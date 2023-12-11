@@ -1,4 +1,10 @@
-pub mod error;
-pub mod lex_error;
-pub mod parser_error;
-pub mod type_error;
+mod error;
+
+mod lex_error;
+pub use crate::lex_error::LexError;
+
+mod parser_error;
+pub use crate::parser_error::{ParserError, ParserErrorKind};
+
+mod type_error;
+pub use crate::type_error::{TypeError, TypeErrorKind};

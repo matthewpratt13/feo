@@ -1,14 +1,28 @@
-pub trait Literal {}
+use crate::{
+    primitive::{Primitive, PrimitiveType},
+    span::{Span, Spanned},
+};
 
-pub trait FeoLiteral<L: Literal>
-where
-    Self: Sized,
-{
-    fn new(input: L) -> Self;
+pub struct Literal<L: 'static + Primitive> {
+    raw_value: L,
+    span: Span,
 }
 
-pub struct CharLiteral {}
-pub struct StringLiteral {}
-pub struct IntLiteral {}
-pub struct FloatLiteral {}
-pub struct BoolLiteral {}
+impl<L> PrimitiveType<L> for Literal<L>
+where
+    L: 'static + Primitive,
+{
+    fn new(raw_value: L, span: Span) -> Self {
+        Self { raw_value, span }
+    }
+
+    fn raw_value(&self) -> &L {
+        &self.raw_value
+    }
+}
+
+impl<L: Primitive> Spanned for Literal<L> {
+    fn span(&self) -> &Span {
+        &self.span
+    }
+}
