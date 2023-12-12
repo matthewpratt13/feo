@@ -1,5 +1,6 @@
 use crate::span::{Span, Spanned};
 
+#[derive(Debug)]
 pub enum KeywordKind {
     AbstractKw,
     AsKw,
@@ -48,6 +49,7 @@ pub enum KeywordKind {
     WhileKw,
 }
 
+#[derive(Debug)]
 pub struct Keyword {
     keyword_kind: KeywordKind,
     span: Span,

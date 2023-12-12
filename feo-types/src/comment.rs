@@ -1,5 +1,6 @@
 use crate::span::{Span, Spanned};
 
+#[derive(Debug)]
 pub enum CommentKind {
     Newline,
     Trailing,
@@ -7,6 +8,7 @@ pub enum CommentKind {
     Multiline,
 }
 
+#[derive(Debug)]
 pub struct Comment {
     comment_kind: CommentKind,
     span: Span,
@@ -18,6 +20,7 @@ impl Spanned for Comment {
     }
 }
 
+#[derive(Debug)]
 pub struct DocComment {
     comment_kind: CommentKind,
     span: Span,

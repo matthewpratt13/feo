@@ -22,6 +22,8 @@ pub use crate::span::{Span, SpanError, Spanned};
 mod identifier {
     use crate::span::{Span, Spanned};
 
+    #[derive(Debug)]
+
     pub struct Identifier {
         name: String,
         span: Span,

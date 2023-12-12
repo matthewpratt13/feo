@@ -6,6 +6,7 @@ use crate::literals::{
 };
 
 // token type
+#[derive(Debug)]
 pub enum Token {
     // literals
     CharLit(CharLiteral),
