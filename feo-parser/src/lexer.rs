@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{iter::Peekable, sync::Arc};
 
 use feo_error::LexErrorKind;
 
@@ -6,8 +6,10 @@ mod token;
 pub use self::token::{Token, TokenStream, TokenTree};
 
 pub struct Lexer<'a> {
-    src: Arc<&'a str>,
+    src: &'a str,
     pos: usize,
+    peekable_chars: Peekable<std::str::Chars<'a>>,
+    // errors: Vec<String>,
 }
 
 impl Iterator for Lexer<'_> {
