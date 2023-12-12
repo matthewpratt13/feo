@@ -22,6 +22,24 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    fn advance(&mut self) {
+        self.pos += 1;
+        self.peekable_chars.next();
+    }
+
+    fn current_char(&self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.current_char() {
+            if !c.is_whitespace() {
+                break;
+            }
+            self.advance();
+        }
+    }
+
     fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexErrorKind> {
         let src = Arc::into_inner(Arc::clone(&self.input)).ok_or(LexErrorKind::SourceFileEmpty)?;
 
