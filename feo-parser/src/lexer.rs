@@ -601,6 +601,18 @@ impl<'a> Lexer<'a> {
     }
 }
 
+fn is_keyword(identifier: &str) -> bool {
+    // Implement your keyword checking logic here
+    // For example, check if the identifier is "let", "mut", "if", etc.
+    // Return true if it's a keyword, false otherwise
+    // This is a simplified example; you might need a more comprehensive approach
+    [
+        "let", "mut", "if", "else", "while", "fn", "struct", "impl", "return",
+    ]
+    .contains(&identifier)
+}
+
+
 impl Iterator for Lexer<'_> {
     type Item = char;
 
