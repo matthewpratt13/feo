@@ -1,8 +1,13 @@
-use feo_types::Span;
+use thiserror::Error;
 
-pub enum LexErrorKind {}
+use feo_types::{Span, SpanError};
 
-pub struct LexError {
-    error_kind: LexErrorKind,
-    span: Span,
+#[derive(Debug, Error)]
+pub enum LexErrorKind {
+    #[error("source file empty")]
+    SourceFileEmpty,
+    #[error("invalid char")]
+    InvalidChar,
+    #[error("unclosed delimiters")]
+    UnclosedDelimiters
 }

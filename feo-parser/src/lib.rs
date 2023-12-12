@@ -1,6 +1,6 @@
 use std::iter::Iterator;
 
-use feo_error::ParserError;
+use feo_error::ParserErrorKind;
 use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation};
 
 mod lexer;
@@ -20,7 +20,7 @@ impl<I> Parse<I> for Comment
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -29,7 +29,7 @@ impl<I> Parse<I> for Delimiter
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -38,7 +38,7 @@ impl<I> Parse<I> for DocComment
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -47,7 +47,7 @@ impl<I> Parse<I> for Identifier
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -56,7 +56,7 @@ impl<I> Parse<I> for Keyword
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -65,7 +65,7 @@ impl<I> Parse<I> for Punctuation
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -74,7 +74,7 @@ impl<I> Parse<I> for BoolLiteral
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -83,7 +83,7 @@ impl<I> Parse<I> for CharLiteral
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -92,7 +92,7 @@ impl<I> Parse<I> for StringLiteral
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError> {
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -106,7 +106,8 @@ where
         input: char,
         i: usize,
         is_negative_number: bool,
-    ) -> Result<Option<Token>, ParserError> {
+        is_hexadecimal_int: bool,
+    ) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -120,7 +121,8 @@ where
         input: char,
         i: usize,
         is_negative_number: bool,
-    ) -> Result<Option<Token>, ParserError> {
+        is_hexadecimal_int: bool,
+    ) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -134,7 +136,8 @@ where
         input: char,
         i: usize,
         is_negative_number: bool,
-    ) -> Result<Option<Token>, ParserError> {
+        is_hexadecimal_int: bool,
+    ) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -148,7 +151,8 @@ where
         input: char,
         i: usize,
         is_negative_number: bool,
-    ) -> Result<Option<Token>, ParserError> {
+        is_hexadecimal_int: bool,
+    ) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
