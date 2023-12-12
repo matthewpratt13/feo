@@ -1,13 +1,15 @@
 use thiserror::Error;
 
-use feo_types::{Span, SpanError};
-
 #[derive(Debug, Error)]
 pub enum LexErrorKind {
+    #[error("token not found")]
+    TokenNotFound,
     #[error("source file empty")]
     SourceFileEmpty,
     #[error("invalid char")]
     InvalidChar,
     #[error("unclosed delimiters")]
-    UnclosedDelimiters
+    UnclosedDelimiters,
+    #[error("unopened block comment")]
+    UnopenedBlockComment,
 }

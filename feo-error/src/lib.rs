@@ -7,4 +7,4 @@ mod parser_error;
 pub use crate::parser_error::ParserErrorKind;
 
 mod type_error;
-pub use crate::type_error::{TypeError, TypeErrorKind};
+pub use crate::type_error::TypeErrorKind;

@@ -66,7 +66,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && char_reader.peek() == Some(&'/') => {
                     if !in_block_comment {
-                        // throw error
+                        return Err(LexErrorKind::UnopenedBlockComment);
                     } else {
                         char_reader.next(); // skip '*'
                         char_reader.next(); // skip '/'
