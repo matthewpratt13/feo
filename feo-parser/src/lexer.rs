@@ -40,6 +40,11 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    // fn log_error(&mut self, message: &str) {
+    //     let error_message = format!("Error at position {}: {}", self.pos, message);
+    //     self.errors.push(error_message);
+    // }
+
     fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexErrorKind> {
         let src = Arc::into_inner(Arc::clone(&self.input)).ok_or(LexErrorKind::SourceFileEmpty)?;
 
