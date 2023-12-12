@@ -601,6 +601,12 @@ impl<'a> Lexer<'a> {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+// CHAT-GPT FUNCTIONS
+
+///////////////////////////////////////////////////////////////////////////
+
 fn is_keyword(identifier: &str) -> bool {
     // Implement your keyword checking logic here
     // For example, check if the identifier is "let", "mut", "if", etc.
@@ -611,6 +617,17 @@ fn is_keyword(identifier: &str) -> bool {
     ]
     .contains(&identifier)
 }
+
+// Helper function to check if a character is a punctuation character
+fn is_punctuation(c: char) -> bool {
+    ",;:()[]{}+-*/%&|^~<>=".contains(c)
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+// FEO IMPLEMENTATION
+
+///////////////////////////////////////////////////////////////////////////
 
 
 impl Iterator for Lexer<'_> {
@@ -624,6 +641,40 @@ impl Iterator for Lexer<'_> {
             Some(c)
         } else {
             self.pos = src.len();
+            None
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+// CHAT-GPT IMPLEMENTATION
+
+///////////////////////////////////////////////////////////////////////////
+
+impl<'a> Iterator for Lexer<'a> {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.skip_whitespace();
+
+        if let Some(c) = self.current_char() {
+            Some(match c {
+                // ... (unchanged logic for other characters)
+                _ => {
+                    // Handle delimiter characters
+                    if "([{}])".contains(c) {
+                        self.tokenize_delimiter()
+                    } else {
+                        // Continue with the existing tokenization logic
+                        // ...
+
+                        // Placeholder return to compile the code
+                        Token::Error("Tokenization not implemented yet".to_string())
+                    }
+                }
+            })
+        } else {
             None
         }
     }
