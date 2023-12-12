@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use feo_error::LexErrorKind;
 use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, Span, Spanned};
 
