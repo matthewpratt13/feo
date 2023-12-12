@@ -58,6 +58,7 @@ impl<'a> Lexer<'a> {
 
             match c {
                 _ if c.is_whitespace() => {
+                    // move the reader to the first char if there is whitespace at the start
                     if start_index - file_start_offset == 0 {
                         file_start_offset += 1;
                     }
@@ -80,7 +81,7 @@ impl<'a> Lexer<'a> {
                             // skip second '/'
                             if let Some('/') = char_reader.peek() {
                                 char_reader.next(); // skip third '/'
-                                               //   parse doc comment
+                                                    //   parse doc comment
                             } else {
                                 //  parse newline / trailing comment
                                 continue;
@@ -116,12 +117,12 @@ impl<'a> Lexer<'a> {
 
                 '"' => {
                     char_reader.next(); // skip opening double quote
-                                   // parse string literal
+                                        // parse string literal
                     char_reader.next(); // skip closing double quote
                 }
                 '\'' => {
                     char_reader.next(); // skip opening single quote
-                                   // parse char literal
+                                        // parse char literal
                     char_reader.next(); // skip opening single quote
                 }
 
@@ -129,6 +130,7 @@ impl<'a> Lexer<'a> {
                 // does `is_digit()` include floats?
                 _ if c == '-' && char_reader.peek().is_some_and(|c| c.is_digit(10 | 16)) => {
                     is_negative_number = true;
+                    char_reader.next();
                 }
 
                 // account for hexadecimal prefix
@@ -146,7 +148,7 @@ impl<'a> Lexer<'a> {
                     // parse punctuation
                     // continue;
                 }
-                _ => return { Err(LexErrorKind::InvalidChar) },
+                _ => return Err(LexErrorKind::InvalidChar),
             }
         }
 
