@@ -2,7 +2,7 @@ mod comment;
 pub use crate::comment::{Comment, DocComment};
 
 mod delimiter;
-pub use crate::delimiter::{Delimiter, DelimiterError};
+pub use crate::delimiter::{Delimiter, DelimiterError, DelimKind};
 
 mod keyword;
 pub use crate::keyword::Keyword;

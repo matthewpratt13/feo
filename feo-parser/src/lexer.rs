@@ -1,6 +1,8 @@
 use std::{iter::Peekable, sync::Arc};
 
+use bnum::BUint;
 use feo_error::LexErrorKind;
+use feo_types::DelimKind;
 
 mod token;
 pub use self::token::{Token, TokenStream, TokenTree};
@@ -219,9 +221,9 @@ impl<'a> Lexer<'a> {
 
     fn tokenize_delimiter(&mut self) -> Token {
         let delimiter_type = match self.current_char() {
-            Some('(') | Some(')') => DelimiterType::Parenthesis,
-            Some('[') | Some(']') => DelimiterType::SquareBracket,
-            Some('{') | Some('}') => DelimiterType::CurlyBrace,
+            Some('(') | Some(')') => DelimKind::Paren,
+            Some('[') | Some(']') => DelimKind::Bracket,
+            Some('{') | Some('}') => DelimKind::Brace,
             _ => unreachable!(), // Should not be called for non-delimiter characters
         };
 
@@ -229,7 +231,7 @@ impl<'a> Lexer<'a> {
         Token::Delimiter(delimiter_type)
     }
 
-    fn tokenize_token_tree(&mut self, delimiter_type: DelimiterType) -> Vec<Token> {
+    fn tokenize_token_tree(&mut self, delimiter_type: DelimKind) -> Vec<Token> {
         let mut tokens = Vec::new();
         let mut nesting_level = 1;
 
@@ -265,12 +267,12 @@ impl<'a> Lexer<'a> {
         match self.current_char() {
             Some('(') | Some('[') | Some('{') => {
                 let delimiter_type = match self.current_char() {
-                    Some('(') => DelimiterType::Parenthesis,
-                    Some(')') => DelimiterType::Parenthesis,
-                    Some('[') => DelimiterType::SquareBracket,
-                    Some(']') => DelimiterType::SquareBracket,
-                    Some('{') => DelimiterType::CurlyBrace,
-                    Some('}') => DelimiterType::CurlyBrace,
+                    Some('(') => DelimKind::Parenthesis,
+                    Some(')') => DelimKind::Parenthesis,
+                    Some('[') => DelimKind::SquareBracket,
+                    Some(']') => DelimKind::SquareBracket,
+                    Some('{') => DelimKind::CurlyBrace,
+                    Some('}') => DelimKind::CurlyBrace,
                     _ => unreachable!(), // Should not be called for non-delimiter characters
                 };
 
@@ -580,7 +582,7 @@ impl<'a> Lexer<'a> {
                 Token::Error(format!("Error parsing float: {}", code))
             }
         } else if is_hex {
-            if let Ok(uint_value) = BigUint::from_str_radix(code, 16) {
+            if let Ok(uint_value) = BUint::from_str_radix(code, 16) {
                 Token::UInt(uint_value)
             } else {
                 self.log_error("Error parsing hexadecimal integer");
