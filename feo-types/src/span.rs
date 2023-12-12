@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use thiserror::Error;
 
 pub trait Spanned {
@@ -6,7 +8,7 @@ pub trait Spanned {
 
 #[derive(Debug, Clone)]
 pub struct Span {
-    data: String,
+    src: Arc<String>,
     start: usize,
     end: usize,
 }
@@ -22,7 +24,7 @@ impl Span {
         }
 
         Ok(Self {
-            data: src.to_string(),
+            src: Arc::new(src.to_string()),
             start,
             end,
         })
