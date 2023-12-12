@@ -8,7 +8,7 @@ use crate::lexer::Token;
 
 mod literals;
 use crate::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
 
 mod parse;
@@ -128,21 +128,6 @@ where
 }
 
 impl<I> ParseDigit<I> for UIntLiteral
-where
-    I: Iterator,
-{
-    fn parse(
-        src: &mut I,
-        input: char,
-        i: usize,
-        is_negative_number: bool,
-        is_hexadecimal_int: bool,
-    ) -> Result<Option<Token>, ParserErrorKind> {
-        todo!()
-    }
-}
-
-impl<I> ParseDigit<I> for U256Literal
 where
     I: Iterator,
 {

@@ -2,7 +2,7 @@ use feo_error::LexErrorKind;
 use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, Span, Spanned};
 
 use crate::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
 
 pub enum Token {
@@ -10,7 +10,6 @@ pub enum Token {
     StringLit(StringLiteral),
     IntLit(IntLiteral),
     UIntLit(UIntLiteral),
-    U256Lit(U256Literal),
     FloatLit(FloatLiteral),
     BoolLit(BoolLiteral),
 

@@ -70,33 +70,16 @@ impl TryFrom<Token> for IntLiteral {
 
 pub struct UIntLiteral {
     uint_kind: Option<UintKind>,
-    lit: Literal<u64>,
+    lit: Literal<U256>,
 }
 
-// convert `Token` to inner `UIntLiteral`
+// convert `Token` to inner `U256Literal`
 impl TryFrom<Token> for UIntLiteral {
     type Error = LexErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::UIntLit(u) => Ok(u),
-            _ => Err(LexErrorKind::TokenNotFound),
-        }
-    }
-}
-
-pub struct U256Literal {
-    uint_kind: Option<UintKind>,
-    lit: Literal<U256>,
-}
-
-// convert `Token` to inner `U256Literal`
-impl TryFrom<Token> for U256Literal {
-    type Error = LexErrorKind;
-
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
-        match value {
-            Token::U256Lit(u) => Ok(u),
             _ => Err(LexErrorKind::TokenNotFound),
         }
     }
