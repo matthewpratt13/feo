@@ -5,22 +5,38 @@ use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
 
+// token type
 pub enum Token {
+    // literals
     CharLit(CharLiteral),
     StringLit(StringLiteral),
+    BoolLit(BoolLiteral),
     IntLit(IntLiteral),
     UIntLit(UIntLiteral),
     FloatLit(FloatLiteral),
-    BoolLit(BoolLiteral),
 
-    Comment(Comment),
-    DocCommet(DocComment),
-    Delim(Delimiter),
+    // identifiers and keywords
     Iden(Identifier),
     Keyword(Keyword),
+
+    // comments
+    LineComment(Comment),
+    BlockComment(Comment),
+    DocCommet(DocComment),
+
+    // path expression, e.g. crate::module::Struct
+    // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
+    Path(Vec<String>), // TODO: make a separate type
+
+    Delim(Delimiter),
     Punc(Punctuation),
 
-    EOF, // end of file
+    // type annotation
+    Type(String), // TODO: make a separate type
+
+    // other
+    Whitespace,
+    Error(String),
 }
 
 pub struct TokenStream<T> {

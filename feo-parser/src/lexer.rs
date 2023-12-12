@@ -156,8 +156,6 @@ impl<'a> Lexer<'a> {
             return Err(LexErrorKind::UnclosedDelimiters);
         }
 
-        tokens.push(Some(Token::EOF));
-
         let stream: TokenStream<TokenTree> = TokenStream::build(src, token_trees, 0, self.pos)?;
         Ok(stream)
     }
