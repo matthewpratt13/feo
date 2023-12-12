@@ -11,7 +11,7 @@ pub struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
-    // errors: Vec<String>,
+    errors: Vec<String>,
 }
 
 impl<'a> Lexer<'a> {
@@ -20,7 +20,7 @@ impl<'a> Lexer<'a> {
             input,
             pos: 0,
             peekable_chars: input.chars().peekable(),
-            // errors: Vec::new(),
+            errors: Vec::new(),
         }
     }
 
@@ -42,21 +42,12 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    // fn log_error(&mut self, message: &str) {
-    //     let error_message = format!("Error at position {}: {}", self.pos, message);
-    //     self.errors.push(error_message);
-    // }
+    fn log_error(&mut self, message: &str) {
+        let error_message = format!("Error at position {}: {}", self.pos, message);
+        self.errors.push(error_message);
+    }
 
     fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexErrorKind> {
-        let src = &self.input;
-
-        let char_reader = &mut Lexer {
-            input: self.input,
-            pos: self.pos,
-            peekable_chars: self.input.chars().peekable(),
-        }
-        .peekable();
-
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -67,7 +58,7 @@ impl<'a> Lexer<'a> {
         let mut num_open_delimiters: usize = 0;
         let mut file_start_offset: usize = 0;
 
-        while let Some(c) = char_reader.next() {
+        while let Some(c) = self.current_char() {
             let start_index = self.pos;
 
             match c {
@@ -76,26 +67,27 @@ impl<'a> Lexer<'a> {
                     if start_index - file_start_offset == 0 {
                         file_start_offset += 1;
                     }
-                    continue;
+
+                    self.skip_whitespace();
                 }
-                _ if c == '*' && char_reader.peek() == Some(&'/') => {
+                _ if c == '*' && self.peek_next() == Some('/') => {
                     if !in_block_comment {
                         return Err(LexErrorKind::UnopenedBlockComment);
                     } else {
-                        char_reader.next(); // skip '*'
-                        char_reader.next(); // skip '/'
+                        self.advance(); // skip '*'
+                        self.advance(); // skip '/'
                         in_block_comment = false;
                     }
                     continue;
                 }
                 _ if c == '/' => {
-                    match char_reader.next() {
+                    match self.peek_next() {
                         Some('/') => {
-                            char_reader.next();
+                            self.advance();
                             // skip second '/'
-                            if let Some('/') = char_reader.peek() {
-                                char_reader.next(); // skip third '/'
-                                                    //   parse doc comment
+                            if let Some('/') = self.peek_next() {
+                                self.advance(); // skip third '/'
+                                                //   parse doc comment
                             } else {
                                 //  parse newline / trailing comment
                                 continue;
@@ -103,11 +95,11 @@ impl<'a> Lexer<'a> {
                             continue;
                         }
                         Some('*') => {
-                            char_reader.next(); // skip '*'
+                            self.advance(); // skip '*'
                             in_block_comment = true;
                             // parse inline / multiline comment
-                            char_reader.next(); // skip closing '*'
-                            char_reader.next(); // skip closing '/'
+                            self.advance(); // skip closing '*'
+                            self.advance(); // skip closing '/'
                             in_block_comment = false;
                             continue;
                         }
@@ -116,64 +108,74 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if unicode_ident::is_xid_start(c) || c == '_' => {
-                    // parse keywords and identifiers
+                    // tokenize keywords and identifiers
                 }
 
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
-                    // parse opening delimiter
+                    // tokenize opening delimiter
+                    // tokenize token tree
+                    self.advance();
                 }
 
                 ')' | ']' | '}' => {
-                    // parse closing delimiter
+                    // tokenize closing delimiter
+                    // tokenize token tree
                     num_open_delimiters -= 1;
+                    self.advance();
                 }
 
                 '"' => {
-                    char_reader.next(); // skip opening double quote
-                                        // parse string literal
-                    char_reader.next(); // skip closing double quote
+                    self.advance(); // skip opening double quote
+                                    // parse string literal
+                    self.advance(); // skip closing double quote
                 }
                 '\'' => {
-                    char_reader.next(); // skip opening single quote
-                                        // parse char literal
-                    char_reader.next(); // skip opening single quote
+                    self.advance(); // skip opening single quote
+                                    // parse char literal
+                    self.advance(); // skip opening single quote
                 }
 
                 // handle negative numbers; do we allow for example "-.3" ?
                 // does `is_digit()` include floats?
-                _ if c == '-' && char_reader.peek().is_some_and(|c| c.is_digit(10 | 16)) => {
+                _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10 | 16)) => {
                     is_negative_number = true;
-                    char_reader.next();
+                    self.advance();
                 }
 
                 // account for hexadecimal prefix
-                _ if c == '0' && char_reader.peek() == Some(&'x') => {
-                    char_reader.next(); // skip '0'
-                    char_reader.next(); // skip 'x'
+                _ if c == '0' && self.peek_next() == Some('x') => {
+                    self.advance(); // skip '0'
+                    self.advance(); // skip 'x'
                     is_hexadecimal_int = true;
                 }
                 '0'..='9' | 'a'..='f' | 'A'..='F' => {
                     // parse digits
-                    // continue;
                 }
 
                 _ if c.is_ascii_punctuation() => {
-                    // parse punctuation
-                    // continue;
+                    // tokenize punctuation
+                    self.advance();
                 }
-                _ => return Err(LexErrorKind::InvalidChar),
+                _ => {
+                    self.log_error(&format!("Unexpected character: {}", c));
+                    self.advance();
+                }
             }
         }
 
-        if num_open_delimiters != 0 {
-            return Err(LexErrorKind::UnclosedDelimiters);
+        if num_open_delimiters > 0 {
+            self.log_error("Unexpected end of input within delimiter");
         }
 
-        let stream: TokenStream<TokenTree> = TokenStream::build(src, token_trees, 0, self.pos)?;
+        let stream: TokenStream<TokenTree> =
+            TokenStream::build(self.input, token_trees, 0, self.pos)?;
         Ok(stream)
     }
 
+    fn peek_next(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
     ///////////////////////////////////////////////////////////////////////////
 
     // CHAT-GPT FUNCTIONS
@@ -241,7 +243,7 @@ impl<'a> Lexer<'a> {
                             tokens.push(self.gpt_tokenize_delimiter());
                         }
                         _ => {
-                            // self.log_error(&format!("Unexpected character: {}", c));
+                            // self.gpt_log_error(&format!("Unexpected character: {}", c));
                             self.gpt_advance();
                         }
                     }
