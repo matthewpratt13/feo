@@ -6,41 +6,27 @@ mod token;
 pub use self::token::{Token, TokenStream, TokenTree};
 
 pub struct Lexer<'a> {
-    src: &'a str,
+    input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     // errors: Vec<String>,
 }
 
-impl Iterator for Lexer<'_> {
-    type Item = char;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let src = Arc::into_inner(Arc::clone(&self.src)).unwrap_or("");
-
-        if let Some(c) = src.chars().next() {
-            self.pos += 1;
-            Some(c)
-        } else {
-            self.pos = src.len();
-            None
-        }
-    }
-}
-
 impl<'a> Lexer<'a> {
-    fn new(data: &'a str) -> Self {
+    fn new(input: &'a str) -> Self {
         Self {
-            src: Arc::new(data),
+            input,
             pos: 0,
+            peekable_chars: input.chars().peekable(),
+            // errors: Vec::new(),
         }
     }
 
     fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexErrorKind> {
-        let src = Arc::into_inner(Arc::clone(&self.src)).ok_or(LexErrorKind::SourceFileEmpty)?;
+        let src = Arc::into_inner(Arc::clone(&self.input)).ok_or(LexErrorKind::SourceFileEmpty)?;
 
         let char_reader = &mut Lexer {
-            src: Arc::clone(&self.src),
+            src: Arc::clone(&self.input),
             pos: self.pos,
         }
         .peekable();
@@ -160,5 +146,21 @@ impl<'a> Lexer<'a> {
 
         let stream: TokenStream<TokenTree> = TokenStream::build(src, token_trees, 0, self.pos)?;
         Ok(stream)
+    }
+}
+
+impl Iterator for Lexer<'_> {
+    type Item = char;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let src = Arc::into_inner(Arc::clone(&self.input)).unwrap_or("");
+
+        if let Some(c) = src.chars().next() {
+            self.pos += 1;
+            Some(c)
+        } else {
+            self.pos = src.len();
+            None
+        }
     }
 }
