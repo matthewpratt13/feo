@@ -158,7 +158,7 @@ impl<'a> Lexer<'a> {
 
         tokens.push(Some(Token::EOF));
 
-        let stream = TokenStream::new(src, token_trees, 0, self.pos);
+        let stream = TokenStream::build(src, token_trees, 0, self.pos)?;
         Ok(stream)
     }
 }

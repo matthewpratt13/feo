@@ -1,20 +1,30 @@
 use thiserror::Error;
 
-use std::sync::Arc;
-
 pub trait Spanned {
     fn span(&self) -> &Span;
 }
 
 pub struct Span {
-    src: Arc<&'static str>,
+    data: String,
     start: usize,
     end: usize,
 }
 
 impl Span {
     pub fn build(src: &str, start: usize, end: usize) -> Result<Self, SpanError> {
-        todo!()
+        if start >= src.len() || end >= src.len() {
+            return Err(SpanError::IndexOutOfRange)?;
+        }
+
+        if start > end {
+            return Err(SpanError::EndIndexBeforeStart)?;
+        }
+
+        Ok(Self {
+            data: src.to_string(),
+            start,
+            end,
+        })
     }
 }
 

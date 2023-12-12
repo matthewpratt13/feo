@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use feo_error::LexErrorKind;
 use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, Span, Spanned};
 
 use crate::literals::{
@@ -29,8 +32,14 @@ pub struct TokenStream<T> {
 }
 
 impl<T> TokenStream<T> {
-    pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
-        todo!()
+    pub fn build(
+        src: &str,
+        tokens: Vec<Option<T>>,
+        start: usize,
+        end: usize,
+    ) -> Result<Self, LexErrorKind> {
+        let span = Span::build(src, start, end)?;
+        Ok(Self { tokens, span })
     }
 
     pub fn tokens(&self) -> &Vec<Option<T>> {
@@ -47,7 +56,12 @@ impl<T> Spanned for TokenStream<T> {
 pub struct TokenTree(TokenStream<Token>);
 
 impl TokenTree {
-    pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
-        Self(TokenStream::new(src, tokens, start, end))
+    pub fn build(
+        src: &str,
+        tokens: Vec<Option<Token>>,
+        start: usize,
+        end: usize,
+    ) -> Result<Self, LexErrorKind> {
+        Ok(Self(TokenStream::build(src, tokens, start, end)?))
     }
 }
