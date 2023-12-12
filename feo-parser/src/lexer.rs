@@ -1,3 +1,4 @@
+use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_error::LexError;
@@ -10,6 +11,8 @@ pub struct Lexer<'a> {
     pos: usize,
 }
 
+type CharReader<'a> = Peekable<Lexer<'a>>;
+
 impl Iterator for Lexer<'_> {
     type Item = char;
 
@@ -17,8 +20,6 @@ impl Iterator for Lexer<'_> {
         todo!()
     }
 }
-
-type CharReader<'a> = std::iter::Peekable<Lexer<'a>>;
 
 impl<'a> Lexer<'a> {
     fn new(src: &'a str) -> Self {

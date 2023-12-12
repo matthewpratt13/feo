@@ -21,7 +21,10 @@ where
     }
 }
 
-impl<L: Primitive> Spanned for Literal<L> {
+impl<L> Spanned for Literal<L>
+where
+    L: 'static + Primitive,
+{
     fn span(&self) -> &Span {
         &self.span
     }
