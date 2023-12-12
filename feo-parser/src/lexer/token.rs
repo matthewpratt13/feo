@@ -23,7 +23,7 @@ pub enum Token {
     // comments
     LineComment(Comment),
     BlockComment(Comment),
-    DocCommet(DocComment),
+    DocComment(DocComment),
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`

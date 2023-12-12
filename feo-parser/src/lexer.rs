@@ -48,11 +48,12 @@ impl<'a> Lexer<'a> {
     // }
 
     fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexErrorKind> {
-        let src = Arc::into_inner(Arc::clone(&self.input)).ok_or(LexErrorKind::SourceFileEmpty)?;
+        let src = &self.input;
 
         let char_reader = &mut Lexer {
-            src: Arc::clone(&self.input),
+            input: self.input,
             pos: self.pos,
+            peekable_chars: self.input.chars().peekable(),
         }
         .peekable();
 
@@ -179,37 +180,69 @@ impl<'a> Lexer<'a> {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    fn tokenize(&mut self) -> Vec<Token> {
+    fn gpt_new(input: &'a str) -> Self {
+        Self {
+            input,
+            pos: 0,
+            peekable_chars: input.chars().peekable(),
+            // errors: Vec::new(),
+        }
+    }
+
+    fn gpt_advance(&mut self) {
+        self.pos += 1;
+        self.peekable_chars.next();
+    }
+
+    fn gpt_current_char(&self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
+    fn gpt_skip_whitespace(&mut self) {
+        while let Some(c) = self.gpt_current_char() {
+            if !c.is_whitespace() {
+                break;
+            }
+            self.gpt_advance();
+        }
+    }
+
+    fn gpt_log_error(&mut self, message: &str) {
+        let error_message = format!("Error at position {}: {}", self.pos, message);
+        // self.errors.push(error_message);
+    }
+
+    fn gpt_tokenize(&mut self) -> Vec<Token> {
         let mut tokens = Vec::new();
 
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.gpt_current_char() {
             if c.is_whitespace() {
-                self.skip_whitespace();
+                self.gpt_skip_whitespace();
                 tokens.push(Token::Whitespace);
-            } else if c.is_digit(10) || (c == '-' && self.peek_next().is_digit(10)) {
-                tokens.push(self.parse_number());
+            } else if c.is_digit(10) || (c == '-' && self.gpt_peek_next().is_digit(10)) {
+                tokens.push(self.gpt_parse_number());
             } else if c.is_alphabetic() || c == '_' {
-                tokens.push(self.parse_identifier_or_keyword());
+                tokens.push(self.gpt_parse_identifier_or_keyword());
             } else if c == '"' {
-                tokens.push(self.parse_string());
+                tokens.push(self.gpt_parse_string());
             } else if c == '\'' {
-                tokens.push(self.parse_char());
-            } else if c == '/' && self.peek_next() == Some('/') {
-                tokens.push(self.parse_comment());
-            } else if c == '/' && self.peek_next() == Some('*') {
-                tokens.push(self.parse_block_comment());
+                tokens.push(self.gpt_parse_char());
+            } else if c == '/' && self.gpt_peek_next() == Some('/') {
+                tokens.push(self.gpt_parse_comment());
+            } else if c == '/' && self.gpt_peek_next() == Some('*') {
+                tokens.push(self.gpt_parse_block_comment());
             } else {
-                if is_punctuation(c) {
-                    self.advance();
-                    tokens.push(Token::Punctuation(c));
+                if gpt_is_punctuation(c) {
+                    self.gpt_advance();
+                    tokens.push(Token::Punc(c));
                 } else {
                     match c {
                         '(' | ')' | '[' | ']' | '{' | '}' => {
-                            tokens.push(self.tokenize_delimiter());
+                            tokens.push(self.gpt_tokenize_delimiter());
                         }
                         _ => {
-                            self.log_error(&format!("Unexpected character: {}", c));
-                            self.advance();
+                            // self.log_error(&format!("Unexpected character: {}", c));
+                            self.gpt_advance();
                         }
                     }
                 }
@@ -219,65 +252,65 @@ impl<'a> Lexer<'a> {
         tokens
     }
 
-    fn tokenize_delimiter(&mut self) -> Token {
-        let delimiter_type = match self.current_char() {
+    fn gpt_tokenize_delimiter(&mut self) -> Token {
+        let delimiter_type = match self.gpt_current_char() {
             Some('(') | Some(')') => DelimKind::Paren,
             Some('[') | Some(']') => DelimKind::Bracket,
             Some('{') | Some('}') => DelimKind::Brace,
             _ => unreachable!(), // Should not be called for non-delimiter characters
         };
 
-        self.advance(); // Consume the delimiter character
-        Token::Delimiter(delimiter_type)
+        self.gpt_advance(); // Consume the delimiter character
+        Token::Delim(delimiter_type) // MP: conflicting type
     }
 
-    fn tokenize_token_tree(&mut self, delimiter_type: DelimKind) -> Vec<Token> {
+    fn gpt_tokenize_token_tree(&mut self, delimiter_type: DelimKind) -> Vec<Token> {
         let mut tokens = Vec::new();
         let mut nesting_level = 1;
 
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.gpt_current_char() {
             match c {
                 '(' | '[' | '{' => {
                     nesting_level += 1;
-                    self.advance();
+                    self.gpt_advance();
                 }
                 ')' | ']' | '}' => {
                     nesting_level -= 1;
                     if nesting_level == 0 {
-                        self.advance();
+                        self.gpt_advance();
                         break;
                     } else {
-                        self.advance();
+                        self.gpt_advance();
                     }
                 }
                 _ => {
-                    tokens.push(self.tokenize_token());
+                    tokens.push(self.gpt_tokenize_token());
                 }
             }
         }
 
         if nesting_level > 0 {
-            self.log_error("Unexpected end of input within delimiter");
+            self.gpt_log_error("Unexpected end of input within delimiter");
         }
 
         tokens
     }
 
-    fn tokenize_token(&mut self) -> Token {
-        match self.current_char() {
+    fn gpt_tokenize_token(&mut self) -> Token {
+        match self.gpt_current_char() {
             Some('(') | Some('[') | Some('{') => {
-                let delimiter_type = match self.current_char() {
-                    Some('(') => DelimKind::Parenthesis,
-                    Some(')') => DelimKind::Parenthesis,
-                    Some('[') => DelimKind::SquareBracket,
-                    Some(']') => DelimKind::SquareBracket,
-                    Some('{') => DelimKind::CurlyBrace,
-                    Some('}') => DelimKind::CurlyBrace,
+                let delimiter_type = match self.gpt_current_char() {
+                    Some('(') => DelimKind::Paren,
+                    Some(')') => DelimKind::Paren,
+                    Some('[') => DelimKind::Bracket,
+                    Some(']') => DelimKind::Bracket,
+                    Some('{') => DelimKind::Brace,
+                    Some('}') => DelimKind::Brace,
                     _ => unreachable!(), // Should not be called for non-delimiter characters
                 };
 
-                self.advance();
-                Token::Delimiter(delimiter_type)
+                self.gpt_advance();
+                Token::Delim(delimiter_type) // MP: conflicting type
             }
             _ => {
                 // Continue with existing tokenization logic
@@ -289,43 +322,43 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn parse_string(&mut self) -> Token {
-        self.advance(); // Consume the opening double quote
+    fn gpt_parse_string(&mut self) -> Token {
+        self.gpt_advance(); // Consume the opening double quote
         let mut string_content = String::new();
 
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.gpt_current_char() {
             match c {
                 '\\' => {
                     // Handle escape sequences
-                    if let Some(escaped_char) = self.parse_escape_sequence() {
+                    if let Some(escaped_char) = self.gpt_parse_escape_sequence() {
                         string_content.push(escaped_char);
                     } else {
                         // Invalid escape sequence
-                        self.log_error("Invalid escape sequence in string literal");
+                        self.gpt_log_error("Invalid escape sequence in string literal");
                     }
                 }
                 '"' => {
                     // Consume the closing double quote
-                    self.advance();
-                    return Token::Str(string_content);
+                    self.gpt_advance();
+                    return Token::StringLit(string_content); // MP: conflicting types
                 }
                 _ => {
                     string_content.push(c);
-                    self.advance();
+                    self.gpt_advance();
                 }
             }
         }
 
         // If we reach here, there's an unterminated string literal
-        self.log_error("Unterminated string literal");
+        self.gpt_log_error("Unterminated string literal");
         Token::Error("Unterminated string literal".to_string())
     }
 
-    fn parse_escape_sequence(&mut self) -> Option<char> {
-        self.advance(); // Consume the backslash
+    fn gpt_parse_escape_sequence(&mut self) -> Option<char> {
+        self.gpt_advance(); // Consume the backslash
 
-        if let Some(escaped_char) = self.current_char() {
-            self.advance(); // Consume the escaped character
+        if let Some(escaped_char) = self.gpt_current_char() {
+            self.gpt_advance(); // Consume the escaped character
             match escaped_char {
                 'n' => Some('\n'),
                 'r' => Some('\r'),
@@ -335,37 +368,37 @@ impl<'a> Lexer<'a> {
                 '\'' => Some('\''),
                 _ => {
                     // Invalid escape sequence
-                    self.log_error("Invalid escape sequence in string literal");
+                    self.gpt_log_error("Invalid escape sequence in string literal");
                     None
                 }
             }
         } else {
             // Escape sequence is expected, but the input has ended
-            self.log_error("Unexpected end of input in escape sequence");
+            self.gpt_log_error("Unexpected end of input in escape sequence");
             None
         }
     }
 
-    fn parse_char(&mut self) -> Token {
-        self.advance(); // Consume the opening single quote
+    fn gpt_parse_char(&mut self) -> Token {
+        self.gpt_advance(); // Consume the opening single quote
 
-        if let Some(c) = self.current_char() {
+        if let Some(c) = self.gpt_current_char() {
             match c {
                 '\\' => {
                     // Handle escape sequences
-                    if let Some(escaped_char) = self.parse_escape_sequence() {
+                    if let Some(escaped_char) = self.gpt_parse_escape_sequence() {
                         // Check for the closing single quote
-                        if self.current_char() == Some('\'') {
-                            self.advance(); // Consume the closing single quote
-                            return Token::Char(escaped_char);
+                        if self.gpt_current_char() == Some('\'') {
+                            self.gpt_advance(); // Consume the closing single quote
+                            return Token::CharLit(escaped_char); // MP: conflicting type
                         } else {
                             // Invalid character literal
-                            self.log_error("Invalid character literal");
+                            self.gpt_log_error("Invalid character literal");
                             return Token::Error("Invalid character literal".to_string());
                         }
                     } else {
                         // Invalid escape sequence
-                        self.log_error("Invalid escape sequence in character literal");
+                        self.gpt_log_error("Invalid escape sequence in character literal");
                         return Token::Error(
                             "Invalid escape sequence in character literal".to_string(),
                         );
@@ -373,122 +406,122 @@ impl<'a> Lexer<'a> {
                 }
                 '\'' => {
                     // Empty character literal is invalid
-                    self.log_error("Empty character literal");
+                    self.gpt_log_error("Empty character literal");
                     Token::Error("Empty character literal".to_string())
                 }
                 _ => {
                     // Regular character
-                    self.advance(); // Consume the character
-                    if self.current_char() == Some('\'') {
-                        self.advance(); // Consume the closing single quote
-                        Token::Char(c)
+                    self.gpt_advance(); // Consume the character
+                    if self.gpt_current_char() == Some('\'') {
+                        self.gpt_advance(); // Consume the closing single quote
+                        Token::CharLit(c) // MP: conflicting type
                     } else {
                         // Invalid character literal
-                        self.log_error("Invalid character literal");
+                        self.gpt_log_error("Invalid character literal");
                         Token::Error("Invalid character literal".to_string())
                     }
                 }
             }
         } else {
             // Unexpected end of input
-            self.log_error("Unexpected end of input in character literal");
+            self.gpt_log_error("Unexpected end of input in character literal");
             Token::Error("Unexpected end of input in character literal".to_string())
         }
     }
 
-    fn parse_line_comment(&mut self) -> Token {
-        self.advance(); // Consume the first '/'
-        self.advance(); // Consume the second '/'
+    fn gpt_parse_line_comment(&mut self) -> Token {
+        self.gpt_advance(); // Consume the first '/'
+        self.gpt_advance(); // Consume the second '/'
 
         let mut comment_content = String::new();
 
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.gpt_current_char() {
             if c == '\n' {
                 // End of line, finish the comment
                 break;
             } else {
                 comment_content.push(c);
-                self.advance();
+                self.gpt_advance();
             }
         }
 
         Token::LineComment(comment_content)
     }
 
-    fn parse_doc_comment(&mut self) -> Token {
-        self.advance(); // Skip '/'
-        self.advance(); // Skip '!'
+    fn gpt_parse_doc_comment(&mut self) -> Token {
+        self.gpt_advance(); // Skip '/'
+        self.gpt_advance(); // Skip '!'
         let start_pos = self.pos;
 
-        while let Some(c) = self.current_char() {
-            if c == '*' && self.peek_next() == Some('/') {
-                self.advance();
-                self.advance();
+        while let Some(c) = self.gpt_current_char() {
+            if c == '*' && self.gpt_peek_next() == Some('/') {
+                self.gpt_advance();
+                self.gpt_advance();
                 let end_pos = self.pos;
                 let code = Arc::new(self.input[start_pos..end_pos].trim().to_string());
-                return Token::DocComment(code);
+                return Token::DocComment(code); // MP: conflicting type
             } else {
-                self.advance();
+                self.gpt_advance();
             }
         }
 
-        self.log_error("Unterminated doc comment");
+        self.gpt_log_error("Unterminated doc comment");
         Token::Error("Unterminated doc comment".to_string())
     }
 
-    fn parse_block_comment(&mut self) -> Token {
-        self.advance(); // Consume the first '/'
-        self.advance(); // Consume the '!' character
+    fn gpt_parse_block_comment(&mut self) -> Token {
+        self.gpt_advance(); // Consume the first '/'
+        self.gpt_advance(); // Consume the '!' character
 
         let mut comment_content = String::new();
 
-        while let Some(c) = self.current_char() {
-            if c == '*' && self.peek_next() == Some('/') {
+        while let Some(c) = self.gpt_current_char() {
+            if c == '*' && self.gpt_peek_next() == Some('/') {
                 // Consume the '*' and '/'
-                self.advance();
-                self.advance();
-                return Token::BlockComment(comment_content);
+                self.gpt_advance();
+                self.gpt_advance();
+                return Token::BlockComment(comment_content); // MP: conflicting type
             } else {
                 comment_content.push(c);
-                self.advance();
+                self.gpt_advance();
             }
         }
 
         // If we reach here, the block comment is unterminated
-        self.log_error("Unterminated block comment");
+        self.gpt_log_error("Unterminated block comment");
         Token::Error("Unterminated block comment".to_string())
     }
 
     // Helper function to parse comments
-    fn parse_comment(&mut self) -> Token {
-        if self.current_char() == Some('/') && self.peek_next() == Some('/') {
-            self.parse_line_comment()
-        } else if self.current_char() == Some('/') && self.peek_next() == Some('*') {
-            self.parse_block_comment()
-        } else if self.current_char() == Some('/') && self.peek_next() == Some('!') {
-            self.parse_doc_comment()
+    fn gpt_parse_comment(&mut self) -> Token {
+        if self.gpt_current_char() == Some('/') && self.gpt_peek_next() == Some('/') {
+            self.gpt_parse_line_comment()
+        } else if self.current_char() == Some('/') && self.gpt_peek_next() == Some('*') {
+            self.gpt_parse_block_comment()
+        } else if self.current_char() == Some('/') && self.gpt_peek_next() == Some('!') {
+            self.gpt_parse_doc_comment()
         } else {
             Token::Error("Unexpected comment format".to_string())
         }
     }
 
-    fn parse_identifier_or_keyword(&mut self) -> Token {
+    fn gpt_parse_identifier_or_keyword(&mut self) -> Token {
         let mut identifier = String::new();
 
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.gpt_current_char() {
             if c.is_alphanumeric() || c == '_' {
                 identifier.push(c);
-                self.advance();
+                self.gpt_advance();
             } else if c == ':' {
                 // Check for type annotation syntax (e.g., ": Type")
-                self.advance(); // Consume ':'
-                self.skip_whitespace();
+                self.gpt_advance(); // Consume ':'
+                self.gpt_skip_whitespace();
                 let mut type_name = String::new();
 
-                while let Some(c) = self.current_char() {
+                while let Some(c) = self.gpt_current_char() {
                     if c.is_alphanumeric() || c == '_' {
                         type_name.push(c);
-                        self.advance();
+                        self.gpt_advance();
                     } else {
                         break;
                     }
@@ -497,23 +530,23 @@ impl<'a> Lexer<'a> {
                 if !type_name.is_empty() {
                     return Token::Type(type_name);
                 }
-            } else if c == ':' && self.peek_next() == Some(':') {
+            } else if c == ':' && self.gpt_peek_next() == Some(':') {
                 // Check for path expression syntax
-                self.advance(); // Consume first ':'
-                self.advance(); // Consume second ':'
+                self.gpt_advance(); // Consume first ':'
+                self.gpt_advance(); // Consume second ':'
                 let mut path_components = vec![identifier];
 
-                while let Some(c) = self.current_char() {
+                while let Some(c) = self.gpt_current_char() {
                     if c.is_alphanumeric() || c == '_' {
                         let mut component = String::new();
                         component.push(c);
-                        self.advance();
+                        self.gpt_advance();
 
                         // Collect the rest of the component
-                        while let Some(next_c) = self.current_char() {
+                        while let Some(next_c) = self.gpt_current_char() {
                             if next_c.is_alphanumeric() || next_c == '_' {
                                 component.push(next_c);
-                                self.advance();
+                                self.gpt_advance();
                             } else {
                                 break;
                             }
@@ -532,39 +565,39 @@ impl<'a> Lexer<'a> {
         }
 
         // Check if the identifier is a keyword
-        if is_keyword(&identifier) {
-            Token::Keyword(identifier)
+        if gpt_is_keyword(&identifier) {
+            Token::Keyword(identifier) // MP: conflicting type
         } else {
-            Token::Identifier(identifier)
+            Token::Iden(identifier) // MP: conflicting type
         }
     }
 
     // Helper function to parse integers, floats, and hexadecimal numbers
-    fn parse_number(&mut self) -> Token {
+    fn gpt_parse_number(&mut self) -> Token {
         let start_pos = self.pos;
         let mut is_float = false;
         let mut is_hex = false;
 
         // Check for negative sign
-        if self.current_char() == Some('-') {
-            self.advance();
+        if self.gpt_current_char() == Some('-') {
+            self.gpt_advance();
         }
 
         // Check for hexadecimal prefix
-        if self.current_char() == Some('0')
-            && self.peek_next().map_or(false, |c| c == 'x' || c == 'X')
+        if self.gpt_current_char() == Some('0')
+            && self.gpt_peek_next().map_or(false, |c| c == 'x' || c == 'X')
         {
-            self.advance(); // Skip '0'
-            self.advance(); // Skip 'x'
+            self.gpt_advance(); // Skip '0'
+            self.gpt_advance(); // Skip 'x'
             is_hex = true;
         }
 
         // Parse digits
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.gpt_current_char() {
             if c.is_digit(10) || (is_hex && c.is_digit(16)) {
-                self.advance();
+                self.gpt_advance();
             } else if c == '.' && !is_float {
-                self.advance();
+                self.gpt_advance();
                 is_float = true;
             } else {
                 break;
@@ -576,29 +609,29 @@ impl<'a> Lexer<'a> {
         // Parse and return the appropriate token
         if is_float {
             if let Ok(float_value) = code.parse::<f64>() {
-                Token::Float(float_value)
+                Token::FloatLit(float_value) // MP: conflicting type
             } else {
-                self.log_error("Error parsing float");
+                self.gpt_log_error("Error parsing float");
                 Token::Error(format!("Error parsing float: {}", code))
             }
         } else if is_hex {
             if let Ok(uint_value) = BUint::from_str_radix(code, 16) {
-                Token::UInt(uint_value)
+                Token::UIntLit(uint_value) // MP: conflicting type
             } else {
-                self.log_error("Error parsing hexadecimal integer");
+                self.gpt_log_error("Error parsing hexadecimal integer");
                 Token::Error(format!("Error parsing hexadecimal integer: {}", code))
             }
         } else {
             if let Ok(int_value) = code.parse::<i64>() {
-                Token::Int(int_value)
+                Token::IntLit(int_value) // MP: conflicting type
             } else {
-                self.log_error("Error parsing integer");
+                self.gpt_log_error("Error parsing integer");
                 Token::Error(format!("Error parsing integer: {}", code))
             }
         }
     }
 
-    fn peek_next(&mut self) -> Option<char> {
+    fn gpt_peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
 }
@@ -609,7 +642,7 @@ impl<'a> Lexer<'a> {
 
 ///////////////////////////////////////////////////////////////////////////
 
-fn is_keyword(identifier: &str) -> bool {
+fn gpt_is_keyword(identifier: &str) -> bool {
     // Implement your keyword checking logic here
     // For example, check if the identifier is "let", "mut", "if", etc.
     // Return true if it's a keyword, false otherwise
@@ -621,7 +654,7 @@ fn is_keyword(identifier: &str) -> bool {
 }
 
 // Helper function to check if a character is a punctuation character
-fn is_punctuation(c: char) -> bool {
+fn gpt_is_punctuation(c: char) -> bool {
     ",;:()[]{}+-*/%&|^~<>=".contains(c)
 }
 
@@ -631,18 +664,15 @@ fn is_punctuation(c: char) -> bool {
 
 ///////////////////////////////////////////////////////////////////////////
 
-
 impl Iterator for Lexer<'_> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let src = Arc::into_inner(Arc::clone(&self.input)).unwrap_or("");
-
-        if let Some(c) = src.chars().next() {
+        if let Some(c) = self.input.chars().next() {
             self.pos += 1;
             Some(c)
         } else {
-            self.pos = src.len();
+            self.pos = self.input.len();
             None
         }
     }
@@ -654,30 +684,30 @@ impl Iterator for Lexer<'_> {
 
 ///////////////////////////////////////////////////////////////////////////
 
-impl<'a> Iterator for Lexer<'a> {
-    type Item = Token;
+// impl<'a> Iterator for Lexer<'a> {
+//     type Item = Token;
 
-    fn next(&mut self) -> Option<Self::Item> {
-        self.skip_whitespace();
+//     fn next(&mut self) -> Option<Self::Item> {
+//         self.gpt_skip_whitespace();
 
-        if let Some(c) = self.current_char() {
-            Some(match c {
-                // ... (unchanged logic for other characters)
-                _ => {
-                    // Handle delimiter characters
-                    if "([{}])".contains(c) {
-                        self.tokenize_delimiter()
-                    } else {
-                        // Continue with the existing tokenization logic
-                        // ...
+//         if let Some(c) = self.gpt_current_char() {
+//             Some(match c {
+//                 // ... (unchanged logic for other characters)
+//                 _ => {
+//                     // Handle delimiter characters
+//                     if "([{}])".contains(c) {
+//                         self.gpt_tokenize_delimiter()
+//                     } else {
+//                         // Continue with the existing tokenization logic
+//                         // ...
 
-                        // Placeholder return to compile the code
-                        Token::Error("Tokenization not implemented yet".to_string())
-                    }
-                }
-            })
-        } else {
-            None
-        }
-    }
-}
+//                         // Placeholder return to compile the code
+//                         Token::Error("Tokenization not implemented yet".to_string())
+//                     }
+//                 }
+//             })
+//         } else {
+//             None
+//         }
+//     }
+// }
