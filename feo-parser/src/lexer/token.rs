@@ -38,8 +38,10 @@ impl<T> TokenStream<T> {
         start: usize,
         end: usize,
     ) -> Result<Self, LexErrorKind> {
-        let span = Span::build(src, start, end)?;
-        Ok(Self { tokens, span })
+        Ok(Self {
+            tokens,
+            span: Span::build(src, start, end)?,
+        })
     }
 
     pub fn tokens(&self) -> &Vec<Option<T>> {
