@@ -170,6 +170,435 @@ impl<'a> Lexer<'a> {
         let stream: TokenStream<TokenTree> = TokenStream::build(src, token_trees, 0, self.pos)?;
         Ok(stream)
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // CHAT-GPT FUNCTIONS
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    fn tokenize(&mut self) -> Vec<Token> {
+        let mut tokens = Vec::new();
+
+        while let Some(c) = self.current_char() {
+            if c.is_whitespace() {
+                self.skip_whitespace();
+                tokens.push(Token::Whitespace);
+            } else if c.is_digit(10) || (c == '-' && self.peek_next().is_digit(10)) {
+                tokens.push(self.parse_number());
+            } else if c.is_alphabetic() || c == '_' {
+                tokens.push(self.parse_identifier_or_keyword());
+            } else if c == '"' {
+                tokens.push(self.parse_string());
+            } else if c == '\'' {
+                tokens.push(self.parse_char());
+            } else if c == '/' && self.peek_next() == Some('/') {
+                tokens.push(self.parse_comment());
+            } else if c == '/' && self.peek_next() == Some('*') {
+                tokens.push(self.parse_block_comment());
+            } else {
+                if is_punctuation(c) {
+                    self.advance();
+                    tokens.push(Token::Punctuation(c));
+                } else {
+                    match c {
+                        '(' | ')' | '[' | ']' | '{' | '}' => {
+                            tokens.push(self.tokenize_delimiter());
+                        }
+                        _ => {
+                            self.log_error(&format!("Unexpected character: {}", c));
+                            self.advance();
+                        }
+                    }
+                }
+            }
+        }
+
+        tokens
+    }
+
+    fn tokenize_delimiter(&mut self) -> Token {
+        let delimiter_type = match self.current_char() {
+            Some('(') | Some(')') => DelimiterType::Parenthesis,
+            Some('[') | Some(']') => DelimiterType::SquareBracket,
+            Some('{') | Some('}') => DelimiterType::CurlyBrace,
+            _ => unreachable!(), // Should not be called for non-delimiter characters
+        };
+
+        self.advance(); // Consume the delimiter character
+        Token::Delimiter(delimiter_type)
+    }
+
+    fn tokenize_token_tree(&mut self, delimiter_type: DelimiterType) -> Vec<Token> {
+        let mut tokens = Vec::new();
+        let mut nesting_level = 1;
+
+        while let Some(c) = self.current_char() {
+            match c {
+                '(' | '[' | '{' => {
+                    nesting_level += 1;
+                    self.advance();
+                }
+                ')' | ']' | '}' => {
+                    nesting_level -= 1;
+                    if nesting_level == 0 {
+                        self.advance();
+                        break;
+                    } else {
+                        self.advance();
+                    }
+                }
+                _ => {
+                    tokens.push(self.tokenize_token());
+                }
+            }
+        }
+
+        if nesting_level > 0 {
+            self.log_error("Unexpected end of input within delimiter");
+        }
+
+        tokens
+    }
+
+    fn tokenize_token(&mut self) -> Token {
+        match self.current_char() {
+            Some('(') | Some('[') | Some('{') => {
+                let delimiter_type = match self.current_char() {
+                    Some('(') => DelimiterType::Parenthesis,
+                    Some(')') => DelimiterType::Parenthesis,
+                    Some('[') => DelimiterType::SquareBracket,
+                    Some(']') => DelimiterType::SquareBracket,
+                    Some('{') => DelimiterType::CurlyBrace,
+                    Some('}') => DelimiterType::CurlyBrace,
+                    _ => unreachable!(), // Should not be called for non-delimiter characters
+                };
+
+                self.advance();
+                Token::Delimiter(delimiter_type)
+            }
+            _ => {
+                // Continue with existing tokenization logic
+                // ...
+
+                // Placeholder return to compile the code
+                Token::Error("Tokenization not implemented yet".to_string())
+            }
+        }
+    }
+
+    fn parse_string(&mut self) -> Token {
+        self.advance(); // Consume the opening double quote
+        let mut string_content = String::new();
+
+        while let Some(c) = self.current_char() {
+            match c {
+                '\\' => {
+                    // Handle escape sequences
+                    if let Some(escaped_char) = self.parse_escape_sequence() {
+                        string_content.push(escaped_char);
+                    } else {
+                        // Invalid escape sequence
+                        self.log_error("Invalid escape sequence in string literal");
+                    }
+                }
+                '"' => {
+                    // Consume the closing double quote
+                    self.advance();
+                    return Token::Str(string_content);
+                }
+                _ => {
+                    string_content.push(c);
+                    self.advance();
+                }
+            }
+        }
+
+        // If we reach here, there's an unterminated string literal
+        self.log_error("Unterminated string literal");
+        Token::Error("Unterminated string literal".to_string())
+    }
+
+    fn parse_escape_sequence(&mut self) -> Option<char> {
+        self.advance(); // Consume the backslash
+
+        if let Some(escaped_char) = self.current_char() {
+            self.advance(); // Consume the escaped character
+            match escaped_char {
+                'n' => Some('\n'),
+                'r' => Some('\r'),
+                't' => Some('\t'),
+                '\\' => Some('\\'),
+                '"' => Some('"'),
+                '\'' => Some('\''),
+                _ => {
+                    // Invalid escape sequence
+                    self.log_error("Invalid escape sequence in string literal");
+                    None
+                }
+            }
+        } else {
+            // Escape sequence is expected, but the input has ended
+            self.log_error("Unexpected end of input in escape sequence");
+            None
+        }
+    }
+
+    fn parse_char(&mut self) -> Token {
+        self.advance(); // Consume the opening single quote
+
+        if let Some(c) = self.current_char() {
+            match c {
+                '\\' => {
+                    // Handle escape sequences
+                    if let Some(escaped_char) = self.parse_escape_sequence() {
+                        // Check for the closing single quote
+                        if self.current_char() == Some('\'') {
+                            self.advance(); // Consume the closing single quote
+                            return Token::Char(escaped_char);
+                        } else {
+                            // Invalid character literal
+                            self.log_error("Invalid character literal");
+                            return Token::Error("Invalid character literal".to_string());
+                        }
+                    } else {
+                        // Invalid escape sequence
+                        self.log_error("Invalid escape sequence in character literal");
+                        return Token::Error(
+                            "Invalid escape sequence in character literal".to_string(),
+                        );
+                    }
+                }
+                '\'' => {
+                    // Empty character literal is invalid
+                    self.log_error("Empty character literal");
+                    Token::Error("Empty character literal".to_string())
+                }
+                _ => {
+                    // Regular character
+                    self.advance(); // Consume the character
+                    if self.current_char() == Some('\'') {
+                        self.advance(); // Consume the closing single quote
+                        Token::Char(c)
+                    } else {
+                        // Invalid character literal
+                        self.log_error("Invalid character literal");
+                        Token::Error("Invalid character literal".to_string())
+                    }
+                }
+            }
+        } else {
+            // Unexpected end of input
+            self.log_error("Unexpected end of input in character literal");
+            Token::Error("Unexpected end of input in character literal".to_string())
+        }
+    }
+
+    fn parse_line_comment(&mut self) -> Token {
+        self.advance(); // Consume the first '/'
+        self.advance(); // Consume the second '/'
+
+        let mut comment_content = String::new();
+
+        while let Some(c) = self.current_char() {
+            if c == '\n' {
+                // End of line, finish the comment
+                break;
+            } else {
+                comment_content.push(c);
+                self.advance();
+            }
+        }
+
+        Token::LineComment(comment_content)
+    }
+
+    fn parse_doc_comment(&mut self) -> Token {
+        self.advance(); // Skip '/'
+        self.advance(); // Skip '!'
+        let start_pos = self.pos;
+
+        while let Some(c) = self.current_char() {
+            if c == '*' && self.peek_next() == Some('/') {
+                self.advance();
+                self.advance();
+                let end_pos = self.pos;
+                let code = Arc::new(self.input[start_pos..end_pos].trim().to_string());
+                return Token::DocComment(code);
+            } else {
+                self.advance();
+            }
+        }
+
+        self.log_error("Unterminated doc comment");
+        Token::Error("Unterminated doc comment".to_string())
+    }
+
+    fn parse_block_comment(&mut self) -> Token {
+        self.advance(); // Consume the first '/'
+        self.advance(); // Consume the '!' character
+
+        let mut comment_content = String::new();
+
+        while let Some(c) = self.current_char() {
+            if c == '*' && self.peek_next() == Some('/') {
+                // Consume the '*' and '/'
+                self.advance();
+                self.advance();
+                return Token::BlockComment(comment_content);
+            } else {
+                comment_content.push(c);
+                self.advance();
+            }
+        }
+
+        // If we reach here, the block comment is unterminated
+        self.log_error("Unterminated block comment");
+        Token::Error("Unterminated block comment".to_string())
+    }
+
+    // Helper function to parse comments
+    fn parse_comment(&mut self) -> Token {
+        if self.current_char() == Some('/') && self.peek_next() == Some('/') {
+            self.parse_line_comment()
+        } else if self.current_char() == Some('/') && self.peek_next() == Some('*') {
+            self.parse_block_comment()
+        } else if self.current_char() == Some('/') && self.peek_next() == Some('!') {
+            self.parse_doc_comment()
+        } else {
+            Token::Error("Unexpected comment format".to_string())
+        }
+    }
+
+    fn parse_identifier_or_keyword(&mut self) -> Token {
+        let mut identifier = String::new();
+
+        while let Some(c) = self.current_char() {
+            if c.is_alphanumeric() || c == '_' {
+                identifier.push(c);
+                self.advance();
+            } else if c == ':' {
+                // Check for type annotation syntax (e.g., ": Type")
+                self.advance(); // Consume ':'
+                self.skip_whitespace();
+                let mut type_name = String::new();
+
+                while let Some(c) = self.current_char() {
+                    if c.is_alphanumeric() || c == '_' {
+                        type_name.push(c);
+                        self.advance();
+                    } else {
+                        break;
+                    }
+                }
+
+                if !type_name.is_empty() {
+                    return Token::Type(type_name);
+                }
+            } else if c == ':' && self.peek_next() == Some(':') {
+                // Check for path expression syntax
+                self.advance(); // Consume first ':'
+                self.advance(); // Consume second ':'
+                let mut path_components = vec![identifier];
+
+                while let Some(c) = self.current_char() {
+                    if c.is_alphanumeric() || c == '_' {
+                        let mut component = String::new();
+                        component.push(c);
+                        self.advance();
+
+                        // Collect the rest of the component
+                        while let Some(next_c) = self.current_char() {
+                            if next_c.is_alphanumeric() || next_c == '_' {
+                                component.push(next_c);
+                                self.advance();
+                            } else {
+                                break;
+                            }
+                        }
+
+                        path_components.push(component);
+                    } else {
+                        break;
+                    }
+                }
+
+                return Token::Path(path_components);
+            } else {
+                break;
+            }
+        }
+
+        // Check if the identifier is a keyword
+        if is_keyword(&identifier) {
+            Token::Keyword(identifier)
+        } else {
+            Token::Identifier(identifier)
+        }
+    }
+
+    // Helper function to parse integers, floats, and hexadecimal numbers
+    fn parse_number(&mut self) -> Token {
+        let start_pos = self.pos;
+        let mut is_float = false;
+        let mut is_hex = false;
+
+        // Check for negative sign
+        if self.current_char() == Some('-') {
+            self.advance();
+        }
+
+        // Check for hexadecimal prefix
+        if self.current_char() == Some('0')
+            && self.peek_next().map_or(false, |c| c == 'x' || c == 'X')
+        {
+            self.advance(); // Skip '0'
+            self.advance(); // Skip 'x'
+            is_hex = true;
+        }
+
+        // Parse digits
+        while let Some(c) = self.current_char() {
+            if c.is_digit(10) || (is_hex && c.is_digit(16)) {
+                self.advance();
+            } else if c == '.' && !is_float {
+                self.advance();
+                is_float = true;
+            } else {
+                break;
+            }
+        }
+
+        let code = &self.input[start_pos..self.pos];
+
+        // Parse and return the appropriate token
+        if is_float {
+            if let Ok(float_value) = code.parse::<f64>() {
+                Token::Float(float_value)
+            } else {
+                self.log_error("Error parsing float");
+                Token::Error(format!("Error parsing float: {}", code))
+            }
+        } else if is_hex {
+            if let Ok(uint_value) = BigUint::from_str_radix(code, 16) {
+                Token::UInt(uint_value)
+            } else {
+                self.log_error("Error parsing hexadecimal integer");
+                Token::Error(format!("Error parsing hexadecimal integer: {}", code))
+            }
+        } else {
+            if let Ok(int_value) = code.parse::<i64>() {
+                Token::Int(int_value)
+            } else {
+                self.log_error("Error parsing integer");
+                Token::Error(format!("Error parsing integer: {}", code))
+            }
+        }
+    }
+
+    fn peek_next(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
 }
 
 impl Iterator for Lexer<'_> {
