@@ -15,6 +15,4 @@ impl Span {
     pub fn new(src: Arc<String>, start: usize, end: usize) -> Self {
         Self { src, start, end }
     }
-
-
 }
