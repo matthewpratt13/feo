@@ -81,24 +81,20 @@ impl<'a> Lexer<'a> {
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if !in_block_comment {
                         self.log_error("Unexpected comment terminator without opener");
-                    } else {
-                        // comment terminator
-                        self.advance(); // skip '*'
-                        self.advance(); // skip '/'
+                    } else 
+                        self.advance(); 
+                        self.advance(); 
                         in_block_comment = false;
-                    }
+                    
                 }
-                // comments
                 _ if c == '/' => {
                     match self.peek_next() {
-                        // newline / trailing comment
                         Some('/') => {
-                            self.advance(); // skip first '/'
-                            self.advance(); // skip second '/'
+                            self.advance();
+                            self.advance();
 
-                            //  (newline) doc comment
                             if let Some('/') = self.current_char() {
-                                self.advance(); // skip third '/'
+                                self.advance();
                                 let mut comment_content = String::new();
 
                                 while let Some(c) = self.current_char() {
@@ -116,7 +112,6 @@ impl<'a> Lexer<'a> {
 
                                 continue;
                             } else {
-                                // normal comment
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         tokens.push(Some(Token::NewLine));
@@ -128,23 +123,20 @@ impl<'a> Lexer<'a> {
                             }
                         }
 
-                        // module-level doc comments (multiline)
                         Some('!') => {
-                            // open ('/!')
-                            self.advance(); // skip '/'
-                            self.advance(); // skip '!'
+                            self.advance();
+                            self.advance();
                             in_block_comment = true;
                             let start_pos = self.pos;
 
                             while let Some(c) = self.current_char() {
                                 if c == '\n' {
                                     tokens.push(Some(Token::NewLine));
-                                    // *don't* break
                                 }
 
                                 if c == '*' && self.peek_next() == Some('/') {
-                                    self.advance(); // skip '*'
-                                    self.advance(); // skip '/'
+                                    self.advance();
+                                    self.advance();
                                     in_block_comment = false;
                                     let end_pos = self.pos;
                                     let code =
@@ -162,11 +154,9 @@ impl<'a> Lexer<'a> {
                             self.log_error("Unterminated doc comment");
                         }
 
-                        // inline or multiline comments
                         Some('*') => {
-                            // open ('*/')
-                            self.advance(); // skip '/'
-                            self.advance(); // skip '*'
+                            self.advance();
+                            self.advance();
                             in_block_comment = true;
 
                             while let Some(c) = self.current_char() {
@@ -176,9 +166,8 @@ impl<'a> Lexer<'a> {
                                 }
 
                                 if c == '*' && self.peek_next() == Some('/') {
-                                    // terminate ('*/')
-                                    self.advance(); // skip '*'
-                                    self.advance(); // skip '/'
+                                    self.advance();
+                                    self.advance();
                                     in_block_comment = false;
                                     break;
                                 } else {
