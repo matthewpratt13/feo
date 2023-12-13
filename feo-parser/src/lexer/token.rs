@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use feo_error::LexErrorKind;
 use feo_types::span::{Span, Spanned};
-use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation};
+use feo_types::{
+    Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
+    TypeAnnotation,
+};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -28,13 +31,13 @@ pub enum Token<T> {
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
-    Path(Vec<String>), // TODO: make a separate type
+    Path(PathExpression<T>),
 
     Delim(Delimiter),
     Punc(Punctuation),
 
     // type annotation
-    Type(String), // TODO: make a separate type
+    Type(TypeAnnotation),
 
     // other
     NewLine, // for debugging purposes
