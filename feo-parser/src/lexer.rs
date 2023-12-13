@@ -80,12 +80,13 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if !in_block_comment {
-                        self.log_error("Unexpected comment terminator without opener");
-                    } else 
-                        self.advance(); 
-                        self.advance(); 
+                        // self.log_error("Unexpected comment terminator without opener");
+                        // TODO: throw error
+                    } else {
+                        self.advance();
+                        self.advance();
                         in_block_comment = false;
-                    
+                    }
                 }
                 _ if c == '/' => {
                     match self.peek_next() {
@@ -93,24 +94,23 @@ impl<'a> Lexer<'a> {
                             self.advance();
                             self.advance();
 
-                            if let Some('/') = self.current_char() {
+                            if let Some('/') = self.peek_next() {
                                 self.advance();
-                                let mut comment_content = String::new();
+
+                                let mut doc_comment_content = String::new();
 
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         tokens.push(Some(Token::NewLine));
                                         break;
                                     } else {
-                                        comment_content.push(c);
+                                        doc_comment_content.push(c);
                                         self.advance();
                                     }
                                 }
 
                                 let doc_comment = DocComment::parse(self)?;
                                 tokens.push(doc_comment);
-
-                                continue;
                             } else {
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
@@ -127,17 +127,20 @@ impl<'a> Lexer<'a> {
                             self.advance();
                             self.advance();
                             in_block_comment = true;
+
                             let start_pos = self.pos;
 
                             while let Some(c) = self.current_char() {
                                 if c == '\n' {
                                     tokens.push(Some(Token::NewLine));
+                                    continue;
                                 }
 
                                 if c == '*' && self.peek_next() == Some('/') {
                                     self.advance();
                                     self.advance();
                                     in_block_comment = false;
+
                                     let end_pos = self.pos;
                                     let code =
                                         Arc::new(self.input[start_pos..end_pos].trim().to_string());
@@ -162,7 +165,7 @@ impl<'a> Lexer<'a> {
                             while let Some(c) = self.current_char() {
                                 if c == '\n' {
                                     tokens.push(Some(Token::NewLine));
-                                    // *don't* break (comment can be inline)
+                                    continue;
                                 }
 
                                 if c == '*' && self.peek_next() == Some('/') {
@@ -177,8 +180,6 @@ impl<'a> Lexer<'a> {
 
                             // if we reach here, the block comment is unterminated
                             self.log_error("Unterminated block comment");
-
-                            continue;
                         }
 
                         Some(_) | None => {
