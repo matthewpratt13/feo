@@ -30,10 +30,10 @@ pub enum FloatKind {
 pub struct CharLiteral(Literal<char>);
 
 // convert `Token` to inner `CharLiteral`
-impl TryFrom<Token> for CharLiteral {
+impl<T> TryFrom<Token<T>> for CharLiteral {
     type Error = LexErrorKind;
 
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
+    fn try_from(value: Token<T>) -> Result<Self, Self::Error> {
         match value {
             Token::CharLit(c) => Ok(c),
             _ => Err(LexErrorKind::TokenNotFound),
@@ -45,10 +45,10 @@ impl TryFrom<Token> for CharLiteral {
 pub struct StringLiteral(Literal<String>);
 
 // convert `Token` to inner `StringLiteral`
-impl TryFrom<Token> for StringLiteral {
+impl<T> TryFrom<Token<T>> for StringLiteral {
     type Error = LexErrorKind;
 
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
+    fn try_from(value: Token<T>) -> Result<Self, Self::Error> {
         match value {
             Token::StringLit(s) => Ok(s),
             _ => Err(LexErrorKind::TokenNotFound),
@@ -63,10 +63,10 @@ pub struct IntLiteral {
 }
 
 // convert `Token` to inner `IntLiteral`
-impl TryFrom<Token> for IntLiteral {
+impl<T> TryFrom<Token<T>> for IntLiteral {
     type Error = LexErrorKind;
 
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
+    fn try_from(value: Token<T>) -> Result<Self, Self::Error> {
         match value {
             Token::IntLit(i) => Ok(i),
             _ => Err(LexErrorKind::TokenNotFound),
@@ -81,10 +81,10 @@ pub struct UIntLiteral {
 }
 
 // convert `Token` to inner `U256Literal`
-impl TryFrom<Token> for UIntLiteral {
+impl<T> TryFrom<Token<T>> for UIntLiteral {
     type Error = LexErrorKind;
 
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
+    fn try_from(value: Token<T>) -> Result<Self, Self::Error> {
         match value {
             Token::UIntLit(u) => Ok(u),
             _ => Err(LexErrorKind::TokenNotFound),
@@ -99,10 +99,10 @@ pub struct FloatLiteral {
 }
 
 // convert `Token` to inner `FloatLiteral`
-impl TryFrom<Token> for FloatLiteral {
+impl<T> TryFrom<Token<T>> for FloatLiteral {
     type Error = LexErrorKind;
 
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
+    fn try_from(value: Token<T>) -> Result<Self, Self::Error> {
         match value {
             Token::FloatLit(f) => Ok(f),
             _ => Err(LexErrorKind::TokenNotFound),
@@ -114,10 +114,10 @@ impl TryFrom<Token> for FloatLiteral {
 pub struct BoolLiteral(Literal<bool>);
 
 // convert `Token` to inner `BoolLiteral`
-impl TryFrom<Token> for BoolLiteral {
+impl<T> TryFrom<Token<T>> for BoolLiteral {
     type Error = LexErrorKind;
 
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
+    fn try_from(value: Token<T>) -> Result<Self, Self::Error> {
         match value {
             Token::BoolLit(b) => Ok(b),
             _ => Err(LexErrorKind::TokenNotFound),

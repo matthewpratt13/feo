@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use feo_error::LexErrorKind;
-use feo_types::{Comment, Delimiter, Identifier, Keyword, Punctuation, Span, Spanned};
+use feo_types::span::{Span, Spanned};
+use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -9,7 +10,7 @@ use crate::literals::{
 
 // token type
 #[derive(Debug)]
-pub enum Token {
+pub enum Token<T> {
     // literals
     CharLit(CharLiteral),
     StringLit(StringLiteral),
@@ -19,11 +20,11 @@ pub enum Token {
     FloatLit(FloatLiteral),
 
     // identifiers and keywords
-    Iden(Identifier),
+    Iden(Identifier<T>),
     Keyword(Keyword),
 
-    Comment(Comment),
-    DocComment(DocComment),
+    Comment(Comment<T>),
+    DocComment(DocComment<T>),
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
@@ -68,12 +69,12 @@ impl<T> Spanned for TokenStream<T> {
     }
 }
 
-pub struct TokenTree(TokenStream<Token>);
+pub struct TokenTree<T>(TokenStream<Token<T>>);
 
-impl TokenTree {
+impl<T> TokenTree<T> {
     pub fn build(
         src: &str,
-        tokens: Vec<Option<Token>>,
+        tokens: Vec<Option<Token<T>>>,
         start: usize,
         end: usize,
     ) -> Result<Self, LexErrorKind> {

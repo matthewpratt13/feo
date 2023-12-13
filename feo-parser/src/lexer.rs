@@ -1,17 +1,19 @@
-use std::{iter::Peekable, sync::Arc};
-
 use bnum::BUint;
-use feo_error::{LexErrorKind, ParserErrorKind};
+
+use std::iter::Peekable;
+use std::sync::Arc;
+
+use feo_error::ParserErrorKind;
 use feo_types::{DelimKind, DocComment};
 
-mod token;
 use crate::parse::Parse;
 
-pub use self::token::{Token, TokenStream, TokenTree};
+mod token;
+pub(crate) use self::token::{Token, TokenStream, TokenTree};
 
-pub struct Lexer<'a> {
-    pub input: &'a str,
-    pub pos: usize,
+pub(crate) struct Lexer<'a> {
+    input: &'a str,
+    pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     errors: Vec<String>,
 }
@@ -26,12 +28,12 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub(crate) fn advance(&mut self) {
+    fn advance(&mut self) {
         self.pos += 1;
         self.peekable_chars.next();
     }
 
-    pub(crate) fn current_char(&self) -> Option<char> {
+    fn current_char(&self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
 
@@ -45,12 +47,12 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub(crate) fn log_error(&mut self, message: &str) {
+    fn log_error(&mut self, message: &str) {
         let error_message = format!("Error at position {}: {}", self.pos, message);
         self.errors.push(error_message);
     }
 
-    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserErrorKind> {
+    fn tokenize<T>(&mut self) -> Result<TokenStream<TokenTree<T>>, ParserErrorKind> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -254,7 +256,7 @@ impl<'a> Lexer<'a> {
         Ok(stream)
     }
 
-    pub(crate) fn peek_next(&mut self) -> Option<char> {
+    fn peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
     ///////////////////////////////////////////////////////////////////////////
@@ -268,7 +270,7 @@ impl<'a> Lexer<'a> {
             input,
             pos: 0,
             peekable_chars: input.chars().peekable(),
-            // errors: Vec::new(),
+            errors: Vec::new(),
         }
     }
 

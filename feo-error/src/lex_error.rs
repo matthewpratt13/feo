@@ -12,6 +12,4 @@ pub enum LexErrorKind {
     UnclosedDelimiters,
     #[error("unopened block comment")]
     UnopenedBlockComment,
-    #[error("span error")]
-    SpanError(#[from] feo_types::SpanError),
 }

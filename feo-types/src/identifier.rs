@@ -1,7 +1,6 @@
 use crate::{
-    primitive::PrimitiveType,
+    primitive::{Primitive, PrimitiveType},
     span::{Span, Spanned},
-    Primitive,
 };
 
 #[derive(Debug)]
