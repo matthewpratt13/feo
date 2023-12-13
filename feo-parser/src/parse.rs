@@ -17,6 +17,9 @@ pub trait ParseDigit {
 }
 
 // use for comments, doc comments, identifiers, path expressions
-pub trait ParseData {
+pub trait ParseData<T>
+where
+    T: 'static + Primitive,
+{
     fn parse(src: &str, input: T, start: usize, end: usize) -> Option<Token>;
 }
