@@ -1,7 +1,9 @@
 use std::iter::Iterator;
 
 use feo_error::ParserErrorKind;
-use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation};
+use feo_types::{
+    BlockComment, Delimiter, DocComment, Identifier, Keyword, LineComment, Punctuation,
+};
 
 mod lexer;
 use crate::lexer::Token;
@@ -16,7 +18,16 @@ use crate::parse::{Parse, ParseDigit};
 
 mod source;
 
-impl<I> Parse<I> for Comment
+impl<I> Parse<I> for LineComment
+where
+    I: Iterator,
+{
+    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+        todo!()
+    }
+}
+
+impl<I> Parse<I> for BlockComment
 where
     I: Iterator,
 {

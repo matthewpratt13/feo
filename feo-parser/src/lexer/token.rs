@@ -1,5 +1,8 @@
 use feo_error::LexErrorKind;
-use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, Span, Spanned};
+use feo_types::{
+    BlockComment, Delimiter, DocComment, Identifier, Keyword, LineComment, Punctuation, Span,
+    Spanned,
+};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -21,8 +24,8 @@ pub enum Token {
     Keyword(Keyword),
 
     // comments
-    LineComment(Comment),
-    BlockComment(Comment),
+    LineComment(LineComment),
+    BlockComment(BlockComment),
     DocComment(DocComment),
 
     // path expression, e.g. crate::module::Struct

@@ -1,8 +1,8 @@
 mod comment;
-pub use crate::comment::{Comment, DocComment};
+pub use crate::comment::{BlockComment, DocComment, LineComment};
 
 mod delimiter;
-pub use crate::delimiter::{Delimiter, DelimiterError, DelimKind};
+pub use crate::delimiter::{DelimKind, Delimiter, DelimiterError};
 
 mod keyword;
 pub use crate::keyword::Keyword;

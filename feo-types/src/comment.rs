@@ -2,19 +2,31 @@ use crate::span::{Span, Spanned};
 
 #[derive(Debug)]
 pub enum CommentKind {
-    Newline,
-    Trailing,
-    Inline,
-    Multiline,
+    Newline, // `LineComment`
+    Trailing, // `LineComment`
+    Inline, // `DocComment`
+    Multiline, // `DocComment`
 }
 
 #[derive(Debug)]
-pub struct Comment {
+pub struct LineComment {
     comment_kind: CommentKind,
     span: Span,
 }
 
-impl Spanned for Comment {
+impl Spanned for LineComment {
+    fn span(&self) -> &Span {
+        &self.span
+    }
+}
+
+#[derive(Debug)]
+pub struct BlockComment {
+    comment_kind: CommentKind,
+    span: Span,
+}
+
+impl Spanned for BlockComment {
     fn span(&self) -> &Span {
         &self.span
     }
