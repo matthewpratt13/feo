@@ -14,7 +14,7 @@ pub struct Span {
 }
 
 impl Span {
-    pub fn build(src: &str, start: usize, end: usize) -> Result<Self, SpanError> {
+    pub fn build(src: Arc<String>, start: usize, end: usize) -> Result<Self, SpanError> {
         if start >= src.len() || end >= src.len() {
             return Err(SpanError::IndexOutOfRange)?;
         }
@@ -23,11 +23,7 @@ impl Span {
             return Err(SpanError::EndIndexBeforeStart)?;
         }
 
-        Ok(Self {
-            src: Arc::new(src.to_string()),
-            start,
-            end,
-        })
+        Ok(Self { src, start, end })
     }
 }
 

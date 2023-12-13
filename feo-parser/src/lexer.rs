@@ -1,7 +1,7 @@
 use std::{iter::Peekable, sync::Arc};
 
 use bnum::BUint;
-use feo_error::LexErrorKind;
+use feo_error::{LexErrorKind, ParserErrorKind};
 use feo_types::{DelimKind, DocComment};
 
 mod token;
@@ -10,8 +10,8 @@ use crate::parse::Parse;
 pub use self::token::{Token, TokenStream, TokenTree};
 
 pub struct Lexer<'a> {
-    input: &'a str,
-    pos: usize,
+    pub input: Arc<String>,
+    pub pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     errors: Vec<String>,
 }
@@ -19,19 +19,19 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     fn new(input: &'a str) -> Self {
         Self {
-            input,
+            input: Arc::new(input.to_string()),
             pos: 0,
             peekable_chars: input.chars().peekable(),
             errors: Vec::new(),
         }
     }
 
-    fn advance(&mut self) {
+    pub(crate) fn advance(&mut self) {
         self.pos += 1;
         self.peekable_chars.next();
     }
 
-    fn current_char(&self) -> Option<char> {
+    pub(crate) fn current_char(&self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
 
@@ -45,12 +45,12 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn log_error(&mut self, message: &str) {
+    pub(crate) fn log_error(&mut self, message: &str) {
         let error_message = format!("Error at position {}: {}", self.pos, message);
         self.errors.push(error_message);
     }
 
-    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexErrorKind> {
+    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserErrorKind> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -150,7 +150,7 @@ impl<'a> Lexer<'a> {
                                     let code =
                                         Arc::new(self.input[start_pos..end_pos].trim().to_string());
 
-                                    let doc_comment = DocComment::parse(&code)?;
+                                    let doc_comment = DocComment::parse(self)?;
                                     tokens.push(doc_comment);
                                     break;
                                 } else {
@@ -264,7 +264,7 @@ impl<'a> Lexer<'a> {
         Ok(stream)
     }
 
-    fn peek_next(&mut self) -> Option<char> {
+    pub(crate) fn peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
     ///////////////////////////////////////////////////////////////////////////

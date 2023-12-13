@@ -1,5 +1,5 @@
 mod comment;
-pub use crate::comment::{BlockComment, DocComment, LineComment};
+pub use crate::comment::{CommentKind, Comment};
 
 mod delimiter;
 pub use crate::delimiter::{DelimKind, Delimiter, DelimiterError};

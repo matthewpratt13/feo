@@ -10,4 +10,6 @@ pub enum ParserErrorKind {
     ParseFloatError,
     #[error("unable to parse int")]
     ParseIntError,
+    #[error("span error")]
+    SpanError(#[from] feo_types::SpanError),
 }

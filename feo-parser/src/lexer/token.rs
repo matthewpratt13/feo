@@ -1,8 +1,7 @@
+use std::sync::Arc;
+
 use feo_error::LexErrorKind;
-use feo_types::{
-    BlockComment, Delimiter, DocComment, Identifier, Keyword, LineComment, Punctuation, Span,
-    Spanned,
-};
+use feo_types::{Comment, Delimiter, Identifier, Keyword, Punctuation, Span, Spanned};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -23,10 +22,7 @@ pub enum Token {
     Iden(Identifier),
     Keyword(Keyword),
 
-    // comments
-    LineComment(LineComment),   // `//`
-    BlockComment(BlockComment), // `/*` (open) `*/` (close)
-    DocComment(DocComment),     //  `///`
+    Comment(Comment),
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
@@ -49,7 +45,7 @@ pub struct TokenStream<T> {
 
 impl<T> TokenStream<T> {
     pub fn build(
-        src: &str,
+        src: Arc<String>,
         tokens: Vec<Option<T>>,
         start: usize,
         end: usize,
@@ -75,7 +71,7 @@ pub struct TokenTree(TokenStream<Token>);
 
 impl TokenTree {
     pub fn build(
-        src: &str,
+        src: Arc<String>,
         tokens: Vec<Option<Token>>,
         start: usize,
         end: usize,
