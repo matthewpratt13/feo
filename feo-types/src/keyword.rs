@@ -51,7 +51,7 @@ pub enum KeywordKind {
 
 #[derive(Debug)]
 pub struct Keyword {
-    keyword_kind: KeywordKind,
+    pub keyword_kind: KeywordKind,
     span: Span,
 }
 

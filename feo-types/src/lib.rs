@@ -1,5 +1,5 @@
 mod comment;
-pub use crate::comment::{CommentKind, Comment};
+pub use crate::comment::{Comment, DocComment};
 
 mod delimiter;
 pub use crate::delimiter::{DelimKind, Delimiter, DelimiterError};
@@ -17,16 +17,27 @@ mod punctuation;
 pub use crate::punctuation::Punctuation;
 
 mod span;
-pub use crate::span::{Span, SpanError, Spanned};
+pub use crate::span::{Span, Spanned};
 
 mod identifier {
+    use std::sync::Arc;
+
     use crate::span::{Span, Spanned};
 
     #[derive(Debug)]
 
     pub struct Identifier {
-        name: String,
+        pub name: String,
         span: Span,
+    }
+
+    impl Identifier {
+        pub fn new(name: String, input: &str, start: usize, end: usize) -> Self {
+            Self {
+                name,
+                span: Span::new(Arc::new(input.to_string()), start, end),
+            }
+        }
     }
 
     impl Spanned for Identifier {

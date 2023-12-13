@@ -1,8 +1,10 @@
+use std::sync::Arc;
+
 use thiserror::Error;
 
 use crate::span::{Span, Spanned};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DelimKind {
     Paren,
     Bracket,
@@ -22,7 +24,7 @@ impl TryFrom<char> for DelimKind {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DelimOrientation {
     Open,
     Close,
@@ -30,14 +32,24 @@ pub enum DelimOrientation {
 
 #[derive(Debug)]
 pub struct Delimiter {
-    delim_kind: DelimKind,
-    delim_orientation: DelimOrientation,
+    pub delim_kind: DelimKind,
+    pub delim_orientation: DelimOrientation,
     span: Span,
 }
 
 impl Delimiter {
-    pub fn delim_kind(&self) -> &DelimKind {
-        &self.delim_kind
+    pub fn new(
+        delim_kind: DelimKind,
+        delim_orientation: DelimOrientation,
+        input: &str,
+        start: usize,
+        end: usize,
+    ) -> Self {
+        Self {
+            delim_kind,
+            delim_orientation,
+            span: Span::new(Arc::new(input.to_string()), start, end),
+        }
     }
 }
 

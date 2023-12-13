@@ -10,7 +10,7 @@ use crate::parse::Parse;
 pub use self::token::{Token, TokenStream, TokenTree};
 
 pub struct Lexer<'a> {
-    pub input: Arc<String>,
+    pub input: &'a str,
     pub pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     errors: Vec<String>,
@@ -19,7 +19,7 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     fn new(input: &'a str) -> Self {
         Self {
-            input: Arc::new(input.to_string()),
+            input,
             pos: 0,
             peekable_chars: input.chars().peekable(),
             errors: Vec::new(),
@@ -62,12 +62,12 @@ impl<'a> Lexer<'a> {
         let mut file_start_offset: usize = 0;
 
         while let Some(c) = self.current_char() {
-            let start_index = self.pos;
+            let start_pos = self.pos;
 
             match c {
                 _ if c.is_whitespace() => {
                     // move the reader to the first char if there is whitespace at the start
-                    if start_index - file_start_offset == 0 {
+                    if start_pos - file_start_offset == 0 {
                         file_start_offset += 1;
                     }
 

@@ -1,41 +1,39 @@
+use std::sync::Arc;
+
 use crate::span::{Span, Spanned};
 
 #[derive(Debug)]
-pub enum CommentKind {
-    Line,
-    Block,
-    OuterDocComment,
-    ModuleDocComment,
-}
-
-#[derive(Debug)]
 pub struct Comment {
-    comment_kind: CommentKind,
-    start: usize,
-    end: usize,
+    span: Span,
 }
 
 impl Comment {
-    pub fn new(comment_kind: CommentKind, start: usize, end: usize) -> Self {
+    pub fn new(start: usize, end: usize) -> Self {
         Self {
-            comment_kind,
-            start,
-            end,
+            span: Span::new(Arc::new(String::new()), start, end),
         }
+    }
+}
+
+impl Spanned for Comment {
+    fn span(&self) -> &Span {
+        &self.span
     }
 }
 
 #[derive(Debug)]
 pub struct DocComment {
-    comment_kind: CommentKind,
     span: Span,
 }
 
 impl DocComment {
-    pub fn new(comment_kind: CommentKind, span: Span) -> Self {
-        Self { comment_kind, span }
+    pub fn new(input: &str, start: usize, end: usize) -> Self {
+        Self {
+            span: Span::new(Arc::new(input.to_string()), start, end),
+        }
     }
 }
+
 impl Spanned for DocComment {
     fn span(&self) -> &Span {
         &self.span

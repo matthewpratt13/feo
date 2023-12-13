@@ -57,7 +57,7 @@ pub enum PuncKind {
 
 #[derive(Debug)]
 pub struct Punctuation {
-    punc_kind: PuncKind,
+    pub punc_kind: PuncKind,
     span: Span,
 }
 

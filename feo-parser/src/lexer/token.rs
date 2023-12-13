@@ -23,6 +23,7 @@ pub enum Token {
     Keyword(Keyword),
 
     Comment(Comment),
+    DocComment(DocComment),
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
@@ -45,14 +46,14 @@ pub struct TokenStream<T> {
 
 impl<T> TokenStream<T> {
     pub fn build(
-        src: Arc<String>,
+        src: &str,
         tokens: Vec<Option<T>>,
         start: usize,
         end: usize,
     ) -> Result<Self, LexErrorKind> {
         Ok(Self {
             tokens,
-            span: Span::build(src, start, end)?,
+            span: Span::build(Arc::new(src.to_string()), start, end)?,
         })
     }
 
@@ -71,7 +72,7 @@ pub struct TokenTree(TokenStream<Token>);
 
 impl TokenTree {
     pub fn build(
-        src: Arc<String>,
+        src: &str,
         tokens: Vec<Option<Token>>,
         start: usize,
         end: usize,
