@@ -38,17 +38,11 @@ pub struct Delimiter {
 }
 
 impl Delimiter {
-    pub fn new(
-        delim_kind: DelimKind,
-        delim_orientation: DelimOrientation,
-        input: &str,
-        start: usize,
-        end: usize,
-    ) -> Self {
+    pub fn new(delim_kind: DelimKind, delim_orientation: DelimOrientation, span: Span) -> Self {
         Self {
             delim_kind,
             delim_orientation,
-            span: Span::new(Arc::new(input.to_string()), start, end),
+            span,
         }
     }
 }

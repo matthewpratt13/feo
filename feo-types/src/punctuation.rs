@@ -61,6 +61,12 @@ pub struct Punctuation {
     span: Span,
 }
 
+impl Punctuation {
+    pub fn new(punc_kind: PuncKind, span: Span) -> Self {
+        Self { punc_kind, span }
+    }
+}
+
 impl Spanned for Punctuation {
     fn span(&self) -> &Span {
         &self.span
