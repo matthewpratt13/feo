@@ -1,22 +1,22 @@
-use std::iter::Iterator;
-
-use feo_error::ParserErrorKind;
-
 use crate::lexer::{Lexer, Token};
 
+// use for delimiters, keywords, literals, punctuation, type annotations
 pub trait Parse {
-    fn parse(src: &mut Lexer) -> Result<Option<Token>, ParserErrorKind>;
+    fn parse(l: &mut Lexer) -> Option<Token>;
 }
 
-pub trait ParseDigit<I>
-where
-    I: Iterator,
-{
+// use for digits
+pub trait ParseDigit {
     fn parse(
-        src: &mut I,
+        l: &mut Lexer,
         input: char,
         i: usize,
         is_negative_number: bool,
         is_hexadecimal_int: bool,
-    ) -> Result<Option<Token>, ParserErrorKind>;
+    ) -> Option<Token>;
+}
+
+// use for comments, doc comments, identifiers, path expressions
+pub trait ParseData {
+    fn parse(src: &str, input: T, start: usize, end: usize) -> Option<Token>;
 }

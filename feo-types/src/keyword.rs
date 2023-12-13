@@ -4,22 +4,16 @@ use crate::span::{Span, Spanned};
 pub enum KeywordKind {
     AbstractKw,
     AsKw,
-    BoolKw,
     BreakKw,
-    CharKw,
     ConstKw,
     ContractKw, // new type (fixed object with basic trait implementations)
     ContinueKw,
     DerefKw, // same as deref operator ('*')
     ElseKw,
     EnumKw,
-    F32Kw,
-    F64Kw,
     FalseKw,
     ForKw,
     FuncKw,
-    I32Kw,
-    I64Kw,
     IfKw,
     ImplKw,
     ImportKw, // same as "use"
@@ -35,17 +29,11 @@ pub enum KeywordKind {
     ReturnKw,
     SelfKw,
     StaticKw,
-    StringKw,
     StructKw,
     SuperKw, // only relevant in path expressions
     TraitKw,
     TrueKw,
     TypeKw,
-    U8Kw,
-    U16Kw,
-    U32Kw,
-    U64Kw,
-    U256Kw,
     WhileKw,
 }
 
@@ -55,7 +43,49 @@ pub struct Keyword {
     span: Span,
 }
 
+impl Keyword {
+    pub fn new(keyword_kind: KeywordKind, span: Span) -> Self {
+        Self { keyword_kind, span }
+    }
+}
+
 impl Spanned for Keyword {
+    fn span(&self) -> &Span {
+        &self.span
+    }
+}
+
+#[derive(Debug)]
+pub enum TypeName {
+    BoolType,
+    CharType,
+    F32Type,
+    F64Type,
+    I32Type,
+    I64Type,
+    StringType,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    U256Type,
+
+    CustomType(String),
+}
+
+#[derive(Debug)]
+pub struct TypeAnnotation {
+    pub type_name: TypeName,
+    span: Span,
+}
+
+impl TypeAnnotation {
+    pub fn new(type_name: TypeName, span: Span) -> Self {
+        Self { type_name, span }
+    }
+}
+
+impl Spanned for TypeAnnotation {
     fn span(&self) -> &Span {
         &self.span
     }
