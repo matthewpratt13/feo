@@ -8,7 +8,7 @@ pub trait Parse<I>
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind>;
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind>;
 }
 
 pub trait ParseDigit<I>

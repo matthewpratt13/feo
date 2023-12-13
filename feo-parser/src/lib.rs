@@ -22,7 +22,7 @@ impl<I> Parse<I> for LineComment
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -31,7 +31,7 @@ impl<I> Parse<I> for BlockComment
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -40,7 +40,7 @@ impl<I> Parse<I> for Delimiter
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -49,7 +49,7 @@ impl<I> Parse<I> for DocComment
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -58,7 +58,7 @@ impl<I> Parse<I> for Identifier
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -67,7 +67,7 @@ impl<I> Parse<I> for Keyword
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -76,7 +76,7 @@ impl<I> Parse<I> for Punctuation
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -85,7 +85,7 @@ impl<I> Parse<I> for BoolLiteral
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -94,7 +94,7 @@ impl<I> Parse<I> for CharLiteral
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }
@@ -103,7 +103,7 @@ impl<I> Parse<I> for StringLiteral
 where
     I: Iterator,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserErrorKind> {
+    fn parse(src: &mut I) -> Result<Option<Token>, ParserErrorKind> {
         todo!()
     }
 }

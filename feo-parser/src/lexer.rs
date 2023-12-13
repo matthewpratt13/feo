@@ -2,9 +2,11 @@ use std::{iter::Peekable, sync::Arc};
 
 use bnum::BUint;
 use feo_error::LexErrorKind;
-use feo_types::DelimKind;
+use feo_types::{DelimKind, DocComment};
 
 mod token;
+use crate::parse::Parse;
+
 pub use self::token::{Token, TokenStream, TokenTree};
 
 pub struct Lexer<'a> {
@@ -38,6 +40,7 @@ impl<'a> Lexer<'a> {
             if !c.is_whitespace() {
                 break;
             }
+
             self.advance();
         }
     }
@@ -68,42 +71,130 @@ impl<'a> Lexer<'a> {
                         file_start_offset += 1;
                     }
 
+                    // for debugging purposes (i.e., identifying line number and column)
+                    if c == '\n' {
+                        tokens.push(Some(Token::NewLine));
+                    }
+
                     self.skip_whitespace();
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if !in_block_comment {
-                        return Err(LexErrorKind::UnopenedBlockComment);
+                        self.log_error("Unexpected comment terminator without opener");
                     } else {
+                        // comment terminator
                         self.advance(); // skip '*'
                         self.advance(); // skip '/'
                         in_block_comment = false;
                     }
-                    continue;
                 }
+                // comments
                 _ if c == '/' => {
                     match self.peek_next() {
+                        // newline / trailing comment
                         Some('/') => {
-                            self.advance();
-                            // skip second '/'
-                            if let Some('/') = self.peek_next() {
+                            self.advance(); // skip first '/'
+                            self.advance(); // skip second '/'
+
+                            //  (newline) doc comment
+                            if let Some('/') = self.current_char() {
                                 self.advance(); // skip third '/'
-                                                //   parse doc comment
-                            } else {
-                                //  parse newline / trailing comment
+                                let mut comment_content = String::new();
+
+                                while let Some(c) = self.current_char() {
+                                    if c == '\n' {
+                                        tokens.push(Some(Token::NewLine));
+                                        break;
+                                    } else {
+                                        comment_content.push(c);
+                                        self.advance();
+                                    }
+                                }
+
+                                let doc_comment = DocComment::parse(self)?;
+                                tokens.push(doc_comment);
+
                                 continue;
+                            } else {
+                                // normal comment
+                                while let Some(c) = self.current_char() {
+                                    if c == '\n' {
+                                        tokens.push(Some(Token::NewLine));
+                                        break;
+                                    } else {
+                                        self.advance();
+                                    }
+                                }
                             }
-                            continue;
                         }
+
+                        // module-level doc comments (multiline)
+                        Some('!') => {
+                            // open ('/!')
+                            self.advance(); // skip '/'
+                            self.advance(); // skip '!'
+                            in_block_comment = true;
+                            let start_pos = self.pos;
+
+                            while let Some(c) = self.current_char() {
+                                if c == '\n' {
+                                    tokens.push(Some(Token::NewLine));
+                                    // *don't* break
+                                }
+
+                                if c == '*' && self.peek_next() == Some('/') {
+                                    self.advance(); // skip '*'
+                                    self.advance(); // skip '/'
+                                    in_block_comment = false;
+                                    let end_pos = self.pos;
+                                    let code =
+                                        Arc::new(self.input[start_pos..end_pos].trim().to_string());
+
+                                    let doc_comment = DocComment::parse(&code)?;
+                                    tokens.push(doc_comment);
+                                    break;
+                                } else {
+                                    self.advance();
+                                }
+                            }
+
+                            // if we reach here, the block comment is unterminated
+                            self.log_error("Unterminated doc comment");
+                        }
+
+                        // inline or multiline comments
                         Some('*') => {
+                            // open ('*/')
+                            self.advance(); // skip '/'
                             self.advance(); // skip '*'
                             in_block_comment = true;
-                            // parse inline / multiline comment
-                            self.advance(); // skip closing '*'
-                            self.advance(); // skip closing '/'
-                            in_block_comment = false;
+
+                            while let Some(c) = self.current_char() {
+                                if c == '\n' {
+                                    tokens.push(Some(Token::NewLine));
+                                    // *don't* break (comment can be inline)
+                                }
+
+                                if c == '*' && self.peek_next() == Some('/') {
+                                    // terminate ('*/')
+                                    self.advance(); // skip '*'
+                                    self.advance(); // skip '/'
+                                    in_block_comment = false;
+                                    break;
+                                } else {
+                                    self.advance();
+                                }
+                            }
+
+                            // if we reach here, the block comment is unterminated
+                            self.log_error("Unterminated block comment");
+
                             continue;
                         }
-                        Some(_) | None => (),
+
+                        Some(_) | None => {
+                            self.log_error("Unexpected comment");
+                        }
                     }
                 }
 

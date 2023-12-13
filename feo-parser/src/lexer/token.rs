@@ -24,9 +24,9 @@ pub enum Token {
     Keyword(Keyword),
 
     // comments
-    LineComment(LineComment),
-    BlockComment(BlockComment),
-    DocComment(DocComment),
+    LineComment(LineComment),   // `//`
+    BlockComment(BlockComment), // `/*` (open) `*/` (close)
+    DocComment(DocComment),     //  `///`
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
@@ -39,8 +39,7 @@ pub enum Token {
     Type(String), // TODO: make a separate type
 
     // other
-    Whitespace,
-    Error(String),
+    NewLine, // for debugging purposes
 }
 
 pub struct TokenStream<T> {

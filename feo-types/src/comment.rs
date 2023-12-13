@@ -1,32 +1,32 @@
+use std::sync::Arc;
+
 use crate::span::{Span, Spanned};
 
 #[derive(Debug)]
 pub enum CommentKind {
-    Newline, // `LineComment`
-    Trailing, // `LineComment`
-    Inline, // `DocComment`
-    Multiline, // `DocComment`
+    LineComment,
+    BlockComment,
 }
 
 #[derive(Debug)]
-pub struct LineComment {
-    comment_kind: CommentKind,
+pub struct GenericComment {
     span: Span,
 }
 
-impl Spanned for LineComment {
+impl Spanned for GenericComment {
     fn span(&self) -> &Span {
         &self.span
     }
 }
 
 #[derive(Debug)]
-pub struct BlockComment {
+pub struct DocComment {
     comment_kind: CommentKind,
+    contents: Arc<String>,
     span: Span,
 }
 
-impl Spanned for BlockComment {
+impl Spanned for DocComment {
     fn span(&self) -> &Span {
         &self.span
     }
