@@ -4,6 +4,8 @@ pub use crate::comment::*;
 mod delimiter;
 pub use crate::delimiter::*;
 
+pub mod error;
+
 mod identifier;
 pub use crate::identifier::*;
 

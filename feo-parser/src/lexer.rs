@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use feo_types::{DelimKind, DocComment};
 
-use crate::parse::Parse;
+use crate::error::ParserError;
 
 mod token;
 pub(crate) use self::token::{Token, TokenStream, TokenTree};
@@ -49,7 +49,7 @@ impl<'a> Lexer<'a> {
         self.errors.push(error_message);
     }
 
-    fn tokenize<T>(&mut self) -> Result<TokenStream<TokenTree<T>>, ParserErrorKind> {
+    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserError> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -697,7 +697,7 @@ impl<'a> Lexer<'a> {
                 Token::Error(format!("Error parsing float: {}", code))
             }
         } else if is_hex {
-            if let Ok(uint_value) = BUint::from_str_radix(code, 16) {
+            if let Ok(uint_value) = u64::from_str_radix(code, 16) {
                 Token::UIntLit(uint_value) // MP: conflicting type
             } else {
                 self.gpt_log_error("Error parsing hexadecimal integer");
@@ -793,7 +793,3 @@ impl Iterator for Lexer<'_> {
 //         }
 //     }
 // }
-
-pub enum LexError {
-    TokenNotFound,
-}

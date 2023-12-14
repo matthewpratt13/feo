@@ -6,15 +6,14 @@ use feo_types::{
     TypeAnnotation,
 };
 
+use crate::error::LexError;
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
 
-use super::LexError;
-
 // token type
 #[derive(Debug)]
-pub enum Token<T> {
+pub enum Token {
     // literals
     CharLit(CharLiteral),
     StringLit(StringLiteral),
@@ -24,15 +23,15 @@ pub enum Token<T> {
     FloatLit(FloatLiteral),
 
     // identifiers and keywords
-    Iden(Identifier<T>),
+    Iden(Identifier),
     Keyword(Keyword),
 
-    Comment(Comment<T>),
-    DocComment(DocComment<T>),
+    Comment(Comment),
+    DocComment(DocComment),
 
     // path expression, e.g. crate::module::Struct
     // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
-    Path(PathExpression<T>),
+    Path(PathExpression),
 
     Delim(Delimiter),
     Punc(Punctuation),
@@ -58,7 +57,7 @@ impl<T> TokenStream<T> {
     ) -> Result<Self, LexError> {
         Ok(Self {
             tokens,
-            span: Span::build(Arc::new(src.to_string()), start, end)?,
+            span: Span::new(Arc::new(src.to_string()), start, end),
         })
     }
 
@@ -73,12 +72,12 @@ impl<T> Spanned for TokenStream<T> {
     }
 }
 
-pub struct TokenTree<T>(TokenStream<Token<T>>);
+pub struct TokenTree(TokenStream<Token>);
 
-impl<T> TokenTree<T> {
+impl TokenTree {
     pub fn build(
         src: &str,
-        tokens: Vec<Option<Token<T>>>,
+        tokens: Vec<Option<Token>>,
         start: usize,
         end: usize,
     ) -> Result<Self, LexError> {

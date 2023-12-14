@@ -1,5 +1,4 @@
-use thiserror::Error;
-
+use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone)]
@@ -10,14 +9,14 @@ pub enum DelimKind {
 }
 
 impl TryFrom<char> for DelimKind {
-    type Error = DelimiterError;
+    type Error = TypeError;
 
     fn try_from(value: char) -> Result<Self, Self::Error> {
         match value {
             '(' | ')' => Ok(DelimKind::Paren),
             '[' | ']' => Ok(DelimKind::Bracket),
             '{' | '}' => Ok(DelimKind::Brace),
-            _ => Err(DelimiterError::UnrecognizedDelimiter),
+            _ => Err(TypeError::UnrecognizedDelimiter),
         }
     }
 }
@@ -49,10 +48,4 @@ impl Spanned for Delimiter {
     fn span(&self) -> &Span {
         &self.span
     }
-}
-
-#[derive(Debug, Error)]
-pub enum DelimiterError {
-    #[error("unrecognized delimiter")]
-    UnrecognizedDelimiter,
 }
