@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use feo_types::{DelimKind, DocComment};
 
-use crate::error::ParserError;
+use crate::{error::LexError, parse::ParseData};
 
 mod token;
 pub(crate) use self::token::{Token, TokenStream, TokenTree};
@@ -49,7 +49,7 @@ impl<'a> Lexer<'a> {
         self.errors.push(error_message);
     }
 
-    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserError> {
+    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexError> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -93,6 +93,8 @@ impl<'a> Lexer<'a> {
                             self.advance();
                             self.advance();
 
+                            let start_pos = self.pos;
+
                             if let Some('/') = self.peek_next() {
                                 self.advance();
 
@@ -108,7 +110,12 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                let doc_comment = DocComment::parse(self)?;
+                                let doc_comment = DocComment::parse(
+                                    self.input,
+                                    doc_comment_content,
+                                    start_pos,
+                                    self.pos,
+                                );
                                 tokens.push(doc_comment);
                             } else {
                                 while let Some(c) = self.current_char() {
@@ -144,7 +151,8 @@ impl<'a> Lexer<'a> {
                                     let code =
                                         Arc::new(self.input[start_pos..end_pos].trim().to_string());
 
-                                    let doc_comment = DocComment::parse(self)?;
+                                    let doc_comment =
+                                        DocComment::parse(self.input, code, start_pos, end_pos);
                                     tokens.push(doc_comment);
                                     break;
                                 } else {
@@ -248,9 +256,8 @@ impl<'a> Lexer<'a> {
             self.log_error("Unexpected end of input within delimiter");
         }
 
-        let stream: TokenStream<TokenTree> =
-            TokenStream::build(self.input, token_trees, 0, self.pos)?;
-        Ok(stream)
+        let stream = TokenStream::build(self.input, token_trees, 0, self.pos);
+        stream
     }
 
     fn peek_next(&mut self) -> Option<char> {
