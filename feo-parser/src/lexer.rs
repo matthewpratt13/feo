@@ -1,9 +1,13 @@
 use std::iter::Peekable;
 use std::sync::Arc;
 
-use feo_types::{DelimKind, DocComment};
+use feo_types::{Comment, DelimKind, Delimiter, DocComment, Identifier, Punctuation};
 
-use crate::{error::LexError, parse::ParseData};
+use crate::{
+    error::LexError,
+    literals::{CharLiteral, StringLiteral},
+    parse::{Parse, ParseData},
+};
 
 mod token;
 pub(crate) use self::token::{Token, TokenStream, TokenTree};
@@ -79,7 +83,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if !in_block_comment {
-                        // self.log_error("Unexpected comment terminator without opener");
+                        self.log_error("Unexpected comment terminator without opener");
                         // TODO: throw error
                     } else {
                         self.advance();
@@ -126,6 +130,15 @@ impl<'a> Lexer<'a> {
                                         self.advance();
                                     }
                                 }
+
+                                let comment = Comment::parse(
+                                    self.input,
+                                    Arc::new(String::new()),
+                                    start_pos,
+                                    self.pos,
+                                );
+
+                                tokens.push(comment);
                             }
                         }
 
@@ -179,6 +192,14 @@ impl<'a> Lexer<'a> {
                                     self.advance();
                                     self.advance();
                                     in_block_comment = false;
+                                    let comment = Comment::parse(
+                                        self.input,
+                                        Arc::new(String::new()),
+                                        start_pos,
+                                        self.pos,
+                                    );
+
+                                    tokens.push(comment);
                                     break;
                                 } else {
                                     self.advance();
@@ -196,31 +217,44 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c.is_alphabetic() || c == '_' => {
-                    // tokenize keywords and identifiers
+                    let start_pos = self.pos;
+                    let mut buf = String::new();
+
+                    while let Some(c) = self.current_char() {
+                        if c.is_alphabetic() || c == '_' {
+                            buf.push(c);
+                        } else {
+                            break;
+                        }
+                        self.advance();
+                    }
+
+                    let kw_or_iden = Identifier::parse(self.input, buf, start_pos, self.pos);
+                    tokens.push(kw_or_iden);
                 }
 
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
-                    // tokenize opening delimiter
-                    // tokenize token tree
+                    tokens.push(Delimiter::parse(self));
+                    // TODO: tokenize token tree
                     self.advance();
                 }
 
                 ')' | ']' | '}' => {
-                    // tokenize closing delimiter
-                    // tokenize token tree
+                    tokens.push(Delimiter::parse(self));
+                    // TODO: tokenize token tree
                     num_open_delimiters -= 1;
                     self.advance();
                 }
 
                 '"' => {
                     self.advance(); // skip opening double quote
-                                    // parse string literal
+                    tokens.push(StringLiteral::parse(self));
                     self.advance(); // skip closing double quote
                 }
                 '\'' => {
                     self.advance(); // skip opening single quote
-                                    // parse char literal
+                    tokens.push(CharLiteral::parse(self));
                     self.advance(); // skip opening single quote
                 }
 
@@ -238,11 +272,11 @@ impl<'a> Lexer<'a> {
                     is_hexadecimal_int = true;
                 }
                 '0'..='9' | 'a'..='f' | 'A'..='F' => {
-                    // parse digits
+                    // TODO: parse digits
                 }
 
                 _ if c.is_ascii_punctuation() => {
-                    // tokenize punctuation
+                    tokens.push(Punctuation::parse(self));
                     self.advance();
                 }
                 _ => {

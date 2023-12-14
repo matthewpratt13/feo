@@ -97,15 +97,6 @@ where
     }
 }
 
-impl<T> ParseData<T> for Keyword
-where
-    T: 'static + Primitive,
-{
-    fn parse(src: &str, input: T, start: usize, end: usize) -> Option<lexer::Token> {
-        todo!()
-    }
-}
-
 impl<T> ParseData<T> for Identifier
 where
     T: 'static + Primitive,
