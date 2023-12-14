@@ -18,10 +18,14 @@ pub trait ParseDigit {
     ) -> Option<Token<T>>;
 }
 
-// use for comments, doc comments, identifiers, path expressions
+// use for comments, doc comments, keywords, identifiers, path expressions
 pub trait ParseData<T>
 where
     T: 'static + Primitive,
 {
     fn parse(src: &str, input: T, start: usize, end: usize) -> Option<Token<T>>;
 }
+
+// TOKENIZE:
+// - Delimiter,
+// - Punctuation,
