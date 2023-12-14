@@ -29,16 +29,14 @@ pub enum DelimOrientation {
 
 #[derive(Debug)]
 pub struct Delimiter {
-    pub delim_kind: DelimKind,
-    pub delim_orientation: DelimOrientation,
+    pub delim: (DelimKind, DelimOrientation),
     span: Span,
 }
 
 impl Delimiter {
     pub fn new(delim_kind: DelimKind, delim_orientation: DelimOrientation, span: Span) -> Self {
         Self {
-            delim_kind,
-            delim_orientation,
+            delim: (delim_kind, delim_orientation),
             span,
         }
     }
