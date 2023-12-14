@@ -1,4 +1,3 @@
-use bnum::types::U256;
 
 use crate::span::Span;
 
@@ -19,8 +18,6 @@ impl Primitive for u16 {}
 impl Primitive for u32 {}
 
 impl Primitive for u64 {}
-
-impl Primitive for U256 {}
 
 impl Primitive for f32 {}
 

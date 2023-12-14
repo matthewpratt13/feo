@@ -6,8 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bnum = { version = "0.10.0", features = ["numtraits"] }
 thiserror = "1"
-unicode-ident = "1.0.12"
 feo-types = { path = "../feo-types" }
 feo-error = { path = "../feo-error" }

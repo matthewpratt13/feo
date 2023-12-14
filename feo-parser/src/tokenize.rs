@@ -1,8 +1,10 @@
+use crate::lexer::Lexer;
+
 pub trait Tokenizer {}
 
-impl Tokenizer for Lexer {}
+impl Tokenizer for Lexer<'_> {}
 
 
-pub trait Tokenize {
-    fn tokenize(&mut Lexer) -> T {}
+pub trait Tokenize<T> {
+    fn tokenize(l: &mut Lexer) -> T {}
 }

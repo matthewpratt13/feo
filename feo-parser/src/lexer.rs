@@ -1,5 +1,3 @@
-use bnum::BUint;
-
 use std::iter::Peekable;
 use std::sync::Arc;
 
@@ -190,7 +188,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if unicode_ident::is_xid_start(c) || c == '_' => {
+                _ if c.is_alphabetic() || c == '_' => {
                     // tokenize keywords and identifiers
                 }
 

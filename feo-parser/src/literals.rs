@@ -1,5 +1,3 @@
-use bnum::types::U256;
-
 use feo_error::LexErrorKind;
 use feo_types::Literal;
 
@@ -17,7 +15,6 @@ pub enum UintKind {
     U16,
     U32,
     U64,
-    U256,
 }
 
 #[derive(Debug)]
@@ -77,7 +74,7 @@ impl<T> TryFrom<Token<T>> for IntLiteral {
 #[derive(Debug)]
 pub struct UIntLiteral {
     uint_kind: Option<UintKind>,
-    lit: Literal<U256>,
+    lit: Literal<u64>,
 }
 
 // convert `Token` to inner `U256Literal`
