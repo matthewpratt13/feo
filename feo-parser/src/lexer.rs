@@ -1,7 +1,6 @@
 use std::iter::Peekable;
 use std::sync::Arc;
 
-use feo_error::ParserErrorKind;
 use feo_types::{DelimKind, DocComment};
 
 use crate::parse::Parse;
@@ -794,3 +793,7 @@ impl Iterator for Lexer<'_> {
 //         }
 //     }
 // }
+
+pub enum LexError {
+    TokenNotFound,
+}

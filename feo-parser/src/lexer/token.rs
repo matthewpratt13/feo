@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use feo_error::LexErrorKind;
 use feo_types::span::{Span, Spanned};
 use feo_types::{
     Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
@@ -10,6 +9,8 @@ use feo_types::{
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
+
+use super::LexError;
 
 // token type
 #[derive(Debug)]
@@ -54,7 +55,7 @@ impl<T> TokenStream<T> {
         tokens: Vec<Option<T>>,
         start: usize,
         end: usize,
-    ) -> Result<Self, LexErrorKind> {
+    ) -> Result<Self, LexError> {
         Ok(Self {
             tokens,
             span: Span::build(Arc::new(src.to_string()), start, end)?,
@@ -80,7 +81,7 @@ impl<T> TokenTree<T> {
         tokens: Vec<Option<Token<T>>>,
         start: usize,
         end: usize,
-    ) -> Result<Self, LexErrorKind> {
+    ) -> Result<Self, LexError> {
         Ok(Self(TokenStream::build(src, tokens, start, end)?))
     }
 }

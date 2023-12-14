@@ -8,4 +8,3 @@ edition = "2021"
 [dependencies]
 thiserror = "1"
 feo-types = { path = "../feo-types" }
-feo-error = { path = "../feo-error" }
