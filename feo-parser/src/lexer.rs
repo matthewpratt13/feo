@@ -84,7 +84,6 @@ impl<'a> Lexer<'a> {
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if !in_block_comment {
                         self.log_error("Unexpected comment terminator without opener");
-                        // TODO: throw error
                     } else {
                         self.advance();
                         self.advance();
@@ -104,20 +103,20 @@ impl<'a> Lexer<'a> {
 
                                 let start_pos = self.pos;
 
-                                let mut doc_comment_content = String::new();
+                                let mut buf = String::new();
 
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
                                     } else {
-                                        doc_comment_content.push(c);
+                                        buf.push(c);
                                         self.advance();
                                     }
                                 }
 
                                 let doc_comment = DocComment::parse(
                                     self.input,
-                                    doc_comment_content,
+                                    buf,
                                     start_pos,
                                     self.pos,
                                 );
@@ -237,14 +236,13 @@ impl<'a> Lexer<'a> {
                     num_open_delimiters += 1;
                     tokens.push(Delimiter::parse(self));
                     // TODO: tokenize token tree
-                    self.advance();
                 }
 
                 ')' | ']' | '}' => {
                     tokens.push(Delimiter::parse(self));
                     // TODO: tokenize token tree
                     num_open_delimiters -= 1;
-                    self.advance();
+                    self.advance(); // skip closing delimiter
                 }
 
                 '"' => {
@@ -277,11 +275,9 @@ impl<'a> Lexer<'a> {
 
                 _ if c.is_ascii_punctuation() => {
                     tokens.push(Punctuation::parse(self));
-                    self.advance();
                 }
                 _ => {
                     self.log_error(&format!("Unexpected character: {}", c));
-                    self.advance();
                 }
             }
         }
