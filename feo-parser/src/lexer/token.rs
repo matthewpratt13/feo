@@ -38,9 +38,6 @@ pub enum Token {
 
     // type annotation
     Type(TypeAnnotation),
-
-    // other
-    NewLine, // for debugging purposes
 }
 
 pub struct TokenStream<T> {

@@ -38,6 +38,11 @@ impl<'a> Lexer<'a> {
         self.peekable_chars.peek().cloned()
     }
 
+    // *mutable
+    fn peek_next(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
     fn skip_whitespace(&mut self) {
         while let Some(c) = self.current_char() {
             if !c.is_whitespace() {
@@ -62,7 +67,7 @@ impl<'a> Lexer<'a> {
         let mut is_hexadecimal_int = false;
 
         let mut num_open_delimiters: usize = 0;
-        let mut file_start_offset: usize = 0;
+        // let mut file_start_offset: usize = 0;
 
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
@@ -70,14 +75,9 @@ impl<'a> Lexer<'a> {
             match c {
                 _ if c.is_whitespace() => {
                     // move the reader to the first char if there is whitespace at the start
-                    if start_pos - file_start_offset == 0 {
-                        file_start_offset += 1;
-                    }
-
-                    // for debugging purposes (i.e., identifying line number and column)
-                    if c == '\n' {
-                        tokens.push(Some(Token::NewLine));
-                    }
+                    // if start_pos - file_start_offset == 0 {
+                    // file_start_offset += 1;
+                    // }
 
                     self.skip_whitespace();
                 }
@@ -102,11 +102,12 @@ impl<'a> Lexer<'a> {
                             if let Some('/') = self.peek_next() {
                                 self.advance();
 
+                                let start_pos = self.pos;
+
                                 let mut doc_comment_content = String::new();
 
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
-                                        tokens.push(Some(Token::NewLine));
                                         break;
                                     } else {
                                         doc_comment_content.push(c);
@@ -124,7 +125,6 @@ impl<'a> Lexer<'a> {
                             } else {
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
-                                        tokens.push(Some(Token::NewLine));
                                         break;
                                     } else {
                                         self.advance();
@@ -133,7 +133,7 @@ impl<'a> Lexer<'a> {
 
                                 let comment = Comment::parse(
                                     self.input,
-                                    Arc::new(String::new()),
+                                    String::from(""),
                                     start_pos,
                                     self.pos,
                                 );
@@ -151,7 +151,6 @@ impl<'a> Lexer<'a> {
 
                             while let Some(c) = self.current_char() {
                                 if c == '\n' {
-                                    tokens.push(Some(Token::NewLine));
                                     continue;
                                 }
 
@@ -182,9 +181,10 @@ impl<'a> Lexer<'a> {
                             self.advance();
                             in_block_comment = true;
 
+                            let start_pos = self.pos;
+
                             while let Some(c) = self.current_char() {
                                 if c == '\n' {
-                                    tokens.push(Some(Token::NewLine));
                                     continue;
                                 }
 
@@ -192,9 +192,10 @@ impl<'a> Lexer<'a> {
                                     self.advance();
                                     self.advance();
                                     in_block_comment = false;
+
                                     let comment = Comment::parse(
                                         self.input,
-                                        Arc::new(String::new()),
+                                        String::from(""),
                                         start_pos,
                                         self.pos,
                                     );
@@ -217,7 +218,6 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c.is_alphabetic() || c == '_' => {
-                    let start_pos = self.pos;
                     let mut buf = String::new();
 
                     while let Some(c) = self.current_char() {
@@ -294,9 +294,6 @@ impl<'a> Lexer<'a> {
         stream
     }
 
-    fn peek_next(&mut self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
-    }
     ///////////////////////////////////////////////////////////////////////////
 
     // CHAT-GPT FUNCTIONS
