@@ -2,7 +2,7 @@ use feo_types::Primitive;
 
 use crate::lexer::{Lexer, Token};
 
-// use for delimiters, keywords, literals, punctuation, type annotations
+// use for delimiters, char + string + bool literals, punctuation
 pub trait Parse {
     fn parse(l: &mut Lexer) -> Option<Token>;
 }
@@ -18,14 +18,10 @@ pub trait ParseDigit {
     ) -> Option<Token>;
 }
 
-// use for comments, doc comments, keywords, identifiers, path expressions
+// use for comments, doc comments, keywords, identifiers, path expressions, type annotations
 pub trait ParseData<T>
 where
     T: 'static + Primitive,
 {
     fn parse(src: &str, input: T, start: usize, end: usize) -> Option<Token>;
 }
-
-// TOKENIZE:
-// - Delimiter,
-// - Punctuation,
