@@ -273,7 +273,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 // account for hexadecimal prefix
-                _ if c == '0' && self.peek_next() == Some('x') => {
+                _ if c == '0' && self.peek_next().is_some_and(|c| c.to_ascii_lowercase() == 'x') => {
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
                     is_hexadecimal_int = true;
