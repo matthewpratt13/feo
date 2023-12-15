@@ -114,12 +114,8 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                let doc_comment = DocComment::parse(
-                                    self.input,
-                                    buf,
-                                    start_pos,
-                                    self.pos,
-                                );
+                                let doc_comment =
+                                    DocComment::parse(self.input, buf, start_pos, self.pos);
                                 tokens.push(doc_comment);
                             } else {
                                 while let Some(c) = self.current_char() {
@@ -235,14 +231,27 @@ impl<'a> Lexer<'a> {
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
                     tokens.push(Delimiter::parse(self));
-                    // TODO: tokenize token tree
+                    let tree = TokenTree::build(
+                        self.input,
+                        std::mem::take(&mut tokens),
+                        self.pos - tokens.len(),
+                        self.pos,
+                    )?;
+                    token_trees.push(tree);
                 }
 
                 ')' | ']' | '}' => {
                     tokens.push(Delimiter::parse(self));
-                    // TODO: tokenize token tree
+                    // TODO: check that this closing delimiter matches the opening one
+                    let tree = TokenTree::build(
+                        self.input,
+                        std::mem::take(&mut tokens),
+                        self.pos - tokens.len(),
+                        self.pos,
+                    )?;
+                    token_trees.push(tree);
+
                     num_open_delimiters -= 1;
-                    self.advance(); // skip closing delimiter
                 }
 
                 '"' => {

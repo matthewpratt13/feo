@@ -77,7 +77,7 @@ impl TokenTree {
         tokens: Vec<Option<Token>>,
         start: usize,
         end: usize,
-    ) -> Result<Self, LexError> {
-        Ok(Self(TokenStream::build(src, tokens, start, end)?))
+    ) -> Result<Option<Self>, LexError> {
+        Ok(Some(Self(TokenStream::build(src, tokens, start, end)?)))
     }
 }
