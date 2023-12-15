@@ -1,26 +1,6 @@
 use feo_types::Literal;
 
-use crate::{lexer::Token, error::LexError};
-
-#[derive(Debug)]
-pub enum IntKind {
-    I32,
-    I64,
-}
-
-#[derive(Debug)]
-pub enum UintKind {
-    U8,
-    U16,
-    U32,
-    U64,
-}
-
-#[derive(Debug)]
-pub enum FloatKind {
-    F32,
-    F64,
-}
+use crate::{error::LexError, lexer::Token};
 
 #[derive(Debug)]
 pub struct CharLiteral(Literal<char>);
@@ -38,7 +18,7 @@ impl TryFrom<Token> for CharLiteral {
 }
 
 #[derive(Debug)]
-pub struct StringLiteral(Literal<String>);
+pub struct StringLiteral(pub Literal<String>);
 
 // convert `Token` to inner `StringLiteral`
 impl TryFrom<Token> for StringLiteral {
@@ -53,10 +33,7 @@ impl TryFrom<Token> for StringLiteral {
 }
 
 #[derive(Debug)]
-pub struct IntLiteral {
-    int_kind: Option<IntKind>,
-    lit: Literal<i64>,
-}
+pub struct IntLiteral(pub Literal<i64>);
 
 // convert `Token` to inner `IntLiteral`
 impl TryFrom<Token> for IntLiteral {
@@ -71,10 +48,7 @@ impl TryFrom<Token> for IntLiteral {
 }
 
 #[derive(Debug)]
-pub struct UIntLiteral {
-    uint_kind: Option<UintKind>,
-    lit: Literal<u64>,
-}
+pub struct UIntLiteral(pub Literal<u64>);
 
 // convert `Token` to inner `U256Literal`
 impl TryFrom<Token> for UIntLiteral {
@@ -89,10 +63,7 @@ impl TryFrom<Token> for UIntLiteral {
 }
 
 #[derive(Debug)]
-pub struct FloatLiteral {
-    float_kind: Option<FloatKind>,
-    lit: Literal<f64>,
-}
+pub struct FloatLiteral(pub Literal<f64>);
 
 // convert `Token` to inner `FloatLiteral`
 impl TryFrom<Token> for FloatLiteral {

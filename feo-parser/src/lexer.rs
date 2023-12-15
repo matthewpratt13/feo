@@ -8,9 +8,7 @@ use feo_types::{
 
 use crate::{
     error::LexError,
-    literals::{
-        CharLiteral, FloatKind, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral, UintKind,
-    },
+    literals::{CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     parse::{Parse, ParseData},
 };
 
@@ -274,8 +272,6 @@ impl<'a> Lexer<'a> {
                     self.advance(); // skip opening single quote
                 }
 
-                // handle negative numbers; do we allow for example "-.3" ?
-                // does `is_digit()` include floats?
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
                     let mut is_float = false;
                     let mut is_hex = false;
@@ -312,12 +308,8 @@ impl<'a> Lexer<'a> {
                             let span =
                                 Span::new(Arc::new(self.input.to_string()), start_pos, self.pos);
                             let lit = Literal::new(f, span);
-                            let float_lit = FloatLiteral {
-                                float_kind: FloatKind::F64,
-                                lit,
-                            };
 
-                            let token = Token::FloatLit(float_lit);
+                            let token = Token::FloatLit(FloatLiteral(lit));
                         } else {
                             self.log_error("Error parsing float");
                         }
@@ -325,24 +317,16 @@ impl<'a> Lexer<'a> {
                         if let Ok(i) = code.parse::<i64>() {
                             let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
                             let lit = Literal::new(i, span);
-                            let int_lit = IntLiteral {
-                                int_kind: IntKind::I64,
-                                lit,
-                            };
-                            let token = Token::IntLit(int_lit);
+                            let token = Token::IntLit(IntLiteral(lit));
                         } else {
                             self.log_error("Error parsing integer");
                         }
                     } else if is_hex {
                         if let Ok(u) = code.parse::<u64>() {
                             let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
-                            let lit = Literal::new(i, span);
-                            let uint_lit = UIntLiteral {
-                                uint_kind: UIntKind::U64,
-                                lit,
-                            };
+                            let lit = Literal::new(u, span);
 
-                            let token = Token::UIntLit(uint_lit);
+                            let token = Token::UIntLit(UIntLiteral(lit));
                         } else {
                             self.log_error("Error parsing hexadecimal uint");
                         }
@@ -350,30 +334,12 @@ impl<'a> Lexer<'a> {
                         if let Ok(u) = code.parse::<u64>() {
                             let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
                             let lit = Literal::new(u, span);
-                            let uint_lit = UIntLiteral {
-                                uint_kind: UIntKind::U64,
-                                lit,
-                            };
 
-                            let token = Token::UIntLit(uint_lit);
+                            let token = Token::UIntLit(UIntLiteral(lit));
                         } else {
                             self.log_error("Error parsing uint");
                         }
                     }
-                }
-
-                // account for hexadecimal prefix
-                _ if c == '0'
-                    && self
-                        .peek_next()
-                        .is_some_and(|c| c.to_ascii_lowercase() == 'x') =>
-                {
-                    self.advance(); // skip '0'
-                    self.advance(); // skip 'x'
-                    is_hexadecimal_int = true;
-                }
-                '0'..='9' | 'a'..='f' | 'A'..='F' => {
-                    // TODO: parse digits
                 }
 
                 _ if c.is_ascii_punctuation() => {
