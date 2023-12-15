@@ -1,7 +1,7 @@
 use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DelimKind {
     Paren,
     Bracket,
@@ -21,7 +21,7 @@ impl TryFrom<char> for DelimKind {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DelimOrientation {
     Open,
     Close,
