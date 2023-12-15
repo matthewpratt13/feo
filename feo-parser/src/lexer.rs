@@ -268,6 +268,12 @@ impl<'a> Lexer<'a> {
                 // handle negative numbers; do we allow for example "-.3" ?
                 // does `is_digit()` include floats?
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10 | 16)) => {
+                    // TODO: parse digit
+
+
+
+
+
                     is_negative_number = true;
                     self.advance();
                 }
