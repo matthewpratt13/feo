@@ -1,11 +1,16 @@
 use std::iter::Peekable;
 use std::sync::Arc;
 
-use feo_types::{Comment, DelimKind, Delimiter, DocComment, Identifier, Punctuation};
+use feo_types::{
+    span::Span, Comment, DelimKind, Delimiter, DocComment, Identifier, Literal, PrimitiveType,
+    Punctuation,
+};
 
 use crate::{
     error::LexError,
-    literals::{CharLiteral, StringLiteral},
+    literals::{
+        CharLiteral, FloatKind, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral, UintKind,
+    },
     parse::{Parse, ParseData},
 };
 
@@ -27,6 +32,10 @@ impl<'a> Lexer<'a> {
             peekable_chars: input.chars().peekable(),
             errors: Vec::new(),
         }
+    }
+
+    pub fn pos(&self) -> usize {
+        self.pos
     }
 
     fn advance(&mut self) {
@@ -267,19 +276,98 @@ impl<'a> Lexer<'a> {
 
                 // handle negative numbers; do we allow for example "-.3" ?
                 // does `is_digit()` include floats?
-                _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10 | 16)) => {
-                    // TODO: parse digit
+                _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
+                    let mut is_float = false;
+                    let mut is_hex = false;
+                    let mut is_negative = false;
 
+                    if self.current_char() == Some('-') {
+                        is_negative = true;
+                        self.advance(); // skip '-'
+                    }
 
+                    if self.current_char() == Some('0')
+                        && self.peek_next().map_or(false, |c| c == 'x' || c == 'X')
+                    {
+                        self.advance(); // skip '0'
+                        self.advance(); // skip 'x'
+                        is_hex = true;
+                    }
 
+                    while let Some(c) = self.current_char() {
+                        if c.is_digit(10) || (is_hex && c.is_digit(16)) {
+                            self.advance();
+                        } else if c == '.' && !is_float {
+                            self.advance();
+                            is_float = true;
+                        } else {
+                            break;
+                        }
+                    }
 
+                    let code = &self.input[start_pos..self.pos];
 
-                    is_negative_number = true;
-                    self.advance();
+                    if is_float {
+                        if let Ok(f) = code.parse::<f64>() {
+                            let span =
+                                Span::new(Arc::new(self.input.to_string()), start_pos, self.pos);
+                            let lit = Literal::new(f, span);
+                            let float_lit = FloatLiteral {
+                                float_kind: FloatKind::F64,
+                                lit,
+                            };
+
+                            let token = Token::FloatLit(float_lit);
+                        } else {
+                            self.log_error("Error parsing float");
+                        }
+                    } else if is_negative {
+                        if let Ok(i) = code.parse::<i64>() {
+                            let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
+                            let lit = Literal::new(i, span);
+                            let int_lit = IntLiteral {
+                                int_kind: IntKind::I64,
+                                lit,
+                            };
+                            let token = Token::IntLit(int_lit);
+                        } else {
+                            self.log_error("Error parsing integer");
+                        }
+                    } else if is_hex {
+                        if let Ok(u) = code.parse::<u64>() {
+                            let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
+                            let lit = Literal::new(i, span);
+                            let uint_lit = UIntLiteral {
+                                uint_kind: UIntKind::U64,
+                                lit,
+                            };
+
+                            let token = Token::UIntLit(uint_lit);
+                        } else {
+                            self.log_error("Error parsing hexadecimal uint");
+                        }
+                    } else {
+                        if let Ok(u) = code.parse::<u64>() {
+                            let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
+                            let lit = Literal::new(u, span);
+                            let uint_lit = UIntLiteral {
+                                uint_kind: UIntKind::U64,
+                                lit,
+                            };
+
+                            let token = Token::UIntLit(uint_lit);
+                        } else {
+                            self.log_error("Error parsing uint");
+                        }
+                    }
                 }
 
                 // account for hexadecimal prefix
-                _ if c == '0' && self.peek_next().is_some_and(|c| c.to_ascii_lowercase() == 'x') => {
+                _ if c == '0'
+                    && self
+                        .peek_next()
+                        .is_some_and(|c| c.to_ascii_lowercase() == 'x') =>
+                {
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
                     is_hexadecimal_int = true;
