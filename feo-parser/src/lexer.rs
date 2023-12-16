@@ -215,36 +215,75 @@ impl<'a> Lexer<'a> {
                 },
 
                 _ if c.is_alphabetic() || c == '_' => {
+                    let mut buf = String::new();
+
                     while let Some(c) = self.current_char() {
-                        if c.is_alphabetic() || c == '_' {
+                        if c.is_alphanumeric() || c == '_' {
+                            buf.push(c);
                             self.advance()
+                        } else if c == ':' {
+                            self.advance(); // skip ':' for `TypeAnnotation`;
+                            self.skip_whitespace();
+                            let mut type_name = String::new();
+
+                            while let Some(c) = self.current_char() {
+                                if c.is_alphanumeric() || c == '_' {
+                                    type_name.push(c);
+                                    self.advance();
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if !type_name.is_empty() {
+                                let type_ann =
+                                    TypeAnnotation::parse(self.input, buf, start_pos, self.pos)?;
+                                tokens.push(type_ann);
+                            }
+                        } else if c == ':' && self.peek_next() == Some(':') {
+                            // check for `PathExpression` syntax
+                            self.advance(); // skip first ':'
+                            self.advance(); // skip second ':'
+
+                            let mut path_components = vec![buf];
+
+                            while let Some(c) = self.current_char() {
+                                if c.is_alphabetic() || c == '_' {
+                                    let mut component = String::new();
+                                    component.push(c);
+                                    self.advance();
+
+                                    while let Some(next_c) = self.current_char() {
+                                        if next_c.is_alphanumeric() || next_c == '_' {
+                                            component.push(c);
+                                            self.advance();
+                                        } else {
+                                            break;
+                                        }
+                                    }
+
+                                    path_components.push(component);
+                                } else {
+                                    break;
+                                }
+                            }
+                            let path = PathExpression::parse(
+                                self.input,
+                                path_components,
+                                start_pos,
+                                self.pos,
+                            )?;
+                            tokens.push(path);
                         } else {
                             break;
                         }
                     }
 
-                    let alpha_content = Arc::new(self.input[start_pos..self.pos].to_string());
-
-                    if let Ok(k) = Keyword::parse(self.input, alpha_content, start_pos, self.pos) {
+                    if let Ok(k) = Keyword::parse(self.input, buf, start_pos, self.pos) {
                         tokens.push(k);
-                    } else if let Ok(b) =
-                        BoolLiteral::parse(self.input, alpha_content, start_pos, self.pos)
-                    {
-                        tokens.push(b)
-                    } else if let Ok(t) =
-                        TypeAnnotation::parse(self.input, alpha_content, start_pos, self.pos)
-                    {
-                        tokens.push(t);
-                    } else if let Ok(p) =
-                        PathExpression::parse(self.input, alpha_content, start_pos, self.pos)
-                    {
-                        tokens.push(p);
-                    } else if let Ok(i) =
-                        Identifier::parse(self.input, alpha_content, start_pos, self.pos)
-                    {
-                        tokens.push(i)
                     } else {
-                        self.log_error("Error parsing identifier");
+                        let iden = Identifier::parse(self.input, buf, start_pos, self.pos)?;
+                        tokens.push(iden);
                     }
                 }
 
