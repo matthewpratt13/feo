@@ -558,7 +558,7 @@ impl<'a> Lexer<'a> {
             if c.is_whitespace() {
                 self.gpt_skip_whitespace();
                 tokens.push(Token::Whitespace);
-            } else if c.is_digit(10) || (c == '-' && self.gpt_peek_next().is_digit(10)) {
+            } else if c.is_digit(10) || (c == '-' && self.gpt_peek_next().unwrap().is_digit(10)) {
                 tokens.push(self.gpt_parse_number());
             } else if c.is_alphabetic() || c == '_' {
                 tokens.push(self.gpt_parse_identifier_or_keyword());
@@ -973,11 +973,13 @@ impl<'a> Lexer<'a> {
     fn gpt_peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-// CHAT-GPT FUNCTIONS
+// CHAT-GPT HELPER FUNCTIONS
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -996,57 +998,3 @@ fn gpt_is_keyword(identifier: &str) -> bool {
 fn gpt_is_punctuation(c: char) -> bool {
     ",;:()[]{}+-*/%&|^~<>=".contains(c)
 }
-
-///////////////////////////////////////////////////////////////////////////
-
-// FEO IMPLEMENTATION
-
-///////////////////////////////////////////////////////////////////////////
-
-impl Iterator for Leer<'_> {
-    type Item = char;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if let Some(c) = self.input.chars().next() {
-            self.pos += 1;
-            Some(c)
-        } else {
-            self.pos = self.input.len();
-            None
-        }
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////
-
-// CHAT-GPT IMPLEMENTATION
-
-///////////////////////////////////////////////////////////////////////////
-
-// impl<'a> Iterator for Lexer<'a> {
-//     type Item = Token;
-
-//     fn next(&mut self) -> Option<Self::Item> {
-//         self.gpt_skip_whitespace();
-
-//         if let Some(c) = self.gpt_current_char() {
-//             Some(match c {
-//                 // ... (unchanged logic for other characters)
-//                 _ => {
-//                     // Handle delimiter characters
-//                     if "([{}])".contains(c) {
-//                         self.gpt_tokenize_delimiter()
-//                     } else {
-//                         // Continue with the existing tokenization logic
-//                         // ...
-
-//                         // Placeholder return to compile the code
-//                         Token::Error("Tokenization not implemented yet".to_string())
-//                     }
-//                 }
-//             })
-//         } else {
-//             None
-//         }
-//     }
-// }
