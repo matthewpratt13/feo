@@ -281,6 +281,8 @@ impl<'a> Lexer<'a> {
 
                     if let Ok(k) = Keyword::parse(self.input, buf, start_pos, self.pos) {
                         tokens.push(k);
+                    } else if let Ok(b) = BoolLiteral::parse(self.input, buf, start_pos, self.pos) {
+                        tokens.push(b);
                     } else {
                         let iden = Identifier::parse(self.input, buf, start_pos, self.pos)?;
                         tokens.push(iden);
