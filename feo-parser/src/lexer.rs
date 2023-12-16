@@ -330,7 +330,21 @@ impl<'a> Lexer<'a> {
                     while let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                // TODO: handle escape code
+                                self.advance(); // skip '\'
+
+                                if let Some(esc_c) = self.current_char() {
+                                    self.advance(); // skip second '\'
+
+                                    match esc_c {
+                                        'n' => buf.push('\n'),
+                                        'r' => buf.push('\r'),
+                                        't' => buf.push('\t'),
+                                        '"' => buf.push('"'),
+                                        '\'' => buf.push('\''),
+                                        _ => self
+                                            .log_error("Invalid escape sequence in string literal"),
+                                    };
+                                }
                             }
 
                             '"' => {
@@ -355,7 +369,34 @@ impl<'a> Lexer<'a> {
                     if let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                // TODO: handle escape code
+                                self.advance(); // skip '\'
+
+                                if let Some(esc_c) = self.current_char() {
+                                    self.advance(); // skip second '\'
+
+                                    let char_lit = match esc_c {
+                                        'n' => CharLiteral::parse(
+                                            self.input, '\n', start_pos, self.pos,
+                                        ),
+                                        'r' => CharLiteral::parse(
+                                            self.input, '\r', start_pos, self.pos,
+                                        ),
+                                        't' => CharLiteral::parse(
+                                            self.input, '\t', start_pos, self.pos,
+                                        ),
+
+                                        '"' => {
+                                            CharLiteral::parse(self.input, '"', start_pos, self.pos)
+                                        }
+
+                                        '\'' => CharLiteral::parse(
+                                            self.input, '\'', start_pos, self.pos,
+                                        ),
+                                        _ => return Err(ParserError::InvalidEscapeCode),
+                                    }?;
+
+                                    tokens.push(char_lit);
+                                }
                             }
                             '\'' => self.log_error("Empty character literal"),
                             _ => {

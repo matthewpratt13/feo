@@ -4,4 +4,6 @@ pub enum LexError {
 }
 
 #[derive(Debug)]
-pub enum ParserError {}
+pub enum ParserError {
+    InvalidEscapeCode
+}
