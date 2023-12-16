@@ -47,9 +47,33 @@ where
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// these are not parsed but directly tokenized:
+// these are not parsed but directly tokenized (direct reference to the source code):
 
 // 11/ `Comment` { String, Span } -> Token::Comment(Comment)
 // 12/ `DocComment` { String, Span } -> Token::DocComment(DocComment)
 // 13/ `Identifier` { String, Span } -> Token::Identifier(Identifier)
 // 14/ `PathExpression` { Vec<String>, Span } -> Token::PathExpression(PathExpression)
+
+fn parse(input: &str, start: usize, end: usize) -> Self {}
+
+let lit = StringLiteral::parse(self.input, start_pos, self.pos);
+
+// in tokenize():
+
+(match '"') ...
+self.advance();
+let start_pos = self.pos;
+let mut buf = String::new();
+
+while Some(c) = self.current_char() {
+    if c != '"' {
+        buf.push(c);
+    } else {
+        break
+    }
+}
+
+let string_lit = StringLiteral::parse(self.input, buf, start_pos, self.pos)
+
+
+

@@ -2,13 +2,13 @@ use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_types::{
-    span::Span, Comment, DelimKind, Delimiter, DocComment, Identifier, Literal, PrimitiveType,
-    Punctuation,
+    span::Span, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, Literal,
+    PathExpression, PrimitiveType, Punctuation, TypeAnnotation,
 };
 
 use crate::{
     error::LexError,
-    literals::{CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
+    literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     parse::{Parse, ParseData},
 };
 
@@ -97,41 +97,102 @@ impl<'a> Lexer<'a> {
                         in_block_comment = false;
                     }
                 }
-                _ if c == '/' => {
-                    match self.peek_next() {
-                        Some('/') => {
-                            self.advance();
+                _ if c == '/' => match self.peek_next() {
+                    Some('/') => {
+                        self.advance();
+                        self.advance();
+
+                        let start_pos = self.pos;
+
+                        if let Some('/') = self.peek_next() {
                             self.advance();
 
                             let start_pos = self.pos;
 
-                            if let Some('/') = self.peek_next() {
+                            while let Some(c) = self.current_char() {
+                                if c == '\n' {
+                                    break;
+                                } else {
+                                    self.advance();
+                                }
+                            }
+
+                            let doc_comment_content =
+                                Arc::new(self.input[start_pos..self.pos].to_string());
+
+                            let doc_comment = DocComment::parse(
+                                self.input,
+                                doc_comment_content,
+                                start_pos,
+                                self.pos,
+                            );
+                            tokens.push(doc_comment);
+                        } else {
+                            while let Some(c) = self.current_char() {
+                                if c == '\n' {
+                                    break;
+                                } else {
+                                    self.advance();
+                                }
+                            }
+
+                            let comment =
+                                Comment::parse(self.input, String::from(""), start_pos, self.pos);
+
+                            tokens.push(comment);
+                        }
+                    }
+
+                    Some('!') => {
+                        self.advance();
+                        self.advance();
+                        in_block_comment = true;
+
+                        let start_pos = self.pos;
+
+                        while let Some(c) = self.current_char() {
+                            if c == '\n' {
+                                continue;
+                            }
+
+                            if c == '*' && self.peek_next() == Some('/') {
                                 self.advance();
+                                self.advance();
+                                in_block_comment = false;
 
-                                let start_pos = self.pos;
+                                let doc_comment_content =
+                                    Arc::new(self.input[start_pos..self.pos].trim().to_string());
 
-                                let mut buf = String::new();
-
-                                while let Some(c) = self.current_char() {
-                                    if c == '\n' {
-                                        break;
-                                    } else {
-                                        buf.push(c);
-                                        self.advance();
-                                    }
-                                }
-
-                                let doc_comment =
-                                    DocComment::parse(self.input, buf, start_pos, self.pos);
+                                let doc_comment = DocComment::parse(
+                                    self.input,
+                                    doc_comment_content,
+                                    start_pos,
+                                    self.pos,
+                                );
                                 tokens.push(doc_comment);
+                                break;
                             } else {
-                                while let Some(c) = self.current_char() {
-                                    if c == '\n' {
-                                        break;
-                                    } else {
-                                        self.advance();
-                                    }
-                                }
+                                self.advance();
+                            }
+                        }
+                    }
+
+                    Some('*') => {
+                        self.advance();
+                        self.advance();
+                        in_block_comment = true;
+
+                        let start_pos = self.pos;
+
+                        while let Some(c) = self.current_char() {
+                            if c == '\n' {
+                                continue;
+                            }
+
+                            if c == '*' && self.peek_next() == Some('/') {
+                                self.advance();
+                                self.advance();
+                                in_block_comment = false;
 
                                 let comment = Comment::parse(
                                     self.input,
@@ -141,100 +202,53 @@ impl<'a> Lexer<'a> {
                                 );
 
                                 tokens.push(comment);
+                                break;
+                            } else {
+                                self.advance();
                             }
-                        }
-
-                        Some('!') => {
-                            self.advance();
-                            self.advance();
-                            in_block_comment = true;
-
-                            let start_pos = self.pos;
-
-                            while let Some(c) = self.current_char() {
-                                if c == '\n' {
-                                    continue;
-                                }
-
-                                if c == '*' && self.peek_next() == Some('/') {
-                                    self.advance();
-                                    self.advance();
-                                    in_block_comment = false;
-
-                                    let end_pos = self.pos;
-                                    let code =
-                                        Arc::new(self.input[start_pos..end_pos].trim().to_string());
-
-                                    let doc_comment =
-                                        DocComment::parse(self.input, code, start_pos, end_pos);
-                                    tokens.push(doc_comment);
-                                    break;
-                                } else {
-                                    self.advance();
-                                }
-                            }
-
-                            // if we reach here, the block comment is unterminated
-                            self.log_error("Unterminated doc comment");
-                        }
-
-                        Some('*') => {
-                            self.advance();
-                            self.advance();
-                            in_block_comment = true;
-
-                            let start_pos = self.pos;
-
-                            while let Some(c) = self.current_char() {
-                                if c == '\n' {
-                                    continue;
-                                }
-
-                                if c == '*' && self.peek_next() == Some('/') {
-                                    self.advance();
-                                    self.advance();
-                                    in_block_comment = false;
-
-                                    let comment = Comment::parse(
-                                        self.input,
-                                        String::from(""),
-                                        start_pos,
-                                        self.pos,
-                                    );
-
-                                    tokens.push(comment);
-                                    break;
-                                } else {
-                                    self.advance();
-                                }
-                            }
-
-                            // if we reach here, the block comment is unterminated
-                            self.log_error("Unterminated block comment");
-                        }
-
-                        Some(_) | None => {
-                            self.log_error("Unexpected comment");
                         }
                     }
-                }
+
+                    Some(_) | None => {
+                        self.log_error("Unexpected comment");
+                    }
+                },
 
                 _ if c.is_alphabetic() || c == '_' => {
-                    let mut buf = String::new();
-
                     while let Some(c) = self.current_char() {
                         if c.is_alphabetic() || c == '_' {
-                            buf.push(c);
+                            self.advance()
                         } else {
                             break;
                         }
-                        self.advance();
                     }
 
-                    let kw_or_iden = Identifier::parse(self.input, buf, start_pos, self.pos);
-                    tokens.push(kw_or_iden);
+                    let alpha_content = Arc::new(self.input[start_pos..self.pos].to_string());
+
+                    if let Ok(k) = Keyword::parse(self.input, alpha_content, start_pos, self.pos) {
+                        tokens.push(k);
+                    } else if let Ok(b) =
+                        BoolLiteral::parse(self.input, alpha_content, start_pos, self.pos)
+                    {
+                        tokens.push(b)
+                    } else if let Ok(t) =
+                        TypeAnnotation::parse(self.input, alpha_content, start_pos, self.pos)
+                    {
+                        tokens.push(t);
+                    } else if let Ok(p) =
+                        PathExpression::parse(self.input, alpha_content, start_pos, self.pos)
+                    {
+                        tokens.push(p);
+                    } else if let Ok(i) =
+                        Identifier::parse(self.input, alpha_content, start_pos, self.pos)
+                    {
+                        tokens.push(i)
+                    } else {
+                        self.log_error("Error parsing identifier");
+                    }
                 }
 
+                // TODO: sort out parsing func
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
                     tokens.push(Delimiter::parse(self));
@@ -247,6 +261,7 @@ impl<'a> Lexer<'a> {
                     token_trees.push(tree);
                 }
 
+                // TODO: sort out parsing func
                 ')' | ']' | '}' => {
                     tokens.push(Delimiter::parse(self));
                     // TODO: check that this closing delimiter matches the opening one
@@ -263,13 +278,56 @@ impl<'a> Lexer<'a> {
 
                 '"' => {
                     self.advance(); // skip opening double quote
-                    tokens.push(StringLiteral::parse(self));
-                    self.advance(); // skip closing double quote
+                    let start_pos = self.pos;
+
+                    let mut buf = String::new();
+
+                    while let Some(c) = self.current_char() {
+                        match c {
+                            '\\' => {
+                                // handle escape code
+                            }
+
+                            '"' => {
+                                self.advance(); // skip closing double quote
+                                let string_lit =
+                                    StringLiteral::parse(self.input, buf, start_pos, self.pos);
+                                tokens.push(string_lit);
+                                break;
+                            }
+
+                            _ => {
+                                buf.push(c);
+                                self.advance();
+                            }
+                        }
+                    }
                 }
                 '\'' => {
                     self.advance(); // skip opening single quote
-                    tokens.push(CharLiteral::parse(self));
-                    self.advance(); // skip opening single quote
+                    let start_pos = self.pos;
+
+                    if let Some(c) = self.current_char() {
+                        match c {
+                            '\\' => {
+                                // handle escape code
+                            }
+                            '\'' => self.log_error("Empty character literal"),
+                            _ => {
+                                self.advance(); // consume the char
+                                if self.get_current_char() == Some('\'') {
+                                    self.advance(); // skip closing single quote
+                                    let char_lit =
+                                        CharLiteral::parse(self.input, c, start_pos, self.pos);
+                                    tokens.push(char_lit);
+                                } else {
+                                    self.log_error("Invalid character literal");
+                                }
+                            }
+                        }
+                    } else {
+                        self.log_error("Unexpected end of input in character literal");
+                    }
                 }
 
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
@@ -301,41 +359,37 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let code = &self.input[start_pos..self.pos];
+                    let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
                     if is_float {
-                        if let Ok(f) = code.parse::<f64>() {
-                            let span =
-                                Span::new(Arc::new(self.input.to_string()), start_pos, self.pos);
-                            let lit = Literal::new(f, span);
-
-                            let token = Token::FloatLit(FloatLiteral(lit));
+                        if let Ok(f) =
+                            FloatLiteral::parse(self.input, num_content, start_pos, self.pos)
+                        {
+                            tokens.push(f);
                         } else {
                             self.log_error("Error parsing float");
                         }
                     } else if is_negative {
-                        if let Ok(i) = code.parse::<i64>() {
-                            let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
-                            let lit = Literal::new(i, span);
-                            let token = Token::IntLit(IntLiteral(lit));
+                        if let Ok(i) =
+                            IntLiteral::parse(self.input, num_content, start_pos, self.pos)
+                        {
+                            tokens.push(i);
                         } else {
                             self.log_error("Error parsing integer");
                         }
                     } else if is_hex {
-                        if let Ok(u) = code.parse::<u64>() {
-                            let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
-                            let lit = Literal::new(u, span);
-
-                            let token = Token::UIntLit(UIntLiteral(lit));
+                        if let Ok(u) =
+                            UIntLiteral::parse(self.input, num_content, start_pos, self.pos)
+                        {
+                            tokens.push(u);
                         } else {
                             self.log_error("Error parsing hexadecimal uint");
                         }
                     } else {
-                        if let Ok(u) = code.parse::<u64>() {
-                            let span = Span::new(Arc::new(code.to_string()), start_pos, self.pos);
-                            let lit = Literal::new(u, span);
-
-                            let token = Token::UIntLit(UIntLiteral(lit));
+                        if let Ok(u) =
+                            UIntLiteral::parse(self.input, num_content, start_pos, self.pos)
+                        {
+                            tokens.push(u);
                         } else {
                             self.log_error("Error parsing uint");
                         }
@@ -343,10 +397,19 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c.is_ascii_punctuation() => {
-                    tokens.push(Punctuation::parse(self));
-                }
-                _ => {
-                    self.log_error(&format!("Unexpected character: {}", c));
+                    while let Some(c) = self.current_char() {
+                        if c.is_ascii_punctuation() {
+                            self.advance();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    let punc_content = Arc::new(self.input[start_pos..self.pos].to_string());
+
+                    // TODO:
+                    let punc = Punctuation::parse(self.input, punc_content, start_pos, self.pos);
+                    tokens.push(punc)
                 }
             }
         }

@@ -8,6 +8,8 @@ impl Primitive for char {}
 
 impl Primitive for String {}
 
+impl Primitive for Arc<String> {}
+
 impl Primitive for i32 {}
 
 impl Primitive for i64 {}
