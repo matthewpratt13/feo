@@ -243,8 +243,12 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
-                                let type_ann =
-                                    TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)?;
+                                let type_ann = TypeAnnotation::parse(
+                                    self.input,
+                                    &buf,
+                                    start_pos,
+                                    self.pos,
+                                )?;
                                 tokens.push(type_ann);
                                 break;
                             }
@@ -253,7 +257,7 @@ impl<'a> Lexer<'a> {
                             self.advance(); // skip first ':'
                             self.advance(); // skip second ':'
 
-                            let mut path_components = vec![buf];
+                            let mut path_components: Vec<String> = Vec::new();
 
                             while let Some(c) = self.current_char() {
                                 if c.is_alphabetic() || c == '_' {
