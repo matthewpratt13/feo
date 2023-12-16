@@ -69,6 +69,9 @@ impl<'a> Lexer<'a> {
         let mut num_open_delimiters: usize = 0;
         // let mut file_start_offset: usize = 0;
 
+        let mut is_float = false;
+        let mut is_negative = false;
+
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
 
@@ -211,11 +214,8 @@ impl<'a> Lexer<'a> {
                     }
                 },
 
-                // alphanumeric or '_'
-                '\u{0059}'
-                | '\u{0030}'..='\u{0039}'
-                | '\u{0041}'..='\u{005A}'
-                | '\u{0061}'..='\u{007A}' => {
+                // alphabetic or '_'
+                'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
                     while let Some(c) = self.current_char() {
@@ -365,8 +365,8 @@ impl<'a> Lexer<'a> {
                                         't' => buf.push('\t'),
                                         '\\' => buf.push('\\'),
                                         '0' => buf.push('\0'),
-                                        '"' => buf.push('"'),
                                         '\'' => buf.push('\''),
+                                        '"' => buf.push('"'),
                                         _ => self
                                             .log_error("Invalid escape sequence in char literal"),
                                     };
@@ -458,30 +458,19 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
-                    let start_pos = self.pos;
+                    is_negative = true;
+                    self.advance(); // skip '-'
+                }
 
-                    let mut is_float = false;
-                    let mut is_hex = false;
-                    let mut is_negative = false;
+                // hexadecimal number
+                _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
+                    let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
-                    // check for negative sign
-                    if self.current_char() == Some('-') {
-                        is_negative = true;
-                        self.advance(); // skip '-'
-                    }
+                    self.advance(); // skip '0'
+                    self.advance(); // skip 'x'
 
-                    // check for hexadecimal prefix
-                    if self.current_char() == Some('0')
-                        && self.peek_next().map_or(false, |c| c == 'x' || c == 'X')
-                    {
-                        self.advance(); // skip '0'
-                        self.advance(); // skip 'x'
-                        is_hex = true;
-                    }
-
-                    // parse digits
                     while let Some(c) = self.current_char() {
-                        if c.is_digit(10) || (is_hex && c.is_digit(16)) {
+                        if c.is_digit(16) {
                             self.advance();
                         } else if c == '.' && !is_float {
                             self.advance();
@@ -491,12 +480,12 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
+                    let hex_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
                     // parse and push the appropriate tokens to `tokens`
                     if is_float {
                         if let Ok(f) =
-                            FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                            FloatLiteral::parse(self.input, &hex_content, start_pos, self.pos)
                         {
                             tokens.push(f);
                         } else {
@@ -504,41 +493,69 @@ impl<'a> Lexer<'a> {
                         }
                     } else if is_negative {
                         if let Ok(i) =
-                            IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                            IntLiteral::parse(self.input, &hex_content, start_pos, self.pos)
                         {
                             tokens.push(i);
                         } else {
-                            // TODO: return `Err` ?
                             self.log_error("Error parsing integer");
-                        }
-                    } else if is_hex {
-                        if let Ok(h) =
-                            // TODO: remember to handle hexadecimal digits in `UintLiteral::parse()`
-                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
-                        {
-                            tokens.push(h);
-                        } else {
-                            // TODO: return `Err` ?
-                            self.log_error("Error parsing hexadecimal uint");
                         }
                     } else {
                         if let Ok(u) =
-                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                            UIntLiteral::parse(self.input, &hex_content, start_pos, self.pos)
                         {
                             tokens.push(u);
                         } else {
-                            // TODO: return `Err` ?
+                            self.log_error("Error parsing uint");
+                        }
+                    }
+                }
+
+                '0'..='9' => {
+                    let start_pos = if is_negative { self.pos - 1 } else { self.pos };
+
+                    while let Some(c) = self.current_char() {
+                        if c.is_digit(10) {
+                            self.advance();
+                        } else if c == '.' && !is_float {
+                            self.advance();
+                            is_float = true;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    let dec_content = Arc::new(self.input[start_pos..self.pos].to_string());
+
+                    // parse and push the appropriate tokens to `tokens`
+                    if is_float {
+                        if let Ok(f) =
+                            FloatLiteral::parse(self.input, &dec_content, start_pos, self.pos)
+                        {
+                            tokens.push(f);
+                        } else {
+                            self.log_error("Error parsing float");
+                        }
+                    } else if is_negative {
+                        if let Ok(i) =
+                            IntLiteral::parse(self.input, &dec_content, start_pos, self.pos)
+                        {
+                            tokens.push(i);
+                        } else {
+                            self.log_error("Error parsing integer");
+                        }
+                    } else {
+                        if let Ok(u) =
+                            UIntLiteral::parse(self.input, &dec_content, start_pos, self.pos)
+                        {
+                            tokens.push(u);
+                        } else {
                             self.log_error("Error parsing uint");
                         }
                     }
                 }
 
                 // punctuation / escape codes
-                '\0'..='\''
-                | '\u{0021}'..='\u{002F}'
-                | '\u{003A}'..='\u{0040}'
-                | '\u{005B}'..='\u{0060}'
-                | '\u{007B}'..='\u{007E}' => {
+                '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation() {
                             self.advance();

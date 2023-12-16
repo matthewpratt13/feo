@@ -17,6 +17,7 @@ pub enum PuncKind {
 
     Bang, // (exclamation point)
     Hash,
+    DollarSign,
     Percent, // (modulus)
     Ampersand,
     Asterisk, // (multiply)
@@ -28,7 +29,10 @@ pub enum PuncKind {
     GreaterThan,
     QuestionMark,
     AtSign,
+    Caret,
+    BackTick,
     Pipe,
+    Tilde,
 
     BangEquals,
     PercentEquals,
@@ -45,7 +49,7 @@ pub enum PuncKind {
     FatArrow,  // "=>"
     DoublePipe,
 
-    // escape codes
+    // escape sequences
     Newline,
     Return,
     Tab,
