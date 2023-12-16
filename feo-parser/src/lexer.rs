@@ -15,7 +15,7 @@ use crate::{
 mod token;
 pub(crate) use self::token::{Token, TokenStream, TokenTree};
 
-pub(crate) struct Lexer<'a> {
+struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
@@ -32,10 +32,6 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn pos(&self) -> usize {
-        self.pos
-    }
-
     fn advance(&mut self) {
         self.pos += 1;
         self.peekable_chars.next();
@@ -45,7 +41,6 @@ impl<'a> Lexer<'a> {
         self.peekable_chars.next()
     }
 
-    // *mutable
     fn peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
@@ -243,12 +238,8 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
-                                let type_ann = TypeAnnotation::parse(
-                                    self.input,
-                                    &buf,
-                                    start_pos,
-                                    self.pos,
-                                )?;
+                                let type_ann =
+                                    TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)?;
                                 tokens.push(type_ann);
                                 break;
                             }
