@@ -251,7 +251,11 @@ impl<'a> Lexer<'a> {
                 // TODO: sort out parsing func
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
-                    tokens.push(Delimiter::parse(self));
+                    match c {
+                        '(' => tokens.push(Delimiter::parse(self.input, ')', start_pos, self.pos)),
+                        '[' => tokens.push(Delimiter::parse(self.input, ']', start_pos, self.pos)),
+                        '{' => tokens.push(self.input, '}', start_pos, self.pos),
+                    };
                     let tree = TokenTree::build(
                         self.input,
                         std::mem::take(&mut tokens),
@@ -263,7 +267,11 @@ impl<'a> Lexer<'a> {
 
                 // TODO: sort out parsing func
                 ')' | ']' | '}' => {
-                    tokens.push(Delimiter::parse(self));
+                    match c {
+                        ')' => tokens.push(Delimiter::parse(self.input, ')', start_pos, self.pos)),
+                        ']' => tokens.push(Delimiter::parse(self.input, ']', start_pos, self.pos)),
+                        '}' => tokens.push(self.input, '}', start_pos, self.pos),
+                    };
                     // TODO: check that this closing delimiter matches the opening one
                     let tree = TokenTree::build(
                         self.input,
