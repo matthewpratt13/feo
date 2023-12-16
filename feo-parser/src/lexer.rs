@@ -341,6 +341,8 @@ impl<'a> Lexer<'a> {
                                         'n' => buf.push('\n'),
                                         'r' => buf.push('\r'),
                                         't' => buf.push('\t'),
+                                        '\\' => buf.push('\\'),
+                                        '0' => buf.push('\0'),
                                         '"' => buf.push('"'),
                                         '\'' => buf.push('\''),
                                         _ => self
@@ -386,11 +388,15 @@ impl<'a> Lexer<'a> {
                                         't' => CharLiteral::parse(
                                             self.input, '\t', start_pos, self.pos,
                                         ),
-
+                                        '\\' => CharLiteral::parse(
+                                            self.input, '\\', start_pos, self.pos,
+                                        ),
+                                        '0' => CharLiteral::parse(
+                                            self.input, '\0', start_pos, self.pos,
+                                        ),
                                         '"' => {
                                             CharLiteral::parse(self.input, '"', start_pos, self.pos)
                                         }
-
                                         '\'' => CharLiteral::parse(
                                             self.input, '\'', start_pos, self.pos,
                                         ),
