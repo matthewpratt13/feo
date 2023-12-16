@@ -1,20 +1,13 @@
-use std::sync::Arc;
-
 use feo_types::Primitive;
 
-use crate::lexer::{Lexer, Token};
+use crate::{error::ParserError, lexer::Token};
 
-// use for delimiters, literals, punctuation
-pub trait Parse {
-    fn parse(l: &mut Lexer) -> Option<Token>;
-}
-
-// use for comments, doc comments, keywords, identifiers, path expressions, type annotations
-pub trait ParseData<T>
+pub trait Parse<T>
 where
     T: 'static + Primitive,
 {
-    fn parse(src: Arc<String>, content: T, start: usize, end: usize) -> Option<Token>;
+    fn parse(src: &str, content: T, start: usize, end: usize)
+        -> Result<Option<Token>, ParserError>;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,27 +46,3 @@ where
 // 12/ `DocComment` { String, Span } -> Token::DocComment(DocComment)
 // 13/ `Identifier` { String, Span } -> Token::Identifier(Identifier)
 // 14/ `PathExpression` { Vec<String>, Span } -> Token::PathExpression(PathExpression)
-
-fn parse(input: &str, start: usize, end: usize) -> Self {}
-
-let lit = StringLiteral::parse(self.input, start_pos, self.pos);
-
-// in tokenize():
-
-(match '"') ...
-self.advance();
-let start_pos = self.pos;
-let mut buf = String::new();
-
-while Some(c) = self.current_char() {
-    if c != '"' {
-        buf.push(c);
-    } else {
-        break
-    }
-}
-
-let string_lit = StringLiteral::parse(self.input, buf, start_pos, self.pos)
-
-
-

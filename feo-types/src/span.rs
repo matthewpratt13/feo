@@ -12,8 +12,12 @@ pub struct Span {
 }
 
 impl Span {
-    pub fn new(src: Arc<String>, start: usize, end: usize) -> Self {
-        Self { src, start, end }
+    pub fn new(src: &str, start: usize, end: usize) -> Self {
+        Self {
+            src: Arc::new(src.to_string()),
+            start,
+            end,
+        }
     }
 
     pub fn source(&self) -> Arc<String> {

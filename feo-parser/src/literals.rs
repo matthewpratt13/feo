@@ -3,7 +3,7 @@ use feo_types::Literal;
 use crate::{error::LexError, lexer::Token};
 
 #[derive(Debug)]
-pub struct CharLiteral(Literal<char>);
+pub struct CharLiteral(pub Literal<char>);
 
 // convert `Token` to inner `CharLiteral`
 impl TryFrom<Token> for CharLiteral {
@@ -78,7 +78,7 @@ impl TryFrom<Token> for FloatLiteral {
 }
 
 #[derive(Debug)]
-pub struct BoolLiteral(Literal<bool>);
+pub struct BoolLiteral(pub Literal<bool>);
 
 // convert `Token` to inner `BoolLiteral`
 impl TryFrom<Token> for BoolLiteral {

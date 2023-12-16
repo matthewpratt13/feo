@@ -2,14 +2,14 @@ use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_types::{
-    span::Span, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, Literal,
-    PathExpression, PrimitiveType, Punctuation, TypeAnnotation,
+    Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
+    TypeAnnotation,
 };
 
 use crate::{
-    error::LexError,
+    error::ParserError,
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
-    parse::{Parse, ParseData},
+    parse::Parse,
 };
 
 mod token;
@@ -65,7 +65,7 @@ impl<'a> Lexer<'a> {
         self.errors.push(error_message);
     }
 
-    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexError> {
+    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserError> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -125,7 +125,7 @@ impl<'a> Lexer<'a> {
                                 doc_comment_content,
                                 start_pos,
                                 self.pos,
-                            );
+                            )?;
                             tokens.push(doc_comment);
                         } else {
                             while let Some(c) = self.current_char() {
@@ -137,7 +137,7 @@ impl<'a> Lexer<'a> {
                             }
 
                             let comment =
-                                Comment::parse(self.input, String::from(""), start_pos, self.pos);
+                                Comment::parse(self.input, String::from(""), start_pos, self.pos)?;
 
                             tokens.push(comment);
                         }
@@ -168,7 +168,7 @@ impl<'a> Lexer<'a> {
                                     doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                );
+                                )?;
                                 tokens.push(doc_comment);
                                 break;
                             } else {
@@ -199,7 +199,7 @@ impl<'a> Lexer<'a> {
                                     String::from(""),
                                     start_pos,
                                     self.pos,
-                                );
+                                )?;
 
                                 tokens.push(comment);
                                 break;
@@ -248,13 +248,12 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // TODO: sort out parsing func
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
                     match c {
-                        '(' => tokens.push(Delimiter::parse(self.input, ')', start_pos, self.pos)),
-                        '[' => tokens.push(Delimiter::parse(self.input, ']', start_pos, self.pos)),
-                        '{' => tokens.push(self.input, '}', start_pos, self.pos),
+                        '(' => tokens.push(Delimiter::parse(self.input, '(', start_pos, self.pos)?),
+                        '[' => tokens.push(Delimiter::parse(self.input, '[', start_pos, self.pos)?),
+                        '{' => tokens.push(Delimiter::parse(self.input, '{', start_pos, self.pos)?),
                     };
                     let tree = TokenTree::build(
                         self.input,
@@ -265,12 +264,11 @@ impl<'a> Lexer<'a> {
                     token_trees.push(tree);
                 }
 
-                // TODO: sort out parsing func
                 ')' | ']' | '}' => {
                     match c {
-                        ')' => tokens.push(Delimiter::parse(self.input, ')', start_pos, self.pos)),
-                        ']' => tokens.push(Delimiter::parse(self.input, ']', start_pos, self.pos)),
-                        '}' => tokens.push(self.input, '}', start_pos, self.pos),
+                        ')' => tokens.push(Delimiter::parse(self.input, ')', start_pos, self.pos)?),
+                        ']' => tokens.push(Delimiter::parse(self.input, ']', start_pos, self.pos)?),
+                        '}' => tokens.push(Delimiter::parse(self.input, '}', start_pos, self.pos)?),
                     };
                     // TODO: check that this closing delimiter matches the opening one
                     let tree = TokenTree::build(
@@ -293,13 +291,13 @@ impl<'a> Lexer<'a> {
                     while let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                // handle escape code
+                                // TODO: handle escape code
                             }
 
                             '"' => {
                                 self.advance(); // skip closing double quote
                                 let string_lit =
-                                    StringLiteral::parse(self.input, buf, start_pos, self.pos);
+                                    StringLiteral::parse(self.input, buf, start_pos, self.pos)?;
                                 tokens.push(string_lit);
                                 break;
                             }
@@ -318,15 +316,15 @@ impl<'a> Lexer<'a> {
                     if let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                // handle escape code
+                                // TODO: handle escape code
                             }
                             '\'' => self.log_error("Empty character literal"),
                             _ => {
                                 self.advance(); // consume the char
-                                if self.get_current_char() == Some('\'') {
+                                if self.current_char() == Some('\'') {
                                     self.advance(); // skip closing single quote
                                     let char_lit =
-                                        CharLiteral::parse(self.input, c, start_pos, self.pos);
+                                        CharLiteral::parse(self.input, c, start_pos, self.pos)?;
                                     tokens.push(char_lit);
                                 } else {
                                     self.log_error("Invalid character literal");
@@ -415,9 +413,12 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
-                    // TODO:
-                    let punc = Punctuation::parse(self.input, punc_content, start_pos, self.pos);
-                    tokens.push(punc)
+                    if let Ok(p) = Punctuation::parse(self.input, punc_content, start_pos, self.pos)
+                    {
+                        tokens.push(p)
+                    } else {
+                        self.log_error("Error punctuation uint");
+                    }
                 }
             }
         }
@@ -920,7 +921,7 @@ fn gpt_is_punctuation(c: char) -> bool {
 
 ///////////////////////////////////////////////////////////////////////////
 
-impl Iterator for Lexer<'_> {
+impl Iterator for Leer<'_> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {

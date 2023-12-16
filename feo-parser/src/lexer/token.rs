@@ -1,12 +1,10 @@
-use std::sync::Arc;
-
 use feo_types::span::{Span, Spanned};
 use feo_types::{
     Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
     TypeAnnotation,
 };
 
-use crate::error::LexError;
+use crate::error::ParserError;
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
@@ -51,10 +49,10 @@ impl<T> TokenStream<T> {
         tokens: Vec<Option<T>>,
         start: usize,
         end: usize,
-    ) -> Result<Self, LexError> {
+    ) -> Result<Self, ParserError> {
         Ok(Self {
             tokens,
-            span: Span::new(Arc::new(src.to_string()), start, end),
+            span: Span::new(src, start, end),
         })
     }
 
@@ -77,7 +75,7 @@ impl TokenTree {
         tokens: Vec<Option<Token>>,
         start: usize,
         end: usize,
-    ) -> Result<Option<Self>, LexError> {
+    ) -> Result<Option<Self>, ParserError> {
         Ok(Some(Self(TokenStream::build(src, tokens, start, end)?)))
     }
 }
