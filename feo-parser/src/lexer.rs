@@ -7,7 +7,7 @@ use feo_types::{
 };
 
 use crate::{
-    error::ParserError,
+    error::{LexError, ParserError},
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     parse::Parse,
 };
@@ -99,8 +99,8 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '/' => match self.peek_next() {
                     Some('/') => {
-                        self.advance();
-                        self.advance();
+                        self.advance(); // skip first '\''
+                        self.advance(); // skip second '\''
 
                         let start_pos = self.pos;
 
@@ -136,6 +136,7 @@ impl<'a> Lexer<'a> {
                                 }
                             }
 
+                            // no need to store ordinary comment content
                             let comment =
                                 Comment::parse(self.input, String::from(""), start_pos, self.pos)?;
 
@@ -144,8 +145,8 @@ impl<'a> Lexer<'a> {
                     }
 
                     Some('!') => {
-                        self.advance();
-                        self.advance();
+                        self.advance(); // skip '/'
+                        self.advance(); // skip '!'
                         in_block_comment = true;
 
                         let start_pos = self.pos;
@@ -156,8 +157,8 @@ impl<'a> Lexer<'a> {
                             }
 
                             if c == '*' && self.peek_next() == Some('/') {
-                                self.advance();
-                                self.advance();
+                                self.advance(); // skip '*'
+                                self.advance(); // skip '/'
                                 in_block_comment = false;
 
                                 let doc_comment_content =
@@ -175,25 +176,25 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                             }
                         }
+
+                        // TODO: is logic sound ?
+                        self.log_error("Unterminated doc comment");
                     }
 
                     Some('*') => {
-                        self.advance();
-                        self.advance();
+                        self.advance(); // skip '/'
+                        self.advance(); // skip '*'
                         in_block_comment = true;
 
                         let start_pos = self.pos;
 
                         while let Some(c) = self.current_char() {
-                            if c == '\n' {
-                                continue;
-                            }
-
                             if c == '*' && self.peek_next() == Some('/') {
-                                self.advance();
-                                self.advance();
+                                self.advance(); // skip '*'
+                                self.advance(); // skip '/'
                                 in_block_comment = false;
 
+                                // no need to store ordinary comment content
                                 let comment = Comment::parse(
                                     self.input,
                                     String::from(""),
@@ -207,10 +208,13 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                             }
                         }
+
+                        // TODO: is logic sound ?
+                        self.gpt_log_error("Unterminated block comment");
                     }
 
                     Some(_) | None => {
-                        self.log_error("Unexpected comment");
+                        self.log_error("Unexpected comment format");
                     }
                 },
 
@@ -220,9 +224,10 @@ impl<'a> Lexer<'a> {
                     while let Some(c) = self.current_char() {
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
-                            self.advance()
+                            self.advance();
                         } else if c == ':' {
-                            self.advance(); // skip ':' for `TypeAnnotation`;
+                            // check for `TypeAnnotation` syntax
+                            self.advance(); // skip ':'
                             self.skip_whitespace();
                             let mut type_name = String::new();
 
@@ -239,6 +244,7 @@ impl<'a> Lexer<'a> {
                                 let type_ann =
                                     TypeAnnotation::parse(self.input, buf, start_pos, self.pos)?;
                                 tokens.push(type_ann);
+                                break;
                             }
                         } else if c == ':' && self.peek_next() == Some(':') {
                             // check for `PathExpression` syntax
@@ -267,6 +273,7 @@ impl<'a> Lexer<'a> {
                                     break;
                                 }
                             }
+
                             let path = PathExpression::parse(
                                 self.input,
                                 path_components,
@@ -274,6 +281,7 @@ impl<'a> Lexer<'a> {
                                 self.pos,
                             )?;
                             tokens.push(path);
+                            break;
                         } else {
                             break;
                         }
@@ -295,6 +303,7 @@ impl<'a> Lexer<'a> {
                         '(' => tokens.push(Delimiter::parse(self.input, '(', start_pos, self.pos)?),
                         '[' => tokens.push(Delimiter::parse(self.input, '[', start_pos, self.pos)?),
                         '{' => tokens.push(Delimiter::parse(self.input, '{', start_pos, self.pos)?),
+                        _ => unreachable!(),
                     };
                     let tree = TokenTree::build(
                         self.input,
@@ -303,6 +312,7 @@ impl<'a> Lexer<'a> {
                         self.pos,
                     )?;
                     token_trees.push(tree);
+                    self.advance(); // skip delimiter
                 }
 
                 ')' | ']' | '}' => {
@@ -318,14 +328,15 @@ impl<'a> Lexer<'a> {
                         self.pos - tokens.len(),
                         self.pos,
                     )?;
-                    token_trees.push(tree);
 
                     num_open_delimiters -= 1;
+
+                    token_trees.push(tree);
+                    self.advance(); // skip delimiter
                 }
 
                 '"' => {
                     self.advance(); // skip opening double quote
-                    let start_pos = self.pos;
 
                     let mut buf = String::new();
 
@@ -346,8 +357,12 @@ impl<'a> Lexer<'a> {
                                         '"' => buf.push('"'),
                                         '\'' => buf.push('\''),
                                         _ => self
-                                            .log_error("Invalid escape sequence in string literal"),
+                                            .log_error("Invalid escape sequence in char literal"),
                                     };
+                                } else {
+                                    // TODO: return `Err`
+                                    // Escape sequence is expected, but the input has ended
+                                    self.log_error("Unexpected end of input in escape sequence");
                                 }
                             }
 
@@ -356,7 +371,6 @@ impl<'a> Lexer<'a> {
                                 let string_lit =
                                     StringLiteral::parse(self.input, buf, start_pos, self.pos)?;
                                 tokens.push(string_lit);
-                                break;
                             }
 
                             _ => {
@@ -365,10 +379,13 @@ impl<'a> Lexer<'a> {
                             }
                         }
                     }
+
+                    // TODO: is logic sound ?
+                    // If we reach here, there's an unterminated string literal
+                    self.log_error("Unterminated string literal");
                 }
                 '\'' => {
                     self.advance(); // skip opening single quote
-                    let start_pos = self.pos;
 
                     if let Some(c) = self.current_char() {
                         match c {
@@ -400,14 +417,18 @@ impl<'a> Lexer<'a> {
                                         '\'' => CharLiteral::parse(
                                             self.input, '\'', start_pos, self.pos,
                                         ),
-                                        _ => return Err(ParserError::InvalidEscapeCode),
+                                        // TODO: return `Err`
+                                        _ => self
+                                            .log_error("Invalid escape sequence in string literal"),
                                     }?;
 
                                     tokens.push(char_lit);
                                 }
                             }
+                            // TODO: return `Err`
                             '\'' => self.log_error("Empty character literal"),
                             _ => {
+                                // regular char
                                 self.advance(); // consume the char
                                 if self.current_char() == Some('\'') {
                                     self.advance(); // skip closing single quote
@@ -415,25 +436,31 @@ impl<'a> Lexer<'a> {
                                         CharLiteral::parse(self.input, c, start_pos, self.pos)?;
                                     tokens.push(char_lit);
                                 } else {
+                                    // TODO: return `Err`
                                     self.log_error("Invalid character literal");
                                 }
                             }
                         }
                     } else {
+                        // TODO: return `Err`
                         self.log_error("Unexpected end of input in character literal");
                     }
                 }
 
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
+                    let start_pos = self.pos;
+
                     let mut is_float = false;
                     let mut is_hex = false;
                     let mut is_negative = false;
 
+                    // check for negative sign
                     if self.current_char() == Some('-') {
                         is_negative = true;
                         self.advance(); // skip '-'
                     }
 
+                    // check for hexadecimal prefix
                     if self.current_char() == Some('0')
                         && self.peek_next().map_or(false, |c| c == 'x' || c == 'X')
                     {
@@ -442,6 +469,7 @@ impl<'a> Lexer<'a> {
                         is_hex = true;
                     }
 
+                    // parse digits
                     while let Some(c) = self.current_char() {
                         if c.is_digit(10) || (is_hex && c.is_digit(16)) {
                             self.advance();
@@ -455,12 +483,14 @@ impl<'a> Lexer<'a> {
 
                     let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
+                    // parse and push the appropriate tokens to `tokens`
                     if is_float {
                         if let Ok(f) =
                             FloatLiteral::parse(self.input, num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
                         } else {
+                
                             self.log_error("Error parsing float");
                         }
                     } else if is_negative {
@@ -469,14 +499,17 @@ impl<'a> Lexer<'a> {
                         {
                             tokens.push(i);
                         } else {
+                            // TODO: return `Err` ?
                             self.log_error("Error parsing integer");
                         }
                     } else if is_hex {
-                        if let Ok(u) =
+                        if let Ok(h) =
+                            // TODO: remember to handle hexadecimal digits in `UintLiteral::parse()`
                             UIntLiteral::parse(self.input, num_content, start_pos, self.pos)
                         {
-                            tokens.push(u);
+                            tokens.push(h);
                         } else {
+                            // TODO: return `Err` ?
                             self.log_error("Error parsing hexadecimal uint");
                         }
                     } else {
@@ -485,6 +518,7 @@ impl<'a> Lexer<'a> {
                         {
                             tokens.push(u);
                         } else {
+                            // TODO: return `Err` ?
                             self.log_error("Error parsing uint");
                         }
                     }
@@ -505,13 +539,16 @@ impl<'a> Lexer<'a> {
                     {
                         tokens.push(p)
                     } else {
-                        self.log_error("Error punctuation uint");
+                        // TODO: return `Err`
+                        self.log_error(&format!("Unexpected character: {}", c));
+                        self.advance();
                     }
                 }
             }
         }
 
         if num_open_delimiters > 0 {
+            // TODO: return `Err`
             self.log_error("Unexpected end of input within delimiter");
         }
 
@@ -586,7 +623,7 @@ impl<'a> Lexer<'a> {
                             tokens.push(self.gpt_tokenize_delimiter());
                         }
                         _ => {
-                            // self.gpt_log_error(&format!("Unexpected character: {}", c));
+                            self.gpt_log_error(&format!("Unexpected character: {}", c));
                             self.gpt_advance();
                         }
                     }
