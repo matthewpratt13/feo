@@ -205,13 +205,14 @@ impl<'a> Lexer<'a> {
                             }
                         }
 
+                        
                         // TODO: is logic sound ?
                         self.log_error("Unterminated block comment");
                     }
-
-                    Some(_) | None => {
-                        self.log_error("Unexpected comment format");
-                    }
+                    
+                    // TODO: check comment opener/closer against '/' alone (i.e., division operator)
+                    // TODO: before returning `()`
+                    Some(_) | None => (),
                 },
 
                 // alphabetic or '_'
