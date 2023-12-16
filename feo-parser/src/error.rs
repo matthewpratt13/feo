@@ -5,5 +5,6 @@ pub enum LexError {
 
 #[derive(Debug)]
 pub enum ParserError {
-    InvalidEscapeCode
+    InvalidEscapeCode,
+    UnexpectedChar,
 }
