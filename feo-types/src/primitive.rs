@@ -8,9 +8,11 @@ impl Primitive for char {}
 
 impl Primitive for String {}
 
-impl Primitive for Vec<String> {}
+impl Primitive for &String {}
 
 impl Primitive for Arc<String> {}
+
+impl Primitive for Vec<String> {}
 
 impl Primitive for i32 {}
 

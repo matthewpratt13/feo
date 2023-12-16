@@ -6,7 +6,7 @@ pub trait Parse<T>
 where
     T: 'static + Primitive,
 {
-    fn parse(src: &str, content: T, start: usize, end: usize)
+    fn parse(src: &str, content: &T, start: usize, end: usize)
         -> Result<Option<Token>, ParserError>;
 }
 

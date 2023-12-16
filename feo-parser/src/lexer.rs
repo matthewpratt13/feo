@@ -41,8 +41,8 @@ impl<'a> Lexer<'a> {
         self.peekable_chars.next();
     }
 
-    fn current_char(&self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
+    fn current_char(&mut self) -> Option<char> {
+        self.peekable_chars.next()
     }
 
     // *mutable
@@ -70,8 +70,6 @@ impl<'a> Lexer<'a> {
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
         let mut in_block_comment = false; // generic inline / multiline comment
-        let mut is_negative_number = false;
-        let mut is_hexadecimal_int = false;
 
         let mut num_open_delimiters: usize = 0;
         // let mut file_start_offset: usize = 0;
@@ -122,7 +120,7 @@ impl<'a> Lexer<'a> {
 
                             let doc_comment = DocComment::parse(
                                 self.input,
-                                doc_comment_content,
+                                &doc_comment_content,
                                 start_pos,
                                 self.pos,
                             )?;
@@ -138,7 +136,7 @@ impl<'a> Lexer<'a> {
 
                             // no need to store ordinary comment content
                             let comment =
-                                Comment::parse(self.input, String::from(""), start_pos, self.pos)?;
+                                Comment::parse(self.input, &String::from(""), start_pos, self.pos)?;
 
                             tokens.push(comment);
                         }
@@ -166,7 +164,7 @@ impl<'a> Lexer<'a> {
 
                                 let doc_comment = DocComment::parse(
                                     self.input,
-                                    doc_comment_content,
+                                    &doc_comment_content,
                                     start_pos,
                                     self.pos,
                                 )?;
@@ -197,7 +195,7 @@ impl<'a> Lexer<'a> {
                                 // no need to store ordinary comment content
                                 let comment = Comment::parse(
                                     self.input,
-                                    String::from(""),
+                                    &String::from(""),
                                     start_pos,
                                     self.pos,
                                 )?;
@@ -246,7 +244,7 @@ impl<'a> Lexer<'a> {
 
                             if !type_name.is_empty() {
                                 let type_ann =
-                                    TypeAnnotation::parse(self.input, buf, start_pos, self.pos)?;
+                                    TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)?;
                                 tokens.push(type_ann);
                                 break;
                             }
@@ -280,7 +278,7 @@ impl<'a> Lexer<'a> {
 
                             let path = PathExpression::parse(
                                 self.input,
-                                path_components,
+                                &path_components,
                                 start_pos,
                                 self.pos,
                             )?;
@@ -291,12 +289,13 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    if let Ok(k) = Keyword::parse(self.input, buf, start_pos, self.pos) {
+                    if let Ok(k) = Keyword::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(k);
-                    } else if let Ok(b) = BoolLiteral::parse(self.input, buf, start_pos, self.pos) {
+                    } else if let Ok(b) = BoolLiteral::parse(self.input, &buf, start_pos, self.pos)
+                    {
                         tokens.push(b);
                     } else {
-                        let iden = Identifier::parse(self.input, buf, start_pos, self.pos)?;
+                        let iden = Identifier::parse(self.input, &buf, start_pos, self.pos)?;
                         tokens.push(iden);
                     }
                 }
@@ -304,9 +303,15 @@ impl<'a> Lexer<'a> {
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
                     match c {
-                        '(' => tokens.push(Delimiter::parse(self.input, '(', start_pos, self.pos)?),
-                        '[' => tokens.push(Delimiter::parse(self.input, '[', start_pos, self.pos)?),
-                        '{' => tokens.push(Delimiter::parse(self.input, '{', start_pos, self.pos)?),
+                        '(' => {
+                            tokens.push(Delimiter::parse(self.input, &'(', start_pos, self.pos)?)
+                        }
+                        '[' => {
+                            tokens.push(Delimiter::parse(self.input, &'[', start_pos, self.pos)?)
+                        }
+                        '{' => {
+                            tokens.push(Delimiter::parse(self.input, &'{', start_pos, self.pos)?)
+                        }
                         _ => unreachable!(),
                     };
                     let tree = TokenTree::build(
@@ -321,9 +326,15 @@ impl<'a> Lexer<'a> {
 
                 ')' | ']' | '}' => {
                     match c {
-                        ')' => tokens.push(Delimiter::parse(self.input, ')', start_pos, self.pos)?),
-                        ']' => tokens.push(Delimiter::parse(self.input, ']', start_pos, self.pos)?),
-                        '}' => tokens.push(Delimiter::parse(self.input, '}', start_pos, self.pos)?),
+                        ')' => {
+                            tokens.push(Delimiter::parse(self.input, &')', start_pos, self.pos)?)
+                        }
+                        ']' => {
+                            tokens.push(Delimiter::parse(self.input, &']', start_pos, self.pos)?)
+                        }
+                        '}' => {
+                            tokens.push(Delimiter::parse(self.input, &'}', start_pos, self.pos)?)
+                        }
                         _ => unreachable!(),
                     };
                     // TODO: check that this closing delimiter matches the opening one
@@ -374,7 +385,7 @@ impl<'a> Lexer<'a> {
                             '"' => {
                                 self.advance(); // skip closing double quote
                                 let string_lit =
-                                    StringLiteral::parse(self.input, buf, start_pos, self.pos)?;
+                                    StringLiteral::parse(self.input, &buf, start_pos, self.pos)?;
                                 tokens.push(string_lit);
                             }
 
@@ -402,25 +413,25 @@ impl<'a> Lexer<'a> {
 
                                     let char_lit = match esc_c {
                                         'n' => CharLiteral::parse(
-                                            self.input, '\n', start_pos, self.pos,
+                                            self.input, &'\n', start_pos, self.pos,
                                         ),
                                         'r' => CharLiteral::parse(
-                                            self.input, '\r', start_pos, self.pos,
+                                            self.input, &'\r', start_pos, self.pos,
                                         ),
                                         't' => CharLiteral::parse(
-                                            self.input, '\t', start_pos, self.pos,
+                                            self.input, &'\t', start_pos, self.pos,
                                         ),
                                         '\\' => CharLiteral::parse(
-                                            self.input, '\\', start_pos, self.pos,
+                                            self.input, &'\\', start_pos, self.pos,
                                         ),
                                         '0' => CharLiteral::parse(
-                                            self.input, '\0', start_pos, self.pos,
+                                            self.input, &'\0', start_pos, self.pos,
                                         ),
-                                        '"' => {
-                                            CharLiteral::parse(self.input, '"', start_pos, self.pos)
-                                        }
+                                        '"' => CharLiteral::parse(
+                                            self.input, &'"', start_pos, self.pos,
+                                        ),
                                         '\'' => CharLiteral::parse(
-                                            self.input, '\'', start_pos, self.pos,
+                                            self.input, &'\'', start_pos, self.pos,
                                         ),
                                         // TODO: return `Err`
                                         _ => return Err(ParserError::InvalidEscapeCode),
@@ -437,7 +448,7 @@ impl<'a> Lexer<'a> {
                                 if self.current_char() == Some('\'') {
                                     self.advance(); // skip closing single quote
                                     let char_lit =
-                                        CharLiteral::parse(self.input, c, start_pos, self.pos)?;
+                                        CharLiteral::parse(self.input, &c, start_pos, self.pos)?;
                                     tokens.push(char_lit);
                                 } else {
                                     // TODO: return `Err`
@@ -490,7 +501,7 @@ impl<'a> Lexer<'a> {
                     // parse and push the appropriate tokens to `tokens`
                     if is_float {
                         if let Ok(f) =
-                            FloatLiteral::parse(self.input, num_content, start_pos, self.pos)
+                            FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
                         } else {
@@ -498,7 +509,7 @@ impl<'a> Lexer<'a> {
                         }
                     } else if is_negative {
                         if let Ok(i) =
-                            IntLiteral::parse(self.input, num_content, start_pos, self.pos)
+                            IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(i);
                         } else {
@@ -508,7 +519,7 @@ impl<'a> Lexer<'a> {
                     } else if is_hex {
                         if let Ok(h) =
                             // TODO: remember to handle hexadecimal digits in `UintLiteral::parse()`
-                            UIntLiteral::parse(self.input, num_content, start_pos, self.pos)
+                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(h);
                         } else {
@@ -517,7 +528,7 @@ impl<'a> Lexer<'a> {
                         }
                     } else {
                         if let Ok(u) =
-                            UIntLiteral::parse(self.input, num_content, start_pos, self.pos)
+                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(u);
                         } else {
@@ -543,7 +554,8 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
-                    if let Ok(p) = Punctuation::parse(self.input, punc_content, start_pos, self.pos)
+                    if let Ok(p) =
+                        Punctuation::parse(self.input, &punc_content, start_pos, self.pos)
                     {
                         tokens.push(p)
                     } else {

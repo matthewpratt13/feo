@@ -23,7 +23,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -37,7 +37,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -51,7 +51,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -65,7 +65,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -79,7 +79,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -93,7 +93,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -107,7 +107,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -121,7 +121,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -135,7 +135,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -149,7 +149,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -163,7 +163,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -177,7 +177,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -191,7 +191,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
@@ -205,7 +205,7 @@ where
 {
     fn parse(
         src: &str,
-        content: T,
+        content: &T,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
