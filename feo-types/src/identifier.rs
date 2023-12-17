@@ -24,6 +24,12 @@ pub struct PathExpression {
     span: Span,
 }
 
+impl PathExpression {
+    pub fn new(path: Vec<String>, span: Span) -> Self {
+        Self { path, span }
+    }
+}
+
 impl Spanned for PathExpression {
     fn span(&self) -> &Span {
         &self.span

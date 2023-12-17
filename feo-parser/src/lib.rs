@@ -21,7 +21,7 @@ pub mod error;
 
 impl<T> Parse<T> for CharLiteral
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -217,7 +217,7 @@ where
 
 impl<T> Parse<T> for Comment
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -231,7 +231,7 @@ where
 
 impl<T> Parse<T> for DocComment
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -259,7 +259,7 @@ where
 
 impl<T> Parse<T> for Delimiter
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -273,7 +273,7 @@ where
 
 impl<T> Parse<T> for Punctuation
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -287,7 +287,7 @@ where
 
 impl<T> Parse<T> for TypeAnnotation
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
