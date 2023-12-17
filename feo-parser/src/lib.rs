@@ -3,7 +3,7 @@ use std::fmt::Display;
 use error::ParserError;
 use feo_types::{
     span::Span, Comment, Delimiter, DocComment, Identifier, Keyword, KeywordKind, Literal,
-    PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation,
+    PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation, TypeName,
 };
 
 mod lexer;
@@ -314,6 +314,27 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let type_name = match content.to_string().as_str() {
+            "bool" => Ok(TypeName::BoolType),
+            "char" => Ok(TypeName::CharType),
+            "f32" => Ok(TypeName::F32Type),
+            "f64" => Ok(TypeName::F64Type),
+            "i32" => Ok(TypeName::I32Type),
+            "i64" => Ok(TypeName::I64Type),
+            "String" => Ok(TypeName::StringType),
+            "u8" => Ok(TypeName::U8Type),
+            "u16" => Ok(TypeName::U16Type),
+            "u32" => Ok(TypeName::U32Type),
+            "u64" => Ok(TypeName::U32Type),
+            _ => Ok(TypeName::CustomType(content.to_string())),
+        }?;
+
+        let type_ann = TypeAnnotation::new(type_name, span);
+
+        let token = Token::Type(type_ann);
+
+        Ok(Some(token))
     }
 }

@@ -65,7 +65,6 @@ pub enum TypeName {
     U16Type,
     U32Type,
     U64Type,
-    U256Type,
 
     CustomType(String),
 }
