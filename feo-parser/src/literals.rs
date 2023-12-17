@@ -12,7 +12,7 @@ impl TryFrom<Token> for CharLiteral {
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::CharLit(c) => Ok(c),
-            _ => Err(LexError::TokenNotFound),
+            _ => Err(LexError::MismatchedTokenType),
         }
     }
 }
@@ -27,7 +27,7 @@ impl TryFrom<Token> for StringLiteral {
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::StringLit(s) => Ok(s),
-            _ => Err(LexError::TokenNotFound),
+            _ => Err(LexError::MismatchedTokenType),
         }
     }
 }
@@ -42,7 +42,7 @@ impl TryFrom<Token> for IntLiteral {
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::IntLit(i) => Ok(i),
-            _ => Err(LexError::TokenNotFound),
+            _ => Err(LexError::MismatchedTokenType),
         }
     }
 }
@@ -57,7 +57,7 @@ impl TryFrom<Token> for UIntLiteral {
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::UIntLit(u) => Ok(u),
-            _ => Err(LexError::TokenNotFound),
+            _ => Err(LexError::MismatchedTokenType),
         }
     }
 }
@@ -72,7 +72,7 @@ impl TryFrom<Token> for FloatLiteral {
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::FloatLit(f) => Ok(f),
-            _ => Err(LexError::TokenNotFound),
+            _ => Err(LexError::MismatchedTokenType),
         }
     }
 }
@@ -87,7 +87,7 @@ impl TryFrom<Token> for BoolLiteral {
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::BoolLit(b) => Ok(b),
-            _ => Err(LexError::TokenNotFound),
+            _ => Err(LexError::MismatchedTokenType),
         }
     }
 }

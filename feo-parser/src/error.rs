@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub enum LexError {
-    TokenNotFound,
+    MismatchedTokenType,
 }
 
 #[derive(Debug)]

@@ -430,7 +430,6 @@ impl<'a> Lexer<'a> {
                                         '\'' => CharLiteral::parse(
                                             self.input, &'\'', start_pos, self.pos,
                                         ),
-                                        // TODO: return `Err`
                                         _ => return Err(ParserError::InvalidEscapeCode),
                                     }?;
 
