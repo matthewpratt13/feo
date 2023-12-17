@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::span::{Span, Spanned};
 
 #[derive(Debug)]
@@ -25,13 +27,21 @@ pub struct PathExpression {
 }
 
 impl PathExpression {
-    pub fn new(path: Vec<String>, span: Span) -> Self {
-        Self { path, span }
+    pub fn new(path: String, span: Span) -> Self {
+        let split = path.as_str().split("::").into_iter().map(|s| s.to_string()).collect();
+
+        Self { path: split, span }
     }
 }
 
 impl Spanned for PathExpression {
     fn span(&self) -> &Span {
         &self.span
+    }
+}
+
+impl fmt::Display for PathExpression {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt.debug_set().entries(self.path.iter()).finish()
     }
 }

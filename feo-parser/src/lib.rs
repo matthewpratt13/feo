@@ -2,8 +2,8 @@ use std::fmt::Display;
 
 use feo_types::{
     span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
-    KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation,
-    TypeName,
+    KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, PuncKind, Punctuation,
+    TypeAnnotation, TypeName,
 };
 
 mod lexer;
@@ -46,9 +46,9 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let lit = Literal::new(content.to_string(), span);
+        let string_lit = Literal::new(content.to_string(), span);
 
-        let token = Token::StringLit(StringLiteral(lit));
+        let token = Token::StringLit(StringLiteral(string_lit));
 
         Ok(Some(token))
     }
@@ -66,11 +66,11 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.to_string().parse::<char>()?;
+        let parsed = content.to_string().parse::<bool>()?;
 
-        let lit = Literal::new(parsed, span);
+        let bool_lit = Literal::new(parsed, span);
 
-        let token = Token::CharLit(CharLiteral(lit));
+        let token = Token::BoolLit(BoolLiteral(bool_lit));
 
         Ok(Some(token))
     }
@@ -90,9 +90,9 @@ where
 
         let parsed = i64::from_str_radix(&content.to_string(), 10 | 16)?;
 
-        let lit = Literal::new(parsed, span);
+        let int_lit = Literal::new(parsed, span);
 
-        let token = Token::IntLit(IntLiteral(lit));
+        let token = Token::IntLit(IntLiteral(int_lit));
 
         Ok(Some(token))
     }
@@ -112,9 +112,9 @@ where
 
         let parsed = u64::from_str_radix(&content.to_string(), 10 | 16)?;
 
-        let lit = Literal::new(parsed, span);
+        let uint_lit = Literal::new(parsed, span);
 
-        let token = Token::UIntLit(UIntLiteral(lit));
+        let token = Token::UIntLit(UIntLiteral(uint_lit));
 
         Ok(Some(token))
     }
@@ -134,9 +134,9 @@ where
 
         let parsed = content.to_string().parse::<f64>()?;
 
-        let lit = Literal::new(parsed, span);
+        let float_lit = Literal::new(parsed, span);
 
-        let token = Token::FloatLit(FloatLiteral(lit));
+        let token = Token::FloatLit(FloatLiteral(float_lit));
 
         Ok(Some(token))
     }
@@ -269,7 +269,7 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let path_expr = PathExpression::new(content, span);
+        let path_expr = PathExpression::new(content.to_string(), span);
 
         let token = Token::Path(path_expr);
 
@@ -320,7 +320,63 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let punc_kind = match content.to_string().as_str() {
+            ":" => Ok(PuncKind::Colon),
+            ";" => Ok(PuncKind::Semicolon),
+            "," => Ok(PuncKind::Comma),
+            "." => Ok(PuncKind::FullStop),
+            "_" => Ok(PuncKind::Underscore),
+            "::" => Ok(PuncKind::DoubleColon),
+            ".." => Ok(PuncKind::DoubleFullStop),
+            "//" => Ok(PuncKind::DoubleSlash),
+            "///" => Ok(PuncKind::TripleSlash),
+            "/*" => Ok(PuncKind::SlashAsterisk),
+            "*/" => Ok(PuncKind::AsteriskSlash),
+            "!" => Ok(PuncKind::Bang),
+            "#" => Ok(PuncKind::Hash),
+            "%" => Ok(PuncKind::Percent),
+            "&" => Ok(PuncKind::Ampersand),
+            "*" => Ok(PuncKind::Asterisk),
+            "+" => Ok(PuncKind::Plus),
+            "-" => Ok(PuncKind::Minus),
+            "/" => Ok(PuncKind::ForwardSlash),
+            "<" => Ok(PuncKind::LessThan),
+            "=" => Ok(PuncKind::Equals),
+            ">" => Ok(PuncKind::GreaterThan),
+            "?" => Ok(PuncKind::QuestionMark),
+            "@" => Ok(PuncKind::AtSign),
+            "|" => Ok(PuncKind::Pipe),
+            "!=" => Ok(PuncKind::BangEquals),
+            "%=" => Ok(PuncKind::PercentEquals),
+            "*=" => Ok(PuncKind::AsteriskEquals),
+            "**" => Ok(PuncKind::DoubleAsterisk),
+            "&&" => Ok(PuncKind::DoubleAmpersand),
+            "+=" => Ok(PuncKind::PlusEquals),
+            "-=" => Ok(PuncKind::MinusEquals),
+            "/=" => Ok(PuncKind::ForwardSlashEquals),
+            "<=" => Ok(PuncKind::LessThanEquals),
+            "==" => Ok(PuncKind::DoubleEquals),
+            ">=" => Ok(PuncKind::GreaterThanEquals),
+            "->" => Ok(PuncKind::ThinArrow),
+            "=>" => Ok(PuncKind::FatArrow),
+            "||" => Ok(PuncKind::DoublePipe),
+            "\n" => Ok(PuncKind::Newline),
+            "\r" => Ok(PuncKind::Return),
+            "\t" => Ok(PuncKind::Tab),
+            "\\" => Ok(PuncKind::Backslash),
+            "\0" => Ok(PuncKind::Null),
+            "\'" => Ok(PuncKind::SingleQuote),
+            "\"" => Ok(PuncKind::DoubleQuote),
+            _ => Err(ParserError::InvalidPunctuation),
+        }?;
+
+        let punc = Punctuation::new(punc_kind, span);
+
+        let token = Token::Punc(punc);
+
+        Ok(Some(token))
     }
 }
 

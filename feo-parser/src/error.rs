@@ -8,5 +8,6 @@ pub enum ParserError {
     InvalidEscapeCode,
     InvalidKeyword,
     InvalidDelimiter,
+    InvalidPunctuation,
     UnexpectedChar,
 }
