@@ -8,7 +8,7 @@ impl Primitive for char {}
 
 impl Primitive for String {}
 
-impl Primitive for &String {}
+impl Primitive for &str {}
 
 impl Primitive for Arc<String> {}
 
