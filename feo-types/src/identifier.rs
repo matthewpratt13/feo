@@ -27,10 +27,8 @@ pub struct PathExpression {
 }
 
 impl PathExpression {
-    pub fn new(path: String, span: Span) -> Self {
-        let split = path.as_str().split("::").into_iter().map(|s| s.to_string()).collect();
-
-        Self { path: split, span }
+    pub fn new(path: Vec<String>, span: Span) -> Self {
+        Self { path, span }
     }
 }
 

@@ -13,7 +13,7 @@ mod literals;
 use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral};
 
 mod parse;
-use parse::Parse;
+use parse::{Parse, ParseVec};
 
 pub mod error;
 use error::ParserError;
@@ -256,20 +256,21 @@ where
     }
 }
 
-// TODO: find a way to properly implement this:
-impl<T> Parse<T> for PathExpression
+impl<T> ParseVec<T> for PathExpression
 where
     T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
-        content: &T,
+        content: &Vec<T>,
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let path_expr = PathExpression::new(content.to_string(), span);
+        let path: Vec<String> = content.into_iter().map(|t| t.to_string()).collect();
+
+        let path_expr = PathExpression::new(path, span);
 
         let token = Token::Path(path_expr);
 

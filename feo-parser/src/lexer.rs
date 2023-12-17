@@ -9,7 +9,7 @@ use feo_types::{
 use crate::{
     error::ParserError,
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
-    parse::Parse,
+    parse::{Parse, ParseVec},
 };
 
 mod token;

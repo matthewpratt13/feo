@@ -14,6 +14,18 @@ where
     ) -> Result<Option<Token>, ParserError>;
 }
 
+pub trait ParseVec<T>
+where
+    T: 'static + Primitive,
+{
+    fn parse(
+        src: &str,
+        content: &Vec<T>,
+        start: usize,
+        end: usize,
+    ) -> Result<Option<Token>, ParserError>;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // these are parsed …
