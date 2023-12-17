@@ -10,4 +10,8 @@ pub enum ParserError {
     InvalidDelimiter,
     InvalidPunctuation,
     UnexpectedChar,
+    ParseBoolError,
+    ParseIntError,
+    ParseFloatError,
+    ParseCharError,
 }

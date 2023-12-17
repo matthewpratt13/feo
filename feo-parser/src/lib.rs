@@ -18,8 +18,6 @@ use parse::{Parse, ParseVec};
 pub mod error;
 use error::ParserError;
 
-// TODO:
-
 impl<T> Parse<T> for CharLiteral
 where
     T: 'static + Primitive + Display,
@@ -30,7 +28,18 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let parsed = content
+            .to_string()
+            .parse::<char>()
+            .map_err(|_| ParserError::ParseCharError)?;
+
+        let char_lit = Literal::new(parsed, span);
+
+        let token = Token::CharLit(CharLiteral(char_lit));
+
+        Ok(Some(token))
     }
 }
 
@@ -66,7 +75,10 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.to_string().parse::<bool>()?;
+        let parsed = content
+            .to_string()
+            .parse::<bool>()
+            .map_err(|_| ParserError::ParseBoolError)?;
 
         let bool_lit = Literal::new(parsed, span);
 
@@ -88,7 +100,8 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let parsed = i64::from_str_radix(&content.to_string(), 10 | 16)?;
+        let parsed = i64::from_str_radix(&content.to_string(), 10 | 16)
+            .map_err(|_| ParserError::ParseIntError)?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -110,7 +123,8 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let parsed = u64::from_str_radix(&content.to_string(), 10 | 16)?;
+        let parsed = u64::from_str_radix(&content.to_string(), 10 | 16)
+            .map_err(|_| ParserError::ParseIntError)?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -132,7 +146,10 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.to_string().parse::<f64>()?;
+        let parsed = content
+            .to_string()
+            .parse::<f64>()
+            .map_err(|_| ParserError::ParseFloatError)?;
 
         let float_lit = Literal::new(parsed, span);
 
