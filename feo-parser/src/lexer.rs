@@ -15,6 +15,7 @@ use crate::{
 mod token;
 pub(crate) use self::token::{Token, TokenStream, TokenTree};
 
+#[allow(dead_code)]
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
@@ -22,6 +23,7 @@ struct Lexer<'a> {
     errors: Vec<String>,
 }
 
+#[allow(dead_code)]
 impl<'a> Lexer<'a> {
     fn new(input: &'a str) -> Self {
         Self {
@@ -205,11 +207,10 @@ impl<'a> Lexer<'a> {
                             }
                         }
 
-                        
                         // TODO: is logic sound ?
                         self.log_error("Unterminated block comment");
                     }
-                    
+
                     // TODO: check comment opener/closer against '/' alone (i.e., division operator)
                     // TODO: before returning `()`
                     Some(_) | None => (),

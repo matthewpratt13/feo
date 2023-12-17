@@ -38,11 +38,13 @@ pub enum Token {
     Type(TypeAnnotation),
 }
 
+#[allow(dead_code)]
 pub struct TokenStream<T> {
     tokens: Vec<Option<T>>,
     span: Span,
 }
 
+#[allow(dead_code)]
 impl<T> TokenStream<T> {
     pub fn build(
         src: &str,
