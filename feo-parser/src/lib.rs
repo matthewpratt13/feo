@@ -1,7 +1,9 @@
+use std::fmt::Display;
+
 use error::ParserError;
 use feo_types::{
-    Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Primitive, Punctuation,
-    TypeAnnotation,
+    span::Span, Comment, Delimiter, DocComment, Identifier, Keyword, Literal, PathExpression,
+    Primitive, PrimitiveType, Punctuation, TypeAnnotation,
 };
 
 mod lexer;
@@ -33,7 +35,7 @@ where
 
 impl<T> Parse<T> for StringLiteral
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -41,7 +43,13 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let string_lit = Literal::new(content.to_string(), span);
+
+        let token = Token::StringLit(StringLiteral(string_lit));
+
+        Ok(Some(token))
     }
 }
 
