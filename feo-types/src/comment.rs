@@ -6,6 +6,12 @@ pub struct Comment {
     span: Span,
 }
 
+impl Comment {
+    pub fn new(content: String, span: Span) -> Self {
+        Self { content, span }
+    }
+}
+
 impl Spanned for Comment {
     fn span(&self) -> &Span {
         &self.span
@@ -16,6 +22,12 @@ impl Spanned for Comment {
 pub struct DocComment {
     pub content: String,
     span: Span,
+}
+
+impl DocComment {
+    pub fn new(content: String, span: Span) -> Self {
+        Self { content, span }
+    }
 }
 
 impl Spanned for DocComment {

@@ -225,7 +225,13 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let comment = Comment::new(content.to_string(), span);
+
+        let token = Token::Comment(comment);
+
+        Ok(Some(token))
     }
 }
 
@@ -239,13 +245,20 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let doc_comment = DocComment::new(content.to_string(), span);
+
+        let token = Token::DocComment(doc_comment);
+
+        Ok(Some(token))
     }
 }
 
+// TODO: find a way to properly implement this:
 impl<T> Parse<T> for PathExpression
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -253,7 +266,13 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let path_expr = PathExpression::new(content, span);
+
+        let token = Token::Path(path_expr);
+
+        Ok(Some(token))
     }
 }
 
