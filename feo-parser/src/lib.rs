@@ -2,8 +2,8 @@ use std::fmt::Display;
 
 use error::ParserError;
 use feo_types::{
-    span::Span, Comment, Delimiter, DocComment, Identifier, Keyword, Literal, PathExpression,
-    Primitive, PrimitiveType, Punctuation, TypeAnnotation,
+    span::Span, Comment, Delimiter, DocComment, Identifier, Keyword, KeywordKind, Literal,
+    PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation,
 };
 
 mod lexer;
@@ -143,7 +143,7 @@ where
 
 impl<T> Parse<T> for Identifier
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -151,13 +151,19 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let iden = Identifier::new(content.to_string(), span);
+
+        let token = Token::Iden(iden);
+
+        Ok(Some(token))
     }
 }
 
 impl<T> Parse<T> for Keyword
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -165,7 +171,47 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let keyword_kind = match content.to_string().as_str() {
+            "abstract" => Ok(KeywordKind::AbstractKw),
+            "as" => Ok(KeywordKind::AsKw),
+            "break" => Ok(KeywordKind::BreakKw),
+            "const" => Ok(KeywordKind::ConstKw),
+            "continue" => Ok(KeywordKind::ContinueKw),
+            "deref" => Ok(KeywordKind::DerefKw),
+            "else" => Ok(KeywordKind::ElseKw),
+            "enum" => Ok(KeywordKind::EnumKw),
+            "for" => Ok(KeywordKind::ForKw),
+            "func" => Ok(KeywordKind::FuncKw),
+            "if" => Ok(KeywordKind::IfKw),
+            "impl" => Ok(KeywordKind::ImplKw),
+            "import" => Ok(KeywordKind::ImportKw),
+            "in" => Ok(KeywordKind::InKw),
+            "let" => Ok(KeywordKind::LetKw),
+            "library" => Ok(KeywordKind::LibraryKw),
+            "loop" => Ok(KeywordKind::LoopKw),
+            "match" => Ok(KeywordKind::MatchKw),
+            "mod" => Ok(KeywordKind::ModKw),
+            "mut" => Ok(KeywordKind::MutKw),
+            "pub" => Ok(KeywordKind::PubKw),
+            "ref" => Ok(KeywordKind::RefKw),
+            "return" => Ok(KeywordKind::ReturnKw),
+            "self" => Ok(KeywordKind::SelfKw),
+            "static" => Ok(KeywordKind::StaticKw),
+            "struct" => Ok(KeywordKind::StructKw),
+            "super" => Ok(KeywordKind::SuperKw),
+            "trait" => Ok(KeywordKind::TraitKw),
+            "type" => Ok(KeywordKind::TypeKw),
+            "while" => Ok(KeywordKind::WhileKw),
+            _ => Err(ParserError::InvalidKeyword),
+        }?;
+
+        let keyword = Keyword::new(keyword_kind, span);
+
+        let token = Token::Keyword(keyword);
+
+        Ok(Some(token))
     }
 }
 

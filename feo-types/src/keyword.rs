@@ -6,12 +6,10 @@ pub enum KeywordKind {
     AsKw,
     BreakKw,
     ConstKw,
-    ContractKw, // new type (fixed object with basic trait implementations)
     ContinueKw,
     DerefKw, // same as deref operator ('*')
     ElseKw,
     EnumKw,
-    FalseKw,
     ForKw,
     FuncKw,
     IfKw,
@@ -32,7 +30,6 @@ pub enum KeywordKind {
     StructKw,
     SuperKw, // only relevant in path expressions
     TraitKw,
-    TrueKw,
     TypeKw,
     WhileKw,
 }

@@ -6,6 +6,12 @@ pub struct Identifier {
     span: Span,
 }
 
+impl Identifier {
+    pub fn new(name: String, span: Span) -> Self {
+        Self { name, span }
+    }
+}
+
 impl Spanned for Identifier {
     fn span(&self) -> &Span {
         &self.span
