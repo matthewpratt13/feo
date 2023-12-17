@@ -77,7 +77,7 @@ where
 
 impl<T> Parse<T> for IntLiteral
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -85,13 +85,21 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let parsed = i64::from_str_radix(&content.to_string(), 10 | 16)?;
+
+        let lit = Literal::new(parsed, span);
+
+        let token = Token::IntLit(IntLiteral(lit));
+
+        Ok(Some(token))
     }
 }
 
 impl<T> Parse<T> for UIntLiteral
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -99,13 +107,21 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let parsed = u64::from_str_radix(&content.to_string(), 10 | 16)?;
+
+        let lit = Literal::new(parsed, span);
+
+        let token = Token::UIntLit(UIntLiteral(lit));
+
+        Ok(Some(token))
     }
 }
 
 impl<T> Parse<T> for FloatLiteral
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -113,7 +129,15 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let parsed = content.to_string().parse::<f64>()?;
+
+        let lit = Literal::new(parsed, span);
+
+        let token = Token::FloatLit(FloatLiteral(lit));
+
+        Ok(Some(token))
     }
 }
 
