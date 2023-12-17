@@ -1,6 +1,5 @@
 use std::fmt::Display;
 
-use error::ParserError;
 use feo_types::{
     span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
     KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation,
@@ -8,15 +7,16 @@ use feo_types::{
 };
 
 mod lexer;
+use lexer::Token;
 
 mod literals;
-use lexer::Token;
 use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral};
-use parse::Parse;
 
 mod parse;
+use parse::Parse;
 
 pub mod error;
+use error::ParserError;
 
 // TODO:
 
