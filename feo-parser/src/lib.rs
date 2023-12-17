@@ -45,9 +45,9 @@ where
     ) -> Result<Option<Token>, ParserError> {
         let span = Span::new(src, start, end);
 
-        let string_lit = Literal::new(content.to_string(), span);
+        let lit = Literal::new(content.to_string(), span);
 
-        let token = Token::StringLit(StringLiteral(string_lit));
+        let token = Token::StringLit(StringLiteral(lit));
 
         Ok(Some(token))
     }
@@ -55,7 +55,7 @@ where
 
 impl<T> Parse<T> for BoolLiteral
 where
-    T: 'static + Primitive,
+    T: 'static + Primitive + Display,
 {
     fn parse(
         src: &str,
@@ -63,7 +63,15 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let parsed = content.to_string().parse::<char>()?;
+
+        let lit = Literal::new(c, span);
+
+        let token = Token::CharLit(CharLiteral(lit));
+
+        Ok(Some(token))
     }
 }
 
