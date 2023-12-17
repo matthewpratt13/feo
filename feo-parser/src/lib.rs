@@ -67,7 +67,7 @@ where
 
         let parsed = content.to_string().parse::<char>()?;
 
-        let lit = Literal::new(c, span);
+        let lit = Literal::new(parsed, span);
 
         let token = Token::CharLit(CharLiteral(lit));
 
