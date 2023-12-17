@@ -2,8 +2,9 @@ use std::fmt::Display;
 
 use error::ParserError;
 use feo_types::{
-    span::Span, Comment, Delimiter, DocComment, Identifier, Keyword, KeywordKind, Literal,
-    PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation, TypeName,
+    span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
+    KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, Punctuation, TypeAnnotation,
+    TypeName,
 };
 
 mod lexer;
@@ -286,7 +287,26 @@ where
         start: usize,
         end: usize,
     ) -> Result<Option<Token>, ParserError> {
-        todo!()
+        let span = Span::new(src, start, end);
+
+        let delim_kind = match content.to_string().as_str() {
+            "(" | ")" => Ok(DelimKind::Paren),
+            "[" | "]" => Ok(DelimKind::Bracket),
+            "{" | "}" => Ok(DelimKind::Brace),
+            _ => Err(ParserError::InvalidDelimiter),
+        }?;
+
+        let delim_orientation = match content.to_string().as_str() {
+            "(" | "[" | "{" => Ok(DelimOrientation::Open),
+            ")" | "]" | "}" => Ok(DelimOrientation::Close),
+            _ => Err(ParserError::InvalidDelimiter),
+        }?;
+
+        let delim = Delimiter::new(delim_kind, delim_orientation, span);
+
+        let token = Token::Delim(delim);
+
+        Ok(Some(token))
     }
 }
 

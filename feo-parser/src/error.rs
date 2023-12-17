@@ -7,5 +7,6 @@ pub enum LexError {
 pub enum ParserError {
     InvalidEscapeCode,
     InvalidKeyword,
+    InvalidDelimiter,
     UnexpectedChar,
 }
