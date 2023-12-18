@@ -7,7 +7,7 @@ use feo_types::{
 };
 
 mod lexer;
-use lexer::Token;
+use lexer::{Lexer, Token};
 
 mod literals;
 use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral};
@@ -435,4 +435,21 @@ where
 
         Ok(Some(token))
     }
+}
+
+// TODO: return `LexError`
+pub fn lex() -> Result<(), ParserError> {
+    let filename = "path/to/your/file.txt"; // Change this to your file path
+    let source_code = std::fs::read_to_string(filename).expect("Error reading file");
+
+    let mut lexer = Lexer::new(&source_code);
+    let tokens = lexer.tokenize();
+
+    if let Ok(t) = tokens {
+        for token in t.tokens() {
+            println!("{:?}", token);
+        }
+    }
+
+    Ok(())
 }

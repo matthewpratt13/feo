@@ -38,13 +38,12 @@ pub enum Token {
     Type(TypeAnnotation),
 }
 
-#[allow(dead_code)]
+#[derive(Debug)]
 pub struct TokenStream<T> {
     tokens: Vec<Option<T>>,
     span: Span,
 }
 
-#[allow(dead_code)]
 impl<T> TokenStream<T> {
     pub fn build(
         src: &str,
@@ -58,8 +57,8 @@ impl<T> TokenStream<T> {
         })
     }
 
-    pub fn tokens(&self) -> &Vec<Option<T>> {
-        &self.tokens
+    pub fn tokens(&self) -> &[Option<T>] {
+        self.tokens.as_slice()
     }
 }
 
@@ -69,6 +68,7 @@ impl<T> Spanned for TokenStream<T> {
     }
 }
 
+#[derive(Debug)]
 pub struct TokenTree(TokenStream<Token>);
 
 impl TokenTree {

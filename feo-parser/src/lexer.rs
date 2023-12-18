@@ -15,17 +15,15 @@ use crate::{
 mod token;
 pub(crate) use self::token::{Token, TokenStream, TokenTree};
 
-#[allow(dead_code)]
-struct Lexer<'a> {
+pub(crate) struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     errors: Vec<String>,
 }
 
-#[allow(dead_code)]
 impl<'a> Lexer<'a> {
-    fn new(input: &'a str) -> Self {
+    pub fn new(input: &'a str) -> Self {
         Self {
             input,
             pos: 0,
@@ -62,7 +60,8 @@ impl<'a> Lexer<'a> {
         self.errors.push(error_message);
     }
 
-    fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserError> {
+    // TODO: return `LexError`
+    pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserError> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
