@@ -2,7 +2,7 @@ use feo_types::Literal;
 
 use crate::{error::LexError, lexer::Token};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
 
 // convert `Token` to inner `CharLiteral`
@@ -17,7 +17,7 @@ impl TryFrom<Token> for CharLiteral {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StringLiteral(pub Literal<String>);
 
 // convert `Token` to inner `StringLiteral`
@@ -32,7 +32,7 @@ impl TryFrom<Token> for StringLiteral {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IntLiteral(pub Literal<i64>);
 
 // convert `Token` to inner `IntLiteral`
@@ -47,7 +47,7 @@ impl TryFrom<Token> for IntLiteral {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UIntLiteral(pub Literal<u64>);
 
 // convert `Token` to inner `U256Literal`
@@ -62,7 +62,7 @@ impl TryFrom<Token> for UIntLiteral {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FloatLiteral(pub Literal<f64>);
 
 // convert `Token` to inner `FloatLiteral`
@@ -77,7 +77,7 @@ impl TryFrom<Token> for FloatLiteral {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BoolLiteral(pub Literal<bool>);
 
 // convert `Token` to inner `BoolLiteral`

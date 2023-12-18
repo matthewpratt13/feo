@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::span::{Span, Spanned};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Identifier {
     pub name: String,
     span: Span,
@@ -20,7 +20,7 @@ impl Spanned for Identifier {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PathExpression {
     pub path: Vec<String>,
     span: Span,

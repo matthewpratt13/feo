@@ -1,7 +1,7 @@
 use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum DelimKind {
     Paren,
     Bracket,
@@ -21,13 +21,13 @@ impl TryFrom<char> for DelimKind {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DelimOrientation {
     Open,
     Close,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Delimiter {
     pub delim: (DelimKind, DelimOrientation),
     span: Span,

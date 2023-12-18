@@ -3,7 +3,7 @@ use crate::{
     span::{Span, Spanned},
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Literal<L: 'static + Primitive> {
     raw_value: L,
     span: Span,

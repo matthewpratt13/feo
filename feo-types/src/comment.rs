@@ -1,6 +1,6 @@
 use crate::span::{Span, Spanned};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Comment {
     pub content: String,
     span: Span,
@@ -18,7 +18,7 @@ impl Spanned for Comment {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DocComment {
     pub content: String,
     span: Span,

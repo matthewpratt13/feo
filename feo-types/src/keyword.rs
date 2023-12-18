@@ -1,6 +1,6 @@
 use crate::span::{Span, Spanned};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum KeywordKind {
     AsKw,
     BreakKw,
@@ -33,7 +33,7 @@ pub enum KeywordKind {
     WhileKw,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Keyword {
     pub keyword_kind: KeywordKind,
     span: Span,
@@ -51,7 +51,7 @@ impl Spanned for Keyword {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TypeName {
     BoolType,
     CharType,
@@ -68,7 +68,7 @@ pub enum TypeName {
     CustomType(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TypeAnnotation {
     pub type_name: TypeName,
     span: Span,

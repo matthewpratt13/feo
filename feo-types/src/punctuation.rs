@@ -1,6 +1,6 @@
 use crate::span::{Span, Spanned};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PuncKind {
     Colon,
     Semicolon,
@@ -60,7 +60,7 @@ pub enum PuncKind {
     DoubleQuote,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Punctuation {
     pub punc_kind: PuncKind,
     span: Span,
