@@ -62,7 +62,7 @@ impl<'a> Lexer<'a> {
     }
 
     // TODO: return `LexError`
-    pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ParserError> {
+    pub fn tokenize(&mut self) -> TokenStream<TokenTree> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
@@ -601,7 +601,7 @@ impl<'a> Lexer<'a> {
             self.log_error("Unexpected end of input in character literal");
         }
 
-        let stream = TokenStream::build(self.input, token_trees, 0, self.pos);
+        let stream = TokenStream::new(self.input, token_trees, 0, self.pos);
         stream
     }
 }

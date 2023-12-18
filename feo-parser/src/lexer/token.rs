@@ -4,7 +4,7 @@ use feo_types::{
     TypeAnnotation,
 };
 
-use crate::error::{LexError, ParserError};
+use crate::error::LexError;
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
@@ -45,16 +45,11 @@ pub struct TokenStream<T> {
 }
 
 impl<T> TokenStream<T> {
-    pub fn build(
-        src: &str,
-        tokens: Vec<Option<T>>,
-        start: usize,
-        end: usize,
-    ) -> Result<Self, LexError> {
-        Ok(Self {
+    pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
+        Self {
             tokens,
             span: Span::new(src, start, end),
-        })
+        }
     }
 
     pub fn tokens(&self) -> &[Option<T>] {
@@ -72,13 +67,8 @@ impl<T> Spanned for TokenStream<T> {
 pub struct TokenTree(TokenStream<Token>);
 
 impl TokenTree {
-    pub fn build(
-        src: &str,
-        tokens: Vec<Option<Token>>,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Self>, LexError> {
-        Ok(Some(Self(TokenStream::build(src, tokens, start, end)?)))
+    pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
+        Self(TokenStream::new(src, tokens, start, end))
     }
 
     pub fn tokens(&self) -> &[Option<Token>] {
