@@ -353,7 +353,6 @@ where
     }
 }
 
-// convert `Token` to inner `IntLiteral`
 impl TryFrom<Token> for Delimiter {
     type Error = ();
 
