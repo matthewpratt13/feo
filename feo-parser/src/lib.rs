@@ -6,8 +6,6 @@ use feo_types::{
     TypeAnnotation, TypeName,
 };
 
-mod delimiter;
-
 mod lexer;
 use lexer::{Lexer, Token};
 
@@ -352,6 +350,18 @@ where
         let token = Token::Type(type_ann);
 
         Ok(Some(token))
+    }
+}
+
+// convert `Token` to inner `IntLiteral`
+impl TryFrom<Token> for Delimiter {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Delim(d) => Ok(d),
+            _ => return Err(()),
+        }
     }
 }
 
