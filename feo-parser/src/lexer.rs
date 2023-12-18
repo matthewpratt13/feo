@@ -467,7 +467,7 @@ impl<'a> Lexer<'a> {
                         self.log_error("Unexpected end of input in character literal");
                     }
                 }
-~
+
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
                     is_negative = true;
                     self.advance(); // skip '-'
