@@ -192,7 +192,6 @@ where
         let span = Span::new(src, start, end);
 
         let keyword_kind = match content.to_string().as_str() {
-            "abstract" => Ok(KeywordKind::AbstractKw),
             "as" => Ok(KeywordKind::AsKw),
             "break" => Ok(KeywordKind::BreakKw),
             "const" => Ok(KeywordKind::ConstKw),

@@ -2,7 +2,6 @@ use crate::span::{Span, Spanned};
 
 #[derive(Debug)]
 pub enum KeywordKind {
-    AbstractKw,
     AsKw,
     BreakKw,
     ConstKw,
