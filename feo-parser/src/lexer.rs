@@ -214,7 +214,7 @@ impl<'a> Lexer<'a> {
                     Some(_) | None => (),
                 },
 
-                // alphabetic or '_'
+                // `Identifier` + `Keyword` (cannot start with digit, but can contain)
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
@@ -299,13 +299,16 @@ impl<'a> Lexer<'a> {
                     num_open_delimiters += 1;
                     match c {
                         '(' => {
-                            tokens.push(Delimiter::parse(self.input, &'(', start_pos, self.pos)?)
+                            let delim = Delimiter::parse(self.input, &'(', start_pos, self.pos)?;
+                            tokens.push(delim);
                         }
                         '[' => {
-                            tokens.push(Delimiter::parse(self.input, &'[', start_pos, self.pos)?)
+                            let delim = Delimiter::parse(self.input, &'[', start_pos, self.pos)?;
+                            tokens.push(delim);
                         }
                         '{' => {
-                            tokens.push(Delimiter::parse(self.input, &'{', start_pos, self.pos)?)
+                            let delim = Delimiter::parse(self.input, &'{', start_pos, self.pos)?;
+                            tokens.push(delim);
                         }
                         _ => unreachable!(),
                     };
@@ -322,13 +325,16 @@ impl<'a> Lexer<'a> {
                 ')' | ']' | '}' => {
                     match c {
                         ')' => {
-                            tokens.push(Delimiter::parse(self.input, &')', start_pos, self.pos)?)
+                            let delim = Delimiter::parse(self.input, &')', start_pos, self.pos)?;
+                            tokens.push(delim);
                         }
                         ']' => {
-                            tokens.push(Delimiter::parse(self.input, &']', start_pos, self.pos)?)
+                            let delim = Delimiter::parse(self.input, &']', start_pos, self.pos)?;
+                            tokens.push(delim)
                         }
                         '}' => {
-                            tokens.push(Delimiter::parse(self.input, &'}', start_pos, self.pos)?)
+                            let delim = Delimiter::parse(self.input, &'}', start_pos, self.pos)?;
+                            tokens.push(delim);
                         }
                         _ => unreachable!(),
                     };
