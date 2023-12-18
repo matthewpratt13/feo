@@ -72,7 +72,6 @@ impl<'a> Lexer<'a> {
         let mut num_open_delimiters: usize = 0;
         let mut num_open_single_quotes: usize = 0;
         let mut num_open_double_quotes: usize = 0;
-        // let mut file_start_offset: usize = 0;
 
         let mut is_float = false;
         let mut is_negative = false;
@@ -83,11 +82,6 @@ impl<'a> Lexer<'a> {
 
             match c {
                 _ if c.is_whitespace() => {
-                    // move the reader to the first char if there is whitespace at the start
-                    // if start_pos - file_start_offset == 0 {
-                    // file_start_offset += 1;
-                    // }
-
                     self.skip_whitespace();
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
