@@ -75,6 +75,7 @@ impl<'a> Lexer<'a> {
 
         let mut is_float = false;
         let mut is_negative = false;
+        let mut is_hexadecimal = false;
 
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
@@ -466,65 +467,31 @@ impl<'a> Lexer<'a> {
                         self.log_error("Unexpected end of input in character literal");
                     }
                 }
-
+~
                 _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
                     is_negative = true;
                     self.advance(); // skip '-'
                 }
 
-                // hexadecimal number
                 _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
-                    let start_pos = if is_negative { self.pos - 1 } else { self.pos };
-
+                    is_hexadecimal = true;
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
-
-                    while let Some(c) = self.current_char() {
-                        if c.is_digit(16) {
-                            self.advance();
-                        } else if c == '.' && !is_float {
-                            self.advance();
-                            is_float = true;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    let hex_content = Arc::new(self.input[start_pos..self.pos].to_string());
-
-                    // parse and push the appropriate tokens to `tokens`
-                    if is_float {
-                        if let Ok(f) =
-                            FloatLiteral::parse(self.input, &hex_content, start_pos, self.pos)
-                        {
-                            tokens.push(f);
-                        } else {
-                            self.log_error("Error parsing float");
-                        }
-                    } else if is_negative {
-                        if let Ok(i) =
-                            IntLiteral::parse(self.input, &hex_content, start_pos, self.pos)
-                        {
-                            tokens.push(i);
-                        } else {
-                            self.log_error("Error parsing integer");
-                        }
-                    } else {
-                        if let Ok(u) =
-                            UIntLiteral::parse(self.input, &hex_content, start_pos, self.pos)
-                        {
-                            tokens.push(u);
-                        } else {
-                            self.log_error("Error parsing uint");
-                        }
-                    }
                 }
 
-                '0'..='9' => {
-                    let start_pos = if is_negative { self.pos - 1 } else { self.pos };
+                _ if c.is_digit(10) || (is_hexadecimal && c.is_digit(16)) => {
+                    let start_pos = if is_negative {
+                        if is_hexadecimal {
+                            self.pos - 3
+                        } else {
+                            self.pos - 1
+                        }
+                    } else {
+                        self.pos
+                    };
 
                     while let Some(c) = self.current_char() {
-                        if c.is_digit(10) {
+                        if c.is_digit(10 | 16) {
                             self.advance();
                         } else if c == '.' && !is_float {
                             self.advance();
@@ -534,12 +501,12 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let dec_content = Arc::new(self.input[start_pos..self.pos].to_string());
+                    let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
                     // parse and push the appropriate tokens to `tokens`
                     if is_float {
                         if let Ok(f) =
-                            FloatLiteral::parse(self.input, &dec_content, start_pos, self.pos)
+                            FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
                         } else {
@@ -547,7 +514,7 @@ impl<'a> Lexer<'a> {
                         }
                     } else if is_negative {
                         if let Ok(i) =
-                            IntLiteral::parse(self.input, &dec_content, start_pos, self.pos)
+                            IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(i);
                         } else {
@@ -555,7 +522,7 @@ impl<'a> Lexer<'a> {
                         }
                     } else {
                         if let Ok(u) =
-                            UIntLiteral::parse(self.input, &dec_content, start_pos, self.pos)
+                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(u);
                         } else {
