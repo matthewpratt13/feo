@@ -1,8 +1,4 @@
-pub struct LexError {
-    pub error_kind: LexErrorKind,
-    pub pos: usize,
-}
-
+#[derive(Debug)]
 pub enum LexErrorKind {
     UnclosedBlockComment,
     MismatchedDelimiters,
@@ -12,6 +8,7 @@ pub enum LexErrorKind {
     UnclosedCharLiteral,
     MismatchedTokenType,
     NoTokenFound,
+    NoTokenTreeFound,
     UnopenedBlockComment,
     FinalIndex,
     InvalidEscapeSequence,
@@ -31,6 +28,14 @@ pub enum LexErrorKind {
     ParseUIntError,
     ParseFloatError,
     ParseCharError,
-    UnrecognizedDelimiter,
+    UnrecognizedDelimKind,
     EmptyCharLiteral,
+    UnexpectedIdentifier,
+    UnexpectedChar,
+}
+
+#[derive(Debug)]
+pub struct LexError {
+    pub error_kind: LexErrorKind,
+    pub pos: usize,
 }

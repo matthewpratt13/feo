@@ -63,7 +63,6 @@ impl<'a> Lexer<'a> {
         });
     }
 
-    // TODO: return `LexError`
     pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
@@ -93,7 +92,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if num_open_block_comments == 0 {
-                        self.log_error(LexErrorKind::UnopenedBlockComment);
+                        return Err(self.log_error(LexErrorKind::UnopenedBlockComment));
                     } else {
                         self.advance();
                         self.advance();
@@ -152,6 +151,8 @@ impl<'a> Lexer<'a> {
                                 )
                             {
                                 tokens.push(c);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidCommentContent)
                             }
                         }
                     }
@@ -323,23 +324,35 @@ impl<'a> Lexer<'a> {
                         tokens.push(i);
                     } else {
                         self.log_error(LexErrorKind::InvalidIdentifier);
+                        break;
                     }
+
+                    self.log_error(LexErrorKind::UnexpectedIdentifier);
                 }
 
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
                     match c {
                         '(' => {
-                            let delim = Delimiter::parse(self.input, &'(', start_pos, self.pos)?;
-                            tokens.push(delim);
+                            if let Ok(d) = Delimiter::parse(self.input, &'(', start_pos, self.pos) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidDelimiter);
+                            }
                         }
                         '[' => {
-                            let delim = Delimiter::parse(self.input, &'[', start_pos, self.pos)?;
-                            tokens.push(delim);
+                            if let Ok(d) = Delimiter::parse(self.input, &'[', start_pos, self.pos) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidDelimiter)
+                            }
                         }
                         '{' => {
-                            let delim = Delimiter::parse(self.input, &'{', start_pos, self.pos)?;
-                            tokens.push(delim);
+                            if let Ok(d) = Delimiter::parse(self.input, &'{', start_pos, self.pos) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidDelimiter)
+                            }
                         }
                         _ => unreachable!(),
                     };
@@ -356,24 +369,32 @@ impl<'a> Lexer<'a> {
                 ')' | ']' | '}' => {
                     match c {
                         ')' => {
-                            let delim = Delimiter::parse(self.input, &')', start_pos, self.pos)?;
-                            tokens.push(delim);
+                            if let Ok(d) = Delimiter::parse(self.input, &')', start_pos, self.pos) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidDelimiter)
+                            }
                         }
                         ']' => {
-                            let delim = Delimiter::parse(self.input, &']', start_pos, self.pos)?;
-                            tokens.push(delim)
+                            if let Ok(d) = Delimiter::parse(self.input, &']', start_pos, self.pos) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidDelimiter)
+                            }
                         }
                         '}' => {
-                            let delim = Delimiter::parse(self.input, &'}', start_pos, self.pos)?;
-                            tokens.push(delim);
+                            if let Ok(d) = Delimiter::parse(self.input, &'}', start_pos, self.pos) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error(LexErrorKind::InvalidDelimiter)
+                            }
                         }
                         _ => unreachable!(),
                     };
-                    // TODO: check that this closing delimiter matches the opening one
                     let prev_delim = token_trees
                         .pop()
                         .ok_or(self.log_error(LexErrorKind::FinalIndex))?
-                        .ok_or(self.log_error(LexErrorKind::NoTokenFound))?
+                        .ok_or(self.log_error(LexErrorKind::NoTokenTreeFound))?
                         .tokens()
                         .to_vec()
                         .pop()
@@ -385,7 +406,7 @@ impl<'a> Lexer<'a> {
                         .0;
 
                     let curr_delim_kind = DelimKind::try_from(c)
-                        .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimiter))?;
+                        .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimKind))?;
 
                     if prev_delim_kind == curr_delim_kind {
                         let tree = TokenTree::new(
@@ -396,7 +417,7 @@ impl<'a> Lexer<'a> {
                         );
                         token_trees.push(Some(tree));
                     } else {
-                        self.log_error(LexErrorKind::MismatchedDelimiters);
+                        return Err(self.log_error(LexErrorKind::MismatchedDelimiters));
                     }
 
                     self.advance(); // skip delimiter
@@ -428,9 +449,10 @@ impl<'a> Lexer<'a> {
                                         _ => self.log_error(LexErrorKind::InvalidEscapeSequence),
                                     };
                                 } else {
-                                    // TODO: return `Err`
                                     // Escape sequence is expected, but the input has ended
-                                    self.log_error(LexErrorKind::ExpectedEscapeSequence);
+                                    return Err(
+                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
+                                    );
                                 }
                             }
 
@@ -484,14 +506,21 @@ impl<'a> Lexer<'a> {
                                         '\'' => CharLiteral::parse(
                                             self.input, &'\'', start_pos, self.pos,
                                         ),
-                                        _ => Err(self.log_error(LexErrorKind::EmptyCharLiteral)),
+                                        _ => {
+                                            return Err(
+                                                self.log_error(LexErrorKind::InvalidEscapeSequence)
+                                            )
+                                        }
                                     }?;
 
                                     tokens.push(char_lit);
+                                } else {
+                                    return Err(
+                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
+                                    );
                                 }
                             }
                             '\'' => {
-                                // TODO: return `Err`
                                 num_open_single_quotes -= 1;
                                 self.log_error(LexErrorKind::EmptyCharLiteral);
                             }
@@ -511,7 +540,7 @@ impl<'a> Lexer<'a> {
                             }
                         }
                     } else {
-                        self.log_error(LexErrorKind::UnclosedCharLiteral);
+                        return Err(self.log_error(LexErrorKind::UnclosedCharLiteral));
                         // self.log_error("Unexpected end of input in character literal");
                     }
                 }
@@ -599,8 +628,7 @@ impl<'a> Lexer<'a> {
                     {
                         tokens.push(p)
                     } else {
-                        // TODO: return `Err`
-                        self.log_error(LexErrorKind::InvalidChar);
+                        self.log_error(LexErrorKind::UnexpectedChar);
                         // self.log_error(&format!("Unexpected character: {}", c));
                         self.advance();
                     }
@@ -611,28 +639,23 @@ impl<'a> Lexer<'a> {
         }
 
         if num_open_doc_comments > 0 {
-            // TODO: return `Err`
-            self.log_error(LexErrorKind::UnclosedDocComment);
+            return Err(self.log_error(LexErrorKind::UnclosedDocComment));
         }
 
         if num_open_block_comments > 0 {
-            // TODO: return `Err`
-            self.log_error(LexErrorKind::UnclosedBlockComment);
+            return Err(self.log_error(LexErrorKind::UnclosedBlockComment));
         }
 
         if num_open_delimiters > 0 {
-            // TODO: return `Err`
-            self.log_error(LexErrorKind::UnclosedDelimiter);
+            return Err(self.log_error(LexErrorKind::UnclosedDelimiter));
         }
 
         if num_open_double_quotes > 0 {
-            // TODO: return `Err`
-            self.log_error(LexErrorKind::UnclosedStringLiteral);
+            return Err(self.log_error(LexErrorKind::UnclosedStringLiteral));
         }
 
         if num_open_single_quotes > 0 {
-            // TODO: return `Err`
-            self.log_error(LexErrorKind::UnclosedCharLiteral);
+            return Err(self.log_error(LexErrorKind::UnclosedCharLiteral));
         }
 
         let stream = TokenStream::new(self.input, token_trees, 0, self.pos);
