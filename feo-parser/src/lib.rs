@@ -365,7 +365,6 @@ impl TryFrom<Token> for Delimiter {
     }
 }
 
-// TODO: return `LexError`
 pub fn lex() -> Result<(), ()> {
     let filename = "path/to/your/file.txt"; // Change this to your file path
     let source_code = std::fs::read_to_string(filename).expect("Error reading file");
@@ -380,6 +379,6 @@ pub fn lex() -> Result<(), ()> {
     } else {
         println!("Error tokenizing file");
     }
-    
+
     Ok(())
 }
