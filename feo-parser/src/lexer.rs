@@ -575,7 +575,7 @@ impl<'a> Lexer<'a> {
 
         if num_open_double_quotes > 0 {
             // TODO: return `Err`
-            self.log_error("Unexpected end of input in string literall");
+            self.log_error("Unexpected end of input in string literal");
         }
 
         if num_open_single_quotes > 0 {
