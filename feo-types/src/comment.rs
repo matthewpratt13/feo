@@ -1,15 +1,15 @@
 use crate::span::{Span, Spanned};
 
-pub enum CommentKind {
-    Newline,
-    Trailing,
-    Inline,
-    Multiline,
+#[derive(Debug, Clone)]
+pub struct Comment {
+    pub content: String,
+    span: Span,
 }
 
-pub struct Comment {
-    comment_kind: CommentKind,
-    span: Span,
+impl Comment {
+    pub fn new(content: String, span: Span) -> Self {
+        Self { content, span }
+    }
 }
 
 impl Spanned for Comment {
@@ -18,9 +18,16 @@ impl Spanned for Comment {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct DocComment {
-    comment_kind: CommentKind,
+    pub content: String,
     span: Span,
+}
+
+impl DocComment {
+    pub fn new(content: String, span: Span) -> Self {
+        Self { content, span }
+    }
 }
 
 impl Spanned for DocComment {

@@ -1,29 +1,34 @@
-use thiserror::Error;
-
 use std::sync::Arc;
 
 pub trait Spanned {
     fn span(&self) -> &Span;
 }
 
+#[derive(Debug, Clone)]
 pub struct Span {
-    src: Arc<&'static str>,
+    src: Arc<String>,
     start: usize,
     end: usize,
 }
 
 impl Span {
-    pub fn build(src: &str, start: usize, end: usize) -> Result<Self, SpanError> {
-        todo!()
+    pub fn new(src: &str, start: usize, end: usize) -> Self {
+        Self {
+            src: Arc::new(src.to_string()),
+            start,
+            end,
+        }
     }
-}
 
-#[derive(Debug, Error)]
-pub enum SpanError {
-    #[error("index is out of range")]
-    IndexOutOfRange,
-    #[error("end index is before start")]
-    EndIndexBeforeStart,
-    #[error("source file is empty")]
-    SourceFileEmpty,
+    pub fn source(&self) -> Arc<String> {
+        Arc::clone(&self.src)
+    }
+
+    pub fn start(&self) -> usize {
+        self.start
+    }
+
+    pub fn end(&self) -> usize {
+        self.end
+    }
 }

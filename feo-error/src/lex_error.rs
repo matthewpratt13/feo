@@ -1,8 +1,41 @@
-use feo_types::Span;
+#[derive(Debug)]
+pub enum LexErrorKind {
+    UnclosedBlockComment,
+    MismatchedDelimiters,
+    UnclosedDocComment,
+    UnclosedDelimiter,
+    UnclosedStringLiteral,
+    UnclosedCharLiteral,
+    MismatchedTokenType,
+    NoTokenFound,
+    NoTokenTreeFound,
+    UnopenedBlockComment,
+    FinalIndex,
+    InvalidEscapeSequence,
+    InvalidDocCommentContent,
+    InvalidCommentContent,
+    InvalidKeyword,
+    InvalidChar,
+    InvalidCharLiteral,
+    InvalidDelimiter,
+    InvalidPunctuation,
+    InvalidIdentifier,
+    InvalidPathExpression,
+    InvalidTypeAnnotation,
+    ExpectedEscapeSequence,
+    ParseBoolError,
+    ParseIntError,
+    ParseUIntError,
+    ParseFloatError,
+    ParseCharError,
+    UnrecognizedDelimKind,
+    EmptyCharLiteral,
+    UnexpectedIdentifier,
+    UnexpectedChar,
+}
 
-pub enum LexErrorKind {}
-
+#[derive(Debug)]
 pub struct LexError {
-    error_kind: LexErrorKind,
-    span: Span,
+    pub error_kind: LexErrorKind,
+    pub pos: usize,
 }

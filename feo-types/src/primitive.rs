@@ -1,4 +1,4 @@
-use bnum::types::U256;
+use std::sync::Arc;
 
 use crate::span::Span;
 
@@ -7,6 +7,12 @@ pub trait Primitive {}
 impl Primitive for char {}
 
 impl Primitive for String {}
+
+impl Primitive for &str {}
+
+impl Primitive for Arc<String> {}
+
+impl Primitive for Vec<String> {}
 
 impl Primitive for i32 {}
 
@@ -19,8 +25,6 @@ impl Primitive for u16 {}
 impl Primitive for u32 {}
 
 impl Primitive for u64 {}
-
-impl Primitive for U256 {}
 
 impl Primitive for f32 {}
 

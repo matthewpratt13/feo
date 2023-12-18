@@ -3,6 +3,7 @@ use crate::{
     span::{Span, Spanned},
 };
 
+#[derive(Debug, Clone)]
 pub struct Literal<L: 'static + Primitive> {
     raw_value: L,
     span: Span,
@@ -21,7 +22,10 @@ where
     }
 }
 
-impl<L: Primitive> Spanned for Literal<L> {
+impl<L> Spanned for Literal<L>
+where
+    L: 'static + Primitive,
+{
     fn span(&self) -> &Span {
         &self.span
     }

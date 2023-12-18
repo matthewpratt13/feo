@@ -1,23 +1,24 @@
 mod comment;
-pub use crate::comment::{Comment, DocComment};
+pub use crate::comment::*;
 
 mod delimiter;
-pub use crate::delimiter::{Delimiter, DelimiterError};
+pub use crate::delimiter::*;
+
+pub mod error;
 
 mod identifier;
-pub use crate::identifier::Identifier;
+pub use crate::identifier::*;
 
 mod keyword;
-pub use crate::keyword::Keyword;
+pub use crate::keyword::*;
 
 mod literal;
-pub use crate::literal::Literal;
+pub use crate::literal::*;
 
 mod primitive;
-pub use crate::primitive::Primitive;
+pub use crate::primitive::*;
 
 mod punctuation;
-pub use crate::punctuation::Punctuation;
+pub use crate::punctuation::*;
 
-mod span;
-pub use crate::span::{Span, SpanError, Spanned};
+pub mod span;

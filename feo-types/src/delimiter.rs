@@ -1,7 +1,7 @@
-use thiserror::Error;
-
+use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum DelimKind {
     Paren,
     Bracket,
@@ -9,32 +9,36 @@ pub enum DelimKind {
 }
 
 impl TryFrom<char> for DelimKind {
-    type Error = DelimiterError;
+    type Error = TypeError;
 
     fn try_from(value: char) -> Result<Self, Self::Error> {
         match value {
             '(' | ')' => Ok(DelimKind::Paren),
             '[' | ']' => Ok(DelimKind::Bracket),
             '{' | '}' => Ok(DelimKind::Brace),
-            _ => Err(DelimiterError::UnrecognizedDelimiter),
+            _ => Err(TypeError::UnrecognizedDelimiter),
         }
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum DelimOrientation {
     Open,
     Close,
 }
 
+#[derive(Debug, Clone)]
 pub struct Delimiter {
-    delim_kind: DelimKind,
-    delim_orientation: DelimOrientation,
+    pub delim: (DelimKind, DelimOrientation),
     span: Span,
 }
 
 impl Delimiter {
-    pub fn delim_kind(&self) -> &DelimKind {
-        &self.delim_kind
+    pub fn new(delim_kind: DelimKind, delim_orientation: DelimOrientation, span: Span) -> Self {
+        Self {
+            delim: (delim_kind, delim_orientation),
+            span,
+        }
     }
 }
 
@@ -42,10 +46,4 @@ impl Spanned for Delimiter {
     fn span(&self) -> &Span {
         &self.span
     }
-}
-
-#[derive(Debug, Error)]
-pub enum DelimiterError {
-    #[error("unrecognized delimiter")]
-    UnrecognizedDelimiter,
 }

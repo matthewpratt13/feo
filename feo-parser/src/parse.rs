@@ -1,25 +1,19 @@
-use feo_error::ParserError;
+use std::fmt::Display;
+
 use feo_types::Primitive;
 
 use crate::lexer::Token;
 
-pub trait Parse<P, I>
+pub trait Parse<T>
 where
-    P: 'static + Primitive,
-    I: std::iter::Iterator,
+    T: 'static + Primitive + Display,
 {
-    fn parse(src: &mut I, input: char, i: usize) -> Result<Option<Token>, ParserError>;
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()>;
 }
 
-pub trait ParseDigit<P, I>
+pub trait ParseVec<T>
 where
-    P: 'static + Primitive,
-    I: std::iter::Iterator,
+    T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &mut I,
-        input: char,
-        i: usize,
-        is_negative_number: bool,
-    ) -> Result<Option<Token>, ParserError>;
+    fn parse(src: &str, content: &Vec<T>, start: usize, end: usize) -> Result<Option<Token>, ()>;
 }

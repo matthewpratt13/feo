@@ -1,5 +1,6 @@
 use crate::span::{Span, Spanned};
 
+#[derive(Debug, Clone)]
 pub enum PuncKind {
     Colon,
     Semicolon,
@@ -12,10 +13,12 @@ pub enum PuncKind {
     DoubleSlash,   // trailing / line comment
     TripleSlash,   // doc comment
     SlashAsterisk, // multiline / inline comment open
+    SlashBang,     // doc comment
     AsteriskSlash, // multiline / inline comment close
 
     Bang, // (exclamation point)
     Hash,
+    DollarSign,
     Percent, // (modulus)
     Ampersand,
     Asterisk, // (multiply)
@@ -27,7 +30,10 @@ pub enum PuncKind {
     GreaterThan,
     QuestionMark,
     AtSign,
+    Caret,
+    BackTick,
     Pipe,
+    Tilde,
 
     BangEquals,
     PercentEquals,
@@ -44,7 +50,7 @@ pub enum PuncKind {
     FatArrow,  // "=>"
     DoublePipe,
 
-    // escape codes
+    // escape sequences
     Newline,
     Return,
     Tab,
@@ -54,9 +60,16 @@ pub enum PuncKind {
     DoubleQuote,
 }
 
+#[derive(Debug, Clone)]
 pub struct Punctuation {
-    punc_kind: PuncKind,
+    pub punc_kind: PuncKind,
     span: Span,
+}
+
+impl Punctuation {
+    pub fn new(punc_kind: PuncKind, span: Span) -> Self {
+        Self { punc_kind, span }
+    }
 }
 
 impl Spanned for Punctuation {
