@@ -1,8 +1,9 @@
 use std::fmt::Display;
 
+use feo_error::lex_error::LexErrorKind;
 use feo_types::Primitive;
 
-use crate::{error::ParserError, lexer::Token};
+use crate::lexer::Token;
 
 pub trait Parse<T>
 where
@@ -13,7 +14,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError>;
+    ) -> Result<Option<Token>, LexErrorKind>;
 }
 
 pub trait ParseVec<T>
@@ -25,5 +26,5 @@ where
         content: &Vec<T>,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError>;
+    ) -> Result<Option<Token>, LexErrorKind>;
 }

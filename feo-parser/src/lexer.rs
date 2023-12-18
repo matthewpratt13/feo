@@ -1,13 +1,13 @@
 use std::iter::Peekable;
 use std::sync::Arc;
 
+use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
     Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
     TypeAnnotation,
 };
 
 use crate::{
-    error::{LexError, ParserError},
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     parse::{Parse, ParseVec},
 };
@@ -20,7 +20,7 @@ pub(crate) struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
-    errors: Vec<String>,
+    errors: Vec<LexError>,
 }
 
 impl<'a> Lexer<'a> {
@@ -56,9 +56,11 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn log_error(&mut self, message: &str) {
-        let error_message = format!("Error at position {}: {}", self.pos, message);
-        self.errors.push(error_message);
+    fn log_error(&mut self, error_kind: LexErrorKind) {
+        self.errors.push(LexError {
+            error_kind,
+            pos: self.pos,
+        });
     }
 
     // TODO: return `LexError`
@@ -91,7 +93,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if num_open_block_comments == 0 {
-                        return Err(LexError::UnopenedCommentTerminator);
+                        self.log_error(LexErrorKind::UnopenedBlockComment);
                     } else {
                         self.advance();
                         self.advance();
@@ -127,7 +129,7 @@ impl<'a> Lexer<'a> {
                                 start_pos,
                                 self.pos,
                             ) {
-                                tokens.push(d);
+                                tokens.push(dc);
                             } else {
                                 self.log_error("Invalid doc comment content")
                             }
@@ -150,8 +152,6 @@ impl<'a> Lexer<'a> {
                                 )
                             {
                                 tokens.push(c);
-                            } else {
-                                self.log_error("Invalid comment content")
                             }
                         }
                     }

@@ -1,2 +1,6 @@
+use crate::lex_error::LexError;
+
 #[allow(dead_code)]
-pub struct Error {}
+pub enum CompileError {
+    Lex(LexError)
+}

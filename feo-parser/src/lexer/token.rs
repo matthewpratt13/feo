@@ -4,7 +4,6 @@ use feo_types::{
     TypeAnnotation,
 };
 
-use crate::error::LexError;
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };

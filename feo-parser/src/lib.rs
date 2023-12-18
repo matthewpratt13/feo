@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use feo_error::lex_error::LexErrorKind;
 use feo_types::{
     span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
     KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, PuncKind, Punctuation,
@@ -17,9 +18,6 @@ use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral
 mod parse;
 use parse::{Parse, ParseVec};
 
-pub mod error;
-use error::ParserError;
-
 impl<T> Parse<T> for CharLiteral
 where
     T: 'static + Primitive + Display,
@@ -29,13 +27,13 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let parsed = content
             .to_string()
             .parse::<char>()
-            .map_err(|_| ParserError::ParseCharError)?;
+            .map_err(|_| LexErrorKind::ParseCharError)?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -54,7 +52,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let string_lit = Literal::new(content.to_string(), span);
@@ -74,13 +72,13 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let parsed = content
             .to_string()
             .parse::<bool>()
-            .map_err(|_| ParserError::ParseBoolError)?;
+            .map_err(|_| LexErrorKind::ParseBoolError)?;
 
         let bool_lit = Literal::new(parsed, span);
 
@@ -99,11 +97,11 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let parsed = i64::from_str_radix(&content.to_string(), 10 | 16)
-            .map_err(|_| ParserError::ParseIntError)?;
+            .map_err(|_| LexErrorKind::ParseIntError)?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -122,11 +120,11 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let parsed = u64::from_str_radix(&content.to_string(), 10 | 16)
-            .map_err(|_| ParserError::ParseIntError)?;
+            .map_err(|_| LexErrorKind::ParseIntError)?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -145,13 +143,13 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let parsed = content
             .to_string()
             .parse::<f64>()
-            .map_err(|_| ParserError::ParseFloatError)?;
+            .map_err(|_| LexErrorKind::ParseFloatError)?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -170,7 +168,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let iden = Identifier::new(content.to_string(), span);
@@ -190,7 +188,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let keyword_kind = match content.to_string().as_str() {
@@ -223,7 +221,7 @@ where
             "trait" => Ok(KeywordKind::TraitKw),
             "type" => Ok(KeywordKind::TypeKw),
             "while" => Ok(KeywordKind::WhileKw),
-            _ => Err(ParserError::InvalidKeyword),
+            _ => Err(LexErrorKind::InvalidKeyword),
         }?;
 
         let keyword = Keyword::new(keyword_kind, span);
@@ -243,7 +241,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let comment = Comment::new(content.to_string(), span);
@@ -263,7 +261,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let doc_comment = DocComment::new(content.to_string(), span);
@@ -283,7 +281,7 @@ where
         content: &Vec<T>,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let path: Vec<String> = content.into_iter().map(|t| t.to_string()).collect();
@@ -305,20 +303,20 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let delim_kind = match content.to_string().as_str() {
             "(" | ")" => Ok(DelimKind::Paren),
             "[" | "]" => Ok(DelimKind::Bracket),
             "{" | "}" => Ok(DelimKind::Brace),
-            _ => Err(ParserError::InvalidDelimiter),
+            _ => Err(LexErrorKind::InvalidDelimiter),
         }?;
 
         let delim_orientation = match content.to_string().as_str() {
             "(" | "[" | "{" => Ok(DelimOrientation::Open),
             ")" | "]" | "}" => Ok(DelimOrientation::Close),
-            _ => Err(ParserError::InvalidDelimiter),
+            _ => Err(LexErrorKind::InvalidDelimiter),
         }?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
@@ -338,7 +336,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let punc_kind = match content.to_string().as_str() {
@@ -393,7 +391,7 @@ where
             "\0" => Ok(PuncKind::Null),
             "\'" => Ok(PuncKind::SingleQuote),
             "\"" => Ok(PuncKind::DoubleQuote),
-            _ => Err(ParserError::InvalidPunctuation),
+            _ => Err(LexErrorKind::InvalidPunctuation),
         }?;
 
         let punc = Punctuation::new(punc_kind, span);
@@ -413,7 +411,7 @@ where
         content: &T,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ParserError> {
+    ) -> Result<Option<Token>, LexErrorKind> {
         let span = Span::new(src, start, end);
 
         let type_name = match content.to_string().as_str() {
@@ -440,7 +438,7 @@ where
 }
 
 // TODO: return `LexError`
-pub fn lex() -> Result<(), ParserError> {
+pub fn lex() -> Result<(), ()> {
     let filename = "path/to/your/file.txt"; // Change this to your file path
     let source_code = std::fs::read_to_string(filename).expect("Error reading file");
 
