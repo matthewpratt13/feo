@@ -377,7 +377,9 @@ pub fn lex() -> Result<(), ()> {
         for token in t.tokens() {
             println!("{:?}", token);
         }
+    } else {
+        println!("Error tokenizing file");
     }
-
+    
     Ok(())
 }
