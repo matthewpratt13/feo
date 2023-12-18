@@ -69,6 +69,8 @@ impl<'a> Lexer<'a> {
         let mut num_open_block_comments: usize = 0;
         let mut num_open_doc_comments: usize = 0;
         let mut num_open_delimiters: usize = 0;
+        let mut num_open_single_quotes: usize = 0;
+        let mut num_open_double_quotes: usize = 0;
         // let mut file_start_offset: usize = 0;
 
         let mut is_float = false;
@@ -88,6 +90,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if num_open_block_comments == 0 {
+                        // TODO: return `Err`
                         self.log_error("Unexpected comment terminator without opener");
                     } else {
                         self.advance();
@@ -175,10 +178,6 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                             }
                         }
-
-                        if num_open_doc_comments > 0 {
-                            self.log_error("Unterminated doc comment");
-                        }
                     }
 
                     Some('*') => {
@@ -207,10 +206,6 @@ impl<'a> Lexer<'a> {
                             } else {
                                 self.advance();
                             }
-                        }
-
-                        if num_open_block_comments > 0 {
-                            self.log_error("Unterminated block comment");
                         }
                     }
 
@@ -345,14 +340,15 @@ impl<'a> Lexer<'a> {
                         self.pos,
                     )?;
 
-                    num_open_delimiters -= 1;
-
                     token_trees.push(tree);
+
                     self.advance(); // skip delimiter
+                    num_open_delimiters -= 1;
                 }
 
                 '"' => {
                     self.advance(); // skip opening double quote
+                    num_open_double_quotes += 1;
 
                     let mut buf = String::new();
 
@@ -384,6 +380,8 @@ impl<'a> Lexer<'a> {
 
                             '"' => {
                                 self.advance(); // skip closing double quote
+                                num_open_double_quotes -= 1;
+
                                 let string_lit =
                                     StringLiteral::parse(self.input, &buf, start_pos, self.pos)?;
                                 tokens.push(string_lit);
@@ -395,13 +393,10 @@ impl<'a> Lexer<'a> {
                             }
                         }
                     }
-
-                    // TODO: is logic sound ?
-                    // If we reach here, there's an unterminated string literal
-                    self.log_error("Unterminated string literal");
                 }
                 '\'' => {
                     self.advance(); // skip opening single quote
+                    num_open_single_quotes += 1;
 
                     if let Some(c) = self.current_char() {
                         match c {
@@ -439,13 +434,18 @@ impl<'a> Lexer<'a> {
                                     tokens.push(char_lit);
                                 }
                             }
-                            // TODO: return `Err`
-                            '\'' => self.log_error("Empty character literal"),
+                            '\'' => {
+                                // TODO: return `Err`
+                                num_open_single_quotes -= 1;
+                                self.log_error("Empty character literal");
+                            }
                             _ => {
                                 // regular char
                                 self.advance(); // consume the char
                                 if self.current_char() == Some('\'') {
                                     self.advance(); // skip closing single quote
+                                    num_open_single_quotes -= 1;
+
                                     let char_lit =
                                         CharLiteral::parse(self.input, &c, start_pos, self.pos)?;
                                     tokens.push(char_lit);
@@ -585,9 +585,29 @@ impl<'a> Lexer<'a> {
             }
         }
 
+        if num_open_doc_comments > 0 {
+            // TODO: return `Err`
+            self.log_error("Unexpected doc comment terminator without opener");
+        }
+
+        if num_open_block_comments > 0 {
+            // TODO: return `Err`
+            self.log_error("Unexpected block comment terminator without opener");
+        }
+
         if num_open_delimiters > 0 {
             // TODO: return `Err`
             self.log_error("Unexpected end of input within delimiter");
+        }
+
+        if num_open_double_quotes > 0 {
+            // TODO: return `Err`
+            self.log_error("Unexpected end of input in string literall");
+        }
+
+        if num_open_single_quotes > 0 {
+            // TODO: return `Err`
+            self.log_error("Unexpected end of input in character literal");
         }
 
         let stream = TokenStream::build(self.input, token_trees, 0, self.pos);
