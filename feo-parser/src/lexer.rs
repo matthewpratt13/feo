@@ -226,8 +226,6 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    // TODO: check comment opener/closer against '/' alone (i.e., division operator)
-                    // TODO: before returning `()`
                     Some(_) | None => (),
                 },
 
