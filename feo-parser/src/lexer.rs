@@ -66,8 +66,8 @@ impl<'a> Lexer<'a> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
-        let mut in_block_comment = false; // generic inline / multiline comment
-
+        let mut num_open_block_comments: usize = 0;
+        let mut num_open_doc_comments: usize = 0;
         let mut num_open_delimiters: usize = 0;
         // let mut file_start_offset: usize = 0;
 
@@ -87,23 +87,23 @@ impl<'a> Lexer<'a> {
                     self.skip_whitespace();
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
-                    if !in_block_comment {
+                    if num_open_block_comments == 0 {
                         self.log_error("Unexpected comment terminator without opener");
                     } else {
                         self.advance();
                         self.advance();
-                        in_block_comment = false;
+                        num_open_block_comments -= 1;
                     }
                 }
                 _ if c == '/' => match self.peek_next() {
                     Some('/') => {
-                        self.advance(); // skip first '\''
-                        self.advance(); // skip second '\''
+                        self.advance(); // skip first '/'
+                        self.advance(); // skip second '/'
 
                         let start_pos = self.pos;
 
                         if let Some('/') = self.peek_next() {
-                            self.advance();
+                            self.advance(); // skip third '/'
 
                             let start_pos = self.pos;
 
@@ -145,7 +145,7 @@ impl<'a> Lexer<'a> {
                     Some('!') => {
                         self.advance(); // skip '/'
                         self.advance(); // skip '!'
-                        in_block_comment = true;
+                        num_open_doc_comments += 1;
 
                         let start_pos = self.pos;
 
@@ -154,10 +154,11 @@ impl<'a> Lexer<'a> {
                                 continue;
                             }
 
+                            // close doc comment
                             if c == '*' && self.peek_next() == Some('/') {
                                 self.advance(); // skip '*'
                                 self.advance(); // skip '/'
-                                in_block_comment = false;
+                                num_open_doc_comments -= 1;
 
                                 let doc_comment_content =
                                     Arc::new(self.input[start_pos..self.pos].trim().to_string());
@@ -175,14 +176,15 @@ impl<'a> Lexer<'a> {
                             }
                         }
 
-                        // TODO: is logic sound ?
-                        self.log_error("Unterminated doc comment");
+                        if num_open_doc_comments > 0 {
+                            self.log_error("Unterminated doc comment");
+                        }
                     }
 
                     Some('*') => {
                         self.advance(); // skip '/'
                         self.advance(); // skip '*'
-                        in_block_comment = true;
+                        num_open_block_comments += 1;
 
                         let start_pos = self.pos;
 
@@ -190,7 +192,7 @@ impl<'a> Lexer<'a> {
                             if c == '*' && self.peek_next() == Some('/') {
                                 self.advance(); // skip '*'
                                 self.advance(); // skip '/'
-                                in_block_comment = false;
+                                num_open_block_comments -= 1;
 
                                 // no need to store ordinary comment content
                                 let comment = Comment::parse(
@@ -207,8 +209,9 @@ impl<'a> Lexer<'a> {
                             }
                         }
 
-                        // TODO: is logic sound ?
-                        self.log_error("Unterminated block comment");
+                        if num_open_block_comments > 0 {
+                            self.log_error("Unterminated block comment");
+                        }
                     }
 
                     // TODO: check comment opener/closer against '/' alone (i.e., division operator)
