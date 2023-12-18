@@ -5,6 +5,7 @@ pub enum LexError {
     MismatchedTokenType,
     NoTokenFound,
     NoTokenTreeFound,
+    UnopenedCommentTerminator,
 }
 
 #[derive(Debug)]

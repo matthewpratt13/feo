@@ -62,9 +62,9 @@ impl<'a> Lexer<'a> {
     }
 
     // TODO: return `LexError`
-    pub fn tokenize(&mut self) -> TokenStream<TokenTree> {
+    pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexError> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
-        let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
+        let mut token_trees: Vec<TokenTree> = Vec::new();
 
         let mut num_open_block_comments: usize = 0;
         let mut num_open_doc_comments: usize = 0;
@@ -91,8 +91,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if num_open_block_comments == 0 {
-                        // TODO: return `Err`
-                        self.log_error("Unexpected comment terminator without opener");
+                        return Err(LexError::UnopenedCommentTerminator);
                     } else {
                         self.advance();
                         self.advance();
@@ -122,13 +121,16 @@ impl<'a> Lexer<'a> {
                             let doc_comment_content =
                                 Arc::new(self.input[start_pos..self.pos].to_string());
 
-                            let doc_comment = DocComment::parse(
+                            if let Ok(dc) = DocComment::parse(
                                 self.input,
                                 &doc_comment_content,
                                 start_pos,
                                 self.pos,
-                            )?;
-                            tokens.push(doc_comment);
+                            ) {
+                                tokens.push(d);
+                            } else {
+                                self.log_error("Invalid doc comment content")
+                            }
                         } else {
                             while let Some(c) = self.current_char() {
                                 if c == '\n' {
@@ -138,11 +140,19 @@ impl<'a> Lexer<'a> {
                                 }
                             }
 
-                            // no need to store ordinary comment content
-                            let comment =
-                                Comment::parse(self.input, &String::from(""), start_pos, self.pos)?;
-
-                            tokens.push(comment);
+                            if let Ok(c) =
+                                // no need to store ordinary comment content
+                                Comment::parse(
+                                    self.input,
+                                    &String::from(""),
+                                    start_pos,
+                                    self.pos,
+                                )
+                            {
+                                tokens.push(c);
+                            } else {
+                                self.log_error("Invalid comment content")
+                            }
                         }
                     }
 
@@ -167,14 +177,17 @@ impl<'a> Lexer<'a> {
                                 let doc_comment_content =
                                     Arc::new(self.input[start_pos..self.pos].trim().to_string());
 
-                                let doc_comment = DocComment::parse(
+                                if let Ok(dc) = DocComment::parse(
                                     self.input,
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                )?;
-                                tokens.push(doc_comment);
-                                break;
+                                ) {
+                                    tokens.push(dc);
+                                    break;
+                                } else {
+                                    self.log_error("Invalid doc comment content");
+                                }
                             } else {
                                 self.advance();
                             }
@@ -202,8 +215,17 @@ impl<'a> Lexer<'a> {
                                     self.pos,
                                 )?;
 
-                                tokens.push(comment);
-                                break;
+                                if let Ok(c) = Comment::parse(
+                                    self.input,
+                                    &String::from(""),
+                                    start_pos,
+                                    self.pos,
+                                ) {
+                                    tokens.push(c);
+                                    break;
+                                } else {
+                                    self.log_error("Invalid comment content");
+                                }
                             } else {
                                 self.advance();
                             }
@@ -239,10 +261,14 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
-                                let type_ann =
-                                    TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)?;
-                                tokens.push(type_ann);
-                                break;
+                                if let Ok(t) =
+                                    TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
+                                {
+                                    tokens.push(t);
+                                    break;
+                                } else {
+                                    self.log_error("Invalid type annotation")
+                                }
                             }
                         } else if c == ':' && self.peek_next() == Some(':') {
                             // check for `PathExpression` syntax
@@ -272,14 +298,17 @@ impl<'a> Lexer<'a> {
                                 }
                             }
 
-                            let path = PathExpression::parse(
+                            if let Ok(p) = PathExpression::parse(
                                 self.input,
                                 &path_components,
                                 start_pos,
                                 self.pos,
-                            )?;
-                            tokens.push(path);
-                            break;
+                            ) {
+                                tokens.push(p);
+                                break;
+                            } else {
+                                self.log_error("Invalid path expression")
+                            }
                         } else {
                             break;
                         }
@@ -287,12 +316,20 @@ impl<'a> Lexer<'a> {
 
                     if let Ok(k) = Keyword::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(k);
-                    } else if let Ok(b) = BoolLiteral::parse(self.input, &buf, start_pos, self.pos)
-                    {
+                    } else {
+                        continue;
+                    };
+
+                    if let Ok(b) = BoolLiteral::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(b);
                     } else {
-                        let iden = Identifier::parse(self.input, &buf, start_pos, self.pos)?;
-                        tokens.push(iden);
+                        continue;
+                    }
+
+                    if let Ok(i) = Identifier::parse(self.input, &buf, start_pos, self.pos) {
+                        tokens.push(i);
+                    } else {
+                        self.log_error("Invalid identifier");
                     }
                 }
 
@@ -313,12 +350,12 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
-                    let tree = TokenTree::build(
+                    let tree = TokenTree::new(
                         self.input,
                         std::mem::take(&mut tokens),
                         self.pos - tokens.len(),
                         self.pos,
-                    )?;
+                    );
                     token_trees.push(tree);
                     self.advance(); // skip delimiter
                 }
@@ -343,25 +380,23 @@ impl<'a> Lexer<'a> {
                     let prev_delim = token_trees
                         .pop()
                         .ok_or(LexError::FinalIndex)?
-                        .ok_or(LexError::NoTokenTreeFound)?
                         .tokens()
                         .clone()
                         .to_vec()
                         .pop()
                         .ok_or(LexError::FinalIndex)?
                         .ok_or(LexError::NoTokenFound)?;
-
                     let prev_delim_kind = Delimiter::try_from(prev_delim)?.delim.0;
 
                     let curr_delim_kind = DelimKind::try_from(c)?;
 
                     if prev_delim_kind == curr_delim_kind {
-                        let tree = TokenTree::build(
+                        let tree = TokenTree::new(
                             self.input,
                             std::mem::take(&mut tokens),
                             self.pos - tokens.len(),
                             self.pos,
-                        )?;
+                        );
                         token_trees.push(tree);
                     } else {
                         return Err(LexError::MismatchedDelimiter);
@@ -602,6 +637,6 @@ impl<'a> Lexer<'a> {
         }
 
         let stream = TokenStream::new(self.input, token_trees, 0, self.pos);
-        stream
+        Ok(stream)
     }
 }
