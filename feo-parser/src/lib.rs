@@ -1,6 +1,5 @@
 use std::fmt::Display;
 
-use feo_error::lex_error::LexErrorKind;
 use feo_types::{
     span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
     KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, PuncKind, Punctuation,
@@ -22,18 +21,10 @@ impl<T> Parse<T> for CharLiteral
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = content
-            .to_string()
-            .parse::<char>()
-            .map_err(|_| LexErrorKind::ParseCharError)?;
+        let parsed = content.to_string().parse::<char>().map_err(|_| ())?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -47,12 +38,7 @@ impl<T> Parse<T> for StringLiteral
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let string_lit = Literal::new(content.to_string(), span);
@@ -67,18 +53,10 @@ impl<T> Parse<T> for BoolLiteral
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = content
-            .to_string()
-            .parse::<bool>()
-            .map_err(|_| LexErrorKind::ParseBoolError)?;
+        let parsed = content.to_string().parse::<bool>().map_err(|_| ())?;
 
         let bool_lit = Literal::new(parsed, span);
 
@@ -92,16 +70,10 @@ impl<T> Parse<T> for IntLiteral
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = i64::from_str_radix(&content.to_string(), 10 | 16)
-            .map_err(|_| LexErrorKind::ParseIntError)?;
+        let parsed = i64::from_str_radix(&content.to_string(), 10 | 16).map_err(|_| ())?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -115,16 +87,10 @@ impl<T> Parse<T> for UIntLiteral
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = u64::from_str_radix(&content.to_string(), 10 | 16)
-            .map_err(|_| LexErrorKind::ParseIntError)?;
+        let parsed = u64::from_str_radix(&content.to_string(), 10 | 16).map_err(|_| (()))?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -138,18 +104,10 @@ impl<T> Parse<T> for FloatLiteral
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = content
-            .to_string()
-            .parse::<f64>()
-            .map_err(|_| LexErrorKind::ParseFloatError)?;
+        let parsed = content.to_string().parse::<f64>().map_err(|_| (()))?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -163,12 +121,7 @@ impl<T> Parse<T> for Identifier
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let iden = Identifier::new(content.to_string(), span);
@@ -183,12 +136,7 @@ impl<T> Parse<T> for Keyword
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let keyword_kind = match content.to_string().as_str() {
@@ -221,7 +169,7 @@ where
             "trait" => Ok(KeywordKind::TraitKw),
             "type" => Ok(KeywordKind::TypeKw),
             "while" => Ok(KeywordKind::WhileKw),
-            _ => Err(LexErrorKind::InvalidKeyword),
+            _ => Err(()),
         }?;
 
         let keyword = Keyword::new(keyword_kind, span);
@@ -236,12 +184,7 @@ impl<T> Parse<T> for Comment
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let comment = Comment::new(content.to_string(), span);
@@ -256,12 +199,7 @@ impl<T> Parse<T> for DocComment
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let doc_comment = DocComment::new(content.to_string(), span);
@@ -276,12 +214,7 @@ impl<T> ParseVec<T> for PathExpression
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &Vec<T>,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &Vec<T>, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let path: Vec<String> = content.into_iter().map(|t| t.to_string()).collect();
@@ -298,25 +231,20 @@ impl<T> Parse<T> for Delimiter
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let delim_kind = match content.to_string().as_str() {
             "(" | ")" => Ok(DelimKind::Paren),
             "[" | "]" => Ok(DelimKind::Bracket),
             "{" | "}" => Ok(DelimKind::Brace),
-            _ => Err(LexErrorKind::InvalidDelimiter),
+            _ => Err(()),
         }?;
 
         let delim_orientation = match content.to_string().as_str() {
             "(" | "[" | "{" => Ok(DelimOrientation::Open),
             ")" | "]" | "}" => Ok(DelimOrientation::Close),
-            _ => Err(LexErrorKind::InvalidDelimiter),
+            _ => Err(()),
         }?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
@@ -331,12 +259,7 @@ impl<T> Parse<T> for Punctuation
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let punc_kind = match content.to_string().as_str() {
@@ -391,7 +314,7 @@ where
             "\0" => Ok(PuncKind::Null),
             "\'" => Ok(PuncKind::SingleQuote),
             "\"" => Ok(PuncKind::DoubleQuote),
-            _ => Err(LexErrorKind::InvalidPunctuation),
+            _ => Err(()),
         }?;
 
         let punc = Punctuation::new(punc_kind, span);
@@ -406,12 +329,7 @@ impl<T> Parse<T> for TypeAnnotation
 where
     T: 'static + Primitive + Display,
 {
-    fn parse(
-        src: &str,
-        content: &T,
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Token>, LexErrorKind> {
+    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let type_name = match content.to_string().as_str() {

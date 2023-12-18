@@ -64,9 +64,9 @@ impl<'a> Lexer<'a> {
     }
 
     // TODO: return `LexError`
-    pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, LexError> {
+    pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
-        let mut token_trees: Vec<TokenTree> = Vec::new();
+        let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
         let mut num_open_block_comments: usize = 0;
         let mut num_open_doc_comments: usize = 0;
@@ -131,7 +131,7 @@ impl<'a> Lexer<'a> {
                             ) {
                                 tokens.push(dc);
                             } else {
-                                self.log_error("Invalid doc comment content")
+                                self.log_error(LexErrorKind::InvalidDocCommentContent)
                             }
                         } else {
                             while let Some(c) = self.current_char() {
@@ -186,7 +186,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(dc);
                                     break;
                                 } else {
-                                    self.log_error("Invalid doc comment content");
+                                    self.log_error(LexErrorKind::InvalidDocCommentContent);
                                 }
                             } else {
                                 self.advance();
@@ -208,13 +208,6 @@ impl<'a> Lexer<'a> {
                                 num_open_block_comments -= 1;
 
                                 // no need to store ordinary comment content
-                                let comment = Comment::parse(
-                                    self.input,
-                                    &String::from(""),
-                                    start_pos,
-                                    self.pos,
-                                )?;
-
                                 if let Ok(c) = Comment::parse(
                                     self.input,
                                     &String::from(""),
@@ -224,7 +217,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(c);
                                     break;
                                 } else {
-                                    self.log_error("Invalid comment content");
+                                    self.log_error(LexErrorKind::InvalidCommentContent);
                                 }
                             } else {
                                 self.advance();
@@ -267,7 +260,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(t);
                                     break;
                                 } else {
-                                    self.log_error("Invalid type annotation")
+                                    self.log_error(LexErrorKind::InvalidTypeAnnotation)
                                 }
                             }
                         } else if c == ':' && self.peek_next() == Some(':') {
@@ -307,7 +300,7 @@ impl<'a> Lexer<'a> {
                                 tokens.push(p);
                                 break;
                             } else {
-                                self.log_error("Invalid path expression")
+                                self.log_error(LexErrorKind::InvalidPathExpression)
                             }
                         } else {
                             break;
@@ -329,7 +322,7 @@ impl<'a> Lexer<'a> {
                     if let Ok(i) = Identifier::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(i);
                     } else {
-                        self.log_error("Invalid identifier");
+                        self.log_error(LexErrorKind::InvalidIdentifier);
                     }
                 }
 
@@ -356,7 +349,7 @@ impl<'a> Lexer<'a> {
                         self.pos - tokens.len(),
                         self.pos,
                     );
-                    token_trees.push(tree);
+                    token_trees.push(Some(tree));
                     self.advance(); // skip delimiter
                 }
 
@@ -379,16 +372,20 @@ impl<'a> Lexer<'a> {
                     // TODO: check that this closing delimiter matches the opening one
                     let prev_delim = token_trees
                         .pop()
-                        .ok_or(LexError::FinalIndex)?
+                        .ok_or(self.log_error(LexErrorKind::FinalIndex))?
+                        .ok_or(self.log_error(LexErrorKind::NoTokenFound))?
                         .tokens()
-                        .clone()
                         .to_vec()
                         .pop()
-                        .ok_or(LexError::FinalIndex)?
-                        .ok_or(LexError::NoTokenFound)?;
-                    let prev_delim_kind = Delimiter::try_from(prev_delim)?.delim.0;
+                        .ok_or(self.log_error(LexErrorKind::FinalIndex))?
+                        .ok_or(self.log_error(LexErrorKind::NoTokenFound))?;
+                    let prev_delim_kind = Delimiter::try_from(prev_delim)
+                        .map_err(|_| self.log_error(LexErrorKind::MismatchedDelimiters))?
+                        .delim
+                        .0;
 
-                    let curr_delim_kind = DelimKind::try_from(c)?;
+                    let curr_delim_kind = DelimKind::try_from(c)
+                        .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimiter))?;
 
                     if prev_delim_kind == curr_delim_kind {
                         let tree = TokenTree::new(
@@ -397,9 +394,9 @@ impl<'a> Lexer<'a> {
                             self.pos - tokens.len(),
                             self.pos,
                         );
-                        token_trees.push(tree);
+                        token_trees.push(Some(tree));
                     } else {
-                        return Err(LexError::MismatchedDelimiter);
+                        self.log_error(LexErrorKind::MismatchedDelimiters);
                     }
 
                     self.advance(); // skip delimiter
@@ -428,13 +425,12 @@ impl<'a> Lexer<'a> {
                                         '0' => buf.push('\0'),
                                         '\'' => buf.push('\''),
                                         '"' => buf.push('"'),
-                                        _ => self
-                                            .log_error("Invalid escape sequence in char literal"),
+                                        _ => self.log_error(LexErrorKind::InvalidEscapeSequence),
                                     };
                                 } else {
                                     // TODO: return `Err`
                                     // Escape sequence is expected, but the input has ended
-                                    self.log_error("Unexpected end of input in escape sequence");
+                                    self.log_error(LexErrorKind::ExpectedEscapeSequence);
                                 }
                             }
 
@@ -488,7 +484,7 @@ impl<'a> Lexer<'a> {
                                         '\'' => CharLiteral::parse(
                                             self.input, &'\'', start_pos, self.pos,
                                         ),
-                                        _ => return Err(ParserError::InvalidEscapeSequence),
+                                        _ => Err(self.log_error(LexErrorKind::EmptyCharLiteral)),
                                     }?;
 
                                     tokens.push(char_lit);
@@ -497,7 +493,7 @@ impl<'a> Lexer<'a> {
                             '\'' => {
                                 // TODO: return `Err`
                                 num_open_single_quotes -= 1;
-                                self.log_error("Empty character literal");
+                                self.log_error(LexErrorKind::EmptyCharLiteral);
                             }
                             _ => {
                                 // regular char
@@ -510,14 +506,13 @@ impl<'a> Lexer<'a> {
                                         CharLiteral::parse(self.input, &c, start_pos, self.pos)?;
                                     tokens.push(char_lit);
                                 } else {
-                                    // TODO: return `Err`
-                                    self.log_error("Invalid character literal");
+                                    self.log_error(LexErrorKind::InvalidCharLiteral);
                                 }
                             }
                         }
                     } else {
-                        // TODO: return `Err`
-                        self.log_error("Unexpected end of input in character literal");
+                        self.log_error(LexErrorKind::UnclosedCharLiteral);
+                        // self.log_error("Unexpected end of input in character literal");
                     }
                 }
 
@@ -563,7 +558,8 @@ impl<'a> Lexer<'a> {
                         {
                             tokens.push(f);
                         } else {
-                            self.log_error("Error parsing float");
+                            self.log_error(LexErrorKind::ParseFloatError);
+                            // self.log_error("Error parsing float");
                         }
                     } else if is_negative {
                         if let Ok(i) =
@@ -571,7 +567,8 @@ impl<'a> Lexer<'a> {
                         {
                             tokens.push(i);
                         } else {
-                            self.log_error("Error parsing integer");
+                            self.log_error(LexErrorKind::ParseIntError);
+                            // self.log_error("Error parsing integer");
                         }
                     } else {
                         if let Ok(u) =
@@ -579,7 +576,8 @@ impl<'a> Lexer<'a> {
                         {
                             tokens.push(u);
                         } else {
-                            self.log_error("Error parsing uint");
+                            self.log_error(LexErrorKind::ParseUIntError);
+                            // self.log_error("Error parsing uint");
                         }
                     }
                 }
@@ -602,38 +600,39 @@ impl<'a> Lexer<'a> {
                         tokens.push(p)
                     } else {
                         // TODO: return `Err`
-                        self.log_error(&format!("Unexpected character: {}", c));
+                        self.log_error(LexErrorKind::InvalidChar);
+                        // self.log_error(&format!("Unexpected character: {}", c));
                         self.advance();
                     }
                 }
 
-                _ => return Err(ParserError::UnexpectedChar),
+                _ => self.log_error(LexErrorKind::InvalidChar),
             }
         }
 
         if num_open_doc_comments > 0 {
             // TODO: return `Err`
-            self.log_error("Unexpected doc comment terminator without opener");
+            self.log_error(LexErrorKind::UnclosedDocComment);
         }
 
         if num_open_block_comments > 0 {
             // TODO: return `Err`
-            self.log_error("Unexpected block comment terminator without opener");
+            self.log_error(LexErrorKind::UnclosedBlockComment);
         }
 
         if num_open_delimiters > 0 {
             // TODO: return `Err`
-            self.log_error("Unexpected end of input within delimiter");
+            self.log_error(LexErrorKind::UnclosedDelimiter);
         }
 
         if num_open_double_quotes > 0 {
             // TODO: return `Err`
-            self.log_error("Unexpected end of input in string literal");
+            self.log_error(LexErrorKind::UnclosedStringLiteral);
         }
 
         if num_open_single_quotes > 0 {
             // TODO: return `Err`
-            self.log_error("Unexpected end of input in character literal");
+            self.log_error(LexErrorKind::UnclosedCharLiteral);
         }
 
         let stream = TokenStream::new(self.input, token_trees, 0, self.pos);
