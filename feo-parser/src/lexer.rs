@@ -13,7 +13,8 @@ use crate::{
 };
 
 mod token;
-pub(crate) use self::token::{Token, TokenStream, TokenTree};
+pub(crate) use self::token::Token;
+use self::token::{TokenStream, TokenTree};
 
 pub(crate) struct Lexer<'a> {
     input: &'a str,
