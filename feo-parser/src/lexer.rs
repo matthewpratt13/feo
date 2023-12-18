@@ -2,12 +2,12 @@ use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_types::{
-    Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
+    Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
     TypeAnnotation,
 };
 
 use crate::{
-    error::ParserError,
+    error::{LexError, ParserError},
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     parse::{Parse, ParseVec},
 };
@@ -340,14 +340,32 @@ impl<'a> Lexer<'a> {
                         _ => unreachable!(),
                     };
                     // TODO: check that this closing delimiter matches the opening one
-                    let tree = TokenTree::build(
-                        self.input,
-                        std::mem::take(&mut tokens),
-                        self.pos - tokens.len(),
-                        self.pos,
-                    )?;
+                    let prev_delim = token_trees
+                        .pop()
+                        .ok_or(LexError::FinalIndex)?
+                        .ok_or(LexError::NoTokenTreeFound)?
+                        .tokens()
+                        .clone()
+                        .to_vec()
+                        .pop()
+                        .ok_or(LexError::FinalIndex)?
+                        .ok_or(LexError::NoTokenFound)?;
 
-                    token_trees.push(tree);
+                    let prev_delim_kind = Delimiter::try_from(prev_delim)?.delim.0;
+
+                    let curr_delim_kind = DelimKind::try_from(c)?;
+
+                    if prev_delim_kind == curr_delim_kind {
+                        let tree = TokenTree::build(
+                            self.input,
+                            std::mem::take(&mut tokens),
+                            self.pos - tokens.len(),
+                            self.pos,
+                        )?;
+                        token_trees.push(tree);
+                    } else {
+                        return Err(LexError::MismatchedDelimiter);
+                    }
 
                     self.advance(); // skip delimiter
                     num_open_delimiters -= 1;

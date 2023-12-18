@@ -1,7 +1,7 @@
 use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum DelimKind {
     Paren,
     Bracket,

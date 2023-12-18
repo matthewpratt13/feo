@@ -4,13 +4,13 @@ use feo_types::{
     TypeAnnotation,
 };
 
-use crate::error::ParserError;
+use crate::error::{LexError, ParserError};
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
 
 // token type
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Token {
     // literals
     CharLit(CharLiteral),
@@ -38,7 +38,7 @@ pub enum Token {
     Type(TypeAnnotation),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TokenStream<T> {
     tokens: Vec<Option<T>>,
     span: Span,
@@ -50,7 +50,7 @@ impl<T> TokenStream<T> {
         tokens: Vec<Option<T>>,
         start: usize,
         end: usize,
-    ) -> Result<Self, ParserError> {
+    ) -> Result<Self, LexError> {
         Ok(Self {
             tokens,
             span: Span::new(src, start, end),
@@ -68,7 +68,7 @@ impl<T> Spanned for TokenStream<T> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TokenTree(TokenStream<Token>);
 
 impl TokenTree {
@@ -77,7 +77,11 @@ impl TokenTree {
         tokens: Vec<Option<Token>>,
         start: usize,
         end: usize,
-    ) -> Result<Option<Self>, ParserError> {
+    ) -> Result<Option<Self>, LexError> {
         Ok(Some(Self(TokenStream::build(src, tokens, start, end)?)))
+    }
+
+    pub fn tokens(&self) -> &[Option<Token>] {
+        self.0.tokens.as_slice()
     }
 }

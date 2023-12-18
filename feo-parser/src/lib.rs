@@ -6,6 +6,8 @@ use feo_types::{
     TypeAnnotation, TypeName,
 };
 
+mod delimiter;
+
 mod lexer;
 use lexer::{Lexer, Token};
 
