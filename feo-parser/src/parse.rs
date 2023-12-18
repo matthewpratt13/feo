@@ -8,6 +8,7 @@ pub trait Parse<T>
 where
     T: 'static + Primitive + Display,
 {
+    // TODO: return `bool`
     fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()>;
 }
 
@@ -15,5 +16,6 @@ pub trait ParseVec<T>
 where
     T: 'static + Primitive + Display,
 {
+    // TODO: return `bool`
     fn parse(src: &str, content: &Vec<T>, start: usize, end: usize) -> Result<Option<Token>, ()>;
 }

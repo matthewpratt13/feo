@@ -63,6 +63,7 @@ impl<'a> Lexer<'a> {
         });
     }
 
+    // TODO: return `bool`
     pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
