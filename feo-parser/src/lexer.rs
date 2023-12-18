@@ -434,7 +434,7 @@ impl<'a> Lexer<'a> {
                                         '\'' => CharLiteral::parse(
                                             self.input, &'\'', start_pos, self.pos,
                                         ),
-                                        _ => return Err(ParserError::InvalidEscapeCode),
+                                        _ => return Err(ParserError::InvalidEscapeSequence),
                                     }?;
 
                                     tokens.push(char_lit);

@@ -5,7 +5,7 @@ pub enum LexError {
 
 #[derive(Debug)]
 pub enum ParserError {
-    InvalidEscapeCode,
+    InvalidEscapeSequence,
     InvalidKeyword,
     InvalidDelimiter,
     InvalidPunctuation,
