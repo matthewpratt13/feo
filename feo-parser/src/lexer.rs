@@ -4,7 +4,7 @@ use std::sync::Arc;
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
     Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
-    TypeAnnotation,
+    TypeAnnotation, span::Spanned,
 };
 
 use crate::{
@@ -320,7 +320,12 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
-                    let tree = TokenTree::new(self.input, tokens.clone(), start_pos, self.pos);
+                    let tree = TokenTree::new(
+                        self.input,
+                        tokens.clone(),
+                        start_pos - tokens.len(),
+                        self.pos,
+                    );
                     token_trees.push(Some(tree));
                 }
 
@@ -351,7 +356,7 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
-                    let prev_delim = token_trees
+                    let prev_token = token_trees
                         .pop()
                         .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
                         .ok_or(self.log_error(LexErrorKind::ExpectedTokenTree))?
@@ -360,19 +365,17 @@ impl<'a> Lexer<'a> {
                         .pop()
                         .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
                         .ok_or(self.log_error(LexErrorKind::ExpectedToken))?;
-                    let prev_delim_kind = Delimiter::try_from(prev_delim)
-                        .map_err(|_| self.log_error(LexErrorKind::MismatchedDelimiters))?
-                        .delim
-                        .0;
+                    let prev_delim = Delimiter::try_from(prev_token)
+                        .map_err(|_| self.log_error(LexErrorKind::MismatchedDelimiters))?;
 
                     let curr_delim_kind = DelimKind::try_from(c)
                         .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimKind(c)))?;
 
-                    if prev_delim_kind == curr_delim_kind {
+                    if prev_delim.delim.0 == curr_delim_kind {
                         let tree = TokenTree::new(
                             self.input,
                             std::mem::take(&mut tokens),
-                            start_pos,
+                            prev_delim.span().start(),
                             self.pos,
                         );
                         token_trees.push(Some(tree));
@@ -642,7 +645,7 @@ mod tests {
         let tokens = token_stream.tokens();
 
         for t in tokens {
-            println!("Tokens: {:?}", t);
+            println!("Tokens: {:#?}", t);
         }
     }
 }
