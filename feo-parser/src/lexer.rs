@@ -96,10 +96,10 @@ impl<'a> Lexer<'a> {
                 // comments and doc comments
                 _ if c == '/' => match self.peek_next() {
                     Some('/') => {
+                        let start_pos = self.pos;
+
                         self.advance(); // skip first '/'
                         self.advance(); // skip second '/'
-
-                        let start_pos = self.pos;
 
                         if let Some('/') = self.peek_next() {
                             self.advance(); // skip third '/'
@@ -129,107 +129,23 @@ impl<'a> Lexer<'a> {
                             } else {
                                 self.log_error(LexErrorKind::ParseDocCommentError)
                             }
-                        } else if let Some('!') = self.peek_next() {
-                            self.advance(); // skip '!'
-                            num_open_doc_comments += 1;
-
-                            self.skip_whitespace();
-
-                            let start_pos = self.pos;
-
-                            while let Some(c) = self.current_char() {
-                                // close doc comment
-                                if c == '*' && self.peek_next() == Some('/') {
-                                    self.advance(); // skip '*'
-                                    self.advance(); // skip '/'
-                                    num_open_doc_comments -= 1;
-
-                                    let doc_comment_content = Arc::new(
-                                        self.input[start_pos..self.pos].trim().to_string(),
-                                    );
-
-                                    if let Ok(dc) = DocComment::parse(
-                                        self.input,
-                                        &doc_comment_content,
-                                        start_pos,
-                                        self.pos,
-                                    ) {
-                                        tokens.push(dc);
-                                        break;
-                                    } else {
-                                        self.log_error(LexErrorKind::ParseDocCommentError);
-                                    }
-                                } else {
-                                    self.advance();
-                                }
-                            }
-                        } else if self.current_char() != Some('/') {
-                            return Err(
-                                self.log_error(LexErrorKind::ExpectedBlockCommentTerminator)
-                            );
-                        }
-
-                        if let Ok(c) =
-                            // no need to store ordinary comment content
-                            Comment::parse(
-                                self.input,
-                                &String::from(""),
-                                start_pos,
-                                self.pos,
-                            )
-                        {
-                            tokens.push(c);
                         } else {
-                            self.log_error(LexErrorKind::ParseCommentError)
+                            if let Ok(c) =
+                                // no need to store ordinary comment content
+                                Comment::parse(
+                                    self.input,
+                                    &String::from(""),
+                                    start_pos,
+                                    self.pos,
+                                )
+                            {
+                                tokens.push(c);
+                            } else {
+                                self.log_error(LexErrorKind::ParseCommentError)
+                            }
                         }
                     }
 
-                    // Some('!') => {
-                    //     self.advance(); // skip '/'
-                    //     self.advance(); // skip '/'
-                    //     self.advance(); // skip '!'
-                    //     num_open_doc_comments += 1;
-
-                    //     self.skip_whitespace();
-
-                    //     let start_pos = self.pos;
-
-                    //     while let Some(c) = self.current_char() {
-                    //         if c == '\n' {
-                    //             continue;
-                    //         }
-
-                    //         // close doc comment
-                    //         if c == '*' && self.peek_next() == Some('/') {
-                    //             self.advance(); // skip '*'
-                    //             self.advance(); // skip '/'
-                    //             num_open_doc_comments -= 1;
-
-                    //             let doc_comment_content =
-                    //                 Arc::new(self.input[start_pos..self.pos].trim().to_string());
-
-                    //             if let Ok(dc) = DocComment::parse(
-                    //                 self.input,
-                    //                 &doc_comment_content,
-                    //                 start_pos,
-                    //                 self.pos,
-                    //             ) {
-                    //                 tokens.push(dc);
-                    //                 break;
-                    //             } else {
-                    //                 self.log_error(LexErrorKind::ParseDocCommentError);
-                    //             }
-                    //         } else {
-                    //             self.advance();
-                    //         }
-                    //     }
-
-                    //     if self.current_char() != Some('/') {
-                    //         return Err(
-                    //             self.log_error(LexErrorKind::ExpectedBlockCommentTerminator)
-                    //         );
-                    //     }
-                    // }
                     Some('*') => {
                         self.advance(); // skip '/'
                         self.advance(); // skip '*'
@@ -283,6 +199,8 @@ impl<'a> Lexer<'a> {
                             // check for `TypeAnnotation` syntax
                             self.advance(); // skip ':'
                             self.skip_whitespace();
+
+                            let start_pos = self.pos;
                             let mut type_name = String::new();
 
                             while let Some(c) = self.current_char() {
@@ -295,9 +213,9 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
-                                if let Ok(t) =
-                                    TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
-                                {
+                                if let Ok(t) = TypeAnnotation::parse(
+                                    self.input, &type_name, start_pos, self.pos,
+                                ) {
                                     tokens.push(t);
                                     break;
                                 } else {
@@ -308,6 +226,8 @@ impl<'a> Lexer<'a> {
                             // check for `PathExpression` syntax
                             self.advance(); // skip first ':'
                             self.advance(); // skip second ':'
+
+                            let start_pos = self.pos;
 
                             let mut path_components: Vec<String> = Vec::new();
 
@@ -341,34 +261,34 @@ impl<'a> Lexer<'a> {
                                 tokens.push(p);
                                 break;
                             } else {
-                                self.log_error(LexErrorKind::ParsePathExprError)
+                                self.log_error(LexErrorKind::ParsePathExprError);
+                                continue;
                             }
                         } else {
                             break;
                         }
                     }
 
-                    if let Ok(k) = Keyword::parse(self.input, &buf, start_pos, self.pos) {
-                        tokens.push(k);
-                    } else {
-                        self.log_error(LexErrorKind::InvalidKeyword(buf));
-                        continue;
-                    };
-
-                    if let Ok(b) = BoolLiteral::parse(self.input, &buf, start_pos, self.pos) {
-                        tokens.push(b);
-                    } else {
-                        self.log_error(LexErrorKind::ParseBoolError);
-                        continue;
+                    if buf == "true" || buf == "false" {
+                        if let Ok(b) =
+                            BoolLiteral::parse(self.input, &buf, self.pos - buf.len(), self.pos)
+                        {
+                            tokens.push(b);
+                        } else {
+                            self.log_error(LexErrorKind::ParseBoolError);
+                        }
                     }
 
-                    if let Ok(i) = Identifier::parse(self.input, &buf, start_pos, self.pos) {
+                    if let Ok(k) = Keyword::parse(self.input, &buf, self.pos - buf.len(), self.pos)
+                    {
+                        tokens.push(k);
+                    } else if let Ok(i) =
+                        Identifier::parse(self.input, &buf, self.pos - buf.len(), self.pos)
+                    {
                         tokens.push(i);
                     } else {
-                        break;
+                        self.log_error(LexErrorKind::UnexpectedIdentifier(buf));
                     }
-
-                    self.log_error(LexErrorKind::UnexpectedIdentifier(buf));
                 }
 
                 '(' | '[' | '{' => {
@@ -401,7 +321,7 @@ impl<'a> Lexer<'a> {
                     let tree = TokenTree::new(
                         self.input,
                         tokens.clone(),
-                        self.pos - tokens.len(),
+                        start_pos,
                         self.pos,
                     );
                     token_trees.push(Some(tree));
@@ -454,7 +374,7 @@ impl<'a> Lexer<'a> {
                         let tree = TokenTree::new(
                             self.input,
                             std::mem::take(&mut tokens),
-                            self.pos - tokens.len(),
+                            start_pos,
                             self.pos,
                         );
                         token_trees.push(Some(tree));
@@ -716,17 +636,19 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        {
-           /! q
+        /// doc comment
+        
+        pub struct Foo {
+            bar: String,
         }
         "#;
 
         let mut lexer = Lexer::new(&source_code);
-        let token_trees = lexer.tokenize().unwrap();
-        let tokens = token_trees.tokens();
+        let token_stream = lexer.tokenize().unwrap();
+        let tokens = token_stream.tokens();
 
         for t in tokens {
-            println!("tokens: {:?}", t);
+            println!("Tokens: {:?}", t);
         }
     }
 }
