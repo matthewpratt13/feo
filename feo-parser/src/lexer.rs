@@ -63,7 +63,6 @@ impl<'a> Lexer<'a> {
         });
     }
 
-
     pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
@@ -94,6 +93,7 @@ impl<'a> Lexer<'a> {
                         num_open_block_comments -= 1;
                     }
                 }
+                // comments and doc comments
                 _ if c == '/' => match self.peek_next() {
                     Some('/') => {
                         self.advance(); // skip first '/'
@@ -125,7 +125,7 @@ impl<'a> Lexer<'a> {
                             ) {
                                 tokens.push(dc);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDocCommentContent)
+                                self.log_error(LexErrorKind::ParseDocCommentError)
                             }
                         } else {
                             while let Some(c) = self.current_char() {
@@ -147,7 +147,7 @@ impl<'a> Lexer<'a> {
                             {
                                 tokens.push(c);
                             } else {
-                                self.log_error(LexErrorKind::InvalidCommentContent)
+                                self.log_error(LexErrorKind::ParseCommentError)
                             }
                         }
                     }
@@ -182,7 +182,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(dc);
                                     break;
                                 } else {
-                                    self.log_error(LexErrorKind::InvalidDocCommentContent);
+                                    self.log_error(LexErrorKind::ParseDocCommentError);
                                 }
                             } else {
                                 self.advance();
@@ -213,7 +213,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(c);
                                     break;
                                 } else {
-                                    self.log_error(LexErrorKind::InvalidCommentContent);
+                                    self.log_error(LexErrorKind::ParseCommentError);
                                 }
                             } else {
                                 self.advance();
@@ -224,7 +224,7 @@ impl<'a> Lexer<'a> {
                     Some(_) | None => (),
                 },
 
-                // `Identifier` + `Keyword` (cannot start with digit, but can contain)
+                // identifiers and keywords (cannot start with, but can contain, digits)
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
@@ -254,7 +254,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(t);
                                     break;
                                 } else {
-                                    self.log_error(LexErrorKind::InvalidTypeAnnotation)
+                                    self.log_error(LexErrorKind::ParseTypeAnnError)
                                 }
                             }
                         } else if c == ':' && self.peek_next() == Some(':') {
@@ -294,7 +294,7 @@ impl<'a> Lexer<'a> {
                                 tokens.push(p);
                                 break;
                             } else {
-                                self.log_error(LexErrorKind::InvalidPathExpression)
+                                self.log_error(LexErrorKind::ParsePathExprError)
                             }
                         } else {
                             break;
@@ -304,23 +304,24 @@ impl<'a> Lexer<'a> {
                     if let Ok(k) = Keyword::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(k);
                     } else {
+                        self.log_error(LexErrorKind::InvalidKeyword(buf));
                         continue;
                     };
 
                     if let Ok(b) = BoolLiteral::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(b);
                     } else {
+                        self.log_error(LexErrorKind::ParseBoolError);
                         continue;
                     }
 
                     if let Ok(i) = Identifier::parse(self.input, &buf, start_pos, self.pos) {
                         tokens.push(i);
                     } else {
-                        self.log_error(LexErrorKind::InvalidIdentifier);
                         break;
                     }
 
-                    self.log_error(LexErrorKind::UnexpectedIdentifier);
+                    self.log_error(LexErrorKind::UnexpectedIdentifier(buf));
                 }
 
                 '(' | '[' | '{' => {
@@ -330,21 +331,21 @@ impl<'a> Lexer<'a> {
                             if let Ok(d) = Delimiter::parse(self.input, &'(', start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDelimiter);
+                                self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         '[' => {
                             if let Ok(d) = Delimiter::parse(self.input, &'[', start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDelimiter)
+                                self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         '{' => {
                             if let Ok(d) = Delimiter::parse(self.input, &'{', start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDelimiter)
+                                self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         _ => unreachable!(),
@@ -365,41 +366,41 @@ impl<'a> Lexer<'a> {
                             if let Ok(d) = Delimiter::parse(self.input, &')', start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDelimiter)
+                                self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         ']' => {
                             if let Ok(d) = Delimiter::parse(self.input, &']', start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDelimiter)
+                                self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         '}' => {
                             if let Ok(d) = Delimiter::parse(self.input, &'}', start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::InvalidDelimiter)
+                                self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         _ => unreachable!(),
                     };
                     let prev_delim = token_trees
                         .pop()
-                        .ok_or(self.log_error(LexErrorKind::FinalIndex))?
-                        .ok_or(self.log_error(LexErrorKind::NoTokenTreeFound))?
+                        .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
+                        .ok_or(self.log_error(LexErrorKind::ExpectedTokenTree))?
                         .tokens()
                         .to_vec()
                         .pop()
-                        .ok_or(self.log_error(LexErrorKind::FinalIndex))?
-                        .ok_or(self.log_error(LexErrorKind::NoTokenFound))?;
+                        .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
+                        .ok_or(self.log_error(LexErrorKind::ExpectedToken))?;
                     let prev_delim_kind = Delimiter::try_from(prev_delim)
                         .map_err(|_| self.log_error(LexErrorKind::MismatchedDelimiters))?
                         .delim
                         .0;
 
                     let curr_delim_kind = DelimKind::try_from(c)
-                        .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimKind))?;
+                        .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimKind(c)))?;
 
                     if prev_delim_kind == curr_delim_kind {
                         let tree = TokenTree::new(
@@ -442,7 +443,7 @@ impl<'a> Lexer<'a> {
                                         _ => self.log_error(LexErrorKind::InvalidEscapeSequence),
                                     };
                                 } else {
-                                    // Escape sequence is expected, but the input has ended
+                                    // escape sequence is expected, but the input has ended
                                     return Err(
                                         self.log_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
@@ -454,7 +455,8 @@ impl<'a> Lexer<'a> {
                                 num_open_double_quotes -= 1;
 
                                 let string_lit =
-                                    StringLiteral::parse(self.input, &buf, start_pos, self.pos)?;
+                                    StringLiteral::parse(self.input, &buf, start_pos, self.pos)
+                                        .map_err(|_| self.log_error(LexErrorKind::ParseError))?;
                                 tokens.push(string_lit);
                             }
 
@@ -504,7 +506,8 @@ impl<'a> Lexer<'a> {
                                                 self.log_error(LexErrorKind::InvalidEscapeSequence)
                                             )
                                         }
-                                    }?;
+                                    }
+                                    .map_err(|_| self.log_error(LexErrorKind::ParseCharError))?;
 
                                     tokens.push(char_lit);
                                 } else {
@@ -525,16 +528,18 @@ impl<'a> Lexer<'a> {
                                     num_open_single_quotes -= 1;
 
                                     let char_lit =
-                                        CharLiteral::parse(self.input, &c, start_pos, self.pos)?;
+                                        CharLiteral::parse(self.input, &c, start_pos, self.pos)
+                                            .map_err(|_| {
+                                                self.log_error(LexErrorKind::ParseCharError)
+                                            })?;
                                     tokens.push(char_lit);
                                 } else {
-                                    self.log_error(LexErrorKind::InvalidCharLiteral);
+                                    self.log_error(LexErrorKind::UnexpectedCharLiteral(c));
                                 }
                             }
                         }
                     } else {
                         return Err(self.log_error(LexErrorKind::UnclosedCharLiteral));
-                        // self.log_error("Unexpected end of input in character literal");
                     }
                 }
 
@@ -573,7 +578,6 @@ impl<'a> Lexer<'a> {
 
                     let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
-                    // parse and push the appropriate tokens to `tokens`
                     if is_float {
                         if let Ok(f) =
                             FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
@@ -581,7 +585,6 @@ impl<'a> Lexer<'a> {
                             tokens.push(f);
                         } else {
                             self.log_error(LexErrorKind::ParseFloatError);
-                            // self.log_error("Error parsing float");
                         }
                     } else if is_negative {
                         if let Ok(i) =
@@ -590,7 +593,6 @@ impl<'a> Lexer<'a> {
                             tokens.push(i);
                         } else {
                             self.log_error(LexErrorKind::ParseIntError);
-                            // self.log_error("Error parsing integer");
                         }
                     } else {
                         if let Ok(u) =
@@ -599,12 +601,10 @@ impl<'a> Lexer<'a> {
                             tokens.push(u);
                         } else {
                             self.log_error(LexErrorKind::ParseUIntError);
-                            // self.log_error("Error parsing uint");
                         }
                     }
                 }
 
-                // punctuation / escape codes
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation() {
@@ -621,13 +621,12 @@ impl<'a> Lexer<'a> {
                     {
                         tokens.push(p)
                     } else {
-                        self.log_error(LexErrorKind::UnexpectedChar);
-                        // self.log_error(&format!("Unexpected character: {}", c));
+                        self.log_error(LexErrorKind::UnexpectedChar(c));
                         self.advance();
                     }
                 }
 
-                _ => self.log_error(LexErrorKind::InvalidChar),
+                _ => self.log_error(LexErrorKind::InvalidChar(c)),
             }
         }
 
@@ -655,3 +654,6 @@ impl<'a> Lexer<'a> {
         Ok(stream)
     }
 }
+
+#[cfg(test)]
+mod tests {}
