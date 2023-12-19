@@ -161,6 +161,10 @@ impl<'a> Lexer<'a> {
                         let start_pos = self.pos;
 
                         while let Some(c) = self.current_char() {
+                            if c == '\n' {
+                                self.advance();
+                            }
+
                             if c == '*' && self.peek_next() == Some('/') {
                                 self.advance(); // skip '*'
                                 self.advance(); // skip '/'
@@ -652,8 +656,7 @@ mod tests {
     fn tokenize() {
         let source_code = r#"
         // line comment
-        /*
-        block comment
+        /* block comment 
          */
         /// doc comment
         pub struct Foo {
