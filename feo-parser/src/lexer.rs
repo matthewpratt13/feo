@@ -534,7 +534,7 @@ impl<'a> Lexer<'a> {
                                             })?;
                                     tokens.push(char_lit);
                                 } else {
-                                    self.log_error(LexErrorKind::UnexpectedCharLiteral(c));
+                                    self.log_error(LexErrorKind::ExpectedClosingSingleQuote);
                                 }
                             }
                         }

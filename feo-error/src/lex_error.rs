@@ -8,7 +8,7 @@ pub enum LexErrorKind {
     UnclosedStringLiteral,
     UnclosedCharLiteral,
     EmptyCharLiteral,
-    UnexpectedCharLiteral(char),
+    ExpectedClosingSingleQuote,
     UnexpectedIdentifier(String),
     InvalidEscapeSequence,
     ExpectedEscapeSequence,
