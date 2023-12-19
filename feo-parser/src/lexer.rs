@@ -458,6 +458,7 @@ impl<'a> Lexer<'a> {
                                     StringLiteral::parse(self.input, &buf, start_pos, self.pos)
                                         .map_err(|_| self.log_error(LexErrorKind::ParseError))?;
                                 tokens.push(string_lit);
+                                break;
                             }
 
                             _ => {
@@ -465,6 +466,10 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                             }
                         }
+                    }
+
+                    if self.current_char() != Some('"') {
+                        self.log_error(LexErrorKind::ExpectedClosingDoubleQuote);
                     }
                 }
                 '\'' => {
