@@ -469,7 +469,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if self.current_char() != Some('"') {
-                        self.log_error(LexErrorKind::InvalidStringLiteral);
+                        self.log_error(LexErrorKind::ExpectedClosingDoubleQuote);
                     }
                 }
                 '\'' => {
@@ -547,7 +547,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if self.current_char() != Some('\'') {
-                        self.log_error(LexErrorKind::InvalidCharLiteral);
+                        self.log_error(LexErrorKind::ExpectedClosingSingleQuote);
                     }
                 }
 
