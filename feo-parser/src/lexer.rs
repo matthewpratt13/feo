@@ -129,75 +129,107 @@ impl<'a> Lexer<'a> {
                             } else {
                                 self.log_error(LexErrorKind::ParseDocCommentError)
                             }
-                        } else {
+                        } else if let Some('!') = self.peek_next() {
+                            self.advance(); // skip '!'
+                            num_open_doc_comments += 1;
+
+                            self.skip_whitespace();
+
+                            let start_pos = self.pos;
+
                             while let Some(c) = self.current_char() {
-                                if c == '\n' {
-                                    break;
+                                // close doc comment
+                                if c == '*' && self.peek_next() == Some('/') {
+                                    self.advance(); // skip '*'
+                                    self.advance(); // skip '/'
+                                    num_open_doc_comments -= 1;
+
+                                    let doc_comment_content = Arc::new(
+                                        self.input[start_pos..self.pos].trim().to_string(),
+                                    );
+
+                                    if let Ok(dc) = DocComment::parse(
+                                        self.input,
+                                        &doc_comment_content,
+                                        start_pos,
+                                        self.pos,
+                                    ) {
+                                        tokens.push(dc);
+                                        break;
+                                    } else {
+                                        self.log_error(LexErrorKind::ParseDocCommentError);
+                                    }
                                 } else {
                                     self.advance();
                                 }
                             }
-
-                            if let Ok(c) =
-                                // no need to store ordinary comment content
-                                Comment::parse(
-                                    self.input,
-                                    &String::from(""),
-                                    start_pos,
-                                    self.pos,
-                                )
-                            {
-                                tokens.push(c);
-                            } else {
-                                self.log_error(LexErrorKind::ParseCommentError)
-                            }
-                        }
-                    }
-
-                    Some('!') => {
-                        self.advance(); // skip '/'
-                        self.advance(); // skip '!'
-                        num_open_doc_comments += 1;
-
-                        let start_pos = self.pos;
-
-                        while let Some(c) = self.current_char() {
-                            if c == '\n' {
-                                continue;
-                            }
-
-                            // close doc comment
-                            if c == '*' && self.peek_next() == Some('/') {
-                                self.advance(); // skip '*'
-                                self.advance(); // skip '/'
-                                num_open_doc_comments -= 1;
-
-                                let doc_comment_content =
-                                    Arc::new(self.input[start_pos..self.pos].trim().to_string());
-
-                                if let Ok(dc) = DocComment::parse(
-                                    self.input,
-                                    &doc_comment_content,
-                                    start_pos,
-                                    self.pos,
-                                ) {
-                                    tokens.push(dc);
-                                    break;
-                                } else {
-                                    self.log_error(LexErrorKind::ParseDocCommentError);
-                                }
-                            } else {
-                                self.advance();
-                            }
-                        }
-
-                        if self.current_char() != Some('/') {
+                        } else if self.current_char() != Some('/') {
                             return Err(
                                 self.log_error(LexErrorKind::ExpectedBlockCommentTerminator)
                             );
                         }
+
+                        if let Ok(c) =
+                            // no need to store ordinary comment content
+                            Comment::parse(
+                                self.input,
+                                &String::from(""),
+                                start_pos,
+                                self.pos,
+                            )
+                        {
+                            tokens.push(c);
+                        } else {
+                            self.log_error(LexErrorKind::ParseCommentError)
+                        }
                     }
 
+                    // Some('!') => {
+                    //     self.advance(); // skip '/'
+                    //     self.advance(); // skip '/'
+                    //     self.advance(); // skip '!'
+                    //     num_open_doc_comments += 1;
+
+                    //     self.skip_whitespace();
+
+                    //     let start_pos = self.pos;
+
+                    //     while let Some(c) = self.current_char() {
+                    //         if c == '\n' {
+                    //             continue;
+                    //         }
+
+                    //         // close doc comment
+                    //         if c == '*' && self.peek_next() == Some('/') {
+                    //             self.advance(); // skip '*'
+                    //             self.advance(); // skip '/'
+                    //             num_open_doc_comments -= 1;
+
+                    //             let doc_comment_content =
+                    //                 Arc::new(self.input[start_pos..self.pos].trim().to_string());
+
+                    //             if let Ok(dc) = DocComment::parse(
+                    //                 self.input,
+                    //                 &doc_comment_content,
+                    //                 start_pos,
+                    //                 self.pos,
+                    //             ) {
+                    //                 tokens.push(dc);
+                    //                 break;
+                    //             } else {
+                    //                 self.log_error(LexErrorKind::ParseDocCommentError);
+                    //             }
+                    //         } else {
+                    //             self.advance();
+                    //         }
+                    //     }
+
+                    //     if self.current_char() != Some('/') {
+                    //         return Err(
+                    //             self.log_error(LexErrorKind::ExpectedBlockCommentTerminator)
+                    //         );
+                    //     }
+                    // }
                     Some('*') => {
                         self.advance(); // skip '/'
                         self.advance(); // skip '*'
@@ -685,14 +717,8 @@ mod tests {
     fn tokenize() {
         let source_code = r#"
         {
-            /*
-            block comment
-            
-            */
+           /! q
         }
-    
-
-
         "#;
 
         let mut lexer = Lexer::new(&source_code);
