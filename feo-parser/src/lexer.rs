@@ -104,6 +104,8 @@ impl<'a> Lexer<'a> {
                         if let Some('/') = self.peek_next() {
                             self.advance(); // skip third '/'
 
+                            self.skip_whitespace();
+
                             let start_pos = self.pos;
 
                             while let Some(c) = self.current_char() {
@@ -205,8 +207,9 @@ impl<'a> Lexer<'a> {
 
                         while let Some(c) = self.current_char() {
                             if c == '*' && self.peek_next() == Some('/') {
-                                self.advance(); // skip '*'
                                 self.advance(); // skip '/'
+                                self.advance(); // skip '*'
+
                                 num_open_block_comments -= 1;
 
                                 // no need to store ordinary comment content
@@ -682,12 +685,15 @@ mod tests {
     fn tokenize() {
         let source_code = r#"
         {
-            let a = module::Struct;
+            /*
+            block comment
+            
+            */
         }
+    
+
 
         "#;
-
-        // let source_code = r#" pub struct Foo { let a = 1; } "#;
 
         let mut lexer = Lexer::new(&source_code);
         let token_trees = lexer.tokenize().unwrap();
