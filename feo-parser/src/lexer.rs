@@ -39,7 +39,7 @@ impl<'a> Lexer<'a> {
     }
 
     fn current_char(&mut self) -> Option<char> {
-        self.peekable_chars.next()
+        self.peekable_chars.peek().cloned()
     }
 
     fn peek_next(&mut self) -> Option<char> {
@@ -338,6 +338,7 @@ impl<'a> Lexer<'a> {
 
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
+
                     match c {
                         '(' => {
                             if let Ok(d) = Delimiter::parse(self.input, &'(', start_pos, self.pos) {
@@ -364,7 +365,7 @@ impl<'a> Lexer<'a> {
                     };
                     let tree = TokenTree::new(
                         self.input,
-                        std::mem::take(&mut tokens),
+                        tokens.clone(),
                         self.pos - tokens.len(),
                         self.pos,
                     );
@@ -680,31 +681,20 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        // line comment
-        /// outer doc comment
-        /* 
-        block comment
-        */
+        {
+            let a = module::Struct;
+        }
 
-        /!
-        module doc comment
-        */
-
-        let foo = "bar";
-
-        let baz = -10;
-
-        let foo = false;
-
-        let bar: u32 = 10;
-
-        let baz = 'a';
         "#;
+
+        // let source_code = r#" pub struct Foo { let a = 1; } "#;
 
         let mut lexer = Lexer::new(&source_code);
         let token_trees = lexer.tokenize().unwrap();
         let tokens = token_trees.tokens();
 
-        println!("tokens: {:?}", tokens);
+        for t in tokens {
+            println!("tokens: {:?}", t);
+        }
     }
 }
