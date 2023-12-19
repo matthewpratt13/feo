@@ -469,7 +469,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if self.current_char() != Some('"') {
-                        self.log_error(LexErrorKind::ExpectedClosingDoubleQuote);
+                        self.log_error(LexErrorKind::InvalidStringLiteral);
                     }
                 }
                 '\'' => {
@@ -538,13 +538,16 @@ impl<'a> Lexer<'a> {
                                                 self.log_error(LexErrorKind::ParseCharError)
                                             })?;
                                     tokens.push(char_lit);
-                                } else {
-                                    self.log_error(LexErrorKind::ExpectedClosingSingleQuote);
+                                    continue;
                                 }
                             }
                         }
                     } else {
-                        return Err(self.log_error(LexErrorKind::UnclosedCharLiteral));
+                        return Err(self.log_error(LexErrorKind::ExpectedCharLiteral));
+                    }
+
+                    if self.current_char() != Some('\'') {
+                        self.log_error(LexErrorKind::InvalidCharLiteral);
                     }
                 }
 
