@@ -68,7 +68,6 @@ impl<'a> Lexer<'a> {
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
         let mut num_open_block_comments: usize = 0;
-        let mut num_open_doc_comments: usize = 0;
         let mut num_open_delimiters: usize = 0;
         let mut num_open_single_quotes: usize = 0;
         let mut num_open_double_quotes: usize = 0;
@@ -200,8 +199,9 @@ impl<'a> Lexer<'a> {
                             self.advance(); // skip ':'
                             self.skip_whitespace();
 
-                            let start_pos = self.pos;
                             let mut type_name = String::new();
+
+                            let start_pos = self.pos;
 
                             while let Some(c) = self.current_char() {
                                 if c.is_alphanumeric() || c == '_' {
@@ -271,7 +271,7 @@ impl<'a> Lexer<'a> {
 
                     if buf == "true" || buf == "false" {
                         if let Ok(b) =
-                            BoolLiteral::parse(self.input, &buf, self.pos - buf.len(), self.pos)
+                            BoolLiteral::parse(self.input, &buf, start_pos, start_pos + buf.len())
                         {
                             tokens.push(b);
                         } else {
@@ -279,11 +279,12 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    if let Ok(k) = Keyword::parse(self.input, &buf, self.pos - buf.len(), self.pos)
+                    if let Ok(k) =
+                        Keyword::parse(self.input, &buf, start_pos, start_pos + buf.len())
                     {
                         tokens.push(k);
                     } else if let Ok(i) =
-                        Identifier::parse(self.input, &buf, self.pos - buf.len(), self.pos)
+                        Identifier::parse(self.input, &buf, start_pos, start_pos + buf.len())
                     {
                         tokens.push(i);
                     } else {
@@ -293,6 +294,7 @@ impl<'a> Lexer<'a> {
 
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
+                    self.advance(); // skip delimiter
 
                     match c {
                         '(' => {
@@ -318,17 +320,13 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
-                    let tree = TokenTree::new(
-                        self.input,
-                        tokens.clone(),
-                        start_pos,
-                        self.pos,
-                    );
+                    let tree = TokenTree::new(self.input, tokens.clone(), start_pos, self.pos);
                     token_trees.push(Some(tree));
-                    self.advance(); // skip delimiter
                 }
 
                 ')' | ']' | '}' => {
+                    self.advance(); // skip delimiter
+
                     match c {
                         ')' => {
                             if let Ok(d) = Delimiter::parse(self.input, &')', start_pos, self.pos) {
@@ -602,10 +600,6 @@ impl<'a> Lexer<'a> {
 
                 _ => self.log_error(LexErrorKind::InvalidChar(c)),
             }
-        }
-
-        if num_open_doc_comments > 0 {
-            return Err(self.log_error(LexErrorKind::UnterminatedDocComments));
         }
 
         if num_open_block_comments > 0 {
