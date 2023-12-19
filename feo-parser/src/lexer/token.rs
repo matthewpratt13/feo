@@ -37,6 +37,27 @@ pub enum Token {
     Type(TypeAnnotation),
 }
 
+impl Spanned for Token {
+    fn span(&self) -> &Span {
+        match self {
+            Token::CharLit(c) => c.span(),
+            Token::StringLit(s) => s.span(),
+            Token::BoolLit(b) => b.span(),
+            Token::IntLit(i) => i.span(),
+            Token::UIntLit(u) => u.span(),
+            Token::FloatLit(f) => f.span(),
+            Token::Iden(i) => i.span(),
+            Token::Keyword(k) => k.span(),
+            Token::Comment(c) => c.span(),
+            Token::DocComment(dc) => dc.span(),
+            Token::Path(p) => p.span(),
+            Token::Delim(d) => d.span(),
+            Token::Punc(p) => p.span(),
+            Token::Type(t) => t.span(),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TokenStream<T> {
     tokens: Vec<Option<T>>,

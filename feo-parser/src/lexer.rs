@@ -3,8 +3,8 @@ use std::sync::Arc;
 
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
-    Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
-    TypeAnnotation, span::Spanned,
+    span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression,
+    Punctuation, TypeAnnotation,
 };
 
 use crate::{
@@ -129,6 +129,14 @@ impl<'a> Lexer<'a> {
                                 self.log_error(LexErrorKind::ParseDocCommentError)
                             }
                         } else {
+                            while let Some(c) = self.current_char() {
+                                if c == '\n' {
+                                    break;
+                                } else {
+                                    self.advance();
+                                }
+                            }
+
                             if let Ok(c) =
                                 // no need to store ordinary comment content
                                 Comment::parse(
@@ -154,26 +162,28 @@ impl<'a> Lexer<'a> {
 
                         while let Some(c) = self.current_char() {
                             if c == '*' && self.peek_next() == Some('/') {
-                                self.advance(); // skip '/'
                                 self.advance(); // skip '*'
+                                self.advance(); // skip '/'
 
                                 num_open_block_comments -= 1;
-
-                                // no need to store ordinary comment content
-                                if let Ok(c) = Comment::parse(
-                                    self.input,
-                                    &String::from(""),
-                                    start_pos,
-                                    self.pos,
-                                ) {
-                                    tokens.push(c);
-                                    break;
-                                } else {
-                                    self.log_error(LexErrorKind::ParseCommentError);
-                                }
+                                break;
                             } else {
                                 self.advance();
                             }
+                        }
+
+                        if let Ok(c) =
+                            // no need to store ordinary comment content
+                            Comment::parse(
+                                self.input,
+                                &String::from(""),
+                                start_pos,
+                                self.pos,
+                            )
+                        {
+                            tokens.push(c);
+                        } else {
+                            self.log_error(LexErrorKind::ParseCommentError)
                         }
 
                         if self.current_char() != Some('/') {
@@ -320,12 +330,19 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
+                    let start_pos = tokens[0]
+                        .clone()
+                        .ok_or(self.log_error(LexErrorKind::ExpectedToken))?
+                        .span()
+                        .start();
+
                     let tree = TokenTree::new(
                         self.input,
-                        tokens.clone(),
-                        start_pos - tokens.len(),
+                        std::mem::take(&mut tokens),
+                        start_pos,
                         self.pos,
                     );
+
                     token_trees.push(Some(tree));
                 }
 
@@ -357,6 +374,7 @@ impl<'a> Lexer<'a> {
                         _ => unreachable!(),
                     };
                     let prev_token = token_trees
+                        .clone()
                         .pop()
                         .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
                         .ok_or(self.log_error(LexErrorKind::ExpectedTokenTree))?
@@ -375,7 +393,7 @@ impl<'a> Lexer<'a> {
                         let tree = TokenTree::new(
                             self.input,
                             std::mem::take(&mut tokens),
-                            prev_delim.span().start(),
+                            prev_delim.span().end() + 1,
                             self.pos,
                         );
                         token_trees.push(Some(tree));
@@ -633,8 +651,11 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
+        // line comment
+        /*
+        block comment
+         */
         /// doc comment
-        
         pub struct Foo {
             bar: String,
         }
