@@ -10,11 +10,6 @@ pub enum PuncKind {
 
     DoubleColon,
     DoubleFullStop,
-    DoubleSlash,   // trailing / line comment
-    TripleSlash,   // doc comment
-    SlashAsterisk, // multiline / inline comment open
-    SlashBang,     // doc comment
-    AsteriskSlash, // multiline / inline comment close
 
     Bang, // (exclamation point)
     Hash,

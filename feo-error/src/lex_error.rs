@@ -3,7 +3,6 @@ pub enum LexErrorKind {
     UninitializedBlockComment,
     UnterminatedBlockComments,
     ExpectedBlockCommentTerminator,
-    UnterminatedDocComments,
     MismatchedDelimiters,
     UnclosedDelimiters,
     UnclosedDoubleQuotes,
