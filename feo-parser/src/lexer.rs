@@ -119,7 +119,7 @@ impl<'a> Lexer<'a> {
 
                                 if let Ok(dc) = DocComment::parse(
                                     self.input,
-                                    &Arc::into_inner(doc_comment_content).unwrap_or("".to_string()),
+                                    &doc_comment_content,
                                     start_pos,
                                     self.pos,
                                 ) {
@@ -481,12 +481,9 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
                     if is_float {
-                        if let Ok(f) = FloatLiteral::parse(
-                            self.input,
-                            &Arc::into_inner(Arc::clone(&num_content)).unwrap_or("".to_string()),
-                            start_pos,
-                            self.pos,
-                        ) {
+                        if let Ok(f) =
+                            FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                        {
                             tokens.push(f);
                             continue;
                         } else {
@@ -495,23 +492,17 @@ impl<'a> Lexer<'a> {
                     }
 
                     if is_negative {
-                        if let Ok(i) = IntLiteral::parse(
-                            self.input,
-                            &Arc::into_inner(Arc::clone(&num_content)).unwrap_or("".to_string()),
-                            start_pos,
-                            self.pos,
-                        ) {
+                        if let Ok(i) =
+                            IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                        {
                             tokens.push(i);
                         } else {
                             self.log_error(LexErrorKind::ParseIntError);
                         }
                     } else {
-                        if let Ok(u) = UIntLiteral::parse(
-                            self.input,
-                            &Arc::into_inner(num_content).unwrap_or("".to_string()),
-                            start_pos,
-                            self.pos,
-                        ) {
+                        if let Ok(u) =
+                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                        {
                             tokens.push(u);
                         } else {
                             self.log_error(LexErrorKind::ParseUIntError);
@@ -530,12 +521,9 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(self.input[start_pos..self.pos].to_string());
 
-                    if let Ok(p) = Punctuation::parse(
-                        self.input,
-                        &Arc::into_inner(punc_content).unwrap_or("".to_string()),
-                        start_pos,
-                        self.pos,
-                    ) {
+                    if let Ok(p) =
+                        Punctuation::parse(self.input, &punc_content, start_pos, self.pos)
+                    {
                         tokens.push(p.clone());
 
                         let punc_kind = Punctuation::try_from(p.unwrap())?.punc_kind;
