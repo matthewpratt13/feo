@@ -107,6 +107,7 @@ pub enum TypeName {
     U16Type,
     U32Type,
     U64Type,
+    VecType,
 
     CustomType(String),
 }
@@ -127,6 +128,7 @@ impl FromStr for TypeName {
             "u16" => Ok(TypeName::U16Type),
             "u32" => Ok(TypeName::U32Type),
             "u64" => Ok(TypeName::U32Type),
+            "Vec" => Ok(TypeName::VecType),
             _ => Ok(TypeName::CustomType(s.to_string())),
         }?;
 
