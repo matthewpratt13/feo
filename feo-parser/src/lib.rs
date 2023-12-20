@@ -2,8 +2,8 @@ use std::{fmt::Display, str::FromStr};
 
 use feo_types::{
     span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
-    KeywordKind, Literal, PathExpression, Primitive, PrimitiveType, PuncKind, Punctuation,
-    TypeAnnotation, TypeName,
+    KeywordKind, Literal, Primitive, PrimitiveType, PuncKind, Punctuation, TypeAnnotation,
+    TypeName,
 };
 
 mod lexer;
@@ -13,7 +13,7 @@ mod literals;
 use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral};
 
 mod parse;
-use parse::{Parse, ParseVec};
+use parse::Parse;
 
 impl<T> Parse<T> for CharLiteral
 where
@@ -172,23 +172,6 @@ where
         let doc_comment = DocComment::new(content.to_string(), span);
 
         let token = Token::DocComment(doc_comment);
-
-        Ok(Some(token))
-    }
-}
-
-impl<T> ParseVec<T> for PathExpression
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &Vec<T>, start: usize, end: usize) -> Result<Option<Token>, ()> {
-        let span = Span::new(src, start, end);
-
-        let path: Vec<String> = content.into_iter().map(|t| t.to_string()).collect();
-
-        let path_expr = PathExpression::new(path, span);
-
-        let token = Token::Path(path_expr);
 
         Ok(Some(token))
     }

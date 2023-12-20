@@ -4,13 +4,13 @@ use std::{iter::Peekable, str::FromStr};
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::PuncKind;
 use feo_types::{
-    span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression,
-    Punctuation, TypeAnnotation,
+    span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, Punctuation,
+    TypeAnnotation,
 };
 
 use crate::{
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
-    parse::{Parse, ParseVec},
+    parse::Parse,
 };
 
 mod token;
@@ -212,124 +212,38 @@ impl<'a> Lexer<'a> {
                     let mut buf = String::new();
 
                     while let Some(c) = self.current_char() {
+                        // check for type annotation syntax
+
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
                             self.advance();
                         } else if c == ':' {
                             // check for `TypeAnnotation` syntax
                             self.advance(); // skip ':'
+                            self.skip_whitespace();
+                            let mut type_name = String::new();
 
-                            if self.peek_next() == Some(':') {
-                                self.advance(); // skip second ':'
+                            let start_pos = self.pos;
 
-                                let start_pos = self.pos;
-
-                                let mut path_components: Vec<String> = Vec::new();
-
-                                while let Some(c) = self.current_char() {
-                                    if c.is_alphanumeric() || c == '_' {
-                                        let mut component = String::new();
-                                        component.push(c);
-                                        self.advance();
-
-                                        // Collect the rest of the component
-                                        while let Some(next_c) = self.current_char() {
-                                            if next_c.is_alphanumeric() || next_c == '_' {
-                                                component.push(next_c);
-                                                self.advance();
-                                            } else {
-                                                break;
-                                            }
-                                        }
-
-                                        path_components.push(component);
-                                    } else if c == ':' && self.peek_next() == Some(':') {
-                                        self.advance();
-                                        self.advance();
-                                    } else {
-                                        break;
-                                    }
-                                }
-
-                                if let Ok(p) = PathExpression::parse(
-                                    self.input,
-                                    &path_components,
-                                    start_pos,
-                                    self.pos,
-                                ) {
-                                    tokens.push(p);
+                            while let Some(c) = self.current_char() {
+                                if c.is_alphanumeric() || c == '_' {
+                                    type_name.push(c);
+                                    self.advance();
                                 } else {
-                                    self.log_error(LexErrorKind::ParsePathExprError);
                                     break;
                                 }
-                            } else {
-                                self.skip_whitespace();
-                                let mut type_name = String::new();
+                            }
 
-                                let start_pos = self.pos;
-
-                                while let Some(c) = self.current_char() {
-                                    if c.is_alphanumeric() || c == '_' {
-                                        type_name.push(c);
-                                        self.advance();
-                                    } else {
-                                        break;
-                                    }
-                                }
-
-                                if !type_name.is_empty() {
-                                    if let Ok(t) = TypeAnnotation::parse(
-                                        self.input, &type_name, start_pos, self.pos,
-                                    ) {
-                                        tokens.push(t);
-                                        break;
-                                    } else {
-                                        self.log_error(LexErrorKind::ParseTypeAnnError)
-                                    }
+                            if !type_name.is_empty() {
+                                if let Ok(t) = TypeAnnotation::parse(
+                                    self.input, &type_name, start_pos, self.pos,
+                                ) {
+                                    tokens.push(t);
+                                    break;
+                                } else {
+                                    self.log_error(LexErrorKind::ParseTypeAnnError)
                                 }
                             }
-                        // } else if c == ':' && self.peek_next() == Some(':') {
-                        //     // check for `PathExpression` syntax
-                        //     self.advance(); // skip first ':'
-                        //     self.advance(); // skip second ':'
-
-                        //     let start_pos = self.pos;
-
-                        //     let mut path_components: Vec<String> = Vec::new();
-
-                        //     while let Some(c) = self.current_char() {
-                        //         if c.is_alphabetic() || c == '_' {
-                        //             let mut component = String::new();
-                        //             component.push(c);
-                        //             self.advance();
-
-                        //             while let Some(next_c) = self.current_char() {
-                        //                 if next_c.is_alphanumeric() || next_c == '_' {
-                        //                     component.push(c);
-                        //                     self.advance();
-                        //                 } else {
-                        //                     break;
-                        //                 }
-                        //             }
-
-                        //             path_components.push(component);
-                        //         } else {
-                        //             break;
-                        //         }
-                        //     }
-
-                        //     if let Ok(p) = PathExpression::parse(
-                        //         self.input,
-                        //         &path_components,
-                        //         start_pos,
-                        //         self.pos,
-                        //     ) {
-                        //         tokens.push(p);
-                        //         break;
-                        //     } else {
-                        //         self.log_error(LexErrorKind::ParsePathExprError);
-                        //         continue;
-                        //     }
                         } else {
                             break;
                         }
@@ -730,9 +644,7 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        {
-        import crate::module::Struct;
-        }
+        // line comment
         "#;
 
         let mut lexer = Lexer::new(&source_code);

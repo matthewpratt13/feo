@@ -1,8 +1,5 @@
 use feo_types::span::{Span, Spanned};
-use feo_types::{
-    Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
-    TypeAnnotation,
-};
+use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -26,10 +23,6 @@ pub enum Token {
     Comment(Comment),
     DocComment(DocComment),
 
-    // path expression, e.g. crate::module::Struct
-    // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
-    Path(PathExpression),
-
     Delim(Delimiter),
     Punc(Punctuation),
 
@@ -50,7 +43,6 @@ impl Spanned for Token {
             Token::Keyword(k) => k.span(),
             Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
-            Token::Path(p) => p.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
             Token::Type(t) => t.span(),
