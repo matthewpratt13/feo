@@ -259,6 +259,17 @@ impl TryFrom<Token> for Delimiter {
     }
 }
 
+impl TryFrom<Token> for Punctuation {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Punc(p) => Ok(p),
+            _ => return Err(()),
+        }
+    }
+}
+
 pub fn lex() {
     // let filename = "path/to/your/file.txt"; // Change this to your file path
     // let source_code = std::fs::read_to_string(filename).expect("Error reading file");

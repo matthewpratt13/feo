@@ -2,6 +2,7 @@ use std::sync::Arc;
 use std::{iter::Peekable, str::FromStr};
 
 use feo_error::lex_error::{LexError, LexErrorKind};
+use feo_types::PuncKind;
 use feo_types::{
     span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression,
     Punctuation, TypeAnnotation,
@@ -294,6 +295,7 @@ impl<'a> Lexer<'a> {
                             BoolLiteral::parse(self.input, &buf, start_pos, start_pos + buf.len())
                         {
                             tokens.push(b);
+                            continue;
                         } else {
                             self.log_error(LexErrorKind::ParseBoolError);
                         }
@@ -621,7 +623,30 @@ impl<'a> Lexer<'a> {
                     if let Ok(p) =
                         Punctuation::parse(self.input, &punc_content, start_pos, self.pos)
                     {
-                        tokens.push(p);
+                        tokens.push(p.clone());
+
+                        let punc_kind = Punctuation::try_from(p.unwrap())?.punc_kind;
+
+                        self.advance();
+
+                        if punc_kind == PuncKind::ThinArrow {
+                            let mut buf = String::new();
+
+                            while let Some(c) = self.current_char() {
+                                if c.is_alphabetic() {
+                                    buf.push(c);
+                                    self.advance();
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if let Ok(t) =
+                                TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
+                            {
+                                tokens.push(t);
+                            }
+                        }
                     } else {
                         self.log_error(LexErrorKind::UnexpectedChar(c));
                         self.advance();
@@ -661,8 +686,8 @@ mod tests {
     fn tokenize() {
         let source_code = r#"
  
-        pub func foo() : String {
-            let a  = b;
+        pub func foo() -> String {
+            let a: bool = false;
         }
         "#;
 
