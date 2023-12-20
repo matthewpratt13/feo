@@ -27,10 +27,8 @@ pub enum LexErrorKind {
     ParseUIntError,
     ParseFloatError,
     ParseDelimError,
-    ParseCommentError,
     ParseDocCommentError,
     ParseTypeAnnError,
-    ParsePathExprError,
     InvalidChar(char),
     UnexpectedChar(char),
 }
