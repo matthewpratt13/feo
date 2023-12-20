@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone)]
@@ -33,6 +35,47 @@ pub enum KeywordKind {
     WhileKw,
 }
 
+impl FromStr for KeywordKind {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let keyword_kind = match s {
+            "as" => Ok(KeywordKind::AsKw),
+            "break" => Ok(KeywordKind::BreakKw),
+            "const" => Ok(KeywordKind::ConstKw),
+            "continue" => Ok(KeywordKind::ContinueKw),
+            "deref" => Ok(KeywordKind::DerefKw),
+            "else" => Ok(KeywordKind::ElseKw),
+            "enum" => Ok(KeywordKind::EnumKw),
+            "for" => Ok(KeywordKind::ForKw),
+            "func" => Ok(KeywordKind::FuncKw),
+            "if" => Ok(KeywordKind::IfKw),
+            "impl" => Ok(KeywordKind::ImplKw),
+            "import" => Ok(KeywordKind::ImportKw),
+            "in" => Ok(KeywordKind::InKw),
+            "let" => Ok(KeywordKind::LetKw),
+            "library" => Ok(KeywordKind::LibraryKw),
+            "loop" => Ok(KeywordKind::LoopKw),
+            "match" => Ok(KeywordKind::MatchKw),
+            "mod" => Ok(KeywordKind::ModKw),
+            "mut" => Ok(KeywordKind::MutKw),
+            "pub" => Ok(KeywordKind::PubKw),
+            "ref" => Ok(KeywordKind::RefKw),
+            "return" => Ok(KeywordKind::ReturnKw),
+            "self" => Ok(KeywordKind::SelfKw),
+            "static" => Ok(KeywordKind::StaticKw),
+            "struct" => Ok(KeywordKind::StructKw),
+            "super" => Ok(KeywordKind::SuperKw),
+            "trait" => Ok(KeywordKind::TraitKw),
+            "type" => Ok(KeywordKind::TypeKw),
+            "while" => Ok(KeywordKind::WhileKw),
+            _ => Err(()),
+        }?;
+
+        Ok(keyword_kind)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Keyword {
     pub keyword_kind: KeywordKind,
@@ -66,6 +109,29 @@ pub enum TypeName {
     U64Type,
 
     CustomType(String),
+}
+
+impl FromStr for TypeName {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let type_name = match s {
+            "bool" => Ok(TypeName::BoolType),
+            "char" => Ok(TypeName::CharType),
+            "f32" => Ok(TypeName::F32Type),
+            "f64" => Ok(TypeName::F64Type),
+            "i32" => Ok(TypeName::I32Type),
+            "i64" => Ok(TypeName::I64Type),
+            "String" => Ok(TypeName::StringType),
+            "u8" => Ok(TypeName::U8Type),
+            "u16" => Ok(TypeName::U16Type),
+            "u32" => Ok(TypeName::U32Type),
+            "u64" => Ok(TypeName::U32Type),
+            _ => Ok(TypeName::CustomType(s.to_string())),
+        }?;
+
+        Ok(type_name)
+    }
 }
 
 #[derive(Debug, Clone)]
