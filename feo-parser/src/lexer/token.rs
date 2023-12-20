@@ -1,5 +1,5 @@
 use feo_types::span::{Span, Spanned};
-use feo_types::{Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
+use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -20,7 +20,6 @@ pub enum Token {
     Iden(Identifier),
     Keyword(Keyword),
 
-    Comment(Comment),
     DocComment(DocComment),
 
     Delim(Delimiter),
@@ -41,7 +40,6 @@ impl Spanned for Token {
             Token::FloatLit(f) => f.span(),
             Token::Iden(i) => i.span(),
             Token::Keyword(k) => k.span(),
-            Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),

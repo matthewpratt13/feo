@@ -1,7 +1,7 @@
 use std::{fmt::Display, str::FromStr};
 
 use feo_types::{
-    span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
+    span::Span, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
     KeywordKind, Literal, Primitive, PrimitiveType, PuncKind, Punctuation, TypeAnnotation,
     TypeName,
 };
@@ -142,21 +142,6 @@ where
         let keyword = Keyword::new(keyword_kind, span);
 
         let token = Token::Keyword(keyword);
-
-        Ok(Some(token))
-    }
-}
-
-impl<T> Parse<T> for Comment
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
-        let span = Span::new(src, start, end);
-
-        let comment = Comment::new(content.to_string(), span);
-
-        let token = Token::Comment(comment);
 
         Ok(Some(token))
     }

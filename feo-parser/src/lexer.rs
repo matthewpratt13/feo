@@ -1,12 +1,9 @@
+use std::iter::Peekable;
 use std::sync::Arc;
-use std::{iter::Peekable, str::FromStr};
 
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::PuncKind;
-use feo_types::{
-    span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, Punctuation,
-    TypeAnnotation,
-};
+use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 use crate::{
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
@@ -15,7 +12,7 @@ use crate::{
 
 mod token;
 pub(crate) use self::token::Token;
-use self::token::{TokenStream, TokenTree};
+use self::token::TokenStream;
 
 pub(crate) struct Lexer<'a> {
     input: &'a str,
