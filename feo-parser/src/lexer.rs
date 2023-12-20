@@ -39,16 +39,12 @@ impl<'a> Lexer<'a> {
         self.peekable_chars.next();
     }
 
-    fn current_char(&mut self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
-    }
-
     fn peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
 
     fn skip_whitespace(&mut self) {
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.peek_next() {
             if !c.is_whitespace() {
                 break;
             }
@@ -77,14 +73,12 @@ impl<'a> Lexer<'a> {
 
         let mut num_open_block_comments: usize = 0;
         let mut num_open_delimiters: usize = 0;
-        let mut num_open_single_quotes: usize = 0;
-        let mut num_open_double_quotes: usize = 0;
 
         let mut is_float = false;
         let mut is_negative = false;
         let mut is_hexadecimal = false;
 
-        while let Some(c) = self.current_char() {
+        while let Some(c) = self.peek_next() {
             let start_pos = self.pos;
 
             match c {
@@ -101,118 +95,75 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 // comments and doc comments
-                _ if c == '/' => match self.peek_next() {
-                    Some('/') => {
-                        let start_pos = self.pos;
+                _ if c == '/' => {
+                    self.advance();
 
-                        self.advance(); // skip first '/'
-                        self.advance(); // skip second '/'
+                    match self.peek_next() {
+                        Some('/') => {
+                            self.advance();
 
-                        if let Some('/') = self.peek_next() {
-                            self.advance(); // skip third '/'
+                            if let Some('/') = self.peek_next() {
+                                self.advance(); // skip third '/'
 
-                            self.skip_whitespace();
+                                self.skip_whitespace();
 
-                            let start_pos = self.pos;
+                                let start_pos = self.pos;
 
-                            while let Some(c) = self.current_char() {
-                                if c == '\n' {
-                                    break;
-                                } else {
-                                    self.advance();
+                                while let Some(c) = self.peek_next() {
+                                    if c == '\n' {
+                                        break;
+                                    } else {
+                                        self.advance();
+                                    }
                                 }
-                            }
 
-                            let doc_comment_content =
-                                Arc::new(self.input[start_pos..self.pos].to_string());
+                                let doc_comment_content =
+                                    Arc::new(self.input[start_pos..self.pos].to_string());
 
-                            if let Ok(dc) = DocComment::parse(
-                                self.input,
-                                &doc_comment_content,
-                                start_pos,
-                                self.pos,
-                            ) {
-                                tokens.push(dc);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDocCommentError)
-                            }
-                        } else {
-                            while let Some(c) = self.current_char() {
-                                if c == '\n' {
-                                    break;
-                                } else {
-                                    self.advance();
-                                }
-                            }
-
-                            if let Ok(c) =
-                                // no need to store ordinary comment content
-                                Comment::parse(
+                                if let Ok(dc) = DocComment::parse(
                                     self.input,
-                                    &String::from(""),
+                                    &doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                )
-                            {
-                                tokens.push(c);
+                                ) {
+                                    tokens.push(dc);
+                                } else {
+                                    self.log_error(LexErrorKind::ParseDocCommentError)
+                                }
                             } else {
-                                self.log_error(LexErrorKind::ParseCommentError)
+                                while let Some(c) = self.peek_next() {
+                                    if c == '\n' {
+                                        break;
+                                    } else {
+                                        self.advance();
+                                    }
+                                }
                             }
                         }
+
+                        Some('*') => {
+                            num_open_block_comments += 1;
+                            self.advance();
+
+                            while self.peek_next() != Some('*') {
+                                if self.peek_next() == Some('/') {
+                                    self.advance();
+                                    num_open_block_comments -= 1;
+                                    break;
+                                } else {
+                                    self.advance()
+                                }
+                            }
+                        }
+
+                        Some(_) | None => (),
                     }
-
-                    Some('*') => {
-                        self.advance(); // skip '/'
-                        self.advance(); // skip '*'
-                        num_open_block_comments += 1;
-
-                        let start_pos = self.pos;
-
-                        while let Some(c) = self.current_char() {
-                            if c == '\n' {
-                                self.advance();
-                            }
-
-                            if c == '*' && self.peek_next() == Some('/') {
-                                self.advance(); // skip '*'
-                                self.advance(); // skip '/'
-
-                                num_open_block_comments -= 1;
-                                break;
-                            } else {
-                                self.advance();
-                            }
-                        }
-
-                        if let Ok(c) =
-                            // no need to store ordinary comment content
-                            Comment::parse(
-                                self.input,
-                                &String::from(""),
-                                start_pos,
-                                self.pos,
-                            )
-                        {
-                            tokens.push(c);
-                        } else {
-                            self.log_error(LexErrorKind::ParseCommentError)
-                        }
-
-                        if self.current_char() != Some('/') {
-                            return Err(
-                                self.throw_error(LexErrorKind::ExpectedBlockCommentTerminator)
-                            );
-                        }
-                    }
-
-                    Some(_) | None => (),
-                },
-
+                }
                 // identifiers and keywords (cannot start with, but can contain, digits)
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
-                    while let Some(c) = self.current_char() {
+                    while let Some(c) = self.peek_next() {
                         // check for type annotation syntax
 
                         if c.is_alphanumeric() || c == '_' {
@@ -226,7 +177,7 @@ impl<'a> Lexer<'a> {
 
                             let start_pos = self.pos;
 
-                            while let Some(c) = self.current_char() {
+                            while let Some(c) = self.peek_next() {
                                 if c.is_alphanumeric() || c == '_' {
                                     type_name.push(c);
                                     self.advance();
@@ -379,16 +330,15 @@ impl<'a> Lexer<'a> {
 
                 '"' => {
                     self.advance(); // skip opening double quote
-                    num_open_double_quotes += 1;
 
                     let mut buf = String::new();
 
-                    while let Some(c) = self.current_char() {
+                    while let Some(c) = self.peek_next() {
                         match c {
                             '\\' => {
                                 self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.current_char() {
+                                if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
 
                                     match esc_c {
@@ -409,7 +359,6 @@ impl<'a> Lexer<'a> {
 
                             '"' => {
                                 self.advance(); // skip closing double quote
-                                num_open_double_quotes -= 1;
 
                                 let string_lit =
                                     StringLiteral::parse(self.input, &buf, start_pos, self.pos)
@@ -424,21 +373,17 @@ impl<'a> Lexer<'a> {
                             }
                         }
                     }
-
-                    if self.current_char() != Some('"') {
-                        return Err(self.throw_error(LexErrorKind::ExpectedClosingDoubleQuote));
-                    }
                 }
                 '\'' => {
+                    // TODO: fix
                     self.advance(); // skip opening single quote
-                    num_open_single_quotes += 1;
 
-                    if let Some(c) = self.current_char() {
+                    if let Some(c) = self.peek_next() {
                         match c {
                             '\\' => {
                                 self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.current_char() {
+                                if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
 
                                     let char_lit = match esc_c {
@@ -478,15 +423,13 @@ impl<'a> Lexer<'a> {
                                 }
                             }
                             '\'' => {
-                                num_open_single_quotes -= 1;
                                 self.log_error(LexErrorKind::EmptyCharLiteral);
                             }
                             _ => {
                                 // regular char
                                 self.advance(); // consume the char
-                                if self.current_char() == Some('\'') {
+                                if self.peek_next() == Some('\'') {
                                     self.advance(); // skip closing single quote
-                                    num_open_single_quotes -= 1;
 
                                     let char_lit =
                                         CharLiteral::parse(self.input, &c, start_pos, self.pos)
@@ -500,10 +443,6 @@ impl<'a> Lexer<'a> {
                         }
                     } else {
                         return Err(self.throw_error(LexErrorKind::ExpectedCharLiteral));
-                    }
-
-                    if self.current_char() != Some('\'') {
-                        return Err(self.throw_error(LexErrorKind::ExpectedClosingSingleQuote));
                     }
                 }
 
@@ -529,7 +468,7 @@ impl<'a> Lexer<'a> {
                         self.pos
                     };
 
-                    while let Some(c) = self.current_char() {
+                    while let Some(c) = self.peek_next() {
                         if c.is_digit(10 | 16) {
                             self.advance();
                         } else if c == '.' && !is_float {
@@ -547,10 +486,13 @@ impl<'a> Lexer<'a> {
                             FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
+                            continue;
                         } else {
                             self.log_error(LexErrorKind::ParseFloatError);
                         }
-                    } else if is_negative {
+                    }
+
+                    if is_negative {
                         if let Ok(i) =
                             IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
@@ -570,7 +512,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
-                    while let Some(c) = self.current_char() {
+                    while let Some(c) = self.peek_next() {
                         if c.is_ascii_punctuation() {
                             self.advance();
                         } else {
@@ -592,7 +534,7 @@ impl<'a> Lexer<'a> {
                         if punc_kind == PuncKind::ThinArrow {
                             let mut buf = String::new();
 
-                            while let Some(c) = self.current_char() {
+                            while let Some(c) = self.peek_next() {
                                 if c.is_alphabetic() {
                                     buf.push(c);
                                     self.advance();
@@ -617,20 +559,8 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        if num_open_block_comments > 0 {
-            return Err(self.throw_error(LexErrorKind::UnterminatedBlockComments));
-        }
-
         if num_open_delimiters > 0 {
             return Err(self.throw_error(LexErrorKind::UnclosedDelimiters));
-        }
-
-        if num_open_double_quotes > 0 {
-            return Err(self.throw_error(LexErrorKind::UnclosedDoubleQuotes));
-        }
-
-        if num_open_single_quotes > 0 {
-            return Err(self.throw_error(LexErrorKind::UnclosedSingleQuotes));
         }
 
         let stream = TokenStream::new(self.input, tokens, 0, self.pos);
@@ -648,7 +578,9 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        {}
+        {
+            let a  = -1;
+        }
         "#;
 
         let mut lexer = Lexer::new(&source_code);
