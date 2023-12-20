@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum LexErrorKind {
     UninitializedBlockComment,
     UnterminatedBlockComments,
@@ -35,7 +35,7 @@ pub enum LexErrorKind {
     UnexpectedChar(char),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LexError {
     pub error_kind: LexErrorKind,
     pub pos: usize,
