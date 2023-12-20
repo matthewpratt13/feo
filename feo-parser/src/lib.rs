@@ -18,7 +18,7 @@ impl Parse for CharLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.to_string().parse::<char>().map_err(|_| ())?;
+        let parsed = content.parse::<char>().map_err(|_| ())?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -44,7 +44,7 @@ impl Parse for BoolLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.to_string().parse::<bool>().map_err(|_| ())?;
+        let parsed = content.parse::<bool>().map_err(|_| ())?;
 
         let bool_lit = Literal::new(parsed, span);
 
@@ -58,7 +58,7 @@ impl Parse for IntLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = i64::from_str_radix(&content.to_string(), 10 | 16).map_err(|_| ())?;
+        let parsed = i64::from_str_radix(content, 10 | 16).map_err(|_| ())?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -72,7 +72,7 @@ impl Parse for UIntLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = u64::from_str_radix(&content.to_string(), 10 | 16).map_err(|_| (()))?;
+        let parsed = u64::from_str_radix(content, 10 | 16).map_err(|_| (()))?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -86,7 +86,7 @@ impl Parse for FloatLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.to_string().parse::<f64>().map_err(|_| (()))?;
+        let parsed = content.parse::<f64>().map_err(|_| (()))?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -112,7 +112,7 @@ impl Parse for Keyword {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let keyword_kind = KeywordKind::from_str(&content.to_string())?;
+        let keyword_kind = KeywordKind::from_str(content)?;
 
         let keyword = Keyword::new(keyword_kind, span);
 
@@ -138,10 +138,10 @@ impl Parse for Delimiter {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let delim_kind = DelimKind::from_str(&content.to_string()).map_err(|_| (()))?;
+        let delim_kind = DelimKind::from_str(content).map_err(|_| (()))?;
 
         let delim_orientation =
-            DelimOrientation::from_str(&content.to_string()).map_err(|_| (()))?;
+            DelimOrientation::from_str(content).map_err(|_| (()))?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
 
@@ -155,7 +155,7 @@ impl Parse for Punctuation {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let punc_kind = PuncKind::from_str(&content.to_string())?;
+        let punc_kind = PuncKind::from_str(content)?;
 
         let punc = Punctuation::new(punc_kind, span);
 
@@ -169,7 +169,7 @@ impl Parse for TypeAnnotation {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let type_name = TypeName::from_str(&content.to_string())?;
+        let type_name = TypeName::from_str(content)?;
 
         let type_ann = TypeAnnotation::new(type_name, span);
 
