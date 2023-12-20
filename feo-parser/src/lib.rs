@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, str::FromStr};
 
 use feo_types::{
     span::Span, Comment, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
@@ -137,38 +137,7 @@ where
     fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let keyword_kind = match content.to_string().as_str() {
-            "as" => Ok(KeywordKind::AsKw),
-            "break" => Ok(KeywordKind::BreakKw),
-            "const" => Ok(KeywordKind::ConstKw),
-            "continue" => Ok(KeywordKind::ContinueKw),
-            "deref" => Ok(KeywordKind::DerefKw),
-            "else" => Ok(KeywordKind::ElseKw),
-            "enum" => Ok(KeywordKind::EnumKw),
-            "for" => Ok(KeywordKind::ForKw),
-            "func" => Ok(KeywordKind::FuncKw),
-            "if" => Ok(KeywordKind::IfKw),
-            "impl" => Ok(KeywordKind::ImplKw),
-            "import" => Ok(KeywordKind::ImportKw),
-            "in" => Ok(KeywordKind::InKw),
-            "let" => Ok(KeywordKind::LetKw),
-            "library" => Ok(KeywordKind::LibraryKw),
-            "loop" => Ok(KeywordKind::LoopKw),
-            "match" => Ok(KeywordKind::MatchKw),
-            "mod" => Ok(KeywordKind::ModKw),
-            "mut" => Ok(KeywordKind::MutKw),
-            "pub" => Ok(KeywordKind::PubKw),
-            "ref" => Ok(KeywordKind::RefKw),
-            "return" => Ok(KeywordKind::ReturnKw),
-            "self" => Ok(KeywordKind::SelfKw),
-            "static" => Ok(KeywordKind::StaticKw),
-            "struct" => Ok(KeywordKind::StructKw),
-            "super" => Ok(KeywordKind::SuperKw),
-            "trait" => Ok(KeywordKind::TraitKw),
-            "type" => Ok(KeywordKind::TypeKw),
-            "while" => Ok(KeywordKind::WhileKw),
-            _ => Err(()),
-        }?;
+        let keyword_kind = KeywordKind::from_str(&content.to_string())?;
 
         let keyword = Keyword::new(keyword_kind, span);
 
@@ -260,55 +229,7 @@ where
     fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let punc_kind = match content.to_string().as_str() {
-            ":" => Ok(PuncKind::Colon),
-            ";" => Ok(PuncKind::Semicolon),
-            "," => Ok(PuncKind::Comma),
-            "." => Ok(PuncKind::FullStop),
-            "_" => Ok(PuncKind::Underscore),
-            "::" => Ok(PuncKind::DoubleColon),
-            ".." => Ok(PuncKind::DoubleFullStop),
-            "!" => Ok(PuncKind::Bang),
-            "#" => Ok(PuncKind::Hash),
-            "$" => Ok(PuncKind::DollarSign),
-            "%" => Ok(PuncKind::Percent),
-            "&" => Ok(PuncKind::Ampersand),
-            "*" => Ok(PuncKind::Asterisk),
-            "+" => Ok(PuncKind::Plus),
-            "-" => Ok(PuncKind::Minus),
-            "/" => Ok(PuncKind::ForwardSlash),
-            "<" => Ok(PuncKind::LessThan),
-            "=" => Ok(PuncKind::Equals),
-            ">" => Ok(PuncKind::GreaterThan),
-            "?" => Ok(PuncKind::QuestionMark),
-            "@" => Ok(PuncKind::AtSign),
-            "^" => Ok(PuncKind::Caret),
-            "`" => Ok(PuncKind::BackTick),
-            "|" => Ok(PuncKind::Pipe),
-            "~" => Ok(PuncKind::Tilde),
-            "!=" => Ok(PuncKind::BangEquals),
-            "%=" => Ok(PuncKind::PercentEquals),
-            "*=" => Ok(PuncKind::AsteriskEquals),
-            "**" => Ok(PuncKind::DoubleAsterisk),
-            "&&" => Ok(PuncKind::DoubleAmpersand),
-            "+=" => Ok(PuncKind::PlusEquals),
-            "-=" => Ok(PuncKind::MinusEquals),
-            "/=" => Ok(PuncKind::ForwardSlashEquals),
-            "<=" => Ok(PuncKind::LessThanEquals),
-            "==" => Ok(PuncKind::DoubleEquals),
-            ">=" => Ok(PuncKind::GreaterThanEquals),
-            "->" => Ok(PuncKind::ThinArrow),
-            "=>" => Ok(PuncKind::FatArrow),
-            "||" => Ok(PuncKind::DoublePipe),
-            "\n" => Ok(PuncKind::Newline),
-            "\r" => Ok(PuncKind::Return),
-            "\t" => Ok(PuncKind::Tab),
-            "\\" => Ok(PuncKind::Backslash),
-            "\0" => Ok(PuncKind::Null),
-            "\'" => Ok(PuncKind::SingleQuote),
-            "\"" => Ok(PuncKind::DoubleQuote),
-            _ => Err(()),
-        }?;
+        let punc_kind = PuncKind::from_str(&content.to_string())?;
 
         let punc = Punctuation::new(punc_kind, span);
 
@@ -325,20 +246,7 @@ where
     fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let type_name = match content.to_string().as_str() {
-            "bool" => Ok(TypeName::BoolType),
-            "char" => Ok(TypeName::CharType),
-            "f32" => Ok(TypeName::F32Type),
-            "f64" => Ok(TypeName::F64Type),
-            "i32" => Ok(TypeName::I32Type),
-            "i64" => Ok(TypeName::I64Type),
-            "String" => Ok(TypeName::StringType),
-            "u8" => Ok(TypeName::U8Type),
-            "u16" => Ok(TypeName::U16Type),
-            "u32" => Ok(TypeName::U32Type),
-            "u64" => Ok(TypeName::U32Type),
-            _ => Ok(TypeName::CustomType(content.to_string())),
-        }?;
+        let type_name = TypeName::from_str(&content.to_string())?;
 
         let type_ann = TypeAnnotation::new(type_name, span);
 
@@ -370,6 +278,19 @@ pub fn lex() {
         block comment
         */
 
+        /!
+        module doc comment
+        */
+
+        let foo = "bar";
+
+        let baz = -10;
+
+        let foo = false;
+
+        let bar: u32 = 10;
+
+        let baz = 'a';
         "#;
 
     let mut lexer = Lexer::new(&source_code);

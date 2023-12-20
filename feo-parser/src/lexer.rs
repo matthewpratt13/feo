@@ -4,7 +4,7 @@ use std::sync::Arc;
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
     span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression,
-    Punctuation, TypeAnnotation,
+    PuncKind, Punctuation, TypeAnnotation,
 };
 
 use crate::{
@@ -621,7 +621,7 @@ impl<'a> Lexer<'a> {
                     if let Ok(p) =
                         Punctuation::parse(self.input, &punc_content, start_pos, self.pos)
                     {
-                        tokens.push(p)
+                        tokens.push(p);
                     } else {
                         self.log_error(LexErrorKind::UnexpectedChar(c));
                         self.advance();
@@ -660,12 +660,9 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        // line comment
-        /* block comment 
-         */
-        /// doc comment
-        pub struct Foo {
-            bar: String,
+ 
+        pub func foo() : String {
+            let a  = b;
         }
         "#;
 
