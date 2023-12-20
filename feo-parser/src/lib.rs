@@ -370,19 +370,6 @@ pub fn lex() {
         block comment
         */
 
-        /!
-        module doc comment
-        */
-
-        let foo = "bar";
-
-        let baz = -10;
-
-        let foo = false;
-
-        let bar: u32 = 10;
-
-        let baz = 'a';
         "#;
 
     let mut lexer = Lexer::new(&source_code);

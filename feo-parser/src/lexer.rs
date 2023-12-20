@@ -63,6 +63,12 @@ impl<'a> Lexer<'a> {
         });
     }
 
+    fn throw_error(&mut self, error_kind: LexErrorKind) {
+        self.log_error(error_kind);
+        let err = self.errors.clone().pop();
+        println!("Error: {:?}", err);
+    }
+
     pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
@@ -85,7 +91,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ if c == '*' && self.peek_next() == Some('/') => {
                     if num_open_block_comments == 0 {
-                        return Err(self.log_error(LexErrorKind::UninitializedBlockComment));
+                        return Err(self.throw_error(LexErrorKind::UninitializedBlockComment));
                     } else {
                         self.advance();
                         self.advance();
@@ -192,7 +198,7 @@ impl<'a> Lexer<'a> {
 
                         if self.current_char() != Some('/') {
                             return Err(
-                                self.log_error(LexErrorKind::ExpectedBlockCommentTerminator)
+                                self.throw_error(LexErrorKind::ExpectedBlockCommentTerminator)
                             );
                         }
                     }
@@ -458,7 +464,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if self.current_char() != Some('"') {
-                        return Err(self.log_error(LexErrorKind::ExpectedClosingDoubleQuote));
+                        return Err(self.throw_error(LexErrorKind::ExpectedClosingDoubleQuote));
                     }
                 }
                 '\'' => {
@@ -496,9 +502,8 @@ impl<'a> Lexer<'a> {
                                             self.input, &'\'', start_pos, self.pos,
                                         ),
                                         _ => {
-                                            return Err(
-                                                self.log_error(LexErrorKind::InvalidEscapeSequence)
-                                            )
+                                            return Err(self
+                                                .throw_error(LexErrorKind::InvalidEscapeSequence))
                                         }
                                     }
                                     .map_err(|_| self.log_error(LexErrorKind::ParseCharError))?;
@@ -506,7 +511,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(char_lit);
                                 } else {
                                     return Err(
-                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
+                                        self.throw_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
                                 }
                             }
@@ -532,11 +537,11 @@ impl<'a> Lexer<'a> {
                             }
                         }
                     } else {
-                        return Err(self.log_error(LexErrorKind::ExpectedCharLiteral));
+                        return Err(self.throw_error(LexErrorKind::ExpectedCharLiteral));
                     }
 
                     if self.current_char() != Some('\'') {
-                        return Err(self.log_error(LexErrorKind::ExpectedClosingSingleQuote));
+                        return Err(self.throw_error(LexErrorKind::ExpectedClosingSingleQuote));
                     }
                 }
 
@@ -628,19 +633,19 @@ impl<'a> Lexer<'a> {
         }
 
         if num_open_block_comments > 0 {
-            return Err(self.log_error(LexErrorKind::UnterminatedBlockComments));
+            return Err(self.throw_error(LexErrorKind::UnterminatedBlockComments));
         }
 
         if num_open_delimiters > 0 {
-            return Err(self.log_error(LexErrorKind::UnclosedDelimiters));
+            return Err(self.throw_error(LexErrorKind::UnclosedDelimiters));
         }
 
         if num_open_double_quotes > 0 {
-            return Err(self.log_error(LexErrorKind::UnclosedDoubleQuotes));
+            return Err(self.throw_error(LexErrorKind::UnclosedDoubleQuotes));
         }
 
         if num_open_single_quotes > 0 {
-            return Err(self.log_error(LexErrorKind::UnclosedSingleQuotes));
+            return Err(self.throw_error(LexErrorKind::UnclosedSingleQuotes));
         }
 
         let stream = TokenStream::new(self.input, token_trees, 0, self.pos);
