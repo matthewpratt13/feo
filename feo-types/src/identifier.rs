@@ -1,5 +1,3 @@
-use std::fmt;
-
 use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone)]
