@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
@@ -8,14 +10,14 @@ pub enum DelimKind {
     Brace,
 }
 
-impl TryFrom<char> for DelimKind {
-    type Error = TypeError;
+impl FromStr for DelimKind {
+    type Err = TypeError;
 
-    fn try_from(value: char) -> Result<Self, Self::Error> {
-        match value {
-            '(' | ')' => Ok(DelimKind::Paren),
-            '[' | ']' => Ok(DelimKind::Bracket),
-            '{' | '}' => Ok(DelimKind::Brace),
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "(" | ")" => Ok(DelimKind::Paren),
+            "[" | "]" => Ok(DelimKind::Bracket),
+            "{" | "}" => Ok(DelimKind::Brace),
             _ => Err(TypeError::UnrecognizedDelimiter),
         }
     }
@@ -25,6 +27,18 @@ impl TryFrom<char> for DelimKind {
 pub enum DelimOrientation {
     Open,
     Close,
+}
+
+impl FromStr for DelimOrientation {
+    type Err = TypeError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "(" | "[" | "{" => Ok(DelimOrientation::Open),
+            ")" | "]" | "}" => Ok(DelimOrientation::Close),
+            _ => Err(TypeError::UnrecognizedDelimiter),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
