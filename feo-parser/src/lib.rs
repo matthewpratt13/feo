@@ -112,7 +112,7 @@ impl Parse for Keyword {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let keyword_kind = KeywordKind::from_str(content)?;
+        let keyword_kind = KeywordKind::from_str(content).map_err(|_| (()))?;
 
         let keyword = Keyword::new(keyword_kind, span);
 
@@ -140,8 +140,7 @@ impl Parse for Delimiter {
 
         let delim_kind = DelimKind::from_str(content).map_err(|_| (()))?;
 
-        let delim_orientation =
-            DelimOrientation::from_str(content).map_err(|_| (()))?;
+        let delim_orientation = DelimOrientation::from_str(content).map_err(|_| (()))?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
 
@@ -155,7 +154,7 @@ impl Parse for Punctuation {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let punc_kind = PuncKind::from_str(content)?;
+        let punc_kind = PuncKind::from_str(content).map_err(|_| (()))?;
 
         let punc = Punctuation::new(punc_kind, span);
 

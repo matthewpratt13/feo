@@ -35,7 +35,7 @@ impl FromStr for TypeName {
             "u8" => Ok(TypeName::U8Type),
             "u16" => Ok(TypeName::U16Type),
             "u32" => Ok(TypeName::U32Type),
-            "u64" => Ok(TypeName::U32Type),
+            "u64" => Ok(TypeName::U64Type),
             "Vec" => Ok(TypeName::VecType),
             _ => Ok(TypeName::CustomType(s.to_string())),
         }?;

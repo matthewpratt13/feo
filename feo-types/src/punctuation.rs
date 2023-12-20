@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use crate::error::TypeError;
 use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -57,26 +58,8 @@ pub enum PuncKind {
     DoubleQuote,
 }
 
-#[derive(Debug, Clone)]
-pub struct Punctuation {
-    pub punc_kind: PuncKind,
-    span: Span,
-}
-
-impl Punctuation {
-    pub fn new(punc_kind: PuncKind, span: Span) -> Self {
-        Self { punc_kind, span }
-    }
-}
-
-impl Spanned for Punctuation {
-    fn span(&self) -> &Span {
-        &self.span
-    }
-}
-
 impl FromStr for PuncKind {
-    type Err = ();
+    type Err = TypeError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let punc_kind = match s {
@@ -125,9 +108,27 @@ impl FromStr for PuncKind {
             "\0" => Ok(PuncKind::Null),
             "\'" => Ok(PuncKind::SingleQuote),
             "\"" => Ok(PuncKind::DoubleQuote),
-            _ => Err(()),
+            _ => Err(TypeError::UnrecognizedPunctuation),
         }?;
 
         Ok(punc_kind)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Punctuation {
+    pub punc_kind: PuncKind,
+    span: Span,
+}
+
+impl Punctuation {
+    pub fn new(punc_kind: PuncKind, span: Span) -> Self {
+        Self { punc_kind, span }
+    }
+}
+
+impl Spanned for Punctuation {
+    fn span(&self) -> &Span {
+        &self.span
     }
 }

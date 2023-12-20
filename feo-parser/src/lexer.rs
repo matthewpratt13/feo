@@ -2,8 +2,9 @@ use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_error::lex_error::{LexError, LexErrorKind};
-use feo_types::PuncKind;
-use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
+use feo_types::{
+    Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation,
+};
 
 use crate::{
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
