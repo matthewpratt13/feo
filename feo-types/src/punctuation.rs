@@ -85,7 +85,6 @@ impl FromStr for PuncKind {
             "," => Ok(PuncKind::Comma),
             "." => Ok(PuncKind::FullStop),
             "_" => Ok(PuncKind::Underscore),
-            "::" => Ok(PuncKind::DoubleColon),
             ".." => Ok(PuncKind::DoubleFullStop),
             "!" => Ok(PuncKind::Bang),
             "#" => Ok(PuncKind::Hash),
