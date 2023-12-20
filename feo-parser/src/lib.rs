@@ -201,18 +201,10 @@ where
     fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let delim_kind = match content.to_string().as_str() {
-            "(" | ")" => Ok(DelimKind::Paren),
-            "[" | "]" => Ok(DelimKind::Bracket),
-            "{" | "}" => Ok(DelimKind::Brace),
-            _ => Err(()),
-        }?;
+        let delim_kind = DelimKind::from_str(&content.to_string()).map_err(|_| (()))?;
 
-        let delim_orientation = match content.to_string().as_str() {
-            "(" | "[" | "{" => Ok(DelimOrientation::Open),
-            ")" | "]" | "}" => Ok(DelimOrientation::Close),
-            _ => Err(()),
-        }?;
+        let delim_orientation =
+            DelimOrientation::from_str(&content.to_string()).map_err(|_| (()))?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
 

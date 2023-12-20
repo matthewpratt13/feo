@@ -1,10 +1,10 @@
-use std::iter::Peekable;
 use std::sync::Arc;
+use std::{iter::Peekable, str::FromStr};
 
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
     span::Spanned, Comment, DelimKind, Delimiter, DocComment, Identifier, Keyword, PathExpression,
-    PuncKind, Punctuation, TypeAnnotation,
+    Punctuation, TypeAnnotation,
 };
 
 use crate::{
@@ -396,7 +396,7 @@ impl<'a> Lexer<'a> {
                     let prev_delim = Delimiter::try_from(prev_token)
                         .map_err(|_| self.log_error(LexErrorKind::MismatchedDelimiters))?;
 
-                    let curr_delim_kind = DelimKind::try_from(c)
+                    let curr_delim_kind = DelimKind::from_str(&String::from(c))
                         .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimKind(c)))?;
 
                     if prev_delim.delim.0 == curr_delim_kind {
