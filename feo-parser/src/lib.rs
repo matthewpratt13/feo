@@ -1,9 +1,8 @@
-use std::{fmt::Display, str::FromStr};
+use std::str::FromStr;
 
 use feo_types::{
     span::Span, DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword,
-    KeywordKind, Literal, Primitive, PrimitiveType, PuncKind, Punctuation, TypeAnnotation,
-    TypeName,
+    KeywordKind, Literal, PrimitiveType, PuncKind, Punctuation, TypeAnnotation, TypeName,
 };
 
 mod lexer;
@@ -15,11 +14,8 @@ use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral
 mod parse;
 use parse::Parse;
 
-impl<T> Parse<T> for CharLiteral
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for CharLiteral {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let parsed = content.to_string().parse::<char>().map_err(|_| ())?;
@@ -32,11 +28,8 @@ where
     }
 }
 
-impl<T> Parse<T> for StringLiteral
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for StringLiteral {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let string_lit = Literal::new(content.to_string(), span);
@@ -47,11 +40,8 @@ where
     }
 }
 
-impl<T> Parse<T> for BoolLiteral
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for BoolLiteral {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let parsed = content.to_string().parse::<bool>().map_err(|_| ())?;
@@ -64,11 +54,8 @@ where
     }
 }
 
-impl<T> Parse<T> for IntLiteral
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for IntLiteral {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let parsed = i64::from_str_radix(&content.to_string(), 10 | 16).map_err(|_| ())?;
@@ -81,11 +68,8 @@ where
     }
 }
 
-impl<T> Parse<T> for UIntLiteral
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for UIntLiteral {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let parsed = u64::from_str_radix(&content.to_string(), 10 | 16).map_err(|_| (()))?;
@@ -98,11 +82,8 @@ where
     }
 }
 
-impl<T> Parse<T> for FloatLiteral
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for FloatLiteral {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let parsed = content.to_string().parse::<f64>().map_err(|_| (()))?;
@@ -115,11 +96,8 @@ where
     }
 }
 
-impl<T> Parse<T> for Identifier
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for Identifier {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let iden = Identifier::new(content.to_string(), span);
@@ -130,11 +108,8 @@ where
     }
 }
 
-impl<T> Parse<T> for Keyword
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for Keyword {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let keyword_kind = KeywordKind::from_str(&content.to_string())?;
@@ -147,11 +122,8 @@ where
     }
 }
 
-impl<T> Parse<T> for DocComment
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for DocComment {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let doc_comment = DocComment::new(content.to_string(), span);
@@ -162,11 +134,8 @@ where
     }
 }
 
-impl<T> Parse<T> for Delimiter
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for Delimiter {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let delim_kind = DelimKind::from_str(&content.to_string()).map_err(|_| (()))?;
@@ -182,11 +151,8 @@ where
     }
 }
 
-impl<T> Parse<T> for Punctuation
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for Punctuation {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let punc_kind = PuncKind::from_str(&content.to_string())?;
@@ -199,11 +165,8 @@ where
     }
 }
 
-impl<T> Parse<T> for TypeAnnotation
-where
-    T: 'static + Primitive + Display,
-{
-    fn parse(src: &str, content: &T, start: usize, end: usize) -> Result<Option<Token>, ()> {
+impl Parse for TypeAnnotation {
+    fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
         let type_name = TypeName::from_str(&content.to_string())?;
