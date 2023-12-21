@@ -97,70 +97,67 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 // comments and doc comments
-                _ if c == '/' => {
-                    self.advance();
+                '/' => match self.peek() {
+                    Some('/') => {
+                        self.advance();
+                        self.advance();
 
-                    match self.peek() {
-                        Some('/') => {
+                        if let Some('/') = self.peek() {
                             self.advance();
 
-                            if let Some('/') = self.peek() {
-                                self.advance(); // skip third '/'
+                            self.skip_whitespace();
 
-                                self.skip_whitespace();
+                            let start_pos = self.pos;
 
-                                let start_pos = self.pos;
-
-                                while let Some(c) = self.peek() {
-                                    if c == '\n' {
-                                        break;
-                                    } else {
-                                        self.advance();
-                                    }
-                                }
-
-                                let doc_comment_content =
-                                    Arc::new(self.input[start_pos..self.pos].to_string());
-
-                                if let Ok(dc) = DocComment::parse(
-                                    self.input,
-                                    &doc_comment_content,
-                                    start_pos,
-                                    self.pos,
-                                ) {
-                                    tokens.push(dc);
-                                } else {
-                                    self.log_error(LexErrorKind::ParseDocCommentError)
-                                }
-                            } else {
-                                while let Some(c) = self.peek() {
-                                    if c == '\n' {
-                                        break;
-                                    } else {
-                                        self.advance();
-                                    }
-                                }
-                            }
-                        }
-
-                        Some('*') => {
-                            num_open_block_comments += 1;
-                            self.advance();
-
-                            while self.peek() != Some('*') {
-                                if self.peek() == Some('/') {
-                                    self.advance();
-                                    num_open_block_comments -= 1;
+                            while let Some(c) = self.peek() {
+                                if c == '\n' {
                                     break;
                                 } else {
-                                    self.advance()
+                                    self.advance();
+                                }
+                            }
+
+                            let doc_comment_content =
+                                Arc::new(self.input[start_pos..self.pos].to_string());
+
+                            if let Ok(dc) = DocComment::parse(
+                                self.input,
+                                &doc_comment_content,
+                                start_pos,
+                                self.pos,
+                            ) {
+                                tokens.push(dc);
+                            } else {
+                                self.log_error(LexErrorKind::ParseDocCommentError)
+                            }
+                        } else {
+                            while let Some(c) = self.next() {
+                                if c == '\n' {
+                                    break;
+                                } else {
+                                    self.advance();
                                 }
                             }
                         }
-
-                        Some(_) | None => (),
                     }
-                }
+
+                    Some('*') => {
+                        num_open_block_comments += 1;
+                        self.advance();
+
+                        while self.peek() != Some('*') {
+                            if self.peek() == Some('/') {
+                                self.advance();
+                                num_open_block_comments -= 1;
+                                break;
+                            } else {
+                                self.advance()
+                            }
+                        }
+                    }
+
+                    Some(_) | None => (),
+                },
                 // identifiers and keywords (cannot start with, but can contain, digits)
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
@@ -582,9 +579,10 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        {
-            let a  = -1;
-        }
+        /// doc comment
+
+        let a: String = "foo";
+        let b: i32 = -123;
         "#;
 
         let mut lexer = Lexer::new(&source_code);
