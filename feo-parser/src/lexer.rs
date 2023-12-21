@@ -69,7 +69,6 @@ impl<'a> Lexer<'a> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         // let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
-        let mut num_open_block_comments: usize = 0;
         let mut num_open_delimiters: usize = 0;
 
         let mut is_float = false;
@@ -130,13 +129,10 @@ impl<'a> Lexer<'a> {
                         Some('*') => {
                             self.advance();
 
-                            num_open_block_comments += 1;
-
                             while let Some(c) = self.peek_next() {
                                 if c == '*' {
                                     self.advance();
                                     self.advance();
-                                    num_open_block_comments -= 1;
                                     break;
                                 } else {
                                     self.advance();

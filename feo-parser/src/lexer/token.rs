@@ -76,6 +76,7 @@ impl<T> Spanned for TokenStream<T> {
 #[derive(Debug, Clone)]
 pub struct TokenTree(TokenStream<Token>);
 
+#[allow(dead_code)]
 impl TokenTree {
     pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
         Self(TokenStream::new(src, tokens, start, end))
