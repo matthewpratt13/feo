@@ -434,20 +434,26 @@ impl<'a> Lexer<'a> {
 
                 _ if c == '-' => {
                     self.advance();
-                    is_negative = true;
+
+                    if self.peek_next().is_some_and(|c| c.is_digit(10 | 16)) {
+                        is_negative = true;
+                    }
                 }
 
-                _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
+                _ if c == '0' => {
                     self.advance(); // skip '0'
-                    self.advance(); // skip 'x'
+                    if self.peek_next().map_or(false, |c| c == 'x' || c == 'X') {
+                        is_hexadecimal = true;
+                        self.advance(); // skip 'x'
+                    }
                 }
 
-                _ if c.is_digit(10)
-                    || (c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10))) =>
-                {
+
+                _ if c.is_digit(10 | 16) => {
+
                     let start_pos = if is_negative {
                         if is_hexadecimal {
-                            self.pos - 3
+                            self.pos - 1
                         } else {
                             self.pos - 1
                         }
@@ -619,7 +625,7 @@ mod tests {
     fn tokenize() {
         let source_code = r#"
         let foo = 'ab';
-        let bar: i32 = -12;
+        let bar: i32 = -10;
         "#;
 
         let mut lexer = Lexer::new(&source_code);
