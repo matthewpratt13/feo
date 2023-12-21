@@ -58,7 +58,7 @@ impl Parse for IntLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = i64::from_str_radix(content, 10 | 16).map_err(|_| ())?;
+        let parsed = i64::from_str_radix(content, 10).map_err(|_| ())?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -72,7 +72,7 @@ impl Parse for UIntLiteral {
     fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
         let span = Span::new(src, start, end);
 
-        let parsed = u64::from_str_radix(content, 10 | 16).map_err(|_| (()))?;
+        let parsed = u64::from_str_radix(content, 10).map_err(|_| (()))?;
 
         let uint_lit = Literal::new(parsed, span);
 

@@ -71,10 +71,6 @@ impl<'a> Lexer<'a> {
 
         let mut num_open_delimiters: usize = 0;
 
-        let mut is_float = false;
-        let mut is_negative = false;
-        let mut is_hexadecimal = false;
-
         while let Some(c) = self.peek_next() {
             let start_pos = self.pos;
 
@@ -432,37 +428,21 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c == '-' => {
-                    self.advance();
+                _ if c.is_digit(10)
+                    || (c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10))) =>
+                {
+                    let mut is_negative = false;
+                    let mut is_float = false;
 
-                    if self.peek_next().is_some_and(|c| c.is_digit(10 | 16)) {
+                    if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) {
                         is_negative = true;
+                        self.advance();
                     }
-                }
 
-                _ if c == '0' => {
-                    self.advance(); // skip '0'
-                    if self.peek_next().map_or(false, |c| c == 'x' || c == 'X') {
-                        is_hexadecimal = true;
-                        self.advance(); // skip 'x'
-                    }
-                }
-
-
-                _ if c.is_digit(10 | 16) => {
-
-                    let start_pos = if is_negative {
-                        if is_hexadecimal {
-                            self.pos - 1
-                        } else {
-                            self.pos - 1
-                        }
-                    } else {
-                        self.pos
-                    };
+                    let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
                     while let Some(c) = self.peek_next() {
-                        if c.is_digit(10 | 16) {
+                        if c.is_digit(10) {
                             self.advance();
                         } else if c == '.' && !is_float {
                             self.advance();
@@ -504,59 +484,6 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // _ if c.is_digit(10) || (is_hexadecimal && c.is_digit(16)) => {
-                //     let start_pos = if is_negative {
-                //         if is_hexadecimal {
-                //             self.pos - 3
-                //         } else {
-                //             self.pos - 1
-                //         }
-                //     } else {
-                //         self.pos
-                //     };
-
-                //     while let Some(c) = self.peek_next() {
-                //         if c.is_digit(10 | 16) {
-                //             self.advance();
-                //         } else if c == '.' && !is_float {
-                //             self.advance();
-                //             is_float = true;
-                //         } else {
-                //             break;
-                //         }
-                //     }
-
-                //     let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
-
-                //     if is_float {
-                //         if let Ok(f) =
-                //             FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
-                //         {
-                //             tokens.push(f);
-                //             continue;
-                //         } else {
-                //             self.log_error(LexErrorKind::ParseFloatError);
-                //         }
-                //     }
-
-                //     if is_negative {
-                //         if let Ok(i) =
-                //             IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
-                //         {
-                //             tokens.push(i);
-                //         } else {
-                //             self.log_error(LexErrorKind::ParseIntError);
-                //         }
-                //     } else {
-                //         if let Ok(u) =
-                //             UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
-                //         {
-                //             tokens.push(u);
-                //         } else {
-                //             self.log_error(LexErrorKind::ParseUIntError);
-                //         }
-                //     }
-                // }
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
                     while let Some(c) = self.peek_next() {
                         if c.is_ascii_punctuation() {
@@ -574,8 +501,6 @@ impl<'a> Lexer<'a> {
                         tokens.push(p.clone());
 
                         let punc_kind = Punctuation::try_from(p.unwrap())?.punc_kind;
-
-                        self.advance();
 
                         if punc_kind == PuncKind::ThinArrow {
                             let mut buf = String::new();
