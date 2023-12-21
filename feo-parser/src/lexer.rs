@@ -37,16 +37,12 @@ impl<'a> Lexer<'a> {
         self.peekable_chars.next()
     }
 
-    fn peek(&mut self) -> Option<char> {
+    fn peek_next(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
 
-    fn next(&mut self) -> Option<char> {
-        self.peekable_chars.next()
-    }
-
     fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek() {
+        while let Some(c) = self.peek_next() {
             if !c.is_whitespace() {
                 break;
             }
@@ -80,7 +76,7 @@ impl<'a> Lexer<'a> {
         let mut is_negative = false;
         let mut is_hexadecimal = false;
 
-        while let Some(c) = self.peek() {
+        while let Some(c) = self.peek_next() {
             let start_pos = self.pos;
 
             match c {
@@ -88,19 +84,19 @@ impl<'a> Lexer<'a> {
                     self.skip_whitespace();
                 }
 
-                _ if c == '/' && self.peek() == Some('/') || self.peek() == Some('*') => {
+                _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     self.advance();
-                    match self.peek() {
+                    match self.peek_next() {
                         Some('/') => {
                             self.advance();
 
-                            if Some('/') == self.peek() {
+                            if Some('/') == self.peek_next() {
                                 self.advance();
                                 self.skip_whitespace();
 
                                 let start_pos = self.pos;
 
-                                while let Some(c) = self.peek() {
+                                while let Some(c) = self.peek_next() {
                                     if c == '\n' {
                                         break;
                                     } else {
@@ -122,7 +118,7 @@ impl<'a> Lexer<'a> {
                                     self.log_error(LexErrorKind::ParseDocCommentError)
                                 }
                             } else {
-                                while let Some(c) = self.peek() {
+                                while let Some(c) = self.peek_next() {
                                     if c == '\n' {
                                         break;
                                     } else {
@@ -136,7 +132,7 @@ impl<'a> Lexer<'a> {
 
                             num_open_block_comments += 1;
 
-                            while let Some(c) = self.peek() {
+                            while let Some(c) = self.peek_next() {
                                 if c == '*' {
                                     self.advance();
                                     self.advance();
@@ -156,7 +152,7 @@ impl<'a> Lexer<'a> {
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
-                    while let Some(c) = self.peek() {
+                    while let Some(c) = self.peek_next() {
                         // check for type annotation syntax
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
@@ -169,7 +165,7 @@ impl<'a> Lexer<'a> {
 
                             let start_pos = self.pos;
 
-                            while let Some(c) = self.peek() {
+                            while let Some(c) = self.peek_next() {
                                 if c.is_alphanumeric() || c == '_' {
                                     type_name.push(c);
                                     self.advance();
@@ -325,12 +321,12 @@ impl<'a> Lexer<'a> {
 
                     let mut buf = String::new();
 
-                    while let Some(c) = self.peek() {
+                    while let Some(c) = self.peek_next() {
                         match c {
                             '\\' => {
                                 self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.peek() {
+                                if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
 
                                     match esc_c {
@@ -370,12 +366,12 @@ impl<'a> Lexer<'a> {
                     // TODO: fix
                     self.advance(); // skip opening single quote
 
-                    if let Some(c) = self.peek() {
+                    if let Some(c) = self.peek_next() {
                         match c {
                             '\\' => {
                                 self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.peek() {
+                                if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
 
                                     let char_lit = match esc_c {
@@ -420,7 +416,7 @@ impl<'a> Lexer<'a> {
                             _ => {
                                 // regular char
                                 self.advance(); // consume the char
-                                if self.peek() == Some('\'') {
+                                if self.peek_next() == Some('\'') {
                                     self.advance(); // skip closing single quote
 
                                     let char_lit = CharLiteral::parse(
@@ -440,12 +436,12 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c == '-' && self.peek().is_some_and(|c| c.is_digit(10)) => {
+                _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
                     is_negative = true;
                     self.advance(); // skip '-'
                 }
 
-                _ if c == '0' && self.peek().map_or(false, |c| c == 'x' || c == 'X') => {
+                _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
                     is_hexadecimal = true;
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
@@ -462,7 +458,7 @@ impl<'a> Lexer<'a> {
                         self.pos
                     };
 
-                    while let Some(c) = self.peek() {
+                    while let Some(c) = self.peek_next() {
                         if c.is_digit(10 | 16) {
                             self.advance();
                         } else if c == '.' && !is_float {
@@ -506,7 +502,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
-                    while let Some(c) = self.peek() {
+                    while let Some(c) = self.peek_next() {
                         if c.is_ascii_punctuation() {
                             self.advance();
                         } else {
@@ -528,7 +524,7 @@ impl<'a> Lexer<'a> {
                         if punc_kind == PuncKind::ThinArrow {
                             let mut buf = String::new();
 
-                            while let Some(c) = self.peek() {
+                            while let Some(c) = self.peek_next() {
                                 if c.is_alphabetic() {
                                     buf.push(c);
                                     self.advance();
