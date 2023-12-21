@@ -572,12 +572,8 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        // line comment
-        /// doc comment
-        /* 
-        block comment
-         */
-        let a = b;
+        let foo = 'ab';
+        let bar: i32 = -12;
         "#;
 
         let mut lexer = Lexer::new(&source_code);
