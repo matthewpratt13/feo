@@ -432,13 +432,12 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) => {
+                _ if c == '-' => {
+                    self.advance();
                     is_negative = true;
-                    self.advance(); // skip '-'
                 }
 
                 _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
-                    is_hexadecimal = true;
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
                 }
