@@ -443,7 +443,9 @@ impl<'a> Lexer<'a> {
                     self.advance(); // skip 'x'
                 }
 
-                _ if c.is_digit(10) || (is_hexadecimal && c.is_digit(16)) => {
+                _ if c.is_digit(10)
+                    || (c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10))) =>
+                {
                     let start_pos = if is_negative {
                         if is_hexadecimal {
                             self.pos - 3
@@ -497,6 +499,59 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
+                // _ if c.is_digit(10) || (is_hexadecimal && c.is_digit(16)) => {
+                //     let start_pos = if is_negative {
+                //         if is_hexadecimal {
+                //             self.pos - 3
+                //         } else {
+                //             self.pos - 1
+                //         }
+                //     } else {
+                //         self.pos
+                //     };
+
+                //     while let Some(c) = self.peek_next() {
+                //         if c.is_digit(10 | 16) {
+                //             self.advance();
+                //         } else if c == '.' && !is_float {
+                //             self.advance();
+                //             is_float = true;
+                //         } else {
+                //             break;
+                //         }
+                //     }
+
+                //     let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
+
+                //     if is_float {
+                //         if let Ok(f) =
+                //             FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                //         {
+                //             tokens.push(f);
+                //             continue;
+                //         } else {
+                //             self.log_error(LexErrorKind::ParseFloatError);
+                //         }
+                //     }
+
+                //     if is_negative {
+                //         if let Ok(i) =
+                //             IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                //         {
+                //             tokens.push(i);
+                //         } else {
+                //             self.log_error(LexErrorKind::ParseIntError);
+                //         }
+                //     } else {
+                //         if let Ok(u) =
+                //             UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                //         {
+                //             tokens.push(u);
+                //         } else {
+                //             self.log_error(LexErrorKind::ParseUIntError);
+                //         }
+                //     }
+                // }
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
                     while let Some(c) = self.peek_next() {
                         if c.is_ascii_punctuation() {
