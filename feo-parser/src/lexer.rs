@@ -69,6 +69,8 @@ impl<'a> Lexer<'a> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
         // let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
+        let mut is_negative = false;
+
         let mut num_open_delimiters: usize = 0;
 
         while let Some(c) = self.peek_next() {
@@ -428,16 +430,8 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c.is_digit(10)
-                    || (c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10))) =>
-                {
-                    let mut is_negative = false;
+                _ if c.is_digit(10) => {
                     let mut is_float = false;
-
-                    if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) {
-                        is_negative = true;
-                        self.advance();
-                    }
 
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
@@ -459,7 +453,6 @@ impl<'a> Lexer<'a> {
                             FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
-                            continue;
                         } else {
                             self.log_error(LexErrorKind::ParseFloatError);
                         }
@@ -482,6 +475,8 @@ impl<'a> Lexer<'a> {
                             self.log_error(LexErrorKind::ParseUIntError);
                         }
                     }
+
+                    is_negative = false; // reset `is_negative`
                 }
 
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
@@ -498,9 +493,7 @@ impl<'a> Lexer<'a> {
                     if let Ok(p) =
                         Punctuation::parse(self.input, &punc_content, start_pos, self.pos)
                     {
-                        tokens.push(p.clone());
-
-                        let punc_kind = Punctuation::try_from(p.unwrap())?.punc_kind;
+                        let punc_kind = Punctuation::try_from(p.clone().unwrap())?.punc_kind;
 
                         if punc_kind == PuncKind::ThinArrow {
                             let mut buf = String::new();
@@ -520,6 +513,15 @@ impl<'a> Lexer<'a> {
                                 tokens.push(t);
                             }
                         }
+
+                        if punc_kind == PuncKind::Minus
+                            && self.peek_next().is_some_and(|c| c.is_digit(10))
+                        {
+                            is_negative = true;
+                            continue;
+                        }
+
+                        tokens.push(p);
                     } else {
                         self.log_error(LexErrorKind::UnexpectedChar(c));
                         self.advance();
@@ -549,8 +551,7 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        let foo = 'ab';
-        let bar: i32 = -10;
+        let bar: i32 = -10.0 - 10.0;
         "#;
 
         let mut lexer = Lexer::new(&source_code);
