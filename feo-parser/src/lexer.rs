@@ -580,15 +580,18 @@ mod tests {
         }
         
         impl Foo {
-            pub func new(a: String, b: i32, c: char, d: bool) -> Foo {
-                let mut foo: f32 = 12.34;
+            pub func new() -> Foo {
+                let vec = [1, 2, 3, 4];
+                let mut new_vec: Vec<f64> = [];
 
                 if foo > 0 {
-                    foo += 56.78;
                     print("{}", foo);
                 } else {
-                    foo -= 0.1234;
                     print("{}", foo);
+                }
+
+                for i in vec {
+                    new_vec.push(i + 1.0);
                 }
 
                 return Foo {
@@ -596,7 +599,7 @@ mod tests {
                     b: -123, 
                     c: 'a', 
                     d: false
-                }
+                };
             }
         }
         "#;
