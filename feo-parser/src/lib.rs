@@ -11,7 +11,13 @@ use lexer::Token;
 mod literals;
 use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral};
 
-mod parse;
+mod parse {
+    use crate::lexer::Token;
+
+    pub trait Parse {
+        fn parse(src: &str, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()>;
+    }
+}
 use parse::Parse;
 
 impl Parse for CharLiteral {
