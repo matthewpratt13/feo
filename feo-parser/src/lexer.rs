@@ -23,6 +23,8 @@ pub(crate) struct Lexer<'a> {
     errors: Vec<LexError>,
 }
 
+// TODO: sort out error handling – i.e., log error (push to `self.errors`) or return error or panic
+
 #[allow(dead_code)]
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
@@ -80,6 +82,8 @@ impl<'a> Lexer<'a> {
                 _ if c.is_whitespace() => {
                     self.skip_whitespace();
                 }
+
+                // TODO: handle unexpected block comment terminator
 
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     self.advance();
@@ -324,6 +328,8 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                             }
                         }
+
+                        // TODO: handle unclosed double quote
                     }
                 }
                 '\'' => {
@@ -392,6 +398,7 @@ impl<'a> Lexer<'a> {
                                     .map_err(|_| self.throw_error(LexErrorKind::ParseCharError))?;
                                     tokens.push(char_lit);
                                 } else {
+                                    // TODO: handle invalid char literal
                                     return Err(
                                         self.throw_error(LexErrorKind::ExpectedClosingSingleQuote)
                                     );
@@ -403,6 +410,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
+                // TODO: add support for hexadecimal numbers
                 _ if c.is_digit(10) => {
                     let mut is_float = false;
 
