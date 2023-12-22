@@ -54,6 +54,7 @@ pub struct TokenStream<T> {
     span: Span,
 }
 
+#[allow(dead_code)]
 impl<T> TokenStream<T> {
     pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
         Self {

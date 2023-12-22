@@ -15,6 +15,7 @@ mod token;
 pub(crate) use self::token::Token;
 use self::token::TokenStream;
 
+#[allow(dead_code)]
 pub(crate) struct Lexer<'a> {
     input: &'a str,
     pos: usize,
@@ -22,6 +23,7 @@ pub(crate) struct Lexer<'a> {
     errors: Vec<LexError>,
 }
 
+#[allow(dead_code)]
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
@@ -65,9 +67,7 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn tokenize(&mut self) -> Result<TokenStream<Token>, ()> {
-        // pub fn tokenize(&mut self) -> Result<TokenStream<TokenTree>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
-        // let mut token_trees: Vec<Option<TokenTree>> = Vec::new();
 
         let mut is_negative = false;
 
@@ -246,20 +246,6 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
-                    // let start_pos = tokens[0]
-                    //     .clone()
-                    //     .ok_or(self.log_error(LexErrorKind::ExpectedToken))?
-                    //     .span()
-                    //     .start();
-
-                    // let tree = TokenTree::new(
-                    //     self.input,
-                    //     std::mem::take(&mut tokens),
-                    //     start_pos,
-                    //     self.pos,
-                    // );
-
-                    // token_trees.push(Some(tree));
                 }
 
                 ')' | ']' | '}' => {
@@ -289,33 +275,6 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
-                    // let prev_token = token_trees
-                    //     .clone()
-                    //     .pop()
-                    //     .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
-                    //     .ok_or(self.log_error(LexErrorKind::ExpectedTokenTree))?
-                    //     .tokens()
-                    //     .to_vec()
-                    //     .pop()
-                    //     .ok_or(self.log_error(LexErrorKind::ReachedFinalIndex))?
-                    //     .ok_or(self.log_error(LexErrorKind::ExpectedToken))?;
-                    // let prev_delim = Delimiter::try_from(prev_token)
-                    //     .map_err(|_| self.log_error(LexErrorKind::MismatchedDelimiters))?;
-
-                    // let curr_delim_kind = DelimKind::from_str(&String::from(c))
-                    //     .map_err(|_| self.log_error(LexErrorKind::UnrecognizedDelimKind(c)))?;
-
-                    // if prev_delim.delim.0 == curr_delim_kind {
-                    //     let tree = TokenTree::new(
-                    //         self.input,
-                    //         std::mem::take(&mut tokens),
-                    //         prev_delim.span().end() + 1,
-                    //         self.pos,
-                    //     );
-                    //     token_trees.push(Some(tree));
-                    // } else {
-                    //     self.log_error(LexErrorKind::MismatchedDelimiters);
-                    // }
 
                     self.advance(); // skip delimiter
                     num_open_delimiters -= 1;
@@ -533,9 +492,6 @@ impl<'a> Lexer<'a> {
 
         let stream = TokenStream::new(self.input, tokens, 0, self.pos);
         Ok(stream)
-
-        // let stream = TokenStream::new(self.input, token_trees, 0, self.pos);
-        // Ok(stream)
     }
 }
 
@@ -585,7 +541,6 @@ mod tests {
         "#;
 
         let mut lexer = Lexer::new(&source_code);
-        // let token_stream = lexer.tokenize();
 
         if let Ok(t) = lexer.tokenize() {
             for token in t.tokens() {
