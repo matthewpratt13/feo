@@ -11,7 +11,7 @@ pub struct CharLiteral(pub Literal<char>);
 
 impl Spanned for CharLiteral {
     fn span(&self) -> &Span {
-        &self.0.span()
+        self.0.span()
     }
 }
 
@@ -32,7 +32,7 @@ pub struct StringLiteral(pub Literal<String>);
 
 impl Spanned for StringLiteral {
     fn span(&self) -> &Span {
-        &self.0.span()
+        self.0.span()
     }
 }
 
@@ -53,7 +53,7 @@ pub struct IntLiteral(pub Literal<i64>);
 
 impl Spanned for IntLiteral {
     fn span(&self) -> &Span {
-        &self.0.span()
+        self.0.span()
     }
 }
 
@@ -74,7 +74,7 @@ pub struct UIntLiteral(pub Literal<u64>);
 
 impl Spanned for UIntLiteral {
     fn span(&self) -> &Span {
-        &self.0.span()
+        self.0.span()
     }
 }
 
@@ -95,7 +95,7 @@ pub struct FloatLiteral(pub Literal<f64>);
 
 impl Spanned for FloatLiteral {
     fn span(&self) -> &Span {
-        &self.0.span()
+        self.0.span()
     }
 }
 
@@ -116,7 +116,7 @@ pub struct BoolLiteral(pub Literal<bool>);
 
 impl Spanned for BoolLiteral {
     fn span(&self) -> &Span {
-        &self.0.span()
+        self.0.span()
     }
 }
 
