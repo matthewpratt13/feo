@@ -17,7 +17,7 @@ use self::token::TokenStream;
 
 #[allow(dead_code)]
 pub(crate) struct Lexer<'a> {
-    input: &'a str,
+    input: Arc<&'a str>,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     errors: Vec<LexError>,
@@ -29,7 +29,7 @@ pub(crate) struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
-            input,
+            input: Arc::new(input),
             pos: 0,
             peekable_chars: input.chars().peekable(),
             errors: Vec::new(),
@@ -84,7 +84,6 @@ impl<'a> Lexer<'a> {
                 }
 
                 // TODO: handle unexpected block comment terminator
-
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     self.advance();
                     match self.peek_next() {
@@ -105,11 +104,11 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                let doc_comment_content =
-                                    Arc::new(self.input[start_pos..self.pos].to_string());
+                                let data = self.input[start_pos..self.pos].to_string();
+                                let doc_comment_content = Arc::new(&data);
 
                                 if let Ok(dc) = DocComment::parse(
-                                    self.input,
+                                    &self.input,
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
@@ -175,7 +174,10 @@ impl<'a> Lexer<'a> {
                             if !type_name.is_empty() {
                                 if type_name == "true" || type_name == "false" {
                                     if let Ok(b) = BoolLiteral::parse(
-                                        self.input, &type_name, start_pos, self.pos,
+                                        &self.input,
+                                        &type_name,
+                                        start_pos,
+                                        self.pos,
                                     ) {
                                         tokens.push(b);
                                         break;
@@ -185,7 +187,10 @@ impl<'a> Lexer<'a> {
                                 }
 
                                 if let Ok(t) = TypeAnnotation::parse(
-                                    self.input, &type_name, start_pos, self.pos,
+                                    &self.input,
+                                    &type_name,
+                                    start_pos,
+                                    self.pos,
                                 ) {
                                     tokens.push(t);
                                     break;
@@ -200,7 +205,7 @@ impl<'a> Lexer<'a> {
 
                     if buf == "true" || buf == "false" {
                         if let Ok(b) =
-                            BoolLiteral::parse(self.input, &buf, start_pos, start_pos + buf.len())
+                            BoolLiteral::parse(&self.input, &buf, start_pos, start_pos + buf.len())
                         {
                             tokens.push(b);
                             continue;
@@ -210,11 +215,11 @@ impl<'a> Lexer<'a> {
                     }
 
                     if let Ok(k) =
-                        Keyword::parse(self.input, &buf, start_pos, start_pos + buf.len())
+                        Keyword::parse(&self.input, &buf, start_pos, start_pos + buf.len())
                     {
                         tokens.push(k);
                     } else if let Ok(i) =
-                        Identifier::parse(self.input, &buf, start_pos, start_pos + buf.len())
+                        Identifier::parse(&self.input, &buf, start_pos, start_pos + buf.len())
                     {
                         tokens.push(i);
                     } else {
@@ -228,21 +233,21 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         '(' => {
-                            if let Ok(d) = Delimiter::parse(self.input, "[", start_pos, self.pos) {
+                            if let Ok(d) = Delimiter::parse(&self.input, "[", start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         '[' => {
-                            if let Ok(d) = Delimiter::parse(self.input, "[", start_pos, self.pos) {
+                            if let Ok(d) = Delimiter::parse(&self.input, "[", start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         '{' => {
-                            if let Ok(d) = Delimiter::parse(self.input, "{", start_pos, self.pos) {
+                            if let Ok(d) = Delimiter::parse(&self.input, "{", start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
@@ -257,21 +262,21 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         ')' => {
-                            if let Ok(d) = Delimiter::parse(self.input, ")", start_pos, self.pos) {
+                            if let Ok(d) = Delimiter::parse(&self.input, ")", start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         ']' => {
-                            if let Ok(d) = Delimiter::parse(self.input, "]", start_pos, self.pos) {
+                            if let Ok(d) = Delimiter::parse(&self.input, "]", start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         '}' => {
-                            if let Ok(d) = Delimiter::parse(self.input, "}", start_pos, self.pos) {
+                            if let Ok(d) = Delimiter::parse(&self.input, "}", start_pos, self.pos) {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
@@ -317,7 +322,7 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // skip closing double quote
 
                                 let string_lit =
-                                    StringLiteral::parse(self.input, &buf, start_pos, self.pos)
+                                    StringLiteral::parse(&self.input, &buf, start_pos, self.pos)
                                         .map_err(|_| self.emit_error(LexErrorKind::ParseError))?;
                                 tokens.push(string_lit);
                                 break;
@@ -346,26 +351,47 @@ impl<'a> Lexer<'a> {
 
                                     let char_lit = match esc_c {
                                         'n' => CharLiteral::parse(
-                                            self.input, "\n", start_pos, self.pos,
+                                            &self.input,
+                                            "\n",
+                                            start_pos,
+                                            self.pos,
                                         ),
                                         'r' => CharLiteral::parse(
-                                            self.input, "\r", start_pos, self.pos,
+                                            &self.input,
+                                            "\r",
+                                            start_pos,
+                                            self.pos,
                                         ),
                                         't' => CharLiteral::parse(
-                                            self.input, "\t", start_pos, self.pos,
+                                            &self.input,
+                                            "\t",
+                                            start_pos,
+                                            self.pos,
                                         ),
                                         '\\' => CharLiteral::parse(
-                                            self.input, "\\", start_pos, self.pos,
+                                            &self.input,
+                                            "\\",
+                                            start_pos,
+                                            self.pos,
                                         ),
                                         '0' => CharLiteral::parse(
-                                            self.input, "\0", start_pos, self.pos,
+                                            &self.input,
+                                            "\0",
+                                            start_pos,
+                                            self.pos,
                                         ),
                                         '"' => CharLiteral::parse(
-                                            self.input, "\"", start_pos, self.pos,
+                                            &self.input,
+                                            "\"",
+                                            start_pos,
+                                            self.pos,
                                         ),
-                                        '\'' => {
-                                            CharLiteral::parse(self.input, "'", start_pos, self.pos)
-                                        }
+                                        '\'' => CharLiteral::parse(
+                                            &self.input,
+                                            "'",
+                                            start_pos,
+                                            self.pos,
+                                        ),
                                         _ => {
                                             return Err(self
                                                 .emit_error(LexErrorKind::InvalidEscapeSequence))
@@ -390,7 +416,7 @@ impl<'a> Lexer<'a> {
                                     self.advance(); // skip closing single quote
 
                                     let char_lit = CharLiteral::parse(
-                                        self.input,
+                                        &self.input,
                                         &c.to_string(),
                                         start_pos,
                                         self.pos,
@@ -427,11 +453,13 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let num_content = Arc::new(self.input[start_pos..self.pos].to_string());
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let num_content = Arc::new(&data);
 
                     if is_float {
                         if let Ok(f) =
-                            FloatLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                            FloatLiteral::parse(&self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
                         } else {
@@ -441,7 +469,7 @@ impl<'a> Lexer<'a> {
 
                     if is_negative {
                         if let Ok(i) =
-                            IntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                            IntLiteral::parse(&self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(i);
                         } else {
@@ -449,7 +477,7 @@ impl<'a> Lexer<'a> {
                         }
                     } else {
                         if let Ok(u) =
-                            UIntLiteral::parse(self.input, &num_content, start_pos, self.pos)
+                            UIntLiteral::parse(&self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(u);
                         } else {
@@ -469,10 +497,12 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let punc_content = Arc::new(self.input[start_pos..self.pos].to_string());
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let punc_content = Arc::new(&data);
 
                     if let Ok(p) =
-                        Punctuation::parse(self.input, &punc_content, start_pos, self.pos)
+                        Punctuation::parse(&self.input, &punc_content, start_pos, self.pos)
                     {
                         let punc_kind = Punctuation::try_from(p.clone().unwrap())?.punc_kind;
 
@@ -498,7 +528,7 @@ impl<'a> Lexer<'a> {
             return Err(self.emit_error(LexErrorKind::UnclosedDelimiters)); // TODO: where?
         }
 
-        let stream = TokenStream::new(self.input, tokens, 0, self.pos);
+        let stream = TokenStream::new(&&self.input, tokens, 0, self.pos);
         Ok(stream)
     }
 }
