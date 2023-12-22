@@ -200,6 +200,17 @@ impl TryFrom<Token> for Punctuation {
     }
 }
 
+impl TryFrom<Token> for TypeName {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Type(t) => Ok(t.type_name),
+            _ => return Err(()),
+        }
+    }
+}
+
 pub fn lex() {
     // let filename = "path/to/your/file.txt"; // Change this to your file path
     // let source_code = std::fs::read_to_string(filename).expect("Error reading file");

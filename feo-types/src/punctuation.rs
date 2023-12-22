@@ -11,7 +11,6 @@ pub enum PuncKind {
     FullStop,
     Underscore,
 
-    DoubleColon,
     DoubleFullStop,
 
     Bang, // (exclamation point)

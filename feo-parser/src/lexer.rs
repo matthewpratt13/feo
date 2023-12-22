@@ -529,6 +529,32 @@ impl<'a> Lexer<'a> {
                             }
                         }
 
+                        // e.g., Vec<f64>
+                        if punc_kind == PuncKind::LessThan {
+                            self.skip_whitespace();
+                            let mut buf = String::new();
+
+                            while let Some(c) = self.peek_next() {
+                                if c.is_alphanumeric() {
+                                    buf.push(c);
+                                    self.advance();
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if let Ok(t) =
+                                TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
+                            {
+                                tokens.push(t);
+                            }
+
+                            self.advance(); // skip '<'
+                            self.advance(); // skip '>'
+
+                            continue;
+                        }
+
                         if punc_kind == PuncKind::Minus
                             && self.peek_next().is_some_and(|c| c.is_digit(10))
                         {
