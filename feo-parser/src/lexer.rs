@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
-    Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation,
+    Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation, TypeName,
 };
 
 use crate::{
@@ -531,7 +531,6 @@ impl<'a> Lexer<'a> {
 
                         // e.g., Vec<f64>
                         if punc_kind == PuncKind::LessThan {
-                            self.skip_whitespace();
                             let mut buf = String::new();
 
                             while let Some(c) = self.peek_next() {
@@ -543,16 +542,19 @@ impl<'a> Lexer<'a> {
                                 }
                             }
 
-                            if let Ok(t) =
+                            let type_ann =
                                 TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
+                                    .map_err(|_| {
+                                        self.throw_error(LexErrorKind::ParseTypeAnnError)
+                                    })?;
+
+                            if type_ann.clone().is_some()
+                                && TypeName::try_from(type_ann.clone().unwrap()).is_ok()
                             {
-                                tokens.push(t);
+                                tokens.push(type_ann);
+                            } else {
+                                continue;
                             }
-
-                            self.advance(); // skip '<'
-                            self.advance(); // skip '>'
-
-                            continue;
                         }
 
                         if punc_kind == PuncKind::Minus
@@ -610,7 +612,7 @@ mod tests {
                 let vec = [1, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
-                if foo > 0 {
+                if foo < 0 {
                     print("{}", foo);
                 } else {
                     print("{}", foo);
