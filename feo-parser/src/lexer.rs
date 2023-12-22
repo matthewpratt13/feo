@@ -169,6 +169,17 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
+                                if type_name == "true" || type_name == "false" {
+                                    if let Ok(b) = BoolLiteral::parse(
+                                        self.input, &type_name, start_pos, self.pos,
+                                    ) {
+                                        tokens.push(b);
+                                        break;
+                                    } else {
+                                        self.log_error(LexErrorKind::ParseBoolError);
+                                    }
+                                }
+
                                 if let Ok(t) = TypeAnnotation::parse(
                                     self.input, &type_name, start_pos, self.pos,
                                 ) {
@@ -252,7 +263,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 ')' | ']' | '}' => {
-                    self.advance(); // skip delimiter
+                    // self.advance(); // skip delimiter
 
                     match c {
                         ')' => {
@@ -499,6 +510,7 @@ impl<'a> Lexer<'a> {
                         let punc_kind = Punctuation::try_from(p.clone().unwrap())?.punc_kind;
 
                         if punc_kind == PuncKind::ThinArrow {
+                            self.skip_whitespace();
                             let mut buf = String::new();
 
                             while let Some(c) = self.peek_next() {
@@ -554,7 +566,39 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        let bar: char = '\"';
+        // line comment
+        /* 
+        block comment
+        */
+        /// doc comment
+    
+        struct Foo {
+            a: String,
+            b: i32,
+            c: char,
+            d: bool
+        }
+        
+        impl Foo {
+            pub func new(a: String, b: i32, c: char, d: bool) -> Foo {
+                let mut foo: f32 = 12.34;
+
+                if foo > 0 {
+                    foo += 56.78;
+                    print("{}", foo);
+                } else {
+                    foo -= 0.1234;
+                    print("{}", foo);
+                }
+
+                return Foo {
+                    a: "foo",
+                    b: -123, 
+                    c: 'a', 
+                    d: false
+                }
+            }
+        }
         "#;
 
         let mut lexer = Lexer::new(&source_code);
