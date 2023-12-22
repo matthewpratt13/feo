@@ -78,7 +78,7 @@ impl Spanned for UIntLiteral {
     }
 }
 
-// convert `Token` to inner `U256Literal`
+// convert `Token` to inner `UIntLiteral`
 impl TryFrom<Token> for UIntLiteral {
     type Error = LexErrorKind;
 
