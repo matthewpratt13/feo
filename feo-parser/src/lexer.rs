@@ -344,7 +344,7 @@ impl<'a> Lexer<'a> {
 
                                 let string_lit =
                                     StringLiteral::parse(self.input, &buf, start_pos, self.pos)
-                                        .map_err(|_| self.log_error(LexErrorKind::ParseError))?;
+                                        .map_err(|_| self.throw_error(LexErrorKind::ParseError))?;
                                 tokens.push(string_lit);
                                 break;
                             }
@@ -357,7 +357,6 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 '\'' => {
-                    // TODO: fix
                     self.advance(); // skip opening single quote
 
                     if let Some(c) = self.peek_next() {
@@ -367,6 +366,7 @@ impl<'a> Lexer<'a> {
 
                                 if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
+                                    self.advance(); // return char to be read
 
                                     let char_lit = match esc_c {
                                         'n' => CharLiteral::parse(
@@ -405,11 +405,11 @@ impl<'a> Lexer<'a> {
                                 }
                             }
                             '\'' => {
-                                self.log_error(LexErrorKind::EmptyCharLiteral);
+                                self.throw_error(LexErrorKind::EmptyCharLiteral);
                             }
                             _ => {
-                                // regular char
                                 self.advance(); // consume the char
+                                                // regular char
                                 if self.peek_next() == Some('\'') {
                                     self.advance(); // skip closing single quote
 
@@ -419,9 +419,12 @@ impl<'a> Lexer<'a> {
                                         start_pos,
                                         self.pos,
                                     )
-                                    .map_err(|_| self.log_error(LexErrorKind::ParseCharError))?;
+                                    .map_err(|_| self.throw_error(LexErrorKind::ParseCharError))?;
                                     tokens.push(char_lit);
-                                    continue;
+                                } else {
+                                    return Err(
+                                        self.throw_error(LexErrorKind::ExpectedClosingSingleQuote)
+                                    );
                                 }
                             }
                         }
@@ -551,7 +554,7 @@ mod tests {
     #[test]
     fn tokenize() {
         let source_code = r#"
-        let bar: i32 = -10.0 - 10.0;
+        let bar: char = '\"';
         "#;
 
         let mut lexer = Lexer::new(&source_code);
