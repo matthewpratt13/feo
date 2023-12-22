@@ -263,7 +263,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 ')' | ']' | '}' => {
-                    // self.advance(); // skip delimiter
+                    self.advance(); // skip delimiter
 
                     match c {
                         ')' => {
@@ -509,54 +509,6 @@ impl<'a> Lexer<'a> {
                     {
                         let punc_kind = Punctuation::try_from(p.clone().unwrap())?.punc_kind;
 
-                        if punc_kind == PuncKind::ThinArrow {
-                            self.skip_whitespace();
-                            let mut buf = String::new();
-
-                            while let Some(c) = self.peek_next() {
-                                if c.is_alphabetic() {
-                                    buf.push(c);
-                                    self.advance();
-                                } else {
-                                    break;
-                                }
-                            }
-
-                            if let Ok(t) =
-                                TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
-                            {
-                                tokens.push(t);
-                            }
-                        }
-
-                        // e.g., Vec<f64>
-                        if punc_kind == PuncKind::LessThan {
-                            let mut buf = String::new();
-
-                            while let Some(c) = self.peek_next() {
-                                if c.is_alphanumeric() {
-                                    buf.push(c);
-                                    self.advance();
-                                } else {
-                                    break;
-                                }
-                            }
-
-                            let type_ann =
-                                TypeAnnotation::parse(self.input, &buf, start_pos, self.pos)
-                                    .map_err(|_| {
-                                        self.throw_error(LexErrorKind::ParseTypeAnnError)
-                                    })?;
-
-                            if type_ann.clone().is_some()
-                                && TypeName::try_from(type_ann.clone().unwrap()).is_ok()
-                            {
-                                tokens.push(type_ann);
-                            } else {
-                                continue;
-                            }
-                        }
-
                         if punc_kind == PuncKind::Minus
                             && self.peek_next().is_some_and(|c| c.is_digit(10))
                         {
@@ -633,9 +585,14 @@ mod tests {
         "#;
 
         let mut lexer = Lexer::new(&source_code);
-        let token_stream = lexer.tokenize().unwrap();
-        let tokens = token_stream.tokens();
+        // let token_stream = lexer.tokenize();
 
-        println!("Tokens: {:#?}", tokens);
+        if let Ok(t) = lexer.tokenize() {
+            for token in t.tokens() {
+                println!("{:?} \n", token)
+            }
+        } else {
+            println!("Error tokenizing file");
+        }
     }
 }
