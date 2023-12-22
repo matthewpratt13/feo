@@ -62,7 +62,7 @@ impl<'a> Lexer<'a> {
         });
     }
 
-    fn throw_error(&mut self, error_kind: LexErrorKind) {
+    fn emit_error(&mut self, error_kind: LexErrorKind) {
         self.log_error(error_kind);
         let err = self.errors.clone().pop();
         println!("Error: {:?}", err);
@@ -318,7 +318,7 @@ impl<'a> Lexer<'a> {
 
                                 let string_lit =
                                     StringLiteral::parse(self.input, &buf, start_pos, self.pos)
-                                        .map_err(|_| self.throw_error(LexErrorKind::ParseError))?;
+                                        .map_err(|_| self.emit_error(LexErrorKind::ParseError))?;
                                 tokens.push(string_lit);
                                 break;
                             }
@@ -368,7 +368,7 @@ impl<'a> Lexer<'a> {
                                         }
                                         _ => {
                                             return Err(self
-                                                .throw_error(LexErrorKind::InvalidEscapeSequence))
+                                                .emit_error(LexErrorKind::InvalidEscapeSequence))
                                         }
                                     }
                                     .map_err(|_| self.log_error(LexErrorKind::ParseCharError))?;
@@ -376,12 +376,12 @@ impl<'a> Lexer<'a> {
                                     tokens.push(char_lit);
                                 } else {
                                     return Err(
-                                        self.throw_error(LexErrorKind::ExpectedEscapeSequence)
+                                        self.emit_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
                                 }
                             }
                             '\'' => {
-                                self.throw_error(LexErrorKind::EmptyCharLiteral);
+                                self.emit_error(LexErrorKind::EmptyCharLiteral);
                             }
                             _ => {
                                 self.advance(); // consume the char
@@ -395,18 +395,18 @@ impl<'a> Lexer<'a> {
                                         start_pos,
                                         self.pos,
                                     )
-                                    .map_err(|_| self.throw_error(LexErrorKind::ParseCharError))?;
+                                    .map_err(|_| self.emit_error(LexErrorKind::ParseCharError))?;
                                     tokens.push(char_lit);
                                 } else {
                                     // TODO: handle invalid char literal
                                     return Err(
-                                        self.throw_error(LexErrorKind::ExpectedClosingSingleQuote)
+                                        self.emit_error(LexErrorKind::ExpectedClosingSingleQuote)
                                     );
                                 }
                             }
                         }
                     } else {
-                        return Err(self.throw_error(LexErrorKind::ExpectedCharLiteral));
+                        return Err(self.emit_error(LexErrorKind::ExpectedCharLiteral));
                     }
                 }
 
@@ -495,7 +495,7 @@ impl<'a> Lexer<'a> {
         }
 
         if num_open_delimiters > 0 {
-            return Err(self.throw_error(LexErrorKind::UnclosedDelimiters));
+            return Err(self.emit_error(LexErrorKind::UnclosedDelimiters)); // TODO: where?
         }
 
         let stream = TokenStream::new(self.input, tokens, 0, self.pos);
