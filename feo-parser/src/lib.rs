@@ -6,7 +6,7 @@ use feo_types::{
 };
 
 mod lexer;
-use lexer::{Lexer, Token};
+use lexer::Token;
 
 mod literals;
 use literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral};

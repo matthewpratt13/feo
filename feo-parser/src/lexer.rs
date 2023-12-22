@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use feo_error::lex_error::{LexError, LexErrorKind};
 use feo_types::{
-    Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation, TypeName,
+    Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation,
 };
 
 use crate::{
