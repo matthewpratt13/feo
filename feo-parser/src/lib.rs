@@ -29,7 +29,7 @@ use parse::Parse;
 
 impl Parse for CharLiteral {
     fn parse(src: &Arc<&str>, content: &str, start: usize, end: usize) -> Result<Option<Token>, ()> {
-        let span = Span::new(&&src, start, end);
+        let span = Span::new(src, start, end);
 
         let parsed = content.parse::<char>().map_err(|_| ())?;
 
