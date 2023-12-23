@@ -75,18 +75,17 @@ impl<'a> Lexer<'a> {
                                 }
 
                                 let data = self.input[start_pos..self.pos].to_string();
+
                                 let doc_comment_content = Arc::new(&data);
 
-                                if let Ok(dc) = DocComment::tokenize(
+                                let doc_comment = DocComment::tokenize(
                                     &self.input,
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                ) {
-                                    tokens.push(dc);
-                                } else {
-                                    self.log_error(LexErrorKind::ParseDocCommentError);
-                                }
+                                )?;
+
+                                tokens.push(doc_comment);
                             } else {
                                 while let Some(c) = self.peek_next() {
                                     if c == '\n' {
@@ -141,32 +140,27 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
-                                // TODO: is there a cleaner way to do this? (i.e., not repeating the code below)
                                 if type_name == "true" || type_name == "false" {
-                                    if let Ok(b) = BoolLiteral::tokenize(
+                                    let bool_lit = BoolLiteral::tokenize(
                                         &self.input,
                                         &type_name,
                                         start_pos,
                                         self.pos,
-                                    ) {
-                                        tokens.push(b);
-                                        break;
-                                    } else {
-                                        self.log_error(LexErrorKind::ParseBoolError);
-                                    }
+                                    )?;
+
+                                    tokens.push(bool_lit);
+                                    break;
                                 }
 
-                                if let Ok(t) = TypeAnnotation::tokenize(
+                                let type_ann = TypeAnnotation::tokenize(
                                     &self.input,
                                     &type_name,
                                     start_pos,
                                     self.pos,
-                                ) {
-                                    tokens.push(t);
-                                    break;
-                                } else {
-                                    self.log_error(LexErrorKind::ParseTypeAnnError);
-                                }
+                                )?;
+
+                                tokens.push(type_ann);
+                                break;
                             }
                         } else {
                             break;
@@ -174,17 +168,15 @@ impl<'a> Lexer<'a> {
                     }
 
                     if buf == "true" || buf == "false" {
-                        if let Ok(b) = BoolLiteral::tokenize(
+                        let bool_lit = BoolLiteral::tokenize(
                             &self.input,
                             &buf,
                             start_pos,
                             start_pos + buf.len(),
-                        ) {
-                            tokens.push(b);
-                            continue;
-                        } else {
-                            self.log_error(LexErrorKind::ParseBoolError);
-                        }
+                        )?;
+
+                        tokens.push(bool_lit);
+                        continue;
                     }
 
                     if is_keyword(&buf) {
@@ -213,31 +205,20 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         '(' => {
-                            if let Ok(d) =
-                                Delimiter::tokenize(&self.input, "[", start_pos, self.pos)
-                            {
-                                tokens.push(d);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDelimError);
-                            }
+                            let delim = Delimiter::tokenize(&self.input, "(", start_pos, self.pos)?;
+
+                            tokens.push(delim);
                         }
                         '[' => {
-                            if let Ok(d) =
-                                Delimiter::tokenize(&self.input, "[", start_pos, self.pos)
-                            {
-                                tokens.push(d);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDelimError);
-                            }
+                            let delim = Delimiter::tokenize(&self.input, "[", start_pos, self.pos)?;
+
+                            tokens.push(delim);
                         }
+
                         '{' => {
-                            if let Ok(d) =
-                                Delimiter::tokenize(&self.input, "{", start_pos, self.pos)
-                            {
-                                tokens.push(d);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDelimError);
-                            }
+                            let delim = Delimiter::tokenize(&self.input, "{", start_pos, self.pos)?;
+
+                            tokens.push(delim);
                         }
                         _ => unreachable!(),
                     };
@@ -248,31 +229,20 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         ')' => {
-                            if let Ok(d) =
-                                Delimiter::tokenize(&self.input, ")", start_pos, self.pos)
-                            {
-                                tokens.push(d);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDelimError);
-                            }
+                            let delim = Delimiter::tokenize(&self.input, ")", start_pos, self.pos)?;
+
+                            tokens.push(delim);
                         }
                         ']' => {
-                            if let Ok(d) =
-                                Delimiter::tokenize(&self.input, "]", start_pos, self.pos)
-                            {
-                                tokens.push(d);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDelimError);
-                            }
+                            let delim = Delimiter::tokenize(&self.input, "]", start_pos, self.pos)?;
+
+                            tokens.push(delim);
                         }
+
                         '}' => {
-                            if let Ok(d) =
-                                Delimiter::tokenize(&self.input, "}", start_pos, self.pos)
-                            {
-                                tokens.push(d);
-                            } else {
-                                self.log_error(LexErrorKind::ParseDelimError);
-                            }
+                            let delim = Delimiter::tokenize(&self.input, "}", start_pos, self.pos)?;
+
+                            tokens.push(delim);
                         }
                         _ => unreachable!(),
                     };
@@ -345,55 +315,53 @@ impl<'a> Lexer<'a> {
                                     self.advance(); // skip second '\'
                                     self.advance(); // return char to be read
 
-                                    let char_lit = match esc_c {
-                                        'n' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\n",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        'r' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\r",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        't' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\t",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '\\' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\\",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '0' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\0",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '"' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\"",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '\'' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "'",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        _ => {
-                                            Err(self
-                                                .emit_error(LexErrorKind::InvalidEscapeSequence))
-                                        }
-                                    }
-                                    .map_err(|_| self.emit_error(LexErrorKind::ParseCharError))?;
+                                    let char_lit =
+                                        match esc_c {
+                                            'n' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\n",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            'r' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\r",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            't' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\t",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            '\\' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\\",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            '0' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\0",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            '"' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\"",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            '\'' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "'",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            _ => Err(self
+                                                .emit_error(LexErrorKind::InvalidEscapeSequence))?,
+                                        };
 
                                     tokens.push(char_lit);
                                 } else {
