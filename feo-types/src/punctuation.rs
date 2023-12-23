@@ -48,7 +48,7 @@ pub enum PuncKind {
     DoublePipe,
 
     // escape sequences
-    Newline,
+    NewLine,
     Return,
     Tab,
     Backslash,
@@ -100,7 +100,7 @@ impl FromStr for PuncKind {
             "->" => Ok(PuncKind::ThinArrow),
             "=>" => Ok(PuncKind::FatArrow),
             "||" => Ok(PuncKind::DoublePipe),
-            "\n" => Ok(PuncKind::Newline),
+            "\n" => Ok(PuncKind::NewLine),
             "\r" => Ok(PuncKind::Return),
             "\t" => Ok(PuncKind::Tab),
             "\\" => Ok(PuncKind::Backslash),

@@ -17,10 +17,9 @@ pub enum KeywordKind {
     FuncKw,
     IfKw,
     ImplKw,
-    ImportKw, // same as "use"
+    ImportKw,
     InKw,
     LetKw,
-    LibraryKw, // same as "crate"
     LoopKw,
     MatchKw,
     ModKw,
@@ -55,7 +54,6 @@ impl FromStr for KeywordKind {
             "import" => Ok(KeywordKind::ImportKw),
             "in" => Ok(KeywordKind::InKw),
             "let" => Ok(KeywordKind::LetKw),
-            "library" => Ok(KeywordKind::LibraryKw),
             "loop" => Ok(KeywordKind::LoopKw),
             "match" => Ok(KeywordKind::MatchKw),
             "mod" => Ok(KeywordKind::ModKw),
