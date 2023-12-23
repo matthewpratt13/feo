@@ -184,7 +184,7 @@ impl<'a> Lexer<'a> {
                             &self.input,
                             &buf,
                             start_pos,
-                            start_pos + buf.len() + 1,
+                            start_pos + buf.len(),
                         )?;
 
                         tokens.push(keyword);
@@ -193,7 +193,7 @@ impl<'a> Lexer<'a> {
                             &self.input,
                             &buf,
                             start_pos,
-                            start_pos + buf.len() + 1,
+                            start_pos + buf.len(),
                         )?;
                         tokens.push(iden);
                     }
