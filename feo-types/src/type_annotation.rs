@@ -1,6 +1,9 @@
 use std::str::FromStr;
 
-use crate::span::{Span, Spanned};
+use crate::{
+    error::TypeError,
+    span::{Span, Spanned},
+};
 
 #[derive(Debug, Clone)]
 pub enum TypeName {
@@ -21,7 +24,7 @@ pub enum TypeName {
 }
 
 impl FromStr for TypeName {
-    type Err = ();
+    type Err = TypeError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let type_name = match s {
