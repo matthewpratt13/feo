@@ -5,7 +5,6 @@ pub enum LexErrorKind {
     EmptyCharLiteral,
     ExpectedCharLiteral,
     ExpectedClosingSingleQuote,
-    UnexpectedIdentifier(String),
     InvalidEscapeSequence,
     InvalidPunctuation,
     ExpectedEscapeSequence,
