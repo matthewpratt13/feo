@@ -1,7 +1,7 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use crate::{
-    error::TypeError,
+    error::TypeErrorKind,
     span::{Span, Spanned},
 };
 
@@ -38,7 +38,7 @@ pub enum KeywordKind {
 }
 
 impl FromStr for KeywordKind {
-    type Err = TypeError;
+    type Err = TypeErrorKind;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let keyword_kind = match s {
@@ -70,7 +70,7 @@ impl FromStr for KeywordKind {
             "trait" => Ok(KeywordKind::TraitKw),
             "type" => Ok(KeywordKind::TypeKw),
             "while" => Ok(KeywordKind::WhileKw),
-            _ => Err(TypeError::UnrecognizedKeyword),
+            _ => Err(TypeErrorKind::UnrecognizedKeyword),
         }?;
 
         Ok(keyword_kind)

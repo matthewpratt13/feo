@@ -13,6 +13,7 @@ pub enum LexErrorKind {
     ExpectedClosingDoubleQuote,
     UnexpectedIdentifier(String),
     InvalidEscapeSequence,
+    InvalidPunctuation,
     ExpectedEscapeSequence,
     MismatchedTokenType,
     ExpectedToken,

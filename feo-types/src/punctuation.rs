@@ -1,6 +1,6 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
-use crate::error::TypeError;
+use crate::error::TypeErrorKind;
 use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -58,7 +58,7 @@ pub enum PuncKind {
 }
 
 impl FromStr for PuncKind {
-    type Err = TypeError;
+    type Err = TypeErrorKind;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let punc_kind = match s {
@@ -107,7 +107,7 @@ impl FromStr for PuncKind {
             "\0" => Ok(PuncKind::Null),
             "\'" => Ok(PuncKind::SingleQuote),
             "\"" => Ok(PuncKind::DoubleQuote),
-            _ => Err(TypeError::UnrecognizedPunctuation),
+            _ => Err(TypeErrorKind::UnrecognizedPunctuation),
         }?;
 
         Ok(punc_kind)

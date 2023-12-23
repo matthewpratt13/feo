@@ -1,7 +1,7 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use crate::{
-    error::TypeError,
+    error::TypeErrorKind,
     span::{Span, Spanned},
 };
 
@@ -24,7 +24,7 @@ pub enum TypeName {
 }
 
 impl FromStr for TypeName {
-    type Err = TypeError;
+    type Err = TypeErrorKind;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let type_name = match s {

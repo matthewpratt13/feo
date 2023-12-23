@@ -1,7 +1,10 @@
-use std::str::FromStr;
+use core::str::FromStr;
 use std::sync::Arc;
 
-use feo_error::error::ErrorEmitted;
+use feo_error::error::{CompileError, ErrorEmitted};
+use feo_error::lex_error::{LexError, LexErrorKind};
+
+use feo_types::error::{TypeError, TypeErrorKind};
 use feo_types::span::Span;
 use feo_types::{
     DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword, KeywordKind, Literal,
@@ -31,9 +34,15 @@ impl Tokenize for CharLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
+        let err = LexError {
+            error_kind: LexErrorKind::ParseCharError,
+            pos: start,
+        };
+
+        // convert `core::char::ParseCharError` to `CompileError::Lex(LexError)`
         let parsed = content
             .parse::<char>()
-            .map_err(|_| ErrorEmitted::emit_err())?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -69,9 +78,15 @@ impl Tokenize for BoolLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
+        let err = LexError {
+            error_kind: LexErrorKind::ParseBoolError,
+            pos: start,
+        };
+
+        // convert `core::str::ParseBoolError` to `CompileError::Lex(LexError)`
         let parsed = content
             .parse::<bool>()
-            .map_err(|_| ErrorEmitted::emit_err())?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
 
         let bool_lit = Literal::new(parsed, span);
 
@@ -90,7 +105,14 @@ impl Tokenize for IntLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = i64::from_str_radix(content, 10).map_err(|_| ErrorEmitted::emit_err())?;
+        let err = LexError {
+            error_kind: LexErrorKind::ParseIntError,
+            pos: start,
+        };
+
+        // convert `core::num::ParseIntError` to `CompileError::Lex(LexError)`
+        let parsed = i64::from_str_radix(content, 10)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -109,7 +131,14 @@ impl Tokenize for UIntLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = u64::from_str_radix(content, 10).map_err(|_| ErrorEmitted::emit_err())?;
+        let err = LexError {
+            error_kind: LexErrorKind::ParseUIntError,
+            pos: start,
+        };
+
+        // convert `core::num::ParseIntError` to `CompileError::Lex(LexError)`
+        let parsed = u64::from_str_radix(content, 10)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -128,9 +157,15 @@ impl Tokenize for FloatLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
+        let err = LexError {
+            error_kind: LexErrorKind::ParseFloatError,
+            pos: start,
+        };
+
+        // convert `core::num::ParseFloatError` to `CompileError::Lex(LexError)`
         let parsed = content
             .parse::<f64>()
-            .map_err(|_| ErrorEmitted::emit_err())?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -166,7 +201,14 @@ impl Tokenize for Keyword {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let keyword_kind = KeywordKind::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
+        let err = TypeError {
+            error_kind: TypeErrorKind::UnrecognizedKeyword,
+            pos: start,
+        };
+
+        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        let keyword_kind = KeywordKind::from_str(content)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err)))?;
 
         let keyword = Keyword::new(keyword_kind, span);
 
@@ -202,10 +244,18 @@ impl Tokenize for Delimiter {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let delim_kind = DelimKind::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
+        let err = TypeError {
+            error_kind: TypeErrorKind::UnrecognizedDelimiter,
+            pos: start,
+        };
 
-        let delim_orientation =
-            DelimOrientation::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
+        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        let delim_kind = DelimKind::from_str(content)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err.clone())))?;
+
+        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        let delim_orientation = DelimOrientation::from_str(content)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err)))?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
 
@@ -224,7 +274,14 @@ impl Tokenize for Punctuation {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let punc_kind = PuncKind::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
+        let err = TypeError {
+            error_kind: TypeErrorKind::UnrecognizedPunctuation,
+            pos: start,
+        };
+
+        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        let punc_kind = PuncKind::from_str(content)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err)))?;
 
         let punc = Punctuation::new(punc_kind, span);
 
@@ -243,7 +300,8 @@ impl Tokenize for TypeAnnotation {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let type_name = TypeName::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
+        let type_name = TypeName::from_str(content)
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Infallible))?;
 
         let type_ann = TypeAnnotation::new(type_name, span);
 
