@@ -1,6 +1,7 @@
 use std::iter::Peekable;
 use std::sync::Arc;
 
+use feo_error::error::ErrorEmitted;
 use feo_error::lex_error::{LexError, LexErrorKind};
 
 use feo_types::{
@@ -39,7 +40,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn lex(&mut self) -> Result<TokenStream<Token>, ()> {
+    pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut is_negative = false;
@@ -86,7 +87,7 @@ impl<'a> Lexer<'a> {
                                 ) {
                                     tokens.push(dc);
                                 } else {
-                                    self.log_error(LexErrorKind::ParseDocCommentError)
+                                    self.log_error(LexErrorKind::ParseDocCommentError);
                                 }
                             } else {
                                 while let Some(c) = self.peek_next() {
@@ -166,7 +167,7 @@ impl<'a> Lexer<'a> {
                                     tokens.push(t);
                                     break;
                                 } else {
-                                    self.log_error(LexErrorKind::ParseTypeAnnError)
+                                    self.log_error(LexErrorKind::ParseTypeAnnError);
                                 }
                             }
                         } else {
@@ -221,7 +222,7 @@ impl<'a> Lexer<'a> {
                             {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::ParseDelimError)
+                                self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         '{' => {
@@ -230,7 +231,7 @@ impl<'a> Lexer<'a> {
                             {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::ParseDelimError)
+                                self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         _ => unreachable!(),
@@ -247,7 +248,7 @@ impl<'a> Lexer<'a> {
                             {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::ParseDelimError)
+                                self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         ']' => {
@@ -256,7 +257,7 @@ impl<'a> Lexer<'a> {
                             {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::ParseDelimError)
+                                self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         '}' => {
@@ -265,7 +266,7 @@ impl<'a> Lexer<'a> {
                             {
                                 tokens.push(d);
                             } else {
-                                self.log_error(LexErrorKind::ParseDelimError)
+                                self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         _ => unreachable!(),
@@ -335,55 +336,56 @@ impl<'a> Lexer<'a> {
                                     self.advance(); // skip second '\'
                                     self.advance(); // return char to be read
 
-                                    let char_lit = match esc_c {
-                                        'n' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\n",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        'r' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\r",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        't' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\t",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '\\' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\\",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '0' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\0",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '"' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\"",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        '\'' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "'",
-                                            start_pos,
-                                            self.pos,
-                                        ),
-                                        _ => {
-                                            return Err(self
-                                                .emit_error(LexErrorKind::InvalidEscapeSequence))
+                                    let char_lit =
+                                        match esc_c {
+                                            'n' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\n",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            'r' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\r",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            't' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\t",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            '\\' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\\",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            '0' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\0",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            '"' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\"",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            '\'' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "'",
+                                                start_pos,
+                                                self.pos,
+                                            ),
+                                            _ => Err(self
+                                                .emit_error(LexErrorKind::InvalidEscapeSequence)),
                                         }
-                                    }
-                                    .map_err(|_| self.log_error(LexErrorKind::ParseCharError))?;
+                                        .map_err(|_| {
+                                            self.emit_error(LexErrorKind::ParseCharError)
+                                        })?;
 
                                     tokens.push(char_lit);
                                 } else {
@@ -490,7 +492,7 @@ impl<'a> Lexer<'a> {
                     if let Ok(p) =
                         Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)
                     {
-                        let punc_kind = Punctuation::try_from(p.clone().unwrap())?.punc_kind;
+                        let punc_kind = Punctuation::try_from(p.clone().expect("Unable to convert input to `Punctuation`"))?.punc_kind;
 
                         if punc_kind == PuncKind::Minus
                             && self.peek_next().is_some_and(|c| c.is_digit(10))
@@ -544,20 +546,22 @@ impl<'a> Lexer<'a> {
         });
     }
 
-    fn emit_error(&mut self, error_kind: LexErrorKind) {
+    fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
         self.log_error(error_kind);
         let err = self.errors.clone().pop();
         println!("Error: {:?}", err);
+
+        ErrorEmitted::emit_err()
     }
 }
 
 impl TryFrom<Token> for Punctuation {
-    type Error = ();
+    type Error = ErrorEmitted;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::Punc(p) => Ok(p),
-            _ => return Err(()),
+            _ => return Err(ErrorEmitted::emit_err()),
         }
     }
 }

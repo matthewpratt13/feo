@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
+use feo_error::error::ErrorEmitted;
 use feo_types::span::Span;
 use feo_types::{
     DelimKind, DelimOrientation, Delimiter, DocComment, Identifier, Keyword, KeywordKind, Literal,
@@ -18,7 +19,7 @@ pub trait Tokenize {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()>;
+    ) -> Result<Option<Token>, ErrorEmitted>;
 }
 
 impl Tokenize for CharLiteral {
@@ -27,10 +28,12 @@ impl Tokenize for CharLiteral {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.parse::<char>().map_err(|_| ())?;
+        let parsed = content
+            .parse::<char>()
+            .map_err(|_| ErrorEmitted::emit_err())?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -46,7 +49,7 @@ impl Tokenize for StringLiteral {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let string_lit = Literal::new(content.to_string(), span);
@@ -63,10 +66,12 @@ impl Tokenize for BoolLiteral {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.parse::<bool>().map_err(|_| ())?;
+        let parsed = content
+            .parse::<bool>()
+            .map_err(|_| ErrorEmitted::emit_err())?;
 
         let bool_lit = Literal::new(parsed, span);
 
@@ -82,10 +87,10 @@ impl Tokenize for IntLiteral {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = i64::from_str_radix(content, 10).map_err(|_| ())?;
+        let parsed = i64::from_str_radix(content, 10).map_err(|_| ErrorEmitted::emit_err())?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -101,10 +106,10 @@ impl Tokenize for UIntLiteral {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = u64::from_str_radix(content, 10).map_err(|_| (()))?;
+        let parsed = u64::from_str_radix(content, 10).map_err(|_| ErrorEmitted::emit_err())?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -120,10 +125,12 @@ impl Tokenize for FloatLiteral {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parsed = content.parse::<f64>().map_err(|_| (()))?;
+        let parsed = content
+            .parse::<f64>()
+            .map_err(|_| ErrorEmitted::emit_err())?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -139,7 +146,7 @@ impl Tokenize for Identifier {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let iden = Identifier::new(content.to_string(), span);
@@ -156,10 +163,10 @@ impl Tokenize for Keyword {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let keyword_kind = KeywordKind::from_str(content).map_err(|_| (()))?;
+        let keyword_kind = KeywordKind::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
 
         let keyword = Keyword::new(keyword_kind, span);
 
@@ -175,7 +182,7 @@ impl Tokenize for DocComment {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let doc_comment = DocComment::new(content.to_string(), span);
@@ -192,12 +199,13 @@ impl Tokenize for Delimiter {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let delim_kind = DelimKind::from_str(content).map_err(|_| (()))?;
+        let delim_kind = DelimKind::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
 
-        let delim_orientation = DelimOrientation::from_str(content).map_err(|_| (()))?;
+        let delim_orientation =
+            DelimOrientation::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
 
@@ -213,10 +221,10 @@ impl Tokenize for Punctuation {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let punc_kind = PuncKind::from_str(content).map_err(|_| (()))?;
+        let punc_kind = PuncKind::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
 
         let punc = Punctuation::new(punc_kind, span);
 
@@ -232,10 +240,10 @@ impl Tokenize for TypeAnnotation {
         content: &str,
         start: usize,
         end: usize,
-    ) -> Result<Option<Token>, ()> {
+    ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let type_name = TypeName::from_str(content)?;
+        let type_name = TypeName::from_str(content).map_err(|_| ErrorEmitted::emit_err())?;
 
         let type_ann = TypeAnnotation::new(type_name, span);
 
