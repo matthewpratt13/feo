@@ -180,12 +180,8 @@ impl<'a> Lexer<'a> {
                     }
 
                     if is_keyword(&buf) {
-                        let keyword = Keyword::tokenize(
-                            &self.input,
-                            &buf,
-                            start_pos,
-                            start_pos + buf.len(),
-                        )?;
+                        let keyword =
+                            Keyword::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())?;
 
                         tokens.push(keyword);
                     } else {
@@ -276,7 +272,9 @@ impl<'a> Lexer<'a> {
                                     };
                                 } else {
                                     // escape sequence is expected, but the input has ended
-                                    self.log_error(LexErrorKind::ExpectedEscapeSequence);
+                                    return Err(
+                                        self.emit_error(LexErrorKind::ExpectedEscapeSequence)
+                                    );
                                 }
                             }
 
