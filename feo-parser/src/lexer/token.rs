@@ -8,7 +8,6 @@ use crate::literals::{
 // token type
 #[derive(Debug, Clone)]
 pub enum Token {
-    // literals
     CharLit(CharLiteral),
     StringLit(StringLiteral),
     BoolLit(BoolLiteral),
@@ -16,7 +15,6 @@ pub enum Token {
     UIntLit(UIntLiteral),
     FloatLit(FloatLiteral),
 
-    // identifiers and keywords
     Iden(Identifier),
     Keyword(Keyword),
 
@@ -25,7 +23,6 @@ pub enum Token {
     Delim(Delimiter),
     Punc(Punctuation),
 
-    // type annotation
     Type(TypeAnnotation),
 }
 
