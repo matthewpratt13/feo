@@ -2,21 +2,24 @@ use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_error::lex_error::{LexError, LexErrorKind};
+
 use feo_types::{
     Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation,
 };
 
-use crate::{
-    literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
-    parse::Parse,
+use crate::literals::{
+    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
 
 mod token;
-pub(crate) use self::token::Token;
+pub use self::token::Token;
 use self::token::TokenStream;
 
+mod tokenizer;
+use self::tokenizer::Tokenize;
+
 #[allow(dead_code)]
-pub(crate) struct Lexer<'a> {
+struct Lexer<'a> {
     input: Arc<&'a str>,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
@@ -36,39 +39,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn advance(&mut self) -> Option<char> {
-        self.pos += 1;
-        self.peekable_chars.next()
-    }
-
-    fn peek_next(&mut self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
-    }
-
-    fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek_next() {
-            if !c.is_whitespace() {
-                break;
-            }
-
-            self.advance();
-        }
-    }
-
-    fn log_error(&mut self, error_kind: LexErrorKind) {
-        self.errors.push(LexError {
-            error_kind,
-            pos: self.pos,
-        });
-    }
-
-    fn emit_error(&mut self, error_kind: LexErrorKind) {
-        self.log_error(error_kind);
-        let err = self.errors.clone().pop();
-        println!("Error: {:?}", err);
-    }
-
-    pub fn tokenize(&mut self) -> Result<TokenStream<Token>, ()> {
+    pub fn lex(&mut self) -> Result<TokenStream<Token>, ()> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut is_negative = false;
@@ -107,7 +78,7 @@ impl<'a> Lexer<'a> {
                                 let data = self.input[start_pos..self.pos].to_string();
                                 let doc_comment_content = Arc::new(&data);
 
-                                if let Ok(dc) = DocComment::parse(
+                                if let Ok(dc) = DocComment::tokenize(
                                     &self.input,
                                     &doc_comment_content,
                                     start_pos,
@@ -173,7 +144,7 @@ impl<'a> Lexer<'a> {
 
                             if !type_name.is_empty() {
                                 if type_name == "true" || type_name == "false" {
-                                    if let Ok(b) = BoolLiteral::parse(
+                                    if let Ok(b) = BoolLiteral::tokenize(
                                         &self.input,
                                         &type_name,
                                         start_pos,
@@ -186,7 +157,7 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                if let Ok(t) = TypeAnnotation::parse(
+                                if let Ok(t) = TypeAnnotation::tokenize(
                                     &self.input,
                                     &type_name,
                                     start_pos,
@@ -204,9 +175,12 @@ impl<'a> Lexer<'a> {
                     }
 
                     if buf == "true" || buf == "false" {
-                        if let Ok(b) =
-                            BoolLiteral::parse(&self.input, &buf, start_pos, start_pos + buf.len())
-                        {
+                        if let Ok(b) = BoolLiteral::tokenize(
+                            &self.input,
+                            &buf,
+                            start_pos,
+                            start_pos + buf.len(),
+                        ) {
                             tokens.push(b);
                             continue;
                         } else {
@@ -215,11 +189,11 @@ impl<'a> Lexer<'a> {
                     }
 
                     if let Ok(k) =
-                        Keyword::parse(&self.input, &buf, start_pos, start_pos + buf.len())
+                        Keyword::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())
                     {
                         tokens.push(k);
                     } else if let Ok(i) =
-                        Identifier::parse(&self.input, &buf, start_pos, start_pos + buf.len())
+                        Identifier::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())
                     {
                         tokens.push(i);
                     } else {
@@ -233,21 +207,27 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         '(' => {
-                            if let Ok(d) = Delimiter::parse(&self.input, "[", start_pos, self.pos) {
+                            if let Ok(d) =
+                                Delimiter::tokenize(&self.input, "[", start_pos, self.pos)
+                            {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError);
                             }
                         }
                         '[' => {
-                            if let Ok(d) = Delimiter::parse(&self.input, "[", start_pos, self.pos) {
+                            if let Ok(d) =
+                                Delimiter::tokenize(&self.input, "[", start_pos, self.pos)
+                            {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         '{' => {
-                            if let Ok(d) = Delimiter::parse(&self.input, "{", start_pos, self.pos) {
+                            if let Ok(d) =
+                                Delimiter::tokenize(&self.input, "{", start_pos, self.pos)
+                            {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
@@ -262,21 +242,27 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         ')' => {
-                            if let Ok(d) = Delimiter::parse(&self.input, ")", start_pos, self.pos) {
+                            if let Ok(d) =
+                                Delimiter::tokenize(&self.input, ")", start_pos, self.pos)
+                            {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         ']' => {
-                            if let Ok(d) = Delimiter::parse(&self.input, "]", start_pos, self.pos) {
+                            if let Ok(d) =
+                                Delimiter::tokenize(&self.input, "]", start_pos, self.pos)
+                            {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
                             }
                         }
                         '}' => {
-                            if let Ok(d) = Delimiter::parse(&self.input, "}", start_pos, self.pos) {
+                            if let Ok(d) =
+                                Delimiter::tokenize(&self.input, "}", start_pos, self.pos)
+                            {
                                 tokens.push(d);
                             } else {
                                 self.log_error(LexErrorKind::ParseDelimError)
@@ -322,7 +308,7 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // skip closing double quote
 
                                 let string_lit =
-                                    StringLiteral::parse(&self.input, &buf, start_pos, self.pos)
+                                    StringLiteral::tokenize(&self.input, &buf, start_pos, self.pos)
                                         .map_err(|_| self.emit_error(LexErrorKind::ParseError))?;
                                 tokens.push(string_lit);
                                 break;
@@ -350,43 +336,43 @@ impl<'a> Lexer<'a> {
                                     self.advance(); // return char to be read
 
                                     let char_lit = match esc_c {
-                                        'n' => CharLiteral::parse(
+                                        'n' => CharLiteral::tokenize(
                                             &self.input,
                                             "\n",
                                             start_pos,
                                             self.pos,
                                         ),
-                                        'r' => CharLiteral::parse(
+                                        'r' => CharLiteral::tokenize(
                                             &self.input,
                                             "\r",
                                             start_pos,
                                             self.pos,
                                         ),
-                                        't' => CharLiteral::parse(
+                                        't' => CharLiteral::tokenize(
                                             &self.input,
                                             "\t",
                                             start_pos,
                                             self.pos,
                                         ),
-                                        '\\' => CharLiteral::parse(
+                                        '\\' => CharLiteral::tokenize(
                                             &self.input,
                                             "\\",
                                             start_pos,
                                             self.pos,
                                         ),
-                                        '0' => CharLiteral::parse(
+                                        '0' => CharLiteral::tokenize(
                                             &self.input,
                                             "\0",
                                             start_pos,
                                             self.pos,
                                         ),
-                                        '"' => CharLiteral::parse(
+                                        '"' => CharLiteral::tokenize(
                                             &self.input,
                                             "\"",
                                             start_pos,
                                             self.pos,
                                         ),
-                                        '\'' => CharLiteral::parse(
+                                        '\'' => CharLiteral::tokenize(
                                             &self.input,
                                             "'",
                                             start_pos,
@@ -415,7 +401,7 @@ impl<'a> Lexer<'a> {
                                 if self.peek_next() == Some('\'') {
                                     self.advance(); // skip closing single quote
 
-                                    let char_lit = CharLiteral::parse(
+                                    let char_lit = CharLiteral::tokenize(
                                         &self.input,
                                         &c.to_string(),
                                         start_pos,
@@ -459,7 +445,7 @@ impl<'a> Lexer<'a> {
 
                     if is_float {
                         if let Ok(f) =
-                            FloatLiteral::parse(&self.input, &num_content, start_pos, self.pos)
+                            FloatLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(f);
                         } else {
@@ -469,7 +455,7 @@ impl<'a> Lexer<'a> {
 
                     if is_negative {
                         if let Ok(i) =
-                            IntLiteral::parse(&self.input, &num_content, start_pos, self.pos)
+                            IntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(i);
                         } else {
@@ -477,7 +463,7 @@ impl<'a> Lexer<'a> {
                         }
                     } else {
                         if let Ok(u) =
-                            UIntLiteral::parse(&self.input, &num_content, start_pos, self.pos)
+                            UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)
                         {
                             tokens.push(u);
                         } else {
@@ -502,7 +488,7 @@ impl<'a> Lexer<'a> {
                     let punc_content = Arc::new(&data);
 
                     if let Ok(p) =
-                        Punctuation::parse(&self.input, &punc_content, start_pos, self.pos)
+                        Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)
                     {
                         let punc_kind = Punctuation::try_from(p.clone().unwrap())?.punc_kind;
 
@@ -531,6 +517,49 @@ impl<'a> Lexer<'a> {
         let stream = TokenStream::new(&&self.input, tokens, 0, self.pos);
         Ok(stream)
     }
+
+    fn advance(&mut self) -> Option<char> {
+        self.pos += 1;
+        self.peekable_chars.next()
+    }
+
+    fn peek_next(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.peek_next() {
+            if !c.is_whitespace() {
+                break;
+            }
+
+            self.advance();
+        }
+    }
+
+    fn log_error(&mut self, error_kind: LexErrorKind) {
+        self.errors.push(LexError {
+            error_kind,
+            pos: self.pos,
+        });
+    }
+
+    fn emit_error(&mut self, error_kind: LexErrorKind) {
+        self.log_error(error_kind);
+        let err = self.errors.clone().pop();
+        println!("Error: {:?}", err);
+    }
+}
+
+impl TryFrom<Token> for Punctuation {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Punc(p) => Ok(p),
+            _ => return Err(()),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -538,7 +567,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn tokenize() {
+    fn lex() {
         let source_code = r#"
         // line comment
         /* 
@@ -580,7 +609,7 @@ mod tests {
 
         let mut lexer = Lexer::new(&source_code);
 
-        if let Ok(t) = lexer.tokenize() {
+        if let Ok(t) = lexer.lex() {
             for token in t.tokens() {
                 println!("{:?} \n", token)
             }

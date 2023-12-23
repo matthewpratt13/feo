@@ -1,8 +1,7 @@
 use feo_error::lex_error::LexErrorKind;
-use feo_types::{
-    span::{Span, Spanned},
-    Literal,
-};
+
+use feo_types::span::{Span, Spanned};
+use feo_types::Literal;
 
 use crate::lexer::Token;
 
