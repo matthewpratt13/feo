@@ -28,7 +28,7 @@ struct Lexer<'a> {
     errors: Vec<LexError>,
 }
 
-// TODO: sort out error handling – i.e., log error (push to `self.errors`) or return error or panic
+// TODO: refine error handling (use a `Handler`?)
 
 #[allow(dead_code)]
 impl<'a> Lexer<'a> {
@@ -128,7 +128,6 @@ impl<'a> Lexer<'a> {
                             buf.push(c);
                             self.advance();
                         } else if c == ':' {
-                            // check for `TypeAnnotation` syntax
                             self.advance(); // skip ':'
                             self.skip_whitespace();
                             let mut type_name = String::new();
@@ -145,6 +144,7 @@ impl<'a> Lexer<'a> {
                             }
 
                             if !type_name.is_empty() {
+                                // TODO: is there a cleaner way to do this? (i.e., not repeating the code below)
                                 if type_name == "true" || type_name == "false" {
                                     if let Ok(b) = BoolLiteral::tokenize(
                                         &self.input,
@@ -190,6 +190,7 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
+                    // TODO: fix these conditions – they are yielding false errors: `is_keyword()`?
                     if let Ok(k) =
                         Keyword::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())
                     {
@@ -205,7 +206,7 @@ impl<'a> Lexer<'a> {
 
                 '(' | '[' | '{' => {
                     num_open_delimiters += 1;
-                    self.advance(); // skip delimiter
+                    self.advance(); // skip opening delimiter
 
                     match c {
                         '(' => {
@@ -240,7 +241,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 ')' | ']' | '}' => {
-                    self.advance(); // skip delimiter
+                    self.advance(); // skip closing delimiter
 
                     match c {
                         ')' => {
@@ -285,7 +286,7 @@ impl<'a> Lexer<'a> {
                     while let Some(c) = self.peek_next() {
                         match c {
                             '\\' => {
-                                self.advance(); // skip '\'
+                                self.advance(); // skip first '\'
 
                                 if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
@@ -335,7 +336,7 @@ impl<'a> Lexer<'a> {
                     if let Some(c) = self.peek_next() {
                         match c {
                             '\\' => {
-                                self.advance(); // skip '\'
+                                self.advance(); // skip first '\'
 
                                 if let Some(esc_c) = self.peek_next() {
                                     self.advance(); // skip second '\'
@@ -402,8 +403,7 @@ impl<'a> Lexer<'a> {
                                 self.emit_error(LexErrorKind::EmptyCharLiteral);
                             }
                             _ => {
-                                self.advance(); // consume the char
-                                                // regular char
+                                self.advance(); // consume the (regular) char
                                 if self.peek_next() == Some('\'') {
                                     self.advance(); // skip closing single quote
 
@@ -496,6 +496,7 @@ impl<'a> Lexer<'a> {
                     if let Ok(p) =
                         Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)
                     {
+                        // TODO: don't panic
                         let punc_kind = Punctuation::try_from(
                             p.clone().expect("Unable to convert input to `Punctuation`"),
                         )?
@@ -520,10 +521,11 @@ impl<'a> Lexer<'a> {
         }
 
         if num_open_delimiters > 0 {
-            return Err(self.emit_error(LexErrorKind::UnclosedDelimiters)); // TODO: where?
+            // TODO: add pos of missing delim
+            return Err(self.emit_error(LexErrorKind::UnclosedDelimiters));
         }
 
-        let stream = TokenStream::new(&&self.input, tokens, 0, self.pos);
+        let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
         Ok(stream)
     }
 
