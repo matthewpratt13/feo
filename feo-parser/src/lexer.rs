@@ -453,31 +453,21 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_float {
-                        if let Ok(f) =
-                            FloatLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)
-                        {
-                            tokens.push(f);
-                        } else {
-                            self.log_error(LexErrorKind::ParseFloatError);
-                        }
+                        let float_lit =
+                            FloatLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+
+                        tokens.push(float_lit);
+                        continue;
                     }
 
                     if is_negative {
-                        if let Ok(i) =
-                            IntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)
-                        {
-                            tokens.push(i);
-                        } else {
-                            self.log_error(LexErrorKind::ParseIntError);
-                        }
+                        let int_lit =
+                            IntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+                        tokens.push(int_lit);
                     } else {
-                        if let Ok(u) =
-                            UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)
-                        {
-                            tokens.push(u);
-                        } else {
-                            self.log_error(LexErrorKind::ParseUIntError);
-                        }
+                        let uint_lit =
+                            UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+                        tokens.push(uint_lit);
                     }
 
                     is_negative = false; // reset `is_negative`
