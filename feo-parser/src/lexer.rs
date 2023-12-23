@@ -4,10 +4,7 @@ use std::sync::Arc;
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::lex_error::{LexError, LexErrorKind};
 
-use feo_types::span::Spanned;
-use feo_types::{
-    Delimiter, DocComment, Identifier, Keyword, PuncKind, Punctuation, TypeAnnotation,
-};
+use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -190,17 +187,23 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    // TODO: fix these conditions – they are yielding false errors: `is_keyword()`?
-                    if let Ok(k) =
-                        Keyword::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())
-                    {
-                        tokens.push(k);
-                    } else if let Ok(i) =
-                        Identifier::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())
-                    {
-                        tokens.push(i);
+                    if is_keyword(&buf) {
+                        let keyword = Keyword::tokenize(
+                            &self.input,
+                            &buf,
+                            start_pos,
+                            start_pos + buf.len() + 1,
+                        )?;
+
+                        tokens.push(keyword);
                     } else {
-                        self.log_error(LexErrorKind::UnexpectedIdentifier(buf));
+                        let iden = Identifier::tokenize(
+                            &self.input,
+                            &buf,
+                            start_pos,
+                            start_pos + buf.len() + 1,
+                        )?;
+                        tokens.push(iden);
                     }
                 }
 
@@ -493,32 +496,17 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(&data);
 
-                    if let Ok(p) =
-                        Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)
+                    let punc =
+                        Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)?;
+
+                    if punc_content.as_str() == "-"
+                        && self.peek_next().is_some_and(|c| c.is_digit(10))
                     {
-                        let err = LexError {
-                            error_kind: LexErrorKind::InvalidPunctuation,
-                            pos: start_pos,
-                        };
-
-                        let punc_kind = Punctuation::try_from(
-                            p.clone()
-                                .ok_or(ErrorEmitted::emit_err(CompileError::Lex(err)))?,
-                        )?
-                        .punc_kind;
-
-                        if punc_kind == PuncKind::Minus
-                            && self.peek_next().is_some_and(|c| c.is_digit(10))
-                        {
-                            is_negative = true;
-                            continue;
-                        }
-
-                        tokens.push(p);
-                    } else {
-                        self.log_error(LexErrorKind::UnexpectedChar(c));
-                        self.advance();
+                        is_negative = true;
+                        continue;
                     }
+
+                    tokens.push(punc);
                 }
 
                 _ => self.log_error(LexErrorKind::InvalidChar(c)),
@@ -572,22 +560,13 @@ impl<'a> Lexer<'a> {
     }
 }
 
-impl TryFrom<Token> for Punctuation {
-    type Error = ErrorEmitted;
-
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
-        match value {
-            Token::Punc(p) => Ok(p),
-            _ => {
-                let err = LexError {
-                    error_kind: LexErrorKind::InvalidPunctuation,
-                    pos: value.span().start(),
-                };
-
-                return Err(ErrorEmitted::emit_err(CompileError::Lex(err)));
-            }
-        }
-    }
+fn is_keyword(iden: &str) -> bool {
+    [
+        "break", "const", "continue", "deref", "else", "enum", "for", "func", "if", "impl",
+        "import", "in", "let", "loop", "match", "mod", "mut", "pub", "ref", "return", "self",
+        "static", "struct", "super", "trait", "type", "while",
+    ]
+    .contains(&iden)
 }
 
 #[cfg(test)]
