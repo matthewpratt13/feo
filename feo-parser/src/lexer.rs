@@ -496,9 +496,14 @@ impl<'a> Lexer<'a> {
                     if let Ok(p) =
                         Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)
                     {
-                        // TODO: don't panic
+                        let err = LexError {
+                            error_kind: LexErrorKind::InvalidPunctuation,
+                            pos: start_pos,
+                        };
+
                         let punc_kind = Punctuation::try_from(
-                            p.clone().expect("Unable to convert input to `Punctuation`"),
+                            p.clone()
+                                .ok_or(ErrorEmitted::emit_err(CompileError::Lex(err)))?,
                         )?
                         .punc_kind;
 
