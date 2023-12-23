@@ -17,8 +17,8 @@ mod token;
 pub use self::token::Token;
 use self::token::TokenStream;
 
-mod tokenizer;
-use self::tokenizer::Tokenize;
+mod tokenize;
+use self::tokenize::Tokenize;
 
 #[allow(dead_code)]
 struct Lexer<'a> {
