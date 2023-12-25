@@ -53,7 +53,6 @@ impl<'a> Lexer<'a> {
                     self.skip_whitespace();
                 }
 
-                // TODO: handle unexpected block comment terminator
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     self.advance();
                     match self.peek_next() {
