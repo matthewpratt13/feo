@@ -44,7 +44,6 @@ impl<'a> Lexer<'a> {
         let mut is_negative = false;
 
         let mut num_open_delimiters: usize = 0;
-
         while let Some(c) = self.peek_next() {
             let start_pos = self.pos;
 
@@ -204,8 +203,8 @@ impl<'a> Lexer<'a> {
                 }
 
                 '(' | '[' | '{' => {
-                    num_open_delimiters += 1;
                     self.advance(); // skip opening delimiter
+                    num_open_delimiters += 1;
 
                     match c {
                         '(' => {
@@ -256,6 +255,7 @@ impl<'a> Lexer<'a> {
 
                 '"' => {
                     self.advance(); // skip opening double quote
+                    let mut string_literal_open = true;
 
                     let mut buf = String::new();
 
@@ -287,6 +287,7 @@ impl<'a> Lexer<'a> {
 
                             '"' => {
                                 self.advance(); // skip closing double quote
+                                string_literal_open = false;
 
                                 let string_lit = StringLiteral::tokenize(
                                     &self.input,
@@ -304,8 +305,10 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                             }
                         }
+                    }
 
-                        //     // TODO: handle unclosed double quote
+                    if string_literal_open {
+                        return Err(self.emit_error(LexErrorKind::UnclosedStringLiteral));
                     }
                 }
                 '\'' => {
@@ -546,8 +549,41 @@ mod tests {
     #[test]
     fn lex() {
         let source_code = r#"
-        {
-            a: "a
+        // line comment
+        /*
+        block comment
+        */
+        /// doc comment
+
+        struct Foo {
+            a: String,
+            b: i32,
+            c: char,
+            d: bool
+        }
+
+        impl Foo {
+            pub func new() -> Foo {
+                let vec = [1, 2, 3, 4];
+                let mut new_vec: Vec<f64> = [];
+
+                if foo < 0 {
+                    print("{}", foo);
+                } else {
+                    print("{}", foo);
+                }
+
+                for i in vec {
+                    new_vec.push(i + 1.0);
+                }
+
+                return Foo {
+                    a: "foo",
+                    b: -123,
+                    c: 'a',
+                    d: false
+                };
+            }
         }
         "#;
 
