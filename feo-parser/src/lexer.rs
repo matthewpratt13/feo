@@ -302,11 +302,11 @@ impl<'a> Lexer<'a> {
 
                             _ => {
                                 buf.push(c);
-                                self.advance();
                             }
                         }
+                        self.advance();
 
-                        // TODO: handle unclosed double quote
+                        //     // TODO: handle unclosed double quote
                     }
                 }
                 '\'' => {
@@ -447,7 +447,7 @@ impl<'a> Lexer<'a> {
                     is_negative = false; // reset `is_negative`
                 }
 
-                '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' | '\0'..='\'' => {
+                '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' => {
                     while let Some(c) = self.peek_next() {
                         if c.is_ascii_punctuation() {
                             self.advance();
@@ -547,19 +547,43 @@ mod tests {
     #[test]
     fn lex() {
         let source_code = r#"
-        // line comment
-        /* 
+ 
+        
+
+
+                    a: "foo",
+                    b: -123, 
+                    c: 'a', 
+                    d: false
+             
+        "#;
+
+        let mut lexer = Lexer::new(&source_code);
+
+        if let Ok(t) = lexer.lex() {
+            for token in t.tokens() {
+                println!("{:?} \n", token)
+            }
+        } else {
+            println!("Error tokenizing file");
+        }
+    }
+}
+
+/*
+// line comment
+        /*
         block comment
         */
         /// doc comment
-    
+
         struct Foo {
             a: String,
             b: i32,
             c: char,
             d: bool
         }
-        
+
         impl Foo {
             pub func new() -> Foo {
                 let vec = [1, 2, 3, 4];
@@ -577,22 +601,10 @@ mod tests {
 
                 return Foo {
                     a: "foo",
-                    b: -123, 
-                    c: 'a', 
+                    b: -123,
+                    c: 'a',
                     d: false
                 };
-            }   
-        }
-        "#;
-
-        let mut lexer = Lexer::new(&source_code);
-
-        if let Ok(t) = lexer.lex() {
-            for token in t.tokens() {
-                println!("{:?} \n", token)
             }
-        } else {
-            println!("Error tokenizing file");
         }
-    }
-}
+    */
