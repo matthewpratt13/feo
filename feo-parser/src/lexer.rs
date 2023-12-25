@@ -250,7 +250,6 @@ impl<'a> Lexer<'a> {
 
                     self.advance(); // skip delimiter
                     num_open_delimiters -= 1;
-                    // panic!();
                 }
 
                 '"' => {
