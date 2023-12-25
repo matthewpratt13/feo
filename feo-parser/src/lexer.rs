@@ -405,6 +405,30 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
+                _ if c == '0' && self.peek_next() == Some('x') => {
+                    self.advance();
+                    self.advance();
+
+                    let start_pos = self.pos;
+
+                    while let Some(c) = self.peek_next() {
+                        if c.is_digit(16) {
+                            self.advance();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let num_content = Arc::new(&data);
+
+                    let hex_uint_lit =
+                        UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+
+                    tokens.push(hex_uint_lit);
+                }
+
                 // TODO: add support for hexadecimal numbers
                 _ if c.is_digit(10) => {
                     let mut is_float = false;
@@ -576,7 +600,7 @@ mod tests {
 
                 return Foo {
                     a: "foo",
-                    b: -123,
+                    b: 0x11,
                     c: 'a',
                     d: false
                 };
