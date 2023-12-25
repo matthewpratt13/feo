@@ -46,15 +46,6 @@ pub enum PuncKind {
     ThinArrow, // "->"
     FatArrow,  // "=>"
     DoublePipe,
-
-    // escape sequences
-    Newline,
-    Return,
-    Tab,
-    Backslash,
-    Null,
-    SingleQuote,
-    DoubleQuote,
 }
 
 impl FromStr for PuncKind {
@@ -100,13 +91,7 @@ impl FromStr for PuncKind {
             "->" => Ok(PuncKind::ThinArrow),
             "=>" => Ok(PuncKind::FatArrow),
             "||" => Ok(PuncKind::DoublePipe),
-            "\n" => Ok(PuncKind::Newline),
-            "\r" => Ok(PuncKind::Return),
-            "\t" => Ok(PuncKind::Tab),
-            "\\" => Ok(PuncKind::Backslash),
-            "\0" => Ok(PuncKind::Null),
-            "\'" => Ok(PuncKind::SingleQuote),
-            "\"" => Ok(PuncKind::DoubleQuote),
+
             _ => Err(TypeErrorKind::UnrecognizedPunctuation),
         }?;
 

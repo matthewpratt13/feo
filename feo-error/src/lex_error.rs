@@ -1,6 +1,7 @@
 #[derive(Debug, Clone)]
 pub enum LexErrorKind {
-    UninitializedBlockComment,
+    UnexpectedCommentTerminator,
+    UnexpectedClosingDelimiter,
     UnclosedDelimiters,
     EmptyCharLiteral,
     ExpectedCharLiteral,
