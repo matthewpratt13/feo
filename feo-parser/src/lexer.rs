@@ -229,8 +229,6 @@ impl<'a> Lexer<'a> {
                 }
 
                 ')' | ']' | '}' => {
-                    self.advance(); // skip closing delimiter
-
                     match c {
                         ')' => {
                             let delim = Delimiter::tokenize(&self.input, ")", start_pos, self.pos)?;
@@ -253,6 +251,7 @@ impl<'a> Lexer<'a> {
 
                     self.advance(); // skip delimiter
                     num_open_delimiters -= 1;
+                    // panic!();
                 }
 
                 '"' => {
@@ -302,9 +301,9 @@ impl<'a> Lexer<'a> {
 
                             _ => {
                                 buf.push(c);
+                                self.advance();
                             }
                         }
-                        self.advance();
 
                         //     // TODO: handle unclosed double quote
                     }
@@ -547,15 +546,9 @@ mod tests {
     #[test]
     fn lex() {
         let source_code = r#"
- 
-        
-
-
-                    a: "foo",
-                    b: -123, 
-                    c: 'a', 
-                    d: false
-             
+        {
+            a: "a
+        }
         "#;
 
         let mut lexer = Lexer::new(&source_code);
