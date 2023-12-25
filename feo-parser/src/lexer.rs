@@ -478,7 +478,6 @@ impl<'a> Lexer<'a> {
         }
 
         if num_open_delimiters > 0 {
-            // TODO: add pos of missing delim
             return Err(self.emit_error(LexErrorKind::UnclosedDelimiters));
         }
 
