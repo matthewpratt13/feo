@@ -184,6 +184,15 @@ impl<'a> Lexer<'a> {
                             Keyword::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())?;
 
                         tokens.push(keyword);
+                    } else if is_type_annotation(&buf) {
+                        let type_ann = TypeAnnotation::tokenize(
+                            &self.input,
+                            &buf,
+                            start_pos,
+                            start_pos + buf.len(),
+                        )?;
+
+                        tokens.push(type_ann);
                     } else {
                         let iden = Identifier::tokenize(
                             &self.input,
@@ -521,6 +530,13 @@ fn is_keyword(iden: &str) -> bool {
         "break", "const", "continue", "deref", "else", "enum", "for", "func", "if", "impl",
         "import", "in", "let", "loop", "match", "mod", "mut", "pub", "ref", "return", "self",
         "static", "struct", "super", "trait", "type", "while",
+    ]
+    .contains(&iden)
+}
+
+fn is_type_annotation(iden: &str) -> bool {
+    [
+        "bool", "char", "f32", "f64", "i32", "i64", "String", "u8", "u16", "u32", "u64", "Vec",
     ]
     .contains(&iden)
 }
