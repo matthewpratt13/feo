@@ -584,7 +584,7 @@ mod tests {
                     d: false
                 };
             }
-        }
+        
         "#;
 
         let mut lexer = Lexer::new(&source_code);
