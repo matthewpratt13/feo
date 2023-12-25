@@ -394,7 +394,6 @@ impl<'a> Lexer<'a> {
 
                                     tokens.push(char_lit);
                                 } else {
-                                    // TODO: handle invalid char literal
                                     return Err(
                                         self.emit_error(LexErrorKind::ExpectedClosingSingleQuote)
                                     );
