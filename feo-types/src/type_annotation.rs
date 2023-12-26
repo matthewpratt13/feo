@@ -5,7 +5,7 @@ use crate::{
     span::{Span, Spanned},
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TypeName {
     BoolType,
     CharType,
@@ -21,6 +21,26 @@ pub enum TypeName {
     VecType,
 
     CustomType(String),
+}
+
+impl TypeName {
+    pub fn as_str(&self) -> &str {
+        match self {
+            TypeName::BoolType => "bool",
+            TypeName::CharType => "char",
+            TypeName::F32Type => "f32",
+            TypeName::F64Type => "f64",
+            TypeName::I32Type => "i32",
+            TypeName::I64Type => "i64",
+            TypeName::StringType => "String",
+            TypeName::U8Type => "u8",
+            TypeName::U16Type => "u16",
+            TypeName::U32Type => "u32",
+            TypeName::U64Type => "u64",
+            TypeName::VecType => "Vec",
+            TypeName::CustomType(s) => s.as_str(),
+        }
+    }
 }
 
 impl FromStr for TypeName {

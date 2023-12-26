@@ -49,6 +49,52 @@ pub enum PuncKind {
     DoublePipe,
 }
 
+impl PuncKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            PuncKind::Colon => ":",
+            PuncKind::Semicolon => ";",
+            PuncKind::Comma => ",",
+            PuncKind::FullStop => ".",
+            PuncKind::Underscore => "_",
+            PuncKind::DoubleFullStop => "..",
+            PuncKind::DoubleColon => "::",
+            PuncKind::Bang => "!",
+            PuncKind::Hash => "#",
+            PuncKind::DollarSign => "$",
+            PuncKind::Percent => "%",
+            PuncKind::Ampersand => "&",
+            PuncKind::Asterisk => "*",
+            PuncKind::Plus => "+",
+            PuncKind::Minus => "-",
+            PuncKind::ForwardSlash => "/",
+            PuncKind::LessThan => "<",
+            PuncKind::Equals => "=",
+            PuncKind::GreaterThan => ">",
+            PuncKind::QuestionMark => "?",
+            PuncKind::AtSign => "@",
+            PuncKind::Caret => "^",
+            PuncKind::BackTick => "`",
+            PuncKind::Pipe => "|",
+            PuncKind::Tilde => "~",
+            PuncKind::BangEquals => "!=",
+            PuncKind::PercentEquals => "%=",
+            PuncKind::AsteriskEquals => "*=",
+            PuncKind::DoubleAsterisk => "**",
+            PuncKind::DoubleAmpersand => "&&",
+            PuncKind::PlusEquals => "+=",
+            PuncKind::MinusEquals => "-=",
+            PuncKind::ForwardSlashEquals => "/=",
+            PuncKind::LessThanEquals => "<=",
+            PuncKind::DoubleEquals => "==",
+            PuncKind::GreaterThanEquals => ">=",
+            PuncKind::ThinArrow => "->",
+            PuncKind::FatArrow => "=>",
+            PuncKind::DoublePipe => "||",
+        }
+    }
+}
+
 impl FromStr for PuncKind {
     type Err = TypeErrorKind;
 
@@ -93,7 +139,6 @@ impl FromStr for PuncKind {
             "->" => Ok(PuncKind::ThinArrow),
             "=>" => Ok(PuncKind::FatArrow),
             "||" => Ok(PuncKind::DoublePipe),
-
             _ => Err(TypeErrorKind::UnrecognizedPunctuation),
         }?;
 
