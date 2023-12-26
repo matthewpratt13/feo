@@ -31,4 +31,8 @@ impl Span {
     pub fn end(&self) -> usize {
         self.end
     }
+
+    pub fn as_str(&self) -> &str {
+        &self.src[self.start..self.end]
+    }
 }
