@@ -6,7 +6,7 @@ pub trait Spanned {
 
 #[derive(Debug, Clone)]
 pub struct Span {
-    src: Arc<String>,
+    // src: Arc<String>,
     start: usize,
     end: usize,
 }
@@ -14,15 +14,15 @@ pub struct Span {
 impl Span {
     pub fn new(src: &str, start: usize, end: usize) -> Self {
         Self {
-            src: Arc::new(src.to_string()),
+            // src: Arc::new(src.to_string()),
             start,
             end,
         }
     }
 
-    pub fn source(&self) -> Arc<String> {
-        Arc::clone(&self.src)
-    }
+    // pub fn source(&self) -> Arc<String> {
+    //     Arc::clone(&self.src)
+    // }
 
     pub fn start(&self) -> usize {
         self.start

@@ -1,5 +1,5 @@
-mod comment;
-pub use crate::comment::*;
+mod doc_comment;
+pub use crate::doc_comment::*;
 
 mod delimiter;
 pub use crate::delimiter::*;
@@ -22,3 +22,6 @@ mod punctuation;
 pub use crate::punctuation::*;
 
 pub mod span;
+
+mod type_annotation;
+pub use crate::type_annotation::*;

@@ -1,10 +1,18 @@
 use feo_error::lex_error::LexErrorKind;
+
+use feo_types::span::{Span, Spanned};
 use feo_types::Literal;
 
 use crate::lexer::Token;
 
 #[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
+
+impl Spanned for CharLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
 
 // convert `Token` to inner `CharLiteral`
 impl TryFrom<Token> for CharLiteral {
@@ -21,6 +29,12 @@ impl TryFrom<Token> for CharLiteral {
 #[derive(Debug, Clone)]
 pub struct StringLiteral(pub Literal<String>);
 
+impl Spanned for StringLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
+
 // convert `Token` to inner `StringLiteral`
 impl TryFrom<Token> for StringLiteral {
     type Error = LexErrorKind;
@@ -35,6 +49,12 @@ impl TryFrom<Token> for StringLiteral {
 
 #[derive(Debug, Clone)]
 pub struct IntLiteral(pub Literal<i64>);
+
+impl Spanned for IntLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
 
 // convert `Token` to inner `IntLiteral`
 impl TryFrom<Token> for IntLiteral {
@@ -51,7 +71,13 @@ impl TryFrom<Token> for IntLiteral {
 #[derive(Debug, Clone)]
 pub struct UIntLiteral(pub Literal<u64>);
 
-// convert `Token` to inner `U256Literal`
+impl Spanned for UIntLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
+
+// convert `Token` to inner `UIntLiteral`
 impl TryFrom<Token> for UIntLiteral {
     type Error = LexErrorKind;
 
@@ -65,6 +91,12 @@ impl TryFrom<Token> for UIntLiteral {
 
 #[derive(Debug, Clone)]
 pub struct FloatLiteral(pub Literal<f64>);
+
+impl Spanned for FloatLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
 
 // convert `Token` to inner `FloatLiteral`
 impl TryFrom<Token> for FloatLiteral {
@@ -80,6 +112,12 @@ impl TryFrom<Token> for FloatLiteral {
 
 #[derive(Debug, Clone)]
 pub struct BoolLiteral(pub Literal<bool>);
+
+impl Spanned for BoolLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
 
 // convert `Token` to inner `BoolLiteral`
 impl TryFrom<Token> for BoolLiteral {

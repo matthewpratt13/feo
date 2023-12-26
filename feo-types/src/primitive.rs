@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use crate::span::Span;
 
 pub trait Primitive {}
@@ -7,12 +5,6 @@ pub trait Primitive {}
 impl Primitive for char {}
 
 impl Primitive for String {}
-
-impl Primitive for &str {}
-
-impl Primitive for Arc<String> {}
-
-impl Primitive for Vec<String> {}
 
 impl Primitive for i32 {}
 

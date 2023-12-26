@@ -1,8 +1,5 @@
 use feo_types::span::{Span, Spanned};
-use feo_types::{
-    Comment, Delimiter, DocComment, Identifier, Keyword, PathExpression, Punctuation,
-    TypeAnnotation,
-};
+use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
@@ -11,7 +8,6 @@ use crate::literals::{
 // token type
 #[derive(Debug, Clone)]
 pub enum Token {
-    // literals
     CharLit(CharLiteral),
     StringLit(StringLiteral),
     BoolLit(BoolLiteral),
@@ -19,22 +15,34 @@ pub enum Token {
     UIntLit(UIntLiteral),
     FloatLit(FloatLiteral),
 
-    // identifiers and keywords
     Iden(Identifier),
     Keyword(Keyword),
 
-    Comment(Comment),
     DocComment(DocComment),
-
-    // path expression, e.g. crate::module::Struct
-    // `Token::Path(vec!["crate".to_string(), "module".to_string(), "Struct".to_string()])`
-    Path(PathExpression),
 
     Delim(Delimiter),
     Punc(Punctuation),
 
-    // type annotation
     Type(TypeAnnotation),
+}
+
+impl Spanned for Token {
+    fn span(&self) -> &Span {
+        match self {
+            Token::CharLit(c) => c.span(),
+            Token::StringLit(s) => s.span(),
+            Token::BoolLit(b) => b.span(),
+            Token::IntLit(i) => i.span(),
+            Token::UIntLit(u) => u.span(),
+            Token::FloatLit(f) => f.span(),
+            Token::Iden(i) => i.span(),
+            Token::Keyword(k) => k.span(),
+            Token::DocComment(dc) => dc.span(),
+            Token::Delim(d) => d.span(),
+            Token::Punc(p) => p.span(),
+            Token::Type(t) => t.span(),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -43,6 +51,7 @@ pub struct TokenStream<T> {
     span: Span,
 }
 
+#[allow(dead_code)]
 impl<T> TokenStream<T> {
     pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
         Self {
@@ -65,6 +74,7 @@ impl<T> Spanned for TokenStream<T> {
 #[derive(Debug, Clone)]
 pub struct TokenTree(TokenStream<Token>);
 
+#[allow(dead_code)]
 impl TokenTree {
     pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
         Self(TokenStream::new(src, tokens, start, end))
