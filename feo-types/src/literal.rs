@@ -4,14 +4,14 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct Literal<L: 'static + Primitive> {
+pub struct Literal<L: 'static + Primitive + Clone> {
     raw_value: L,
     span: Span,
 }
 
 impl<L> PrimitiveType<L> for Literal<L>
 where
-    L: 'static + Primitive,
+    L: 'static + Primitive + Clone,
 {
     fn new(raw_value: L, span: Span) -> Self {
         Self { raw_value, span }
@@ -24,7 +24,7 @@ where
 
 impl<L> Spanned for Literal<L>
 where
-    L: 'static + Primitive,
+    L: 'static + Primitive + Clone,
 {
     fn span(&self) -> &Span {
         &self.span

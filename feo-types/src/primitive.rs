@@ -27,7 +27,7 @@ impl Primitive for bool {}
 pub trait PrimitiveType<P>
 where
     Self: Sized,
-    P: 'static + Primitive,
+    P: 'static + Primitive + Clone,
 {
     fn new(raw_value: P, span: Span) -> Self;
     fn raw_value(&self) -> &P;
