@@ -12,6 +12,7 @@ pub enum PuncKind {
     Underscore,
 
     DoubleFullStop,
+    DoubleColon,
 
     Bang, // (exclamation point)
     Hash,
@@ -59,6 +60,7 @@ impl FromStr for PuncKind {
             "." => Ok(PuncKind::FullStop),
             "_" => Ok(PuncKind::Underscore),
             ".." => Ok(PuncKind::DoubleFullStop),
+            "::" => Ok(PuncKind::DoubleColon),
             "!" => Ok(PuncKind::Bang),
             "#" => Ok(PuncKind::Hash),
             "$" => Ok(PuncKind::DollarSign),
