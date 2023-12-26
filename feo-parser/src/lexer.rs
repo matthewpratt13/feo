@@ -38,12 +38,59 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    fn advance(&mut self) -> Option<char> {
+        self.pos += 1;
+        self.peekable_chars.next()
+    }
+
+    fn current_char(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
+    fn peek_next(&mut self) -> Option<char> {
+        // Create a clone of the iterator and advance the cloned iterator
+        let mut cloned_iter = self.peekable_chars.clone();
+        cloned_iter.next();
+
+        // Peek the next character from the original iterator
+        self.peekable_chars.peek().cloned()
+    }
+
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.peek_next() {
+            if !c.is_whitespace() {
+                break;
+            }
+
+            self.advance();
+        }
+    }
+
+    fn log_error(&mut self, error_kind: LexErrorKind) {
+        self.errors.push(LexError {
+            error_kind,
+            pos: self.pos,
+        });
+    }
+
+    fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
+        self.log_error(error_kind.clone());
+
+        let err = LexError {
+            error_kind,
+            pos: self.pos,
+        };
+
+        ErrorEmitted::emit_err(CompileError::Lex(err))
+    }
+
     pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut is_negative = false;
 
         let mut num_open_delimiters: usize = 0;
+        
         while let Some(c) = self.peek_next() {
             let start_pos = self.pos;
 
@@ -507,56 +554,6 @@ impl<'a> Lexer<'a> {
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
         Ok(stream)
-    }
-
-    fn advance(&mut self) -> Option<char> {
-        self.pos += 1;
-        self.peekable_chars.next()
-    }
-
-    fn current_char(&mut self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
-    }
-
-    fn peek_next(&mut self) -> Option<char> {
-        // Create a clone of the iterator and advance the cloned iterator
-        let mut cloned_iter = self.peekable_chars.clone();
-        cloned_iter.next();
-
-        // Peek the next character from the original iterator
-        self.peekable_chars.peek().cloned()
-    }
-
-    // fn peek_next(&mut self) -> Option<char> {
-    //     self.peekable_chars.peek().cloned()
-    // }
-
-    fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek_next() {
-            if !c.is_whitespace() {
-                break;
-            }
-
-            self.advance();
-        }
-    }
-
-    fn log_error(&mut self, error_kind: LexErrorKind) {
-        self.errors.push(LexError {
-            error_kind,
-            pos: self.pos,
-        });
-    }
-
-    fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
-        self.log_error(error_kind.clone());
-
-        let err = LexError {
-            error_kind,
-            pos: self.pos,
-        };
-
-        ErrorEmitted::emit_err(CompileError::Lex(err))
     }
 }
 
