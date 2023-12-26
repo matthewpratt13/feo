@@ -39,11 +39,11 @@ impl<'a> Lexer<'a> {
     }
 
     // progress through the source code so that the lexer can continue to process chars
-    fn advance(&mut self) {
-        // move to the next char in the iterator
-        self.peekable_chars.next();
+    fn advance(&mut self) -> Option<char> {
         // update the lexer's position or other internal state if needed
         self.pos += 1;
+        // move to the next char in the iterator
+        self.peekable_chars.next()
     }
 
     // return the current char at the lexer's current position without advancing the pos
@@ -471,9 +471,11 @@ impl<'a> Lexer<'a> {
                 }
 
                 // hexadecimal uints
-                _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
+                _ if c == '0' && self.advance().map_or(false, |c| c == 'x' || c == 'X') => {
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
+
+                    println!("current char: {:?}", self.current_char());
 
                     let start_pos = self.pos;
 
@@ -489,6 +491,8 @@ impl<'a> Lexer<'a> {
 
                     let num_content = Arc::new(&data);
 
+                    println!("data: {}", data);
+
                     let hex_uint_lit =
                         UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
 
@@ -496,9 +500,21 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c.is_digit(10) => {
-                    let mut is_float = false;
+                    self.advance();
+
+                    // let mut is_hex = false;
+
+                    // if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') {
+                    //     self.advance();
+                    //     self.advance();
+                    //     is_hex = true;
+                    // }
+
+                    // println!("current_char: {:?}", self.current_char());
 
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
+
+                    let mut is_float = false;
 
                     while let Some(c) = self.current_char() {
                         if c.is_digit(10) {
@@ -598,7 +614,7 @@ mod tests {
     #[test]
     fn lex() {
         let source_code = r#"
-        // line comment
+        / line comment
         /*
         block comment
         */
@@ -613,6 +629,7 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
+                let num: u32 = 0x1234;
                 let vec = [1, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
@@ -633,7 +650,7 @@ mod tests {
                     d: false
                 };
             }
-        } 
+        }
         "#;
 
         let mut lexer = Lexer::new(&source_code);
@@ -664,6 +681,7 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
+                let num: u32 = 0x1234;
                 let vec = [1, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
