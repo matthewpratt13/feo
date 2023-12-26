@@ -263,9 +263,6 @@ impl<'a> Lexer<'a> {
                 }
 
                 '(' | '[' | '{' => {
-                    self.advance(); // skip opening delimiter
-                    num_open_delimiters += 1;
-
                     match c {
                         '(' => {
                             let delim = Delimiter::tokenize(&self.input, "(", start_pos, self.pos)?;
@@ -285,6 +282,9 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
+
+                    num_open_delimiters += 1;
+                    self.advance(); // skip opening delimiter
                 }
 
                 ')' | ']' | '}' => {
@@ -308,23 +308,23 @@ impl<'a> Lexer<'a> {
                         _ => unreachable!(),
                     };
 
-                    self.advance(); // skip delimiter
                     num_open_delimiters -= 1;
+                    self.advance(); // skip closing delimiter
                 }
 
                 '"' => {
-                    self.advance(); // skip opening double quote
+                    self.advance(); // skip opening '"'
                     let mut string_literal_open = true;
 
                     let mut buf = String::new();
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                self.advance(); // skip first '\'
+                                self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.peek_next() {
-                                    self.advance(); // skip second '\'
+                                if let Some(esc_c) = self.current_char() {
+                                    self.advance(); // return escaped char
 
                                     match esc_c {
                                         'n' => buf.push('\n'),
@@ -334,7 +334,10 @@ impl<'a> Lexer<'a> {
                                         '0' => buf.push('\0'),
                                         '\'' => buf.push('\''),
                                         '"' => buf.push('"'),
-                                        _ => self.log_error(LexErrorKind::InvalidEscapeSequence),
+                                        _ => {
+                                            return Err(self
+                                                .emit_error(LexErrorKind::InvalidEscapeSequence))
+                                        }
                                     };
                                 } else {
                                     // escape sequence is expected, but the input has ended
@@ -345,7 +348,7 @@ impl<'a> Lexer<'a> {
                             }
 
                             '"' => {
-                                self.advance(); // skip closing double quote
+                                self.advance(); // skip closing '"'
                                 string_literal_open = false;
 
                                 let string_lit = StringLiteral::tokenize(
@@ -371,18 +374,17 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 '\'' => {
-                    self.advance(); // skip opening single quote
+                    self.advance(); // skip opening '\'' (single quote)
 
-                    if let Some(c) = self.peek_next() {
+                    if let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                self.advance(); // skip first '\'
+                                self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.peek_next() {
-                                    self.advance(); // skip second '\'
-                                    self.advance(); // return char to be read
+                                if let Some(esc_c) = self.current_char() {
+                                    self.advance(); // return escaped char
 
-                                    let char_lit =
+                                    let esc_char_lit =
                                         match esc_c {
                                             'n' => CharLiteral::tokenize(
                                                 &self.input,
@@ -414,15 +416,15 @@ impl<'a> Lexer<'a> {
                                                 start_pos,
                                                 self.pos,
                                             )?,
-                                            '"' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\"",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
                                             '\'' => CharLiteral::tokenize(
                                                 &self.input,
                                                 "'",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            '"' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\"",
                                                 start_pos,
                                                 self.pos,
                                             )?,
@@ -430,8 +432,9 @@ impl<'a> Lexer<'a> {
                                                 .emit_error(LexErrorKind::InvalidEscapeSequence))?,
                                         };
 
-                                    tokens.push(char_lit);
+                                    tokens.push(esc_char_lit);
                                 } else {
+                                    // escape sequence is expected, but the input has ended
                                     return Err(
                                         self.emit_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
@@ -441,9 +444,9 @@ impl<'a> Lexer<'a> {
                                 self.emit_error(LexErrorKind::EmptyCharLiteral);
                             }
                             _ => {
-                                self.advance(); // consume the (regular) char
-                                if self.peek_next() == Some('\'') {
-                                    self.advance(); // skip closing single quote
+                                self.advance(); // return the regular char
+                                if self.current_char() == Some('\'') {
+                                    self.advance(); // skip closing '\'' (single quote)
 
                                     let char_lit = CharLiteral::tokenize(
                                         &self.input,
@@ -465,13 +468,14 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c == '0' && self.peek_next() == Some('x') => {
-                    self.advance();
-                    self.advance();
+                // hexadecimal uints
+                _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
+                    self.advance(); // skip '0'
+                    self.advance(); // skip 'x'
 
                     let start_pos = self.pos;
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         if c.is_digit(16) {
                             self.advance();
                         } else {
@@ -489,13 +493,12 @@ impl<'a> Lexer<'a> {
                     tokens.push(hex_uint_lit);
                 }
 
-                // TODO: add support for hexadecimal numbers
                 _ if c.is_digit(10) => {
                     let mut is_float = false;
 
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         if c.is_digit(10) {
                             self.advance();
                         } else if c == '.' && !is_float {
