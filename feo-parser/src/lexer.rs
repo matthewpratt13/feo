@@ -613,7 +613,7 @@ mod tests {
 
                 return Foo {
                     a: "foo",
-                    b: 0x11,
+                    b: -123,
                     c: 'a',
                     d: false
                 };
