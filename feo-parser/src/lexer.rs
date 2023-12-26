@@ -38,13 +38,73 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    // progress through the source code so that the lexer can continue to process chars
+    fn advance(&mut self) {
+        // move to the next char in the iterator
+        self.peekable_chars.next();
+        // update the lexer's position or other internal state if needed
+        self.pos += 1;
+    }
+
+    // return the current char at the lexer's current position without advancing the pos
+    fn current_char(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
+    // return the next char in the input stream (i.e., peek ahead by one char)
+    fn peek_next(&mut self) -> Option<char> {
+        // create a clone of the iterator and advance this cloned iterator
+        let mut cloned_iter = self.peekable_chars.clone();
+        cloned_iter.next();
+
+        // peek at the next char from the original iterator
+        self.peekable_chars.peek().cloned()
+    }
+
+    // advance the lexer's pos past any whitespace chars in the input stream
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.current_char() {
+            if c.is_whitespace() {
+                // if the current char is whitespace, advance to the next character
+                self.advance();
+            } else {
+                // if the current char is not whitespace, break out of the loop
+                break;
+            }
+        }
+    }
+
+    // log and store information about an error encountered during the lexing process
+    fn log_error(&mut self, error_kind: LexErrorKind) {
+        self.errors.push(LexError {
+            error_kind,
+            pos: self.pos,
+        });
+    }
+
+    // log and store error info, and print it through the `ErrorEmitted::emit_err()` method
+    // return `ErrorEmitted` to prove than an error was emitted (use in debugging, not production)
+    fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
+        self.log_error(error_kind.clone());
+
+        let err = LexError {
+            error_kind,
+            pos: self.pos,
+        };
+
+        ErrorEmitted::emit_err(CompileError::Lex(err))
+    }
+
+    // main lexer function
+    // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
     pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut is_negative = false;
 
         let mut num_open_delimiters: usize = 0;
-        while let Some(c) = self.peek_next() {
+
+        while let Some(c) = self.current_char() {
             let start_pos = self.pos;
 
             match c {
@@ -64,7 +124,7 @@ impl<'a> Lexer<'a> {
 
                                 let start_pos = self.pos;
 
-                                while let Some(c) = self.peek_next() {
+                                while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
                                     } else {
@@ -85,7 +145,7 @@ impl<'a> Lexer<'a> {
 
                                 tokens.push(doc_comment);
                             } else {
-                                while let Some(c) = self.peek_next() {
+                                while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
                                     } else {
@@ -97,7 +157,7 @@ impl<'a> Lexer<'a> {
                         Some('*') => {
                             self.advance();
 
-                            while let Some(c) = self.peek_next() {
+                            while let Some(c) = self.current_char() {
                                 if c == '*' {
                                     self.advance();
                                     self.advance();
@@ -116,7 +176,7 @@ impl<'a> Lexer<'a> {
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         // check for type annotation syntax
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
@@ -128,7 +188,7 @@ impl<'a> Lexer<'a> {
 
                             let start_pos = self.pos;
 
-                            while let Some(c) = self.peek_next() {
+                            while let Some(c) = self.current_char() {
                                 if c.is_alphanumeric() || c == '_' {
                                     type_name.push(c);
                                     self.advance();
@@ -203,8 +263,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 '(' | '[' | '{' => {
-                    self.advance(); // skip opening delimiter
-                    num_open_delimiters += 1;
+                    let start_pos = self.pos;
 
                     match c {
                         '(' => {
@@ -225,9 +284,14 @@ impl<'a> Lexer<'a> {
                         }
                         _ => unreachable!(),
                     };
+
+                    num_open_delimiters += 1;
+                    self.advance(); // skip opening delimiter
                 }
 
                 ')' | ']' | '}' => {
+                    let start_pos = self.pos;
+
                     match c {
                         ')' => {
                             let delim = Delimiter::tokenize(&self.input, ")", start_pos, self.pos)?;
@@ -248,23 +312,23 @@ impl<'a> Lexer<'a> {
                         _ => unreachable!(),
                     };
 
-                    self.advance(); // skip delimiter
                     num_open_delimiters -= 1;
+                    self.advance(); // skip closing delimiter
                 }
 
                 '"' => {
-                    self.advance(); // skip opening double quote
+                    self.advance(); // skip opening '"'
                     let mut string_literal_open = true;
 
                     let mut buf = String::new();
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                self.advance(); // skip first '\'
+                                self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.peek_next() {
-                                    self.advance(); // skip second '\'
+                                if let Some(esc_c) = self.current_char() {
+                                    self.advance(); // return escaped char
 
                                     match esc_c {
                                         'n' => buf.push('\n'),
@@ -274,7 +338,10 @@ impl<'a> Lexer<'a> {
                                         '0' => buf.push('\0'),
                                         '\'' => buf.push('\''),
                                         '"' => buf.push('"'),
-                                        _ => self.log_error(LexErrorKind::InvalidEscapeSequence),
+                                        _ => {
+                                            return Err(self
+                                                .emit_error(LexErrorKind::InvalidEscapeSequence))
+                                        }
                                     };
                                 } else {
                                     // escape sequence is expected, but the input has ended
@@ -285,7 +352,7 @@ impl<'a> Lexer<'a> {
                             }
 
                             '"' => {
-                                self.advance(); // skip closing double quote
+                                self.advance(); // skip closing '"'
                                 string_literal_open = false;
 
                                 let string_lit = StringLiteral::tokenize(
@@ -311,18 +378,17 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 '\'' => {
-                    self.advance(); // skip opening single quote
+                    self.advance(); // skip opening '\'' (single quote)
 
-                    if let Some(c) = self.peek_next() {
+                    if let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
-                                self.advance(); // skip first '\'
+                                self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.peek_next() {
-                                    self.advance(); // skip second '\'
-                                    self.advance(); // return char to be read
+                                if let Some(esc_c) = self.current_char() {
+                                    self.advance(); // return escaped char
 
-                                    let char_lit =
+                                    let esc_char_lit =
                                         match esc_c {
                                             'n' => CharLiteral::tokenize(
                                                 &self.input,
@@ -354,15 +420,15 @@ impl<'a> Lexer<'a> {
                                                 start_pos,
                                                 self.pos,
                                             )?,
-                                            '"' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\"",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
                                             '\'' => CharLiteral::tokenize(
                                                 &self.input,
                                                 "'",
+                                                start_pos,
+                                                self.pos,
+                                            )?,
+                                            '"' => CharLiteral::tokenize(
+                                                &self.input,
+                                                "\"",
                                                 start_pos,
                                                 self.pos,
                                             )?,
@@ -370,20 +436,21 @@ impl<'a> Lexer<'a> {
                                                 .emit_error(LexErrorKind::InvalidEscapeSequence))?,
                                         };
 
-                                    tokens.push(char_lit);
+                                    tokens.push(esc_char_lit);
                                 } else {
+                                    // escape sequence is expected, but the input has ended
                                     return Err(
                                         self.emit_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
                                 }
                             }
                             '\'' => {
-                                self.emit_error(LexErrorKind::EmptyCharLiteral);
+                                return Err(self.emit_error(LexErrorKind::EmptyCharLiteral));
                             }
                             _ => {
-                                self.advance(); // consume the (regular) char
-                                if self.peek_next() == Some('\'') {
-                                    self.advance(); // skip closing single quote
+                                self.advance(); // return the regular char
+                                if self.current_char() == Some('\'') {
+                                    self.advance(); // skip closing '\'' (single quote)
 
                                     let char_lit = CharLiteral::tokenize(
                                         &self.input,
@@ -394,9 +461,7 @@ impl<'a> Lexer<'a> {
 
                                     tokens.push(char_lit);
                                 } else {
-                                    return Err(
-                                        self.emit_error(LexErrorKind::ExpectedClosingSingleQuote)
-                                    );
+                                    return Err(self.emit_error(LexErrorKind::InvalidPunctuation));
                                 }
                             }
                         }
@@ -405,13 +470,14 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c == '0' && self.peek_next() == Some('x') => {
-                    self.advance();
-                    self.advance();
+                // hexadecimal uints
+                _ if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') => {
+                    self.advance(); // skip '0'
+                    self.advance(); // skip 'x'
 
                     let start_pos = self.pos;
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         if c.is_digit(16) {
                             self.advance();
                         } else {
@@ -429,13 +495,12 @@ impl<'a> Lexer<'a> {
                     tokens.push(hex_uint_lit);
                 }
 
-                // TODO: add support for hexadecimal numbers
                 _ if c.is_digit(10) => {
                     let mut is_float = false;
 
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         if c.is_digit(10) {
                             self.advance();
                         } else if c == '.' && !is_float {
@@ -472,7 +537,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' => {
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation() {
                             self.advance();
                         } else {
@@ -507,56 +572,6 @@ impl<'a> Lexer<'a> {
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
         Ok(stream)
-    }
-
-    fn advance(&mut self) -> Option<char> {
-        self.pos += 1;
-        self.peekable_chars.next()
-    }
-
-    fn current_char(&mut self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
-    }
-
-    fn peek_next(&mut self) -> Option<char> {
-        // Create a clone of the iterator and advance the cloned iterator
-        let mut cloned_iter = self.peekable_chars.clone();
-        cloned_iter.next();
-
-        // Peek the next character from the original iterator
-        self.peekable_chars.peek().cloned()
-    }
-
-    // fn peek_next(&mut self) -> Option<char> {
-    //     self.peekable_chars.peek().cloned()
-    // }
-
-    fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek_next() {
-            if !c.is_whitespace() {
-                break;
-            }
-
-            self.advance();
-        }
-    }
-
-    fn log_error(&mut self, error_kind: LexErrorKind) {
-        self.errors.push(LexError {
-            error_kind,
-            pos: self.pos,
-        });
-    }
-
-    fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
-        self.log_error(error_kind.clone());
-
-        let err = LexError {
-            error_kind,
-            pos: self.pos,
-        };
-
-        ErrorEmitted::emit_err(CompileError::Lex(err))
     }
 }
 
@@ -613,7 +628,7 @@ mod tests {
 
                 return Foo {
                     a: "foo",
-                    b: 0x11,
+                    b: -123,
                     c: 'a',
                     d: false
                 };
