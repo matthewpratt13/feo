@@ -54,6 +54,17 @@ impl Delimiter {
             span,
         }
     }
+
+    pub fn as_str(delim_kind: DelimKind, delim_orientation: DelimOrientation) -> &'static str {
+        match (delim_kind, delim_orientation) {
+            (DelimKind::Paren, DelimOrientation::Open) => "(",
+            (DelimKind::Paren, DelimOrientation::Close) => ")",
+            (DelimKind::Bracket, DelimOrientation::Open) => "[",
+            (DelimKind::Bracket, DelimOrientation::Close) => "]",
+            (DelimKind::Brace, DelimOrientation::Open) => "{",
+            (DelimKind::Brace, DelimOrientation::Close) => "}",
+        }
+    }
 }
 
 impl Spanned for Delimiter {
