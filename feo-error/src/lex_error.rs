@@ -1,12 +1,9 @@
 #[derive(Debug, Clone)]
 pub enum LexErrorKind {
-    UnexpectedCommentTerminator,
-    UnexpectedClosingDelimiter,
     UnclosedDelimiters,
     UnclosedStringLiteral,
     EmptyCharLiteral,
     ExpectedCharLiteral,
-    ExpectedClosingSingleQuote,
     InvalidEscapeSequence,
     InvalidPunctuation,
     ExpectedEscapeSequence,
@@ -16,11 +13,7 @@ pub enum LexErrorKind {
     ParseIntError,
     ParseUIntError,
     ParseFloatError,
-    ParseDelimError,
-    ParseDocCommentError,
-    ParseTypeAnnError,
     InvalidChar(char),
-    UnexpectedChar(char),
 }
 
 #[derive(Debug, Clone)]
