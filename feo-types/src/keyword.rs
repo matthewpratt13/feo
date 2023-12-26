@@ -10,7 +10,6 @@ pub enum KeywordKind {
     BreakKw,
     ConstKw,
     ContinueKw,
-    DerefKw, // same as deref operator ('*')
     ElseKw,
     EnumKw,
     ForKw,
@@ -44,7 +43,6 @@ impl FromStr for KeywordKind {
             "break" => Ok(KeywordKind::BreakKw),
             "const" => Ok(KeywordKind::ConstKw),
             "continue" => Ok(KeywordKind::ContinueKw),
-            "deref" => Ok(KeywordKind::DerefKw),
             "else" => Ok(KeywordKind::ElseKw),
             "enum" => Ok(KeywordKind::EnumKw),
             "for" => Ok(KeywordKind::ForKw),
