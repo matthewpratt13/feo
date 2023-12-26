@@ -470,48 +470,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // hexadecimal uints
-                _ if c == '0' && self.advance().map_or(false, |c| c == 'x' || c == 'X') => {
-                    self.advance(); // skip '0'
-                    self.advance(); // skip 'x'
-
-                    println!("current char: {:?}", self.current_char());
-
-                    let start_pos = self.pos;
-
-                    while let Some(c) = self.current_char() {
-                        if c.is_digit(16) {
-                            self.advance();
-                        } else {
-                            break;
-                        }
-                    }
-
-                    let data = self.input[start_pos..self.pos].to_string();
-
-                    let num_content = Arc::new(&data);
-
-                    println!("data: {}", data);
-
-                    let hex_uint_lit =
-                        UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
-
-                    tokens.push(hex_uint_lit);
-                }
-
                 _ if c.is_digit(10) => {
-                    self.advance();
-
-                    // let mut is_hex = false;
-
-                    // if c == '0' && self.peek_next().map_or(false, |c| c == 'x' || c == 'X') {
-                    //     self.advance();
-                    //     self.advance();
-                    //     is_hex = true;
-                    // }
-
-                    // println!("current_char: {:?}", self.current_char());
-
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
                     let mut is_float = false;
@@ -614,7 +573,7 @@ mod tests {
     #[test]
     fn lex() {
         let source_code = r#"
-        / line comment
+        // line comment
         /*
         block comment
         */
@@ -629,7 +588,6 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
-                let num: u32 = 0x1234;
                 let vec = [1, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
