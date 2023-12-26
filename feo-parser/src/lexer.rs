@@ -514,9 +514,22 @@ impl<'a> Lexer<'a> {
         self.peekable_chars.next()
     }
 
-    fn peek_next(&mut self) -> Option<char> {
+    fn current_char(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
+
+    fn peek_next(&mut self) -> Option<char> {
+        // Create a clone of the iterator and advance the cloned iterator
+        let mut cloned_iter = self.peekable_chars.clone();
+        cloned_iter.next();
+
+        // Peek the next character from the original iterator
+        self.peekable_chars.peek().cloned()
+    }
+
+    // fn peek_next(&mut self) -> Option<char> {
+    //     self.peekable_chars.peek().cloned()
+    // }
 
     fn skip_whitespace(&mut self) {
         while let Some(c) = self.peek_next() {
