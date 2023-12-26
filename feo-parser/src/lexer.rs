@@ -176,7 +176,7 @@ impl<'a> Lexer<'a> {
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         // check for type annotation syntax
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
@@ -188,7 +188,7 @@ impl<'a> Lexer<'a> {
 
                             let start_pos = self.pos;
 
-                            while let Some(c) = self.peek_next() {
+                            while let Some(c) = self.current_char() {
                                 if c.is_alphanumeric() || c == '_' {
                                     type_name.push(c);
                                     self.advance();
