@@ -124,7 +124,7 @@ impl<'a> Lexer<'a> {
 
                                 let start_pos = self.pos;
 
-                                while let Some(c) = self.peek_next() {
+                                while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
                                     } else {
@@ -145,7 +145,7 @@ impl<'a> Lexer<'a> {
 
                                 tokens.push(doc_comment);
                             } else {
-                                while let Some(c) = self.peek_next() {
+                                while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
                                     } else {
@@ -157,7 +157,7 @@ impl<'a> Lexer<'a> {
                         Some('*') => {
                             self.advance();
 
-                            while let Some(c) = self.peek_next() {
+                            while let Some(c) = self.current_char() {
                                 if c == '*' {
                                     self.advance();
                                     self.advance();
@@ -263,6 +263,8 @@ impl<'a> Lexer<'a> {
                 }
 
                 '(' | '[' | '{' => {
+                    let start_pos = self.pos;
+
                     match c {
                         '(' => {
                             let delim = Delimiter::tokenize(&self.input, "(", start_pos, self.pos)?;
@@ -288,6 +290,8 @@ impl<'a> Lexer<'a> {
                 }
 
                 ')' | ']' | '}' => {
+                    let start_pos = self.pos;
+
                     match c {
                         ')' => {
                             let delim = Delimiter::tokenize(&self.input, ")", start_pos, self.pos)?;
@@ -441,7 +445,7 @@ impl<'a> Lexer<'a> {
                                 }
                             }
                             '\'' => {
-                                self.emit_error(LexErrorKind::EmptyCharLiteral);
+                                return Err(self.emit_error(LexErrorKind::EmptyCharLiteral));
                             }
                             _ => {
                                 self.advance(); // return the regular char
@@ -457,9 +461,7 @@ impl<'a> Lexer<'a> {
 
                                     tokens.push(char_lit);
                                 } else {
-                                    return Err(
-                                        self.emit_error(LexErrorKind::ExpectedClosingSingleQuote)
-                                    );
+                                    return Err(self.emit_error(LexErrorKind::InvalidPunctuation));
                                 }
                             }
                         }
@@ -535,7 +537,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' => {
-                    while let Some(c) = self.peek_next() {
+                    while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation() {
                             self.advance();
                         } else {
