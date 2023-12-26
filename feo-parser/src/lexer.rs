@@ -38,34 +38,43 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn advance(&mut self) -> Option<char> {
+    // progress through the source code so that the lexer can continue to process chars
+    fn advance(&mut self) {
+        // move to the next char in the iterator
+        self.peekable_chars.next();
+        // update the lexer's position or other internal state if needed
         self.pos += 1;
-        self.peekable_chars.next()
     }
 
+    // return the current char at the lexer's current position without advancing the pos
     fn current_char(&mut self) -> Option<char> {
         self.peekable_chars.peek().cloned()
     }
 
+    // return the next char in the input stream (i.e., peek ahead by one char)
     fn peek_next(&mut self) -> Option<char> {
-        // Create a clone of the iterator and advance the cloned iterator
+        // create a clone of the iterator and advance this cloned iterator
         let mut cloned_iter = self.peekable_chars.clone();
         cloned_iter.next();
 
-        // Peek the next character from the original iterator
+        // peek at the next char from the original iterator
         self.peekable_chars.peek().cloned()
     }
 
+    // advance the lexer's pos past any whitespace chars in the input stream
     fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek_next() {
-            if !c.is_whitespace() {
+        while let Some(c) = self.current_char() {
+            if c.is_whitespace() {
+                // if the current char is whitespace, advance to the next character
+                self.advance();
+            } else {
+                // if the current char is not whitespace, break out of the loop
                 break;
             }
-
-            self.advance();
         }
     }
 
+    // log and store information about an error encountered during the lexing process
     fn log_error(&mut self, error_kind: LexErrorKind) {
         self.errors.push(LexError {
             error_kind,
@@ -73,6 +82,8 @@ impl<'a> Lexer<'a> {
         });
     }
 
+    // log and store error info, and print it through the `ErrorEmitted::emit_err()` method
+    // return `ErrorEmitted` to prove than an error was emitted (use in debugging, not production)
     fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
         self.log_error(error_kind.clone());
 
@@ -84,14 +95,16 @@ impl<'a> Lexer<'a> {
         ErrorEmitted::emit_err(CompileError::Lex(err))
     }
 
+    // main lexer function
+    // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
     pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut is_negative = false;
 
         let mut num_open_delimiters: usize = 0;
-        
-        while let Some(c) = self.peek_next() {
+
+        while let Some(c) = self.current_char() {
             let start_pos = self.pos;
 
             match c {
