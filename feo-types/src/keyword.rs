@@ -35,6 +35,39 @@ pub enum KeywordKind {
     WhileKw,
 }
 
+impl KeywordKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            KeywordKind::BreakKw => "break",
+            KeywordKind::ConstKw => "const",
+            KeywordKind::ContinueKw => "continue",
+            KeywordKind::ElseKw => "else",
+            KeywordKind::EnumKw => "enum",
+            KeywordKind::ForKw => "for",
+            KeywordKind::FuncKw => "func",
+            KeywordKind::IfKw => "if",
+            KeywordKind::ImplKw => "impl",
+            KeywordKind::ImportKw => "import",
+            KeywordKind::InKw => "in",
+            KeywordKind::LetKw => "let",
+            KeywordKind::LoopKw => "loop",
+            KeywordKind::MatchKw => "match",
+            KeywordKind::ModKw => "mod",
+            KeywordKind::MutKw => "mut",
+            KeywordKind::PubKw => "pub",
+            KeywordKind::RefKw => "ref",
+            KeywordKind::ReturnKw => "return",
+            KeywordKind::SelfKw => "self",
+            KeywordKind::StaticKw => "static",
+            KeywordKind::StructKw => "struct",
+            KeywordKind::SuperKw => "super",
+            KeywordKind::TraitKw => "trait",
+            KeywordKind::TypeKw => "type",
+            KeywordKind::WhileKw => "while",
+        }
+    }
+}
+
 impl FromStr for KeywordKind {
     type Err = TypeErrorKind;
 
