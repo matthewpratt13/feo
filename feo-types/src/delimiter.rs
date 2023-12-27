@@ -5,7 +5,7 @@ use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum DelimKind {
-    Paren,
+    Parenthesis,
     Bracket,
     Brace,
 }
@@ -15,7 +15,7 @@ impl FromStr for DelimKind {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "(" | ")" => Ok(DelimKind::Paren),
+            "(" | ")" => Ok(DelimKind::Parenthesis),
             "[" | "]" => Ok(DelimKind::Bracket),
             "{" | "}" => Ok(DelimKind::Brace),
             _ => Err(TypeErrorKind::UnrecognizedDelimiter),
@@ -57,8 +57,8 @@ impl Delimiter {
 
     pub fn as_char(delim_kind: DelimKind, delim_orientation: DelimOrientation) -> char {
         match (delim_kind, delim_orientation) {
-            (DelimKind::Paren, DelimOrientation::Open) => '(',
-            (DelimKind::Paren, DelimOrientation::Close) => ')',
+            (DelimKind::Parenthesis, DelimOrientation::Open) => '(',
+            (DelimKind::Parenthesis, DelimOrientation::Close) => ')',
             (DelimKind::Bracket, DelimOrientation::Open) => '[',
             (DelimKind::Bracket, DelimOrientation::Close) => ']',
             (DelimKind::Brace, DelimOrientation::Open) => '{',
