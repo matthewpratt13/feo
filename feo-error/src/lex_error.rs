@@ -8,11 +8,7 @@ pub enum LexErrorKind {
     InvalidPunctuation,
     ExpectedEscapeSequence,
     MismatchedTokenType,
-    ParseCharError,
-    ParseBoolError,
-    ParseIntError,
-    ParseUIntError,
-    ParseFloatError,
+
     InvalidChar(char),
 }
 

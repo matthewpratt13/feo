@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use feo_error::error::{CompileError, ErrorEmitted};
-use feo_error::lex_error::{LexError, LexErrorKind};
+use feo_error::parser_error::{ParserError, ParserErrorKind};
 
 use feo_types::span::{Span, Spanned};
 use feo_types::{Literal, PrimitiveType};
@@ -20,15 +20,15 @@ impl Tokenize for CharLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = LexError {
-            error_kind: LexErrorKind::ParseCharError,
+        let err = ParserError {
+            error_kind: ParserErrorKind::ParseCharError,
             pos: start,
         };
 
-        // convert `core::char::ParseCharError` to `CompileError::Lex(LexError)`
+        // convert `core::char::ParseCharError` to `CompileError::Parser(ParserError)`
         let parsed = content
             .parse::<char>()
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -82,14 +82,14 @@ impl Tokenize for IntLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = LexError {
-            error_kind: LexErrorKind::ParseIntError,
+        let err = ParserError {
+            error_kind: ParserErrorKind::ParseIntError,
             pos: start,
         };
 
-        // convert `core::num::ParseIntError` to `CompileError::Lex(LexError)`
+        // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
         let parsed = i64::from_str_radix(content, 10)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -117,14 +117,14 @@ impl Tokenize for UIntLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = LexError {
-            error_kind: LexErrorKind::ParseUIntError,
+        let err = ParserError {
+            error_kind: ParserErrorKind::ParseUIntError,
             pos: start,
         };
 
-        // convert `core::num::ParseIntError` to `CompileError::Lex(LexError)`
+        // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
         let parsed = u64::from_str_radix(content, 10)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -152,15 +152,15 @@ impl Tokenize for FloatLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = LexError {
-            error_kind: LexErrorKind::ParseFloatError,
+        let err = ParserError {
+            error_kind: ParserErrorKind::ParseFloatError,
             pos: start,
         };
 
-        // convert `core::num::ParseFloatError` to `CompileError::Lex(LexError)`
+        // convert `core::num::ParseFloatError` to `CompileError::Parser(ParserError)`
         let parsed = content
             .parse::<f64>()
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -188,15 +188,15 @@ impl Tokenize for BoolLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = LexError {
-            error_kind: LexErrorKind::ParseBoolError,
+        let err = ParserError {
+            error_kind: ParserErrorKind::ParseBoolError,
             pos: start,
         };
 
-        // convert `core::str::ParseBoolError` to `CompileError::Lex(LexError)`
+        // convert `core::str::ParseBoolError` to `CompileError::Parser(ParserError)`
         let parsed = content
             .parse::<bool>()
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Lex(err)))?;
+            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
 
         let bool_lit = Literal::new(parsed, span);
 
