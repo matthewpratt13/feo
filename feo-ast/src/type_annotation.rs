@@ -2,7 +2,8 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use feo_error::error::{CompileError, ErrorEmitted};
-use feo_types::{span::Span, TypeAnnotation, TypeName};
+use feo_types::span::Span;
+use feo_types::{TypeAnnotation, TypeName};
 
 use crate::token::{Token, Tokenize};
 

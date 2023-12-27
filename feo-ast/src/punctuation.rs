@@ -3,12 +3,11 @@ use std::sync::Arc;
 
 use feo_error::error::{CompileError, ErrorEmitted};
 
-use feo_types::PuncKind;
-use feo_types::Punctuation;
 use feo_types::{
     error::{TypeError, TypeErrorKind},
     span::Span,
 };
+use feo_types::{PuncKind, Punctuation};
 
 use crate::token::{Token, Tokenize};
 
