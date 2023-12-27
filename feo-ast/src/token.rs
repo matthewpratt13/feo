@@ -1,9 +1,22 @@
+use std::sync::Arc;
+
+use feo_error::error::ErrorEmitted;
+
 use feo_types::span::{Span, Spanned};
 use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 use crate::literals::{
     BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
 };
+
+pub trait Tokenize {
+    fn tokenize(
+        src: &Arc<&str>,
+        content: &str,
+        start: usize,
+        end: usize,
+    ) -> Result<Option<Token>, ErrorEmitted>;
+}
 
 // token type
 #[derive(Debug, Clone)]

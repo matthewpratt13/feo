@@ -1,21 +1,15 @@
 use core::iter::Peekable;
 use std::sync::Arc;
 
+use feo_ast::literals::{
+    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
+};
+use feo_ast::token::{Token, TokenStream, Tokenize};
+
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::lex_error::{LexError, LexErrorKind};
 
 use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
-
-use crate::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
-};
-
-mod token;
-pub use self::token::Token;
-use self::token::TokenStream;
-
-mod tokenize;
-use self::tokenize::Tokenize;
 
 #[allow(dead_code)]
 struct Lexer<'a> {
