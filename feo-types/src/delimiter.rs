@@ -55,14 +55,14 @@ impl Delimiter {
         }
     }
 
-    pub fn as_str(delim_kind: DelimKind, delim_orientation: DelimOrientation) -> &'static str {
+    pub fn as_char(delim_kind: DelimKind, delim_orientation: DelimOrientation) -> char {
         match (delim_kind, delim_orientation) {
-            (DelimKind::Paren, DelimOrientation::Open) => "(",
-            (DelimKind::Paren, DelimOrientation::Close) => ")",
-            (DelimKind::Bracket, DelimOrientation::Open) => "[",
-            (DelimKind::Bracket, DelimOrientation::Close) => "]",
-            (DelimKind::Brace, DelimOrientation::Open) => "{",
-            (DelimKind::Brace, DelimOrientation::Close) => "}",
+            (DelimKind::Paren, DelimOrientation::Open) => '(',
+            (DelimKind::Paren, DelimOrientation::Close) => ')',
+            (DelimKind::Bracket, DelimOrientation::Open) => '[',
+            (DelimKind::Bracket, DelimOrientation::Close) => ']',
+            (DelimKind::Brace, DelimOrientation::Open) => '{',
+            (DelimKind::Brace, DelimOrientation::Close) => '}',
         }
     }
 }
