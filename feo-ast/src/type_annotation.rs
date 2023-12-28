@@ -1,5 +1,4 @@
 use std::str::FromStr;
-use std::sync::Arc;
 
 use feo_error::{
     error::{CompileError, ErrorEmitted},
@@ -92,7 +91,7 @@ impl Spanned for TypeAnnotation {
 
 impl Tokenize for TypeAnnotation {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,

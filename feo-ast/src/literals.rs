@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
@@ -13,7 +11,7 @@ pub struct CharLiteral(pub Literal<char>);
 
 impl Tokenize for CharLiteral {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,
@@ -49,7 +47,7 @@ pub struct StringLiteral(pub Literal<String>);
 
 impl Tokenize for StringLiteral {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,
@@ -75,7 +73,7 @@ pub struct IntLiteral(pub Literal<i64>);
 
 impl Tokenize for IntLiteral {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,
@@ -110,7 +108,7 @@ pub struct UIntLiteral(pub Literal<u64>);
 
 impl Tokenize for UIntLiteral {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,
@@ -145,7 +143,7 @@ pub struct FloatLiteral(pub Literal<f64>);
 
 impl Tokenize for FloatLiteral {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,
@@ -181,7 +179,7 @@ pub struct BoolLiteral(pub Literal<bool>);
 
 impl Tokenize for BoolLiteral {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,

@@ -18,7 +18,7 @@ use feo_types::span::Position;
 
 #[allow(dead_code)]
 struct Lexer<'a> {
-    input: Arc<&'a str>,
+    input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
     errors: Vec<LexError<'a>>,
@@ -30,7 +30,7 @@ struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
-            input: Arc::new(input),
+            input,
             pos: 0,
             peekable_chars: input.chars().peekable(),
             errors: Vec::new(),

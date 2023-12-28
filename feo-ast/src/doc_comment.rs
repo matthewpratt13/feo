@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use feo_error::error::ErrorEmitted;
 use feo_types::span::{Span, Spanned};
 
@@ -19,7 +17,7 @@ impl DocComment {
 
 impl Tokenize for DocComment {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,

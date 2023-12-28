@@ -1,5 +1,4 @@
 use std::str::FromStr;
-use std::sync::Arc;
 
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::type_error::{TypeError, TypeErrorKind};
@@ -165,7 +164,7 @@ impl Punctuation {
 
 impl Tokenize for Punctuation {
     fn tokenize(
-        src: &Arc<&str>,
+        src: &str,
         content: &str,
         start: usize,
         end: usize,
