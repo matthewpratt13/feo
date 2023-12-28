@@ -1,5 +1,3 @@
-use feo_types::span::Position;
-
 #[derive(Debug, Clone)]
 pub enum ParserErrorKind {
     ParseCharError,
@@ -10,7 +8,7 @@ pub enum ParserErrorKind {
 }
 
 #[derive(Debug, Clone)]
-pub struct ParserError<'a> {
+pub struct ParserError {
     pub error_kind: ParserErrorKind,
-    pub pos: Option<Position<'a>>,
+    pub pos: usize,
 }

@@ -1,7 +1,8 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use feo_error::{
-    error::{CompileError, ErrorEmitted},
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
     type_error::TypeErrorKind,
 };
 
@@ -95,11 +96,12 @@ impl Tokenize for TypeAnnotation {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let type_name = TypeName::from_str(content)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Infallible))?;
+        let type_name =
+            TypeName::from_str(content).map_err(|_| handler.emit_err(CompilerError::Infallible))?;
 
         let type_ann = TypeAnnotation::new(type_name, span);
 

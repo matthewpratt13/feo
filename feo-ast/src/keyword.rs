@@ -1,9 +1,12 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
-use feo_error::error::{CompileError, ErrorEmitted};
-use feo_error::type_error::{TypeError, TypeErrorKind};
+use feo_error::{
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
+    type_error::{TypeError, TypeErrorKind},
+};
 
-use feo_types::span::{Position, Span, Spanned};
+use feo_types::span::{Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -132,17 +135,18 @@ impl Tokenize for Keyword {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedKeyword,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
         let keyword_kind = KeywordKind::from_str(content)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
 
         let keyword = Keyword::new(keyword_kind, span);
 

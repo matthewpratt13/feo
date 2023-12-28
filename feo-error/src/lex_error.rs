@@ -1,5 +1,3 @@
-use feo_types::span::Position;
-
 #[derive(Debug, Clone)]
 pub enum LexErrorKind {
     UnclosedDelimiters,
@@ -15,7 +13,7 @@ pub enum LexErrorKind {
 }
 
 #[derive(Debug, Clone)]
-pub struct LexError<'a> {
+pub struct LexError {
     pub error_kind: LexErrorKind,
-    pub pos: Option<Position<'a>>,
+    pub pos: usize,
 }

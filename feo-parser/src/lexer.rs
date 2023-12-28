@@ -12,28 +12,28 @@ use feo_ast::{
     type_annotation::TypeAnnotation,
 };
 
-use feo_error::error::{CompileError, ErrorEmitted};
-use feo_error::lex_error::{LexError, LexErrorKind};
-use feo_types::span::Position;
+use feo_error::{
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
+    lex_error::{LexError, LexErrorKind},
+};
 
 #[allow(dead_code)]
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
-    errors: Vec<LexError<'a>>,
+    handler: &'a mut Handler,
 }
-
-// TODO: refine error handling (use a `Handler`?)
 
 #[allow(dead_code)]
 impl<'a> Lexer<'a> {
-    pub fn new(input: &'a str) -> Self {
+    pub fn new(input: &'a str, handler: &'a mut Handler) -> Self {
         Self {
             input,
             pos: 0,
             peekable_chars: input.chars().peekable(),
-            errors: Vec::new(),
+            handler,
         }
     }
 
@@ -74,24 +74,13 @@ impl<'a> Lexer<'a> {
     }
 
     // log and store information about an error encountered during the lexing process
-    fn log_error(&mut self, error_kind: LexErrorKind) {
-        self.errors.push(LexError {
-            error_kind,
-            pos: Position::new(&self.input, self.pos),
-        });
-    }
-
-    // log and store error info, and print it through the `ErrorEmitted::emit_err()` method
-    // return `ErrorEmitted` to prove than an error was emitted (use in debugging, not production)
-    fn emit_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
-        self.log_error(error_kind.clone());
-
+    fn log_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
         let err = LexError {
             error_kind,
-            pos: Position::new(&self.input, self.pos),
+            pos: self.pos,
         };
 
-        ErrorEmitted::emit_err(CompileError::Lex(err))
+        self.handler.emit_err(CompilerError::Lex(err))
     }
 
     // main lexer function
@@ -140,6 +129,7 @@ impl<'a> Lexer<'a> {
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
+                                    self.handler,
                                 )?;
 
                                 tokens.push(doc_comment);
@@ -203,6 +193,7 @@ impl<'a> Lexer<'a> {
                                         &type_name,
                                         start_pos,
                                         self.pos,
+                                        self.handler,
                                     )?;
 
                                     tokens.push(bool_lit);
@@ -214,6 +205,7 @@ impl<'a> Lexer<'a> {
                                     &type_name,
                                     start_pos,
                                     self.pos,
+                                    self.handler,
                                 )?;
 
                                 tokens.push(type_ann);
@@ -230,6 +222,7 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos,
                             start_pos + buf.len(),
+                            self.handler,
                         )?;
 
                         tokens.push(bool_lit);
@@ -237,8 +230,13 @@ impl<'a> Lexer<'a> {
                     }
 
                     if is_keyword(&buf) {
-                        let keyword =
-                            Keyword::tokenize(&self.input, &buf, start_pos, start_pos + buf.len())?;
+                        let keyword = Keyword::tokenize(
+                            &self.input,
+                            &buf,
+                            start_pos,
+                            start_pos + buf.len(),
+                            self.handler,
+                        )?;
 
                         tokens.push(keyword);
                     } else if is_type_annotation(&buf) {
@@ -247,6 +245,7 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos,
                             start_pos + buf.len(),
+                            self.handler,
                         )?;
 
                         tokens.push(type_ann);
@@ -256,6 +255,7 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos,
                             start_pos + buf.len(),
+                            self.handler,
                         )?;
                         tokens.push(iden);
                     }
@@ -266,18 +266,36 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         '(' => {
-                            let delim = Delimiter::tokenize(&self.input, "(", start_pos, self.pos)?;
+                            let delim = Delimiter::tokenize(
+                                &self.input,
+                                "(",
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
 
                             tokens.push(delim);
                         }
                         '[' => {
-                            let delim = Delimiter::tokenize(&self.input, "[", start_pos, self.pos)?;
+                            let delim = Delimiter::tokenize(
+                                &self.input,
+                                "[",
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
 
                             tokens.push(delim);
                         }
 
                         '{' => {
-                            let delim = Delimiter::tokenize(&self.input, "{", start_pos, self.pos)?;
+                            let delim = Delimiter::tokenize(
+                                &self.input,
+                                "{",
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
 
                             tokens.push(delim);
                         }
@@ -293,18 +311,36 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         ')' => {
-                            let delim = Delimiter::tokenize(&self.input, ")", start_pos, self.pos)?;
+                            let delim = Delimiter::tokenize(
+                                &self.input,
+                                ")",
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
 
                             tokens.push(delim);
                         }
                         ']' => {
-                            let delim = Delimiter::tokenize(&self.input, "]", start_pos, self.pos)?;
+                            let delim = Delimiter::tokenize(
+                                &self.input,
+                                "]",
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
 
                             tokens.push(delim);
                         }
 
                         '}' => {
-                            let delim = Delimiter::tokenize(&self.input, "}", start_pos, self.pos)?;
+                            let delim = Delimiter::tokenize(
+                                &self.input,
+                                "}",
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
 
                             tokens.push(delim);
                         }
@@ -338,14 +374,15 @@ impl<'a> Lexer<'a> {
                                         '\'' => buf.push('\''),
                                         '"' => buf.push('"'),
                                         _ => {
-                                            return Err(self
-                                                .emit_error(LexErrorKind::InvalidEscapeSequence))
+                                            return Err(
+                                                self.log_error(LexErrorKind::InvalidEscapeSequence)
+                                            )
                                         }
                                     };
                                 } else {
                                     // escape sequence is expected, but the input has ended
                                     return Err(
-                                        self.emit_error(LexErrorKind::ExpectedEscapeSequence)
+                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
                                 }
                             }
@@ -359,6 +396,7 @@ impl<'a> Lexer<'a> {
                                     &buf,
                                     start_pos,
                                     self.pos,
+                                    self.handler,
                                 )?;
 
                                 tokens.push(string_lit);
@@ -373,7 +411,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if string_literal_open {
-                        return Err(self.emit_error(LexErrorKind::UnclosedStringLiteral));
+                        return Err(self.log_error(LexErrorKind::UnclosedStringLiteral));
                     }
                 }
                 '\'' => {
@@ -387,64 +425,71 @@ impl<'a> Lexer<'a> {
                                 if let Some(esc_c) = self.current_char() {
                                     self.advance(); // return escaped char
 
-                                    let esc_char_lit =
-                                        match esc_c {
-                                            'n' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\n",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            'r' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\r",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            't' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\t",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            '\\' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\\",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            '0' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\0",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            '\'' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "'",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            '"' => CharLiteral::tokenize(
-                                                &self.input,
-                                                "\"",
-                                                start_pos,
-                                                self.pos,
-                                            )?,
-                                            _ => Err(self
-                                                .emit_error(LexErrorKind::InvalidEscapeSequence))?,
-                                        };
+                                    let esc_char_lit = match esc_c {
+                                        'n' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "\n",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        'r' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "\r",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        't' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "\t",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        '\\' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "\\",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        '0' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "\0",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        '\'' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "'",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        '"' => CharLiteral::tokenize(
+                                            &self.input,
+                                            "\"",
+                                            start_pos,
+                                            self.pos,
+                                            self.handler,
+                                        )?,
+                                        _ => {
+                                            Err(self.log_error(LexErrorKind::InvalidEscapeSequence))?
+                                        }
+                                    };
 
                                     tokens.push(esc_char_lit);
                                 } else {
                                     // escape sequence is expected, but the input has ended
                                     return Err(
-                                        self.emit_error(LexErrorKind::ExpectedEscapeSequence)
+                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
                                     );
                                 }
                             }
                             '\'' => {
-                                return Err(self.emit_error(LexErrorKind::EmptyCharLiteral));
+                                return Err(self.log_error(LexErrorKind::EmptyCharLiteral));
                             }
                             _ => {
                                 self.advance(); // return the regular char
@@ -456,16 +501,17 @@ impl<'a> Lexer<'a> {
                                         &c.to_string(),
                                         start_pos,
                                         self.pos,
+                                        self.handler,
                                     )?;
 
                                     tokens.push(char_lit);
                                 } else {
-                                    return Err(self.emit_error(LexErrorKind::InvalidPunctuation));
+                                    return Err(self.log_error(LexErrorKind::InvalidPunctuation));
                                 }
                             }
                         }
                     } else {
-                        return Err(self.emit_error(LexErrorKind::ExpectedCharLiteral));
+                        return Err(self.log_error(LexErrorKind::ExpectedCharLiteral));
                     }
                 }
 
@@ -490,20 +536,35 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_float {
-                        let float_lit =
-                            FloatLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+                        let float_lit = FloatLiteral::tokenize(
+                            &self.input,
+                            &num_content,
+                            start_pos,
+                            self.pos,
+                            self.handler,
+                        )?;
 
                         tokens.push(float_lit);
                         continue;
                     }
 
                     if is_negative {
-                        let int_lit =
-                            IntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+                        let int_lit = IntLiteral::tokenize(
+                            &self.input,
+                            &num_content,
+                            start_pos,
+                            self.pos,
+                            self.handler,
+                        )?;
                         tokens.push(int_lit);
                     } else {
-                        let uint_lit =
-                            UIntLiteral::tokenize(&self.input, &num_content, start_pos, self.pos)?;
+                        let uint_lit = UIntLiteral::tokenize(
+                            &self.input,
+                            &num_content,
+                            start_pos,
+                            self.pos,
+                            self.handler,
+                        )?;
                         tokens.push(uint_lit);
                     }
 
@@ -523,8 +584,13 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(&data);
 
-                    let punc =
-                        Punctuation::tokenize(&self.input, &punc_content, start_pos, self.pos)?;
+                    let punc = Punctuation::tokenize(
+                        &self.input,
+                        &punc_content,
+                        start_pos,
+                        self.pos,
+                        self.handler,
+                    )?;
 
                     if punc_content.as_str() == "-"
                         && self.peek_next().is_some_and(|c| c.is_digit(10))
@@ -536,12 +602,12 @@ impl<'a> Lexer<'a> {
                     tokens.push(punc);
                 }
 
-                _ => self.log_error(LexErrorKind::InvalidChar(c)),
+                _ => return Err(self.log_error(LexErrorKind::InvalidChar(c))),
             }
         }
 
         if num_open_delimiters > 0 {
-            return Err(self.emit_error(LexErrorKind::UnclosedDelimiters));
+            return Err(self.log_error(LexErrorKind::UnclosedDelimiters));
         }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
@@ -610,7 +676,9 @@ mod tests {
         }
         "#;
 
-        let mut lexer = Lexer::new(&source_code);
+        let handler = &mut Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler);
 
         if let Ok(t) = lexer.lex() {
             for token in t.tokens() {

@@ -1,5 +1,4 @@
-use feo_error::error::ErrorEmitted;
-
+use feo_error::handler::{ErrorEmitted, Handler};
 use feo_types::span::{Span, Spanned};
 
 use crate::{
@@ -18,6 +17,7 @@ pub trait Tokenize {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted>;
 }
 

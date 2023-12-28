@@ -1,4 +1,4 @@
-use feo_error::error::ErrorEmitted;
+use feo_error::handler::{ErrorEmitted, Handler};
 use feo_types::span::{Span, Spanned};
 
 use crate::token::{Token, Tokenize};
@@ -21,6 +21,7 @@ impl Tokenize for Identifier {
         content: &str,
         start: usize,
         end: usize,
+        _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 

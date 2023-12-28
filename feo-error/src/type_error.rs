@@ -1,5 +1,3 @@
-use feo_types::span::Position;
-
 #[derive(Debug, Clone)]
 pub enum TypeErrorKind {
     UnrecognizedDelimiter,
@@ -8,7 +6,7 @@ pub enum TypeErrorKind {
 }
 
 #[derive(Debug, Clone)]
-pub struct TypeError<'a> {
+pub struct TypeError {
     pub error_kind: TypeErrorKind,
-    pub pos: Option<Position<'a>>,
+    pub pos: usize,
 }

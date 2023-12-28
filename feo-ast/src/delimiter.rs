@@ -1,11 +1,12 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use feo_error::{
-    error::{CompileError, ErrorEmitted},
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
     type_error::{TypeError, TypeErrorKind},
 };
 
-use feo_types::span::{Position, Span, Spanned};
+use feo_types::span::{Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -79,21 +80,22 @@ impl Tokenize for Delimiter {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedDelimiter,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
         let delim_kind = DelimKind::from_str(content)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err.clone())))?;
+            .map_err(|_| handler.emit_err(CompilerError::Type(err.clone())))?;
 
         // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
         let delim_orientation = DelimOrientation::from_str(content)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
 
         let delim = Delimiter::new(delim_kind, delim_orientation, span);
 

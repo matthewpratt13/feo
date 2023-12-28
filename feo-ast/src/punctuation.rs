@@ -1,9 +1,12 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
-use feo_error::error::{CompileError, ErrorEmitted};
-use feo_error::type_error::{TypeError, TypeErrorKind};
+use feo_error::{
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
+    type_error::{TypeError, TypeErrorKind},
+};
 
-use feo_types::span::{Position, Span, Spanned};
+use feo_types::span::{Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -168,17 +171,18 @@ impl Tokenize for Punctuation {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedPunctuation,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
-        let punc_kind = PuncKind::from_str(content)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Type(err)))?;
+        let punc_kind =
+            PuncKind::from_str(content).map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
 
         let punc = Punctuation::new(punc_kind, span);
 

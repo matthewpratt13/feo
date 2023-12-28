@@ -1,7 +1,8 @@
-use feo_error::error::{CompileError, ErrorEmitted};
+use feo_error::error::CompilerError;
+use feo_error::handler::{ErrorEmitted, Handler};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
-use feo_types::span::{Position, Span, Spanned};
+use feo_types::span::{Span, Spanned};
 use feo_types::{Literal, PrimitiveType};
 
 use crate::token::{Token, Tokenize};
@@ -15,18 +16,19 @@ impl Tokenize for CharLiteral {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseCharError,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `core::char::ParseCharError` to `CompileError::Parser(ParserError)`
         let parsed = content
             .parse::<char>()
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
         let char_lit = Literal::new(parsed, span);
 
@@ -51,6 +53,7 @@ impl Tokenize for StringLiteral {
         content: &str,
         start: usize,
         end: usize,
+        _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
@@ -77,17 +80,18 @@ impl Tokenize for IntLiteral {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseIntError,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
         let parsed = i64::from_str_radix(content, 10)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
         let int_lit = Literal::new(parsed, span);
 
@@ -112,17 +116,18 @@ impl Tokenize for UIntLiteral {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseUIntError,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
         let parsed = u64::from_str_radix(content, 10)
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
         let uint_lit = Literal::new(parsed, span);
 
@@ -147,18 +152,19 @@ impl Tokenize for FloatLiteral {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseFloatError,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `core::num::ParseFloatError` to `CompileError::Parser(ParserError)`
         let parsed = content
             .parse::<f64>()
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
         let float_lit = Literal::new(parsed, span);
 
@@ -183,18 +189,19 @@ impl Tokenize for BoolLiteral {
         content: &str,
         start: usize,
         end: usize,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseBoolError,
-            pos: Position::new(src, start),
+            pos: start,
         };
 
         // convert `core::str::ParseBoolError` to `CompileError::Parser(ParserError)`
         let parsed = content
             .parse::<bool>()
-            .map_err(|_| ErrorEmitted::emit_err(CompileError::Parser(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
         let bool_lit = Literal::new(parsed, span);
 
