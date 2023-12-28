@@ -550,7 +550,7 @@ impl<'a> Lexer<'a> {
 
 fn is_keyword(iden: &str) -> bool {
     [
-        "break", "const", "continue", "deref", "else", "enum", "for", "func", "if", "impl",
+        "as", "break", "const", "continue", "deref", "else", "enum", "for", "func", "if", "impl",
         "import", "in", "let", "loop", "match", "mod", "mut", "pub", "ref", "return", "self",
         "static", "struct", "super", "trait", "type", "while",
     ]
