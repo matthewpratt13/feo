@@ -80,9 +80,11 @@ impl FromStr for KeywordKind {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let keyword_kind = match s {
+            "as" => Ok(KeywordKind::AsKw),
             "break" => Ok(KeywordKind::BreakKw),
             "const" => Ok(KeywordKind::ConstKw),
             "continue" => Ok(KeywordKind::ContinueKw),
+            "deref" => Ok(KeywordKind::DerefKw),
             "else" => Ok(KeywordKind::ElseKw),
             "enum" => Ok(KeywordKind::EnumKw),
             "for" => Ok(KeywordKind::ForKw),
