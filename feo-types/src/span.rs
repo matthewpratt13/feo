@@ -4,6 +4,7 @@ pub trait Spanned {
     fn span(&self) -> &Span;
 }
 
+#[derive(Debug, Clone)]
 pub struct Position<'a> {
     input: &'a str,
     pos: usize,
@@ -38,10 +39,27 @@ pub struct Span {
 
 impl Span {
     pub fn new(src: &str, start: usize, end: usize) -> Self {
+        if start > src.len() {
+            panic!("Start position out of bounds")
+        }
+
+        if end > src.len() {
+            panic!("End position out of bounds")
+        }
+
+        let mut _start = start;
+        let mut _end = end;
+
+        if start > end {
+            // swap start and end indexes if needed instead of panicking
+            let _start = end;
+            let _end = start;
+        }
+
         Self {
             src: Arc::new(src.to_string()),
-            start,
-            end,
+            start: _start,
+            end: _end,
         }
     }
 

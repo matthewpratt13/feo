@@ -14,13 +14,14 @@ use feo_ast::{
 
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::lex_error::{LexError, LexErrorKind};
+use feo_types::span::Position;
 
 #[allow(dead_code)]
 struct Lexer<'a> {
     input: Arc<&'a str>,
     pos: usize,
     peekable_chars: Peekable<std::str::Chars<'a>>,
-    errors: Vec<LexError>,
+    errors: Vec<LexError<'a>>,
 }
 
 // TODO: refine error handling (use a `Handler`?)
@@ -76,7 +77,7 @@ impl<'a> Lexer<'a> {
     fn log_error(&mut self, error_kind: LexErrorKind) {
         self.errors.push(LexError {
             error_kind,
-            pos: self.pos,
+            pos: Position::new(&self.input, self.pos),
         });
     }
 
@@ -87,7 +88,7 @@ impl<'a> Lexer<'a> {
 
         let err = LexError {
             error_kind,
-            pos: self.pos,
+            pos: Position::new(&self.input, self.pos),
         };
 
         ErrorEmitted::emit_err(CompileError::Lex(err))

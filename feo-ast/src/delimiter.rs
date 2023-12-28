@@ -6,7 +6,7 @@ use feo_error::{
     type_error::{TypeError, TypeErrorKind},
 };
 
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -85,7 +85,7 @@ impl Tokenize for Delimiter {
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedDelimiter,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `TypeErrorKind` to `CompileError::Type(TypeError)`

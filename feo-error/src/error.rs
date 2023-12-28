@@ -3,10 +3,10 @@ use crate::parser_error::ParserError;
 use crate::type_error::TypeError;
 
 #[derive(Debug)]
-pub enum CompileError {
-    Lex(LexError),
-    Parser(ParserError),
-    Type(TypeError),
+pub enum CompileError<'a> {
+    Lex(LexError<'a>),
+    Parser(ParserError<'a>),
+    Type(TypeError<'a>),
     Infallible,
 }
 

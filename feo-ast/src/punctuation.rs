@@ -4,7 +4,7 @@ use std::sync::Arc;
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::type_error::{TypeError, TypeErrorKind};
 
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -174,7 +174,7 @@ impl Tokenize for Punctuation {
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedPunctuation,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `TypeErrorKind` to `CompileError::Type(TypeError)`

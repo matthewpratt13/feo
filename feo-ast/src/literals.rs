@@ -3,7 +3,7 @@ use std::sync::Arc;
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 use feo_types::{Literal, PrimitiveType};
 
 use crate::token::{Token, Tokenize};
@@ -22,7 +22,7 @@ impl Tokenize for CharLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseCharError,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `core::char::ParseCharError` to `CompileError::Parser(ParserError)`
@@ -84,7 +84,7 @@ impl Tokenize for IntLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseIntError,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
@@ -119,7 +119,7 @@ impl Tokenize for UIntLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseUIntError,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
@@ -154,7 +154,7 @@ impl Tokenize for FloatLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseFloatError,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `core::num::ParseFloatError` to `CompileError::Parser(ParserError)`
@@ -190,7 +190,7 @@ impl Tokenize for BoolLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseBoolError,
-            pos: start,
+            pos: Position::new(src, start),
         };
 
         // convert `core::str::ParseBoolError` to `CompileError::Parser(ParserError)`
