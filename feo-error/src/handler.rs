@@ -30,6 +30,16 @@ impl Handler {
     }
 }
 
+impl From<(Vec<CompilerError>, Vec<CompilerWarning>)> for Handler {
+    fn from(value: (Vec<CompilerError>, Vec<CompilerWarning>)) -> Self {
+        Self {
+            inner: RefCell::new(HandlerInner {
+                errors: value.0,
+                warnings: value.1,
+            }),
+        }
+    }
+}
 // dummy struct to prove that an error occurred and was emitted
 pub struct ErrorEmitted {
     _private: (),

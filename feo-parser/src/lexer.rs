@@ -476,7 +476,9 @@ impl<'a> Lexer<'a> {
                                             self.handler,
                                         )?,
                                         _ => {
-                                            Err(self.log_error(LexErrorKind::InvalidEscapeSequence))?
+                                            return Err(
+                                                self.log_error(LexErrorKind::InvalidEscapeSequence)
+                                            )?
                                         }
                                     };
 
