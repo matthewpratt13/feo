@@ -10,9 +10,11 @@ use crate::token::{Token, Tokenize};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum KeywordKind {
+    AsKw,
     BreakKw,
     ConstKw,
     ContinueKw,
+    DerefKw, // replaces dereference operator ('*')
     ElseKw,
     EnumKw,
     ForKw,
@@ -27,7 +29,7 @@ pub enum KeywordKind {
     ModKw,
     MutKw,
     PubKw,
-    RefKw, // same as reference operator ('&')
+    RefKw, // replaces reference operator ('&')
     ReturnKw,
     SelfKw,
     StaticKw,
@@ -41,9 +43,11 @@ pub enum KeywordKind {
 impl KeywordKind {
     pub fn as_str(&self) -> &'static str {
         match self {
+            KeywordKind::AsKw => "as",
             KeywordKind::BreakKw => "break",
             KeywordKind::ConstKw => "const",
             KeywordKind::ContinueKw => "continue",
+            KeywordKind::DerefKw => "deref",
             KeywordKind::ElseKw => "else",
             KeywordKind::EnumKw => "enum",
             KeywordKind::ForKw => "for",
