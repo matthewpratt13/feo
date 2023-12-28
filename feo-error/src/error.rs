@@ -1,7 +1,6 @@
-use feo_types::error::TypeError;
-
 use crate::lex_error::LexError;
 use crate::parser_error::ParserError;
+use crate::type_error::TypeError;
 
 #[derive(Debug)]
 pub enum CompileError {

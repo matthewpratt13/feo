@@ -3,10 +3,15 @@ use std::sync::Arc;
 use feo_error::error::ErrorEmitted;
 
 use feo_types::span::{Span, Spanned};
-use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
-use crate::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
+use crate::{
+    delimiter::Delimiter,
+    doc_comment::DocComment,
+    identifier::Identifier,
+    keyword::Keyword,
+    literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
+    punctuation::Punctuation,
+    type_annotation::TypeAnnotation,
 };
 
 pub trait Tokenize {

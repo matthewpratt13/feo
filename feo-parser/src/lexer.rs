@@ -1,15 +1,19 @@
 use core::iter::Peekable;
 use std::sync::Arc;
 
-use feo_ast::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
+use feo_ast::{
+    delimiter::Delimiter,
+    doc_comment::DocComment,
+    identifier::Identifier,
+    keyword::Keyword,
+    literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
+    punctuation::Punctuation,
+    token::{Token, TokenStream, Tokenize},
+    type_annotation::TypeAnnotation,
 };
-use feo_ast::token::{Token, TokenStream, Tokenize};
 
 use feo_error::error::{CompileError, ErrorEmitted};
 use feo_error::lex_error::{LexError, LexErrorKind};
-
-use feo_types::{Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation};
 
 #[allow(dead_code)]
 struct Lexer<'a> {

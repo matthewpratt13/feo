@@ -1,11 +1,21 @@
 use std::sync::Arc;
 
 use feo_error::error::ErrorEmitted;
-
-use feo_types::span::Span;
-use feo_types::Identifier;
+use feo_types::span::{Span, Spanned};
 
 use crate::token::{Token, Tokenize};
+
+#[derive(Debug, Clone)]
+pub struct Identifier {
+    pub name: String,
+    span: Span,
+}
+
+impl Identifier {
+    pub fn new(name: String, span: Span) -> Self {
+        Self { name, span }
+    }
+}
 
 impl Tokenize for Identifier {
     fn tokenize(
@@ -21,5 +31,11 @@ impl Tokenize for Identifier {
         let token = Token::Iden(iden);
 
         Ok(Some(token))
+    }
+}
+
+impl Spanned for Identifier {
+    fn span(&self) -> &Span {
+        &self.span
     }
 }
