@@ -166,7 +166,6 @@ impl<'a> Lexer<'a> {
                     let mut buf = String::new();
 
                     while let Some(c) = self.current_char() {
-                        // check for type annotation syntax
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
                             self.advance();
