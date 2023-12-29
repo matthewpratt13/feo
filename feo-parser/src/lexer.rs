@@ -2,6 +2,7 @@ use core::iter::Peekable;
 use std::sync::Arc;
 
 use feo_ast::{
+    comment::Comment,
     delimiter::Delimiter,
     doc_comment::DocComment,
     identifier::Identifier,
@@ -101,6 +102,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
+                    let start_pos = self.pos;
                     self.advance();
                     match self.peek_next() {
                         Some('/') => {
@@ -141,6 +143,20 @@ impl<'a> Lexer<'a> {
                                         self.advance();
                                     }
                                 }
+
+                                let data = self.input[start_pos..self.pos].to_string();
+
+                                let comment_content = Arc::new(&data);
+
+                                let comment = Comment::tokenize(
+                                    &self.input,
+                                    &comment_content,
+                                    start_pos,
+                                    self.pos,
+                                    self.handler,
+                                )?;
+
+                                tokens.push(comment);
                             }
                         }
                         Some('*') => {
@@ -155,6 +171,20 @@ impl<'a> Lexer<'a> {
                                     self.advance();
                                 }
                             }
+
+                            let data = self.input[start_pos..self.pos].to_string();
+
+                            let comment_content = Arc::new(&data);
+
+                            let comment = Comment::tokenize(
+                                &self.input,
+                                &comment_content,
+                                start_pos,
+                                self.pos,
+                                self.handler,
+                            )?;
+
+                            tokens.push(comment);
                         }
 
                         Some(_) | None => (),
@@ -646,7 +676,7 @@ mod tests {
         /// doc comment
 
         struct Foo {
-            a: String,
+            a: String // trailing comment,
             b: i32,
             c: char,
             d: bool

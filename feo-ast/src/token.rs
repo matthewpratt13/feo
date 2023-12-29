@@ -2,6 +2,7 @@ use feo_error::handler::{ErrorEmitted, Handler};
 use feo_types::span::{Span, Spanned};
 
 use crate::{
+    comment::Comment,
     delimiter::Delimiter,
     doc_comment::DocComment,
     identifier::Identifier,
@@ -34,6 +35,7 @@ pub enum Token {
     Iden(Identifier),
     Keyword(Keyword),
 
+    Comment(Comment),
     DocComment(DocComment),
 
     Delim(Delimiter),
@@ -53,6 +55,7 @@ impl Spanned for Token {
             Token::FloatLit(f) => f.span(),
             Token::Iden(i) => i.span(),
             Token::Keyword(k) => k.span(),
+            Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),

@@ -1,3 +1,4 @@
+pub mod comment;
 pub mod delimiter;
 pub mod doc_comment;
 pub mod identifier;
