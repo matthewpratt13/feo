@@ -676,7 +676,7 @@ mod tests {
         /// doc comment
 
         struct Foo {
-            a: String,
+            a: String // trailing comment,
             b: i32,
             c: char,
             d: bool
