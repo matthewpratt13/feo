@@ -1,5 +1,6 @@
 #[derive(Debug, Clone)]
 pub enum TypeErrorKind {
+    InvalidPathSeparator
     UnrecognizedCommentPrefix,
     UnrecognizedDelimiter,
     UnrecognizedKeyword,

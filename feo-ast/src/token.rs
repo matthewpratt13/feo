@@ -42,6 +42,7 @@ pub enum Token {
     Punc(Punctuation),
 
     Type(TypeAnnotation),
+    Path(PathType),
 }
 
 impl Spanned for Token {
