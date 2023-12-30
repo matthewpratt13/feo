@@ -1,9 +1,13 @@
 use std::str::FromStr;
 
-use feo_error::{handler, type_error::TypeErrorKind};
+use feo_error::{
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
+    type_error::{TypeError, TypeErrorKind},
+};
 use feo_types::span::{Span, Spanned};
 
-use crate::{identifier::Identifier, punctuation::PuncKind};
+use crate::{identifier::Identifier, punctuation::PuncKind, token::Token};
 
 #[derive(Debug, Clone)]
 pub struct PathTypeSegment {
@@ -31,14 +35,20 @@ impl PathType {
         segments: Vec<(&str, &str)>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
+        let prefix_ = PathTypeSegment { identifier: prefix };
+
         let mut suffix: Vec<(PuncKind, PathTypeSegment)> = Vec::new();
 
         let mut i = start;
 
         for s in segments {
-            let double_colon = PuncKind::from_str(s.0).map_err(|_| {
-                handler.emit_err(CompileError::Type(TypeErrorKind::InvalidPathSeparator))
-            })?;
+            let err = TypeError {
+                error_kind: TypeErrorKind::InvalidPathSeparator,
+                pos: start,
+            };
+
+            let double_colon =
+                PuncKind::from_str(s.0).map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
 
             // skip double colon
             i += s.0.len();
@@ -57,7 +67,7 @@ impl PathType {
         let span = Span::new(src, start, i);
 
         let path = Self {
-            prefix,
+            prefix: prefix_,
             suffix,
             span,
         };

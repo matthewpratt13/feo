@@ -8,6 +8,7 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
+    path::PathType,
     punctuation::Punctuation,
     type_annotation::TypeAnnotation,
 };
@@ -61,6 +62,7 @@ impl Spanned for Token {
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
             Token::Type(t) => t.span(),
+            Token::Path(p) => p.span(),
         }
     }
 }
