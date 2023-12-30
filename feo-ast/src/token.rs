@@ -8,7 +8,6 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
-    path::PathType,
     punctuation::Punctuation,
     type_annotation::TypeAnnotation,
 };
@@ -43,7 +42,6 @@ pub enum Token {
     Punc(Punctuation),
 
     Type(TypeAnnotation),
-    Path(PathType),
 }
 
 impl Spanned for Token {
@@ -62,7 +60,6 @@ impl Spanned for Token {
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
             Token::Type(t) => t.span(),
-            Token::Path(p) => p.span(),
         }
     }
 }

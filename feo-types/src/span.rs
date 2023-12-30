@@ -32,7 +32,7 @@ impl<'a> Position<'a> {
 
 #[derive(Debug, Clone)]
 pub struct Span {
-    // src: Arc<String>,
+    src: Arc<String>,
     start: usize,
     end: usize,
 }
@@ -47,25 +47,25 @@ impl Span {
             panic!("End position out of bounds")
         }
 
-        let mut _start = start;
-        let mut _end = end;
+        let mut start_ = start;
+        let mut end_ = end;
 
         if start > end {
             // swap start and end indexes if needed instead of panicking
-            let _start = end;
-            let _end = start;
+            start_ = end;
+            end_ = start;
         }
 
         Self {
-            // src: Arc::new(src.to_string()),
-            start: _start,
-            end: _end,
+            src: Arc::new(src.to_string()),
+            start: start_,
+            end: end_,
         }
     }
 
-    // pub fn source(&self) -> Arc<String> {
-    //     Arc::clone(&self.src)
-    // }
+    pub fn source(&self) -> Arc<String> {
+        Arc::clone(&self.src)
+    }
 
     pub fn start(&self) -> usize {
         self.start
@@ -75,7 +75,7 @@ impl Span {
         self.end
     }
 
-    // pub fn as_str(&self) -> &str {
-    //     &self.src[self.start..self.end]
-    // }
+    pub fn as_str(&self) -> &str {
+        &self.src[self.start..self.end]
+    }
 }
