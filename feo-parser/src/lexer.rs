@@ -18,6 +18,7 @@ use feo_error::{
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
 };
+use feo_types::span::Span;
 
 #[allow(dead_code)]
 struct Lexer<'a> {
@@ -201,6 +202,33 @@ impl<'a> Lexer<'a> {
                             self.advance();
                         } else if c == ':' {
                             self.advance(); // skip ':'
+
+                            if self.peek_next() == Some(':') {
+                                self.advance(); // skip second ':'
+
+                                let span = Span::new(&self.input, start_pos, start_pos + buf.len());
+
+                                let prefix = Identifier::new(buf.to_string(), span);
+
+                                while let Some(c) = self.current_char() {
+                                    if c.is_alphanumeric() || c == '_' {
+                                        let mut component = String::new();
+                                        component.push(c);
+                                        self.advance();
+
+                                        while let Some(next_c) = self.current_char() {
+                                            if next_c.is_alphanumeric() || c == 
+
+
+                                        }
+
+
+                                    }
+                                }
+
+                                let mut path_components = vec![&buf];
+                            }
+
                             self.skip_whitespace();
                             let mut type_name = String::new();
 
@@ -674,6 +702,9 @@ mod tests {
         block comment
         */
         /// doc comment
+        
+
+        import crate::module::Struct;
 
         struct Foo {
             a: String // trailing comment,
