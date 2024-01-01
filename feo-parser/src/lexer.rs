@@ -494,7 +494,36 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                _ if c.is_digit(10) => {
+                _ if c == '0' && self.peek_next() == Some('x') => {
+                    let start_pos = self.pos;
+
+                    self.advance();
+                    self.advance();
+
+                    while let Some(c) = self.current_char() {
+                        if c.is_digit(16) {
+                            self.advance();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let num_content = Arc::new(&data);
+
+                    let uint_lit = UIntLiteral::tokenize(
+                        &self.input,
+                        &num_content,
+                        start_pos,
+                        self.pos,
+                        self.handler,
+                    )?;
+
+                    tokens.push(uint_lit);
+                }
+
+                '0'..='9' => {
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
                     let mut is_float = false;
@@ -625,7 +654,7 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
-                let vec = [1, 2, 3, 4];
+                let vec = [0xBEEF, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
                 if foo < 0 {
