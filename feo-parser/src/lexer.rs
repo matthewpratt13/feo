@@ -16,9 +16,9 @@ use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
+    warning::CompilerWarning,
 };
 
-#[allow(dead_code)]
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
@@ -391,88 +391,85 @@ impl<'a> Lexer<'a> {
                 }
                 '\'' => {
                     self.advance(); // skip opening '\'' (single quote)
+                    let start_pos = self.pos;
 
                     if let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
                                 self.advance(); // skip '\'
 
-                                if let Some(esc_c) = self.current_char() {
-                                    self.advance(); // return escaped char
+                                let esc_char_lit = match self.current_char() {
+                                    Some('n') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "\n",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    Some('r') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "\r",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    Some('t') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "\t",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    Some('\\') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "\\",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    Some('0') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "\0",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    Some('\'') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "'",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    Some('"') => CharLiteral::tokenize(
+                                        &self.input,
+                                        "\"",
+                                        start_pos,
+                                        self.pos,
+                                        self.handler,
+                                    )?,
+                                    _ => {
+                                        return Err(
+                                            self.log_error(LexErrorKind::InvalidEscapeSequence)
+                                        )?
+                                    }
+                                };
 
-                                    let esc_char_lit = match esc_c {
-                                        'n' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\n",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        'r' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\r",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        't' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\t",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        '\\' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\\",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        '0' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\0",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        '\'' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "'",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        '"' => CharLiteral::tokenize(
-                                            &self.input,
-                                            "\"",
-                                            start_pos,
-                                            self.pos,
-                                            self.handler,
-                                        )?,
-                                        _ => {
-                                            return Err(
-                                                self.log_error(LexErrorKind::InvalidEscapeSequence)
-                                            )?
-                                        }
-                                    };
-
-                                    tokens.push(esc_char_lit);
-                                } else {
-                                    // escape sequence is expected, but the input has ended
-                                    return Err(
-                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
-                                    );
-                                }
+                                tokens.push(esc_char_lit);
+                                self.advance(); // skip first escape char
+                                self.advance(); // skip second escape char
                             }
                             '\'' => {
                                 return Err(self.log_error(LexErrorKind::EmptyCharLiteral));
                             }
                             _ => {
-                                self.advance(); // return the regular char
-                                if self.current_char() == Some('\'') {
-                                    self.advance(); // skip closing '\'' (single quote)
+                                if c.is_whitespace() {
+                                    return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
+                                }
 
+                                self.advance(); // return the regular char
+
+                                if self.current_char() == Some('\'') {
                                     let char_lit = CharLiteral::tokenize(
                                         &self.input,
                                         &c.to_string(),
@@ -482,8 +479,13 @@ impl<'a> Lexer<'a> {
                                     )?;
 
                                     tokens.push(char_lit);
+                                    self.advance(); // skip closing '\'' (single quote)
+                                } else if self.current_char().is_some_and(|c| c.is_whitespace()) {
+                                    return Err(
+                                        self.log_error(LexErrorKind::ExpectedClosingSingleQuote)
+                                    );
                                 } else {
-                                    return Err(self.log_error(LexErrorKind::InvalidPunctuation));
+                                    return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
                                 }
                             }
                         }
@@ -619,6 +621,10 @@ impl<'a> Lexer<'a> {
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
         Ok(stream)
     }
+
+    pub fn errors(&self) -> (Vec<CompilerError>, Vec<CompilerWarning>) {
+        self.handler.clone().get()
+    }
 }
 
 fn is_keyword(iden: &str) -> bool {
@@ -644,7 +650,7 @@ mod tests {
         /// doc comment
         
         struct Foo {
-            a: String // trailing comment,
+            a: String, // trailing comment
             b: i32,
             c: char,
             d: bool
@@ -668,7 +674,7 @@ mod tests {
                 return Foo {
                     a: "foo",
                     b: -123,
-                    c: 'a',
+                    c: '\\',
                     d: false
                 };
             }
@@ -684,7 +690,7 @@ mod tests {
                 println!("{:?} \n", token)
             }
         } else {
-            println!("Error tokenizing file");
+            println!("errors: {:?}", lexer.errors());
         }
     }
 }

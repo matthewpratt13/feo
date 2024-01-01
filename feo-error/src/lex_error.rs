@@ -3,9 +3,10 @@ pub enum LexErrorKind {
     UnclosedDelimiters,
     UnclosedStringLiteral,
     EmptyCharLiteral,
+    InvalidCharLiteral,
     ExpectedCharLiteral,
+    ExpectedClosingSingleQuote,
     InvalidEscapeSequence,
-    InvalidPunctuation,
     ExpectedEscapeSequence,
 
     InvalidChar(char),
