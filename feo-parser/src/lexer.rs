@@ -119,13 +119,13 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                let content_string = self.input[start_pos..self.pos].to_string();
+                                let raw_content = self.input[start_pos..self.pos].to_string();
 
-                                let content_arc = Arc::new(&content_string);
+                                let doc_comment_content = Arc::new(&raw_content);
 
                                 let doc_comment = DocComment::tokenize(
                                     &self.input,
-                                    &content_arc,
+                                    &doc_comment_content,
                                     start_pos,
                                     self.pos,
                                     self.handler,
@@ -141,13 +141,13 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                let data = self.input[start_pos..self.pos].to_string();
+                                let raw_data = self.input[start_pos..self.pos].to_string();
 
-                                let comment_content = Arc::new(&data);
+                                let comment_data = Arc::new(&raw_data);
 
                                 let comment = Comment::tokenize(
                                     &self.input,
-                                    &comment_content,
+                                    &comment_data,
                                     start_pos,
                                     self.pos,
                                     self.handler,
