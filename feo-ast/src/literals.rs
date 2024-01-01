@@ -126,8 +126,15 @@ impl Tokenize for UIntLiteral {
         };
 
         // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
-        let parsed = u64::from_str_radix(content, 10)
-            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
+        let parsed = if content.starts_with("0x") {
+            let without_prefix = content.trim_start_matches("0x");
+
+            u64::from_str_radix(without_prefix, 16)
+                .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+        } else {
+            u64::from_str_radix(content, 10)
+                .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+        };
 
         let uint_lit = Literal::new(parsed, span);
 
