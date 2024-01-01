@@ -99,8 +99,8 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
-                    let start_pos = self.pos;
                     self.advance();
+
                     match self.current_char() {
                         Some('/') => {
                             self.advance();
@@ -109,7 +109,7 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                                 self.skip_whitespace();
 
-                                let start_pos = self.pos;
+                                let start_pos = self.pos; // start after the three '///'
 
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
@@ -119,13 +119,13 @@ impl<'a> Lexer<'a> {
                                     }
                                 }
 
-                                let data = self.input[start_pos..self.pos].to_string();
+                                let content_string = self.input[start_pos..self.pos].to_string();
 
-                                let doc_comment_content = Arc::new(&data);
+                                let content_arc = Arc::new(&content_string);
 
                                 let doc_comment = DocComment::tokenize(
                                     &self.input,
-                                    &doc_comment_content,
+                                    &content_arc,
                                     start_pos,
                                     self.pos,
                                     self.handler,
