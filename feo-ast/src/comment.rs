@@ -51,7 +51,7 @@ impl Tokenize for Comment {
 
             _ => {
                 let err = TypeError {
-                    error_kind: TypeErrorKind::UnrecognizedCommentPrefix,
+                    error_kind: TypeErrorKind::UnrecognizedCommentOpener,
                     pos: start,
                 };
 

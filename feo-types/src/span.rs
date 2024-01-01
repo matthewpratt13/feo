@@ -1,4 +1,4 @@
-use std::sync::Arc;
+// use std::sync::Arc;
 
 pub trait Spanned {
     fn span(&self) -> &Span;
@@ -32,7 +32,7 @@ impl<'a> Position<'a> {
 
 #[derive(Debug, Clone)]
 pub struct Span {
-    src: Arc<String>,
+    // src: Arc<String>,
     start: usize,
     end: usize,
 }
@@ -57,15 +57,15 @@ impl Span {
         }
 
         Self {
-            src: Arc::new(src.to_string()),
+            // src: Arc::new(src.to_string()),
             start: start_,
             end: end_,
         }
     }
 
-    pub fn source(&self) -> Arc<String> {
-        Arc::clone(&self.src)
-    }
+    // pub fn source(&self) -> Arc<String> {
+    //     Arc::clone(&self.src)
+    // }
 
     pub fn start(&self) -> usize {
         self.start
@@ -75,7 +75,7 @@ impl Span {
         self.end
     }
 
-    pub fn as_str(&self) -> &str {
-        &self.src[self.start..self.end]
-    }
+    // pub fn as_str(&self) -> &str {
+    //     &self.src[self.start..self.end]
+    // }
 }

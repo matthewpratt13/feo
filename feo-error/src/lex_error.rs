@@ -7,7 +7,6 @@ pub enum LexErrorKind {
     InvalidEscapeSequence,
     InvalidPunctuation,
     ExpectedEscapeSequence,
-    MismatchedTokenType,
 
     InvalidChar(char),
 }

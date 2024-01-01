@@ -9,7 +9,6 @@ use crate::{
     keyword::Keyword,
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     punctuation::Punctuation,
-    type_annotation::TypeAnnotation,
 };
 
 pub trait Tokenize {
@@ -40,8 +39,6 @@ pub enum Token {
 
     Delim(Delimiter),
     Punc(Punctuation),
-
-    Type(TypeAnnotation),
 }
 
 impl Spanned for Token {
@@ -59,7 +56,6 @@ impl Spanned for Token {
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
-            Token::Type(t) => t.span(),
         }
     }
 }
