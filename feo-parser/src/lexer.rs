@@ -88,7 +88,7 @@ impl<'a> Lexer<'a> {
     pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
-        let mut num_open_delimiters: usize = 0;
+        let mut num_open_delimiters: usize = 0; // to check for unclosed delimiters
 
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
@@ -109,7 +109,7 @@ impl<'a> Lexer<'a> {
                                 self.advance();
                                 self.skip_whitespace();
 
-                                let start_pos = self.pos; // start after the three '///'
+                                let start_pos = self.pos; // start reading after the three '///'
 
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
@@ -169,13 +169,13 @@ impl<'a> Lexer<'a> {
                                 }
                             }
 
-                            let data = self.input[start_pos..self.pos].to_string();
+                            let raw_data = self.input[start_pos..self.pos].to_string();
 
-                            let comment_content = Arc::new(&data);
+                            let comment_data = Arc::new(&raw_data);
 
                             let comment = Comment::tokenize(
                                 &self.input,
-                                &comment_content,
+                                &comment_data,
                                 start_pos,
                                 self.pos,
                                 self.handler,
@@ -188,7 +188,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // identifiers and keywords (cannot start with, but can contain, digits)
+                // identifiers and keywords (cannot start with, but can contain digits)
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
@@ -205,7 +205,7 @@ impl<'a> Lexer<'a> {
                         let bool_lit = BoolLiteral::tokenize(
                             &self.input,
                             &buf,
-                            start_pos,
+                            start_pos, // global `start_pos`
                             start_pos + buf.len(),
                             self.handler,
                         )?;
@@ -218,7 +218,7 @@ impl<'a> Lexer<'a> {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
-                            start_pos,
+                            start_pos, // global `start_pos`
                             start_pos + buf.len(),
                             self.handler,
                         )?;
@@ -228,7 +228,7 @@ impl<'a> Lexer<'a> {
                         let iden = Identifier::tokenize(
                             &self.input,
                             &buf,
-                            start_pos,
+                            start_pos, // global `start_pos`
                             start_pos + buf.len(),
                             self.handler,
                         )?;
@@ -237,7 +237,7 @@ impl<'a> Lexer<'a> {
                 }
 
                 '(' | '[' | '{' => {
-                    let start_pos = self.pos;
+                    self.advance(); // skip opening delimiter
 
                     match c {
                         '(' => {
@@ -278,11 +278,10 @@ impl<'a> Lexer<'a> {
                     };
 
                     num_open_delimiters += 1;
-                    self.advance(); // skip opening delimiter
                 }
 
                 ')' | ']' | '}' => {
-                    let start_pos = self.pos;
+                    self.advance(); // skip closing delimiter (advance counter for correct end pos)
 
                     match c {
                         ')' => {
@@ -323,12 +322,13 @@ impl<'a> Lexer<'a> {
                     };
 
                     num_open_delimiters -= 1;
-                    self.advance(); // skip closing delimiter
                 }
 
                 '"' => {
-                    self.advance(); // skip opening '"'
-                    let mut string_literal_open = true;
+                    // `start_pos` is global `start_pos` (above)
+                    self.advance(); // skip opening '"' (double quote)
+
+                    let mut string_literal_open = true; // to check for unclosed quotes
 
                     let mut buf = String::new();
 
@@ -364,6 +364,7 @@ impl<'a> Lexer<'a> {
 
                             '"' => {
                                 self.advance(); // skip closing '"'
+
                                 string_literal_open = false;
 
                                 let string_lit = StringLiteral::tokenize(
@@ -391,7 +392,8 @@ impl<'a> Lexer<'a> {
                 }
                 '\'' => {
                     self.advance(); // skip opening '\'' (single quote)
-                    let start_pos = self.pos;
+
+                    let start_pos = self.pos; // start reading input after opening quote
 
                     if let Some(c) = self.current_char() {
                         match c {
@@ -403,49 +405,49 @@ impl<'a> Lexer<'a> {
                                         &self.input,
                                         "\n",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     Some('r') => CharLiteral::tokenize(
                                         &self.input,
                                         "\r",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     Some('t') => CharLiteral::tokenize(
                                         &self.input,
                                         "\t",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     Some('\\') => CharLiteral::tokenize(
                                         &self.input,
                                         "\\",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     Some('0') => CharLiteral::tokenize(
                                         &self.input,
                                         "\0",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     Some('\'') => CharLiteral::tokenize(
                                         &self.input,
                                         "'",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     Some('"') => CharLiteral::tokenize(
                                         &self.input,
                                         "\"",
                                         start_pos,
-                                        self.pos,
+                                        self.pos + 1, // +1 to account for second char
                                         self.handler,
                                     )?,
                                     _ => {
@@ -456,8 +458,9 @@ impl<'a> Lexer<'a> {
                                 };
 
                                 tokens.push(esc_char_lit);
-                                self.advance(); // skip first escape char
+
                                 self.advance(); // skip second escape char
+                                self.advance(); // skip closing '\'' (single quote)
                             }
                             '\'' => {
                                 return Err(self.log_error(LexErrorKind::EmptyCharLiteral));
@@ -479,6 +482,7 @@ impl<'a> Lexer<'a> {
                                     )?;
 
                                     tokens.push(char_lit);
+
                                     self.advance(); // skip closing '\'' (single quote)
                                 } else if self.current_char().is_some_and(|c| c.is_whitespace()) {
                                     return Err(
@@ -494,11 +498,12 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
+                // check for hexadecimal prefix
                 _ if c == '0' && self.peek_next() == Some('x') => {
-                    let start_pos = self.pos;
+                    // `start_pos` is global `start_pos` (above)
 
-                    self.advance();
-                    self.advance();
+                    self.advance(); // skip '0'
+                    self.advance(); // skip 'x'
 
                     while let Some(c) = self.current_char() {
                         if c.is_digit(16) {
@@ -530,9 +535,10 @@ impl<'a> Lexer<'a> {
 
                     if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) {
                         is_negative = true;
-                        self.advance();
+                        self.advance(); // skip '-'
                     }
 
+                    // go back and read from previous char ('-') if neg, else read from current pos
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
                     let mut is_float = false;
@@ -619,6 +625,7 @@ impl<'a> Lexer<'a> {
         }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
+
         Ok(stream)
     }
 

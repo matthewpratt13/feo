@@ -16,15 +16,15 @@ pub enum CommentKind {
 #[derive(Debug, Clone)]
 pub struct Comment {
     pub comment_kind: CommentKind,
-    pub content: String,
+    pub data: String,
     span: Span,
 }
 
 impl Comment {
-    pub fn new(comment_kind: CommentKind, content: String, span: Span) -> Self {
+    pub fn new(comment_kind: CommentKind, data: String, span: Span) -> Self {
         Self {
             comment_kind,
-            content,
+            data,
             span,
         }
     }
