@@ -57,7 +57,7 @@ impl<'a> Lexer<'a> {
         cloned_iter.next();
 
         // peek at the next char from the original iterator
-        self.peekable_chars.peek().cloned()
+        cloned_iter.peek().cloned()
     }
 
     // advance the lexer's pos past any whitespace chars in the input stream
@@ -103,11 +103,11 @@ impl<'a> Lexer<'a> {
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     let start_pos = self.pos;
                     self.advance();
-                    match self.peek_next() {
+                    match self.current_char() {
                         Some('/') => {
                             self.advance();
 
-                            if Some('/') == self.peek_next() {
+                            if Some('/') == self.current_char() {
                                 self.advance();
                                 self.skip_whitespace();
 
@@ -635,7 +635,7 @@ mod tests {
                 }
 
                 for i in vec {
-                    new_vec.push(i + 1.0);
+                    new_vec.push(i / 1.0);
                 }
 
                 return Foo {
