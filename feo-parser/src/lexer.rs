@@ -88,8 +88,6 @@ impl<'a> Lexer<'a> {
     pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
-        let mut is_negative = false;
-
         let mut num_open_delimiters: usize = 0;
 
         while let Some(c) = self.current_char() {
@@ -523,7 +521,16 @@ impl<'a> Lexer<'a> {
                     tokens.push(uint_lit);
                 }
 
-                '0'..='9' => {
+                _ if c.is_digit(10)
+                    || (c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10))) =>
+                {
+                    let mut is_negative = false;
+
+                    if c == '-' && self.peek_next().is_some_and(|c| c.is_digit(10)) {
+                        is_negative = true;
+                        self.advance();
+                    }
+
                     let start_pos = if is_negative { self.pos - 1 } else { self.pos };
 
                     let mut is_float = false;
@@ -575,8 +582,6 @@ impl<'a> Lexer<'a> {
                         )?;
                         tokens.push(uint_lit);
                     }
-
-                    is_negative = false; // reset `is_negative`
                 }
 
                 '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' => {
@@ -599,13 +604,6 @@ impl<'a> Lexer<'a> {
                         self.pos,
                         self.handler,
                     )?;
-
-                    if punc_content.as_str() == "-"
-                        && self.peek_next().is_some_and(|c| c.is_digit(10))
-                    {
-                        is_negative = true;
-                        continue;
-                    }
 
                     tokens.push(punc);
                 }
