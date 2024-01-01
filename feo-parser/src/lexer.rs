@@ -195,7 +195,7 @@ impl<'a> Lexer<'a> {
                     let mut buf = String::new();
 
                     while let Some(c) = self.current_char() {
-                        if c.is_alphanumeric() || c == '_' {
+                        if c.is_ascii_alphanumeric() || c == '_' {
                             buf.push(c);
                             self.advance();
                         } else {
