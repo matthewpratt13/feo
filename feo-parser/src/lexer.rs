@@ -10,7 +10,6 @@ use feo_ast::{
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     punctuation::Punctuation,
     token::{Token, TokenStream, Tokenize},
-    type_annotation::TypeAnnotation,
 };
 
 use feo_error::{
@@ -199,48 +198,6 @@ impl<'a> Lexer<'a> {
                         if c.is_alphanumeric() || c == '_' {
                             buf.push(c);
                             self.advance();
-                        } else if c == ':' {
-                            self.advance(); // skip ':'
-
-                            self.skip_whitespace();
-                            let mut type_name = String::new();
-
-                            let start_pos = self.pos;
-
-                            while let Some(c) = self.current_char() {
-                                if c.is_alphanumeric() || c == '_' {
-                                    type_name.push(c);
-                                    self.advance();
-                                } else {
-                                    break;
-                                }
-                            }
-
-                            if !type_name.is_empty() {
-                                if type_name == "true" || type_name == "false" {
-                                    let bool_lit = BoolLiteral::tokenize(
-                                        &self.input,
-                                        &type_name,
-                                        start_pos,
-                                        self.pos,
-                                        self.handler,
-                                    )?;
-
-                                    tokens.push(bool_lit);
-                                    break;
-                                }
-
-                                let type_ann = TypeAnnotation::tokenize(
-                                    &self.input,
-                                    &type_name,
-                                    start_pos,
-                                    self.pos,
-                                    self.handler,
-                                )?;
-
-                                tokens.push(type_ann);
-                                break;
-                            }
                         } else {
                             break;
                         }
@@ -269,16 +226,6 @@ impl<'a> Lexer<'a> {
                         )?;
 
                         tokens.push(keyword);
-                    } else if is_type_annotation(&buf) {
-                        let type_ann = TypeAnnotation::tokenize(
-                            &self.input,
-                            &buf,
-                            start_pos,
-                            start_pos + buf.len(),
-                            self.handler,
-                        )?;
-
-                        tokens.push(type_ann);
                     } else {
                         let iden = Identifier::tokenize(
                             &self.input,
@@ -652,13 +599,6 @@ fn is_keyword(iden: &str) -> bool {
         "as", "break", "const", "continue", "deref", "else", "enum", "for", "func", "if", "impl",
         "import", "in", "let", "loop", "match", "mod", "mut", "pub", "ref", "return", "self",
         "static", "struct", "super", "trait", "type", "while",
-    ]
-    .contains(&iden)
-}
-
-fn is_type_annotation(iden: &str) -> bool {
-    [
-        "bool", "char", "f32", "f64", "i32", "i64", "String", "u8", "u16", "u32", "u64", "Vec",
     ]
     .contains(&iden)
 }
