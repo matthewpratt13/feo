@@ -22,7 +22,7 @@ use feo_error::{
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
-    peekable_chars: Peekable<std::str::Chars<'a>>,
+    peekable_chars: Peekable<core::str::Chars<'a>>,
     handler: &'a mut Handler,
 }
 
