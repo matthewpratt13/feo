@@ -1,5 +1,3 @@
-use feo_types::span::Position;
-
 use crate::lex_error::LexError;
 use crate::parser_error::ParserError;
 use crate::type_error::TypeError;
