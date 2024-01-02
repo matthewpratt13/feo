@@ -16,7 +16,6 @@ use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
-    warning::CompilerWarning,
 };
 use feo_types::span::Position;
 
@@ -636,8 +635,8 @@ impl<'a> Lexer<'a> {
         Ok(stream)
     }
 
-    pub fn errors(&self) -> (Vec<CompilerError>, Vec<CompilerWarning>) {
-        self.handler.clone().get()
+    pub fn errors(&self) -> Vec<CompilerError> {
+        self.handler.clone().get().0
     }
 }
 
@@ -706,8 +705,8 @@ mod tests {
         } else {
             println!(
                 "error: {:?}, \nposition: {:?}",
-                lexer.errors().0[0],
-                lexer.errors().0[0].line_col()
+                lexer.errors().pop(),
+                lexer.errors().pop().expect("Error not found").line_col()
             );
         }
     }
