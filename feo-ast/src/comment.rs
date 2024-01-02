@@ -3,7 +3,7 @@ use feo_error::{
     handler::{ErrorEmitted, Handler},
     type_error::{TypeError, TypeErrorKind},
 };
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Span, Spanned, Position};
 
 use crate::token::{Token, Tokenize};
 
@@ -52,7 +52,7 @@ impl Tokenize for Comment {
             _ => {
                 let err = TypeError {
                     error_kind: TypeErrorKind::UnrecognizedCommentOpener,
-                    pos: start,
+                    position: Position::new(src, start),
                 };
 
                 return Err(handler.emit_err(CompilerError::Type(err)));

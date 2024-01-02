@@ -1,3 +1,5 @@
+use feo_types::span::Position;
+
 #[derive(Debug, Clone)]
 pub enum TypeErrorKind {
     UnrecognizedCommentOpener,
@@ -9,5 +11,5 @@ pub enum TypeErrorKind {
 #[derive(Debug, Clone)]
 pub struct TypeError {
     pub error_kind: TypeErrorKind,
-    pub pos: usize,
+    pub position: Position,
 }

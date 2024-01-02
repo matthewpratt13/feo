@@ -6,7 +6,7 @@ use feo_error::{
     type_error::{TypeError, TypeErrorKind},
 };
 
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -86,14 +86,14 @@ impl Tokenize for Delimiter {
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedDelimiter,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let delim_kind = DelimKind::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(err.clone())))?;
 
-        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let delim_orientation = DelimOrientation::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
 

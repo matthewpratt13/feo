@@ -2,7 +2,7 @@ use feo_error::error::CompilerError;
 use feo_error::handler::{ErrorEmitted, Handler};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 use feo_types::{Literal, PrimitiveType};
 
 use crate::token::{Token, Tokenize};
@@ -22,10 +22,10 @@ impl Tokenize for CharLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseCharError,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `core::char::ParseCharError` to `CompileError::Parser(ParserError)`
+        // convert `core::char::ParseCharError` to `CompilerError::Parser(ParserError)`
         let parsed = content
             .parse::<char>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
@@ -86,10 +86,10 @@ impl Tokenize for IntLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseIntError,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
+        // convert `core::num::ParseIntError` to `CompilerError::Parser(ParserError)`
         let parsed = i64::from_str_radix(content, 10)
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
@@ -122,10 +122,10 @@ impl Tokenize for UIntLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseUIntError,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `core::num::ParseIntError` to `CompileError::Parser(ParserError)`
+        // convert `core::num::ParseIntError` to `CompilerError::Parser(ParserError)`
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
@@ -165,10 +165,10 @@ impl Tokenize for FloatLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseFloatError,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `core::num::ParseFloatError` to `CompileError::Parser(ParserError)`
+        // convert `core::num::ParseFloatError` to `CompilerError::Parser(ParserError)`
         let parsed = content
             .parse::<f64>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
@@ -202,10 +202,10 @@ impl Tokenize for BoolLiteral {
 
         let err = ParserError {
             error_kind: ParserErrorKind::ParseBoolError,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `core::str::ParseBoolError` to `CompileError::Parser(ParserError)`
+        // convert `core::str::ParseBoolError` to `CompilerError::Parser(ParserError)`
         let parsed = content
             .parse::<bool>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;

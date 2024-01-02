@@ -6,7 +6,7 @@ use feo_error::{
     type_error::{TypeError, TypeErrorKind},
 };
 
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 
@@ -141,10 +141,10 @@ impl Tokenize for Keyword {
 
         let err = TypeError {
             error_kind: TypeErrorKind::UnrecognizedKeyword,
-            pos: start,
+            position: Position::new(src, start),
         };
 
-        // convert `TypeErrorKind` to `CompileError::Type(TypeError)`
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let keyword_kind = KeywordKind::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
 

@@ -5,14 +5,20 @@ pub trait Spanned {
 }
 
 #[derive(Debug, Clone)]
-pub struct Position<'a> {
-    input: &'a str,
+pub struct Position {
+    input: Arc<String>,
     pos: usize,
 }
 
-impl<'a> Position<'a> {
-    pub fn new(input: &'a str, pos: usize) -> Option<Position<'a>> {
-        input.get(pos..).map(|_| Position { input, pos })
+impl Position {
+    pub fn new(input: &str, pos: usize) -> Position {
+        input
+            .get(pos..)
+            .map(|_| Position {
+                input: Arc::new(input.to_string()),
+                pos,
+            })
+            .expect("Position out of bounds")
     }
 
     #[inline]
