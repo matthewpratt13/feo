@@ -252,6 +252,7 @@ impl<'a> Lexer<'a> {
 
                             tokens.push(delim);
                         }
+
                         '[' => {
                             let delim = Delimiter::tokenize(
                                 &self.input,
@@ -296,6 +297,7 @@ impl<'a> Lexer<'a> {
 
                             tokens.push(delim);
                         }
+
                         ']' => {
                             let delim = Delimiter::tokenize(
                                 &self.input,
@@ -406,49 +408,49 @@ impl<'a> Lexer<'a> {
                                         &self.input,
                                         "\n",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     Some('r') => CharLiteral::tokenize(
                                         &self.input,
                                         "\r",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     Some('t') => CharLiteral::tokenize(
                                         &self.input,
                                         "\t",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     Some('\\') => CharLiteral::tokenize(
                                         &self.input,
                                         "\\",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     Some('0') => CharLiteral::tokenize(
                                         &self.input,
                                         "\0",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     Some('\'') => CharLiteral::tokenize(
                                         &self.input,
                                         "'",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     Some('"') => CharLiteral::tokenize(
                                         &self.input,
                                         "\"",
                                         start_pos,
-                                        self.pos + 1, // +1 to account for second char
+                                        self.pos + 1,
                                         self.handler,
                                     )?,
                                     _ => {
@@ -459,19 +461,27 @@ impl<'a> Lexer<'a> {
                                 };
 
                                 tokens.push(esc_char_lit);
+                                self.advance(); // skip second char
 
-                                self.advance(); // skip second escape char
+                                if self.current_char() != Some('\'') {
+                                    return Err(
+                                        self.log_error(LexErrorKind::ExpectedClosingSingleQuote)
+                                    );
+                                }
+
                                 self.advance(); // skip closing '\'' (single quote)
                             }
+
                             '\'' => {
                                 return Err(self.log_error(LexErrorKind::EmptyCharLiteral));
                             }
+
                             _ => {
-                                if c.is_whitespace() {
+                                if c == ' ' {
                                     return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
                                 }
 
-                                self.advance(); // return the regular char
+                                self.advance();
 
                                 if self.current_char() == Some('\'') {
                                     let char_lit = CharLiteral::tokenize(
@@ -485,10 +495,6 @@ impl<'a> Lexer<'a> {
                                     tokens.push(char_lit);
 
                                     self.advance(); // skip closing '\'' (single quote)
-                                } else if self.current_char().is_some_and(|c| c.is_whitespace()) {
-                                    return Err(
-                                        self.log_error(LexErrorKind::ExpectedClosingSingleQuote)
-                                    );
                                 } else {
                                     return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
                                 }
@@ -682,7 +688,7 @@ mod tests {
                 return Foo {
                     a: "foo",
                     b: -123,
-                    c: '\\',
+                    c: '\'',
                     d: false
                 };
             }
