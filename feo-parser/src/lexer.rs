@@ -18,6 +18,7 @@ use feo_error::{
     lex_error::{LexError, LexErrorKind},
     warning::CompilerWarning,
 };
+use feo_types::span::Position;
 
 struct Lexer<'a> {
     input: &'a str,
@@ -77,7 +78,7 @@ impl<'a> Lexer<'a> {
     fn log_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
         let err = LexError {
             error_kind,
-            pos: self.pos,
+            position: Position::new(self.input, self.pos),
         };
 
         self.handler.emit_err(CompilerError::Lex(err))
@@ -697,7 +698,11 @@ mod tests {
                 println!("{:?} \n", token)
             }
         } else {
-            println!("errors: {:?}", lexer.errors());
+            println!(
+                "error: {:?}, \nposition: {:?}",
+                lexer.errors().0[0],
+                lexer.errors().0[0].line_col()
+            );
         }
     }
 }
