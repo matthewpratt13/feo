@@ -41,6 +41,7 @@ impl From<(Vec<CompilerError>, Vec<CompilerWarning>)> for Handler {
     }
 }
 // dummy struct to prove that an error occurred and was emitted
+// returned in place of some `CompilerError` (i.e., `LexError`, `ParserError`, `TypeError`, etc.)
 #[derive(Debug)]
 pub struct ErrorEmitted {
     _private: (),

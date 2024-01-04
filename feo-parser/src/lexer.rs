@@ -718,9 +718,9 @@ mod tests {
                 lexer
                     .errors()
                     .pop()
-                    .unwrap()
+                    .expect("Error not found")
                     .to_lex_error(lexer.handler)
-                    .unwrap()
+                    .expect("Cannot convert to LexError")
                     .error_kind,
                 lexer.errors().pop().expect("Error not found").line_col().0,
                 lexer.errors().pop().expect("Error not found").line_col().1
