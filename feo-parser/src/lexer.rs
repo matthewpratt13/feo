@@ -128,7 +128,7 @@ impl<'a> Lexer<'a> {
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                    &mut &mut self.handler,
+                                    &mut self.handler,
                                 )?;
 
                                 tokens.push(doc_comment);
