@@ -64,7 +64,7 @@ impl<'a> Lexer<'a> {
     fn skip_whitespace(&mut self) {
         while let Some(c) = self.current_char() {
             if c.is_whitespace() {
-                // if the current char is whitespace, advance to the next character
+                // if the current char is whitespace, advance to the next char
                 self.advance();
             } else {
                 // if the current char is not whitespace, break out of the loop
