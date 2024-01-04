@@ -51,7 +51,7 @@ impl<'a> Lexer<'a> {
     }
 
     // return the next char in the input stream (i.e., peek ahead by one char)
-    fn peek_next(&mut self) -> Option<char> {
+    fn peek_next(&self) -> Option<char> {
         // create a clone of the iterator and advance this cloned iterator
         let mut cloned_iter = self.peekable_chars.clone();
         cloned_iter.next();
