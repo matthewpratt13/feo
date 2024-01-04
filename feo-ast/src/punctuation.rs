@@ -18,8 +18,8 @@ pub enum PuncKind {
     FullStop,
     Underscore,
 
-    DoubleFullStop,
-    DoubleColon,
+    DblFullStop,
+    DblColon,
 
     Bang, // (exclamation point)
     Hash,
@@ -44,17 +44,19 @@ pub enum PuncKind {
     BangEquals,
     PercentEquals,
     AsteriskEquals,
-    DoubleAsterisk, // (exponent)
-    DoubleAmpersand,
+    DblAsterisk, // (exponent)
+    DblAmpersand,
     PlusEquals,
     MinusEquals,
     ForwardSlashEquals,
+    DblLessThan,
     LessThanEquals,
-    DoubleEquals,
+    DblEquals,
+    DblGreaterThan,
     GreaterThanEquals,
     ThinArrow, // "->"
     FatArrow,  // "=>"
-    DoublePipe,
+    DblPipe,
 }
 
 impl PuncKind {
@@ -65,8 +67,8 @@ impl PuncKind {
             PuncKind::Comma => ",",
             PuncKind::FullStop => ".",
             PuncKind::Underscore => "_",
-            PuncKind::DoubleFullStop => "..",
-            PuncKind::DoubleColon => "::",
+            PuncKind::DblFullStop => "..",
+            PuncKind::DblColon => "::",
             PuncKind::Bang => "!",
             PuncKind::Hash => "#",
             PuncKind::DollarSign => "$",
@@ -89,17 +91,19 @@ impl PuncKind {
             PuncKind::BangEquals => "!=",
             PuncKind::PercentEquals => "%=",
             PuncKind::AsteriskEquals => "*=",
-            PuncKind::DoubleAsterisk => "**",
-            PuncKind::DoubleAmpersand => "&&",
+            PuncKind::DblAsterisk => "**",
+            PuncKind::DblAmpersand => "&&",
             PuncKind::PlusEquals => "+=",
             PuncKind::MinusEquals => "-=",
             PuncKind::ForwardSlashEquals => "/=",
+            PuncKind::DblLessThan => "<<",
             PuncKind::LessThanEquals => "<=",
-            PuncKind::DoubleEquals => "==",
+            PuncKind::DblEquals => "==",
+            PuncKind::DblGreaterThan => ">>",
             PuncKind::GreaterThanEquals => ">=",
             PuncKind::ThinArrow => "->",
             PuncKind::FatArrow => "=>",
-            PuncKind::DoublePipe => "||",
+            PuncKind::DblPipe => "||",
         }
     }
 }
@@ -114,8 +118,8 @@ impl FromStr for PuncKind {
             "," => Ok(PuncKind::Comma),
             "." => Ok(PuncKind::FullStop),
             "_" => Ok(PuncKind::Underscore),
-            ".." => Ok(PuncKind::DoubleFullStop),
-            "::" => Ok(PuncKind::DoubleColon),
+            ".." => Ok(PuncKind::DblFullStop),
+            "::" => Ok(PuncKind::DblColon),
             "!" => Ok(PuncKind::Bang),
             "#" => Ok(PuncKind::Hash),
             "$" => Ok(PuncKind::DollarSign),
@@ -138,17 +142,19 @@ impl FromStr for PuncKind {
             "!=" => Ok(PuncKind::BangEquals),
             "%=" => Ok(PuncKind::PercentEquals),
             "*=" => Ok(PuncKind::AsteriskEquals),
-            "**" => Ok(PuncKind::DoubleAsterisk),
-            "&&" => Ok(PuncKind::DoubleAmpersand),
+            "**" => Ok(PuncKind::DblAsterisk),
+            "&&" => Ok(PuncKind::DblAmpersand),
             "+=" => Ok(PuncKind::PlusEquals),
             "-=" => Ok(PuncKind::MinusEquals),
             "/=" => Ok(PuncKind::ForwardSlashEquals),
+            "<<" => Ok(PuncKind::DblLessThan),
             "<=" => Ok(PuncKind::LessThanEquals),
-            "==" => Ok(PuncKind::DoubleEquals),
+            "==" => Ok(PuncKind::DblEquals),
+            ">>" => Ok(PuncKind::DblGreaterThan),
             ">=" => Ok(PuncKind::GreaterThanEquals),
             "->" => Ok(PuncKind::ThinArrow),
             "=>" => Ok(PuncKind::FatArrow),
-            "||" => Ok(PuncKind::DoublePipe),
+            "||" => Ok(PuncKind::DblPipe),
             _ => Err(TypeErrorKind::UnrecognizedPunctuation),
         }?;
 
