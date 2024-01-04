@@ -392,6 +392,7 @@ impl<'a> Lexer<'a> {
                         return Err(self.log_error(LexErrorKind::UnclosedStringLiteral));
                     }
                 }
+                
                 '\'' => {
                     self.advance(); // skip opening '\'' (single quote)
 
