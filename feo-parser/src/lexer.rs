@@ -77,7 +77,7 @@ impl<'a> Lexer<'a> {
     fn log_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
         let err = LexError {
             error_kind,
-            position: Position::new(self.input, self.pos),
+            position: Position::new(self.input.trim_start_matches('\n'), self.pos),
         };
 
         self.handler.emit_err(CompilerError::Lex(err))
@@ -681,7 +681,7 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
-                let vec = [0xBEEF_ABCD_0000, 2_000_000, 3, 4];
+                let vec = [0xBEEF, 2_000_000, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
                 if foo < 0 {
@@ -714,9 +714,16 @@ mod tests {
             }
         } else {
             println!(
-                "error: {:?}, \nposition: {:?}",
-                lexer.errors().pop(),
-                lexer.errors().pop().expect("Error not found").line_col()
+                "error: {:?}, \nposition: line {:?}, col {:?}",
+                lexer
+                    .errors()
+                    .pop()
+                    .unwrap()
+                    .to_lex_error(lexer.handler)
+                    .unwrap()
+                    .error_kind,
+                lexer.errors().pop().expect("Error not found").line_col().0,
+                lexer.errors().pop().expect("Error not found").line_col().1
             );
         }
     }
