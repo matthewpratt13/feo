@@ -607,7 +607,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                '!' | '#'..='&' | '*'..='/' | ':'..='@' | '|' => {
+                '!' | '#'..='&' | '*'..='/' | ':'..='@' | '^' | '`' | '|' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation() {
                             self.advance();
