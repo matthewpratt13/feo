@@ -90,7 +90,7 @@ impl Tokenize for IntLiteral {
         };
 
         // convert `core::num::ParseIntError` to `CompilerError::Parser(ParserError)`
-        let parsed = i64::from_str_radix(content, 10)
+        let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
         let int_lit = Literal::new(parsed, span);
@@ -129,10 +129,13 @@ impl Tokenize for UIntLiteral {
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
-            u64::from_str_radix(without_prefix, 16)
-                .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+            u64::from_str_radix(
+                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                16,
+            )
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
         } else {
-            u64::from_str_radix(content, 10)
+            u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
                 .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
         };
 

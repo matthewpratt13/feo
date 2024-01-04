@@ -189,11 +189,12 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // identifiers and keywords (cannot start with, but can contain digits)
+                // identifiers and keywords
                 'A'..='Z' | 'a'..='z' | '_' => {
                     let mut buf = String::new();
 
                     while let Some(c) = self.current_char() {
+                        // cannot start with, but can contain numbers (`is_ascii_alphanumeric()`)
                         if c.is_ascii_alphanumeric() || c == '_' {
                             buf.push(c);
                             self.advance();
@@ -521,7 +522,7 @@ impl<'a> Lexer<'a> {
                     self.advance(); // skip 'x'
 
                     while let Some(c) = self.current_char() {
-                        if c.is_digit(16) {
+                        if c.is_digit(16) || c == '_' {
                             self.advance();
                         } else {
                             break;
@@ -559,7 +560,7 @@ impl<'a> Lexer<'a> {
                     let mut is_float = false;
 
                     while let Some(c) = self.current_char() {
-                        if c.is_digit(10) {
+                        if c.is_digit(10) || c == '_' {
                             self.advance();
                         } else if c == '.' && !is_float {
                             self.advance();
@@ -680,7 +681,7 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
-                let vec = [0xBEEF, 2, 3, 4];
+                let vec = [0xBEEF_ABCD_0000, 2_000_000, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
                 if foo < 0 {
@@ -695,7 +696,7 @@ mod tests {
 
                 return Foo {
                     a: "foo",
-                    b: -123,
+                    b: -123_456,
                     c: '\'',
                     d: false
                 };
