@@ -105,7 +105,7 @@ impl<'a> Lexer<'a> {
                         Some('/') => {
                             self.advance();
 
-                            if Some('/') == self.current_char() {
+                            if self.current_char() == Some('/') {
                                 self.advance();
                                 self.skip_whitespace();
 
