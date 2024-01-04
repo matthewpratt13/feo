@@ -156,6 +156,7 @@ impl<'a> Lexer<'a> {
                                 tokens.push(comment);
                             }
                         }
+
                         Some('*') => {
                             self.advance();
 
@@ -392,7 +393,7 @@ impl<'a> Lexer<'a> {
                         return Err(self.log_error(LexErrorKind::UnclosedStringLiteral));
                     }
                 }
-                
+
                 '\'' => {
                     self.advance(); // skip opening '\'' (single quote)
 
@@ -411,6 +412,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     Some('r') => CharLiteral::tokenize(
                                         &self.input,
                                         "\r",
@@ -418,6 +420,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     Some('t') => CharLiteral::tokenize(
                                         &self.input,
                                         "\t",
@@ -425,6 +428,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     Some('\\') => CharLiteral::tokenize(
                                         &self.input,
                                         "\\",
@@ -432,6 +436,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     Some('0') => CharLiteral::tokenize(
                                         &self.input,
                                         "\0",
@@ -439,6 +444,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     Some('\'') => CharLiteral::tokenize(
                                         &self.input,
                                         "'",
@@ -446,6 +452,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     Some('"') => CharLiteral::tokenize(
                                         &self.input,
                                         "\"",
@@ -453,6 +460,7 @@ impl<'a> Lexer<'a> {
                                         self.pos + 1,
                                         self.handler,
                                     )?,
+
                                     _ => {
                                         return Err(
                                             self.log_error(LexErrorKind::InvalidEscapeSequence)
