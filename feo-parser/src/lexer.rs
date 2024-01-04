@@ -23,12 +23,12 @@ struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<core::str::Chars<'a>>,
-    handler: &'a mut Handler,
+    handler: Handler,
 }
 
 #[allow(dead_code)]
 impl<'a> Lexer<'a> {
-    pub fn new(input: &'a str, handler: &'a mut Handler) -> Self {
+    pub fn new(input: &'a str, handler: Handler) -> Self {
         Self {
             input,
             pos: 0,
@@ -74,7 +74,7 @@ impl<'a> Lexer<'a> {
     }
 
     // log and store information about an error encountered during the lexing process
-    fn log_error(&mut self, error_kind: LexErrorKind) -> ErrorEmitted {
+    fn log_error(&self, error_kind: LexErrorKind) -> ErrorEmitted {
         let err = LexError {
             error_kind,
             position: Position::new(self.input.trim_start_matches('\n'), self.pos),
@@ -128,7 +128,7 @@ impl<'a> Lexer<'a> {
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                    self.handler,
+                                    &mut &mut self.handler,
                                 )?;
 
                                 tokens.push(doc_comment);
@@ -150,7 +150,7 @@ impl<'a> Lexer<'a> {
                                     &comment_data,
                                     start_pos,
                                     self.pos,
-                                    self.handler,
+                                    &mut self.handler,
                                 )?;
 
                                 tokens.push(comment);
@@ -179,7 +179,7 @@ impl<'a> Lexer<'a> {
                                 &comment_data,
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(comment);
@@ -209,7 +209,7 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos, // global `start_pos`
                             start_pos + buf.len(),
-                            self.handler,
+                            &mut self.handler,
                         )?;
 
                         tokens.push(bool_lit);
@@ -222,7 +222,7 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos, // global `start_pos`
                             start_pos + buf.len(),
-                            self.handler,
+                            &mut self.handler,
                         )?;
 
                         tokens.push(keyword);
@@ -232,7 +232,7 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos, // global `start_pos`
                             start_pos + buf.len(),
-                            self.handler,
+                            &mut self.handler,
                         )?;
                         tokens.push(iden);
                     }
@@ -248,7 +248,7 @@ impl<'a> Lexer<'a> {
                                 "(",
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(delim);
@@ -260,7 +260,7 @@ impl<'a> Lexer<'a> {
                                 "[",
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(delim);
@@ -272,7 +272,7 @@ impl<'a> Lexer<'a> {
                                 "{",
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(delim);
@@ -293,7 +293,7 @@ impl<'a> Lexer<'a> {
                                 ")",
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(delim);
@@ -305,7 +305,7 @@ impl<'a> Lexer<'a> {
                                 "]",
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(delim);
@@ -317,7 +317,7 @@ impl<'a> Lexer<'a> {
                                 "}",
                                 start_pos,
                                 self.pos,
-                                self.handler,
+                                &mut self.handler,
                             )?;
 
                             tokens.push(delim);
@@ -376,7 +376,7 @@ impl<'a> Lexer<'a> {
                                     &buf,
                                     start_pos,
                                     self.pos,
-                                    self.handler,
+                                    &mut self.handler,
                                 )?;
 
                                 tokens.push(string_lit);
@@ -411,7 +411,7 @@ impl<'a> Lexer<'a> {
                                         "\n",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     Some('r') => CharLiteral::tokenize(
@@ -419,7 +419,7 @@ impl<'a> Lexer<'a> {
                                         "\r",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     Some('t') => CharLiteral::tokenize(
@@ -427,7 +427,7 @@ impl<'a> Lexer<'a> {
                                         "\t",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     Some('\\') => CharLiteral::tokenize(
@@ -435,7 +435,7 @@ impl<'a> Lexer<'a> {
                                         "\\",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     Some('0') => CharLiteral::tokenize(
@@ -443,7 +443,7 @@ impl<'a> Lexer<'a> {
                                         "\0",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     Some('\'') => CharLiteral::tokenize(
@@ -451,7 +451,7 @@ impl<'a> Lexer<'a> {
                                         "'",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     Some('"') => CharLiteral::tokenize(
@@ -459,7 +459,7 @@ impl<'a> Lexer<'a> {
                                         "\"",
                                         start_pos,
                                         self.pos + 1,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?,
 
                                     _ => {
@@ -498,7 +498,7 @@ impl<'a> Lexer<'a> {
                                         &c.to_string(),
                                         start_pos,
                                         self.pos,
-                                        self.handler,
+                                        &mut self.handler,
                                     )?;
 
                                     tokens.push(char_lit);
@@ -538,7 +538,7 @@ impl<'a> Lexer<'a> {
                         &num_content,
                         start_pos,
                         self.pos,
-                        self.handler,
+                        &mut self.handler,
                     )?;
 
                     tokens.push(uint_lit);
@@ -580,7 +580,7 @@ impl<'a> Lexer<'a> {
                             &num_content,
                             start_pos,
                             self.pos,
-                            self.handler,
+                            &mut self.handler,
                         )?;
 
                         tokens.push(float_lit);
@@ -593,7 +593,7 @@ impl<'a> Lexer<'a> {
                             &num_content,
                             start_pos,
                             self.pos,
-                            self.handler,
+                            &mut self.handler,
                         )?;
                         tokens.push(int_lit);
                     } else {
@@ -602,7 +602,7 @@ impl<'a> Lexer<'a> {
                             &num_content,
                             start_pos,
                             self.pos,
-                            self.handler,
+                            &mut self.handler,
                         )?;
                         tokens.push(uint_lit);
                     }
@@ -626,7 +626,7 @@ impl<'a> Lexer<'a> {
                         &punc_content,
                         start_pos,
                         self.pos,
-                        self.handler,
+                        &mut self.handler,
                     )?;
 
                     tokens.push(punc);
@@ -704,7 +704,7 @@ mod tests {
         }
         "#;
 
-        let handler = &mut Handler::default();
+        let handler = Handler::default();
 
         let mut lexer = Lexer::new(&source_code, handler);
 
@@ -719,7 +719,7 @@ mod tests {
                     .errors()
                     .pop()
                     .expect("Error not found")
-                    .to_lex_error(lexer.handler)
+                    .to_lex_error(&lexer.handler)
                     .expect("Cannot convert to LexError")
                     .error_kind,
                 lexer.errors().pop().expect("Error not found").line_col().0,

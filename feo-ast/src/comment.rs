@@ -3,7 +3,7 @@ use feo_error::{
     handler::{ErrorEmitted, Handler},
     type_error::{TypeError, TypeErrorKind},
 };
-use feo_types::span::{Span, Spanned, Position};
+use feo_types::span::{Position, Span, Spanned};
 
 use crate::token::{Token, Tokenize};
 

@@ -15,12 +15,12 @@ struct HandlerInner {
 }
 
 impl Handler {
-    pub fn emit_err(&mut self, err: CompilerError) -> ErrorEmitted {
+    pub fn emit_err(&self, err: CompilerError) -> ErrorEmitted {
         self.inner.borrow_mut().errors.push(err);
         ErrorEmitted { _private: () }
     }
 
-    pub fn emit_warn(&mut self, warn: CompilerWarning) {
+    pub fn emit_warn(&self, warn: CompilerWarning) {
         self.inner.borrow_mut().warnings.push(warn)
     }
 

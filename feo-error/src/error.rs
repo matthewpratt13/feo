@@ -21,7 +21,7 @@ impl CompilerError {
         }
     }
 
-    pub fn to_lex_error(self, handler: &mut Handler) -> Result<LexError, ErrorEmitted> {
+    pub fn to_lex_error(self, handler: &Handler) -> Result<LexError, ErrorEmitted> {
         match self {
             Self::Lex(l) => Ok(l),
             _ => return Err(handler.emit_err(CompilerError::ErrorConversionError)),
