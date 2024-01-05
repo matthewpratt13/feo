@@ -10,6 +10,7 @@ use feo_ast::{
     literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
     punctuation::Punctuation,
     token::{Token, TokenStream, Tokenize},
+    type_annotation::TypeAnnotation,
 };
 
 use feo_error::{
@@ -216,7 +217,17 @@ impl<'a> Lexer<'a> {
                         continue;
                     }
 
-                    if is_keyword(&buf) {
+                    if is_built_in_type_annotation(&buf) {
+                        let type_annotation = TypeAnnotation::tokenize(
+                            &self.input,
+                            &buf,
+                            start_pos,
+                            start_pos + buf.len(),
+                            &mut self.handler,
+                        )?;
+
+                        tokens.push(type_annotation);
+                    } else if is_keyword(&buf) {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
@@ -650,6 +661,13 @@ impl<'a> Lexer<'a> {
     }
 }
 
+fn is_built_in_type_annotation(iden: &str) -> bool {
+    [
+        "char", "String", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64", "Vec",
+    ]
+    .contains(&iden)
+}
+
 fn is_keyword(iden: &str) -> bool {
     [
         "as", "break", "const", "continue", "deref", "else", "enum", "for", "func", "if", "impl",
@@ -681,7 +699,7 @@ mod tests {
 
         impl Foo {
             pub func new() -> Foo {
-                let vec = [0xBEEF, 2_000_000, 3, 4];
+                let vec = [0xBEEF_ABCD, 2_000_000, 3, 4];
                 let mut new_vec: Vec<f64> = [];
 
                 if foo < 0 {
