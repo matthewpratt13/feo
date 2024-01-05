@@ -1,4 +1,5 @@
 use crate::span::Span;
+use crate::U256; // native copy of `bnum::types::U256` / `bnum::BUint`
 
 pub trait Primitive {}
 
@@ -17,6 +18,8 @@ impl Primitive for u16 {}
 impl Primitive for u32 {}
 
 impl Primitive for u64 {}
+
+impl Primitive for U256 {}
 
 impl Primitive for f32 {}
 

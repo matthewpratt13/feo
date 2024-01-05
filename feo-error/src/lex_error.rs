@@ -10,6 +10,7 @@ pub enum LexErrorKind {
     ExpectedClosingSingleQuote,
     InvalidEscapeSequence,
     ExpectedEscapeSequence,
+    TypeAnnotationError,
 
     InvalidChar(char),
 }

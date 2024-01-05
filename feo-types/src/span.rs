@@ -36,7 +36,7 @@ impl Position {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Default, Debug, Clone)]
 pub struct Span {
     // src: Arc<String>,
     start: usize,

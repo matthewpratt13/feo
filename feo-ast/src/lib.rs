@@ -6,3 +6,4 @@ pub mod keyword;
 pub mod literals;
 pub mod punctuation;
 pub mod token;
+pub mod type_annotation;

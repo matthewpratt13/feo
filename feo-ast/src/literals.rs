@@ -1,9 +1,11 @@
+use bnum::cast::As;
+
 use feo_error::error::CompilerError;
 use feo_error::handler::{ErrorEmitted, Handler};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
 use feo_types::span::{Position, Span, Spanned};
-use feo_types::{Literal, PrimitiveType};
+use feo_types::{Literal, PrimitiveType, U256};
 
 use crate::token::{Token, Tokenize};
 
@@ -25,7 +27,6 @@ impl Tokenize for CharLiteral {
             position: Position::new(src, start),
         };
 
-        // convert `core::char::ParseCharError` to `CompilerError::Parser(ParserError)`
         let parsed = content
             .parse::<char>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
@@ -89,7 +90,6 @@ impl Tokenize for IntLiteral {
             position: Position::new(src, start),
         };
 
-        // convert `core::num::ParseIntError` to `CompilerError::Parser(ParserError)`
         let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
@@ -120,23 +120,45 @@ impl Tokenize for UIntLiteral {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = ParserError {
+        let uint_err = ParserError {
             error_kind: ParserErrorKind::ParseUIntError,
             position: Position::new(src, start),
         };
 
-        // convert `core::num::ParseIntError` to `CompilerError::Parser(ParserError)`
+        let u256_err = ParserError {
+            error_kind: ParserErrorKind::ParseU256Error,
+            position: Position::new(src, start),
+        };
+
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
-            u64::from_str_radix(
+            let content_as_hex_u256 = U256::from_str_radix(
                 &without_prefix.split('_').collect::<Vec<&str>>().concat(),
                 16,
             )
-            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+            .map_err(|_| handler.emit_err(CompilerError::Parser(u256_err)))?;
+
+            if content_as_hex_u256 > u64::MAX.as_::<U256>() {
+                panic!("Integer overflow: Input exceeds maximum `u64` value");
+            } else {
+                u64::from_str_radix(
+                    &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                    16,
+                )
+                .map_err(|_| handler.emit_err(CompilerError::Parser(uint_err)))?
+            }
         } else {
-            u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+            let content_as_dec_u256 =
+                U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(u256_err)))?;
+
+            if content_as_dec_u256 > u64::MAX.as_::<U256>() {
+                panic!("Integer overflow: Input exceeds maximum `u64` value");
+            } else {
+                u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(uint_err)))?
+            }
         };
 
         let uint_lit = Literal::new(parsed, span);
@@ -148,6 +170,51 @@ impl Tokenize for UIntLiteral {
 }
 
 impl Spanned for UIntLiteral {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct U256Literal(Literal<U256>);
+
+impl Tokenize for U256Literal {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let err = ParserError {
+            error_kind: ParserErrorKind::ParseU256Error,
+            position: Position::new(src, start),
+        };
+
+        let parsed = if content.starts_with("0x") {
+            let without_prefix = content.trim_start_matches("0x");
+
+            U256::from_str_radix(
+                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                16,
+            )
+            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+        } else {
+            U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?
+        };
+
+        let u256_lit = Literal::new(parsed, span);
+
+        let token = Token::U256Lit(U256Literal(u256_lit));
+
+        Ok(Some(token))
+    }
+}
+
+impl Spanned for U256Literal {
     fn span(&self) -> &Span {
         self.0.span()
     }
@@ -171,7 +238,6 @@ impl Tokenize for FloatLiteral {
             position: Position::new(src, start),
         };
 
-        // convert `core::num::ParseFloatError` to `CompilerError::Parser(ParserError)`
         let parsed = content
             .parse::<f64>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
@@ -208,7 +274,6 @@ impl Tokenize for BoolLiteral {
             position: Position::new(src, start),
         };
 
-        // convert `core::str::ParseBoolError` to `CompilerError::Parser(ParserError)`
         let parsed = content
             .parse::<bool>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;

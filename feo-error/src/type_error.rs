@@ -6,6 +6,7 @@ pub enum TypeErrorKind {
     UnrecognizedDelimiter,
     UnrecognizedKeyword,
     UnrecognizedPunctuation,
+    UnrecognizedBuiltInTypeAnnotation,
 }
 
 #[derive(Debug, Clone)]
