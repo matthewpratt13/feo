@@ -745,42 +745,148 @@ mod tests {
 
     #[test]
     fn lex() {
+        // let source_code = r#"
+        // // line comment
+        // /*
+        // block comment
+        // */
+        // /// doc comment
+
+        // struct Foo {
+        //     a: String, // trailing comment
+        //     b: i32,
+        //     c: char,
+        //     d: bool
+        // }
+
+        // impl Foo {
+        //     pub func new() -> Foo {
+        //         let vec = [0xBEEF_ABCD, 2_000_000, 3, 4];
+        //         let mut new_vec: Vec<f64> = [];
+        //         let big_uint: u256 = 0x0123_4567_89AB_CDEF
+
+        //         if foo < 0 {
+        //             print("{}", foo);
+        //         } else {
+        //             print("{}", foo);
+        //         }
+
+        //         for i in vec {
+        //             new_vec.push(i / 1.0);
+        //         }
+
+        //         return Foo {
+        //             a: "foo",
+        //             b: -123_456,
+        //             c: '\'',
+        //             d: false
+        //         };
+        //     }
+        // }
+        // "#;
+
         let source_code = r#"
         // line comment
+        
         /*
         block comment
         */
-        /// doc comment
         
-        struct Foo {
-            a: String, // trailing comment
-            b: i32,
-            c: char,
-            d: bool
+        /// doc comment
+
+        library Library {
+            func hello_world() {
+                print!("hello world")
+            }
         }
 
-        impl Foo {
-            pub func new() -> Foo {
-                let vec = [0xBEEF_ABCD, 2_000_000, 3, 4];
-                let mut new_vec: Vec<f64> = [];
-                let big_uint: u256 = 0x0123_4567_89AB_CDEF
+        contract Contract {
+            import super::Library;
+            import super::AnotherContract::AnotherContractInterface;
+            import super::AnotherContract::SharedTrait;
 
-                if foo < 0 {
-                    print("{}", foo);
-                } else {
-                    print("{}", foo);
+            struct Foo {
+                field1: String,
+                field2: char,
+                field3: u256,
+                field4: Vec<f64>,
+                field5: i64,
+                field6: bool
+            }
+            
+            interface ContractInterface {
+                func foo() -> Foo;
+                func bar(arg1: u256, arg2: u256);
+            }
+
+            storage {
+                const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
+                static OWNER: Identity = Identity::User(UserId::from(msg.sender()));
+                static BALANCE: u64 = 0;
+            }
+
+            impl ContractInterface for Contract {
+                func foo() -> Foo {
+                    let vec: Vec<u64> = [1, 2, 3, 4];
+                    let mut new_vec: Vec<f64> = [];
+
+                    for num in vec {
+                        new_vec.push(num as f64);
+                    }
+
+                    new_vec.push(5.0);
+
+                    return Foo {
+                        field1: "foo",
+                        field2: '\'',
+                        field3: 0x0123_4567_89AB_CDEF,
+                        field4: new_vec,
+                        field5: -1234,
+                        field6: true
+                    }
                 }
 
-                for i in vec {
-                    new_vec.push(i / 1.0);
-                }
+                func greater_than(arg1: u256, arg2: u256) {
+                    if arg1 > arg2 {
+                        print!("{} is greater than {}", arg1, arg2);
+                    } else if arg1 == arg2 {
+                        print!("{} is equal to {}", arg1, arg2);
+                    } else {
+                        print!("{} is less than {}", arg1, arg2);
+                    }
 
-                return Foo {
-                    a: "foo",
-                    b: -123_456,
-                    c: '\'',
-                    d: false
-                };
+                    Library::hello_world();
+                }
+            }
+
+            impl AnotherContractInterface for Contract {
+                func baz() {
+                    // some implementation
+                }
+            }
+
+            impl SharedTrait for Contract {
+                func bar() -> String {
+                    return "world"
+            }
+        }
+
+        // "abstract" because it doesn't have its own *interface* impl (but has a *trait* impl)
+        abstract contract AnotherContract {
+            pub trait SharedTrait {
+                    func baz() -> String
+                }
+            }
+
+            impl SharedTrait for AnotherContract {
+                func baz(arg: char) -> String {
+                    return "hello"
+                }
+            }
+
+            // can be overridden
+            pub interface AnotherContractInterface {
+                func baz() {}
             }
         }
         "#;
@@ -796,13 +902,10 @@ mod tests {
         } else {
             println!(
                 "error: {:?}, \nposition: line {:?}, col {:?}",
-                lexer
-                    .errors()
-                    .pop()
-                    .expect("Error not found")
-                    .to_lex_error(&lexer.handler)
-                    .expect("Cannot convert to LexError")
-                    .error_kind,
+                lexer.errors().pop().expect("Error not found"),
+                // .to_lex_error(&lexer.handler)
+                // .expect("Cannot convert to LexError")
+                // .error_kind,
                 lexer.errors().pop().expect("Error not found").line_col().0,
                 lexer.errors().pop().expect("Error not found").line_col().1
             );
