@@ -39,6 +39,7 @@ pub enum KeywordKind {
     KwReturn,
     KwSelf,
     KwStatic,
+    KwStorage,
     KwStruct,
     KwSuper, // only relevant in path expressions
     KwTrait,
@@ -76,6 +77,7 @@ impl KeywordKind {
             KeywordKind::KwReturn => "return",
             KeywordKind::KwSelf => "self",
             KeywordKind::KwStatic => "static",
+            KeywordKind::KwStorage => "storage",
             KeywordKind::KwStruct => "struct",
             KeywordKind::KwSuper => "super",
             KeywordKind::KwTrait => "trait",
@@ -117,6 +119,7 @@ impl FromStr for KeywordKind {
             "return" => Ok(KeywordKind::KwReturn),
             "self" => Ok(KeywordKind::KwSelf),
             "static" => Ok(KeywordKind::KwStatic),
+            "storage" => Ok(KeywordKind::KwStorage),
             "struct" => Ok(KeywordKind::KwStruct),
             "super" => Ok(KeywordKind::KwSuper),
             "trait" => Ok(KeywordKind::KwTrait),
