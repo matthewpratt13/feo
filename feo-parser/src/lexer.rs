@@ -800,95 +800,100 @@ mod tests {
                     print!("hello world")
                 }
             }
-        }
 
-        contract Contract {
-            import super::ExternalMod::Library;
-            import super::AnotherExternalMod::AnotherContract::{AnotherContractInterface, SharedTrait};
-
-            struct Foo {
-                field1: String,
-                field2: char,
-                field3: u256,
-                field4: Vec<f64>,
-                field5: i64,
-                field6: bool
-            }
-            
-            interface ContractInterface {
-                func foo() -> Foo;
-                func bar(arg1: u256, arg2: u256);
-            }
-
-            storage {
-                const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
-                static OWNER: Identity = Identity::User(UserId::from(msg.sender()));
-                static BALANCE: u64 = 0;
-            }
-
-            impl ContractInterface for Contract {
-                func foo() -> Foo {
-                    let vec: Vec<u64> = [1, 2, 3, 4];
-                    let mut new_vec: Vec<f64> = [];
-
-                    for num in vec {
-                        new_vec.push(num as f64);
-                    }
-
-                    new_vec.push(5.0);
-
-                    return Foo {
-                        field1: "foo",
-                        field2: '\'',
-                        field3: 0x0123_4567_89AB_CDEF,
-                        field4: new_vec,
-                        field5: -1234,
-                        field6: true
-                    }
+            trait SharedTrait {
+                    func baz() -> String
                 }
-
-                func greater_than(arg1: u256, arg2: u256) {
-                    if arg1 > arg2 {
-                        print!("{} is greater than {}", arg1, arg2);
-                    } else if arg1 == arg2 {
-                        print!("{} is equal to {}", arg1, arg2);
-                    } else {
-                        print!("{} is less than {}", arg1, arg2);
-                    }
-
-                    Library::hello_world();
-                }
-            }
-
-            impl AnotherContractInterface for Contract {
-                func baz() {
-                    // some implementation
-                }
-            }
-
-            impl SharedTrait for Contract {
-                func bar() -> String {
-                    return "world"
             }
         }
 
-        pub mod AnotherExternalMod {
-            // "abstract" because it doesn't have its own *interface* impl (but has a *trait* impl)
-            abstract contract AnotherContract {
-                pub trait SharedTrait {
-                        func baz() -> String
+
+        mod MainPrivateMod {
+            import super::ExternalMod::{Library, SharedTrait};
+            import super::AnotherPrivateMod::AbstractContract::AbstractContractInterface;
+
+            contract Contract {
+                struct Foo {
+                    field1: String,
+                    field2: char,
+                    field3: u256,
+                    field4: Vec<f64>,
+                    field5: i64,
+                    field6: bool
+                }
+                
+                interface ContractInterface {
+                    func foo() -> Foo;
+                    func bar(arg1: u256, arg2: u256);
+                }
+
+                storage {
+                    const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
+                    static OWNER: Identity = Identity::User(UserId::from(msg.sender()));
+                    static BALANCE: u64 = 0;
+                }
+
+                impl ContractInterface for Contract {
+                    func foo() -> Foo {
+                        let vec: Vec<u64> = [1, 2, 3, 4];
+                        let mut new_vec: Vec<f64> = [];
+
+                        for num in vec {
+                            new_vec.push(num as f64);
+                        }
+
+                        new_vec.push(5.0);
+
+                        return Foo {
+                            field1: "foo",
+                            field2: '\'',
+                            field3: 0x0123_4567_89AB_CDEF,
+                            field4: new_vec,
+                            field5: -1234,
+                            field6: true
+                        }
+                    }
+
+                    func greater_than(arg1: u256, arg2: u256) {
+                        if arg1 > arg2 {
+                            print!("{} is greater than {}", arg1, arg2);
+                        } else if arg1 == arg2 {
+                            print!("{} is equal to {}", arg1, arg2);
+                        } else {
+                            print!("{} is less than {}", arg1, arg2);
+                        }
+
+                        Library::hello_world();
                     }
                 }
 
-                impl SharedTrait for AnotherContract {
-                    func baz(arg: char) -> String {
+                impl AbstractContractInterface for Contract {
+                    func baz() {
+                        // some implementation
+                    }
+                }
+
+                impl SharedTrait for Contract {
+                    func bar() -> String {
                         return "hello"
-                    }
                 }
+            }
+        }
 
+        mod AnotherPrivateMod {
+            import super::ExternalMod::SharedTrait;
+
+            // "abstract" because it doesn't have its own *interface* impl (but has a *trait* impl)
+            abstract contract AbstractContract {
                 // can be overridden
                 pub interface AnotherContractInterface {
                     func baz() {}
+                }
+
+                impl SharedTrait for AbstractContract {
+                    func baz(arg: char) -> String {
+                        return "world"
+                    }
                 }
             }
         }
