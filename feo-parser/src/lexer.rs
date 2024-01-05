@@ -7,10 +7,12 @@ use feo_ast::{
     doc_comment::DocComment,
     identifier::Identifier,
     keyword::Keyword,
-    literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
+    literals::{
+        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+    },
     punctuation::Punctuation,
     token::{Token, TokenStream, Tokenize},
-    type_annotation::TypeAnnotation,
+    type_annotation::{TypeAnnKind, TypeAnnotation},
 };
 
 use feo_error::{
@@ -529,6 +531,24 @@ impl<'a> Lexer<'a> {
                 _ if c == '0' && self.peek_next() == Some('x') => {
                     // `start_pos` is global `start_pos` (above)
 
+                    let mut is_u256 = false;
+
+                    let i = tokens.len() - 2; // go backwards: skip the '=', return the 'type_ann'
+
+                    let t = tokens
+                        .get(i)
+                        .expect("Token not found")
+                        .clone()
+                        .expect("Token not found");
+
+                    if let Ok(ta) = TypeAnnKind::try_from(t)
+                        .map_err(|_| self.log_error(LexErrorKind::TypeAnnotationError))
+                    {
+                        if ta == TypeAnnKind::TypeAnnU256 {
+                            is_u256 = true;
+                        }
+                    }
+
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
 
@@ -544,15 +564,27 @@ impl<'a> Lexer<'a> {
 
                     let num_content = Arc::new(&data);
 
-                    let uint_lit = UIntLiteral::tokenize(
-                        &self.input,
-                        &num_content,
-                        start_pos,
-                        self.pos,
-                        &mut self.handler,
-                    )?;
+                    if is_u256 {
+                        let u256_lit = U256Literal::tokenize(
+                            &self.input,
+                            &num_content,
+                            start_pos,
+                            self.pos,
+                            &mut self.handler,
+                        )?;
 
-                    tokens.push(uint_lit);
+                        tokens.push(u256_lit);
+                    } else {
+                        let uint_lit = UIntLiteral::tokenize(
+                            &self.input,
+                            &num_content,
+                            start_pos,
+                            self.pos,
+                            &mut self.handler,
+                        )?;
+
+                        tokens.push(uint_lit);
+                    }
                 }
 
                 _ if c.is_digit(10)
@@ -663,7 +695,8 @@ impl<'a> Lexer<'a> {
 
 fn is_built_in_type_annotation(iden: &str) -> bool {
     [
-        "char", "String", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64", "Vec",
+        "char", "String", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64",
+        "Vec",
     ]
     .contains(&iden)
 }
@@ -701,6 +734,7 @@ mod tests {
             pub func new() -> Foo {
                 let vec = [0xBEEF_ABCD, 2_000_000, 3, 4];
                 let mut new_vec: Vec<f64> = [];
+                let big_uint: u256 = 0x0123_4567_89AB_CDEF
 
                 if foo < 0 {
                     print("{}", foo);

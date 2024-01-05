@@ -11,6 +11,7 @@ use crate::{
         BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
     },
     punctuation::Punctuation,
+    type_annotation::TypeAnnotation,
 };
 
 pub trait Tokenize {
@@ -36,6 +37,7 @@ pub enum Token {
 
     Iden(Identifier),
     Keyword(Keyword),
+    TypeAnn(TypeAnnotation),
 
     Comment(Comment),
     DocComment(DocComment),
@@ -56,6 +58,7 @@ impl Spanned for Token {
             Token::FloatLit(f) => f.span(),
             Token::Iden(i) => i.span(),
             Token::Keyword(k) => k.span(),
+            Token::TypeAnn(ta) => ta.span(),
             Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),

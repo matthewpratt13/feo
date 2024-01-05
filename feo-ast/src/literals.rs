@@ -142,8 +142,11 @@ impl Tokenize for UIntLiteral {
             if content_as_hex_u256 > u64::MAX.as_::<U256>() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
-                u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 16)
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(uint_err)))?
+                u64::from_str_radix(
+                    &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                    16,
+                )
+                .map_err(|_| handler.emit_err(CompilerError::Parser(uint_err)))?
             }
         } else {
             let content_as_dec_u256 =
