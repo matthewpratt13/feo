@@ -1,4 +1,4 @@
-use crate::span::Span;
+use crate::{span::Span, U256};
 
 pub trait Primitive {}
 
@@ -17,6 +17,8 @@ impl Primitive for u16 {}
 impl Primitive for u32 {}
 
 impl Primitive for u64 {}
+
+impl Primitive for U256 {}
 
 impl Primitive for f32 {}
 

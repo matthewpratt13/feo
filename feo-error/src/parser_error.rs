@@ -6,6 +6,7 @@ pub enum ParserErrorKind {
     ParseBoolError,
     ParseIntError,
     ParseUIntError,
+    ParseU256Error,
     ParseFloatError,
     CharPositionNotFound,
 }

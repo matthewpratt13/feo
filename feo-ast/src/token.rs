@@ -7,7 +7,9 @@ use crate::{
     doc_comment::DocComment,
     identifier::Identifier,
     keyword::Keyword,
-    literals::{BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral},
+    literals::{
+        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+    },
     punctuation::Punctuation,
 };
 
@@ -29,6 +31,7 @@ pub enum Token {
     BoolLit(BoolLiteral),
     IntLit(IntLiteral),
     UIntLit(UIntLiteral),
+    U256Lit(U256Literal),
     FloatLit(FloatLiteral),
 
     Iden(Identifier),
@@ -48,7 +51,8 @@ impl Spanned for Token {
             Token::StringLit(s) => s.span(),
             Token::BoolLit(b) => b.span(),
             Token::IntLit(i) => i.span(),
-            Token::UIntLit(u) => u.span(),
+            Token::UIntLit(ui) => ui.span(),
+            Token::U256Lit(u) => u.span(),
             Token::FloatLit(f) => f.span(),
             Token::Iden(i) => i.span(),
             Token::Keyword(k) => k.span(),
