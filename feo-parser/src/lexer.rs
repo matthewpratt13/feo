@@ -794,16 +794,17 @@ mod tests {
         
         /// doc comment
 
-        library Library {
-            func hello_world() {
-                print!("hello world")
+        pub mod ExternalMod {
+            library Library {
+                func hello_world() {
+                    print!("hello world")
+                }
             }
         }
 
         contract Contract {
-            import super::Library;
-            import super::AnotherContract::AnotherContractInterface;
-            import super::AnotherContract::SharedTrait;
+            import super::ExternalMod::Library;
+            import super::AnotherExternalMod::AnotherContract::{AnotherContractInterface, SharedTrait};
 
             struct Foo {
                 field1: String,
@@ -871,22 +872,24 @@ mod tests {
             }
         }
 
-        // "abstract" because it doesn't have its own *interface* impl (but has a *trait* impl)
-        abstract contract AnotherContract {
-            pub trait SharedTrait {
-                    func baz() -> String
+        pub mod AnotherExternalMod {
+            // "abstract" because it doesn't have its own *interface* impl (but has a *trait* impl)
+            abstract contract AnotherContract {
+                pub trait SharedTrait {
+                        func baz() -> String
+                    }
                 }
-            }
 
-            impl SharedTrait for AnotherContract {
-                func baz(arg: char) -> String {
-                    return "hello"
+                impl SharedTrait for AnotherContract {
+                    func baz(arg: char) -> String {
+                        return "hello"
+                    }
                 }
-            }
 
-            // can be overridden
-            pub interface AnotherContractInterface {
-                func baz() {}
+                // can be overridden
+                pub interface AnotherContractInterface {
+                    func baz() {}
+                }
             }
         }
         "#;
