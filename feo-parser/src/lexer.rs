@@ -797,16 +797,10 @@ mod tests {
 
         /// doc comment
 
-        program;
-
         script Main {
-            import some_module;
+            import some_module::{self, SomeContract};
             import some_public_module::SomeLibrary;
             import another_public_module::SomeAbstractContract;
-
-            mod some_module;
-            pub mod some_public_module;
-            pub mod another_public_module;
 
             func main() {
                 some_module::greater_than(1, 2);
@@ -820,7 +814,7 @@ mod tests {
             }
         }
 
-        mod some_public_module {
+        pub mod some_public_module {
             library SomeLibrary {
                 func hello_world() {
                     print!("hello world");
@@ -832,7 +826,7 @@ mod tests {
             }
         }
 
-        mod another_public_module {
+        pub mod another_public_module {
             import super::some_public_module::SomeTrait;
 
             pub enum Colour {
