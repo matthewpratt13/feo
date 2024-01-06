@@ -808,6 +808,8 @@ mod tests {
         
         program;
 
+        mod some_library;
+
         script Main {
             import some_module::SomeContract;
             import another_public_module::SomeAbstractContract;
