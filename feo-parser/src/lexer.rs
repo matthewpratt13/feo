@@ -102,14 +102,15 @@ impl<'a> Lexer<'a> {
                 }
 
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
-                    self.advance();
+                    self.advance(); // skip first '/'
 
                     match self.current_char() {
                         Some('/') => {
-                            self.advance();
+                            self.advance(); // skip second '/'
 
+                            // doc comment
                             if self.current_char() == Some('/') {
-                                self.advance();
+                                self.advance(); // skip third '/'
                                 self.skip_whitespace();
 
                                 let start_pos = self.pos; // start reading after the three '/'
@@ -161,12 +162,12 @@ impl<'a> Lexer<'a> {
                         }
 
                         Some('*') => {
-                            self.advance();
+                            self.advance(); // skip '*'
 
                             while let Some(c) = self.current_char() {
                                 if c == '*' {
-                                    self.advance();
-                                    self.advance();
+                                    self.advance(); // skip closing '*'
+                                    self.advance(); // skip closing '/'
                                     break;
                                 } else {
                                     self.advance();
@@ -247,6 +248,7 @@ impl<'a> Lexer<'a> {
                             start_pos + buf.len(),
                             &mut self.handler,
                         )?;
+
                         tokens.push(iden);
                     }
                 }
@@ -503,7 +505,7 @@ impl<'a> Lexer<'a> {
                                     return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
                                 }
 
-                                self.advance();
+                                self.advance(); // return next (regular) char
 
                                 if self.current_char() == Some('\'') {
                                     let char_lit = CharLiteral::tokenize(
@@ -515,7 +517,6 @@ impl<'a> Lexer<'a> {
                                     )?;
 
                                     tokens.push(char_lit);
-
                                     self.advance(); // skip closing '\'' (single quote)
                                 } else {
                                     return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
@@ -638,6 +639,7 @@ impl<'a> Lexer<'a> {
                             self.pos,
                             &mut self.handler,
                         )?;
+
                         tokens.push(int_lit);
                     } else {
                         let uint_lit = UIntLiteral::tokenize(
@@ -647,6 +649,7 @@ impl<'a> Lexer<'a> {
                             self.pos,
                             &mut self.handler,
                         )?;
+
                         tokens.push(uint_lit);
                     }
                 }
