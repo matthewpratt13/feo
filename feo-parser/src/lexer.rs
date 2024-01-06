@@ -855,7 +855,7 @@ mod tests {
                 }
 
                 impl SomeTrait for SomeAbstractContract {
-                    pub func bar() -> String {
+                    func bar() -> String {
                         return "world"
                     }
                 }
