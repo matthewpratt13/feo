@@ -794,25 +794,25 @@ mod tests {
         
         /// doc comment
 
-        pub mod ExternalMod {
-            library Library {
+        pub mod SomePublicModule {
+            library SomeLibrary {
                 func hello_world() {
-                    print!("hello world")
+                    print!("hello world");
                 }
             }
 
-            trait SharedTrait {
-                    func baz() -> String
+            // each implementation is different (i.e., the functions are "overridden")
+            trait SomeTrait {
+                    func bar() -> String; 
                 }
             }
         }
 
+        mod SomeModule {
+            import super::SomePublicModule::{SomeLibrary, SomeTrait};
+            import super::AnotherModule::SomeAbstractContract::SomeAbstractContractInterface;
 
-        mod MainPrivateMod {
-            import super::ExternalMod::{Library, SharedTrait};
-            import super::AnotherPrivateMod::AbstractContract::AbstractContractInterface;
-
-            contract Contract {
+            contract SomeContract {
                 struct Foo {
                     field1: String,
                     field2: char,
@@ -822,7 +822,7 @@ mod tests {
                     field6: bool
                 }
                 
-                interface ContractInterface {
+                interface SomeContractInterface {
                     func foo() -> Foo;
                     func bar(arg1: u256, arg2: u256);
                 }
@@ -833,7 +833,7 @@ mod tests {
                     static BALANCE: u64 = 0;
                 }
 
-                impl ContractInterface for Contract {
+                impl SomeContractInterface for SomeContract {
                     func foo() -> Foo {
                         let vec: Vec<u64> = [1, 2, 3, 4];
                         let mut new_vec: Vec<f64> = [];
@@ -867,31 +867,31 @@ mod tests {
                     }
                 }
 
-                impl AbstractContractInterface for Contract {
+                impl SomeAbstractContractInterface for SomeContract {
                     func baz() {
                         // some implementation
                     }
                 }
 
-                impl SharedTrait for Contract {
+                impl SomeTrait for SomeContract {
                     func bar() -> String {
                         return "hello"
                 }
             }
         }
 
-        mod AnotherPrivateMod {
-            import super::ExternalMod::SharedTrait;
+        mod AnotherModule {
+            import super::SomePublicModule::SomeTrait;
 
-            // "abstract" because it doesn't have its own *interface* impl (but has a *trait* impl)
-            abstract contract AbstractContract {
-                // can be overridden
+            abstract contract SomeAbstractContract {
+                // this has no implementation, but can be "inherited" and "overridden"
                 pub interface AnotherContractInterface {
                     func baz() {}
                 }
 
-                impl SharedTrait for AbstractContract {
-                    func baz(arg: char) -> String {
+                // but abstract contracts can have trait implementations (*not* "inherited")
+                impl SomeTrait for SomeAbstractContract {
+                    func bar() -> String {
                         return "world"
                     }
                 }
