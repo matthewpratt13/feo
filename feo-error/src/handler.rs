@@ -17,7 +17,7 @@ struct HandlerInner {
 impl Handler {
     pub fn emit_err(&self, err: CompilerError) -> ErrorEmitted {
         self.inner.borrow_mut().errors.push(err);
-        ErrorEmitted { _private: () }
+        ErrorEmitted { _phantom: () }
     }
 
     pub fn emit_warn(&self, warn: CompilerWarning) {
@@ -44,5 +44,5 @@ impl From<(Vec<CompilerError>, Vec<CompilerWarning>)> for Handler {
 // returned in place of some `CompilerError` (i.e., `LexError`, `ParserError`, `TypeError`, etc.)
 #[derive(Debug)]
 pub struct ErrorEmitted {
-    _private: (),
+    _phantom: (),
 }
