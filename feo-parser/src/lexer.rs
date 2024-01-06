@@ -800,6 +800,10 @@ mod tests {
         program;
 
         script Main {
+            import some_module::SomeContract;
+            import some_public_module::SomeLibrary;
+            import another_public_module::SomeAbstractContract;
+            
             func main() {
                 greater_than(1, 2);
 
