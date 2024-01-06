@@ -814,67 +814,37 @@ mod tests {
         `main.feo`
         ////////////////////////////////////////////////////////////////////////////////
         
-        program;
+        script;
+
+        import crate::some_module::SomeContract;
+        import crate::some_public_module::SomeAbstractContract;
 
         mod some_library;
+        pub mod some_public_module;
 
-        script Main {
-            import some_module::SomeContract;
-            import another_public_module::SomeAbstractContract;
+        func main() {
+            greater_than(1, 2);
 
-            func main() {
-                greater_than(1, 2);
+            let hello = SomeContract::bar();
+            let world = SomeAbstractContract::bar();
 
-                let hello = SomeContract::bar();
-                let world = SomeAbstractContract::bar();
+            print!("{} {}", hello, world);
 
-                print!("{} {}", hello, world);
-
-                some_library::hello_world();
-            }
-
-            func greater_than(arg1: u256, arg2: u256) {
-                if arg1 > arg2 {
-                    print!("{} is greater than {}", arg1, arg2);
-                } else if arg1 == arg2 {
-                    print!("{} is equal to {}", arg1, arg2);
-                } else {
-                    print!("{} is less than {}", arg1, arg2);
-                }
-            }
+            some_library::hello_world();
         }
 
-        pub mod some_public_module {
-            pub trait SomeTrait {
-                func bar() -> String; 
+        func greater_than(arg1: u256, arg2: u256) {
+            if arg1 > arg2 {
+                print!("{} is greater than {}", arg1, arg2);
+            } else if arg1 == arg2 {
+                print!("{} is equal to {}", arg1, arg2);
+            } else {
+                print!("{} is less than {}", arg1, arg2);
             }
         }
-
-        pub mod another_public_module {
-            import super::some_public_module::SomeTrait;
-
-            pub enum Colour {
-                Red,
-                Green, 
-                Blue
-            }
-
-            abstract contract SomeAbstractContract {
-                pub interface {
-                    func colour(arg: char) -> Colour?;
-                }
-
-                impl SomeTrait for SomeAbstractContract {
-                    func bar() -> String {
-                        return "world"
-                    }
-                }
-            }
-        }
-
+        
         mod some_module {
-            import super::some_public_module::SomeTrait;
-            import super::another_public_module::{SomeAbstractContract, Colour};
+            import crate::some_public_module::{Colour, SomeAbstractContract, SomeTrait};
 
             struct Foo {
                 field1: String,
@@ -933,6 +903,32 @@ mod tests {
                     func bar() -> String {
                         return "hello"
                     }
+                }
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        `some_public_module.feo`
+        ////////////////////////////////////////////////////////////////////////////////
+
+        pub enum Colour {
+            Red,
+            Green, 
+            Blue
+        }
+
+        pub trait SomeTrait {
+            func bar() -> String; 
+        }
+
+        abstract contract SomeAbstractContract {
+            pub interface {
+                func colour(arg: char) -> Colour?;
+            }
+
+            impl SomeTrait for SomeAbstractContract {
+                func bar() -> String {
+                    return "world"
                 }
             }
         }
