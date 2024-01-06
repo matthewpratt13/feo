@@ -689,7 +689,7 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn errors(&self) -> Vec<CompilerError> {
-        self.handler.clone().get().0
+        self.handler.clone().get_inner().0
     }
 }
 

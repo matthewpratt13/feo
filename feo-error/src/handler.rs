@@ -24,7 +24,7 @@ impl Handler {
         self.inner.borrow_mut().warnings.push(warn)
     }
 
-    pub fn get(self) -> (Vec<CompilerError>, Vec<CompilerWarning>) {
+    pub fn get_inner(self) -> (Vec<CompilerError>, Vec<CompilerWarning>) {
         let inner = self.inner.into_inner();
         (inner.errors, inner.warnings)
     }
