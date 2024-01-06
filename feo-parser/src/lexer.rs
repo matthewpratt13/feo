@@ -797,11 +797,16 @@ mod tests {
 
         /// doc comment
         
+        library SomeLibrary {
+            func hello_world() {
+                print!("hello world");
+            }
+        }
+        
         program;
 
         script Main {
             import some_module::SomeContract;
-            import some_public_module::SomeLibrary;
             import another_public_module::SomeAbstractContract;
 
             func main() {
@@ -827,11 +832,6 @@ mod tests {
         }
 
         pub mod some_public_module {
-            library SomeLibrary {
-                func hello_world() {
-                    print!("hello world");
-                }
-            }
 
             pub trait SomeTrait {
                 func bar() -> String; 
