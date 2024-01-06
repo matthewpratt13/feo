@@ -803,12 +803,12 @@ mod tests {
             import some_module::SomeContract;
             import some_public_module::SomeLibrary;
             import another_public_module::SomeAbstractContract;
-            
+
             func main() {
                 greater_than(1, 2);
 
                 let hello = SomeContract::bar();
-                let word = SomeAbstractContract::bar();
+                let world = SomeAbstractContract::bar();
 
                 print!("{} {}", hello, world);
 
