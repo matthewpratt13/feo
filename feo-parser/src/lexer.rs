@@ -834,9 +834,7 @@ mod tests {
             }
         }
 
-        
         pub mod some_public_module {
-
             pub trait SomeTrait {
                 func bar() -> String; 
             }
