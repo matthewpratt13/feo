@@ -798,12 +798,12 @@ mod tests {
         /// doc comment
 
         script Main {
-            import some_module::{self, SomeContract};
+            import some_module::SomeContract;
             import some_public_module::SomeLibrary;
             import another_public_module::SomeAbstractContract;
 
             func main() {
-                some_module::greater_than(1, 2);
+                greater_than(1, 2);
 
                 let hello = SomeContract::bar();
                 let word = SomeAbstractContract::bar();
@@ -811,6 +811,16 @@ mod tests {
                 print!("{} {}", hello, world);
 
                 SomeLibrary::hello_world();
+            }
+
+            func greater_than(arg1: u256, arg2: u256) {
+                if arg1 > arg2 {
+                    print!("{} is greater than {}", arg1, arg2);
+                } else if arg1 == arg2 {
+                    print!("{} is equal to {}", arg1, arg2);
+                } else {
+                    print!("{} is less than {}", arg1, arg2);
+                }
             }
         }
 
@@ -910,16 +920,6 @@ mod tests {
                     func bar() -> String {
                         return "hello"
                     }
-                }
-            }
-            
-            extern func greater_than(arg1: u256, arg2: u256) {
-                if arg1 > arg2 {
-                    print!("{} is greater than {}", arg1, arg2);
-                } else if arg1 == arg2 {
-                    print!("{} is equal to {}", arg1, arg2);
-                } else {
-                    print!("{} is less than {}", arg1, arg2);
                 }
             }
         }
