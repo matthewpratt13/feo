@@ -787,53 +787,96 @@ mod tests {
 
         let source_code = r#"
         // line comment
-        
+
         /*
         block comment
         */
-        
-        /// doc comment
 
-        pub mod SomePublicModule {
+        // doc comment
+
+        program;
+
+        script Main {
+            import some_module;
+            import some_public_module::SomeLibrary;
+            import another_public_module::SomeAbstractContract;
+
+            mod some_module;
+            pub mod some_public_module;
+            pub mod another_public_module;
+
+            func main() {
+                some_module::greater_than(1, 2);
+
+                let hello = SomeContract::bar();
+                let word = SomeAbstractContract::bar();
+
+                print!("{} {}", hello, world);
+
+                SomeLibrary::hello_world();
+            }
+        }
+
+        mod some_public_module {
             library SomeLibrary {
                 func hello_world() {
                     print!("hello world");
                 }
             }
 
-            // each implementation is different (i.e., the functions are "overridden")
-            trait SomeTrait {
-                    func bar() -> String; 
+            pub trait SomeTrait {
+                func bar() -> String; 
+            }
+        }
+
+        mod another_public_module {
+            import super::some_public_module::SomeTrait;
+
+            pub enum Colour {
+                Red,
+                Green, 
+                Blue
+            }
+
+            abstract contract SomeAbstractContract {
+                pub interface {
+                    func colour(arg: char) -> Colour?;
+                }
+
+                impl SomeTrait for SomeAbstractContract {
+                    pub func bar() -> String {
+                        return "world"
+                    }
                 }
             }
         }
 
-        mod SomeModule {
-            import super::SomePublicModule::{SomeLibrary, SomeTrait};
-            import super::AnotherModule::SomeAbstractContract::SomeAbstractContractInterface;
+        mod some_module {
+            import super::some_public_module::SomeTrait;
+            import super::another_public_module::{SomeAbstractContract, Colour};
+
+            struct Foo {
+                field1: String,
+                field2: char,
+                field3: u256,
+                field4: Vec<f64>,
+                field5: i64,
+                field6: bool
+            }
 
             contract SomeContract {
-                struct Foo {
-                    field1: String,
-                    field2: char,
-                    field3: u256,
-                    field4: Vec<f64>,
-                    field5: i64,
-                    field6: bool
+                pub storage {
+                    pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
+                    pub static OWNER: Identity = Identity::User(UserId::from(msg.sender()));
+                    static BALANCE: u64 = 0;
                 }
-                
-                interface SomeContractInterface {
+
+                interface {
                     func foo() -> Foo;
                     func bar(arg1: u256, arg2: u256);
                 }
 
-                storage {
-                    const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
-                    static OWNER: Identity = Identity::User(UserId::from(msg.sender()));
-                    static BALANCE: u64 = 0;
-                }
-
-                impl SomeContractInterface for SomeContract {
+                impl SomeContract {
                     func foo() -> Foo {
                         let vec: Vec<u64> = [1, 2, 3, 4];
                         let mut new_vec: Vec<f64> = [];
@@ -853,47 +896,33 @@ mod tests {
                             field6: true
                         }
                     }
-
-                    func greater_than(arg1: u256, arg2: u256) {
-                        if arg1 > arg2 {
-                            print!("{} is greater than {}", arg1, arg2);
-                        } else if arg1 == arg2 {
-                            print!("{} is equal to {}", arg1, arg2);
-                        } else {
-                            print!("{} is less than {}", arg1, arg2);
-                        }
-
-                        Library::hello_world();
-                    }
                 }
 
-                impl SomeAbstractContractInterface for SomeContract {
-                    func baz() {
-                        // some implementation
+                impl SomeAbstractContract for SomeContract {
+                    func colour(arg: char) -> Colour? {
+                        return match arg {
+                            'r' => Some(Colour::Red),
+                            'g' => Some(Colour::Green)
+                            'b' => Some(Colour::Blue),
+                            _ => None
+                        }
                     }
                 }
 
                 impl SomeTrait for SomeContract {
                     func bar() -> String {
                         return "hello"
+                    }
                 }
             }
-        }
-
-        mod AnotherModule {
-            import super::SomePublicModule::SomeTrait;
-
-            abstract contract SomeAbstractContract {
-                // this has no implementation, but can be "inherited" and "overridden"
-                pub interface AnotherContractInterface {
-                    func baz() {}
-                }
-
-                // but abstract contracts can have trait implementations (*not* "inherited")
-                impl SomeTrait for SomeAbstractContract {
-                    func bar() -> String {
-                        return "world"
-                    }
+            
+            extern func greater_than(arg1: u256, arg2: u256) {
+                if arg1 > arg2 {
+                    print!("{} is greater than {}", arg1, arg2);
+                } else if arg1 == arg2 {
+                    print!("{} is equal to {}", arg1, arg2);
+                } else {
+                    print!("{} is less than {}", arg1, arg2);
                 }
             }
         }
