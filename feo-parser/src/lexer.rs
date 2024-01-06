@@ -797,10 +797,10 @@ mod tests {
 
         /// doc comment
         
-        library SomeLibrary {
-            func hello_world() {
-                print!("hello world");
-            }
+        library;
+        
+        func hello_world() {
+            print!("hello world");
         }
         
         program;
@@ -817,7 +817,7 @@ mod tests {
 
                 print!("{} {}", hello, world);
 
-                SomeLibrary::hello_world();
+                some_library::hello_world();
             }
 
             func greater_than(arg1: u256, arg2: u256) {
