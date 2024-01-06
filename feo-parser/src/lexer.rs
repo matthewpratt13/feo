@@ -795,7 +795,7 @@ mod tests {
         block comment
         */
 
-        // doc comment
+        /// doc comment
 
         program;
 
