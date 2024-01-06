@@ -796,6 +796,8 @@ mod tests {
         */
 
         /// doc comment
+        
+        program;
 
         script Main {
             import some_module::SomeContract;
