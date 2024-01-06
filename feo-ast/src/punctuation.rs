@@ -184,18 +184,18 @@ impl Tokenize for Punctuation {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = TypeError {
+        let error = TypeError {
             error_kind: TypeErrorKind::UnrecognizedPunctuation,
             position: Position::new(src, start),
         };
 
         // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let punc_kind =
-            PuncKind::from_str(content).map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
+            PuncKind::from_str(content).map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
-        let punc = Punctuation::new(punc_kind, span);
+        let punctuation = Punctuation::new(punc_kind, span);
 
-        let token = Token::Punc(punc);
+        let token = Token::Punc(punctuation);
 
         Ok(Some(token))
     }

@@ -25,9 +25,9 @@ impl Tokenize for Identifier {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let iden = Identifier::new(content.to_string(), span);
+        let identifier = Identifier::new(content.to_string(), span);
 
-        let token = Token::Iden(iden);
+        let token = Token::Iden(identifier);
 
         Ok(Some(token))
     }

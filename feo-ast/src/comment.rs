@@ -50,12 +50,12 @@ impl Tokenize for Comment {
             }
 
             _ => {
-                let err = TypeError {
+                let error = TypeError {
                     error_kind: TypeErrorKind::UnrecognizedCommentOpener,
                     position: Position::new(src, start),
                 };
 
-                return Err(handler.emit_err(CompilerError::Type(err)));
+                return Err(handler.emit_err(CompilerError::Type(error)));
             }
         };
 

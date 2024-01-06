@@ -208,7 +208,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if buf == "true" || buf == "false" {
-                        let bool_lit = BoolLiteral::tokenize(
+                        let bool_literal = BoolLiteral::tokenize(
                             &self.input,
                             &buf,
                             start_pos, // global `start_pos`
@@ -216,7 +216,7 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(bool_lit);
+                        tokens.push(bool_literal);
                         continue;
                     }
 
@@ -241,7 +241,7 @@ impl<'a> Lexer<'a> {
 
                         tokens.push(keyword);
                     } else {
-                        let iden = Identifier::tokenize(
+                        let identifier = Identifier::tokenize(
                             &self.input,
                             &buf,
                             start_pos, // global `start_pos`
@@ -249,7 +249,7 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(iden);
+                        tokens.push(identifier);
                     }
                 }
 
@@ -258,7 +258,7 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         '(' => {
-                            let delim = Delimiter::tokenize(
+                            let delimiter = Delimiter::tokenize(
                                 &self.input,
                                 "(",
                                 start_pos,
@@ -266,11 +266,11 @@ impl<'a> Lexer<'a> {
                                 &mut self.handler,
                             )?;
 
-                            tokens.push(delim);
+                            tokens.push(delimiter);
                         }
 
                         '[' => {
-                            let delim = Delimiter::tokenize(
+                            let delimiter = Delimiter::tokenize(
                                 &self.input,
                                 "[",
                                 start_pos,
@@ -278,11 +278,11 @@ impl<'a> Lexer<'a> {
                                 &mut self.handler,
                             )?;
 
-                            tokens.push(delim);
+                            tokens.push(delimiter);
                         }
 
                         '{' => {
-                            let delim = Delimiter::tokenize(
+                            let delimiter = Delimiter::tokenize(
                                 &self.input,
                                 "{",
                                 start_pos,
@@ -290,7 +290,7 @@ impl<'a> Lexer<'a> {
                                 &mut self.handler,
                             )?;
 
-                            tokens.push(delim);
+                            tokens.push(delimiter);
                         }
                         _ => unreachable!(),
                     };
@@ -303,7 +303,7 @@ impl<'a> Lexer<'a> {
 
                     match c {
                         ')' => {
-                            let delim = Delimiter::tokenize(
+                            let delimiter = Delimiter::tokenize(
                                 &self.input,
                                 ")",
                                 start_pos,
@@ -311,11 +311,11 @@ impl<'a> Lexer<'a> {
                                 &mut self.handler,
                             )?;
 
-                            tokens.push(delim);
+                            tokens.push(delimiter);
                         }
 
                         ']' => {
-                            let delim = Delimiter::tokenize(
+                            let delimiter = Delimiter::tokenize(
                                 &self.input,
                                 "]",
                                 start_pos,
@@ -323,11 +323,11 @@ impl<'a> Lexer<'a> {
                                 &mut self.handler,
                             )?;
 
-                            tokens.push(delim);
+                            tokens.push(delimiter);
                         }
 
                         '}' => {
-                            let delim = Delimiter::tokenize(
+                            let delimiter = Delimiter::tokenize(
                                 &self.input,
                                 "}",
                                 start_pos,
@@ -335,7 +335,7 @@ impl<'a> Lexer<'a> {
                                 &mut self.handler,
                             )?;
 
-                            tokens.push(delim);
+                            tokens.push(delimiter);
                         }
                         _ => unreachable!(),
                     };
@@ -386,7 +386,7 @@ impl<'a> Lexer<'a> {
 
                                 string_literal_open = false;
 
-                                let string_lit = StringLiteral::tokenize(
+                                let string_literal = StringLiteral::tokenize(
                                     &self.input,
                                     &buf,
                                     start_pos,
@@ -394,7 +394,7 @@ impl<'a> Lexer<'a> {
                                     &mut self.handler,
                                 )?;
 
-                                tokens.push(string_lit);
+                                tokens.push(string_literal);
                                 break;
                             }
 
@@ -420,7 +420,7 @@ impl<'a> Lexer<'a> {
                             '\\' => {
                                 self.advance(); // skip '\'
 
-                                let esc_char_lit = match self.current_char() {
+                                let esc_char_literal = match self.current_char() {
                                     Some('n') => CharLiteral::tokenize(
                                         &self.input,
                                         "\n",
@@ -484,7 +484,7 @@ impl<'a> Lexer<'a> {
                                     }
                                 };
 
-                                tokens.push(esc_char_lit);
+                                tokens.push(esc_char_literal);
                                 self.advance(); // skip second char
 
                                 if self.current_char() != Some('\'') {
@@ -508,7 +508,7 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // return next (regular) char
 
                                 if self.current_char() == Some('\'') {
-                                    let char_lit = CharLiteral::tokenize(
+                                    let char_literal = CharLiteral::tokenize(
                                         &self.input,
                                         &c.to_string(),
                                         start_pos,
@@ -516,7 +516,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?;
 
-                                    tokens.push(char_lit);
+                                    tokens.push(char_literal);
                                     self.advance(); // skip closing '\'' (single quote)
                                 } else {
                                     return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
@@ -566,7 +566,7 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_u256 {
-                        let u256_lit = U256Literal::tokenize(
+                        let u256_literal = U256Literal::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -574,9 +574,9 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(u256_lit);
+                        tokens.push(u256_literal);
                     } else {
-                        let uint_lit = UIntLiteral::tokenize(
+                        let uint_literal = UIntLiteral::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -584,7 +584,7 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(uint_lit);
+                        tokens.push(uint_literal);
                     }
                 }
 
@@ -619,7 +619,7 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_float {
-                        let float_lit = FloatLiteral::tokenize(
+                        let float_literal = FloatLiteral::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -627,12 +627,12 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(float_lit);
+                        tokens.push(float_literal);
                         continue;
                     }
 
                     if is_negative {
-                        let int_lit = IntLiteral::tokenize(
+                        let int_literal = IntLiteral::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -640,9 +640,9 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(int_lit);
+                        tokens.push(int_literal);
                     } else {
-                        let uint_lit = UIntLiteral::tokenize(
+                        let uint_literal = UIntLiteral::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -650,7 +650,7 @@ impl<'a> Lexer<'a> {
                             &mut self.handler,
                         )?;
 
-                        tokens.push(uint_lit);
+                        tokens.push(uint_literal);
                     }
                 }
 
@@ -667,7 +667,7 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(&data);
 
-                    let punc = Punctuation::tokenize(
+                    let punctuation = Punctuation::tokenize(
                         &self.input,
                         &punc_content,
                         start_pos,
@@ -675,7 +675,7 @@ impl<'a> Lexer<'a> {
                         &mut self.handler,
                     )?;
 
-                    tokens.push(punc);
+                    tokens.push(punctuation);
                 }
 
                 _ => return Err(self.log_error(LexErrorKind::InvalidChar(c))),

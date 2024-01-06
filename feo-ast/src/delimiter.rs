@@ -84,22 +84,22 @@ impl Tokenize for Delimiter {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = TypeError {
+        let error = TypeError {
             error_kind: TypeErrorKind::UnrecognizedDelimiter,
             position: Position::new(src, start),
         };
 
         // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let delim_kind = DelimKind::from_str(content)
-            .map_err(|_| handler.emit_err(CompilerError::Type(err.clone())))?;
+            .map_err(|_| handler.emit_err(CompilerError::Type(error.clone())))?;
 
         // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let delim_orientation = DelimOrientation::from_str(content)
-            .map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
-        let delim = Delimiter::new(delim_kind, delim_orientation, span);
+        let delimiter = Delimiter::new(delim_kind, delim_orientation, span);
 
-        let token = Token::Delim(delim);
+        let token = Token::Delim(delimiter);
 
         Ok(Some(token))
     }

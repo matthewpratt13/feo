@@ -163,14 +163,14 @@ impl Tokenize for Keyword {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = TypeError {
+        let error = TypeError {
             error_kind: TypeErrorKind::UnrecognizedKeyword,
             position: Position::new(src, start),
         };
 
         // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let keyword_kind = KeywordKind::from_str(content)
-            .map_err(|_| handler.emit_err(CompilerError::Type(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
         let keyword = Keyword::new(keyword_kind, span);
 
