@@ -880,7 +880,6 @@ mod tests {
 
                 interface {
                     func foo() -> Foo;
-                    func bar(arg1: u256, arg2: u256);
                 }
 
                 impl SomeContract {
