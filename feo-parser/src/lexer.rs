@@ -831,6 +831,7 @@ mod tests {
             }
         }
 
+        
         pub mod some_public_module {
 
             pub trait SomeTrait {
@@ -937,10 +938,7 @@ mod tests {
         } else {
             println!(
                 "error: {:?}, \nposition: line {:?}, col {:?}",
-                lexer.errors().pop().expect("Error not found"),
-                // .to_lex_error(&lexer.handler)
-                // .expect("Cannot convert to LexError")
-                // .error_kind,
+                lexer.errors().pop().expect("Error not found").error_kind(),
                 lexer.errors().pop().expect("Error not found").line_col().0,
                 lexer.errors().pop().expect("Error not found").line_col().1
             );

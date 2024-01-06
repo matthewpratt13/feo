@@ -1,4 +1,3 @@
-use crate::handler::{ErrorEmitted, Handler};
 use crate::lex_error::LexError;
 use crate::parser_error::ParserError;
 use crate::type_error::TypeError;
@@ -8,23 +7,32 @@ pub enum CompilerError {
     Lex(LexError),
     Parser(ParserError),
     Type(TypeError),
-    ErrorConversionError,
 }
 
 impl CompilerError {
     pub fn line_col(&self) -> (usize, usize) {
         match self {
-            Self::Lex(l) => l.position.line_col(),
-            Self::Parser(p) => p.position.line_col(),
-            Self::Type(t) => t.position.line_col(),
-            Self::ErrorConversionError => (0, 0),
+            CompilerError::Lex(l) => l.position.line_col(),
+            CompilerError::Parser(p) => p.position.line_col(),
+            CompilerError::Type(t) => t.position.line_col(),
         }
     }
 
-    pub fn to_lex_error(self, handler: &Handler) -> Result<LexError, ErrorEmitted> {
+    // this is throwing a stack overflow error – probably because of the `Box`
+    // how to fix ?
+    pub fn error_kind(&self) -> Box<dyn FeoError> {
         match self {
-            Self::Lex(l) => Ok(l),
-            _ => return Err(handler.emit_err(CompilerError::ErrorConversionError)),
+            CompilerError::Lex(l) => Box::new(l.error_kind),
+            CompilerError::Parser(p) => Box::new(p.error_kind),
+            CompilerError::Type(t) => Box::new(t.error_kind),
         }
+    }
+}
+
+pub trait FeoError {}
+
+impl core::fmt::Debug for dyn FeoError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
     }
 }

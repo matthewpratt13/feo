@@ -1,6 +1,8 @@
 use feo_types::span::Position;
 
-#[derive(Debug, Clone)]
+use crate::error::FeoError;
+
+#[derive(Default, Debug, Copy, Clone)]
 pub enum LexErrorKind {
     UnclosedDelimiters,
     UnclosedStringLiteral,
@@ -13,9 +15,14 @@ pub enum LexErrorKind {
     TypeAnnotationError,
 
     InvalidChar(char),
+
+    #[default]
+    UnknownError,
 }
 
-#[derive(Debug, Clone)]
+impl FeoError for LexErrorKind {}
+
+#[derive(Default, Debug, Clone)]
 pub struct LexError {
     pub error_kind: LexErrorKind,
     pub position: Position,
