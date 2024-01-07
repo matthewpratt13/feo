@@ -661,8 +661,6 @@ impl<'a> Lexer<'a> {
 
                     let punc_content = Arc::new(&data);
 
-                    println!("{}", data);
-
                     let punctuation = Punctuation::tokenize(
                         &self.input,
                         &punc_content,
@@ -701,8 +699,6 @@ impl<'a> Lexer<'a> {
                     let data = self.input[start_pos..self.pos].to_string();
 
                     let punc_content = Arc::new(&data);
-
-                    println!("{}", data);
 
                     let punctuation = Punctuation::tokenize(
                         &self.input,
@@ -796,6 +792,8 @@ fn is_separator(c: char) -> bool {
 
 #[cfg(test)]
 mod tests {
+    use feo_types::PrimitiveType;
+
     use super::*;
 
     #[test]
@@ -949,7 +947,22 @@ mod tests {
 
         if let Ok(t) = lexer.lex() {
             for token in t.tokens() {
-                println!("{:?} \n", token)
+                match token.as_ref().expect("Token not found") {
+                    Token::CharLit(c) => println!("CharLit: {:?}", c.0.raw_value()),
+                    Token::StringLit(s) => println!("StringLit: {:?}", s.0.raw_value()),
+                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.0.raw_value()),
+                    Token::IntLit(i) => println!("IntLit: {:?}", i.0.raw_value()),
+                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.0.raw_value()),
+                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.0.raw_value()),
+                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.0.raw_value()),
+                    Token::Iden(i) => println!("Iden: {:?}", i.name),
+                    Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
+                    Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),
+                    Token::Comment(c) => println!("Comment: {:?}", c.data),
+                    Token::DocComment(dc) => println!("Keyword: {:?}", dc.content),
+                    Token::Delim(d) => println!("Delim: {:?}", d.delim),
+                    Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
+                };
             }
         } else {
             println!(
