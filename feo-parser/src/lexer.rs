@@ -1,4 +1,4 @@
-use core::iter::Peekable;
+use std::iter::Peekable;
 use std::sync::Arc;
 
 use feo_ast::{
@@ -25,7 +25,7 @@ use feo_types::span::Position;
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
-    peekable_chars: Peekable<core::str::Chars<'a>>,
+    peekable_chars: Peekable<std::str::Chars<'a>>,
     handler: Handler,
 }
 
@@ -944,7 +944,7 @@ mod tests {
             }
         } else {
             println!(
-                "error: {:?}, \nposition: line {:?}, col {:?}",
+                "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
                 lexer.errors().pop().expect("Error not found").line_col().0,
                 lexer.errors().pop().expect("Error not found").line_col().1
