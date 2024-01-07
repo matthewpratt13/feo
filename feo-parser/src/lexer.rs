@@ -865,7 +865,7 @@ mod tests {
             contract SomeContract {
                 pub storage {
                     pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
-                    pub static OWNER: Identity = Identity::User(UserId::from(msg.sender()));
+                    pub static OWNER: Identity = Identity::User(UserId::from(msg_sender()));
                     static BALANCE: u64 = 0;
                 }
 
