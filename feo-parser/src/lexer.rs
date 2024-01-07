@@ -745,6 +745,7 @@ fn is_keyword(iden: &str) -> bool {
         "const",
         "continue",
         "contract",
+        "crate",
         "deref",
         "else",
         "enum",
