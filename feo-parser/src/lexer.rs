@@ -543,7 +543,7 @@ impl<'a> Lexer<'a> {
                         .expect("Token not found");
 
                     if let Ok(ta) = TypeAnnKind::try_from(t)
-                        .map_err(|_| self.log_error(LexErrorKind::TypeAnnotationError))
+                        .map_err(|_| self.log_error(LexErrorKind::InvalidTypeAnnotation))
                     {
                         if ta == TypeAnnKind::TypeAnnU256 {
                             is_u256 = true;

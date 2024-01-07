@@ -152,7 +152,7 @@ impl FromStr for PuncKind {
             "->" => Ok(PuncKind::ThinArrow),
             "=>" => Ok(PuncKind::FatArrow),
             "||" => Ok(PuncKind::DblPipe),
-            _ => Err(TypeErrorKind::UnrecognizedPunctuation),
+            _ => Err(TypeErrorKind::UnexpectedPunctuation),
         }?;
 
         Ok(punc_kind)
@@ -182,7 +182,7 @@ impl Tokenize for Punctuation {
         let span = Span::new(src, start, end);
 
         let error = TypeError {
-            error_kind: TypeErrorKind::UnrecognizedPunctuation,
+            error_kind: TypeErrorKind::UnexpectedPunctuation,
             position: Position::new(src, start),
         };
 
