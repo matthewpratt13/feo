@@ -959,7 +959,7 @@ mod tests {
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
                     Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),
                     Token::Comment(c) => println!("Comment: {:?}", c.data),
-                    Token::DocComment(dc) => println!("Keyword: {:?}", dc.content),
+                    Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
                     Token::Delim(d) => println!("Delim: {:?}", d.delim),
                     Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
                 };
