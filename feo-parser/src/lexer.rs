@@ -763,12 +763,14 @@ fn is_keyword(iden: &str) -> bool {
         "match",
         "mod",
         "mut",
+        "None",
         "program",
         "pub",
         "ref",
         "return",
         "script",
         "self",
+        "Some",
         "static",
         "struct",
         "super",
@@ -900,7 +902,7 @@ mod tests {
                     func colour(arg: char) -> Colour? {
                         return match arg {
                             'r' => Some(Colour::Red),
-                            'g' => Some(Colour::Green)
+                            'g' => Some(Colour::Green),
                             'b' => Some(Colour::Blue),
                             _ => None
                         }
