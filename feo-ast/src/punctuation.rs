@@ -1,4 +1,4 @@
-use core::str::FromStr;
+use std::str::FromStr;
 
 use feo_error::{
     error::CompilerError,
@@ -18,7 +18,6 @@ pub enum PuncKind {
     FullStop,
     Underscore,
 
-    DblFullStop,
     DblColon,
 
     Bang, // (exclamation point)
@@ -67,7 +66,6 @@ impl PuncKind {
             PuncKind::Comma => ",",
             PuncKind::FullStop => ".",
             PuncKind::Underscore => "_",
-            PuncKind::DblFullStop => "..",
             PuncKind::DblColon => "::",
             PuncKind::Bang => "!",
             PuncKind::Hash => "#",
@@ -118,7 +116,6 @@ impl FromStr for PuncKind {
             "," => Ok(PuncKind::Comma),
             "." => Ok(PuncKind::FullStop),
             "_" => Ok(PuncKind::Underscore),
-            ".." => Ok(PuncKind::DblFullStop),
             "::" => Ok(PuncKind::DblColon),
             "!" => Ok(PuncKind::Bang),
             "#" => Ok(PuncKind::Hash),
@@ -190,8 +187,8 @@ impl Tokenize for Punctuation {
         };
 
         // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
-        let punc_kind =
-            PuncKind::from_str(content).map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
+        let punc_kind = PuncKind::from_str(content)
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
         let punctuation = Punctuation::new(punc_kind, span);
 

@@ -1,7 +1,5 @@
 use feo_types::span::Position;
 
-use crate::error::FeoError;
-
 #[derive(Default, Debug, Copy, Clone)]
 pub enum ParserErrorKind {
     ParseCharError,
@@ -15,8 +13,6 @@ pub enum ParserErrorKind {
     #[default]
     UnknownError,
 }
-
-impl FeoError for ParserErrorKind {}
 
 #[derive(Default, Debug, Clone)]
 pub struct ParserError {

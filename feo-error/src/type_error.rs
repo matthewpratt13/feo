@@ -1,7 +1,5 @@
 use feo_types::span::Position;
 
-use crate::error::FeoError;
-
 #[derive(Default, Debug, Copy, Clone)]
 pub enum TypeErrorKind {
     UnrecognizedCommentOpener,
@@ -13,8 +11,6 @@ pub enum TypeErrorKind {
     #[default]
     UnknownError,
 }
-
-impl FeoError for TypeErrorKind {}
 
 #[derive(Default, Debug, Clone)]
 pub struct TypeError {

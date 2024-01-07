@@ -1,4 +1,4 @@
-use core::str::FromStr;
+use std::str::FromStr;
 
 use feo_error::{
     handler::{ErrorEmitted, Handler},
