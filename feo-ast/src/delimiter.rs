@@ -62,8 +62,8 @@ impl Delimiter {
         }
     }
 
-    pub fn as_char(delim_kind: DelimKind, delim_orientation: DelimOrientation) -> char {
-        match (delim_kind, delim_orientation) {
+    pub fn as_char(self) -> char {
+        match (self.delim.0, self.delim.1) {
             (DelimKind::Parenthesis, DelimOrientation::Open) => '(',
             (DelimKind::Parenthesis, DelimOrientation::Close) => ')',
             (DelimKind::Bracket, DelimOrientation::Open) => '[',

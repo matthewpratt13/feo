@@ -176,7 +176,7 @@ impl Spanned for UIntLiteral {
 }
 
 #[derive(Debug, Clone)]
-pub struct U256Literal(Literal<U256>);
+pub struct U256Literal(pub Literal<U256>);
 
 impl Tokenize for U256Literal {
     fn tokenize(
