@@ -878,7 +878,7 @@ mod tests {
 
                 impl SomeContract {
                     func foo() -> Foo {
-                        let vec: Vec<u64> = [1, 2, 3, 4];
+                        let vec = [1, 2, 3, 4];
                         let mut new_vec: Vec<f64> = [];
 
                         for num in vec {
