@@ -654,9 +654,44 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                '!' | '#'..='&' | '*'..='/' | ':'..='@' | '\\' | '^' | '`' | '|' => {
+                '.' | ',' | ';' => {
+                    self.advance();
+
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let punc_content = Arc::new(&data);
+
+                    println!("{}", data);
+
+                    let punctuation = Punctuation::tokenize(
+                        &self.input,
+                        &punc_content,
+                        start_pos,
+                        self.pos,
+                        &mut self.handler,
+                    )?;
+
+                    tokens.push(punctuation);
+                }
+
+                '!'
+                | '#'..='&'
+                | '*'
+                | '+'
+                | '/'
+                | '-'
+                | ':'
+                | '<'..='@'
+                | '\\'
+                | '^'
+                | '`'
+                | '|' => {
                     while let Some(c) = self.current_char() {
-                        if c.is_ascii_punctuation() {
+                        if c.is_ascii_punctuation()
+                            && !is_delimiter(c)
+                            && !is_quote(c)
+                            && !is_separator(c)
+                        {
                             self.advance();
                         } else {
                             break;
@@ -666,6 +701,8 @@ impl<'a> Lexer<'a> {
                     let data = self.input[start_pos..self.pos].to_string();
 
                     let punc_content = Arc::new(&data);
+
+                    println!("{}", data);
 
                     let punctuation = Punctuation::tokenize(
                         &self.input,
@@ -745,6 +782,18 @@ fn is_keyword(iden: &str) -> bool {
     .contains(&iden)
 }
 
+fn is_delimiter(c: char) -> bool {
+    ['(', ')', '[', ']', '{', '}'].contains(&c)
+}
+
+fn is_quote(c: char) -> bool {
+    ['\'', '"'].contains(&c)
+}
+
+fn is_separator(c: char) -> bool {
+    ['.', ',', ';'].contains(&c)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -803,7 +852,7 @@ mod tests {
         ////////////////////////////////////////////////////////////////////////////////
         // `some_library.feo`
         ////////////////////////////////////////////////////////////////////////////////
-        
+            
         library;
         
         extern func hello_world() {
@@ -946,8 +995,8 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0,
-                lexer.errors().pop().expect("Error not found").line_col().1
+                lexer.errors().pop().expect("Error not found").line_col().0 + 793,
+                lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
     }
