@@ -800,46 +800,6 @@ mod tests {
 
     #[test]
     fn lex() {
-        // let source_code = r#"
-        // // line comment
-        // /*
-        // block comment
-        // */
-        // /// doc comment
-
-        // struct Foo {
-        //     a: String, // trailing comment
-        //     b: i32,
-        //     c: char,
-        //     d: bool
-        // }
-
-        // impl Foo {
-        //     pub func new() -> Foo {
-        //         let vec = [0xBEEF_ABCD, 2_000_000, 3, 4];
-        //         let mut new_vec: Vec<f64> = [];
-        //         let big_uint: u256 = 0x0123_4567_89AB_CDEF
-
-        //         if foo < 0 {
-        //             print("{}", foo);
-        //         } else {
-        //             print("{}", foo);
-        //         }
-
-        //         for i in vec {
-        //             new_vec.push(i / 1.0);
-        //         }
-
-        //         return Foo {
-        //             a: "foo",
-        //             b: -123_456,
-        //             c: '\'',
-        //             d: false
-        //         };
-        //     }
-        // }
-        // "#;
-
         let source_code = r#"
         // line comment
 
