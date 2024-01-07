@@ -2,8 +2,6 @@ use feo_types::span::Position;
 
 #[derive(Default, Debug, Copy, Clone)]
 pub enum LexErrorKind {
-    UnclosedDelimiters,
-    UnclosedStringLiteral,
     EmptyCharLiteral,
     InvalidCharLiteral,
     ExpectedCharLiteral,

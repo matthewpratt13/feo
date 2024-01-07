@@ -406,7 +406,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if string_literal_open {
-                        return Err(self.log_error(LexErrorKind::UnclosedStringLiteral));
+                        panic!("Unclosed string literal");
                     }
                 }
 
@@ -716,7 +716,7 @@ impl<'a> Lexer<'a> {
         }
 
         if num_open_delimiters > 0 {
-            return Err(self.log_error(LexErrorKind::UnclosedDelimiters));
+            panic!("Unclosed delimiters");
         }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
