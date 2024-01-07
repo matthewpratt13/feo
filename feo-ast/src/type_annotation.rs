@@ -68,7 +68,7 @@ impl FromStr for TypeAnnKind {
             "u256" => Ok(TypeAnnKind::TypeAnnU256),
             "f32" => Ok(TypeAnnKind::TypeAnnF32),
             "f64" => Ok(TypeAnnKind::TypeAnnF64),
-            "Vec" => Ok(TypeAnnKind::TypeAnnF64),
+            "Vec" => Ok(TypeAnnKind::TypeAnnVec),
             "_" => Ok(TypeAnnKind::UnknownTypeAnn),
             _ => Ok(TypeAnnKind::CustomTypeAnn(s.to_string())),
         }?;
