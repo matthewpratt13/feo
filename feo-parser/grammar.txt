@@ -45,7 +45,7 @@
 <Attribute>         ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <Identifier> <(DelimKind::Bracket, DelimOrientation::Close)
 
 
-<LiteralExpr>           ::= <CharLit>
+<LiteralExpr>       ::= <CharLit>
                         | <StringLit>
                         | <IntLit>
                         | <UIntLit>
