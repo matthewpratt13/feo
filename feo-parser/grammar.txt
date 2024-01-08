@@ -18,7 +18,7 @@
 <Expression>        ::= <ExprWithoutBlock> | <ExprWithBlock>
 
 
-<ExprWithoutBlock>  ::= <Attribute> 
+<ExprWithoutBlock>  ::= <OuterAttribute> 
                         (<LiteralExpr> 
                         | <PathExpr>
                         | <OperatorExpr>
