@@ -48,6 +48,7 @@
 <LiteralExpr>           ::= <CharLit>
                         | <StringLit>
                         | <IntLit>
+                        | <UIntLit>
                         | <U256Lit>
                         | <FloatLit>
                         | <BoolLit>
@@ -130,7 +131,7 @@
 
 <TupleElements>     ::= (<Expression> <PuncKind::Comma>)+ <Expression>?
 
-<TupleIndexingExpr> ::= <Expression> <PuncKind::Dot> <IntLit>
+<TupleIndexingExpr> ::= <Expression> <PuncKind::Dot> <UIntLit>
 
 
 
