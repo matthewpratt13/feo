@@ -19,7 +19,7 @@
 
 
 <ExprWithoutBlock>  ::= <Attribute> 
-                        | <LiteralExpr> 
+                        (<LiteralExpr> 
                         | <PathExpr>
                         | <OperatorExpr>
                         | <GroupedExpr>
@@ -34,16 +34,24 @@
                         | <ContinueExpr>
                         | <BreakExpr>
                         | <ReturnExpr>
-                        | <UnderscoreExpr>
+                        | <UnderscoreExpr>)
 
-<ExprWithBlock>     ::= <Attribute>
-                        | <BlockExpr>
+<ExprWithBlock>     ::= <OuterAttribute>
+                        (<BlockExpr>
                         | <LoopExpr>
                         | <IfExpr>
-                        | <MatchExpr>
+                        | <MatchExpr>)
 
-<Attribute>         ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <Identifier> <(DelimKind::Bracket, DelimOrientation::Close)
+<OuterAttribute>    ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <Attribute> <(DelimKind::Bracket, DelimOrientation::Close)
 
+<Attribute>         ::= <SimplePath>
+
+<SimplePath>        ::= <PuncKind::DblColon>? <SimplePathSegment> (PuncKind::DblColon <SimplePathSegment>)*  
+
+<SimplePathSegment> ::= <Identifier>
+                        | <KwSuper>
+                        | <KwSelf>
+                        | <KwCrate>
 
 <LiteralExpr>       ::= <CharLit>
                         | <StringLit>
