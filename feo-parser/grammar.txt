@@ -46,9 +46,9 @@
 
 <Attribute>         ::= <SimplePath>
 
-<SimplePath>        ::= <PuncKind::DblColon>? <SimplePathSegment> (PuncKind::DblColon <SimplePathSegment>)*  
+<SimplePath>        ::= <PuncKind::DblColon>? <PathSegment> (PuncKind::DblColon <PathSegment>)*  
 
-<SimplePathSegment> ::= <Identifier>
+<PathSegment>       ::= <Identifier>
                         | <KwSuper>
                         | <KwSelf>
                         | <KwCrate>
@@ -65,14 +65,7 @@
 
 <PathExpr>          ::= <PathLocation> | <PathItem>
 
-<PathLocation>      ::= <PuncKind::DblColon>? <PathExprSegment> (<PuncKind::DblColon> PathExprSegment)?
-
-<PathExprSegment>   ::= <PathIdenSegment>
-
-<PathIdenSegment>   ::= <Identifier> 
-                        | <KwSuper 
-                        | KwSelf 
-                        | KwCrate
+<PathLocation>      ::= <PuncKind::DblColon>? <PathSegment> (<PuncKind::DblColon> PathSegment)*
 
 <BlockExpr>         ::= <(DelimKind::Brace, DelimOrientation::Open)>
                             <Statements>
