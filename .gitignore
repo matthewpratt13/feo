@@ -23,4 +23,4 @@ Cargo.lock
 .idea
 .vscode
 
-feo-parser/src/lexer/code_example.txt
+feo-parser/examples
