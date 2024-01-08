@@ -42,7 +42,7 @@
                         | <IfExpr>
                         | <MatchExpr>)
 
-<Attribute>    ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <SimplePath> <(DelimKind::Bracket, DelimOrientation::Close)
+<Attribute>         ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <SimplePath> <(DelimKind::Bracket, DelimOrientation::Close)
 
 <SimplePath>        ::= <PuncKind::DblColon>? <PathSegment> (PuncKind::DblColon <PathSegment>)*  
 
