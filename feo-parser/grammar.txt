@@ -18,7 +18,7 @@
 <Expression>        ::= <ExprWithoutBlock> | <ExprWithBlock>
 
 
-<ExprWithoutBlock>  ::= <OuterAttribute> 
+<ExprWithoutBlock>  ::= <Attribute> 
                         (<LiteralExpr> 
                         | <PathExpr>
                         | <OperatorExpr>
@@ -36,15 +36,13 @@
                         | <ReturnExpr>
                         | <UnderscoreExpr>)
 
-<ExprWithBlock>     ::= <OuterAttribute>
+<ExprWithBlock>     ::= <Attribute>
                         (<BlockExpr>
                         | <LoopExpr>
                         | <IfExpr>
                         | <MatchExpr>)
 
-<OuterAttribute>    ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <Attribute> <(DelimKind::Bracket, DelimOrientation::Close)
-
-<Attribute>         ::= <SimplePath>
+<Attribute>    ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <SimplePath> <(DelimKind::Bracket, DelimOrientation::Close)
 
 <SimplePath>        ::= <PuncKind::DblColon>? <PathSegment> (PuncKind::DblColon <PathSegment>)*  
 
@@ -52,6 +50,10 @@
                         | <KwSuper>
                         | <KwSelf>
                         | <KwCrate>
+
+<PathExpr>          ::= <PathLocation> | <PathItem>
+
+<PathLocation>      ::= <SimplePath>
 
 <LiteralExpr>       ::= <CharLit>
                         | <StringLit>
@@ -63,9 +65,7 @@
 
 <BoolLit>           ::= true | false
 
-<PathExpr>          ::= <PathLocation> | <PathItem>
 
-<PathLocation>      ::= <PuncKind::DblColon>? <PathSegment> (<PuncKind::DblColon> PathSegment)*
 
 <BlockExpr>         ::= <(DelimKind::Brace, DelimOrientation::Open)>
                             <Statements>
