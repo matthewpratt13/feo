@@ -127,7 +127,7 @@
 
 <TupleExpr>         ::= ( <TupleElements>? )
 
-<TupleElements>     ::= ( <Expression> , )+ <Expression>?
+<TupleElements>     ::= (<Expression> ,)+ <Expression>?
 
 <TupleIndexingExpr> ::= <Expression> . <IntLit>
 
