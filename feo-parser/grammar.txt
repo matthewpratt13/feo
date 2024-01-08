@@ -69,7 +69,10 @@
 
 <PathExprSegment>   ::= <PathIdenSegment>
 
-<PathIdenSegment>   ::= <Identifier> | <KwSuper | KwSelf | KwCrate
+<PathIdenSegment>   ::= <Identifier> 
+                        | <KwSuper 
+                        | KwSelf 
+                        | KwCrate
 
 <BlockExpr>         ::= <(DelimKind::Brace, DelimOrientation::Open)>
                             <Statements>
