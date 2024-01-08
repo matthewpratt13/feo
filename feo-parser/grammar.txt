@@ -6,20 +6,20 @@
 ?   -> optional
 ()  -> group items
 
-<Statement>         ::= ;
+<Statement>         ::= <PuncKind::Semicolon>
                         | <Item>
                         | LetStatement
                         | ExprStatement
 
-<LetStatement>      ::= <KwLet> <KwMut?> <Iden> (: <TypeAnnotation>)? = <Expression> ;
+<LetStatement>      ::= <KwLet> <KwMut>? <Iden> (<PuncKind::Colon> <TypeAnnotation>)? = <Expression> <PuncKind::Semicolon>
                         
-<ExprStatement>     ::= <ExprWithoutBlock> ;
+<ExprStatement>     ::= <ExprWithoutBlock> <PuncKind::Semicolon>
 
 <Expression>        ::= <ExprWithoutBlock> | <ExprWithBlock>
 
 
 <ExprWithoutBlock>  ::= <Attribute> 
-                        | <LitExpr> 
+                        | <LiteralExpr> 
                         | <PathExpr>
                         | <OperatorExpr>
                         | <GroupedExpr>
@@ -42,10 +42,10 @@
                         | <IfExpr>
                         | <MatchExpr>
 
-<Attribute>         ::= # ! [ <Identifier> ]
+<Attribute>         ::= <PuncKind::Hash> <PuncKind::Bang> <(DelimKind::Bracket, DelimOrientation::Open) <Identifier> <(DelimKind::Bracket, DelimOrientation::Close)
 
 
-<LitExpr>           ::= <CharLit>
+<LiteralExpr>           ::= <CharLit>
                         | <StringLit>
                         | <IntLit>
                         | <U256Lit>
@@ -56,15 +56,15 @@
 
 <PathExpr>          ::= <PathLocation> | <PathItem>
 
-<PathLocation>      ::= ::? <PathExprSegment> (:: PathExprSegment)?
+<PathLocation>      ::= <PuncKind::DblColon>? <PathExprSegment> (<PuncKind::DblColon> PathExprSegment)?
 
 <PathExprSegment>   ::= <PathIdenSegment>
 
 <PathIdenSegment>   ::= <Identifier> | <KwSuper | KwSelf | KwCrate
 
-<BlockExpr>         ::= {
+<BlockExpr>         ::= <(DelimKind::Brace, DelimOrientation::Open)>
                             <Statements>
-                        }
+                        <(DelimKind::Brace, DelimOrientation::Close)>
 
 
 <Statements>        ::= <Statement>
@@ -80,56 +80,57 @@
                         <AssignExpr>
                         <CompoundAssignExpr>
 
-<OptionUnwrapExpr   ::= <Expressions> ?
+<OptionUnwrapExpr   ::= <Expression> <PuncKind::QuestionMark>
 
-<NegationExpr>      ::= - <Expression>
-                        | ! <Expression>
+<NegationExpr>      ::= <PuncKind::Minus> <Expression>
+                        | <PuncKind::Bang> <Expression>
 
-<ArithOrLogicalExpr>::= <Expression> + <Expression>
-                        | <Expression> - <Expression>
-                        | <Expression> * <Expression>
-                        | <Expression> / <Expression>
-                        | <Expression> % <Expression>
-                        | <Expression> & <Expression>
-                        | <Expression> /| <Expression>
-                        | <Expression> << <Expression>
-                        | <Expression> >> <Expression>
+<ArithOrLogicalExpr>::= <Expression> <PuncKind::Plus> <Expression>
+                        | <Expression> <PuncKind::Minus> <Expression>
+                        | <Expression> <PuncKind::Asterisk> <Expression>
+                        | <Expression> <PuncKind::ForwardSlash> <Expression>
+                        | <Expression> <PuncKind::Percent> <Expression>
+                        | <Expression> <PuncKind::Ampersand> <Expression>
+                        | <Expression> <PuncKind::Pipe> <Expression>
+                        | <Expression> <PuncKind::DblLessThan> <Expression>
+                        | <Expression> <PuncKind::DblGreaterThan> <Expression>
+                        | <Expression> <PuncKind::DblAsterisk> <Expression>
 
-<ComparisonExpr>    ::= <Expression> == <Expression>
-                        | <Expression> != Expression>
-                        | <Expression> < <Expression>
-                        | <Expression> > <Expression>
-                        | <Expression> <= <Expression>
-                        | <Expression> >= <Expression>
+<ComparisonExpr>    ::= <Expression> <PuncKind::DblEquals> <Expression>
+                        | <Expression> <PuncKind::BangEquals> Expression>
+                        | <Expression> <PuncKind::LessThan> <Expression>
+                        | <Expression> <PuncKind::GreaterThan> <Expression>
+                        | <Expression> <PuncKind::LessThanEquals> <Expression>
+                        | <Expression> <PuncKind::GreaterThanEquals> <Expression>
 
-<LazyBoolExpr>      ::= <Expression> && <Expression>
-                        | <Expression> || <Expression>
+<LazyBoolExpr>      ::= <Expression> <PuncKind::DblAmpersand> <Expression>
+                        | <Expression> <PuncKind::DblPipe> <Expression>
 
-<TypeCastExpr>      ::= <Expression> KwAs <Type>
+<TypeCastExpr>      ::= <Expression> <KwAs> <Type>
 
-<AssignExpr>        ::= <Expression> = <Expression>
+<AssignExpr>        ::= <Expression> <PuncKind::Equals> <Expression>
 
-<CompoundAssignExpr>::= <Expression> += <Expression>
-                        | <Expression> -= <Expression>
-                        | <Expression> *= <Expression>
-                        | <Expression> /= <Expression>
-                        | <Expression> %= <Expression>
-                        | <Expression> != <Expression>
+<CompoundAssignExpr>::= <Expression> <PuncKind::PlusEquals> <Expression>
+                        | <Expression> <PuncKind::MinusEquals> <Expression>
+                        | <Expression> <PuncKind::AsteriskEquals> <Expression>
+                        | <Expression> <PuncKind::ForwardSlashEquals> <Expression>
+                        | <Expression> <PuncKind::PercentEquals> <Expression>
+                        | <Expression> <PuncKind::BangEquals> <Expression>
 
-<GroupedExpr>       ::= ( <Expression> )
+<GroupedExpr>       ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <Expression> <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
-<ArrayExpr>         ::= [ <ArrayElements>? ]
+<ArrayExpr>         ::= <(DelimKind::Bracket, DelimOrientation::Open)> <ArrayElements>? <(DelimKind::Bracket, DelimOrientation::Close)>
 
-<ArrayElements>     ::= <Expression> (, <Expression>)* ,?
-                        | <Expression> ; <Expression>
+<ArrayElements>     ::= <Expression> (<PuncKind::Comma> <Expression>)* <PuncKind::Comma>?
+                        | <Expression> <PuncKind::Semicolon> <Expression>
 
-<IndexExpr>         ::= <Expression> [ <Expression> ]
+<IndexExpr>         ::= <Expression> <(DelimKind::Bracket, DelimOrientation::Open) <Expression> <(DelimKind::Bracket, DelimOrientation::Close)>
 
-<TupleExpr>         ::= ( <TupleElements>? )
+<TupleExpr>         ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <TupleElements>? <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
-<TupleElements>     ::= (<Expression> ,)+ <Expression>?
+<TupleElements>     ::= (<Expression> <PuncKind::Comma>)+ <Expression>?
 
-<TupleIndexingExpr> ::= <Expression> . <IntLit>
+<TupleIndexingExpr> ::= <Expression> <PuncKind::Dot> <IntLit>
 
 
 
