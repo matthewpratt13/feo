@@ -83,7 +83,7 @@
 <OptionUnwrapExpr   ::= <Expressions> ?
 
 <NegationExpr>      ::= - <Expression>
-                    | ! <Expression>
+                        | ! <Expression>
 
 <ArithOrLogicalExpr>::= <Expression> + <Expression>
                         | <Expression> - <Expression>
