@@ -11,7 +11,7 @@
                         | LetStatement
                         | ExprStatement
 
-<LetStatement>      ::= <KwLet> <KwMut>? <Iden> (<PuncKind::Colon> <TypeAnnotation>)? = <Expression> <PuncKind::Semicolon>
+<LetStatement>      ::= <KwLet> <KwMut>? <Identifier> (<PuncKind::Colon> <TypeAnnotation>)? = <Expression> <PuncKind::Semicolon>
                         
 <ExprStatement>     ::= <ExprWithoutBlock> <PuncKind::Semicolon>
 
