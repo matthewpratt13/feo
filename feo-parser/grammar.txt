@@ -1,0 +1,153 @@
+*Grammar*
+
+**Glossary**
+*   -> zero or more
++   -> one or more
+?   -> optional
+()  -> group items
+
+<Statement>         ::= ;
+                        | <Item>
+                        | LetStatement
+                        | ExprStatement
+
+<LetStatement>      ::= <KwLet> <KwMut?> <Iden> (: <TypeAnnotation>)? = <Expression> ;
+                        
+<ExprStatement>     ::= <ExprWithoutBlock> ;
+
+<Expression>        ::= <ExprWithoutBlock> | <ExprWithBlock>
+
+
+<ExprWithoutBlock>  ::= <Attribute> 
+                        | <LitExpr> 
+                        | <PathExpr>
+                        | <OperatorExpr>
+                        | <GroupedExpr>
+                        | <ArrayExpr>
+                        | <IndexExpr>
+                        | <TupleExpr>
+                        | <TupleIndexingExpr>
+                        | <StructExpr>
+                        | <CallExpr>
+                        | <MethodCallExpr>
+                        | <FieldExpr>
+                        | <ContinueExpr>
+                        | <BreakExpr>
+                        | <ReturnExpr>
+                        | <UnderscoreExpr>
+
+<ExprWithBlock>     ::= <Attribute>
+                        | <BlockExpr>
+                        | <LoopExpr>
+                        | <IfExpr>
+                        | <MatchExpr>
+
+<Attribute>         ::= # ! [ <Identifier> ]
+
+
+<LitExpr>           ::= <CharLit>
+                        | <StringLit>
+                        | <IntLit>
+                        | <U256Lit>
+                        | <FloatLit>
+                        | <BoolLit>
+
+<BoolLit>           ::= true | false
+
+<PathExpr>          ::= <PathLocation> | <PathItem>
+
+<PathLocation>      ::= ::? <PathExprSegment> (:: PathExprSegment)?
+
+<PathExprSegment>   ::= <PathIdenSegment>
+
+<PathIdenSegment>   ::= <Identifier> | <KwSuper | KwSelf | KwCrate
+
+<BlockExpr>         ::= {
+                            <Statements>
+                        }
+
+
+<Statements>        ::= <Statement>
+                        | <Statement> <ExprWithoutBlock>
+                        | <ExprWithoutBlock>
+
+<OperatorExpr>      ::= <OptionUnwrapExpr>
+                        <NegationExpr>
+                        <ArithmeticOrLogicalExpr>
+                        <ComparisonExpr>
+                        <LazyBoolExpr>
+                        <TypeCastExpr>
+                        <AssignExpr>
+                        <CompoundAssignExpr>
+
+<OptionUnwrapExpr   ::= <Expressions> ?
+
+<NegationExpr>      ::= - <Expression>
+                    | ! <Expression>
+
+<ArithOrLogicalExpr>::= <Expression> + <Expression>
+                        | <Expression> - <Expression>
+                        | <Expression> * <Expression>
+                        | <Expression> / <Expression>
+                        | <Expression> % <Expression>
+                        | <Expression> & <Expression>
+                        | <Expression> /| <Expression>
+                        | <Expression> << <Expression>
+                        | <Expression> >> <Expression>
+
+<ComparisonExpr>    ::= <Expression> == <Expression>
+                        | <Expression> != Expression>
+                        | <Expression> < <Expression>
+                        | <Expression> > <Expression>
+                        | <Expression> <= <Expression>
+                        | <Expression> >= <Expression>
+
+<LazyBoolExpr>      ::= <Expression> && <Expression>
+                        | <Expression> || <Expression>
+
+<TypeCastExpr>      ::= <Expression> KwAs <Type>
+
+<AssignExpr>        ::= <Expression> = <Expression>
+
+<CompoundAssignExpr>::= <Expression> += <Expression>
+                        | <Expression> -= <Expression>
+                        | <Expression> *= <Expression>
+                        | <Expression> /= <Expression>
+                        | <Expression> %= <Expression>
+                        | <Expression> != <Expression>
+
+<GroupedExpr>       ::= ( <Expression> )
+
+<ArrayExpr>         ::= [ <ArrayElements>? ]
+
+<ArrayElements>     ::= <Expression> (, <Expression>)* ,?
+                        | <Expression> ; <Expression>
+
+<IndexExpr>         ::= <Expression> [ <Expression> ]
+
+<TupleExpr>         ::= ( <TupleElements>? )
+
+<TupleElements>     ::= ( <Expression> , )+ <Expression>?
+
+<TupleIndexingExpr> ::= <Expression> . <IntLit>
+
+
+
+
+
+
+
+                        
+
+
+        
+
+
+
+
+
+
+
+
+                        
+
