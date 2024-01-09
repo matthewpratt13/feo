@@ -14,7 +14,6 @@ mod import_decl;
 mod module_item;
 mod struct_item;
 mod trait_item;
-mod type_alias;
 
 pub enum Item {
     Visibility,
