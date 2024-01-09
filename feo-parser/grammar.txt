@@ -41,7 +41,19 @@
                         | (<SimplePath>? PuncKind::DblColon)? <(DelimKind::Brace, DelimOrientation::Open)>
                             (<PuncKind::Comma>, <ImportTree>)* <PuncKind::Comma>?)? 
                             <(DelimKind::Brace, DelimOrientation::Close)>
-                        | <SimplePath> (<KwAs> <Identifier>)?      
+                        | <SimplePath> (<KwAs> <Identifier>)?
+
+<Function>          ::= <FuncQualifiers> <KwFunc> <Identifier>
+                        <(DelimKind::Parenthesis, DelimOrientation::Open)>
+                            <FunctionParams>?
+                        <(DelimKind::Parenthesis, DelimOrientation::Close)>
+                        <FuncReturnType>? (<BlockExpr> | <PuncKind::Semicolon>)
+
+<FuncQualifiers>    ::= <KwConst> <KwUnsafe>
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////`   
 
