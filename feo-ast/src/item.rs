@@ -3,7 +3,7 @@ use crate::{identifier::Identifier, keyword::KeywordKind};
 use self::{
     constant_item::{ConstantItem, StaticItem},
     struct_item::StructItem,
-    trait_item::TraitItem,
+    trait_item::TraitItem, enum_item::EnumItem, function_item::FunctionItem, implementation::Implementation, import_decl::ImportDecl, module_item::ModuleItem,
 };
 
 mod constant_item;
@@ -16,22 +16,22 @@ mod struct_item;
 mod trait_item;
 
 pub enum Item {
-    Visibility,
+    Vis(VisibilityItem),
     Constant(ConstantItem),
     Static(StaticItem),
-    Enum,
-    ExternCrate,
-    Function,
-    Implementation,
-    ImportDecl,
-    Module,
+    Enum(EnumItem),
+    ExternCrate(ExternCrateItem),
+    Function(FunctionItem),
+    Impl(Implementation),
+    ImportDecl(ImportDecl),
+    Module(ModuleItem),
     Struct(StructItem),
     Trait(TraitItem),
-    TypeAlias,
+    TypeAlias(TypeAlias),
 }
 
-pub enum Visibility {
-    Pub,
+pub enum VisibilityItem {
+    Pub(KeywordKind),
     PubCrate,
 }
 
@@ -40,7 +40,7 @@ pub enum CrateRef {
     KwSelf(KeywordKind),
 }
 
-pub struct ExternCrate {}
+pub struct ExternCrateItem {}
 
 pub struct AsClause {}
 

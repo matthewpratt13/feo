@@ -1,4 +1,4 @@
-pub struct Function {}
+pub struct FunctionItem {}
 
 pub struct FuncQualifiers {}
 

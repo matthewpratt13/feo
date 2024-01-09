@@ -1,4 +1,4 @@
-pub struct Enum {}
+pub struct EnumItem {}
 
 pub struct EnumItems {}
 
