@@ -22,7 +22,7 @@ use self::{
 };
 
 pub enum Item {
-    Vis(VisibilityItem),
+    Visibility(VisibilityItem),
     Constant(ConstantItem),
     Static(StaticItem),
     Enum(EnumItem),
