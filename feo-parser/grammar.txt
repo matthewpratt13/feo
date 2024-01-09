@@ -17,9 +17,11 @@
                         | TypeAlias
                         | Struct
                         | Enum
-                        | Contract
-                        | Interface
                         | ConstantItem
+                        | StaticItem
+                        | Contract
+                        | Storage
+                        | Interface
                         | Trait
                         | Implementation)
 
@@ -44,15 +46,36 @@
                         | <SimplePath> (<KwAs> <Identifier>)?
 
 <Function>          ::= <FuncQualifiers> <KwFunc> <Identifier>
-                        <(DelimKind::Parenthesis, DelimOrientation::Open)>
-                            <FunctionParams>?
-                        <(DelimKind::Parenthesis, DelimOrientation::Close)>
-                        <FuncReturnType>? (<BlockExpr> | <PuncKind::Semicolon>)
+                            <(DelimKind::Parenthesis, DelimOrientation::Open)>
+                                <FunctionParams>?
+                            <(DelimKind::Parenthesis, DelimOrientation::Close)>
+                            (<PuncKind::ThinArrow> <Type>)? (<BlockExpr> | <PuncKind::Semicolon>)
 
-<FuncQualifiers>    ::= <KwConst> <KwUnsafe>
+<FuncQualifiers>    ::= <KwConst>? <KwUnsafe>? <KwExtern>
 
+<FuncParams>        ::= <SelfParam> <PuncKind::Comma>?
+                        | (<SelfParam <PuncKind::Comma>)? <FuncParam> (<PuncKind::Comma>, <FuncParam>)* <PuncKind::Comma>?
 
+<SelfParam>         ::= <KwRef>? <KwMut>? <KwSelf>
+                        | <KwMut>? <KwSelf> <PuncKind::Colon> <Type>
 
+<FuncParam>         ::= <Pattern> <PuncKind::Colon> <Type>
+
+<Contract>          ::= <KwContract> <Identifier>
+                           ((<(DelimKind::Brace, DelimOrientation::Open)>
+                                (<Function> | <Storage> | <Interface> | <Implementation>)*
+                            <(DelimKind::Brace, DelimOrientation::Close)>) 
+                            | PuncKind::Semicolon)
+
+<Storage>           ::= <KwStorage> <Identifier> (<BlockExpr> | <PuncKind::Semicolon>)
+
+<Interface>         ::= <KwInterface> <Identifier>
+                            ((<(DelimKind::Brace, DelimOrientation::Open)>
+                                (<FunctionQualifiers> <KwFunc> <Identifier> <(DelimKind::Parenthesis, DelimOrientation::Open)>
+                                <FunctionParams>?
+                            <(DelimKind::Parenthesis, DelimOrientation::Close)> (<PuncKind::ThinArrow> <Type>)? <PuncKind::Semicolon>)*
+                            <(DelimKind::Brace, DelimOrientation::Close)>)
+                            | PuncKind::Semicolon)
 
 
 ////////////////////////////////////////////////////////////////////////////////`   
