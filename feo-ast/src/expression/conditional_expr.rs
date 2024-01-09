@@ -1,8 +1,6 @@
-use crate::punctuation::PuncKind;
-
 pub enum ConditionalExpr {
-    IfExpr,
-    MatchExpr,
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
 }
 
 pub struct IfExpr {}

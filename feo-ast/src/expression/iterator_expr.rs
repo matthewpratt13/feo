@@ -2,6 +2,7 @@ use crate::keyword::KeywordKind;
 
 pub enum IteratorExpr {
     Loop(LoopExpr),
+    InfiniteLoop(InfiniteLoopExpr),
     IterLoop(IterLoopExpr),
     PredicateLoop(PredicateLoopExpr),
     Break(KeywordKind),
@@ -9,9 +10,8 @@ pub enum IteratorExpr {
 }
 
 pub struct LoopExpr {}
-
 pub struct InfiniteLoopExpr {}
 
-pub struct PredicateLoopExpr {}
-
 pub struct IterLoopExpr {}
+
+pub struct PredicateLoopExpr {}

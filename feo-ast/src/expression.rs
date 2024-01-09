@@ -1,3 +1,5 @@
+use crate::keyword::KeywordKind;
+
 mod array_expr;
 mod block_expr;
 mod call_expr;
@@ -5,11 +7,9 @@ mod conditional_expr;
 mod iterator_expr;
 mod literal_expr;
 mod operator_expr;
-mod tuple_expr;
-
 mod path_expr;
-
-use crate::keyword::KeywordKind;
+mod struct_expr;
+mod tuple_expr;
 
 pub use self::path_expr::PathExpr;
 use self::{
@@ -23,8 +23,6 @@ use self::{
     struct_expr::StructExpr,
     tuple_expr::{TupleExpr, TupleIndexingExpr},
 };
-
-mod struct_expr;
 
 pub enum Expression {
     WithoutBlock(ExprWithoutBlock),

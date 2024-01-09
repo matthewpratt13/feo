@@ -14,8 +14,10 @@ pub struct SimplePath {
 }
 
 pub enum PathExpr {
-    PathLocation,
+    PathLoc(PathLocation),
     PathItem,
 }
+
+// TODO: Add `PathItem`
 
 pub type PathLocation = SimplePath;
