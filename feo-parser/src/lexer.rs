@@ -941,8 +941,7 @@ mod tests {
 
         impl SomeTrait for SomeAbstractContract {
             func bar() -> String {
-                    return "world"
-                }
+                return "world"
             }
         }
         "#;
