@@ -7,6 +7,8 @@
 !   -> negate
 ()  -> group items
 
+////////////////////////////////////////////////////////////////////////////////
+
 <Item>              ::= <Visibility>? 
                         (Module,
                         | ExternCrate
@@ -39,15 +41,9 @@
                         | (<SimplePath>? PuncKind::DblColon)? <(DelimKind::Brace, DelimOrientation::Open)>
                             (<PuncKind::Comma>, <ImportTree>)* <PuncKind::Comma>?)? 
                             <(DelimKind::Brace, DelimOrientation::Close)>
-                        | <SimplePath> (<KwAs> <Identifier>)?         
+                        | <SimplePath> (<KwAs> <Identifier>)?      
 
-   
-    
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////`   
 
 <Statement>         ::= <PuncKind::Semicolon>
                         | <Item>
@@ -58,6 +54,7 @@
                         
 <ExprStatement>     ::= <ExprWithoutBlock> <PuncKind::Semicolon>
 
+////////////////////////////////////////////////////////////////////////////////
 
 <Expression>        ::= <ExprWithoutBlock> | <ExprWithBlock>
 
@@ -234,6 +231,8 @@
 
 <UnderscoreExpr>    ::= <PuncKind::Underscore>
 
+////////////////////////////////////////////////////////////////////////////////
+
 <Pattern>           ::= <LiteralPatt>
                         | <IdentifierPatt>
                         | <WildcardPatt>
@@ -275,13 +274,13 @@
 
 <TupleStructItems>  ::= <Pattern> (<(DelimKind::Parenthesis, DelimOrientation::Open)> <PuncKind::Comma>)* <PuncKind::Comma>?
 
-<TuplePatt>         ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <TuplePattItems>? <DelimKind::Paren, DelimOrientation::Close)>
+<TuplePatt>         ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <TuplePattItems>? <DelimKind::Parenthesis, DelimOrientation::Close)>
 
 <TuplePattItems>    ::= <Pattern> <PuncKind::Comma>
                         | <Pattern> (<PuncKind::Comma>, <Pattern>)+ <PuncKind::Comma>?
 
 
-<GroupedPatt>       ::= <(DelimKind::Paren, DelimOrientation::Open)>, <Pattern>, <(DelimKind::Paren, DelimOrientation::Close)>
+<GroupedPatt>       ::= <(DelimKind::Parenthesis, DelimOrientation::Open)>, <Pattern>, <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
 <SlicePatt>         ::= <(DelimKind::Bracket, DelimOrientation::Open)> <SlicePattItems>? <(DelimKind::Bracket, DelimOrientation::Close)>?
 
