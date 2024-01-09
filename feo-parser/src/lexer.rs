@@ -834,9 +834,14 @@ mod tests {
         func main() {
             greater_than(1, 2);
 
-            let hello = SomeContract::bar();
-            let world = SomeAbstractContract::bar();
+            let contract = SomeContract::new();
 
+            let hello: String = contract.bar();
+
+            let world: String = SomeAbstractContract::bar();
+            
+            let owner = ref contract.OWNER;
+            
             print!("{} {}", hello, world);
 
             some_library::hello_world();
@@ -859,7 +864,7 @@ mod tests {
         
         contract;
         
-        import crate::some_abstract_contract;
+        import crate::some_abstract_contract::SomeAbstractContract;
 
         struct Foo {
             field1: String,
@@ -876,11 +881,15 @@ mod tests {
             static BALANCE: u64 = 0;
         }
 
-        interface {
+        interface SomeContract {
             func foo() -> Foo;
         }
 
         impl SomeContract {
+            pub func new() -> SomeContract {
+                return SomeContract(ADDRESS)
+            }
+
             func foo() -> Foo {
                 let vec = [1, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
@@ -935,7 +944,7 @@ mod tests {
             func bar() -> String; 
         }
 
-        pub interface {
+        pub interface SomeAbstractContract {
             func colour(arg: char) -> Colour?;
         }
 
