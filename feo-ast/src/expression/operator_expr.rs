@@ -13,7 +13,7 @@ pub struct ArithmeticOrLogicalExpr {}
 
 pub struct AssignmentExpr {}
 
-pub struct CompoundAssigExpr {}
+pub struct CompoundAssignExpr {}
 
 pub struct ComparisonExpr {}
 
