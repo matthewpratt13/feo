@@ -776,6 +776,7 @@ fn is_keyword(iden: &str) -> bool {
         "super",
         "trait",
         "type",
+        "unsafe",
         "while",
     ]
     .contains(&iden)

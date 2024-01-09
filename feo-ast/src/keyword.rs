@@ -50,6 +50,7 @@ pub enum KeywordKind {
     KwSuper, // only relevant in path expressions
     KwTrait,
     KwType,
+    KwUnsafe,
     KwWhile,
 }
 
@@ -66,7 +67,7 @@ impl KeywordKind {
             KeywordKind::KwDeref => "deref",
             KeywordKind::KwElse => "else",
             KeywordKind::KwEnum => "enum",
-            KeywordKind::KwExtern=> "extern",
+            KeywordKind::KwExtern => "extern",
             KeywordKind::KwFor => "for",
             KeywordKind::KwFunc => "func",
             KeywordKind::KwIf => "if",
@@ -94,6 +95,7 @@ impl KeywordKind {
             KeywordKind::KwSuper => "super",
             KeywordKind::KwTrait => "trait",
             KeywordKind::KwType => "type",
+            KeywordKind::KwUnsafe => "unsafe",
             KeywordKind::KwWhile => "while",
         }
     }
@@ -142,6 +144,7 @@ impl FromStr for KeywordKind {
             "super" => Ok(KeywordKind::KwSuper),
             "trait" => Ok(KeywordKind::KwTrait),
             "type" => Ok(KeywordKind::KwType),
+            "unsafe" => Ok(KeywordKind::KwUnsafe),
             "while" => Ok(KeywordKind::KwWhile),
             _ => Err(TypeErrorKind::UnrecognizedKeyword),
         }?;
