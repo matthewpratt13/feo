@@ -1,17 +1,17 @@
 pub enum OperatorExpr {
-    ArithmeticOrLogical,
-    Assignment,
-    CompoundAssignment,
-    Comparison,
-    LazyBool,
-    Negation,
-    OptionUnwrap,
-    TypeCast,
+    ArithmeticOrLogical(ArithmeticOrLogicalExpr),
+    Assignment(AssignExpr),
+    CompoundAssignment(CompoundAssignExpr),
+    Comparison(ComparisonExpr),
+    LazyBool(LazyBoolExpr),
+    Negation(NegationExpr),
+    OptionUnwrap(OptionUnwrapExpr),
+    TypeCast(TypeCastExpr),
 }
 
 pub struct ArithmeticOrLogicalExpr {}
 
-pub struct AssignmentExpr {}
+pub struct AssignExpr {}
 
 pub struct CompoundAssignExpr {}
 
