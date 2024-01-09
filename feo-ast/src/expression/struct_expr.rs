@@ -2,14 +2,12 @@ use super::path_expr::SimplePath;
 
 pub enum StructExpr {
     Struct(Struct),
-    Tuple(Tuple),
-    Unit(Unit),
+    TupleStruct(TupleStruct),
+    UnitStruct(UnitStruct),
 }
 
 pub struct Struct {}
 
-pub struct Tuple {}
+pub struct TupleStruct {}
 
-pub struct Unit(SimplePath);
-
-
+pub struct UnitStruct(SimplePath);
