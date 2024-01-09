@@ -4,7 +4,7 @@ use crate::{
     item::Item,
     keyword::KeywordKind,
     punctuation::PuncKind,
-    type_annotation::TypeAnnotation,
+    type_annotation::TypeAnnKind,
 };
 
 pub enum Statement {
@@ -22,8 +22,8 @@ pub struct LetStatement {
     kw_let: KeywordKind,
     kw_mut_opt: Option<KeywordKind>,
     identifier: Identifier,
-    type_ann_opt: Option<(PuncKind, TypeAnnotation)>,
+    type_ann_opt: Option<(PuncKind, TypeAnnKind)>,
     equals: PuncKind,
-    expr: Expression,
+    expression: Expression,
     semicolon: PuncKind,
 }
