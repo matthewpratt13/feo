@@ -827,11 +827,9 @@ mod tests {
         
         script;
 
-        import crate::some_module::SomeContract;
-        import crate::some_public_module::SomeAbstractContract;
-
-        mod some_library;
-        pub mod some_public_module;
+        import crate::some_contract;
+        import crate::some_abstract_contract;
+        import crate::some_library;
 
         func main() {
             greater_than(1, 2);
@@ -853,74 +851,79 @@ mod tests {
                 print!("{} is less than {}", arg1, arg2);
             }
         }
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // `some_contract.feo`
+        ////////////////////////////////////////////////////////////////////////////////
         
-        mod some_module {
-            import crate::some_public_module::{Colour, SomeAbstractContract, SomeTrait};
+        contract;
+        
+        import crate::some_abstract_contract;
 
-            struct Foo {
-                field1: String,
-                field2: char,
-                field3: u256,
-                field4: Vec<f64>,
-                field5: i64,
-                field6: bool
-            }
+        struct Foo {
+            field1: String,
+            field2: char,
+            field3: u256,
+            field4: Vec<f64>,
+            field5: i64,
+            field6: bool
+        }
 
-            contract SomeContract {
-                pub storage {
-                    pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
-                    pub static OWNER: Identity = Identity::User(UserId::from(msg_sender()));
-                    static BALANCE: u64 = 0;
+        pub storage {
+            pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
+            pub static OWNER: Identity = Identity::User(UserId::from(msg_sender()));
+            static BALANCE: u64 = 0;
+        }
+
+        interface {
+            func foo() -> Foo;
+        }
+
+        impl SomeContract {
+            func foo() -> Foo {
+                let vec = [1, 2, 3, 4];
+                let mut new_vec: Vec<f64> = [];
+
+                for num in vec {
+                    new_vec.push(num as f64);
                 }
 
-                interface {
-                    func foo() -> Foo;
-                }
+                new_vec.push(5.0);
 
-                impl SomeContract {
-                    func foo() -> Foo {
-                        let vec = [1, 2, 3, 4];
-                        let mut new_vec: Vec<f64> = [];
-
-                        for num in vec {
-                            new_vec.push(num as f64);
-                        }
-
-                        new_vec.push(5.0);
-
-                        return Foo {
-                            field1: "foo",
-                            field2: '\'',
-                            field3: 0x0123_4567_89AB_CDEF,
-                            field4: new_vec,
-                            field5: -1234,
-                            field6: true
-                        }
-                    }
-                }
-
-                impl SomeAbstractContract for SomeContract {
-                    func colour(arg: char) -> Colour? {
-                        return match arg {
-                            'r' => Some(Colour::Red),
-                            'g' => Some(Colour::Green),
-                            'b' => Some(Colour::Blue),
-                            _ => None
-                        }
-                    }
-                }
-
-                impl SomeTrait for SomeContract {
-                    func bar() -> String {
-                        return "hello"
-                    }
+                return Foo {
+                    field1: "foo",
+                    field2: '\'',
+                    field3: 0x0123_4567_89AB_CDEF,
+                    field4: new_vec,
+                    field5: -1234,
+                    field6: true
                 }
             }
         }
 
+        impl SomeAbstractContract for SomeContract {
+            func colour(arg: char) -> Colour? {
+                return match arg {
+                    'r' => Some(Colour::Red),
+                    'g' => Some(Colour::Green),
+                    'b' => Some(Colour::Blue),
+                    _ => None
+                }
+            }
+        }
+
+        impl SomeTrait for SomeContract {
+            func bar() -> String {
+                return "hello"
+            }
+        }
+
         ////////////////////////////////////////////////////////////////////////////////
-        // `some_public_module.feo`
+        // `some_abstract_contract.feo`
         ////////////////////////////////////////////////////////////////////////////////
+
+        abstract contract;
 
         pub enum Colour {
             Red,
@@ -932,13 +935,12 @@ mod tests {
             func bar() -> String; 
         }
 
-        abstract contract SomeAbstractContract {
-            pub interface {
-                func colour(arg: char) -> Colour?;
-            }
+        pub interface {
+            func colour(arg: char) -> Colour?;
+        }
 
-            impl SomeTrait for SomeAbstractContract {
-                func bar() -> String {
+        impl SomeTrait for SomeAbstractContract {
+            func bar() -> String {
                     return "world"
                 }
             }

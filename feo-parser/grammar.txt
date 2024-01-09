@@ -9,9 +9,25 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-<Library>           ::= <KwLibrary> <PuncKind::Semicolon> <AssociatedItem>*
+<Library>           ::= <KwLibrary> <PuncKind::Semicolon> 
+                        (<ImportDeclaration> 
+                        | <ExternCrate> 
+                        | <AssociatedItem> 
+                        | <Trait>)*
+
+////////////////////////////////////////////////////////////////////////////////
 
 <Script>            ::= <KwScript> <PuncKind::Semicolon> <Item>*
+
+////////////////////////////////////////////////////////////////////////////////
+
+<Contract>          ::= <KwAbstract>? <KwContract> <PuncKind::Semicolon> <ContractItem>*
+
+<ContractItem>      ::= <Item> 
+                        | <Storage> 
+                        | <Interface>
+
+////////////////////////////////////////////////////////////////////////////////
 
 <Item>              ::= <Visibility>? 
                         (Module,
@@ -24,10 +40,7 @@
                         | ConstantItem
                         | StaticItem
                         | Trait
-                        | Implementation
-                        | Contract
-                        | Storage
-                        | Interface)
+                        | Implementation)
 
 <Visibility>        ::= <KwPub> | <KwPub> <(DelimKind::Parenthesis, DelimOrientation::Open)> <KwCrate> <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
@@ -102,29 +115,15 @@
 
 <StaticItem>        ::= <KwStatic> <KwMut>? <Identifier> <PuncKind::Colon> <Type> (<PuncKind::Equals> <Expression>)? <PuncKind::Semicolon>
 
-<Implementation>    ::= <InherentImpl> | <TraitOrInterfaceImpl>
+<Implementation>    ::= <InherentImpl> | <TraitImpl>
 
 <InherentImpl>      ::= <KwImpl> <Type> <(DelimKind::Brace, DelimOrientation::Open)>
                             <AssociatedItem>*
                             <DelimKind::Brace, DelimOrientation::Close)>
 
-<TraitOrInterfaceImpl>  ::= <KwUnsafe>? <KwImpl> <TypePath> <KwFor> <Type> <(DelimKind::Brace, DelimOrientation::Open)>
+<TraitImpl>         ::= <KwUnsafe>? <KwImpl> <TypePath> <KwFor> <Type> <(DelimKind::Brace, DelimOrientation::Open)>
                             <AssociatedItem>*
                             <(DelimKind::Brace, DelimOrientation::Close)>
-
-<Contract>          ::= <KwContract> <Identifier>
-                           ((<(DelimKind::Brace, DelimOrientation::Open)>
-                                (<Function> | <Storage> | <Interface> | <Implementation>)*
-                            <(DelimKind::Brace, DelimOrientation::Close)>) 
-                            | PuncKind::Semicolon)
-
-<Storage>           ::= <KwStorage> <Identifier> (<BlockExpr> | <PuncKind::Semicolon>)
-
-<Interface>         ::= <KwInterface> <Identifier>
-                            (<(DelimKind::Brace, DelimOrientation::Open)>
-                               <Function>*
-                            <(DelimKind::Brace, DelimOrientation::Close)>)
-                            | PuncKind::Semicolon)
 
 <Trait>             ::= <KwUnsafe>? <KwTrait> <Identifier> <(DelimKind::Brace, DelimOrientation::Open)>
                             <AssociatedItem>*
@@ -132,7 +131,17 @@
 
 <AssociatedItem>    ::= <Attribute>* (<Visibility>? (<TypeAlias> | <ConstantItem> | <Function>))
 
-////////////////////////////////////////////////////////////////////////////////`   
+<Storage>           ::= <KwStorage> <Identifier> <(DelimKind::Brace, DelimOrientation::Open)> 
+                            (<AssociatedItem>* | <PuncKind::Semicolon>)
+                            <(DelimKind::Brace, DelimOrientation::Close)> 
+
+<Interface>         ::= <KwInterface> <Identifier>
+                            (<(DelimKind::Brace, DelimOrientation::Open)>
+                               <Function>*
+                            <(DelimKind::Brace, DelimOrientation::Close)>)
+                            | PuncKind::Semicolon)
+
+////////////////////////////////////////////////////////////////////////////////
 
 <Statement>         ::= <PuncKind::Semicolon>
                         | <Item>
