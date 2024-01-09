@@ -9,6 +9,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+<Library>           ::= <KwLibrary> <PuncKind::Semicolon> <AssociatedItem>*
+
+<Script>            ::= <KwScript> <PuncKind::Semicolon> <Item>*
+
 <Item>              ::= <Visibility>? 
                         (Module,
                         | ExternCrate
@@ -19,11 +23,13 @@
                         | Enum
                         | ConstantItem
                         | StaticItem
+                        | Trait
+                        | Implementation
                         | Contract
                         | Storage
-                        | Interface
-                        | Trait
-                        | Implementation)
+                        | Interface)
+
+<Visibility>        ::= <KwPub> | <KwPub> <(DelimKind::Parenthesis, DelimOrientation::Open)> <KwCrate> <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
 <Module>            ::= <KwMod> <Identifier>
                         | <KwMod> <Identifier> <(DelimKind::Brace, DelimOrientation::Open)>
@@ -90,8 +96,21 @@
 
 <EnumItemTuple>     ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <TupleFields>? <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
-<EnumItemStruct>     ::= <(DelimKind::Brace, DelimOrientation::Open)> <StructFields>? <(DelimKind::Brace, DelimOrientation::Close)>
+<EnumItemStruct>    ::= <(DelimKind::Brace, DelimOrientation::Open)> <StructFields>? <(DelimKind::Brace, DelimOrientation::Close)>
 
+<ConstantItem>      ::= <KwConst> <Identifier> <PuncKind::Colon> <Type> (<PuncKind::Equals> <Expression>)? <PuncKind::Semicolon>
+
+<StaticItem>        ::= <KwStatic> <KwMut>? <Identifier> <PuncKind::Colon> <Type> (<PuncKind::Equals> <Expression>)? <PuncKind::Semicolon>
+
+<Implementation>    ::= <InherentImpl> | <TraitOrInterfaceImpl>
+
+<InherentImpl>      ::= <KwImpl> <Type> <(DelimKind::Brace, DelimOrientation::Open)>
+                            <AssociatedItem>*
+                            <DelimKind::Brace, DelimOrientation::Close)>
+
+<TraitOrInterfaceImpl>  ::= <KwUnsafe>? <KwImpl> <TypePath> <KwFor> <Type> <(DelimKind::Brace, DelimOrientation::Open)>
+                            <AssociatedItem>*
+                            <(DelimKind::Brace, DelimOrientation::Close)>
 
 <Contract>          ::= <KwContract> <Identifier>
                            ((<(DelimKind::Brace, DelimOrientation::Open)>
@@ -102,13 +121,16 @@
 <Storage>           ::= <KwStorage> <Identifier> (<BlockExpr> | <PuncKind::Semicolon>)
 
 <Interface>         ::= <KwInterface> <Identifier>
-                            ((<(DelimKind::Brace, DelimOrientation::Open)>
-                                (<FunctionQualifiers> <KwFunc> <Identifier> <(DelimKind::Parenthesis, DelimOrientation::Open)>
-                                <FunctionParams>?
-                            <(DelimKind::Parenthesis, DelimOrientation::Close)> (<PuncKind::ThinArrow> <Type>)? <PuncKind::Semicolon>)*
+                            (<(DelimKind::Brace, DelimOrientation::Open)>
+                               <Function>*
                             <(DelimKind::Brace, DelimOrientation::Close)>)
                             | PuncKind::Semicolon)
 
+<Trait>             ::= <KwUnsafe>? <KwTrait> <Identifier> <(DelimKind::Brace, DelimOrientation::Open)>
+                            <AssociatedItem>*
+                            <(DelimKind::Brace, DelimOrientation::Close)>
+
+<AssociatedItem>    ::= <Attribute>* (<Visibility>? (<TypeAlias> | <ConstantItem> | <Function>))
 
 ////////////////////////////////////////////////////////////////////////////////`   
 
