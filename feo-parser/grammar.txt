@@ -32,7 +32,7 @@
 <Item>              ::= <Visibility>? 
                         (Module,
                         | ExternCrate
-                        | ImportDeclaration
+                        | ImportDecl
                         | Function
                         | TypeAlias
                         | Struct
@@ -157,27 +157,27 @@
 <Expression>        ::= <ExprWithoutBlock> | <ExprWithBlock>
 
 <ExprWithoutBlock>  ::= <Attribute> 
-                        (<LiteralExpr> 
-                        | <PathExpr>
-                        | <OperatorExpr>
+                        (<ArrayExpr>
+                        | <FunctionCallExpr>
+                        | <MethodCallExpr>
+                        | <BreakExpr>
+                        | <ContinueExpr>
+                        | <FieldAccessExpr>
                         | <GroupedExpr>
-                        | <ArrayExpr>
                         | <IndexExpr>
+                        | <LiteralExpr> 
+                        | <OperatorExpr>
+                        | <PathExpr>
+                        | <StructExpr>
                         | <TupleExpr>
                         | <TupleIndexingExpr>
-                        | <StructExpr>
-                        | <CallExpr>
-                        | <MethodCallExpr>
-                        | <FieldAccessExpr>
-                        | <ContinueExpr>
-                        | <BreakExpr>
                         | <ReturnExpr>
                         | <UnderscoreExpr>)
 
 <ExprWithBlock>     ::= <Attribute>
                         (<BlockExpr>
-                        | <LoopExpr>
                         | <IfExpr>
+                        | <LoopExpr>
                         | <MatchExpr>)
 
 <Attribute>         ::= <PuncKind::Hash> <(DelimKind::Bracket, DelimOrientation::Open) <SimplePath> <(DelimKind::Bracket, DelimOrientation::Close)
@@ -185,9 +185,9 @@
 <SimplePath>        ::= <PuncKind::DblColon>? <PathSegment> (PuncKind::DblColon <PathSegment>)*  
 
 <PathSegment>       ::= <Identifier>
-                        | <KwSuper>
-                        | <KwSelf>
                         | <KwCrate>
+                        | <KwSelf>
+                        | <KwSuper>
 
 <PathExpr>          ::= <PathLocation> | <PathItem>
 
@@ -212,13 +212,13 @@
                         | <ExprWithoutBlock>
 
 <OperatorExpr>      ::= <OptionUnwrapExpr>
-                        <NegationExpr>
-                        <ArithmeticOrLogicalExpr>
-                        <ComparisonExpr>
-                        <LazyBoolExpr>
-                        <TypeCastExpr>
-                        <AssignExpr>
-                        <CompoundAssignExpr>
+                        | <NegationExpr>
+                        | <ArithmeticOrLogicalExpr>
+                        | <ComparisonExpr>
+                        | <LazyBoolExpr>
+                        | <TypeCastExpr>
+                        | <AssignExpr>
+                        | <CompoundAssignExpr>
 
 <OptionUnwrapExpr   ::= <Expression> <PuncKind::QuestionMark>
 
@@ -332,15 +332,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 <Pattern>           ::= <LiteralPatt>
-                        | <IdentifierPatt>
-                        | <WildcardPatt>
-                        | <ReferencePatt>
-                        | <StructPatt>
-                        | <TupleStructPatt>
-                        | <TuplePatt>
                         | <GroupedPatt>
-                        | <SlicePatt>
+                        | <IdentifierPatt>
                         | <PathPatt>
+                        | <ReferencePatt>
+                        | <SlicePatt>
+                        | <StructPatt>
+                        | <TuplePatt>
+                        | <TupleStructPatt>
+                        | <WildcardPatt>
 
 <LiteralPatt>       ::= true | false
                         | <CharLit>

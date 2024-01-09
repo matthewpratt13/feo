@@ -1,9 +1,15 @@
 pub mod comment;
 pub mod delimiter;
 pub mod doc_comment;
+pub mod expression;
 pub mod identifier;
+pub mod item;
 pub mod keyword;
 pub mod literals;
+pub mod pattern;
+pub mod program;
 pub mod punctuation;
+pub mod statement;
 pub mod token;
+pub mod ty;
 pub mod type_annotation;
