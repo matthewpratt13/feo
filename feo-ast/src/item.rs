@@ -1,10 +1,5 @@
-use crate::{identifier::Identifier, keyword::KeywordKind};
-
-use self::{
-    constant_item::{ConstantItem, StaticItem},
-    struct_item::StructItem,
-    trait_item::TraitItem, enum_item::EnumItem, function_item::FunctionItem, implementation::Implementation, import_decl::ImportDecl, module_item::ModuleItem,
-};
+use crate::identifier::Identifier;
+use crate::keyword::KeywordKind;
 
 mod constant_item;
 mod enum_item;
@@ -14,6 +9,17 @@ mod import_decl;
 mod module_item;
 mod struct_item;
 mod trait_item;
+
+use self::{
+    constant_item::{ConstantItem, StaticItem},
+    enum_item::EnumItem,
+    function_item::FunctionItem,
+    implementation::Implementation,
+    import_decl::ImportDecl,
+    module_item::ModuleItem,
+    struct_item::StructItem,
+    trait_item::TraitItem,
+};
 
 pub enum Item {
     Vis(VisibilityItem),

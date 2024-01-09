@@ -1,21 +1,19 @@
-use crate::{
-    expression::PathExpr,
-    literals::{
-        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
-    },
+use crate::expression::PathExpr;
+use crate::literals::{
+    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
 };
 
 pub enum Pattern {
-    Literal,
-    Grouped,
-    Identifier,
+    Literal(LiteralPatt),
+    Grouped(GroupedPatt),
+    Identifier(IdentifierPatt),
     Path(PathPatt),
-    Reference,
-    Slice,
-    Struct,
-    Tuple,
-    TupleStruct,
-    Wildcard,
+    Reference(ReferencePatt),
+    Slice(SlicePatt),
+    Struct(StructPatt),
+    Tuple(TuplePatt),
+    TupleStruct(TupleStructPatt),
+    Wildcard(WildcardPatt),
 }
 
 pub enum LiteralPatt {
