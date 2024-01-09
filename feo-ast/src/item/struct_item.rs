@@ -1,6 +1,6 @@
 pub enum StructItem {
-    Struct,
-    TupleStruct,
+    Struct(Struct),
+    TupleStruct(TupleStruct),
 }
 
 pub struct Struct {}
