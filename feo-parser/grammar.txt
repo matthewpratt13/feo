@@ -61,6 +61,38 @@
 
 <FuncParam>         ::= <Pattern> <PuncKind::Colon> <Type>
 
+<TypeAlias>         ::= <KwType> <Identifier> (<PuncKind::Colon> TraitBound>)? (<PuncKind::Equals> <Type>)?
+
+<Struct>            ::= <StructStruct> | <TupleStruct>
+
+<StructStruct>      ::= <KwStruct> <Identifier> 
+                            (<(DelimKind::Brace, DelimOrientation::Open)> 
+                            <StructFields>? 
+                            <(DelimKind::Brace, DelimOrientation::Close)> 
+                            | <PuncKind::Semicolon)
+
+<TupleStruct>       ::= <KwStruct> <Identifier> <(DelimKind::Parenthesis, DelimOrientation::Open)> 
+                            <TupleFields>? 
+                            <(DelimKind::Parenthesis, DelimOrientation::Close)>
+                            <PuncKind::Semicolon>
+
+<StructFields>      ::= <Attribute>* <Visibility>? <Identifier> <PuncKind::Semicolon> <Type>
+
+<TupleFields>       ::= <TupleField> (<PuncKind::Comma> <TupleField>)* <PuncKind::Comma>?
+
+<TupleField>        ::= <Attribute>* <Visibility>? <Type>
+
+<Enum>              ::= <KwEnum> <Identifier> <(DelimKind::Brace, DelimOrientation::Open)> 
+                            <EnumItems>?
+                            <(DelimKind::Brace, DelimOrientation::Close)> 
+
+<EnumItems>         ::= <Attribute>* <Visibility>? <Identifier> (<EnumItemTuple> | <EnumItemStruct>)? (<PuncKind::Equals> <Expression>)?
+
+<EnumItemTuple>     ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <TupleFields>? <(DelimKind::Parenthesis, DelimOrientation::Close)>
+
+<EnumItemStruct>     ::= <(DelimKind::Brace, DelimOrientation::Open)> <StructFields>? <(DelimKind::Brace, DelimOrientation::Close)>
+
+
 <Contract>          ::= <KwContract> <Identifier>
                            ((<(DelimKind::Brace, DelimOrientation::Open)>
                                 (<Function> | <Storage> | <Interface> | <Implementation>)*
