@@ -2,10 +2,10 @@ use crate::{identifier::Identifier, keyword::KeywordKind};
 
 use self::{
     constant_item::{ConstantItem, StaticItem},
-    struct_item::StructItem, trait_item::TraitItem,
+    struct_item::StructItem,
+    trait_item::TraitItem,
 };
 
-mod associated_item;
 mod constant_item;
 mod enum_item;
 mod function_item;
@@ -24,7 +24,7 @@ pub enum Item {
     ExternCrate,
     Function,
     Implementation,
-    ImportDeclaration,
+    ImportDecl,
     Module,
     Struct(StructItem),
     Trait(TraitItem),
@@ -45,3 +45,6 @@ pub struct ExternCrate {}
 
 pub struct AsClause {}
 
+pub struct AssociatedItem {}
+
+pub struct TypeAlias {}

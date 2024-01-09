@@ -1,5 +1,4 @@
 mod array_expr;
-mod attribute_expr;
 mod block_expr;
 mod call_expr;
 mod conditional_expr;
@@ -44,6 +43,8 @@ pub enum ExprWithBlock {
     LoopExpr,
     MatchExpr,
 }
+
+pub struct Attribute {}
 
 pub struct GroupedExpr {}
 
