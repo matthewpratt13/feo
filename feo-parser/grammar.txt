@@ -281,8 +281,9 @@
 
 <StructExprField>   ::= <Attribute>* (<Identifier> <PuncKind::Colon> <Expression>)
 
-<StructExprType>    ::= <SimplePath> <(DelimKind::Parenthesis, DelimOrientation::Open)>
+<StructExprTuple>    ::= <SimplePath> <(DelimKind::Parenthesis, DelimOrientation::Open)>
                         (<Expression> (<PuncKind::Comma> <Expression>)* <PuncKind::Comma>?)?
+                        (DelimKind::Parenthesis, DelimOrientation::Close)
 
 <StructExprUnit>    ::= <SimplePath>
 
