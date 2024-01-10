@@ -12,9 +12,9 @@ pub struct ArrayExpr {
 }
 
 pub struct ArrayElements {
-    opening_expression: Expression,
+    opening_expr: Expression,
     elements: Vec<(PuncKind, Expression)>,
-    trailing_comma: Option<PuncKind>,
+    trailing_comma_opt: Option<PuncKind>,
 }
 
 pub struct ArrayElementsFixedSize {
