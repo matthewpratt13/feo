@@ -14,8 +14,8 @@ pub struct FunctionCallExpr {
 }
 
 pub struct CallParams {
-    opening_expr: Box<Expression>,
-    comma: Vec<(PuncKind, Expression)>,
+    first_param: Box<Expression>,
+    subsequent_params: Vec<(PuncKind, Expression)>,
     trailing_comma_opt: Option<PuncKind>,
 }
 

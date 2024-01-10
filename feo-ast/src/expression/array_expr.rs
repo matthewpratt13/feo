@@ -7,7 +7,7 @@ use super::Expression;
 
 pub struct ArrayExpr {
     open_bracket: (DelimKind, DelimOrientation),
-    elements: Box<ArrayElements>,
+    elements_opt: Option<Box<ArrayElements>>,
     close_bracket: (DelimKind, DelimOrientation),
 }
 

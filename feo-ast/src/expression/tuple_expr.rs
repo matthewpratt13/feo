@@ -12,8 +12,8 @@ pub struct TupleExpr {
 }
 
 pub struct TupleElements {
-    first_element: (Box<Expression>, PuncKind),
-    subsequent_elements: Option<Box<Expression>>,
+    elements: Vec<(Box<Expression>, PuncKind)>,
+    trailing_element_opt: Option<Box<Expression>>,
 }
 
 pub struct TupleIndexingExpr {

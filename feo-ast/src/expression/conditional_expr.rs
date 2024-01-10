@@ -23,13 +23,18 @@ pub struct IfExpr {
 
 pub struct MatchExpr {
     kw_match: KeywordKind,
-    condition: Box<Expression>, // cannot be a struct expression
+    scrutinee: Box<Expression>, // cannot be a struct expression
     open_brace: (DelimKind, DelimOrientation),
     match_arms_opt: Option<MatchArms>,
     close_brace: (DelimKind, DelimOrientation),
 }
 
 pub struct MatchArms {
+    arm: Vec<(MatchArm, PuncKind, Box<Expression>, Option<PuncKind>)>,
+    final_arm: (MatchArm, PuncKind, Box<Expression>, Option<PuncKind>),
+}
+
+pub struct MatchArm {
     pattern: Pattern,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
