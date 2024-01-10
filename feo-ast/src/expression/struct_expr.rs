@@ -1,10 +1,10 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
     identifier::Identifier,
-    punctuation::PuncKind,
+    punctuation::PuncKind, path::SimplePath,
 };
 
-use super::{path_expr::SimplePath, Attribute, Expression};
+use super::{Attribute, Expression};
 
 pub enum StructExpr {
     Struct(Struct),

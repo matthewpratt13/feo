@@ -6,6 +6,7 @@ pub mod identifier;
 pub mod item;
 pub mod keyword;
 pub mod literals;
+pub mod path;
 pub mod pattern;
 pub mod program;
 pub mod punctuation;

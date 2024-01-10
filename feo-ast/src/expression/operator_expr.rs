@@ -1,10 +1,10 @@
-use crate::{punctuation::PuncKind, ty::Type};
+use crate::{keyword::KeywordKind, punctuation::PuncKind, ty::Type};
 
 use super::Expression;
 
 pub enum OperatorExpr {
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
-    Assignment(AssignExpr),
+    Assign(AssignmentExpr),
     Comparison(ComparisonExpr),
     Bool(BoolExpr),
     Negation(NegationExpr),
@@ -18,7 +18,7 @@ pub struct ArithmeticOrLogicalExpr {
     second_operand: Box<Expression>,
 }
 
-pub struct AssignExpr {
+pub struct AssignmentExpr {
     initial_value: Box<Expression>,
     operator: PuncKind,
     new_value: Box<Expression>,
@@ -48,6 +48,6 @@ pub struct OptionUnwrapExpr {
 
 pub struct TypeCastExpr {
     original_expression: Box<Expression>,
-    kw_as: PuncKind,
+    kw_as: KeywordKind,
     new_type: Type,
 }

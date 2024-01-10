@@ -1,13 +1,15 @@
-use crate::expression::PathExpr;
-use crate::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+use crate::{
+    literals::{
+        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+    },
+    path::SimplePath,
 };
 
 pub enum Pattern {
     Literal(LiteralPatt),
     Grouped(GroupedPatt),
     Identifier(IdentifierPatt),
-    Path(PathPatt),
+    Path(SimplePath),
     Reference(ReferencePatt),
     Slice(SlicePatt),
     Struct(StructPatt),
@@ -29,8 +31,6 @@ pub enum LiteralPatt {
 pub struct GroupedPatt {}
 
 pub struct IdentifierPatt {}
-
-pub type PathPatt = PathExpr;
 
 pub struct ReferencePatt {}
 

@@ -1,9 +1,9 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
+    path::PathSegment,
     punctuation::PuncKind,
 };
 
-use super::path_expr::PathSegment;
 use super::Expression;
 
 pub struct FunctionCallExpr {
