@@ -1,26 +1,53 @@
+use crate::{punctuation::PuncKind, ty::Type};
+
+use super::Expression;
+
 pub enum OperatorExpr {
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
     Assignment(AssignExpr),
-    CompoundAssignment(CompoundAssignExpr),
     Comparison(ComparisonExpr),
-    LazyBool(LazyBoolExpr),
+    Bool(BoolExpr),
     Negation(NegationExpr),
     OptionUnwrap(OptionUnwrapExpr),
     TypeCast(TypeCastExpr),
 }
 
-pub struct ArithmeticOrLogicalExpr {}
+pub struct ArithmeticOrLogicalExpr {
+    first_operand: Box<Expression>,
+    operator: PuncKind,
+    second_operand: Box<Expression>,
+}
 
-pub struct AssignExpr {}
+pub struct AssignExpr {
+    initial_value: Box<Expression>,
+    operator: PuncKind,
+    new_value: Box<Expression>,
+}
 
-pub struct CompoundAssignExpr {}
+pub struct ComparisonExpr {
+    first_expression: Box<Expression>,
+    operator: PuncKind,
+    second_expression: Box<Expression>,
+}
 
-pub struct ComparisonExpr {}
+pub struct BoolExpr {
+    first_expression: Box<Expression>,
+    operator: PuncKind,
+    second_expression: Box<Expression>,
+}
 
-pub struct LazyBoolExpr {}
+pub struct NegationExpr {
+    negator: PuncKind,
+    expression: Box<Expression>,
+}
 
-pub struct NegationExpr {}
+pub struct OptionUnwrapExpr {
+    expression: Box<Expression>,
+    question_mark: PuncKind,
+}
 
-pub struct OptionUnwrapExpr {}
-
-pub struct TypeCastExpr {}
+pub struct TypeCastExpr {
+    original_expression: Box<Expression>,
+    kw_as: PuncKind,
+    new_type: Type,
+}

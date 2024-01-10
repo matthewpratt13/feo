@@ -242,6 +242,12 @@
                         | <Expression> <PuncKind::GreaterThan> <Expression>
                         | <Expression> <PuncKind::LessThanEquals> <Expression>
                         | <Expression> <PuncKind::GreaterThanEquals> <Expression>
+                        | <Expression> <PuncKind::PlusEquals> <Expression>
+                        | <Expression> <PuncKind::MinusEquals> <Expression>
+                        | <Expression> <PuncKind::AsteriskEquals> <Expression>
+                        | <Expression> <PuncKind::ForwardSlashEquals> <Expression>
+                        | <Expression> <PuncKind::PercentEquals> <Expression>
+                        | <Expression> <PuncKind::BangEquals> <Expression>
 
 <LazyBoolExpr>      ::= <Expression> <PuncKind::DblAmpersand> <Expression>
                         | <Expression> <PuncKind::DblPipe> <Expression>
@@ -249,13 +255,6 @@
 <TypeCastExpr>      ::= <Expression> <KwAs> <Type>
 
 <AssignExpr>        ::= <Expression> <PuncKind::Equals> <Expression>
-
-<CompoundAssignExpr>::= <Expression> <PuncKind::PlusEquals> <Expression>
-                        | <Expression> <PuncKind::MinusEquals> <Expression>
-                        | <Expression> <PuncKind::AsteriskEquals> <Expression>
-                        | <Expression> <PuncKind::ForwardSlashEquals> <Expression>
-                        | <Expression> <PuncKind::PercentEquals> <Expression>
-                        | <Expression> <PuncKind::BangEquals> <Expression>
 
 <GroupedExpr>       ::= <(DelimKind::Parenthesis, DelimOrientation::Open)> <Expression> <(DelimKind::Parenthesis, DelimOrientation::Close)>
 
