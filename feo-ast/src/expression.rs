@@ -17,7 +17,7 @@ use self::{
     block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
     conditional_expr::{IfExpr, MatchExpr, UnderscoreExpr},
-    iterator_expr::LoopExpr,
+    iterator_expr::IteratorExpr,
     literal_expr::LiteralExpr,
     operator_expr::OperatorExpr,
     struct_expr::StructExpr,
@@ -53,7 +53,7 @@ pub enum ExprWithBlock {
     Attr(Attribute),
     Block(BlockExpr),
     IfExpr(IfExpr),
-    LoopExpr(LoopExpr),
+    IterExpr(IteratorExpr),
     MatchExpr(MatchExpr),
 }
 

@@ -1,7 +1,9 @@
-use crate::keyword::KeywordKind;
+use crate::{keyword::KeywordKind, pattern::Pattern};
+
+use super::block_expr::BlockExpr;
+use super::Expression;
 
 pub enum IteratorExpr {
-    Loop(LoopExpr),
     InfiniteLoop(InfiniteLoopExpr),
     IterLoop(IterLoopExpr),
     PredicateLoop(PredicateLoopExpr),
@@ -9,10 +11,21 @@ pub enum IteratorExpr {
     Continue(KeywordKind),
 }
 
-pub struct LoopExpr {}
+pub struct InfiniteLoopExpr {
+    kw_loop: KeywordKind,
+    block: BlockExpr,
+}
 
-pub struct InfiniteLoopExpr {}
+pub struct PredicateLoopExpr {
+    kw_while: KeywordKind,
+    predicate: Box<Expression>, // cannot be struct expression
+    block: BlockExpr,
+}
 
-pub struct IterLoopExpr {}
-
-pub struct PredicateLoopExpr {}
+pub struct IterLoopExpr {
+    kw_for: KeywordKind,
+    pattern: Pattern,
+    kw_in: KeywordKind,
+    expression: Box<Expression>, // cannot be struct expression
+    block: BlockExpr,
+}
