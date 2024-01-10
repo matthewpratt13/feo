@@ -7,13 +7,13 @@ use super::Expression;
 
 pub struct ArrayExpr {
     open_bracket: (DelimKind, DelimOrientation),
-    array_elements: Box<ArrayElements>,
+    elements: Box<ArrayElements>,
     close_bracket: (DelimKind, DelimOrientation),
 }
 
 pub struct ArrayElements {
     first_element: Expression,
-    elements: Vec<(PuncKind, Expression)>,
+    subsequent_elements: Vec<(PuncKind, Expression)>,
     trailing_comma_opt: Option<PuncKind>,
 }
 
