@@ -1,3 +1,15 @@
-pub struct BlockExpr {}
+use crate::{punctuation::PuncKind, statement::{Statement, StatementWithExpr}};
 
-pub struct Statements {}
+use super::ExprWithoutBlock;
+
+pub struct BlockExpr {
+    open_brace: PuncKind,
+    statements: Statements,
+    close_brace: PuncKind,
+}
+
+pub enum Statements {
+    Statement(Box<Statement>),
+    StatementWithExpr(Box<StatementWithExpr>),
+    ExprWithoutBlock(ExprWithoutBlock),
+}

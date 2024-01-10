@@ -27,3 +27,8 @@ pub struct LetStatement {
     expression: Expression,
     semicolon: PuncKind,
 }
+
+pub struct StatementWithExpr {
+    statement: Statement,
+    expr_without_block: ExprWithoutBlock
+}
