@@ -16,7 +16,7 @@ use self::{
     array_expr::{ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
-    conditional_expr::{IfExpr, MatchExpr},
+    conditional_expr::{IfExpr, MatchExpr, UnderscoreExpr},
     iterator_expr::LoopExpr,
     literal_expr::LiteralExpr,
     operator_expr::OperatorExpr,
@@ -64,5 +64,3 @@ pub struct GroupedExpr {}
 pub struct FieldAccessExpr {}
 
 pub struct ReturnExpr {}
-
-pub struct UnderscoreExpr {}
