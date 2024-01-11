@@ -26,7 +26,7 @@ use self::{
 };
 
 pub enum Item {
-    Vis(Visibility),
+    Visibility(Visibility),
     Associated(AssociatedItem),
     Constant(ConstantItem),
     Static(StaticItem),
