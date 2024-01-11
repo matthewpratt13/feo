@@ -5,10 +5,10 @@ pub enum StructItem {
 
 pub struct Struct {}
 
-pub struct StructFields {}
+pub struct StructItemFields {}
 
 pub struct TupleStruct {}
 
-pub struct TupleFields {}
+pub struct TupleStructItemFields {}
 
-pub struct TupleField {}
+pub struct TupleStructItemField {}
