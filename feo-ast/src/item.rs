@@ -1,6 +1,3 @@
-use crate::delimiter::{DelimKind, DelimOrientation};
-use crate::keyword::KeywordKind;
-
 mod associated_item;
 mod constant_item;
 mod enum_item;
@@ -25,6 +22,7 @@ use self::{
     struct_item::StructItem,
     trait_item::TraitItem,
     type_alias_item::TypeAliasItem,
+    visibility::Visibility,
 };
 
 pub enum Item {
@@ -43,14 +41,21 @@ pub enum Item {
     TypeAlias(TypeAliasItem),
 }
 
-pub enum Visibility {
-    Pub(KeywordKind),
-    PubCrate(PubCrateVisibility),
-}
+mod visibility {
+    use crate::{
+        delimiter::{DelimKind, DelimOrientation},
+        keyword::KeywordKind,
+    };
 
-pub struct PubCrateVisibility {
-    kw_pub: KeywordKind,
-    open_parenthesis: (DelimKind, DelimOrientation),
-    kw_crate: KeywordKind,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    pub enum Visibility {
+        Pub(KeywordKind),
+        PubCrate(PubCrateVisibility),
+    }
+
+    pub struct PubCrateVisibility {
+        kw_pub: KeywordKind,
+        open_parenthesis: (DelimKind, DelimOrientation),
+        kw_crate: KeywordKind,
+        close_parenthesis: (DelimKind, DelimOrientation),
+    }
 }
