@@ -3,7 +3,7 @@ use crate::{keyword::KeywordKind, pattern::Pattern};
 use super::block_expr::BlockExpr;
 use super::Expression;
 
-pub enum IteratorExpr {
+pub enum IterationExpr {
     InfiniteLoop(InfiniteLoopExpr),
     IterLoop(IterLoopExpr),
     PredicateLoop(PredicateLoopExpr),

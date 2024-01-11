@@ -4,7 +4,7 @@ mod array_expr;
 mod block_expr;
 mod call_expr;
 mod conditional_expr;
-mod iterator_expr;
+mod iteration_expr;
 mod literal_expr;
 mod operator_expr;
 mod struct_expr;
@@ -15,7 +15,7 @@ use self::{
     block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
     conditional_expr::ConditionalExpr,
-    iterator_expr::IteratorExpr,
+    iteration_expr::IterationExpr,
     literal_expr::LiteralExpr,
     operator_expr::OperatorExpr,
     struct_expr::StructExpr,
@@ -50,8 +50,8 @@ pub enum ExprWithoutBlock {
 pub enum ExprWithBlock {
     Attr(Attribute),
     Block(BlockExpr),
-    ConditionalExpr(ConditionalExpr),
-    IterExpr(IteratorExpr),
+    Conditional(ConditionalExpr),
+    Iteration(IterationExpr),
 }
 
 pub struct Attribute {}
