@@ -82,4 +82,7 @@ pub struct GroupedExpr {
     close_parenthesis: Parenthesis,
 }
 
-pub struct ReturnExpr {}
+pub struct ReturnExpr {
+    kw_return: KeywordKind,
+    expression_opt: Option<Box<Expression>>,
+}
