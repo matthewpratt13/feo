@@ -2,10 +2,11 @@
 #![allow(unused_variables)]
 
 use crate::{
-    item::{Bracket, HashSign, Dot},
+    identifier::Identifier,
+    item::{Bracket, Dot, HashSign, Parenthesis},
     keyword::KeywordKind,
     path::SimplePath,
-    punctuation::PuncKind, identifier::Identifier,
+    punctuation::PuncKind,
 };
 
 mod array_expr;
@@ -75,6 +76,10 @@ pub struct FieldAccessExpr {
     field_name: Identifier,
 }
 
-pub struct GroupedExpr {}
+pub struct GroupedExpr {
+    open_parenthesis: Parenthesis,
+    expression: Box<Expression>,
+    close_parenthesis: Parenthesis,
+}
 
 pub struct ReturnExpr {}
