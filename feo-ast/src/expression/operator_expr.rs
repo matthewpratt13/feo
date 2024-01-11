@@ -1,7 +1,6 @@
 use crate::{
-    item::{Equals, QuestionMark},
+    item::{BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
     keyword::KeywordKind,
-    punctuation::PuncKind,
     ty::Type,
 };
 
@@ -19,30 +18,30 @@ pub enum OperatorExpr {
 
 pub struct ArithmeticOrLogicalExpr {
     first_operand: Box<Expression>,
-    operator: PuncKind,
+    operator: OpArithmeticOrLogical,
     second_operand: Box<Expression>,
 }
 
 pub struct AssignmentExpr {
     initial_value: Box<Expression>,
-    operator: Equals,
+    equals: Equals,
     new_value: Box<Expression>,
 }
 
 pub struct ComparisonExpr {
     first_expression: Box<Expression>,
-    operator: PuncKind,
+    operator: OpComparison,
     second_expression: Box<Expression>,
 }
 
 pub struct BoolExpr {
     first_expression: Box<Expression>,
-    operator: PuncKind,
+    operator: OpBool,
     second_expression: Box<Expression>,
 }
 
 pub struct NegationExpr {
-    negator: PuncKind,
+    negator: BangOrMinus,
     expression: Box<Expression>,
 }
 
