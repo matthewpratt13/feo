@@ -6,11 +6,14 @@ use crate::{
     punctuation::PuncKind,
 };
 
-use super::visibility::Visibility;
+use super::{
+    struct_item::{StructItemFields, TupleItemFields},
+    visibility::Visibility,
+};
 
 pub enum EnumVariantType {
-    Struct(EnumItemStruct),
-    Tuple(EnumItemTuple),
+    Struct(EnumVariantStruct),
+    Tuple(EnumVariantTuple),
 }
 
 pub struct EnumItem {
@@ -34,6 +37,14 @@ pub struct EnumVariant {
     variant_type_opt: Option<EnumVariantType>,
 }
 
-pub struct EnumItemStruct {}
+pub struct EnumVariantStruct {
+    open_brace: (DelimKind, DelimOrientation),
+    struct_item_fields_opt: Option<StructItemFields>,
+    close_brace: (DelimKind, DelimOrientation),
+}
 
-pub struct EnumItemTuple {}
+pub struct EnumVariantTuple {
+    open_parenthesis: (DelimKind, DelimOrientation),
+    tuple_item_fields_opt: Option<TupleItemFields>,
+    close_parenthesis: (DelimKind, DelimOrientation),
+}

@@ -40,18 +40,18 @@ pub struct TupleStruct {
     kw_struct: KeywordKind,
     name: Identifier,
     open_parenthesis: (DelimKind, DelimOrientation),
-    tuple_struct_item_fields: TupleStructItemFields,
+    tuple_item_fields_opt: Option<TupleItemFields>,
     close_parenthesis: (DelimKind, DelimOrientation),
     semicolon: PuncKind,
 }
 
-pub struct TupleStructItemFields {
-    first_field: TupleStructItemField,
-    subsequent_fields: Vec<(PuncKind, TupleStructItemField)>,
+pub struct TupleItemFields {
+    first_field: TupleItemField,
+    subsequent_fields: Vec<(PuncKind, TupleItemField)>,
     trailing_comma_opt: Option<PuncKind>,
 }
 
-pub struct TupleStructItemField {
+pub struct TupleItemField {
     attributes: Vec<Attribute>,
     visibility_opt: Option<Visibility>,
     field_type: Type,
