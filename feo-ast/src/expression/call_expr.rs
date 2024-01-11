@@ -1,6 +1,5 @@
 use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    item::{Colon, Comma, Dot},
+    item::{Colon, Comma, Dot, Parenthesis},
     path::PathSegment,
 };
 
@@ -8,9 +7,9 @@ use super::Expression;
 
 pub struct FunctionCallExpr {
     function_path: PathSegment,
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
 }
 
 pub struct CallParams {
@@ -23,7 +22,7 @@ pub struct MethodCallExpr {
     object: Box<Expression>,
     dot: Dot,
     method_path: PathSegment,
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
 }

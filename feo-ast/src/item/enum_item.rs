@@ -1,15 +1,11 @@
-use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    expression::Attribute,
-    identifier::Identifier,
-    keyword::KeywordKind,
-};
+use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind};
 
-use super::Comma;
 use super::{
     struct_item::{StructItemFields, TupleItemFields},
     visibility::Visibility,
+    Parenthesis,
 };
+use super::{Brace, Comma};
 
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),
@@ -19,9 +15,9 @@ pub enum EnumVariantType {
 pub struct EnumItem {
     kw_enum: KeywordKind,
     name: Identifier,
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     enum_variants_opt: Option<EnumVariants>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
 
 pub struct EnumVariants {
@@ -38,13 +34,13 @@ pub struct EnumVariant {
 }
 
 pub struct EnumVariantStruct {
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     struct_item_fields_opt: Option<StructItemFields>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
 
 pub struct EnumVariantTuple {
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     tuple_item_fields_opt: Option<TupleItemFields>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
 }

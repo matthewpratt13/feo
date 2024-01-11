@@ -1,7 +1,6 @@
 use crate::{
-    delimiter::{DelimKind, DelimOrientation},
     identifier::Identifier,
-    item::{Colon, Comma},
+    item::{Brace, Colon, Comma, Parenthesis},
     path::SimplePath,
 };
 
@@ -15,9 +14,9 @@ pub enum StructExpr {
 
 pub struct Struct {
     path: SimplePath,
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     struct_expr_fields_opt: Option<StructExprFields>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
 
 pub struct StructExprFields {
@@ -32,9 +31,9 @@ pub struct StructExprField {
 
 pub struct TupleStruct {
     path: SimplePath,
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Comma)>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
 }
 
 pub struct TupleStructExprFields {

@@ -1,13 +1,9 @@
 use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    expression::ExprWithBlock,
-    identifier::Identifier,
-    keyword::KeywordKind,
-    pattern::Pattern,
+    expression::ExprWithBlock, identifier::Identifier, keyword::KeywordKind, pattern::Pattern,
     ty::Type,
 };
 
-use super::{Colon, Comma, Semicolon, ThinArrow};
+use super::{Colon, Comma, Parenthesis, Semicolon, ThinArrow};
 
 pub enum FuncQualifier {
     Const(KeywordKind),
@@ -24,9 +20,9 @@ pub struct FunctionItem {
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: KeywordKind,
     name: Identifier,
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Type)>,
     func_body: ExprWithBlock,
 }
@@ -35,9 +31,9 @@ pub struct FunctionSignature {
     func_qualifiers_opt: Option<FuncQualifier>,
     kw_func: KeywordKind,
     name: Identifier,
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Type)>,
     semicolon: Semicolon,
 }

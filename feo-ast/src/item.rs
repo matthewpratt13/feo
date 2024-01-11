@@ -12,7 +12,10 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
-use crate::punctuation::PuncKind;
+use crate::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+};
 
 use self::{
     associated_item::AssociatedItem,
@@ -60,11 +63,14 @@ pub type QuestionMark = PuncKind;
 pub type Semicolon = PuncKind;
 pub type ThinArrow = PuncKind;
 
+pub type Parenthesis = (DelimKind, DelimOrientation);
+pub type Bracket = (DelimKind, DelimOrientation);
+pub type Brace = (DelimKind, DelimOrientation);
+
 mod visibility {
-    use crate::{
-        delimiter::{DelimKind, DelimOrientation},
-        keyword::KeywordKind,
-    };
+    use crate::keyword::KeywordKind;
+
+    use super::Parenthesis;
 
     pub enum Visibility {
         Pub(KeywordKind),
@@ -73,9 +79,9 @@ mod visibility {
 
     pub struct PubCrateVisibility {
         kw_pub: KeywordKind,
-        open_parenthesis: (DelimKind, DelimOrientation),
+        open_parenthesis: Parenthesis,
         kw_crate: KeywordKind,
-        close_parenthesis: (DelimKind, DelimOrientation),
+        close_parenthesis: Parenthesis,
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::{
-    delimiter::{DelimKind, DelimOrientation},
+    item::Brace,
     statement::{Statement, StatementWithExpr},
 };
 
@@ -12,7 +12,7 @@ pub enum Statements {
 }
 
 pub struct BlockExpr {
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     statements: Statements,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }

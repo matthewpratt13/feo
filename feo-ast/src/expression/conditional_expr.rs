@@ -1,6 +1,5 @@
 use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    item::{Comma, FatArrow},
+    item::{Brace, Comma, FatArrow},
     keyword::KeywordKind,
     pattern::Pattern,
 };
@@ -24,9 +23,9 @@ pub struct IfExpr {
 pub struct MatchExpr {
     kw_match: KeywordKind,
     scrutinee: Box<Expression>, // cannot be a struct expression
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     match_arms_opt: Option<MatchArms>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
 
 pub struct MatchArms {

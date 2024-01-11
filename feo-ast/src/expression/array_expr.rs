@@ -1,14 +1,11 @@
-use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    item::{Comma, Semicolon},
-};
+use crate::item::{Bracket, Comma, Semicolon};
 
 use super::Expression;
 
 pub struct ArrayExpr {
-    open_bracket: (DelimKind, DelimOrientation),
+    open_bracket: Bracket,
     elements_opt: Option<ArrayElements>,
-    close_bracket: (DelimKind, DelimOrientation),
+    close_bracket: Bracket,
 }
 
 pub struct ArrayElements {
@@ -25,7 +22,7 @@ pub struct ArrayElementsFixedSize {
 
 pub struct IndexExpr {
     item: Box<Expression>,
-    open_bracket: (DelimKind, DelimOrientation),
+    open_bracket: Bracket,
     index: usize,
-    close_bracket: (DelimKind, DelimOrientation),
+    close_bracket: Bracket,
 }

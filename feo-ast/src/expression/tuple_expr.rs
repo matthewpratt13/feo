@@ -1,14 +1,11 @@
-use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    item::{Comma, Dot},
-};
+use crate::item::{Comma, Dot, Parenthesis};
 
 use super::Expression;
 
 pub struct TupleExpr {
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     elements_opt: Option<TupleElements>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
 }
 
 pub struct TupleElements {

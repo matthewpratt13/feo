@@ -1,12 +1,6 @@
-use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    expression::Attribute,
-    identifier::Identifier,
-    keyword::KeywordKind,
-    ty::Type,
-};
+use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind, ty::Type};
 
-use super::{Colon, Comma, Semicolon, Visibility};
+use super::{Brace, Colon, Comma, Parenthesis, Semicolon, Visibility};
 
 pub enum StructItem {
     Struct(Struct),
@@ -16,9 +10,9 @@ pub enum StructItem {
 pub struct Struct {
     kw_struct: KeywordKind,
     name: Identifier,
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     struct_item_fields_opt: Option<StructItemFields>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
 
 pub struct StructItemFields {
@@ -38,9 +32,9 @@ pub struct StructItemField {
 pub struct TupleStruct {
     kw_struct: KeywordKind,
     name: Identifier,
-    open_parenthesis: (DelimKind, DelimOrientation),
+    open_parenthesis: Parenthesis,
     tuple_item_fields_opt: Option<TupleItemFields>,
-    close_parenthesis: (DelimKind, DelimOrientation),
+    close_parenthesis: Parenthesis,
     semicolon: Semicolon,
 }
 

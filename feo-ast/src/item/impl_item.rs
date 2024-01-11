@@ -1,10 +1,7 @@
-use crate::{
-    delimiter::{DelimKind, DelimOrientation},
-    keyword::KeywordKind,
-    ty::Type,
-};
+use crate::{keyword::KeywordKind, ty::Type};
 
 use super::associated_item::AssociatedItem;
+use super::Brace;
 
 pub enum ImplItem {
     Inherent(InherentImpl),
@@ -14,9 +11,9 @@ pub enum ImplItem {
 pub struct InherentImpl {
     kw_impl: KeywordKind,
     object_type: Type,
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     associated_items: Vec<AssociatedItem>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
 
 pub struct TraitImpl {
@@ -25,7 +22,7 @@ pub struct TraitImpl {
     trait_type: Type,
     kw_for: KeywordKind,
     object_type: Type,
-    open_brace: (DelimKind, DelimOrientation),
+    open_brace: Brace,
     associated_items: Vec<AssociatedItem>,
-    close_brace: (DelimKind, DelimOrientation),
+    close_brace: Brace,
 }
