@@ -12,7 +12,7 @@ pub struct TupleExpr {
 }
 
 pub struct TupleElements {
-    elements: Vec<(Box<Expression>, PuncKind)>,
+    elements: Vec<(Expression, PuncKind)>,
     trailing_element_opt: Option<Box<Expression>>,
 }
 
