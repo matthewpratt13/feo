@@ -1,5 +1,7 @@
 use crate::{identifier::Identifier, keyword::KeywordKind, punctuation::PuncKind};
 
+use super::import_decl_item::AsClause;
+
 pub enum CrateRef {
     Identifier(Identifier),
     KwSelf(KeywordKind),
@@ -12,5 +14,3 @@ pub struct ExternCrateItem {
     as_clause_opt: Option<AsClause>,
     semicolon: PuncKind,
 }
-
-pub struct AsClause {}
