@@ -30,7 +30,7 @@ pub struct MatchExpr {
 }
 
 pub struct MatchArms {
-    arm: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
+    arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
     final_arm: (MatchArm, FatArrow, Box<Expression>, Option<Comma>),
 }
 
