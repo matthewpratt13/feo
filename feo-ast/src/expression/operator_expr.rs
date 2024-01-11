@@ -5,8 +5,8 @@ use super::Expression;
 pub enum OperatorExpr {
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
     Assign(AssignmentExpr),
-    Comparison(ComparisonExpr),
     Bool(BoolExpr),
+    Comparison(ComparisonExpr),
     Negation(NegationExpr),
     OptionUnwrap(OptionUnwrapExpr),
     TypeCast(TypeCastExpr),
