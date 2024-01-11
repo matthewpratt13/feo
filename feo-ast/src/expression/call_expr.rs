@@ -1,7 +1,7 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
+    item::{Colon, Comma, Dot},
     path::PathSegment,
-    punctuation::PuncKind,
 };
 
 use super::Expression;
@@ -15,13 +15,13 @@ pub struct FunctionCallExpr {
 
 pub struct CallParams {
     first_param: Box<Expression>,
-    subsequent_params: Vec<(PuncKind, Expression)>,
-    trailing_comma_opt: Option<PuncKind>,
+    subsequent_params: Vec<(Colon, Expression)>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct MethodCallExpr {
     object: Box<Expression>,
-    dot: PuncKind,
+    dot: Dot,
     method_path: PathSegment,
     open_parenthesis: (DelimKind, DelimOrientation),
     call_params_opt: Option<CallParams>,

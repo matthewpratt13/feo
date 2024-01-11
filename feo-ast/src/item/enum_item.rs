@@ -3,12 +3,12 @@ use crate::{
     expression::Attribute,
     identifier::Identifier,
     keyword::KeywordKind,
-    punctuation::PuncKind,
 };
 
 use super::{
     struct_item::{StructItemFields, TupleItemFields},
     visibility::Visibility,
+    Comma,
 };
 
 pub enum EnumVariantType {
@@ -26,8 +26,8 @@ pub struct EnumItem {
 
 pub struct EnumVariants {
     first_variant: EnumVariant,
-    subsequent_variants: Vec<(PuncKind, EnumVariant)>,
-    trailing_comma_opt: Option<PuncKind>,
+    subsequent_variants: Vec<(Comma, EnumVariant)>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct EnumVariant {

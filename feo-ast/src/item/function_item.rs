@@ -4,9 +4,10 @@ use crate::{
     identifier::Identifier,
     keyword::KeywordKind,
     pattern::Pattern,
-    punctuation::PuncKind,
     ty::Type,
 };
+
+use super::{Colon, Comma, Semicolon, ThinArrow};
 
 pub enum FuncQualifier {
     Const(KeywordKind),
@@ -26,7 +27,7 @@ pub struct FunctionItem {
     open_parenthesis: (DelimKind, DelimOrientation),
     func_params_opt: Option<FuncParams>,
     close_parenthesis: (DelimKind, DelimOrientation),
-    return_type_opt: Option<(PuncKind, Type)>,
+    return_type_opt: Option<(ThinArrow, Type)>,
     func_body: ExprWithBlock,
 }
 
@@ -37,30 +38,30 @@ pub struct FunctionSignature {
     open_parenthesis: (DelimKind, DelimOrientation),
     func_params_opt: Option<FuncParams>,
     close_parenthesis: (DelimKind, DelimOrientation),
-    return_type_opt: Option<(PuncKind, Type)>,
-    semicolon: PuncKind,
+    return_type_opt: Option<(ThinArrow, Type)>,
+    semicolon: Semicolon,
 }
 
 pub struct FuncParams {
     first_param: FuncOrMethodParam,
-    subsequent_params: Vec<(PuncKind, FuncParam)>,
-    trailing_comma_opt: Option<PuncKind>,
+    subsequent_params: Vec<(Comma, FuncParam)>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct FuncParam {
     pattern: Pattern,
-    colon: PuncKind,
+    colon: Colon,
     param_type: Type,
 }
 
 pub struct MethodParam {
     self_param: SelfParam,
-    trailing_comma_opt: Option<PuncKind>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct SelfParam {
     kw_ref_opt: Option<KeywordKind>,
     kw_mut_opt: Option<KeywordKind>,
     kw_self: KeywordKind,
-    self_type_opt: Option<(PuncKind, Type)>,
+    self_type_opt: Option<(Colon, Type)>,
 }

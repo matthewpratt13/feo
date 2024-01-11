@@ -1,8 +1,8 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
+    item::{Comma, FatArrow},
     keyword::KeywordKind,
     pattern::Pattern,
-    punctuation::PuncKind,
 };
 
 use super::block_expr::BlockExpr;
@@ -30,8 +30,8 @@ pub struct MatchExpr {
 }
 
 pub struct MatchArms {
-    arm: Vec<(MatchArm, PuncKind, Expression, Option<PuncKind>)>,
-    final_arm: (MatchArm, PuncKind, Box<Expression>, Option<PuncKind>),
+    arm: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
+    final_arm: (MatchArm, FatArrow, Box<Expression>, Option<Comma>),
 }
 
 pub struct MatchArm {

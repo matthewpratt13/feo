@@ -1,4 +1,4 @@
-use crate::{identifier::Identifier, keyword::KeywordKind, punctuation::PuncKind};
+use crate::{identifier::Identifier, item::DblColon, keyword::KeywordKind};
 
 pub enum PathSegment {
     IdentifierSeg(Identifier),
@@ -8,7 +8,7 @@ pub enum PathSegment {
 }
 
 pub struct SimplePath {
-    dbl_colon_opt: Option<PuncKind>,
+    dbl_colon_opt: Option<DblColon>,
     root: PathSegment,
-    segments: Vec<(PuncKind, PathSegment)>,
+    segments: Vec<(DblColon, PathSegment)>,
 }

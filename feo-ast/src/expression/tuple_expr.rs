@@ -1,6 +1,6 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
-    punctuation::PuncKind,
+    item::{Comma, Dot},
 };
 
 use super::Expression;
@@ -12,12 +12,12 @@ pub struct TupleExpr {
 }
 
 pub struct TupleElements {
-    elements: Vec<(Expression, PuncKind)>,
+    elements: Vec<(Expression, Comma)>,
     trailing_element_opt: Option<Box<Expression>>,
 }
 
 pub struct TupleIndexingExpr {
     item: Box<Expression>,
-    dot: PuncKind,
+    dot: Dot,
     index: usize,
 }

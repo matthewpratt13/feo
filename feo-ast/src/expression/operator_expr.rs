@@ -1,4 +1,4 @@
-use crate::{keyword::KeywordKind, punctuation::PuncKind, ty::Type};
+use crate::{keyword::KeywordKind, punctuation::PuncKind, ty::Type, item::{Equals, QuestionMark}};
 
 use super::Expression;
 
@@ -20,7 +20,7 @@ pub struct ArithmeticOrLogicalExpr {
 
 pub struct AssignmentExpr {
     initial_value: Box<Expression>,
-    operator: PuncKind,
+    operator: Equals,
     new_value: Box<Expression>,
 }
 
@@ -43,7 +43,7 @@ pub struct NegationExpr {
 
 pub struct OptionUnwrapExpr {
     expression: Box<Expression>,
-    question_mark: PuncKind,
+    question_mark: QuestionMark,
 }
 
 pub struct TypeCastExpr {

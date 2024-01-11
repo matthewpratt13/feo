@@ -1,8 +1,8 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
     identifier::Identifier,
+    item::{Colon, Comma},
     path::SimplePath,
-    punctuation::PuncKind,
 };
 
 use super::{Attribute, Expression};
@@ -22,24 +22,24 @@ pub struct Struct {
 
 pub struct StructExprFields {
     first_field: StructExprField,
-    subsequent_fields: Vec<(PuncKind, StructExprField)>,
+    subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
 pub struct StructExprField {
     attributes: Vec<Attribute>,
-    data: (Identifier, PuncKind, Box<Expression>),
+    data: (Identifier, Colon, Box<Expression>),
 }
 
 pub struct TupleStruct {
     path: SimplePath,
     open_parenthesis: (DelimKind, DelimOrientation),
-    params_opt: Option<(Box<Expression>, Vec<(PuncKind, Expression)>, PuncKind)>,
+    params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Comma)>,
     close_parenthesis: (DelimKind, DelimOrientation),
 }
 
 pub struct TupleStructExprFields {
     first_field: TupleStructExprField,
-    subsequent_fields: Vec<(PuncKind, TupleStructExprField)>,
+    subsequent_fields: Vec<(Comma, TupleStructExprField)>,
 }
 
 pub struct TupleStructExprField {

@@ -3,11 +3,10 @@ use crate::{
     expression::Attribute,
     identifier::Identifier,
     keyword::KeywordKind,
-    punctuation::PuncKind,
     ty::Type,
 };
 
-use super::Visibility;
+use super::{Colon, Comma, Semicolon, Visibility};
 
 pub enum StructItem {
     Struct(Struct),
@@ -24,15 +23,15 @@ pub struct Struct {
 
 pub struct StructItemFields {
     first_field: StructItemField,
-    subsequent_fields: Vec<(PuncKind, StructItemField)>,
-    trailing_comma_opt: Option<PuncKind>,
+    subsequent_fields: Vec<(Comma, StructItemField)>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct StructItemField {
     attributes: Vec<Attribute>,
     visibility_opt: Option<Visibility>,
     field_name: Identifier,
-    colon: PuncKind,
+    colon: Colon,
     field_type: Type,
 }
 
@@ -42,13 +41,13 @@ pub struct TupleStruct {
     open_parenthesis: (DelimKind, DelimOrientation),
     tuple_item_fields_opt: Option<TupleItemFields>,
     close_parenthesis: (DelimKind, DelimOrientation),
-    semicolon: PuncKind,
+    semicolon: Semicolon,
 }
 
 pub struct TupleItemFields {
     first_field: TupleItemField,
-    subsequent_fields: Vec<(PuncKind, TupleItemField)>,
-    trailing_comma_opt: Option<PuncKind>,
+    subsequent_fields: Vec<(Comma, TupleItemField)>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct TupleItemField {

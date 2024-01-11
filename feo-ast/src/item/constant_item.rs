@@ -3,12 +3,14 @@ use crate::{
     ty::Type,
 };
 
+use super::Colon;
+
 pub struct ConstantItem {
     kw_const: KeywordKind,
     name: Identifier,
-    colon: PuncKind,
+    colon: Colon,
     item_type: Type,
-    assignment_opt: Option<(PuncKind, Box<Expression>)>,
+    assignment_opt: Option<(Colon, Box<Expression>)>,
     semicolon: PuncKind,
 }
 
@@ -16,8 +18,8 @@ pub struct StaticItem {
     kw_static: KeywordKind,
     kw_mut_opt: Option<KeywordKind>,
     name: Identifier,
-    colon: PuncKind,
+    colon: Colon,
     item_type: Type,
-    assignment_opt: Option<(PuncKind, Box<Expression>)>,
+    assignment_opt: Option<(Colon, Box<Expression>)>,
     semicolon: PuncKind,
 }

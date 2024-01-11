@@ -1,8 +1,10 @@
-use crate::{identifier::Identifier, keyword::KeywordKind, punctuation::PuncKind, ty::Type};
+use crate::{identifier::Identifier, keyword::KeywordKind, ty::Type};
+
+use super::{Equals, Semicolon};
 
 pub struct TypeAliasItem {
     kw_type: KeywordKind,
     name: Identifier,
-    value_opt: Option<(PuncKind, Type)>,
-    semicolon: PuncKind,
+    value_opt: Option<(Equals, Type)>,
+    semicolon: Semicolon,
 }

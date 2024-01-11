@@ -9,6 +9,8 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
+use crate::punctuation::PuncKind;
+
 use self::{
     associated_item::AssociatedItem,
     constant_item::{ConstantItem, StaticItem},
@@ -39,6 +41,17 @@ pub enum Item {
     Trait(TraitItem),
     TypeAlias(TypeAliasItem),
 }
+
+pub type Asterisk = PuncKind;
+pub type Colon = PuncKind;
+pub type Comma = PuncKind;
+pub type DblColon = PuncKind;
+pub type Dot = PuncKind;
+pub type Equals = PuncKind;
+pub type FatArrow = PuncKind;
+pub type QuestionMark = PuncKind;
+pub type Semicolon = PuncKind;
+pub type ThinArrow = PuncKind;
 
 mod visibility {
     use crate::{

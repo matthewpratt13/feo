@@ -1,6 +1,6 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
-    punctuation::PuncKind,
+    item::{Comma, Semicolon},
 };
 
 use super::Expression;
@@ -13,13 +13,13 @@ pub struct ArrayExpr {
 
 pub struct ArrayElements {
     first_element: Box<Expression>,
-    subsequent_elements: Vec<(PuncKind, Expression)>,
-    trailing_comma_opt: Option<PuncKind>,
+    subsequent_elements: Vec<(Comma, Expression)>,
+    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct ArrayElementsFixedSize {
     element_type: Box<Expression>,
-    semicolon: PuncKind,
+    semicolon: Semicolon,
     num_elements: usize,
 }
 

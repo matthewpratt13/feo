@@ -1,9 +1,8 @@
 use crate::{
     expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
-    item::Item,
+    item::{Colon, Equals, Item, Semicolon},
     keyword::KeywordKind,
-    punctuation::PuncKind,
     type_annotation::TypeAnnKind,
 };
 
@@ -15,20 +14,20 @@ pub enum Statement {
 
 pub struct ExprStatement {
     expr_without_block: ExprWithoutBlock,
-    semicolon: PuncKind,
+    semicolon: Semicolon,
 }
 
 pub struct LetStatement {
     kw_let: KeywordKind,
     kw_mut_opt: Option<KeywordKind>,
     identifier: Identifier,
-    type_ann_opt: Option<(PuncKind, TypeAnnKind)>,
-    equals: PuncKind,
+    type_ann_opt: Option<(Colon, TypeAnnKind)>,
+    equals: Equals,
     expression: Expression,
-    semicolon: PuncKind,
+    semicolon: Semicolon,
 }
 
 pub struct StatementWithExpr {
     statement: Statement,
-    expr_without_block: ExprWithoutBlock
+    expr_without_block: ExprWithoutBlock,
 }

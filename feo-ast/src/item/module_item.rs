@@ -3,10 +3,9 @@ use crate::{
     expression::Attribute,
     identifier::Identifier,
     keyword::KeywordKind,
-    punctuation::PuncKind,
 };
 
-use super::Item;
+use super::{Item, Semicolon};
 
 pub enum ModuleItem {
     WithoutBody(ModWithoutBody),
@@ -16,7 +15,7 @@ pub enum ModuleItem {
 pub struct ModWithoutBody {
     kw_mod: KeywordKind,
     name: Identifier,
-    semicolon: PuncKind,
+    semicolon: Semicolon,
 }
 
 pub struct ModWithBody {
