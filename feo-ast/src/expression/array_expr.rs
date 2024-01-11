@@ -25,7 +25,7 @@ pub struct ArrayElementsFixedSize {
 
 pub struct IndexExpr {
     item: Box<Expression>,
-    open_bracket: PuncKind,
+    open_bracket: (DelimKind, DelimOrientation),
     index: usize,
-    close_bracket: PuncKind,
+    close_bracket: (DelimKind, DelimOrientation),
 }
