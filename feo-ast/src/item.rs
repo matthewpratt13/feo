@@ -1,6 +1,7 @@
 use crate::delimiter::{DelimKind, DelimOrientation};
 use crate::keyword::KeywordKind;
 
+mod associated_item;
 mod constant_item;
 mod enum_item;
 mod extern_crate_item;
@@ -12,6 +13,7 @@ mod struct_item;
 mod trait_item;
 
 use self::{
+    associated_item::AssociatedItem,
     constant_item::{ConstantItem, StaticItem},
     enum_item::EnumItem,
     extern_crate_item::ExternCrateItem,
@@ -34,6 +36,7 @@ pub enum Item {
     ImportDecl(ImportDeclItem),
     Module(ModuleItem),
     Struct(StructItem),
+    Associated(AssociatedItem),
     Trait(TraitItem),
     TypeAlias(TypeAlias),
 }
@@ -49,7 +52,5 @@ pub struct PubCrateVisibility {
     kw_crate: KeywordKind,
     close_parenthesis: (DelimKind, DelimOrientation),
 }
-
-pub struct AssociatedItem {}
 
 pub struct TypeAlias {}
