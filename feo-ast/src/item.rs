@@ -11,6 +11,7 @@ mod import_decl_item;
 mod module_item;
 mod struct_item;
 mod trait_item;
+mod type_alias_item;
 
 use self::{
     associated_item::AssociatedItem,
@@ -23,10 +24,12 @@ use self::{
     module_item::ModuleItem,
     struct_item::StructItem,
     trait_item::TraitItem,
+    type_alias_item::TypeAliasItem,
 };
 
 pub enum Item {
     Visibility(VisibilityItem),
+    Associated(AssociatedItem),
     Constant(ConstantItem),
     Static(StaticItem),
     Enum(EnumItem),
@@ -36,9 +39,8 @@ pub enum Item {
     ImportDecl(ImportDeclItem),
     Module(ModuleItem),
     Struct(StructItem),
-    Associated(AssociatedItem),
     Trait(TraitItem),
-    TypeAlias(TypeAlias),
+    TypeAlias(TypeAliasItem),
 }
 
 pub enum VisibilityItem {
@@ -52,5 +54,3 @@ pub struct PubCrateVisibility {
     kw_crate: KeywordKind,
     close_parenthesis: (DelimKind, DelimOrientation),
 }
-
-pub struct TypeAlias {}
