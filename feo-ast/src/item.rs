@@ -11,10 +11,10 @@ mod module_item;
 mod struct_item;
 mod trait_item;
 
-use self::extern_crate_item::ExternCrateItem;
 use self::{
     constant_item::{ConstantItem, StaticItem},
     enum_item::EnumItem,
+    extern_crate_item::ExternCrateItem,
     function_item::FunctionItem,
     impl_item::ImplItem,
     import_decl_item::ImportDeclItem,
@@ -49,7 +49,6 @@ pub struct PubCrateVisibility {
     kw_crate: KeywordKind,
     close_parenthesis: (DelimKind, DelimOrientation),
 }
-
 
 pub struct AssociatedItem {}
 
