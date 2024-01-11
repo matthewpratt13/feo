@@ -7,7 +7,7 @@ use crate::{
 use super::Expression;
 
 pub struct FunctionCallExpr {
-    function_signature: PathSegment,
+    function_path: PathSegment,
     open_parenthesis: (DelimKind, DelimOrientation),
     call_params_opt: Option<CallParams>,
     close_parenthesis: (DelimKind, DelimOrientation),
@@ -22,7 +22,7 @@ pub struct CallParams {
 pub struct MethodCallExpr {
     object: Box<Expression>,
     dot: PuncKind,
-    method_signature: PathSegment,
+    method_path: PathSegment,
     open_parenthesis: (DelimKind, DelimOrientation),
     call_params_opt: Option<CallParams>,
     close_parenthesis: (DelimKind, DelimOrientation),
