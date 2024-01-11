@@ -48,7 +48,7 @@
                         | <KwMod> <Identifier> <(DelimKind::Brace, DelimOrientation::Open)>
                             <Attribute>*
                             <Item>*
-                        | <(DelimKind::Brace, DelimOrientation::Close)>
+                        <(DelimKind::Brace, DelimOrientation::Close)>
 
 <ExternCrate>       ::= <KwExtern> <KwCrate> <CrateRef> <AsClause>? <PuncKind::Semicolon>
 

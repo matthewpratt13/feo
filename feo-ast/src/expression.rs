@@ -23,8 +23,8 @@ use self::{
 };
 
 pub enum Expression {
-    WithBlock(ExprWithBlock),
     WithoutBlock(ExprWithoutBlock),
+    WithBlock(ExprWithBlock),
 }
 
 pub enum ExprWithoutBlock {
