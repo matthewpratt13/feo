@@ -13,6 +13,8 @@ pub enum ConditionalExpr {
     MatchExpr(MatchExpr),
 }
 
+pub type UnderscoreExpr = PuncKind;
+
 pub struct IfExpr {
     kw_if: KeywordKind,
     condition: Box<Expression>, // cannot be a struct expression
@@ -43,5 +45,3 @@ pub struct MatchArmGuard {
     kw_if: KeywordKind,
     condition: Box<Expression>,
 }
-
-pub type UnderscoreExpr = PuncKind;
