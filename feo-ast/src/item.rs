@@ -1,5 +1,6 @@
-use crate::identifier::Identifier;
+use crate::delimiter::DelimOrientation;
 use crate::keyword::KeywordKind;
+use crate::{delimiter::DelimKind, identifier::Identifier};
 
 mod constant_item;
 mod enum_item;
@@ -37,8 +38,17 @@ pub enum Item {
 }
 
 pub enum VisibilityItem {
-    Pub(KeywordKind),
-    PubCrate,
+    Pub(KwPub),
+    PubCrate(PubCrateVisibility),
+}
+
+pub type KwPub = KeywordKind;
+
+pub struct PubCrateVisibility {
+    kw_pub: KwPub,
+    open_parenthesis: (DelimKind, DelimOrientation),
+    kw_crate: KeywordKind,
+    close_parenthesis: (DelimKind, DelimOrientation),
 }
 
 pub enum CrateRef {
