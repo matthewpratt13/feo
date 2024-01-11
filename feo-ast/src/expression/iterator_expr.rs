@@ -7,8 +7,6 @@ pub enum IteratorExpr {
     InfiniteLoop(InfiniteLoopExpr),
     IterLoop(IterLoopExpr),
     PredicateLoop(PredicateLoopExpr),
-    Break(KeywordKind),
-    Continue(KeywordKind),
 }
 
 pub struct InfiniteLoopExpr {
