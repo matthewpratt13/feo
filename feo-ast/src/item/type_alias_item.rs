@@ -3,6 +3,6 @@ use crate::{identifier::Identifier, keyword::KeywordKind, punctuation::PuncKind,
 pub struct TypeAliasItem {
     kw_type: KeywordKind,
     name: Identifier,
-    value_opt: (PuncKind, Type),
+    value_opt: Option<(PuncKind, Type)>,
     semicolon: PuncKind,
 }
