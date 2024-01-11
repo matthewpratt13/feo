@@ -23,7 +23,13 @@ pub struct Struct {
 }
 
 pub struct StructItemFields {
-    attributes: Vec<Attribute>,
+    first_field: StructItemField,
+    subsequent_fields: Vec<(PuncKind, StructItemField)>,
+    trailing_comma_opt: Option<PuncKind>,
+}
+
+pub struct StructItemField {
+    attribute: Attribute,
     visibility_opt: Option<Visibility>,
     field_name: Identifier,
     colon: PuncKind,
