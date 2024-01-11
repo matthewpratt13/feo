@@ -7,18 +7,18 @@ use super::Expression;
 
 pub struct ArrayExpr {
     open_bracket: (DelimKind, DelimOrientation),
-    elements_opt: Option<Box<ArrayElements>>,
+    elements_opt: Option<ArrayElements>,
     close_bracket: (DelimKind, DelimOrientation),
 }
 
 pub struct ArrayElements {
-    first_element: Expression,
+    first_element: Box<Expression>,
     subsequent_elements: Vec<(PuncKind, Expression)>,
     trailing_comma_opt: Option<PuncKind>,
 }
 
 pub struct ArrayElementsFixedSize {
-    element_type: Expression,
+    element_type: Box<Expression>,
     semicolon: PuncKind,
     num_elements: usize,
 }
