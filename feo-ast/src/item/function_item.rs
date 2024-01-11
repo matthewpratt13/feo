@@ -3,6 +3,7 @@ use crate::{
     expression::ExprWithBlock,
     identifier::Identifier,
     keyword::KeywordKind,
+    pattern::Pattern,
     punctuation::PuncKind,
     ty::Type,
 };
@@ -11,6 +12,11 @@ pub enum FuncQualifier {
     Const(KeywordKind),
     Unsafe(KeywordKind),
     Extern(KeywordKind),
+}
+
+pub enum FuncOrMethodParam {
+    Func(FuncParam),
+    Method(MethodParam),
 }
 
 pub struct FunctionItem {
@@ -35,8 +41,25 @@ pub struct FunctionSignature {
     semicolon: PuncKind,
 }
 
-pub struct FuncParams {}
+pub struct FuncParams {
+    first_param: FuncOrMethodParam,
+    subsequent_params: Vec<(PuncKind, FuncParam)>,
+    trailing_comma_opt: PuncKind,
+}
+pub struct FuncParam {
+    pattern: Pattern,
+    colon: PuncKind,
+    param_type: Type,
+}
 
-pub struct FuncParam {}
+pub struct MethodParam {
+    self_param: SelfParam,
+    trailing_comma_opt: Option<PuncKind>,
+}
 
-pub struct SelfParam {}
+pub struct SelfParam {
+    kw_ref_opt: Option<KeywordKind>,
+    kw_mut_opt: Option<KeywordKind>,
+    kw_self: KeywordKind,
+    self_type_opt: Option<(PuncKind, Type)>,
+}
