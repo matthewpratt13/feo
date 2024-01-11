@@ -80,7 +80,7 @@
 
 <FuncParam>         ::= <Pattern> <PuncKind::Colon> <Type>
 
-<TypeAlias>         ::= <KwType> <Identifier> (<PuncKind::Colon> TraitBound>)? (<PuncKind::Equals> <Type>)?
+<TypeAlias>         ::= <KwType> <Identifier> (<PuncKind::Equals> <Type>)?
 
 <Struct>            ::= <StructStruct> | <TupleStruct>
 
