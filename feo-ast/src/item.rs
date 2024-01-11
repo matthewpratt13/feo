@@ -28,7 +28,7 @@ use self::{
 };
 
 pub enum Item {
-    Visibility(VisibilityItem),
+    Vis(Visibility),
     Associated(AssociatedItem),
     Constant(ConstantItem),
     Static(StaticItem),
@@ -43,7 +43,7 @@ pub enum Item {
     TypeAlias(TypeAliasItem),
 }
 
-pub enum VisibilityItem {
+pub enum Visibility {
     Pub(KeywordKind),
     PubCrate(PubCrateVisibility),
 }

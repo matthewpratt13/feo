@@ -94,7 +94,7 @@
                             <(DelimKind::Parenthesis, DelimOrientation::Close)>
                             <PuncKind::Semicolon>
 
-<StructFields>      ::= <Attribute>* <Visibility>? <Identifier> <PuncKind::Semicolon> <Type>
+<StructFields>      ::= <Attribute>* <Visibility>? <Identifier> <PuncKind::Colon> <Type>
 
 <TupleFields>       ::= <TupleField> (<PuncKind::Comma> <TupleField>)* <PuncKind::Comma>?
 

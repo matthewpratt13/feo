@@ -1,9 +1,13 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
+    expression::Attribute,
     identifier::Identifier,
     keyword::KeywordKind,
     punctuation::PuncKind,
+    ty::Type,
 };
+
+use super::Visibility;
 
 pub enum StructItem {
     Struct(Struct),
@@ -18,7 +22,13 @@ pub struct Struct {
     close_brace: (DelimKind, DelimOrientation),
 }
 
-pub struct StructItemFields {}
+pub struct StructItemFields {
+    attributes: Vec<Attribute>,
+    visibility_opt: Option<Visibility>,
+    field_name: Identifier,
+    colon: PuncKind,
+    field_type: Type,
+}
 
 pub struct TupleStruct {}
 
