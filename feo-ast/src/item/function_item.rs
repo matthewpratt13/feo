@@ -46,6 +46,7 @@ pub struct FuncParams {
     subsequent_params: Vec<(PuncKind, FuncParam)>,
     trailing_comma_opt: Option<PuncKind>,
 }
+
 pub struct FuncParam {
     pattern: Pattern,
     colon: PuncKind,
