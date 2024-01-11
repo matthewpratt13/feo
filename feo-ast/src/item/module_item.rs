@@ -9,17 +9,17 @@ use crate::{
 use super::Item;
 
 pub enum ModuleItem {
-    WithoutBody(ModuleWithoutBody),
-    WithBody(ModuleWithBody),
+    WithoutBody(ModWithoutBody),
+    WithBody(ModWithBody),
 }
 
-pub struct ModuleWithoutBody {
+pub struct ModWithoutBody {
     kw_mod: KeywordKind,
     name: Identifier,
     semicolon: PuncKind,
 }
 
-pub struct ModuleWithBody {
+pub struct ModWithBody {
     kw_mod: KeywordKind,
     name: Identifier,
     open_brace: (DelimKind, DelimOrientation),
