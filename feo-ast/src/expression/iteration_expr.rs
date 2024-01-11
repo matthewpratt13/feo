@@ -16,7 +16,7 @@ pub struct InfiniteLoopExpr {
 
 pub struct PredicateLoopExpr {
     kw_while: KeywordKind,
-    predicate: Box<Expression>, // cannot be struct expression
+    predicate: Box<Expression>, // cannot be a struct expression
     block: BlockExpr,
 }
 
@@ -24,6 +24,6 @@ pub struct IterLoopExpr {
     kw_for: KeywordKind,
     pattern: Pattern,
     kw_in: KeywordKind,
-    expression: Box<Expression>, // cannot be struct expression
+    expression: Box<Expression>, // cannot be a struct expression
     block: BlockExpr,
 }
