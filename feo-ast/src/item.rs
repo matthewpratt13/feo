@@ -38,14 +38,12 @@ pub enum Item {
 }
 
 pub enum VisibilityItem {
-    Pub(KwPub),
+    Pub(KeywordKind),
     PubCrate(PubCrateVisibility),
 }
 
-pub type KwPub = KeywordKind;
-
 pub struct PubCrateVisibility {
-    kw_pub: KwPub,
+    kw_pub: KeywordKind,
     open_parenthesis: (DelimKind, DelimOrientation),
     kw_crate: KeywordKind,
     close_parenthesis: (DelimKind, DelimOrientation),
