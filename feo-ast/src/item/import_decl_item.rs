@@ -7,9 +7,9 @@ use crate::{
 };
 
 pub enum ImportTree {
-    EntirePath(ImportEntirePath),
-    PathSubset(ImportPathSubset),
-    PathWithAsClause(ImportPathWithAsClause),
+    EntirePath(EntirePath),
+    PathSubsetRecursive(PathSubsetRecursive),
+    PathWithAsClause(PathWithAsClause),
 }
 
 pub struct ImportDeclItem {
@@ -18,15 +18,15 @@ pub struct ImportDeclItem {
     semicolon: PuncKind,
 }
 
-pub struct ImportEntirePath {
+pub struct EntirePath {
     path: Vec<Option<(Option<SimplePath>, PuncKind)>>,
     asterisk: PuncKind,
 }
 
-pub struct ImportPathSubset {
+pub struct PathSubsetRecursive {
     path_root_opt: Option<(Option<SimplePath>, PuncKind)>,
     open_brace: (DelimKind, DelimOrientation),
-    tree: Option<(
+    recursive_tree_opt: Option<(
         Box<ImportTree>,
         Vec<(PuncKind, ImportTree)>,
         Option<PuncKind>,
@@ -34,7 +34,7 @@ pub struct ImportPathSubset {
     close_brace: (DelimKind, DelimOrientation),
 }
 
-pub struct ImportPathWithAsClause {
+pub struct PathWithAsClause {
     path_root: SimplePath,
     as_clause_opt: Option<AsClause>,
 }
