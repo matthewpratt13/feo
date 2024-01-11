@@ -44,7 +44,7 @@ pub enum ExprWithoutBlock {
     Tuple(TupleExpr),
     TupleIndexing(TupleIndexingExpr),
     Return(ReturnExpr),
-    Underscore(UnderscoreExpr),
+    Underscore(PuncKind),
 }
 
 pub enum ExprWithBlock {
@@ -54,8 +54,6 @@ pub enum ExprWithBlock {
     IterExpr(IteratorExpr),
     MatchExpr(MatchExpr),
 }
-
-pub type UnderscoreExpr = PuncKind;
 
 pub struct Attribute {}
 
