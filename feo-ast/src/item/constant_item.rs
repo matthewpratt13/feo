@@ -1,9 +1,6 @@
-use crate::{
-    expression::Expression, identifier::Identifier, keyword::KeywordKind, punctuation::PuncKind,
-    ty::Type,
-};
+use crate::{expression::Expression, identifier::Identifier, keyword::KeywordKind, ty::Type};
 
-use super::Colon;
+use super::{Colon, Semicolon};
 
 pub struct ConstantItem {
     kw_const: KeywordKind,
@@ -11,7 +8,7 @@ pub struct ConstantItem {
     colon: Colon,
     item_type: Type,
     assignment_opt: Option<(Colon, Box<Expression>)>,
-    semicolon: PuncKind,
+    semicolon: Semicolon,
 }
 
 pub struct StaticItem {
@@ -21,5 +18,5 @@ pub struct StaticItem {
     colon: Colon,
     item_type: Type,
     assignment_opt: Option<(Colon, Box<Expression>)>,
-    semicolon: PuncKind,
+    semicolon: Semicolon,
 }

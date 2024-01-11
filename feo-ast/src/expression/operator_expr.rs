@@ -1,4 +1,9 @@
-use crate::{keyword::KeywordKind, punctuation::PuncKind, ty::Type, item::{Equals, QuestionMark}};
+use crate::{
+    item::{Equals, QuestionMark},
+    keyword::KeywordKind,
+    punctuation::PuncKind,
+    ty::Type,
+};
 
 use super::Expression;
 

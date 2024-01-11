@@ -5,10 +5,10 @@ use crate::{
     keyword::KeywordKind,
 };
 
+use super::Comma;
 use super::{
     struct_item::{StructItemFields, TupleItemFields},
     visibility::Visibility,
-    Comma,
 };
 
 pub enum EnumVariantType {
