@@ -1,5 +1,5 @@
 use crate::literals::{
-    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, UIntLiteral,
+    BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
 };
 
 pub enum LiteralExpr {
@@ -7,6 +7,7 @@ pub enum LiteralExpr {
     String(StringLiteral),
     Int(IntLiteral),
     UInt(UIntLiteral),
+    U256(U256Literal),
     Float(FloatLiteral),
     Bool(BoolLiteral),
 }
