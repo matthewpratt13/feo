@@ -36,7 +36,14 @@ pub struct StructItemField {
     field_type: Type,
 }
 
-pub struct TupleStruct {}
+pub struct TupleStruct {
+    kw_struct: KeywordKind,
+    name: Identifier,
+    open_parenthesis: (DelimKind, DelimOrientation),
+    tuple_struct_item_fields: TupleStructItemFields,
+    close_parenthesis: (DelimKind, DelimOrientation),
+    semicolon: PuncKind,
+}
 
 pub struct TupleStructItemFields {}
 
