@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use std::iter::Peekable;
 use std::sync::Arc;
 
@@ -29,7 +32,6 @@ struct Lexer<'a> {
     handler: Handler,
 }
 
-#[allow(dead_code)]
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str, handler: Handler) -> Self {
         Self {

@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use feo_error::handler::{ErrorEmitted, Handler};
 use feo_types::span::{Span, Spanned};
 
@@ -73,7 +76,6 @@ pub struct TokenStream<T> {
     span: Span,
 }
 
-#[allow(dead_code)]
 impl<T> TokenStream<T> {
     pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
         Self {
@@ -96,7 +98,6 @@ impl<T> Spanned for TokenStream<T> {
 #[derive(Debug, Clone)]
 pub struct TokenTree(TokenStream<Token>);
 
-#[allow(dead_code)]
 impl TokenTree {
     pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
         Self(TokenStream::new(src, tokens, start, end))
