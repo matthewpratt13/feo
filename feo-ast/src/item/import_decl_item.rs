@@ -12,6 +12,9 @@ pub enum ImportTree {
     PathWithAsClause(PathWithAsClause),
 }
 
+type Comma = PuncKind;
+type DblColon = PuncKind;
+
 pub struct ImportDeclItem {
     kw_import: KeywordKind,
     import_tree: ImportTree,
@@ -19,17 +22,17 @@ pub struct ImportDeclItem {
 }
 
 pub struct EntirePath {
-    path: Vec<Option<(Option<SimplePath>, PuncKind)>>,
+    path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: PuncKind,
 }
 
 pub struct PathSubsetRecursive {
-    path_root_opt: Option<(Option<SimplePath>, PuncKind)>,
+    path_root_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: (DelimKind, DelimOrientation),
     recursive_tree_opt: Option<(
         Box<ImportTree>,
-        Vec<(PuncKind, ImportTree)>,
-        Option<PuncKind>,
+        Vec<(Comma, ImportTree)>,
+        Option<Comma>,
     )>,
     close_brace: (DelimKind, DelimOrientation),
 }
