@@ -44,7 +44,7 @@ pub struct FunctionSignature {
 pub struct FuncParams {
     first_param: FuncOrMethodParam,
     subsequent_params: Vec<(PuncKind, FuncParam)>,
-    trailing_comma_opt: PuncKind,
+    trailing_comma_opt: Option<PuncKind>,
 }
 pub struct FuncParam {
     pattern: Pattern,
