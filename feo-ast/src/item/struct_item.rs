@@ -45,6 +45,14 @@ pub struct TupleStruct {
     semicolon: PuncKind,
 }
 
-pub struct TupleStructItemFields {}
+pub struct TupleStructItemFields {
+    first_field: TupleStructItemField,
+    subsequent_fields: Vec<(PuncKind, TupleStructItemField)>,
+    trailing_comma_opt: Option<PuncKind>,
+}
 
-pub struct TupleStructItemField {}
+pub struct TupleStructItemField {
+    attribute: Attribute,
+    visibility_opt: Option<Visibility>,
+    field_type: Type,
+}
