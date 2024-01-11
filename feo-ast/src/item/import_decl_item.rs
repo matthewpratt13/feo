@@ -35,7 +35,7 @@ pub struct PathSubsetRecursive {
 }
 
 pub struct PathWithAsClause {
-    path_root: SimplePath,
+    path: SimplePath,
     as_clause_opt: Option<AsClause>,
 }
 
