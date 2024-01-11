@@ -49,16 +49,17 @@ pub enum Item {
 }
 
 pub type Asterisk = PuncKind;
+pub type BangOrMinus = PuncKind;
 pub type Colon = PuncKind;
 pub type Comma = PuncKind;
 pub type DblColon = PuncKind;
 pub type Dot = PuncKind;
 pub type Equals = PuncKind;
 pub type FatArrow = PuncKind;
+pub type HashSign = PuncKind;
 pub type OpArithmeticOrLogical = PuncKind;
 pub type OpBool = PuncKind;
 pub type OpComparison = PuncKind;
-pub type BangOrMinus = PuncKind;
 pub type QuestionMark = PuncKind;
 pub type Semicolon = PuncKind;
 pub type ThinArrow = PuncKind;

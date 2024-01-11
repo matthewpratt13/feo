@@ -1,7 +1,12 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-use crate::{keyword::KeywordKind, path::SimplePath, punctuation::PuncKind};
+use crate::{
+    item::{Bracket, HashSign},
+    keyword::KeywordKind,
+    path::SimplePath,
+    punctuation::PuncKind,
+};
 
 mod array_expr;
 mod block_expr;
@@ -57,7 +62,12 @@ pub enum ExprWithBlock {
     Iteration(IterationExpr),
 }
 
-pub struct Attribute {}
+pub struct Attribute {
+    hash: HashSign,
+    open_bracket: Bracket,
+    path: SimplePath,
+    close_bracket: Bracket,
+}
 
 pub struct FieldAccessExpr {}
 
