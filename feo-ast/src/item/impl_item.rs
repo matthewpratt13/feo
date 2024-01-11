@@ -1,4 +1,4 @@
-pub enum Implementation {
+pub enum ImplItem {
     Inherent(InherentImpl),
     Trait(TraitImpl),
 }
@@ -6,5 +6,3 @@ pub enum Implementation {
 pub struct InherentImpl {}
 
 pub struct TraitImpl {}
-
-

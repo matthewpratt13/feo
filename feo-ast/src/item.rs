@@ -4,7 +4,7 @@ use crate::keyword::KeywordKind;
 mod constant_item;
 mod enum_item;
 mod function_item;
-mod implementation;
+mod impl_item;
 mod import_decl;
 mod module_item;
 mod struct_item;
@@ -14,7 +14,7 @@ use self::{
     constant_item::{ConstantItem, StaticItem},
     enum_item::EnumItem,
     function_item::FunctionItem,
-    implementation::Implementation,
+    impl_item::ImplItem,
     import_decl::ImportDecl,
     module_item::ModuleItem,
     struct_item::StructItem,
@@ -28,7 +28,7 @@ pub enum Item {
     Enum(EnumItem),
     ExternCrate(ExternCrateItem),
     Function(FunctionItem),
-    Impl(Implementation),
+    Impl(ImplItem),
     ImportDecl(ImportDecl),
     Module(ModuleItem),
     Struct(StructItem),
