@@ -26,7 +26,7 @@ pub struct StructExprFields {
 }
 
 pub struct StructExprField {
-    attribute: Vec<Attribute>,
+    attributes: Vec<Attribute>,
     data: (Identifier, PuncKind, Box<Expression>),
 }
 
@@ -35,6 +35,16 @@ pub struct TupleStruct {
     open_parenthesis: (DelimKind, DelimOrientation),
     params_opt: Option<(Box<Expression>, Vec<(PuncKind, Expression)>, PuncKind)>,
     close_parenthesis: (DelimKind, DelimOrientation),
+}
+
+pub struct TupleStructExprFields {
+    first_field: TupleStructExprField,
+    subsequent_fields: Vec<(PuncKind, TupleStructExprField)>,
+}
+
+pub struct TupleStructExprField {
+    attributes: Vec<Attribute>,
+    data: Box<Expression>,
 }
 
 pub struct UnitStruct(SimplePath);

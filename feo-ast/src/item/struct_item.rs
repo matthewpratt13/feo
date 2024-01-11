@@ -29,7 +29,7 @@ pub struct StructItemFields {
 }
 
 pub struct StructItemField {
-    attribute: Attribute,
+    attributes: Vec<Attribute>,
     visibility_opt: Option<Visibility>,
     field_name: Identifier,
     colon: PuncKind,
@@ -52,7 +52,7 @@ pub struct TupleStructItemFields {
 }
 
 pub struct TupleStructItemField {
-    attribute: Attribute,
+    attributes: Vec<Attribute>,
     visibility_opt: Option<Visibility>,
     field_type: Type,
 }
