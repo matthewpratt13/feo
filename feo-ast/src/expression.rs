@@ -1,4 +1,4 @@
-use crate::{keyword::KeywordKind, path::SimplePath};
+use crate::{keyword::KeywordKind, path::SimplePath, punctuation::PuncKind};
 
 mod array_expr;
 mod block_expr;
@@ -14,7 +14,7 @@ use self::{
     array_expr::{ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
-    conditional_expr::{IfExpr, MatchExpr, UnderscoreExpr},
+    conditional_expr::{IfExpr, MatchExpr},
     iterator_expr::IteratorExpr,
     literal_expr::LiteralExpr,
     operator_expr::OperatorExpr,
@@ -54,6 +54,8 @@ pub enum ExprWithBlock {
     IterExpr(IteratorExpr),
     MatchExpr(MatchExpr),
 }
+
+pub type UnderscoreExpr = PuncKind;
 
 pub struct Attribute {}
 
