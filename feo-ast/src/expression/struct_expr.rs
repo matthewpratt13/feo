@@ -1,7 +1,8 @@
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
     identifier::Identifier,
-    punctuation::PuncKind, path::SimplePath,
+    path::SimplePath,
+    punctuation::PuncKind,
 };
 
 use super::{Attribute, Expression};
@@ -32,7 +33,7 @@ pub struct StructExprField {
 pub struct TupleStruct {
     path: SimplePath,
     open_parenthesis: (DelimKind, DelimOrientation),
-    params_opt: Option<(Box<Expression>, Vec<(PuncKind, Box<Expression>)>, PuncKind)>,
+    params_opt: Option<(Box<Expression>, Vec<(PuncKind, Expression)>, PuncKind)>,
     close_parenthesis: (DelimKind, DelimOrientation),
 }
 
