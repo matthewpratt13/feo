@@ -1,4 +1,3 @@
-mod associated_item;
 mod constant_item;
 mod enum_item;
 mod extern_crate_item;
@@ -57,5 +56,25 @@ mod visibility {
         open_parenthesis: (DelimKind, DelimOrientation),
         kw_crate: KeywordKind,
         close_parenthesis: (DelimKind, DelimOrientation),
+    }
+}
+
+mod associated_item {
+    use crate::expression::Attribute;
+
+    use super::{
+        constant_item::ConstantItem, function_item::FunctionItem, type_alias_item::TypeAliasItem,
+        visibility::Visibility,
+    };
+
+    pub enum AssociatedItemKind {
+        TypeAlias(TypeAliasItem),
+        Constant(ConstantItem),
+        Function(FunctionItem),
+    }
+
+    pub struct AssociatedItem {
+        attributes: Vec<Attribute>,
+        item: (Option<Visibility>, AssociatedItemKind),
     }
 }
