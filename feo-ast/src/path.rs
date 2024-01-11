@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use crate::{identifier::Identifier, item::DblColon, keyword::KeywordKind};
 
 pub enum PathSegment {

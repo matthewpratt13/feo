@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use crate::{keyword::KeywordKind, path::SimplePath, punctuation::PuncKind};
 
 mod array_expr;

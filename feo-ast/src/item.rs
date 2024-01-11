@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 mod constant_item;
 mod enum_item;
 mod extern_crate_item;
