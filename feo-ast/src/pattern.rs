@@ -1,6 +1,6 @@
 use crate::{
     identifier::Identifier,
-    item::Parenthesis,
+    item::{Parenthesis, Underscore},
     keyword::KeywordKind,
     literals::{
         BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
@@ -8,7 +8,10 @@ use crate::{
     path::SimplePath,
 };
 
-use self::{slice_patt::SlicePatt, struct_patt::StructPatt};
+use self::{
+    slice_patt::SlicePatt, struct_patt::StructPatt, tuple_patt::TuplePatt,
+    tuple_struct_item::TupleStructPatt,
+};
 
 pub enum Pattern {
     Literal(LiteralPatt),
@@ -20,7 +23,7 @@ pub enum Pattern {
     Struct(StructPatt),
     Tuple(TuplePatt),
     TupleStruct(TupleStructPatt),
-    Wildcard(WildcardPatt),
+    Wildcard(Underscore),
 }
 
 pub enum LiteralPatt {
@@ -133,7 +136,7 @@ mod tuple_struct_item {
     }
 
     pub struct TupleStructElements {
-        first_pattern: Pattern,
+        first_pattern: Box<Pattern>,
         subsequent_patterns: Vec<(Comma, Pattern)>,
         trailing_comma_opt: Option<Comma>,
     }
@@ -151,10 +154,8 @@ mod tuple_patt {
     }
 
     pub struct TuplePattElements {
-        first_pattern: Pattern,
+        first_pattern: Box<Pattern>,
         subsequent_patterns: Vec<(Comma, Pattern)>,
         trailing_comma_opt: Option<Comma>,
     }
 }
-
-pub struct WildcardPatt {}
