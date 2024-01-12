@@ -128,7 +128,7 @@ mod tuple_struct_item {
     pub struct TupleStructPatt {
         path: SimplePath,
         open_parenthesis: Parenthesis,
-        tuple_struct_items_opt: Option<TupleStructElements>,
+        tuple_struct_elements_opt: Option<TupleStructElements>,
         close_parenthesis: Parenthesis,
     }
 
@@ -139,8 +139,22 @@ mod tuple_struct_item {
     }
 }
 
-pub struct TuplePatt {}
+mod tuple_patt {
+    use crate::item::{Comma, Parenthesis};
 
-pub struct TuplePattItems {}
+    use super::Pattern;
+
+    pub struct TuplePatt {
+        open_parenthesis: Parenthesis,
+        tuple_patt_elements_opt: Option<TuplePattElements>,
+        close_parenthesis: Parenthesis,
+    }
+
+    pub struct TuplePattElements {
+        first_pattern: Pattern,
+        subsequent_patterns: Vec<(Comma, Pattern)>,
+        trailing_comma_opt: Option<Comma>,
+    }
+}
 
 pub struct WildcardPatt {}
