@@ -60,6 +60,7 @@ pub type HashSign = PuncKind;
 pub type OpArithmeticOrLogical = PuncKind;
 pub type OpBool = PuncKind;
 pub type OpComparison = PuncKind;
+pub type Plus = PuncKind;
 pub type QuestionMark = PuncKind;
 pub type Semicolon = PuncKind;
 pub type ThinArrow = PuncKind;
