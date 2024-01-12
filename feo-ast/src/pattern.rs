@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use crate::{
     identifier::Identifier,
     item::{Parenthesis, Underscore},
@@ -8,9 +11,14 @@ use crate::{
     path::SimplePath,
 };
 
+mod slice_patt;
+mod struct_patt;
+mod tuple_patt;
+
 use self::{
-    slice_patt::SlicePatt, struct_patt::StructPatt, tuple_patt::TuplePatt,
-    tuple_struct_item::TupleStructPatt,
+    slice_patt::SlicePatt,
+    struct_patt::{StructPatt, TupleStructPatt},
+    tuple_patt::TuplePatt,
 };
 
 pub enum Pattern {
@@ -52,110 +60,4 @@ pub struct ReferencePatt {
     kw_ref_opt: Option<KeywordKind>,
     kw_mut_opt: Option<KeywordKind>,
     name: Box<Pattern>,
-}
-
-mod slice_patt {
-    use crate::item::{Bracket, Comma};
-
-    use super::Pattern;
-
-    pub struct SlicePatt {
-        open_bracket: Bracket,
-        slice_pattern_items_opt: Option<SlicePattItems>,
-        close_bracket: Bracket,
-    }
-
-    pub struct SlicePattItems {
-        first_pattern: Box<Pattern>,
-        subsequent_patterns: Vec<(Comma, Pattern)>,
-        trailing_comma_opt: Option<Comma>,
-    }
-}
-
-mod struct_patt {
-    use crate::{
-        expression::Attribute,
-        identifier::Identifier,
-        item::{Brace, Colon, Comma},
-        keyword::KeywordKind,
-        path::SimplePath,
-    };
-
-    use super::Pattern;
-
-    pub enum StructPattKind {
-        WithoutBody(StructWithoutBody),
-        WithBody(StructWithBody),
-    }
-
-    pub struct StructWithoutBody {
-        kw_ref_opt: Option<KeywordKind>,
-        kw_mut_opt: Option<KeywordKind>,
-        name: Identifier,
-    }
-
-    pub struct StructWithBody {
-        name: Identifier,
-        colon: Colon,
-        pattern: Box<Pattern>,
-    }
-
-    pub struct StructPatt {
-        path: SimplePath,
-        open_brace: Brace,
-        struct_patt_fields_opt: Option<StructPattFields>,
-        trailing_comma_opt: Option<Comma>,
-        close_brace: Brace,
-    }
-
-    pub struct StructPattFields {
-        first_field: StructPattField,
-        subsequent_fields: Vec<(Comma, StructPattField)>,
-        trailing_comma_opt: Option<Comma>,
-    }
-
-    pub struct StructPattField {
-        attribute: Attribute,
-        struct_pattern_kind: StructPattKind,
-    }
-}
-
-mod tuple_struct_item {
-    use crate::{
-        item::{Comma, Parenthesis},
-        path::SimplePath,
-    };
-
-    use super::Pattern;
-
-    pub struct TupleStructPatt {
-        path: SimplePath,
-        open_parenthesis: Parenthesis,
-        tuple_struct_elements_opt: Option<TupleStructElements>,
-        close_parenthesis: Parenthesis,
-    }
-
-    pub struct TupleStructElements {
-        first_pattern: Box<Pattern>,
-        subsequent_patterns: Vec<(Comma, Pattern)>,
-        trailing_comma_opt: Option<Comma>,
-    }
-}
-
-mod tuple_patt {
-    use crate::item::{Comma, Parenthesis};
-
-    use super::Pattern;
-
-    pub struct TuplePatt {
-        open_parenthesis: Parenthesis,
-        tuple_patt_elements_opt: Option<TuplePattElements>,
-        close_parenthesis: Parenthesis,
-    }
-
-    pub struct TuplePattElements {
-        first_pattern: Box<Pattern>,
-        subsequent_patterns: Vec<(Comma, Pattern)>,
-        trailing_comma_opt: Option<Comma>,
-    }
 }
