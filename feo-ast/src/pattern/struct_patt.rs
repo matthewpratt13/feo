@@ -52,7 +52,7 @@ pub struct TupleStructPatt {
 }
 
 pub struct TupleStructFields {
-    first_pattern: Box<Pattern>,
-    subsequent_patterns: Vec<(Comma, Pattern)>,
+    first_field: Box<Pattern>,
+    subsequent_fields: Vec<(Comma, Pattern)>,
     trailing_comma_opt: Option<Comma>,
 }
