@@ -47,11 +47,11 @@ pub struct StructPattField {
 pub struct TupleStructPatt {
     path: SimplePath,
     open_parenthesis: Parenthesis,
-    tuple_struct_elements_opt: Option<TupleStructElements>,
+    tuple_struct_fields_opt: Option<TupleStructFields>,
     close_parenthesis: Parenthesis,
 }
 
-pub struct TupleStructElements {
+pub struct TupleStructFields {
     first_pattern: Box<Pattern>,
     subsequent_patterns: Vec<(Comma, Pattern)>,
     trailing_comma_opt: Option<Comma>,
