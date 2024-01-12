@@ -4,10 +4,10 @@
 use crate::{identifier::Identifier, item::DblColon, keyword::KeywordKind};
 
 pub enum PathSegment {
-    IdentifierSeg(Identifier),
-    CrateSeg(KeywordKind),
-    SelfSeg(KeywordKind),
-    SuperSeg(KeywordKind),
+    Identifier(Identifier),
+    CrateKeyword(KeywordKind),
+    SelfKeyword(KeywordKind),
+    SuperKeyword(KeywordKind),
 }
 
 pub struct SimplePath {
