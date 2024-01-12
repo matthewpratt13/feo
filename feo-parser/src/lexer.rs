@@ -655,7 +655,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                '.' | ',' | ';' => {
+                ',' | ';' => {
                     self.advance();
 
                     let data = self.input[start_pos..self.pos].to_string();
@@ -679,6 +679,7 @@ impl<'a> Lexer<'a> {
                 | '+'
                 | '/'
                 | '-'
+                | '.'
                 | ':'
                 | '<'..='@'
                 | '\\'

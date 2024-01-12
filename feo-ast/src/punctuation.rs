@@ -18,6 +18,7 @@ pub enum PuncKind {
     FullStop,
     Underscore,
 
+    DblDot,
     DblColon,
 
     Bang, // (exclamation point)
@@ -66,6 +67,7 @@ impl PuncKind {
             PuncKind::Comma => ",",
             PuncKind::FullStop => ".",
             PuncKind::Underscore => "_",
+            PuncKind::DblDot => "..",
             PuncKind::DblColon => "::",
             PuncKind::Bang => "!",
             PuncKind::Hash => "#",
@@ -209,5 +211,5 @@ pub fn is_quote(c: char) -> bool {
 }
 
 pub fn is_separator(c: char) -> bool {
-    ['.', ',', ';'].contains(&c)
+    [',', ';'].contains(&c)
 }
