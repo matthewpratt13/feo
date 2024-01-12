@@ -100,7 +100,7 @@ mod struct_patt {
     pub struct StructPatt {
         path: SimplePath,
         open_brace: Brace,
-        struct_pattern_fields_opt: Option<StructPattFields>,
+        struct_patt_fields_opt: Option<StructPattFields>,
         trailing_comma_opt: Option<Comma>,
         close_brace: Brace,
     }
@@ -117,9 +117,24 @@ mod struct_patt {
     }
 }
 
-pub struct TupleStructPatt {}
+mod tuple_struct_item {
+    use crate::{item::{Parenthesis, Comma}, path::SimplePath};
 
-pub struct TupleStructItems {}
+    use super::Pattern;
+
+    pub struct TupleStructPatt {
+        path: SimplePath,
+        open_parenthesis: Parenthesis,
+        tuple_struct_items_opt: Option<TupleStructItems>,
+        close_parenthesis: Parenthesis,
+    }
+
+    pub struct TupleStructItems {
+        first_pattern: Pattern,
+        subsequent_patterns: Vec<(Parenthesis, Comma)>,
+        trailing_comma_opt: Option<Comma>,
+    }
+}
 
 pub struct TuplePatt {}
 
