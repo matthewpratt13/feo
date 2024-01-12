@@ -12,9 +12,3 @@ pub enum Type {
     InferredType,
     QualifiedPathInType,
 }
-
-pub struct TypePath {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: PathSegment,
-    subsequent_segments: Vec<(DblColon, PathSegment)>,
-}
