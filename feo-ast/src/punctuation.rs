@@ -19,6 +19,7 @@ pub enum PuncKind {
     Underscore,
 
     DblDot,
+    DotDotEquals,
     DblColon,
 
     Bang, // (exclamation point)
@@ -68,6 +69,7 @@ impl PuncKind {
             PuncKind::FullStop => ".",
             PuncKind::Underscore => "_",
             PuncKind::DblDot => "..",
+            PuncKind::DotDotEquals => "..=",
             PuncKind::DblColon => "::",
             PuncKind::Bang => "!",
             PuncKind::Hash => "#",
@@ -119,6 +121,7 @@ impl FromStr for PuncKind {
             "." => Ok(PuncKind::FullStop),
             "_" => Ok(PuncKind::Underscore),
             ".." => Ok(PuncKind::DblDot),
+            "..=" => Ok(PuncKind::DotDotEquals),
             "::" => Ok(PuncKind::DblColon),
             "!" => Ok(PuncKind::Bang),
             "#" => Ok(PuncKind::Hash),
