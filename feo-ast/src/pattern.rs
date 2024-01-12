@@ -8,7 +8,7 @@ use crate::{
     path::SimplePath,
 };
 
-use self::slice_patt::SlicePatt;
+use self::{slice_patt::SlicePatt, struct_patt::StructPatt};
 
 pub enum Pattern {
     Literal(LiteralPatt),
@@ -69,11 +69,60 @@ mod slice_patt {
     }
 }
 
-pub struct StructPatt {}
+mod struct_patt {
+    use crate::{
+        expression::Attribute,
+        identifier::Identifier,
+        item::{Brace, Colon, Comma},
+        keyword::KeywordKind,
+        path::SimplePath,
+    };
 
-pub struct StructPattFields {}
+    use super::Pattern;
 
-pub struct StructPattField {}
+    pub enum StructPattKind {
+        WithoutBody(StructWithoutBody),
+        WithBody(StructWithBody),
+        TupleStruct(TupleStruct),
+    }
+
+    pub struct StructWithoutBody {
+        kw_ref_opt: Option<KeywordKind>,
+        kw_mut_opt: Option<KeywordKind>,
+        name: Identifier,
+    }
+
+    pub struct StructWithBody {
+        name: Identifier,
+        colon: Colon,
+        pattern: Box<Pattern>,
+    }
+
+    pub struct TupleStruct {
+        index: usize,
+        colon: Colon,
+        pattern: Box<Pattern>,
+    }
+
+    pub struct StructPatt {
+        path: SimplePath,
+        open_brace: Brace,
+        struct_pattern_fields_opt: Option<StructPattFields>,
+        trailing_comma_opt: Option<Comma>,
+        close_brace: Brace,
+    }
+
+    pub struct StructPattFields {
+        first_field: StructPattField,
+        subsequent_fields: Vec<(Comma, StructPattField)>,
+        trailing_comma_opt: Option<Comma>,
+    }
+
+    pub struct StructPattField {
+        attribute: Attribute,
+        struct_pattern_kind: StructPattKind,
+    }
+}
 
 pub struct TuplePatt {}
 
