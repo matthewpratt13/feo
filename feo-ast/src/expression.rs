@@ -15,6 +15,7 @@ mod call_expr;
 mod conditional_expr;
 mod iteration_expr;
 mod operator_expr;
+mod range_expr;
 mod struct_expr;
 mod tuple_expr;
 
@@ -26,7 +27,7 @@ use self::{
     iteration_expr::IterationExpr,
     operator_expr::OperatorExpr,
     struct_expr::StructExpr,
-    tuple_expr::{TupleExpr, TupleIndexingExpr},
+    tuple_expr::{TupleExpr, TupleIndexingExpr}, range_expr::RangeExprKind,
 };
 
 pub enum Expression {
@@ -47,6 +48,7 @@ pub enum ExprWithoutBlock {
     Literal(LiteralExpr),
     Operator(OperatorExpr),
     Path(SimplePath),
+    Range(RangeExprKind),
     Struct(StructExpr),
     Tuple(TupleExpr),
     TupleIndexing(TupleIndexingExpr),
