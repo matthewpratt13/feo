@@ -12,6 +12,6 @@ pub enum PathSegment {
 
 pub struct SimplePath {
     dbl_colon_opt: Option<DblColon>,
-    root: PathSegment,
-    segments: Vec<(DblColon, PathSegment)>,
+    first_segment: PathSegment,
+    subsequent_segments: Vec<(DblColon, PathSegment)>,
 }
