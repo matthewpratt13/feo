@@ -83,7 +83,6 @@ mod struct_patt {
     pub enum StructPattKind {
         WithoutBody(StructWithoutBody),
         WithBody(StructWithBody),
-        TupleStruct(TupleStruct),
     }
 
     pub struct StructWithoutBody {
@@ -94,12 +93,6 @@ mod struct_patt {
 
     pub struct StructWithBody {
         name: Identifier,
-        colon: Colon,
-        pattern: Box<Pattern>,
-    }
-
-    pub struct TupleStruct {
-        index: usize,
         colon: Colon,
         pattern: Box<Pattern>,
     }
@@ -124,12 +117,12 @@ mod struct_patt {
     }
 }
 
-pub struct TuplePatt {}
-
-pub struct TuplePattItems {}
-
 pub struct TupleStructPatt {}
 
 pub struct TupleStructItems {}
+
+pub struct TuplePatt {}
+
+pub struct TuplePattItems {}
 
 pub struct WildcardPatt {}
