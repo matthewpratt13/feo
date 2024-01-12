@@ -16,6 +16,7 @@ mod struct_patt;
 mod tuple_patt;
 
 use self::{
+    range_patt::RangePattKind,
     slice_patt::SlicePatt,
     struct_patt::{StructPatt, TupleStructPatt},
     tuple_patt::TuplePatt,

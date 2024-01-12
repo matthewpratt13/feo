@@ -1,8 +1,12 @@
-use crate::{item::{Plus, QuestionMark}, keyword::KeywordKind, path::SimplePath};
+use crate::{keyword::KeywordKind, path::SimplePath};
+
+use self::impl_trait_type::{ImplTraitType, TraitBounds};
+
+mod impl_trait_type;
 
 pub enum Type {
     ImplTrait(ImplTraitType),
-    TraitObject,
+    TraitObject(TypeObjectType),
     TypePath(SimplePath),
     Tuple,
     Reference,
@@ -12,17 +16,7 @@ pub enum Type {
     QualifiedPathIn,
 }
 
-pub struct ImplTraitType {
-    kw_impl: KeywordKind,
+pub struct TypeObjectType {
+    kw_dyn: KeywordKind,
     trait_bounds: TraitBounds,
-}
-
-pub struct TraitBounds {
-    first_trait_bound: TraitBound,
-    subsequent_trait_bounds: Vec<(Plus, TraitBound)>,
-}
-
-pub struct TraitBound {
-    question_mark: QuestionMark,
-    path: SimplePath,
 }
