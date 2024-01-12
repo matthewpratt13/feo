@@ -9,7 +9,7 @@ pub struct TuplePatt {
 }
 
 pub struct TuplePattElements {
-    first_pattern: Box<Pattern>,
-    subsequent_patterns: Vec<(Comma, Pattern)>,
+    first_element: Box<Pattern>,
+    subsequent_elements: Vec<(Comma, Pattern)>,
     trailing_comma_opt: Option<Comma>,
 }
