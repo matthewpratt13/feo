@@ -1,3 +1,4 @@
+use crate::path::SimplePath;
 use crate::{keyword::KeywordKind, ty::Type};
 
 use super::associated_item::AssociatedItem;
@@ -18,8 +19,8 @@ pub struct InherentImpl {
 
 pub struct TraitImpl {
     kw_unsafe_opt: Option<KeywordKind>,
-    kw_trait: KeywordKind,
-    trait_type: Type,
+    kw_impl: KeywordKind,
+    trait_path: SimplePath,
     kw_for: KeywordKind,
     object_type: Type,
     open_brace: Brace,
