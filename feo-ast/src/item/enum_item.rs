@@ -3,9 +3,8 @@ use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind}
 use super::{
     struct_item::{StructItemFields, TupleItemFields},
     visibility::Visibility,
-    Parenthesis,
 };
-use super::{Brace, Comma};
+use super::{Brace, Comma, Parenthesis};
 
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),

@@ -1,10 +1,10 @@
 #![allow(dead_code)]
-#![allow(unused_variables)]
 
 use crate::{
     identifier::Identifier,
     item::{Bracket, Dot, HashSign, Parenthesis},
     keyword::KeywordKind,
+    literals::{BoolLiteral, CharLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral},
     path::SimplePath,
     punctuation::PuncKind,
 };
@@ -14,7 +14,6 @@ mod block_expr;
 mod call_expr;
 mod conditional_expr;
 mod iteration_expr;
-mod literal_expr;
 mod operator_expr;
 mod struct_expr;
 mod tuple_expr;
@@ -25,7 +24,6 @@ use self::{
     call_expr::{FunctionCallExpr, MethodCallExpr},
     conditional_expr::ConditionalExpr,
     iteration_expr::IterationExpr,
-    literal_expr::LiteralExpr,
     operator_expr::OperatorExpr,
     struct_expr::StructExpr,
     tuple_expr::{TupleExpr, TupleIndexingExpr},
@@ -61,6 +59,16 @@ pub enum ExprWithBlock {
     Block(BlockExpr),
     Conditional(ConditionalExpr),
     Iteration(IterationExpr),
+}
+
+pub enum LiteralExpr {
+    Char(CharLiteral),
+    String(StringLiteral),
+    Int(IntLiteral),
+    UInt(UIntLiteral),
+    U256(U256Literal),
+    Float(CharLiteral),
+    Bool(BoolLiteral),
 }
 
 pub struct Attribute {

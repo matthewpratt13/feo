@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-#![allow(unused_variables)]
 
+mod associated_item;
 mod constant_item;
 mod enum_item;
 mod extern_crate_item;
@@ -9,12 +9,14 @@ mod impl_item;
 mod import_decl_item;
 mod module_item;
 mod struct_item;
-mod trait_item;
-mod type_alias_item;
+mod visibility;
 
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
+    identifier::Identifier,
+    keyword::KeywordKind,
     punctuation::PuncKind,
+    ty::Type,
 };
 
 use self::{
@@ -27,8 +29,6 @@ use self::{
     import_decl_item::ImportDeclItem,
     module_item::ModuleItem,
     struct_item::StructItem,
-    trait_item::TraitItem,
-    type_alias_item::TypeAliasItem,
     visibility::Visibility,
 };
 
@@ -69,40 +69,18 @@ pub type Parenthesis = (DelimKind, DelimOrientation);
 pub type Bracket = (DelimKind, DelimOrientation);
 pub type Brace = (DelimKind, DelimOrientation);
 
-mod visibility {
-    use crate::keyword::KeywordKind;
-
-    use super::Parenthesis;
-
-    pub enum Visibility {
-        Pub(KeywordKind),
-        PubCrate(PubCrateVisibility),
-    }
-
-    pub struct PubCrateVisibility {
-        kw_pub: KeywordKind,
-        open_parenthesis: Parenthesis,
-        kw_crate: KeywordKind,
-        close_parenthesis: Parenthesis,
-    }
+pub struct TraitItem {
+    kw_unsafe_opt: Option<KeywordKind>,
+    kw_impl: KeywordKind,
+    name: Identifier,
+    open_brace: Brace,
+    associated_items: Vec<AssociatedItem>,
+    close_brace: Brace,
 }
 
-mod associated_item {
-    use crate::expression::Attribute;
-
-    use super::{
-        constant_item::ConstantItem, function_item::FunctionItem, type_alias_item::TypeAliasItem,
-        visibility::Visibility,
-    };
-
-    pub enum AssociatedItemKind {
-        TypeAlias(TypeAliasItem),
-        Constant(ConstantItem),
-        Function(FunctionItem),
-    }
-
-    pub struct AssociatedItem {
-        attributes: Vec<Attribute>,
-        item: (Option<Visibility>, AssociatedItemKind),
-    }
+pub struct TypeAliasItem {
+    kw_type: KeywordKind,
+    name: Identifier,
+    value_opt: Option<(Equals, Type)>,
+    semicolon: Semicolon,
 }
