@@ -203,3 +203,11 @@ impl Spanned for Punctuation {
         &self.span
     }
 }
+
+pub fn is_quote(c: char) -> bool {
+    ['\'', '"'].contains(&c)
+}
+
+pub fn is_separator(c: char) -> bool {
+    ['.', ',', ';'].contains(&c)
+}

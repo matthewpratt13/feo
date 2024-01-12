@@ -38,3 +38,48 @@ impl Spanned for Identifier {
         &self.span
     }
 }
+
+pub fn is_keyword(iden: &str) -> bool {
+    [
+        "abstract",
+        "as",
+        "break",
+        "const",
+        "continue",
+        "contract",
+        "crate",
+        "deref",
+        "else",
+        "enum",
+        "extern",
+        "for",
+        "func",
+        "if",
+        "impl",
+        "import",
+        "in",
+        "interface",
+        "let",
+        "library",
+        "loop",
+        "match",
+        "mod",
+        "mut",
+        "None",
+        "program",
+        "pub",
+        "ref",
+        "return",
+        "script",
+        "self",
+        "Some",
+        "static",
+        "struct",
+        "super",
+        "trait",
+        "type",
+        "unsafe",
+        "while",
+    ]
+    .contains(&iden)
+}

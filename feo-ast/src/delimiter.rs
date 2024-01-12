@@ -110,3 +110,7 @@ impl Spanned for Delimiter {
         &self.span
     }
 }
+
+pub fn is_delimiter(c: char) -> bool {
+    ['(', ')', '[', ']', '{', '}'].contains(&c)
+}

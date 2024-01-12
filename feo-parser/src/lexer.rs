@@ -221,7 +221,7 @@ impl<'a> Lexer<'a> {
                         continue;
                     }
 
-                    if is_built_in_type_annotation(&buf) {
+                    if feo_ast::type_annotation::is_built_in_type_annotation(&buf) {
                         let type_annotation = TypeAnnotation::tokenize(
                             &self.input,
                             &buf,
@@ -231,7 +231,7 @@ impl<'a> Lexer<'a> {
                         )?;
 
                         tokens.push(type_annotation);
-                    } else if is_keyword(&buf) {
+                    } else if feo_ast::identifier::is_keyword(&buf) {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
@@ -687,9 +687,9 @@ impl<'a> Lexer<'a> {
                 | '|' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation()
-                            && !is_delimiter(c)
-                            && !is_quote(c)
-                            && !is_separator(c)
+                            && !feo_ast::delimiter::is_delimiter(c)
+                            && !feo_ast::punctuation::is_quote(c)
+                            && !feo_ast::punctuation::is_separator(c)
                         {
                             self.advance();
                         } else {
@@ -728,71 +728,6 @@ impl<'a> Lexer<'a> {
     pub fn errors(&self) -> Vec<CompilerError> {
         self.handler.clone().get_inner().0
     }
-}
-
-fn is_built_in_type_annotation(iden: &str) -> bool {
-    [
-        "char", "String", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64",
-        "Vec",
-    ]
-    .contains(&iden)
-}
-
-fn is_keyword(iden: &str) -> bool {
-    [
-        "abstract",
-        "as",
-        "break",
-        "const",
-        "continue",
-        "contract",
-        "crate",
-        "deref",
-        "else",
-        "enum",
-        "extern",
-        "for",
-        "func",
-        "if",
-        "impl",
-        "import",
-        "in",
-        "interface",
-        "let",
-        "library",
-        "loop",
-        "match",
-        "mod",
-        "mut",
-        "None",
-        "program",
-        "pub",
-        "ref",
-        "return",
-        "script",
-        "self",
-        "Some",
-        "static",
-        "struct",
-        "super",
-        "trait",
-        "type",
-        "unsafe",
-        "while",
-    ]
-    .contains(&iden)
-}
-
-fn is_delimiter(c: char) -> bool {
-    ['(', ')', '[', ']', '{', '}'].contains(&c)
-}
-
-fn is_quote(c: char) -> bool {
-    ['\'', '"'].contains(&c)
-}
-
-fn is_separator(c: char) -> bool {
-    ['.', ',', ';'].contains(&c)
 }
 
 #[cfg(test)]
