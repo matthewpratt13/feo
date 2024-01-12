@@ -10,6 +10,7 @@ use crate::{
     path::SimplePath,
 };
 
+mod range_patt;
 mod slice_patt;
 mod struct_patt;
 mod tuple_patt;
