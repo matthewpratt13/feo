@@ -1,9 +1,14 @@
 use crate::{
+    identifier::Identifier,
+    item::Parenthesis,
+    keyword::KeywordKind,
     literals::{
         BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
     },
     path::SimplePath,
 };
+
+use self::slice_patt::SlicePatt;
 
 pub enum Pattern {
     Literal(LiteralPatt),
@@ -28,15 +33,41 @@ pub enum LiteralPatt {
     Bool(BoolLiteral),
 }
 
-pub struct GroupedPatt {}
+pub struct GroupedPatt {
+    open_parenthesis: Parenthesis,
+    pattern: Box<Pattern>,
+    close_parenthesis: Parenthesis,
+}
 
-pub struct IdentifierPatt {}
+pub struct IdentifierPatt {
+    kw_ref_opt: Option<KeywordKind>,
+    kw_mut_opt: Option<KeywordKind>,
+    name: Identifier,
+}
 
-pub struct ReferencePatt {}
+pub struct ReferencePatt {
+    kw_ref_opt: Option<KeywordKind>,
+    kw_mut_opt: Option<KeywordKind>,
+    name: Box<Pattern>,
+}
 
-pub struct SlicePatt {}
+mod slice_patt {
+    use crate::item::{Bracket, Comma};
 
-pub struct SlicePattItems {}
+    use super::Pattern;
+
+    pub struct SlicePatt {
+        open_bracket: Bracket,
+        slice_pattern_items_opt: Option<SlicePattItems>,
+        close_bracket: Bracket,
+    }
+
+    pub struct SlicePattItems {
+        first_pattern: Box<Pattern>,
+        subsequent_patterns: Vec<(Comma, Pattern)>,
+        trailing_comma_opt: Option<Comma>,
+    }
+}
 
 pub struct StructPatt {}
 
