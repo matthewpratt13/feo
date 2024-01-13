@@ -784,7 +784,9 @@ mod tests {
 
             let hello: str = Contract::bar();
 
-            let world = str!("{}", ['w', 'o', 'r', 'l', 'd']);
+            let chars = ['w', 'o', 'r', 'l', 'd'];
+
+            let world = str!(chars);
 
             print!("{} {}", hello, world);
 
