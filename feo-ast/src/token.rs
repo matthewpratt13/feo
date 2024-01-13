@@ -56,7 +56,7 @@ impl Spanned for Token {
             Token::UIntLit(ui) => ui.span(),
             Token::U256Lit(u) => u.span(),
             Token::FloatLit(f) => f.span(),
-            Token::Iden(i) => i.span(),
+            Token::Iden(id) => id.span(),
             Token::Keyword(k) => k.span(),
             Token::TypeAnn(ta) => ta.span(),
             Token::Comment(c) => c.span(),

@@ -917,7 +917,7 @@ mod tests {
                     Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.0.raw_value()),
                     Token::U256Lit(u) => println!("U256Lit: {:?}", u.0.raw_value()),
                     Token::FloatLit(f) => println!("FloatLit: {:?}", f.0.raw_value()),
-                    Token::Iden(i) => println!("Iden: {:?}", i.name),
+                    Token::Iden(id) => println!("Iden: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
                     Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),
                     Token::Comment(c) => println!("Comment: {:?}", c.data),
