@@ -778,18 +778,16 @@ mod tests {
         script;
 
         import crate::some_library;
-        import crate::contracts::{Contract, SomeAbstractContract};
+        import crate::contracts::{Contract};
 
         func main() {
             greater_than(1, 2);
 
-            let contract = SomeContract::new();
+            let hello: str = Contract::bar();
 
-            let hello: String = string!(["hello"]);
+            let world = str!("{}", ['w', 'o', 'r', 'l', 'd']);
 
-            let world: str = SomeAbstractContract::bar();
-            
-            print!("{} {}", ref hello, world);
+            print!("{} {}", hello, world);
 
             some_library::hello_world();
         }
@@ -819,7 +817,7 @@ mod tests {
         import self::some_abstract_contract::SomeAbstractContract;
 
         struct Foo {
-            field1: str,
+            field1: String,
             field2: char,
             field3: u256,
             field4: Vec<f64>,
@@ -829,9 +827,8 @@ mod tests {
 
         pub storage {
             pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
-            pub static OWNER: Identity = Identity::User(UserId::from(msg_sender()));
-            const STR_SLICE: [char; 3] = slice!["foo"]; // immutable, fixed size
-            static mut string: String = string!(str_array); // mutable but size known @ compilation
+            const STR: static str = "foo";
+            const STR_ARRAY: [char; 3] = chars!(STR);
         }
 
         abi Contract {
@@ -840,20 +837,20 @@ mod tests {
 
         impl Contract {
             func foo() -> Foo {
-                let vec = [1, 2, 3, 4];
-                let mut new_vec: Vec<f64> = [];
+                let array: [u64; 4] = [1, 2, 3, 4];
+                let mut vec: Vec<f64> = vec![];
 
-                for num in vec {
-                    new_vec.push(num as f64);
+                for num in array {
+                    vec.push(num as f64);
                 }
 
-                new_vec.push(5.0);
+                vec.push(5.0);
 
                 return Foo {
-                    field1: "foo",
+                    field1: string!("foo"),
                     field2: '\'',
                     field3: 0x0123_4567_89AB_CDEF,
-                    field4: new_vec,
+                    field4: vec,
                     field5: -1234,
                     field6: true
                 }
@@ -894,12 +891,6 @@ mod tests {
 
         pub abi SomeAbstractContract {
             func colour(arg: char) -> Colour?;
-        }
-
-        impl SomeTrait for SomeAbstractContract {
-            func bar() -> str {
-                return "world"
-            }
         }
         "#;
 

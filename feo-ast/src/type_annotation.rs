@@ -13,6 +13,7 @@ use crate::token::{Token, Tokenize};
 pub enum TypeAnnKind {
     TypeAnnChar,
     TypeAnnString,
+    TypeAnnStr,
     TypeAnnBool,
     TypeAnnI32,
     TypeAnnI64,
@@ -34,6 +35,7 @@ impl TypeAnnKind {
         match self {
             TypeAnnKind::TypeAnnChar => "char",
             TypeAnnKind::TypeAnnString => "String",
+            TypeAnnKind::TypeAnnStr => "str",
             TypeAnnKind::TypeAnnBool => "bool",
             TypeAnnKind::TypeAnnI32 => "i32",
             TypeAnnKind::TypeAnnI64 => "i64",
@@ -58,6 +60,7 @@ impl FromStr for TypeAnnKind {
         let type_ann = match s {
             "char" => Ok(TypeAnnKind::TypeAnnChar),
             "String" => Ok(TypeAnnKind::TypeAnnString),
+            "str" => Ok(TypeAnnKind::TypeAnnStr),
             "bool" => Ok(TypeAnnKind::TypeAnnBool),
             "i32" => Ok(TypeAnnKind::TypeAnnI32),
             "i64" => Ok(TypeAnnKind::TypeAnnI64),
