@@ -42,6 +42,7 @@ pub enum PuncKind {
     Pipe,
     Tilde,
 
+    HashBang,
     BangEquals,
     PercentEquals,
     AsteriskEquals,
@@ -90,6 +91,7 @@ impl PuncKind {
             PuncKind::BackTick => "`",
             PuncKind::Pipe => "|",
             PuncKind::Tilde => "~",
+            PuncKind::HashBang => "#!",
             PuncKind::BangEquals => "!=",
             PuncKind::PercentEquals => "%=",
             PuncKind::AsteriskEquals => "*=",
@@ -142,6 +144,7 @@ impl FromStr for PuncKind {
             "`" => Ok(PuncKind::BackTick),
             "|" => Ok(PuncKind::Pipe),
             "~" => Ok(PuncKind::Tilde),
+            "#!" => Ok(PuncKind::HashBang),
             "!=" => Ok(PuncKind::BangEquals),
             "%=" => Ok(PuncKind::PercentEquals),
             "*=" => Ok(PuncKind::AsteriskEquals),
