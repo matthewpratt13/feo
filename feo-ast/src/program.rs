@@ -7,12 +7,12 @@ pub enum Program {
 pub enum ContractItem {
     Item,
     Storage,
-    Interface,
+    Abi,
 }
 
 pub struct Storage {}
 
-pub struct Interface {}
+pub struct Abi {}
 
 pub struct Contract {}
 
