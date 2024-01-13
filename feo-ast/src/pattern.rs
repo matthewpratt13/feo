@@ -27,6 +27,7 @@ pub enum Pattern {
     Grouped(GroupedPatt),
     Identifier(IdentifierPatt),
     Path(SimplePath),
+    Range(RangePattKind),
     Reference(ReferencePatt),
     Slice(SlicePatt),
     Struct(StructPatt),
