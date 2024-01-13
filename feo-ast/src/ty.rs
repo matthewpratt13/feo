@@ -6,7 +6,7 @@ mod impl_trait_type;
 
 pub enum Type {
     ImplTrait(ImplTraitType),
-    TraitObject(TypeObjectType),
+    TraitObject(TraitObjectType),
     TypePath(SimplePath),
     Tuple,
     Reference,
@@ -16,7 +16,7 @@ pub enum Type {
     QualifiedPathIn,
 }
 
-pub struct TypeObjectType {
+pub struct TraitObjectType {
     kw_dyn: KeywordKind,
     trait_bounds: TraitBounds,
 }
