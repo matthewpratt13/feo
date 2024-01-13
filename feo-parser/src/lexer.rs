@@ -115,8 +115,6 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // skip third '/' or '!'
                                 self.skip_whitespace();
 
-                                // let start_pos = self.pos; // start reading after the three '/'
-
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
