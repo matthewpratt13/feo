@@ -135,8 +135,8 @@ impl Spanned for TypeAnnotation {
 
 pub fn is_built_in_type_annotation(iden: &str) -> bool {
     [
-        "char", "String", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64",
-        "Vec",
+        "char", "String", "str", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32",
+        "f64", "Vec",
     ]
     .contains(&iden)
 }
