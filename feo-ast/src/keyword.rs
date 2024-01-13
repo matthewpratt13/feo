@@ -12,6 +12,7 @@ use crate::token::{Token, Tokenize};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum KeywordKind {
+    KwAbi,
     KwAbstract,
     KwAs,
     KwBreak,
@@ -31,7 +32,6 @@ pub enum KeywordKind {
     KwImpl,
     KwImport,
     KwIn,
-    KwInterface,
     KwLet,
     KwLibrary,
     KwLoop,
@@ -59,6 +59,7 @@ pub enum KeywordKind {
 impl KeywordKind {
     pub fn as_str(&self) -> &'static str {
         match self {
+            KeywordKind::KwAbi => "abi",
             KeywordKind::KwAbstract => "abstract",
             KeywordKind::KwAs => "as",
             KeywordKind::KwBreak => "break",
@@ -78,7 +79,6 @@ impl KeywordKind {
             KeywordKind::KwImpl => "impl",
             KeywordKind::KwImport => "import",
             KeywordKind::KwIn => "in",
-            KeywordKind::KwInterface => "interface",
             KeywordKind::KwLet => "let",
             KeywordKind::KwLibrary => "library",
             KeywordKind::KwLoop => "loop",
@@ -110,6 +110,7 @@ impl FromStr for KeywordKind {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let keyword_kind = match s {
+            "abi" => Ok(KeywordKind::KwAbi),
             "abstract" => Ok(KeywordKind::KwAbstract),
             "as" => Ok(KeywordKind::KwAs),
             "break" => Ok(KeywordKind::KwBreak),
@@ -129,7 +130,6 @@ impl FromStr for KeywordKind {
             "impl" => Ok(KeywordKind::KwImpl),
             "import" => Ok(KeywordKind::KwImport),
             "in" => Ok(KeywordKind::KwIn),
-            "interface" => Ok(KeywordKind::KwInterface),
             "let" => Ok(KeywordKind::KwLet),
             "library" => Ok(KeywordKind::KwLibrary),
             "loop" => Ok(KeywordKind::KwLoop),

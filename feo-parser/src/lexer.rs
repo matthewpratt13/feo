@@ -833,7 +833,7 @@ mod tests {
             static BALANCE: u64 = 0;
         }
 
-        interface Contract {
+        abi Contract {
             func foo() -> Foo;
         }
 
@@ -891,7 +891,7 @@ mod tests {
             Blue
         }
 
-        pub interface SomeAbstractContract {
+        pub abi SomeAbstractContract {
             func colour(arg: char) -> Colour?;
         }
 

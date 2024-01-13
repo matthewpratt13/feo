@@ -41,6 +41,7 @@ impl Spanned for Identifier {
 
 pub fn is_keyword(iden: &str) -> bool {
     [
+        "abi",
         "abstract",
         "as",
         "break",
@@ -60,7 +61,6 @@ pub fn is_keyword(iden: &str) -> bool {
         "impl",
         "import",
         "in",
-        "interface",
         "let",
         "library",
         "loop",
