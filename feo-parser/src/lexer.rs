@@ -747,26 +747,36 @@ mod tests {
         */
 
         /// doc comment
-        
+               
         ////////////////////////////////////////////////////////////////////////////////
-        // `some_library.feo`
+        // `src/lib.feo`
+        ////////////////////////////////////////////////////////////////////////////////
+       
+        pub mod contract;
+        pub mod some_library;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // `src/lib/some_library.feo`
         ////////////////////////////////////////////////////////////////////////////////
             
         library;
+
+        pub trait SomeTrait {
+            func bar() -> String; 
+        }
         
         extern func hello_world() {
             print!("hello world");
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // `main.feo`
+        // `src/main.feo`
         ////////////////////////////////////////////////////////////////////////////////
         
         script;
 
-        import crate::some_contract;
-        import crate::some_abstract_contract;
         import crate::some_library;
+        import crate::contracts::{Contract, SomeAbstractContract};
 
         func main() {
             greater_than(1, 2);
@@ -796,12 +806,17 @@ mod tests {
 
 
         ////////////////////////////////////////////////////////////////////////////////
-        // `some_contract.feo`
+        // `src/contract.feo`
         ////////////////////////////////////////////////////////////////////////////////
         
         contract;
+
+        import crate::some_library::SomeTrait;
+
+        mod some_abstract_contract;
         
-        import crate::some_abstract_contract::SomeAbstractContract;
+        #[export]
+        import self::some_abstract_contract::SomeAbstractContract;
 
         struct Foo {
             field1: String,
@@ -818,15 +833,11 @@ mod tests {
             static BALANCE: u64 = 0;
         }
 
-        interface SomeContract {
+        interface Contract {
             func foo() -> Foo;
         }
 
-        impl SomeContract {
-            pub func new() -> SomeContract {
-                return SomeContract(ADDRESS)
-            }
-
+        impl Contract {
             func foo() -> Foo {
                 let vec = [1, 2, 3, 4];
                 let mut new_vec: Vec<f64> = [];
@@ -848,7 +859,7 @@ mod tests {
             }
         }
 
-        impl SomeAbstractContract for SomeContract {
+        impl SomeAbstractContract for Contract {
             func colour(arg: char) -> Colour? {
                 return match arg {
                     'r' => Some(Colour::Red),
@@ -859,26 +870,25 @@ mod tests {
             }
         }
 
-        impl SomeTrait for SomeContract {
+        impl SomeTrait for Contract {
             func bar() -> String {
                 return "hello"
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // `some_abstract_contract.feo`
+        // `src/contract/some_abstract_contract.feo`
         ////////////////////////////////////////////////////////////////////////////////
 
-        abstract contract;
+        #[abstract]
+        contract;
+
+        import crate::some_library::SomeTrait;
 
         pub enum Colour {
             Red,
             Green, 
             Blue
-        }
-
-        pub trait SomeTrait {
-            func bar() -> String; 
         }
 
         pub interface SomeAbstractContract {
