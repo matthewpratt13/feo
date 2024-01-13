@@ -763,7 +763,6 @@ mod tests {
         library;
 
         pub trait SomeTrait {
-            // return variable-length string pointer (size unknown at compile time)
             func bar() -> str; 
         }
         
@@ -880,8 +879,6 @@ mod tests {
 
         #[abstract]
         contract;
-
-        import crate::some_library::SomeTrait;
 
         pub enum Colour {
             Red,
