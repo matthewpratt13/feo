@@ -777,7 +777,7 @@ mod tests {
         script;
 
         import crate::some_library;
-        import crate::contracts::Contract;
+        import crate::contract::Contract;
 
         func main() {
             greater_than(1, 2);
