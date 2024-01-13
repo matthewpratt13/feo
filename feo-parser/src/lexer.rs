@@ -763,7 +763,8 @@ mod tests {
         library;
 
         pub trait SomeTrait {
-            func bar() -> String; 
+            // return variable-length string pointer (size unknown at compile time)
+            func bar() -> str; 
         }
         
         extern func hello_world() {
@@ -784,13 +785,11 @@ mod tests {
 
             let contract = SomeContract::new();
 
-            let hello: String = contract.bar();
+            let hello: String = string!(["hello"]);
 
-            let world: String = SomeAbstractContract::bar();
+            let world: str = SomeAbstractContract::bar();
             
-            let owner = ref contract.OWNER;
-            
-            print!("{} {}", hello, world);
+            print!("{} {}", ref hello, world);
 
             some_library::hello_world();
         }
@@ -820,7 +819,7 @@ mod tests {
         import self::some_abstract_contract::SomeAbstractContract;
 
         struct Foo {
-            field1: String,
+            field1: str,
             field2: char,
             field3: u256,
             field4: Vec<f64>,
@@ -831,7 +830,8 @@ mod tests {
         pub storage {
             pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
             pub static OWNER: Identity = Identity::User(UserId::from(msg_sender()));
-            static BALANCE: u64 = 0;
+            const STR_SLICE: [char; 3] = slice!["foo"]; // immutable, fixed size
+            static mut string: String = string!(str_array); // mutable but size known @ compilation
         }
 
         abi Contract {
@@ -872,7 +872,7 @@ mod tests {
         }
 
         impl SomeTrait for Contract {
-            func bar() -> String {
+            func bar() -> str {
                 return "hello"
             }
         }
@@ -897,7 +897,7 @@ mod tests {
         }
 
         impl SomeTrait for SomeAbstractContract {
-            func bar() -> String {
+            func bar() -> str {
                 return "world"
             }
         }
