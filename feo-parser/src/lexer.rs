@@ -110,11 +110,12 @@ impl<'a> Lexer<'a> {
                             self.advance(); // skip second '/'
 
                             // doc comment
-                            if self.current_char() == Some('/') {
-                                self.advance(); // skip third '/'
+                            if self.current_char() == Some('/') || self.current_char() == Some('!')
+                            {
+                                self.advance(); // skip third '/' or '!'
                                 self.skip_whitespace();
 
-                                let start_pos = self.pos; // start reading after the three '/'
+                                // let start_pos = self.pos; // start reading after the three '/'
 
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
@@ -739,7 +740,9 @@ mod tests {
 
     #[test]
     fn lex() {
-        let source_code = r#"
+        let source_code = r#"   
+        //! outer doc comment
+        
         // line comment
 
         /*
