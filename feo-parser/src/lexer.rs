@@ -788,7 +788,7 @@ mod tests {
 
             let world = str!(chars);
 
-            print!"{} {}", hello, world);
+            print!("{} {}", hello, world);
 
             some_library::hello_world();
         }
