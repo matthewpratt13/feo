@@ -34,7 +34,7 @@ pub struct MatchArms {
 }
 
 pub struct MatchArm {
-    pattern: Pattern,
+    pattern: Box<Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
 

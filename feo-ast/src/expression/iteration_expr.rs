@@ -22,7 +22,7 @@ pub struct PredicateLoopExpr {
 
 pub struct IterLoopExpr {
     kw_for: KeywordKind,
-    pattern: Pattern,
+    pattern: Box<Pattern>,
     kw_in: KeywordKind,
     expression: Box<Expression>, // cannot be a struct expression
     block: BlockExpr,

@@ -53,5 +53,5 @@ pub struct ResultUnwrapExpr {
 pub struct TypeCastExpr {
     original_expression: Box<Expression>,
     kw_as: KeywordKind,
-    new_type: Type,
+    new_type: Box<Type>,
 }

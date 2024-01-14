@@ -25,11 +25,11 @@ pub struct LetStatement {
     identifier: Identifier,
     type_ann_opt: Option<(Colon, TypeAnnKind)>,
     equals: Equals,
-    expression: Expression,
+    expression: Box<Expression>,
     semicolon: Semicolon,
 }
 
 pub struct StatementWithExpr {
-    statement: Statement,
+    statement: Box<Statement>,
     expr_without_block: ExprWithoutBlock,
 }

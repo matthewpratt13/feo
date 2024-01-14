@@ -26,7 +26,7 @@ pub struct StructItemField {
     visibility_opt: Option<Visibility>,
     field_name: Identifier,
     colon: Colon,
-    field_type: Type,
+    field_type: Box<Type>,
 }
 
 pub struct TupleStruct {
@@ -47,5 +47,5 @@ pub struct TupleItemFields {
 pub struct TupleItemField {
     attributes: Vec<Attribute>,
     visibility_opt: Option<Visibility>,
-    field_type: Type,
+    field_type: Box<Type>,
 }

@@ -7,7 +7,7 @@ use super::ExprWithoutBlock;
 
 pub enum Statements {
     Statement(Box<Statement>),
-    StatementWithExpr(Box<StatementWithExpr>),
+    StatementWithExpr(StatementWithExpr),
     ExprWithoutBlock(ExprWithoutBlock),
 }
 

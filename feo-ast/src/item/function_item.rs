@@ -23,7 +23,7 @@ pub struct FunctionItem {
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Type)>,
+    return_type_opt: Option<(ThinArrow, Box<Type>)>,
     func_body: ExprWithBlock,
 }
 
@@ -45,9 +45,9 @@ pub struct FuncParams {
 }
 
 pub struct FuncParam {
-    pattern: Pattern,
+    pattern: Box<Pattern>,
     colon: Colon,
-    param_type: Type,
+    param_type: Box<Type>,
 }
 
 pub struct MethodParam {
@@ -59,5 +59,5 @@ pub struct SelfParam {
     kw_ref_opt: Option<KeywordKind>,
     kw_mut_opt: Option<KeywordKind>,
     kw_self: KeywordKind,
-    self_type_opt: Option<(Colon, Type)>,
+    self_type_opt: Option<(Colon, Box<Type>)>,
 }

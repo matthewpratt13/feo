@@ -10,7 +10,7 @@ pub enum ImplItem {
 
 pub struct InherentImpl {
     kw_impl: KeywordKind,
-    object_type: Type,
+    object_type: Box<Type>,
     open_brace: Brace,
     associated_items: Vec<AssociatedItem>,
     close_brace: Brace,
@@ -21,7 +21,7 @@ pub struct TraitImpl {
     kw_impl: KeywordKind,
     trait_path: SimplePath,
     kw_for: KeywordKind,
-    object_type: Type,
+    object_type: Box<Type>,
     open_brace: Brace,
     associated_items: Vec<AssociatedItem>,
     close_brace: Brace,

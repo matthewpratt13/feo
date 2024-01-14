@@ -6,7 +6,7 @@ pub struct ConstantItem {
     kw_const: KeywordKind,
     name: Identifier,
     colon: Colon,
-    item_type: Type,
+    item_type: Box<Type>,
     assignment_opt: Option<(Colon, Box<Expression>)>,
     semicolon: Semicolon,
 }
@@ -16,7 +16,7 @@ pub struct StaticItem {
     kw_mut_opt: Option<KeywordKind>,
     name: Identifier,
     colon: Colon,
-    item_type: Type,
+    item_type: Box<Type>,
     assignment_opt: Option<(Colon, Box<Expression>)>,
     semicolon: Semicolon,
 }
