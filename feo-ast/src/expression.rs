@@ -72,6 +72,7 @@ pub enum LiteralExpr {
     UInt(u64),
     U256(U256),
     Float(f64),
+    Bytes32([u8; 32]),
     Bool(bool),
 }
 
