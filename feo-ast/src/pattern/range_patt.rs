@@ -1,4 +1,4 @@
-use crate::{item::DotDotEquals, literals::{CharLiteral, IntLiteral, FloatLiteral}};
+use crate::item::DotDotEquals;
 
 pub enum RangePattKind {
     Inclusive(RangeInclusivePatt),
@@ -24,7 +24,7 @@ pub struct RangeToInclusivePatt {
 }
 
 pub enum RangePattBound {
-    CharLit(CharLiteral),
-    IntLit(IntLiteral),
-    FloatLit(FloatLiteral),
+    CharLit(char),
+    IntLit(i64),
+    FloatLit(f64),
 }

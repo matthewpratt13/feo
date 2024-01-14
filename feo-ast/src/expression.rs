@@ -1,10 +1,11 @@
 #![allow(dead_code)]
 
+use feo_types::U256;
+
 use crate::{
     identifier::Identifier,
     item::{Bracket, Dot, HashSign, Parenthesis},
     keyword::KeywordKind,
-    literals::{BoolLiteral, CharLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral},
     path::SimplePath,
     punctuation::PuncKind,
 };
@@ -26,8 +27,9 @@ use self::{
     conditional_expr::ConditionalExpr,
     iteration_expr::IterationExpr,
     operator_expr::OperatorExpr,
+    range_expr::RangeExprKind,
     struct_expr::StructExpr,
-    tuple_expr::{TupleExpr, TupleIndexingExpr}, range_expr::RangeExprKind,
+    tuple_expr::{TupleExpr, TupleIndexingExpr},
 };
 
 pub enum Expression {
@@ -64,13 +66,13 @@ pub enum ExprWithBlock {
 }
 
 pub enum LiteralExpr {
-    Char(CharLiteral),
-    String(StringLiteral),
-    Int(IntLiteral),
-    UInt(UIntLiteral),
-    U256(U256Literal),
-    Float(CharLiteral),
-    Bool(BoolLiteral),
+    Char(char),
+    Str(&'static str),
+    Int(i64),
+    UInt(u64),
+    U256(U256),
+    Float(f64),
+    Bool(bool),
 }
 
 pub struct Attribute {

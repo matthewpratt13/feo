@@ -2,16 +2,22 @@
 
 mod associated_item;
 mod constant_item;
+
 mod enum_item;
 pub use self::enum_item::EnumItem;
+
 mod extern_crate_item;
+
 mod function_item;
 pub use self::function_item::FunctionItem;
+
 mod impl_item;
 mod import_decl_item;
 mod module_item;
+
 mod struct_item;
 pub use self::struct_item::StructItem;
+
 mod visibility;
 
 use crate::{

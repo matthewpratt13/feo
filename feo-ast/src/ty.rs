@@ -1,22 +1,19 @@
 #![allow(dead_code)]
 
-use crate::{
-    item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem},
-    literals::{
-        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
-    },
-};
+use feo_types::U256;
+
+use crate::item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem};
 
 use self::trait_object_type::TraitObjectType;
 
 pub enum Type {
-    Char(CharLiteral),
-    String(StringLiteral),
-    Int(IntLiteral),
-    UInt(UIntLiteral),
-    U256(U256Literal),
-    Float(FloatLiteral),
-    Bool(BoolLiteral),
+    Char(char),
+    Str(&'static str),
+    Int(i64),
+    UInt(u64),
+    U256(U256),
+    Float(f64),
+    Bool(bool),
     Struct(Box<StructItem>),
     Enum(Box<EnumItem>),
     Function(Box<FunctionItem>),

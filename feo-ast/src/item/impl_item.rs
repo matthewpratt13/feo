@@ -1,5 +1,4 @@
-use crate::path::SimplePath;
-use crate::{keyword::KeywordKind, ty::Type};
+use crate::{keyword::KeywordKind, path::SimplePath, ty::Type};
 
 use super::associated_item::AssociatedItem;
 use super::Brace;
