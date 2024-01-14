@@ -21,6 +21,8 @@ impl Primitive for u64 {}
 
 impl Primitive for U256 {}
 
+impl Primitive for [u8; 32] {}
+
 impl Primitive for f32 {}
 
 impl Primitive for f64 {}

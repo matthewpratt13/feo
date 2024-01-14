@@ -8,7 +8,8 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     literals::{
-        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+        BoolLiteral, Bytes32Literal, CharLiteral, FloatLiteral, IntLiteral, StringLiteral,
+        U256Literal, UIntLiteral,
     },
     punctuation::Punctuation,
     type_annotation::TypeAnnotation,
@@ -33,6 +34,7 @@ pub enum Token {
     IntLit(IntLiteral),
     UIntLit(UIntLiteral),
     U256Lit(U256Literal),
+    Bytes32Lit(Bytes32Literal),
     FloatLit(FloatLiteral),
 
     Iden(Identifier),
@@ -55,6 +57,7 @@ impl Spanned for Token {
             Token::IntLit(i) => i.span(),
             Token::UIntLit(ui) => ui.span(),
             Token::U256Lit(u) => u.span(),
+            Token::Bytes32Lit(by) => by.span(),
             Token::FloatLit(f) => f.span(),
             Token::Iden(id) => id.span(),
             Token::Keyword(k) => k.span(),

@@ -221,6 +221,17 @@ impl Spanned for U256Literal {
 }
 
 #[derive(Debug, Clone)]
+pub struct Bytes32Literal(pub Literal<[u8; 32]>);
+
+// TODO: implement Tokenize ?
+
+impl Spanned for Bytes32Literal {
+    fn span(&self) -> &Span {
+        self.0.span()
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct FloatLiteral(pub Literal<f64>);
 
 impl Tokenize for FloatLiteral {
