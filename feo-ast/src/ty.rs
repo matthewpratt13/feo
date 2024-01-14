@@ -3,7 +3,8 @@
 use crate::{
     item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem},
     literals::{
-        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+        BoolLiteral, Bytes32Literal, CharLiteral, FloatLiteral, IntLiteral, StringLiteral,
+        U256Literal, UIntLiteral,
     },
     path::SimplePath,
 };
@@ -22,7 +23,7 @@ pub enum Type {
     U256(U256Literal),
     F32(FloatLiteral),
     F64(FloatLiteral),
-    Bytes32([u8; 32]),
+    Bytes32(Bytes32Literal),
     Bool(BoolLiteral),
     Struct(Box<StructItem>),
     Enum(Box<EnumItem>),
