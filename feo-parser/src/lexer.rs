@@ -784,7 +784,7 @@ mod tests {
 
             let hello: str = Contract::bar();
 
-            let chars = ['w', 'o', 'r', 'l', 'd'];
+            let chars: [char; 5] = ['w', 'o', 'r', 'l', 'd'];
 
             let world = str!(chars);
 
