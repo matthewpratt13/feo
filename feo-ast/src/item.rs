@@ -3,12 +3,15 @@
 mod associated_item;
 mod constant_item;
 mod enum_item;
+pub use self::enum_item::EnumItem;
 mod extern_crate_item;
 mod function_item;
+pub use self::function_item::FunctionItem;
 mod impl_item;
 mod import_decl_item;
 mod module_item;
 mod struct_item;
+pub use self::struct_item::StructItem;
 mod visibility;
 
 use crate::{
@@ -22,13 +25,10 @@ use crate::{
 use self::{
     associated_item::AssociatedItem,
     constant_item::{ConstantItem, StaticItem},
-    enum_item::EnumItem,
     extern_crate_item::ExternCrateItem,
-    function_item::FunctionItem,
     impl_item::ImplItem,
     import_decl_item::ImportDeclItem,
     module_item::ModuleItem,
-    struct_item::StructItem,
     visibility::Visibility,
 };
 
