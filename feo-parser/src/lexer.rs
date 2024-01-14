@@ -828,7 +828,7 @@ mod tests {
 
         pub storage {
             pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
-            const STR: static str = "foo";
+            const STR: str = "foo";
             const STR_ARRAY: [char; 3] = chars!(STR);
         }
 
