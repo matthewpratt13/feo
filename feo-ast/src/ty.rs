@@ -18,6 +18,7 @@ pub enum Type {
     U256(U256),
     F32(f32),
     F64(f64),
+    Bytes32([u8; 32]),
     Bool(bool),
     Struct(Box<StructItem>),
     Enum(Box<EnumItem>),
