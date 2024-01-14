@@ -10,13 +10,11 @@ use crate::{
 };
 
 mod range_patt;
-mod slice_patt;
 mod struct_patt;
 mod tuple_patt;
 
 use self::{
     range_patt::RangePattKind,
-    slice_patt::SlicePatt,
     struct_patt::{StructPatt, TupleStructPatt},
     tuple_patt::TuplePatt,
 };
@@ -27,8 +25,6 @@ pub enum Pattern {
     Identifier(IdentifierPatt),
     Path(SimplePath),
     Range(RangePattKind),
-    Reference(ReferencePatt),
-    Slice(SlicePatt),
     Struct(StructPatt),
     Tuple(TuplePatt),
     TupleStruct(TupleStructPatt),
@@ -56,10 +52,4 @@ pub struct IdentifierPatt {
     kw_ref_opt: Option<KeywordKind>,
     kw_mut_opt: Option<KeywordKind>,
     name: Identifier,
-}
-
-pub struct ReferencePatt {
-    kw_ref_opt: Option<KeywordKind>,
-    kw_mut_opt: Option<KeywordKind>,
-    name: Box<Pattern>,
 }
