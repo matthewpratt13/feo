@@ -861,9 +861,9 @@ mod tests {
         impl SomeAbstractContract for Contract {
             func colour(arg: char) -> Colour? {
                 return match arg {
-                    'r' => Some(Colour::Red),
-                    'g' => Some(Colour::Green),
-                    'b' => Some(Colour::Blue),
+                    'r' => Colour::Red?,
+                    'g' => Colour::Green?,
+                    'b' => Colour::Blue?,
                     _ => None
                 }
             }
