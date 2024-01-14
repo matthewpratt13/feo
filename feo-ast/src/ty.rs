@@ -1,32 +1,36 @@
 #![allow(dead_code)]
 
-use feo_types::U256;
-
-use crate::{item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem}, path::SimplePath};
+use crate::{
+    item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem},
+    literals::{
+        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
+    },
+    path::SimplePath,
+};
 
 use self::trait_object_type::TraitObjectType;
 
 pub enum Type {
-    Char(char),
-    Str(&'static str),
-    I32(i32),
-    I64(i64),
-    U8(u8),
-    U16(u16),
-    U32(u32),
-    U64(u64),
-    U256(U256),
-    F32(f32),
-    F64(f64),
+    Char(CharLiteral),
+    Str(StringLiteral),
+    I32(IntLiteral),
+    I64(IntLiteral),
+    U8(UIntLiteral),
+    U16(UIntLiteral),
+    U32(UIntLiteral),
+    U64(UIntLiteral),
+    U256(U256Literal),
+    F32(FloatLiteral),
+    F64(FloatLiteral),
     Bytes32([u8; 32]),
-    Bool(bool),
+    Bool(BoolLiteral),
     Struct(Box<StructItem>),
     Enum(Box<EnumItem>),
     Function(Box<FunctionItem>),
     Array(ArrayType),
     Tuple(TupleType),
     TraitObject(TraitObjectType),
-    TypePath(SimplePath)
+    TypePath(SimplePath),
 }
 
 pub struct ArrayType {
