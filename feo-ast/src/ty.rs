@@ -2,7 +2,7 @@
 
 use feo_types::U256;
 
-use crate::item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem};
+use crate::{item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem}, path::SimplePath};
 
 use self::trait_object_type::TraitObjectType;
 
@@ -26,6 +26,7 @@ pub enum Type {
     Array(ArrayType),
     Tuple(TupleType),
     TraitObject(TraitObjectType),
+    TypePath(SimplePath)
 }
 
 pub struct ArrayType {
