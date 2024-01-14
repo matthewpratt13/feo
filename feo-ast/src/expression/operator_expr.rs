@@ -12,7 +12,7 @@ pub enum OperatorExpr {
     Bool(BoolExpr),
     Comparison(ComparisonExpr),
     Negation(NegationExpr),
-    OptionUnwrap(OptionUnwrapExpr),
+    ResultUnwrap(ResultUnwrapExpr),
     TypeCast(TypeCastExpr),
 }
 
@@ -45,7 +45,7 @@ pub struct NegationExpr {
     expression: Box<Expression>,
 }
 
-pub struct OptionUnwrapExpr {
+pub struct ResultUnwrapExpr {
     expression: Box<Expression>,
     question_mark: QuestionMark,
 }
