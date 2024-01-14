@@ -788,7 +788,7 @@ mod tests {
 
             let world = str!(chars);
 
-            print!("{} {}", hello, world);
+            print!"{} {}", hello, world);
 
             some_library::hello_world();
         }
@@ -833,13 +833,13 @@ mod tests {
         }
 
         abi Contract {
-            func foo() -> Foo;
+            func foo() -> Result<Foo>;
         }
 
         impl Contract {
-            func foo() -> Foo {
+            func foo() -> Result<Foo> {
                 let array: [u64; 4] = [1, 2, 3, 4];
-                let mut vec: Vec<f64> = vec![];
+                let mut vec: Vec<f64> = Vec::new();
 
                 for num in array {
                     vec.push(num as f64);
@@ -848,22 +848,22 @@ mod tests {
                 vec.push(5.0);
 
                 return Foo {
-                    field1: string!("foo"),
+                    field1: String::from("foo"),
                     field2: '\'',
                     field3: 0x0123_4567_89AB_CDEF,
                     field4: vec,
                     field5: -1234,
                     field6: true
-                }
+                }?
             }
         }
 
         impl SomeAbstractContract for Contract {
-            func colour(arg: char) -> Colour? {
+            func colour(arg: char) -> Option<Colour> {
                 return match arg {
-                    'r' => Colour::Red?,
-                    'g' => Colour::Green?,
-                    'b' => Colour::Blue?,
+                    'r' => Some(Colour::Red),
+                    'g' => Some(Colour::Green),
+                    'b' => Some(Colour::Blue),
                     _ => None
                 }
             }
@@ -889,7 +889,7 @@ mod tests {
         }
 
         pub abi SomeAbstractContract {
-            func colour(arg: char) -> Colour?;
+            func colour(arg: char) -> Option<Colour>;
         }
         "#;
 

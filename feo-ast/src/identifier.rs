@@ -53,7 +53,6 @@ pub fn is_keyword(iden: &str) -> bool {
         "dyn",
         "else",
         "enum",
-        "Err",
         "export",
         "extern",
         "for",
