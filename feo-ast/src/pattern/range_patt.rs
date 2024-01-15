@@ -1,29 +1,20 @@
-use feo_types::U256;
-
 use crate::type_utils::DotDotEquals;
 
-pub enum RangePattBoundKind {
-    CharLit(char),
-    IntLit(i64),
-    UIntLit(u64),
-    U256Lit(U256),
-    Bytes32Lit([u8; 32]),
-    FloatLit(f64),
-}
+use super::RangePattBound;
 
-pub struct RangeFromPatt {
-    from: RangePattBoundKind,
+pub struct RangeFromPatt<T> {
+    from: Box<dyn RangePattBound<T>>,
     dot_dot_equals: DotDotEquals,
 }
 
-pub struct RangeInclusivePatt {
-    from: RangePattBoundKind,
+pub struct RangeInclusivePatt<T> {
+    from: Box<dyn RangePattBound<T>>,
     dot_dot_equals: DotDotEquals,
-    to: RangePattBoundKind,
+    to: Box<dyn RangePattBound<T>>,
 }
 
-pub struct RangeToInclusivePatt {
-    from: RangePattBoundKind,
+pub struct RangeToInclusivePatt<T> {
+    from: Box<dyn RangePattBound<T>>,
     dot_dot_equals: DotDotEquals,
-    to: RangePattBoundKind,
+    to: Box<dyn RangePattBound<T>>,
 }

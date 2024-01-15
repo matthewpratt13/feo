@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    item::{EnumItem, FunctionItem, Item, StructItem},
+    item::{EnumItem, FunctionItem, StructItem},
     literals::{
         BoolLiteral, Bytes32Literal, CharLiteral, FloatLiteral, IntLiteral, StringLiteral,
         U256Literal, UIntLiteral,
@@ -30,7 +30,7 @@ impl Type for Bytes32Literal {}
 
 impl Type for BoolLiteral {}
 
-impl<S> Type for dyn StructItem<S> where S: Item {}
+impl<S> Type for dyn StructItem<S> {}
 
 impl Type for EnumItem {}
 

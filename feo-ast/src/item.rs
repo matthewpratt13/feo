@@ -9,6 +9,8 @@ mod import_decl_item;
 mod module_item;
 mod struct_item;
 
+use crate::keyword::KeywordKind;
+
 use self::impl_item::{InherentImpl, TraitImpl};
 use self::import_decl_item::{
     EntirePathContentsItem, PathSubsetRecursiveItem, PathWithAsClauseItem,
@@ -79,6 +81,8 @@ impl<I> Item for dyn ImportTree<I> {}
 
 impl<T> Item for InherentImpl<T> {}
 impl<T, I> ImplItem<I> for InherentImpl<T> where I: Item {}
+
+impl Item for KeywordKind {}
 
 impl Item for ModWithBody {}
 impl<M> ModItem<M> for ModWithBody where M: Item {}

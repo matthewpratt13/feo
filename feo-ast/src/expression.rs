@@ -248,50 +248,6 @@ impl Expression for [u8; 32] {}
 
 impl Expression for bool {}
 
-// pub enum ExpressionKind {
-//     WithoutBlock(ExprWithoutBlockKind),
-//     WithBlock(ExprWithBlockKind),
-// }
-
-// pub enum ExprWithoutBlockKind {
-//     Attr(Attribute),
-//     Array(ArrayExpr),
-//     FunctionCall(FunctionCallExpr),
-//     MethodCall(MethodCallExpr),
-//     Break(KeywordKind),
-//     Continue(KeywordKind),
-//     FieldAccess(FieldAccessExpr),
-//     Grouped(GroupedExpr),
-//     Index(IndexExpr),
-//     Literal(LiteralExprKind),
-//     Operator(OperatorExprKind),
-//     Path(SimplePath),
-//     Range(RangeExprKind),
-//     Struct(StructExprKind),
-//     Tuple(TupleExpr),
-//     TupleIndexing(TupleIndexingExpr),
-//     Return(ReturnExpr),
-//     Underscore(PuncKind),
-// }
-
-// pub enum ExprWithBlockKind {
-//     Attr(Attribute),
-//     Block(BlockExpr),
-//     Conditional(ConditionalExprKind),
-//     Iteration(IterationExprKind),
-// }
-
-// pub enum LiteralExprKind {
-//     Char(char),
-//     Str(&'static str),
-//     Int(i64),
-//     UInt(u64),
-//     U256(U256),
-//     Float(f64),
-//     Bytes32([u8; 32]),
-//     Bool(bool),
-// }
-
 pub struct Attribute {
     hash: HashSign,
     open_bracket: Bracket,
