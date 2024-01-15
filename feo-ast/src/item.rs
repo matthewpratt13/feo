@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 
-mod associated_item;
 mod constant_item;
 mod enum_item;
 mod extern_crate_item;
@@ -19,10 +18,9 @@ use crate::{
 };
 
 use self::{
-    associated_item::AssociatedItem,
     constant_item::{ConstantItem, StaticItem},
     extern_crate_item::ExternCrateItem,
-    impl_item::ImplItem,
+    impl_item::{AssociatedItem, ImplItem},
     import_decl_item::ImportDeclItem,
     module_item::ModuleItem,
     visibility::Visibility,
@@ -34,7 +32,6 @@ pub use self::struct_item::StructItemKind;
 
 pub enum Item {
     Visibility(Visibility),
-    Associated(AssociatedItem),
     Constant(ConstantItem),
     Static(StaticItem),
     Enum(EnumItem),
