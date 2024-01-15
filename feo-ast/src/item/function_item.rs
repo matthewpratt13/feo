@@ -1,5 +1,5 @@
 use crate::{
-    expression::ExprWithBlockKind,
+    expression::ExprWithBlock,
     identifier::Identifier,
     keyword::KeywordKind,
     pattern::PatternKind,
@@ -18,7 +18,7 @@ pub enum FuncOrMethodParam {
     Method(MethodParam),
 }
 
-pub struct FunctionItem {
+pub struct FunctionItem<T> {
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: KeywordKind,
     name: Identifier,
@@ -26,7 +26,7 @@ pub struct FunctionItem {
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Box<Type>)>,
-    func_body: ExprWithBlockKind,
+    func_body: Box<dyn ExprWithBlock<T>>,
 }
 
 pub struct FunctionSignature {

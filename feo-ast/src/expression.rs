@@ -23,17 +23,15 @@ mod tuple_expr;
 use self::{
     array_expr::{ArrayExpr, IndexExpr},
     call_expr::{FunctionCallExpr, MethodCallExpr},
-    conditional_expr::{ConditionalExprKind, IfExpr, MatchExpr},
-    iteration_expr::{InfiniteLoopExpr, IterLoopExpr, IterationExprKind, PredicateLoopExpr},
+    conditional_expr::{IfExpr, MatchExpr},
+    iteration_expr::{InfiniteLoopExpr, IterLoopExpr, PredicateLoopExpr},
     operator_expr::{
         ArithmeticOrLogicalExpr, AssignmentExpr, BoolExpr, ComparisonExpr, NegationExpr,
-        OperatorExprKind, ResultUnwrapExpr, TypeCastExpr,
+        ResultUnwrapExpr, TypeCastExpr,
     },
     range_expr::{
-        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr,
-        RangeToInclusiveExpr,
+        RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
     },
-    struct_expr::StructExprKind,
     tuple_expr::{TupleExpr, TupleIndexingExpr},
 };
 
@@ -104,8 +102,8 @@ impl Expression for Attribute {}
 impl<E> ExprWithBlock<E> for Attribute where E: Expression {}
 impl<E> ExprWithoutBlock<E> for Attribute where E: Expression {}
 
-impl Expression for BlockExpr {}
-impl<E> ExprWithBlock<E> for BlockExpr where E: Expression {}
+impl<B> Expression for BlockExpr<B> {}
+impl<B, E> ExprWithBlock<E> for BlockExpr<B> where E: Expression {}
 
 impl Expression for BoolExpr {}
 impl<E> ExprWithoutBlock<E> for BoolExpr where E: Expression {}
@@ -131,22 +129,22 @@ impl<E> ExprWithoutBlock<E> for FunctionCallExpr where E: Expression {}
 impl Expression for GroupedExpr {}
 impl<E> ExprWithoutBlock<E> for GroupedExpr where E: Expression {}
 
-impl Expression for IfExpr {}
-impl<C> ConditionalExpr<C> for IfExpr where C: Expression {}
-impl<E> ExprWithBlock<E> for IfExpr where E: Expression {}
+impl<T> Expression for IfExpr<T> {}
+impl<T, C> ConditionalExpr<C> for IfExpr<T> where C: Expression {}
+impl<T, E> ExprWithBlock<E> for IfExpr<T> where E: Expression {}
 
 impl Expression for IndexExpr {}
 impl<E> ExprWithoutBlock<E> for IndexExpr where E: Expression {}
 
-impl Expression for InfiniteLoopExpr {}
-impl<E> ExprWithBlock<E> for InfiniteLoopExpr where E: Expression {}
-impl<I> IterationExpr<I> for InfiniteLoopExpr where I: Expression {}
+impl<T> Expression for InfiniteLoopExpr<T> {}
+impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> where E: Expression {}
+impl<T, I> IterationExpr<I> for InfiniteLoopExpr<T> where I: Expression {}
 
 impl<I> Expression for dyn IterationExpr<I> where I: Expression {}
 impl<I, E> ExprWithBlock<E> for dyn IterationExpr<I> where E: Expression {}
 
-impl Expression for IterLoopExpr {}
-impl<I> IterationExpr<I> for IterLoopExpr where I: Expression {}
+impl<T> Expression for IterLoopExpr<T> {}
+impl<T, I> IterationExpr<I> for IterLoopExpr<T> where I: Expression {}
 
 impl Expression for KeywordKind {}
 impl<E> ExprWithoutBlock<E> for KeywordKind where E: Expression {}
@@ -168,9 +166,9 @@ impl<O> OperatorExpr<O> for NegationExpr where O: Expression {}
 impl<O> Expression for dyn OperatorExpr<O> where O: Expression {}
 impl<O, E> ExprWithoutBlock<E> for dyn OperatorExpr<O> where E: Expression {}
 
-impl Expression for PredicateLoopExpr {}
-impl<E> ExprWithBlock<E> for PredicateLoopExpr where E: Expression {}
-impl<I> IterationExpr<I> for PredicateLoopExpr where I: Expression {}
+impl<T> Expression for PredicateLoopExpr<T> {}
+impl<T, E> ExprWithBlock<E> for PredicateLoopExpr<T> where E: Expression {}
+impl<T, I> IterationExpr<I> for PredicateLoopExpr<T> where I: Expression {}
 
 impl Expression for PuncKind {}
 impl<E> ExprWithoutBlock<E> for PuncKind where E: Expression {}
@@ -248,49 +246,49 @@ impl Expression for [u8; 32] {}
 
 impl Expression for bool {}
 
-pub enum ExpressionKind {
-    WithoutBlock(ExprWithoutBlockKind),
-    WithBlock(ExprWithBlockKind),
-}
+// pub enum ExpressionKind {
+//     WithoutBlock(ExprWithoutBlockKind),
+//     WithBlock(ExprWithBlockKind),
+// }
 
-pub enum ExprWithoutBlockKind {
-    Attr(Attribute),
-    Array(ArrayExpr),
-    FunctionCall(FunctionCallExpr),
-    MethodCall(MethodCallExpr),
-    Break(KeywordKind),
-    Continue(KeywordKind),
-    FieldAccess(FieldAccessExpr),
-    Grouped(GroupedExpr),
-    Index(IndexExpr),
-    Literal(LiteralExprKind),
-    Operator(OperatorExprKind),
-    Path(SimplePath),
-    Range(RangeExprKind),
-    Struct(StructExprKind),
-    Tuple(TupleExpr),
-    TupleIndexing(TupleIndexingExpr),
-    Return(ReturnExpr),
-    Underscore(PuncKind),
-}
+// pub enum ExprWithoutBlockKind {
+//     Attr(Attribute),
+//     Array(ArrayExpr),
+//     FunctionCall(FunctionCallExpr),
+//     MethodCall(MethodCallExpr),
+//     Break(KeywordKind),
+//     Continue(KeywordKind),
+//     FieldAccess(FieldAccessExpr),
+//     Grouped(GroupedExpr),
+//     Index(IndexExpr),
+//     Literal(LiteralExprKind),
+//     Operator(OperatorExprKind),
+//     Path(SimplePath),
+//     Range(RangeExprKind),
+//     Struct(StructExprKind),
+//     Tuple(TupleExpr),
+//     TupleIndexing(TupleIndexingExpr),
+//     Return(ReturnExpr),
+//     Underscore(PuncKind),
+// }
 
-pub enum ExprWithBlockKind {
-    Attr(Attribute),
-    Block(BlockExpr),
-    Conditional(ConditionalExprKind),
-    Iteration(IterationExprKind),
-}
+// pub enum ExprWithBlockKind {
+//     Attr(Attribute),
+//     Block(BlockExpr),
+//     Conditional(ConditionalExprKind),
+//     Iteration(IterationExprKind),
+// }
 
-pub enum LiteralExprKind {
-    Char(char),
-    Str(&'static str),
-    Int(i64),
-    UInt(u64),
-    U256(U256),
-    Float(f64),
-    Bytes32([u8; 32]),
-    Bool(bool),
-}
+// pub enum LiteralExprKind {
+//     Char(char),
+//     Str(&'static str),
+//     Int(i64),
+//     UInt(u64),
+//     U256(U256),
+//     Float(f64),
+//     Bytes32([u8; 32]),
+//     Bool(bool),
+// }
 
 pub struct Attribute {
     hash: HashSign,
@@ -300,18 +298,18 @@ pub struct Attribute {
 }
 
 pub struct FieldAccessExpr {
-    object: Box<ExpressionKind>,
+    object: Box<dyn Expression>,
     dot: Dot,
     field_name: Identifier,
 }
 
 pub struct GroupedExpr {
     open_parenthesis: Parenthesis,
-    expression: Box<ExpressionKind>,
+    expression: Box<dyn Expression>,
     close_parenthesis: Parenthesis,
 }
 
 pub struct ReturnExpr {
     kw_return: KeywordKind,
-    expression_opt: Option<Box<ExpressionKind>>,
+    expression_opt: Option<Box<dyn Expression>>,
 }

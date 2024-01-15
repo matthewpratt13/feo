@@ -1,10 +1,10 @@
 use crate::{
     identifier::Identifier,
-    type_utils::{Brace, Colon, Comma, Parenthesis},
     path::SimplePath,
+    type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::{Attribute, ExpressionKind};
+use super::{Attribute, Expression};
 
 pub enum StructExprKind {
     Struct(Struct),
@@ -26,13 +26,13 @@ pub struct StructExprFields {
 
 pub struct StructExprField {
     attributes: Vec<Attribute>,
-    data: (Identifier, Colon, Box<ExpressionKind>),
+    data: (Identifier, Colon, Box<dyn Expression>),
 }
 
 pub struct TupleStruct {
     tuple_struct_path: SimplePath,
     open_parenthesis: Parenthesis,
-    params_opt: Option<(Box<ExpressionKind>, Vec<(Comma, ExpressionKind)>, Comma)>,
+    params_opt: Option<(Box<dyn Expression>, Vec<(Comma, dyn Expression)>, Comma)>,
     close_parenthesis: Parenthesis,
 }
 
@@ -43,7 +43,7 @@ pub struct TupleStructExprFields {
 
 pub struct TupleStructExprField {
     attributes: Vec<Attribute>,
-    data: Box<ExpressionKind>,
+    data: Box<dyn Expression>,
 }
 
 pub struct UnitStruct(SimplePath);

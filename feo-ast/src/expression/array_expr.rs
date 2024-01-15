@@ -1,6 +1,6 @@
 use crate::type_utils::{Bracket, Comma, Semicolon};
 
-use super::ExpressionKind;
+use super::Expression;
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
@@ -9,19 +9,19 @@ pub struct ArrayExpr {
 }
 
 pub struct ArrayElements {
-    first_element: Box<ExpressionKind>,
-    subsequent_elements: Vec<(Comma, ExpressionKind)>,
+    first_element: Box<dyn Expression>,
+    subsequent_elements: Vec<(Comma, Box<dyn Expression>)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 pub struct ArrayDefinition {
-    element_type: Box<ExpressionKind>,
+    element_type: Box<dyn Expression>,
     semicolon: Semicolon,
     num_elements: usize,
 }
 
 pub struct IndexExpr {
-    object: Box<ExpressionKind>,
+    object: Box<dyn Expression>,
     open_bracket: Bracket,
     index: usize,
     close_bracket: Bracket,

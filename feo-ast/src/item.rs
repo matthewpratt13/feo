@@ -42,12 +42,12 @@ mod trait_item {
 
     use super::AssociatedItem;
 
-    pub struct TraitItem {
+    pub struct TraitItem<T> {
         kw_unsafe_opt: Option<KeywordKind>,
         kw_impl: KeywordKind,
         name: Identifier,
         open_brace: Brace,
-        associated_items: Vec<AssociatedItem>,
+        associated_items: Vec<AssociatedItem<T>>,
         close_brace: Brace,
     }
 }

@@ -1,5 +1,5 @@
 use crate::{
-    expression::ExpressionKind,
+    expression::Expression,
     identifier::Identifier,
     keyword::KeywordKind,
     ty::Type,
@@ -11,7 +11,7 @@ pub struct ConstantItem {
     name: Identifier,
     colon: Colon,
     item_type: Box<Type>,
-    assignment_opt: Option<(Colon, Box<ExpressionKind>)>,
+    assignment_opt: Option<(Colon, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
 
@@ -21,6 +21,6 @@ pub struct StaticItem {
     name: Identifier,
     colon: Colon,
     item_type: Box<Type>,
-    assignment_opt: Option<(Colon, Box<ExpressionKind>)>,
+    assignment_opt: Option<(Colon, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }

@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    expression::{ExprWithoutBlockKind, ExpressionKind},
+    expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
     item::ItemKind,
     keyword::KeywordKind,
@@ -9,14 +9,14 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-pub enum StatementKind {
-    Expr(ExprStatement),
+pub enum StatementKind<T> {
+    Expr(ExprStatement<T>),
     Item(ItemKind),
     Let(LetStatement),
 }
 
-pub struct ExprStatement {
-    expr_without_block: ExprWithoutBlockKind,
+pub struct ExprStatement<T> {
+    expr_without_block: Box<dyn ExprWithoutBlock<T>>,
     semicolon: Semicolon,
 }
 
@@ -26,11 +26,11 @@ pub struct LetStatement {
     identifier: Identifier,
     type_ann_opt: Option<(Colon, TypeAnnKind)>,
     equals: Equals,
-    value: Box<ExpressionKind>,
+    value: Box<dyn Expression>,
     semicolon: Semicolon,
 }
 
-pub struct StatementWithExpr {
-    statement: Box<StatementKind>,
-    expr_without_block: ExprWithoutBlockKind,
+pub struct StatementWithExpr<T, U> {
+    statement: Box<StatementKind<T>>,
+    expr_without_block: Box<dyn ExprWithoutBlock<U>>,
 }
