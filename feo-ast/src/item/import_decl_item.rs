@@ -5,31 +5,33 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-pub enum ImportTreeKind {
-    EntirePathContent(EntirePathContents),
-    PathSubsetRecursive(PathSubsetRecursive),
-    PathWithAsClause(PathWithAsClause),
-}
+use super::ImportTree;
 
-pub struct ImportDeclItem {
+// pub enum ImportTreeKind {
+//     EntirePathContent(EntirePathContentsItem),
+//     PathSubsetRecursive(PathSubsetRecursive),
+//     PathWithAsClause(PathWithAsClause),
+// }
+
+pub struct ImportDeclItem<T> {
     kw_import: KeywordKind,
-    import_tree: ImportTreeKind,
+    import_tree: Box<dyn ImportTree<T>>,
     semicolon: Semicolon,
 }
 
-pub struct EntirePathContents {
+pub struct EntirePathContentsItem {
     path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
 
-pub struct PathSubsetRecursive {
+pub struct PathSubsetRecursiveItem<T> {
     path_root_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(Box<ImportTreeKind>, Vec<(Comma, ImportTreeKind)>, Option<Comma>)>,
+    recursive_tree_opt: Option<(Box<dyn ImportTree<T>>, Vec<(Comma, Box<dyn ImportTree<T>>)>, Option<Comma>)>,
     close_brace: Brace,
 }
 
-pub struct PathWithAsClause {
+pub struct PathWithAsClauseItem {
     original_path: SimplePath,
     as_clause_opt: Option<AsClause>,
 }

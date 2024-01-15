@@ -102,8 +102,8 @@ impl Expression for Attribute {}
 impl<E> ExprWithBlock<E> for Attribute where E: Expression {}
 impl<E> ExprWithoutBlock<E> for Attribute where E: Expression {}
 
-impl<B> Expression for BlockExpr<B> {}
-impl<B, E> ExprWithBlock<E> for BlockExpr<B> where E: Expression {}
+impl<T> Expression for BlockExpr<T> {}
+impl<T, E> ExprWithBlock<E> for BlockExpr<T> where E: Expression {}
 
 impl Expression for BoolExpr {}
 impl<E> ExprWithoutBlock<E> for BoolExpr where E: Expression {}
