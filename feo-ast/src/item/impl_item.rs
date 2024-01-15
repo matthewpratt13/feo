@@ -4,37 +4,37 @@ use crate::{
 
 use super::{ConstantItem, FunctionItem, TypeAliasItem, VisibilityKind};
 
-pub enum ImplItemKind<T> {
-    Inherent(InherentImpl<T>),
-    Trait(TraitImpl<T>),
+pub enum ImplItemKind {
+    Inherent(InherentImpl),
+    Trait(TraitImpl),
 }
 
-pub enum AssociatedItemKind<T> {
+pub enum AssociatedItemKind {
     Constant(ConstantItem),
-    Function(FunctionItem<T>),
+    Function(FunctionItem),
     TypeAlias(TypeAliasItem),
 }
 
-pub struct InherentImpl<T> {
+pub struct InherentImpl {
     kw_impl: KeywordKind,
     object_type: Box<Type>,
     open_brace: Brace,
-    associated_items: Vec<AssociatedItem<T>>,
+    associated_items: Vec<AssociatedItem>,
     close_brace: Brace,
 }
 
-pub struct TraitImpl<T> {
+pub struct TraitImpl {
     kw_unsafe_opt: Option<KeywordKind>,
     kw_impl: KeywordKind,
     trait_path: SimplePath,
     kw_for: KeywordKind,
     object_type: Box<Type>,
     open_brace: Brace,
-    associated_items: Vec<AssociatedItem<T>>,
+    associated_items: Vec<AssociatedItem>,
     close_brace: Brace,
 }
 
-pub struct AssociatedItem<T> {
+pub struct AssociatedItem {
     attributes: Vec<Attribute>,
-    item: (Option<VisibilityKind>, AssociatedItemKind<T>),
+    item: (Option<VisibilityKind>, AssociatedItemKind),
 }

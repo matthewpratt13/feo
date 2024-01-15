@@ -22,32 +22,73 @@ pub use self::struct_item::StructItemKind;
 pub use self::type_alias_item::TypeAliasItem;
 pub use self::visibility::VisibilityKind;
 
-pub enum ItemKind {
-    Visibility(VisibilityKind),
-    Constant(ConstantItem),
-    Static(StaticItem),
-    Enum(EnumItem),
-    ExternCrate(ExternCrateItem),
-    Function(FunctionItem),
-    Impl(ImplItemKind),
-    ImportDecl(ImportDeclItem),
-    Module(ModuleItemKind),
-    Struct(StructItemKind),
-    Trait(TraitItem),
-    TypeAlias(TypeAliasItem),
+pub trait Item {}
+
+pub trait ImplItem<I>
+where
+    I: Item,
+{
 }
+
+pub trait ModuleItem<M>
+where
+    M: Item,
+{
+}
+
+pub trait StructItem<S>
+where
+    S: Item,
+{
+}
+
+impl Item for ConstantItem {}
+
+impl Item for EnumItem {}
+
+impl Item for ExternCrateItem {}
+
+impl Item for FunctionItem {}
+
+impl<I> Item for dyn ImplItem<I> {}
+
+impl Item for ImportDeclItem {}
+
+impl<M> Item for dyn ModuleItem<M> {}
+
+impl Item for StaticItem {}
+
+impl<S> Item for dyn StructItem<S> {}
+
+impl Item for TraitItem {}
+
+impl Item for TypeAliasItem {}
+
+// pub enum ItemKind {
+//     Constant(ConstantItem),
+//     Static(StaticItem),
+//     Enum(EnumItem),
+//     ExternCrate(ExternCrateItem),
+//     Function(FunctionItem),
+//     Impl(ImplItemKind),
+//     ImportDecl(ImportDeclItem),
+//     Module(ModuleItemKind),
+//     Struct(StructItemKind),
+//     Trait(TraitItem),
+//     TypeAlias(TypeAliasItem),
+// }
 
 mod trait_item {
     use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Brace};
 
     use super::AssociatedItem;
 
-    pub struct TraitItem<T> {
+    pub struct TraitItem {
         kw_unsafe_opt: Option<KeywordKind>,
         kw_impl: KeywordKind,
         name: Identifier,
         open_brace: Brace,
-        associated_items: Vec<AssociatedItem<T>>,
+        associated_items: Vec<AssociatedItem>,
         close_brace: Brace,
     }
 }
