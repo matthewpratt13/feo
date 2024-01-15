@@ -6,12 +6,6 @@ use crate::{
 
 use super::{Attribute, Expression};
 
-pub enum StructExprKind {
-    Struct(Struct),
-    TupleStruct(TupleStruct),
-    UnitStruct(UnitStruct),
-}
-
 pub struct Struct {
     struct_path: SimplePath,
     open_brace: Brace,
