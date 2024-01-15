@@ -3,7 +3,7 @@ use crate::type_utils::{DblDot, DotDotEquals};
 use super::ExpressionKind;
 
 pub enum RangeExprKind {
-    Range(RangeExpr),
+    Range(RangeFromToExpr),
     From(RangeFromExpr),
     To(RangeToExpr),
     Full(DblDot),
@@ -11,7 +11,7 @@ pub enum RangeExprKind {
     ToInclusive(RangeToInclusiveExpr),
 }
 
-pub struct RangeExpr {
+pub struct RangeFromToExpr {
     from_expression: Box<ExpressionKind>,
     dbl_dot: DblDot,
     to_expression_excl: Box<ExpressionKind>,
