@@ -8,10 +8,10 @@ use crate::{
 
 use super::VisibilityKind;
 
-pub enum StructItemKind {
-    Struct(StructItem),
-    TupleStruct(TupleStructItem),
-}
+// pub enum StructItemKind {
+//     Struct(StructItem),
+//     TupleStruct(TupleStructItem),
+// }
 
 pub struct StructItem {
     kw_struct: KeywordKind,
@@ -32,7 +32,7 @@ pub struct StructItemField {
     visibility_opt: Option<VisibilityKind>,
     field_name: Identifier,
     colon: Colon,
-    field_type: Box<Type>,
+    field_type: Box<dyn Type>,
 }
 
 pub struct TupleStructItem {
@@ -53,5 +53,5 @@ pub struct TupleItemFields {
 pub struct TupleItemField {
     attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
-    field_type: Box<Type>,
+    field_type: Box<dyn Type>,
 }

@@ -1,4 +1,4 @@
-use crate::{keyword::KeywordKind, pattern::PatternKind};
+use crate::{keyword::KeywordKind, pattern::Pattern};
 
 use super::{BlockExpr, Expression};
 
@@ -21,7 +21,7 @@ pub struct PredicateLoopExpr<T, U> {
 
 pub struct IterLoopExpr<T, U> {
     kw_for: KeywordKind,
-    pattern: Box<PatternKind>,
+    pattern: Box<dyn Pattern>,
     kw_in: KeywordKind,
     expression: Box<dyn Expression>, // cannot be a struct expression
     block: BlockExpr<T, U>,

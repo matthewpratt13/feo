@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-use super::ImportTree;
+use super::{ImportTree, Item};
 
 // pub enum ImportTreeKind {
 //     EntirePathContent(EntirePathContentsItem),
@@ -27,7 +27,11 @@ pub struct EntirePathContentsItem {
 pub struct PathSubsetRecursiveItem<T> {
     path_root_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(Box<dyn ImportTree<T>>, Vec<(Comma, Box<dyn ImportTree<T>>)>, Option<Comma>)>,
+    recursive_tree_opt: Option<(
+        Box<dyn ImportTree<T>>,
+        Vec<(Comma, Box<dyn ImportTree<T>>)>,
+        Option<Comma>,
+    )>,
     close_brace: Brace,
 }
 

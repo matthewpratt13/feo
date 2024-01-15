@@ -32,7 +32,11 @@ pub struct StructExprField {
 pub struct TupleStruct {
     tuple_struct_path: SimplePath,
     open_parenthesis: Parenthesis,
-    params_opt: Option<(Box<dyn Expression>, Vec<(Comma, dyn Expression)>, Comma)>,
+    params_opt: Option<(
+        Box<dyn Expression>,
+        Vec<(Comma, Box<dyn Expression>)>,
+        Comma,
+    )>,
     close_parenthesis: Parenthesis,
 }
 

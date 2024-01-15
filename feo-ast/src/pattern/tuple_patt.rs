@@ -1,6 +1,6 @@
 use crate::type_utils::{Comma, Parenthesis};
 
-use super::PatternKind;
+use super::Pattern;
 
 pub struct TuplePatt {
     open_parenthesis: Parenthesis,
@@ -9,7 +9,7 @@ pub struct TuplePatt {
 }
 
 pub struct TuplePattElements {
-    first_element: Box<PatternKind>,
-    subsequent_elements: Vec<(Comma, PatternKind)>,
+    first_element: Box<dyn Pattern>,
+    subsequent_elements: Vec<(Comma, Box<dyn Pattern>)>,
     trailing_comma_opt: Option<Comma>,
 }

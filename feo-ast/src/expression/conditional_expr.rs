@@ -1,7 +1,6 @@
 use crate::{
     keyword::KeywordKind,
-    pattern::PatternKind,
-    type_utils::{Brace, Comma, FatArrow},
+    type_utils::{Brace, Comma, FatArrow}, pattern::Pattern,
 };
 
 use super::{BlockExpr, Expression};
@@ -33,7 +32,7 @@ pub struct MatchArms {
 }
 
 pub struct MatchArm {
-    pattern: Box<PatternKind>,
+    pattern: Box<dyn Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
 

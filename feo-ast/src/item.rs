@@ -21,7 +21,6 @@ use self::{
 pub use self::constant_item::{ConstantItem, StaticItem};
 pub use self::enum_item::EnumItem;
 pub use self::function_item::FunctionItem;
-pub use self::struct_item::StructItemKind;
 pub use self::type_alias_item::TypeAliasItem;
 pub use self::visibility::VisibilityKind;
 
@@ -105,7 +104,7 @@ impl<T> Item for TraitImpl<T> {}
 impl<T, I> ImplItem<I> for TraitImpl<T> where I: Item {}
 
 impl Item for TypeAliasItem {}
-impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
+impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}
 
 // pub enum ItemKind {
 //     Constant(ConstantItem),
@@ -147,7 +146,7 @@ mod type_alias_item {
     pub struct TypeAliasItem {
         kw_type: KeywordKind,
         name: Identifier,
-        value_opt: Option<(Equals, Box<Type>)>,
+        value_opt: Option<(Equals, Box<dyn Type>)>,
         semicolon: Semicolon,
     }
 }
