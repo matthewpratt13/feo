@@ -25,7 +25,7 @@ pub struct LetStatement {
     identifier: Identifier,
     type_ann_opt: Option<(Colon, TypeAnnKind)>,
     equals: Equals,
-    expression: Box<Expression>,
+    value: Box<Expression>,
     semicolon: Semicolon,
 }
 

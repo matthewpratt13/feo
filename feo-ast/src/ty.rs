@@ -67,6 +67,6 @@ mod trait_object_type {
 
     pub struct TraitBound {
         question_mark_opt: Option<QuestionMark>,
-        path: SimplePath,
+        trait_path: SimplePath,
     }
 }

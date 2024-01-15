@@ -84,7 +84,7 @@ pub struct TraitItem {
 pub struct TypeAliasItem {
     kw_type: KeywordKind,
     name: Identifier,
-    value_opt: Option<(Equals, Type)>,
+    value_opt: Option<(Equals, Box<Type>)>,
     semicolon: Semicolon,
 }
 

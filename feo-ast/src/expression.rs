@@ -79,7 +79,7 @@ pub enum LiteralExpr {
 pub struct Attribute {
     hash: HashSign,
     open_bracket: Bracket,
-    path: SimplePath,
+    attribute_path: SimplePath,
     close_bracket: Bracket,
 }
 
