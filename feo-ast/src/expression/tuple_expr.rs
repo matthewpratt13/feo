@@ -14,7 +14,7 @@ pub struct TupleElements {
 }
 
 pub struct TupleIndexingExpr {
-    item: Box<Expression>,
+    object: Box<Expression>,
     dot: Dot,
     index: usize,
 }
