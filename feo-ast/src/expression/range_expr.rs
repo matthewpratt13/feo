@@ -2,15 +2,6 @@ use crate::type_utils::{DblDot, DotDotEquals};
 
 use super::Expression;
 
-// pub enum RangeExprKind {
-//     Range(RangeFromToExpr),
-//     From(RangeFromExpr),
-//     To(RangeToExpr),
-//     Full(DblDot),
-//     Inclusive(RangeInclusiveExpr),
-//     ToInclusive(RangeToInclusiveExpr),
-// }
-
 pub struct RangeFromToExpr {
     from_expression: Box<dyn Expression>,
     dbl_dot: DblDot,

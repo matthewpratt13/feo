@@ -106,20 +106,6 @@ impl<T, I> ImplItem<I> for TraitImpl<T> where I: Item {}
 impl Item for TypeAliasItem {}
 impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}
 
-// pub enum ItemKind {
-//     Constant(ConstantItem),
-//     Static(StaticItem),
-//     Enum(EnumItem),
-//     ExternCrate(ExternCrateItem),
-//     Function(FunctionItem),
-//     Impl(ImplItemKind),
-//     ImportDecl(ImportDeclItem),
-//     Module(ModuleItemKind),
-//     Struct(StructItemKind),
-//     Trait(TraitItem),
-//     TypeAlias(TypeAliasItem),
-// }
-
 mod trait_item {
     use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Brace};
 

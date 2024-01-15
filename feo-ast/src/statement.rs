@@ -16,12 +16,6 @@ impl Statement for LetStatement {}
 
 impl<T> Statement for StatementWithExpr<T> {}
 
-// pub enum StatementKind<T> {
-//     Expr(ExprStatement<T>),
-//     Item(Box<dyn Item>),
-//     Let(LetStatement),
-// }
-
 pub struct ExprStatement<T> {
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
     semicolon: Semicolon,

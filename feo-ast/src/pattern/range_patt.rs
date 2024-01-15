@@ -2,12 +2,6 @@ use feo_types::U256;
 
 use crate::type_utils::DotDotEquals;
 
-// pub enum RangePattKind {
-//     From(RangeFromPatt),
-//     Inclusive(RangeInclusivePatt),
-//     ToInclusive(RangeToInclusivePatt),
-// }
-
 pub enum RangePattBoundKind {
     CharLit(char),
     IntLit(i64),

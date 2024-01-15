@@ -1,14 +1,10 @@
 use crate::{
     keyword::KeywordKind,
-    type_utils::{Brace, Comma, FatArrow}, pattern::Pattern,
+    pattern::Pattern,
+    type_utils::{Brace, Comma, FatArrow},
 };
 
 use super::{BlockExpr, Expression};
-
-// pub enum ConditionalExprKind<T> {
-//     IfExpr(IfExpr<T>),
-//     MatchExpr(MatchExpr),
-// }
 
 pub struct IfExpr<T, U> {
     kw_if: KeywordKind,

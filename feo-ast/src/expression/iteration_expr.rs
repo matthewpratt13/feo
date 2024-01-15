@@ -2,12 +2,6 @@ use crate::{keyword::KeywordKind, pattern::Pattern};
 
 use super::{BlockExpr, Expression};
 
-// pub enum IterationExprKind {
-//     InfiniteLoop(InfiniteLoopExpr),
-//     IterLoop(IterLoopExpr),
-//     PredicateLoop(PredicateLoopExpr),
-// }
-
 pub struct InfiniteLoopExpr<T, U> {
     kw_loop: KeywordKind,
     block: BlockExpr<T, U>,

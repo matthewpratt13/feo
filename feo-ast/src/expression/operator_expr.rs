@@ -6,16 +6,6 @@ use crate::{
 
 use super::Expression;
 
-// pub enum OperatorExprKind {
-//     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
-//     Assign(AssignmentExpr),
-//     Bool(BoolExpr),
-//     Comparison(ComparisonExpr),
-//     Negation(NegationExpr),
-//     ResultUnwrap(ResultUnwrapExpr),
-//     TypeCast(TypeCastExpr),
-// }
-
 pub struct ArithmeticOrLogicalExpr {
     first_operand: Box<dyn Expression>,
     operator: OpArithmeticOrLogical,

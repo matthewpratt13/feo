@@ -5,13 +5,7 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-use super::{ImportTree, Item};
-
-// pub enum ImportTreeKind {
-//     EntirePathContent(EntirePathContentsItem),
-//     PathSubsetRecursive(PathSubsetRecursive),
-//     PathWithAsClause(PathWithAsClause),
-// }
+use super::ImportTree;
 
 pub struct ImportDeclItem<T> {
     kw_import: KeywordKind,

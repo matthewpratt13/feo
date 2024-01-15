@@ -8,11 +8,6 @@ use crate::{
 
 use super::VisibilityKind;
 
-// pub enum StructItemKind {
-//     Struct(StructItem),
-//     TupleStruct(TupleStructItem),
-// }
-
 pub struct StructItem {
     kw_struct: KeywordKind,
     name: Identifier,

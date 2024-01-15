@@ -7,12 +7,6 @@ use crate::{
 
 use super::Item;
 
-
-// pub enum ModuleItemKind {
-//     WithoutBody(ModWithoutBody),
-//     WithBody(ModWithBody),
-// }
-
 pub struct ModWithoutBody {
     kw_mod: KeywordKind,
     name: Identifier,

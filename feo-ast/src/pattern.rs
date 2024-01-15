@@ -78,18 +78,6 @@ impl<L> LiteralPatt<L> for [u8; 32] where L: Pattern {}
 impl Pattern for bool {}
 impl<L> LiteralPatt<L> for bool where L: Pattern {}
 
-// pub enum PatternKind {
-//     Grouped(GroupedPatt),
-//     Identifier(IdentifierPatt),
-//     Literal(LiteralPattKind),
-//     Path(SimplePath),
-//     Range(RangePattKind),
-//     Struct(StructPatt),
-//     Tuple(TuplePatt),
-//     TupleStruct(TupleStructPatt),
-//     Wildcard(Underscore),
-// }
-
 pub struct GroupedPatt {
     open_parenthesis: Parenthesis,
     pattern: Box<dyn Pattern>,
@@ -105,18 +93,3 @@ mod identifier_patt {
         name: Identifier,
     }
 }
-
-// mod literal_patt {
-//     use feo_types::U256;
-
-//     pub enum LiteralPattKind {
-//         Char(char),
-//         Str(&'static str),
-//         Int(i64),
-//         UInt(u64),
-//         U256(U256),
-//         Float(f64),
-//         Bytes32([u8; 32]),
-//         Bool(bool),
-//     }
-// }

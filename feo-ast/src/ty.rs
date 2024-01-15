@@ -44,29 +44,6 @@ impl Type for TupleType {}
 
 impl Type for SimplePath {}
 
-// pub enum Type {
-//     Char(CharLiteral),
-//     Str(StringLiteral),
-//     I32(IntLiteral),
-//     I64(IntLiteral),
-//     U8(UIntLiteral),
-//     U16(UIntLiteral),
-//     U32(UIntLiteral),
-//     U64(UIntLiteral),
-//     U256(U256Literal),
-//     F32(FloatLiteral),
-//     F64(FloatLiteral),
-//     Bytes32(Bytes32Literal),
-//     Bool(BoolLiteral),
-//     Struct(StructItemKind),
-//     Enum(EnumItem),
-//     Function(FunctionItem),
-//     Array(ArrayType),
-//     TraitObject(TraitObjectType),
-//     Tuple(TupleType),
-//     TypePath(SimplePath),
-// }
-
 pub struct ArrayType {
     open_bracket: Bracket,
     element_type: Box<dyn Type>,

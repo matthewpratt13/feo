@@ -1,9 +1,10 @@
 use crate::{
-    expression::{ExprWithBlock, Expression},
+    expression::ExprWithBlock,
     identifier::Identifier,
     keyword::KeywordKind,
+    pattern::Pattern,
     ty::Type,
-    type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow}, pattern::Pattern,
+    type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
 pub enum FuncQualifier {
