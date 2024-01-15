@@ -28,15 +28,15 @@ pub struct AssignmentExpr {
     new_value: Box<Expression>,
 }
 
-pub struct ComparisonExpr {
-    first_expression: Box<Expression>,
-    operator: OpComparison,
-    second_expression: Box<Expression>,
-}
-
 pub struct BoolExpr {
     first_expression: Box<Expression>,
     operator: OpBool,
+    second_expression: Box<Expression>,
+}
+
+pub struct ComparisonExpr {
+    first_expression: Box<Expression>,
+    operator: OpComparison,
     second_expression: Box<Expression>,
 }
 

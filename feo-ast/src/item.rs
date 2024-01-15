@@ -74,9 +74,9 @@ pub type Semicolon = PuncKind;
 pub type ThinArrow = PuncKind;
 pub type Underscore = PuncKind;
 
-pub type Parenthesis = (DelimKind, DelimOrientation);
-pub type Bracket = (DelimKind, DelimOrientation);
 pub type Brace = (DelimKind, DelimOrientation);
+pub type Bracket = (DelimKind, DelimOrientation);
+pub type Parenthesis = (DelimKind, DelimOrientation);
 
 pub struct TraitItem {
     kw_unsafe_opt: Option<KeywordKind>,

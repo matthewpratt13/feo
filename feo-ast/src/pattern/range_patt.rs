@@ -6,10 +6,10 @@ pub enum RangePattKind {
     ToInclusive(RangeToInclusivePatt),
 }
 
-pub struct RangeInclusivePatt {
-    from: RangePattBound,
-    dot_dot_equals: DotDotEquals,
-    to: RangePattBound,
+pub enum RangePattBound {
+    CharLit(char),
+    IntLit(i64),
+    FloatLit(f64),
 }
 
 pub struct RangeFromPatt {
@@ -17,14 +17,14 @@ pub struct RangeFromPatt {
     dot_dot_equals: DotDotEquals,
 }
 
-pub struct RangeToInclusivePatt {
+pub struct RangeInclusivePatt {
     from: RangePattBound,
     dot_dot_equals: DotDotEquals,
     to: RangePattBound,
 }
 
-pub enum RangePattBound {
-    CharLit(char),
-    IntLit(i64),
-    FloatLit(f64),
+pub struct RangeToInclusivePatt {
+    from: RangePattBound,
+    dot_dot_equals: DotDotEquals,
+    to: RangePattBound,
 }

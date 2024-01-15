@@ -9,8 +9,8 @@ use crate::{
 };
 
 pub enum Statement {
-    Item(Item),
     Expr(ExprStatement),
+    Item(Item),
     Let(LetStatement),
 }
 
