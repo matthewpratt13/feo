@@ -1,10 +1,14 @@
-use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind};
+use crate::{
+    expression::Attribute,
+    identifier::Identifier,
+    keyword::KeywordKind,
+    type_utils::{Brace, Comma, Parenthesis},
+};
 
 use super::{
     struct_item::{StructItemFields, TupleItemFields},
-    visibility::Visibility,
+    VisibilityKind,
 };
-use super::{Brace, Comma, Parenthesis};
 
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),
@@ -27,7 +31,7 @@ pub struct EnumVariants {
 
 pub struct EnumVariant {
     attributes: Vec<Attribute>,
-    visibility_opt: Option<Visibility>,
+    visibility_opt: Option<VisibilityKind>,
     name: Identifier,
     variant_type_opt: Option<EnumVariantType>,
 }

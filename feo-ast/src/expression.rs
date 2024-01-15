@@ -4,10 +4,10 @@ use feo_types::U256;
 
 use crate::{
     identifier::Identifier,
-    item::{Bracket, Dot, HashSign, Parenthesis},
     keyword::KeywordKind,
     path::SimplePath,
     punctuation::PuncKind,
+    type_utils::{Bracket, Dot, HashSign, Parenthesis},
 };
 
 mod array_expr;
@@ -22,22 +22,23 @@ mod tuple_expr;
 
 use self::{
     array_expr::{ArrayExpr, IndexExpr},
-    block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
-    conditional_expr::ConditionalExpr,
-    iteration_expr::IterationExpr,
-    operator_expr::OperatorExpr,
+    conditional_expr::ConditionalExprKind,
+    iteration_expr::IterationExprKind,
+    operator_expr::OperatorExprKind,
     range_expr::RangeExprKind,
     struct_expr::StructExprKind,
     tuple_expr::{TupleExpr, TupleIndexingExpr},
 };
 
-pub enum Expression {
-    WithoutBlock(ExprWithoutBlock),
-    WithBlock(ExprWithBlock),
+pub use self::block_expr::BlockExpr;
+
+pub enum ExpressionKind {
+    WithoutBlock(ExprWithoutBlockKind),
+    WithBlock(ExprWithBlockKind),
 }
 
-pub enum ExprWithoutBlock {
+pub enum ExprWithoutBlockKind {
     Attr(Attribute),
     Array(ArrayExpr),
     FunctionCall(FunctionCallExpr),
@@ -47,8 +48,8 @@ pub enum ExprWithoutBlock {
     FieldAccess(FieldAccessExpr),
     Grouped(GroupedExpr),
     Index(IndexExpr),
-    Literal(LiteralExpr),
-    Operator(OperatorExpr),
+    Literal(LiteralExprKind),
+    Operator(OperatorExprKind),
     Path(SimplePath),
     Range(RangeExprKind),
     Struct(StructExprKind),
@@ -58,14 +59,14 @@ pub enum ExprWithoutBlock {
     Underscore(PuncKind),
 }
 
-pub enum ExprWithBlock {
+pub enum ExprWithBlockKind {
     Attr(Attribute),
     Block(BlockExpr),
-    Conditional(ConditionalExpr),
-    Iteration(IterationExpr),
+    Conditional(ConditionalExprKind),
+    Iteration(IterationExprKind),
 }
 
-pub enum LiteralExpr {
+pub enum LiteralExprKind {
     Char(char),
     Str(&'static str),
     Int(i64),
@@ -84,18 +85,18 @@ pub struct Attribute {
 }
 
 pub struct FieldAccessExpr {
-    object: Box<Expression>,
+    object: Box<ExpressionKind>,
     dot: Dot,
     field_name: Identifier,
 }
 
 pub struct GroupedExpr {
     open_parenthesis: Parenthesis,
-    expression: Box<Expression>,
+    expression: Box<ExpressionKind>,
     close_parenthesis: Parenthesis,
 }
 
 pub struct ReturnExpr {
     kw_return: KeywordKind,
-    expression_opt: Option<Box<Expression>>,
+    expression_opt: Option<Box<ExpressionKind>>,
 }

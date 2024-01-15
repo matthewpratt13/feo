@@ -1,9 +1,11 @@
 use crate::{
-    expression::ExprWithBlock, identifier::Identifier, keyword::KeywordKind, pattern::Pattern,
+    expression::ExprWithBlockKind,
+    identifier::Identifier,
+    keyword::KeywordKind,
+    pattern::PatternKind,
     ty::Type,
+    type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
-
-use super::{Colon, Comma, Parenthesis, Semicolon, ThinArrow};
 
 pub enum FuncQualifier {
     Const(KeywordKind),
@@ -24,7 +26,7 @@ pub struct FunctionItem {
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Box<Type>)>,
-    func_body: ExprWithBlock,
+    func_body: ExprWithBlockKind,
 }
 
 pub struct FunctionSignature {
@@ -45,7 +47,7 @@ pub struct FuncParams {
 }
 
 pub struct FuncParam {
-    pattern: Box<Pattern>,
+    pattern: Box<PatternKind>,
     colon: Colon,
     param_type: Box<Type>,
 }

@@ -1,10 +1,10 @@
-pub enum Program {
+pub enum ProgramKind {
     Contract,
     Library,
     Script,
 }
 
-pub enum ContractItem {
+pub enum ContractItemKind {
     Item,
     Storage,
     Abi,

@@ -14,3 +14,32 @@ pub mod statement;
 pub mod token;
 pub mod ty;
 pub mod type_annotation;
+
+mod type_utils {
+    use crate::delimiter::{DelimKind, DelimOrientation};
+    use crate::punctuation::PuncKind;
+
+    pub type Asterisk = PuncKind;
+    pub type Bang = PuncKind;
+    pub type Colon = PuncKind;
+    pub type Comma = PuncKind;
+    pub type DblColon = PuncKind;
+    pub type DblDot = PuncKind;
+    pub type Dot = PuncKind;
+    pub type DotDotEquals = PuncKind;
+    pub type Equals = PuncKind;
+    pub type FatArrow = PuncKind;
+    pub type HashSign = PuncKind;
+    pub type OpArithmeticOrLogical = PuncKind;
+    pub type OpBool = PuncKind;
+    pub type OpComparison = PuncKind;
+    pub type Plus = PuncKind;
+    pub type QuestionMark = PuncKind;
+    pub type Semicolon = PuncKind;
+    pub type ThinArrow = PuncKind;
+    pub type Underscore = PuncKind;
+
+    pub type Brace = (DelimKind, DelimOrientation);
+    pub type Bracket = (DelimKind, DelimOrientation);
+    pub type Parenthesis = (DelimKind, DelimOrientation);
+}

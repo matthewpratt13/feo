@@ -1,6 +1,6 @@
 use feo_types::U256;
 
-use crate::item::DotDotEquals;
+use crate::type_utils::DotDotEquals;
 
 pub enum RangePattKind {
     From(RangeFromPatt),
@@ -8,7 +8,7 @@ pub enum RangePattKind {
     ToInclusive(RangeToInclusivePatt),
 }
 
-pub enum RangePattBound {
+pub enum RangePattBoundKind {
     CharLit(char),
     IntLit(i64),
     UIntLit(u64),
@@ -18,18 +18,18 @@ pub enum RangePattBound {
 }
 
 pub struct RangeFromPatt {
-    from: RangePattBound,
+    from: RangePattBoundKind,
     dot_dot_equals: DotDotEquals,
 }
 
 pub struct RangeInclusivePatt {
-    from: RangePattBound,
+    from: RangePattBoundKind,
     dot_dot_equals: DotDotEquals,
-    to: RangePattBound,
+    to: RangePattBoundKind,
 }
 
 pub struct RangeToInclusivePatt {
-    from: RangePattBound,
+    from: RangePattBoundKind,
     dot_dot_equals: DotDotEquals,
-    to: RangePattBound,
+    to: RangePattBoundKind,
 }

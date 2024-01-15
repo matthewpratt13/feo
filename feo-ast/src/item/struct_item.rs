@@ -1,6 +1,12 @@
-use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind, ty::Type};
+use crate::{
+    expression::Attribute,
+    identifier::Identifier,
+    keyword::KeywordKind,
+    ty::Type,
+    type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
+};
 
-use super::{Brace, Colon, Comma, Parenthesis, Semicolon, Visibility};
+use super::VisibilityKind;
 
 pub enum StructItemKind {
     Struct(StructItem),
@@ -23,7 +29,7 @@ pub struct StructItemFields {
 
 pub struct StructItemField {
     attributes: Vec<Attribute>,
-    visibility_opt: Option<Visibility>,
+    visibility_opt: Option<VisibilityKind>,
     field_name: Identifier,
     colon: Colon,
     field_type: Box<Type>,
@@ -46,6 +52,6 @@ pub struct TupleItemFields {
 
 pub struct TupleItemField {
     attributes: Vec<Attribute>,
-    visibility_opt: Option<Visibility>,
+    visibility_opt: Option<VisibilityKind>,
     field_type: Box<Type>,
 }

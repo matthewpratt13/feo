@@ -1,12 +1,12 @@
 use crate::{
-    item::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
+    type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
     keyword::KeywordKind,
     ty::Type,
 };
 
-use super::Expression;
+use super::ExpressionKind;
 
-pub enum OperatorExpr {
+pub enum OperatorExprKind {
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
     Assign(AssignmentExpr),
     Bool(BoolExpr),
@@ -17,41 +17,41 @@ pub enum OperatorExpr {
 }
 
 pub struct ArithmeticOrLogicalExpr {
-    first_operand: Box<Expression>,
+    first_operand: Box<ExpressionKind>,
     operator: OpArithmeticOrLogical,
-    second_operand: Box<Expression>,
+    second_operand: Box<ExpressionKind>,
 }
 
 pub struct AssignmentExpr {
-    initial_value: Box<Expression>,
+    initial_value: Box<ExpressionKind>,
     equals: Equals,
-    new_value: Box<Expression>,
+    new_value: Box<ExpressionKind>,
 }
 
 pub struct BoolExpr {
-    first_expression: Box<Expression>,
+    first_expression: Box<ExpressionKind>,
     operator: OpBool,
-    second_expression: Box<Expression>,
+    second_expression: Box<ExpressionKind>,
 }
 
 pub struct ComparisonExpr {
-    first_expression: Box<Expression>,
+    first_expression: Box<ExpressionKind>,
     operator: OpComparison,
-    second_expression: Box<Expression>,
+    second_expression: Box<ExpressionKind>,
 }
 
 pub struct NegationExpr {
     negator: Bang,
-    expression: Box<Expression>,
+    expression: Box<ExpressionKind>,
 }
 
 pub struct ResultUnwrapExpr {
-    expression: Box<Expression>,
+    expression: Box<ExpressionKind>,
     question_mark: QuestionMark,
 }
 
 pub struct TypeCastExpr {
-    original_expression: Box<Expression>,
+    original_expression: Box<ExpressionKind>,
     kw_as: KeywordKind,
     new_type: Box<Type>,
 }

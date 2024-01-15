@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
-use crate::{identifier::Identifier, item::DblColon, keyword::KeywordKind};
+use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::DblColon};
 
-pub enum PathSegment {
+pub enum PathSegmentKind {
     Identifier(Identifier),
     CrateKeyword(KeywordKind),
     SelfKeyword(KeywordKind),
@@ -11,6 +11,6 @@ pub enum PathSegment {
 
 pub struct SimplePath {
     dbl_colon_opt: Option<DblColon>,
-    first_segment: PathSegment,
-    subsequent_segments: Vec<(DblColon, PathSegment)>,
+    first_segment: PathSegmentKind,
+    subsequent_segments: Vec<(DblColon, PathSegmentKind)>,
 }

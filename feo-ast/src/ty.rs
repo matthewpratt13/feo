@@ -1,15 +1,16 @@
 #![allow(dead_code)]
 
 use crate::{
-    item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItemKind},
+    item::{EnumItem, FunctionItem, StructItemKind},
     literals::{
         BoolLiteral, Bytes32Literal, CharLiteral, FloatLiteral, IntLiteral, StringLiteral,
         U256Literal, UIntLiteral,
     },
     path::SimplePath,
+    type_utils::{Bracket, Comma, Parenthesis, Semicolon},
 };
 
-use self::trait_object_type::TraitObjectType;
+pub use self::trait_object_type::TraitObjectType;
 
 pub enum Type {
     Char(CharLiteral),
@@ -50,9 +51,9 @@ pub struct TupleType {
 
 mod trait_object_type {
     use crate::{
-        item::{Plus, QuestionMark},
         keyword::KeywordKind,
         path::SimplePath,
+        type_utils::{Plus, QuestionMark},
     };
 
     pub struct TraitObjectType {

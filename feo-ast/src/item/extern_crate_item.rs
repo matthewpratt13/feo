@@ -1,9 +1,8 @@
-use crate::{identifier::Identifier, keyword::KeywordKind};
+use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Semicolon};
 
 use super::import_decl_item::AsClause;
-use super::Semicolon;
 
-pub enum CrateRef {
+pub enum CrateRefKind {
     Identifier(Identifier),
     KwSelf(KeywordKind),
 }
@@ -11,7 +10,7 @@ pub enum CrateRef {
 pub struct ExternCrateItem {
     kw_extern: KeywordKind,
     kw_crate: KeywordKind,
-    crate_ref: CrateRef,
+    crate_ref: CrateRefKind,
     as_clause_opt: Option<AsClause>,
     semicolon: Semicolon,
 }

@@ -1,13 +1,17 @@
-use crate::{expression::Expression, identifier::Identifier, keyword::KeywordKind, ty::Type};
-
-use super::{Colon, Semicolon};
+use crate::{
+    expression::ExpressionKind,
+    identifier::Identifier,
+    keyword::KeywordKind,
+    ty::Type,
+    type_utils::{Colon, Semicolon},
+};
 
 pub struct ConstantItem {
     kw_const: KeywordKind,
     name: Identifier,
     colon: Colon,
     item_type: Box<Type>,
-    assignment_opt: Option<(Colon, Box<Expression>)>,
+    assignment_opt: Option<(Colon, Box<ExpressionKind>)>,
     semicolon: Semicolon,
 }
 
@@ -17,6 +21,6 @@ pub struct StaticItem {
     name: Identifier,
     colon: Colon,
     item_type: Box<Type>,
-    assignment_opt: Option<(Colon, Box<Expression>)>,
+    assignment_opt: Option<(Colon, Box<ExpressionKind>)>,
     semicolon: Semicolon,
 }

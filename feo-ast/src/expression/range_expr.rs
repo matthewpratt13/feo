@@ -1,6 +1,6 @@
-use crate::item::{DblDot, DotDotEquals};
+use crate::type_utils::{DblDot, DotDotEquals};
 
-use super::Expression;
+use super::ExpressionKind;
 
 pub enum RangeExprKind {
     Range(RangeExpr),
@@ -12,28 +12,28 @@ pub enum RangeExprKind {
 }
 
 pub struct RangeExpr {
-    from_expression: Box<Expression>,
+    from_expression: Box<ExpressionKind>,
     dbl_dot: DblDot,
-    to_expression_excl: Box<Expression>,
+    to_expression_excl: Box<ExpressionKind>,
 }
 
 pub struct RangeFromExpr {
-    from_expression: Box<Expression>,
+    from_expression: Box<ExpressionKind>,
     dbl_dot: DblDot,
 }
 
 pub struct RangeToExpr {
     dbl_dot: DblDot,
-    to_expression: Box<Expression>,
+    to_expression: Box<ExpressionKind>,
 }
 
 pub struct RangeInclusiveExpr {
-    from_expression: Box<Expression>,
+    from_expression: Box<ExpressionKind>,
     dot_dot_equals: DotDotEquals,
-    to_expression_incl: Box<Expression>,
+    to_expression_incl: Box<ExpressionKind>,
 }
 
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
-    to_expression_incl: Box<Expression>,
+    to_expression_incl: Box<ExpressionKind>,
 }

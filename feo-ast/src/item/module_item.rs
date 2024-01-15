@@ -1,8 +1,13 @@
-use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind};
+use crate::{
+    expression::Attribute,
+    identifier::Identifier,
+    keyword::KeywordKind,
+    type_utils::{Brace, Semicolon},
+};
 
-use super::{Brace, Item, Semicolon};
+use super::ItemKind;
 
-pub enum ModuleItem {
+pub enum ModuleItemKind {
     WithoutBody(ModWithoutBody),
     WithBody(ModWithBody),
 }
@@ -18,6 +23,6 @@ pub struct ModWithBody {
     name: Identifier,
     open_brace: Brace,
     attributes: Vec<Attribute>,
-    items: Vec<Item>,
+    items: Vec<ItemKind>,
     close_brace: Brace,
 }

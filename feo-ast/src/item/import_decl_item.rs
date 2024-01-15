@@ -1,8 +1,11 @@
-use crate::{identifier::Identifier, keyword::KeywordKind, path::SimplePath};
+use crate::{
+    identifier::Identifier,
+    keyword::KeywordKind,
+    path::SimplePath,
+    type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
+};
 
-use super::{Asterisk, Brace, Comma, DblColon, Semicolon};
-
-pub enum ImportTree {
+pub enum ImportTreeKind {
     EntirePathContent(EntirePathContents),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
@@ -10,7 +13,7 @@ pub enum ImportTree {
 
 pub struct ImportDeclItem {
     kw_import: KeywordKind,
-    import_tree: ImportTree,
+    import_tree: ImportTreeKind,
     semicolon: Semicolon,
 }
 
@@ -22,7 +25,7 @@ pub struct EntirePathContents {
 pub struct PathSubsetRecursive {
     path_root_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(Box<ImportTree>, Vec<(Comma, ImportTree)>, Option<Comma>)>,
+    recursive_tree_opt: Option<(Box<ImportTreeKind>, Vec<(Comma, ImportTreeKind)>, Option<Comma>)>,
     close_brace: Brace,
 }
 

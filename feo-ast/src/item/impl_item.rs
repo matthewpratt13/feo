@@ -1,11 +1,10 @@
-use crate::{expression::Attribute, keyword::KeywordKind, path::SimplePath, ty::Type};
-
-use super::{
-    constant_item::ConstantItem, function_item::FunctionItem, visibility::Visibility, Brace,
-    TypeAliasItem,
+use crate::{
+    expression::Attribute, keyword::KeywordKind, path::SimplePath, ty::Type, type_utils::Brace,
 };
 
-pub enum ImplItem {
+use super::{ConstantItem, FunctionItem, TypeAliasItem, VisibilityKind};
+
+pub enum ImplItemKind {
     Inherent(InherentImpl),
     Trait(TraitImpl),
 }
@@ -37,5 +36,5 @@ pub struct TraitImpl {
 
 pub struct AssociatedItem {
     attributes: Vec<Attribute>,
-    item: (Option<Visibility>, AssociatedItemKind),
+    item: (Option<VisibilityKind>, AssociatedItemKind),
 }
