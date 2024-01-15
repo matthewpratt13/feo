@@ -3,7 +3,7 @@ use crate::{
     type_utils::{Colon, Comma, Dot, Parenthesis},
 };
 
-use super::ExpressionKind;
+use super::Expression;
 
 pub struct FunctionCallExpr {
     function_path: PathSegmentKind,
@@ -13,13 +13,13 @@ pub struct FunctionCallExpr {
 }
 
 pub struct CallParams {
-    first_param: Box<ExpressionKind>,
-    subsequent_params: Vec<(Colon, ExpressionKind)>,
+    first_param: Box<dyn Expression>,
+    subsequent_params: Vec<(Colon, Box<dyn Expression>)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 pub struct MethodCallExpr {
-    object: Box<ExpressionKind>,
+    object: Box<dyn Expression>,
     dot: Dot,
     method_path: PathSegmentKind,
     open_parenthesis: Parenthesis,

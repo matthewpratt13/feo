@@ -1,43 +1,38 @@
 use crate::{
     keyword::KeywordKind,
-    pattern::PatternKind,
+    pattern::Pattern,
     type_utils::{Brace, Comma, FatArrow},
 };
 
-use super::{BlockExpr, ExpressionKind};
+use super::{BlockExpr, Expression};
 
-pub enum ConditionalExprKind {
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
-}
-
-pub struct IfExpr {
+pub struct IfExpr<T, U> {
     kw_if: KeywordKind,
-    condition: Box<ExpressionKind>, // cannot be a struct expression
-    block: BlockExpr,
-    else_if_block_opt: Option<(KeywordKind, Box<IfExpr>)>,
-    else_block_opt: Option<(KeywordKind, BlockExpr)>,
+    condition: Box<dyn Expression>, // cannot be a struct expression
+    block: BlockExpr<T, U>,
+    else_if_block_opt: Option<(KeywordKind, Box<IfExpr<T, U>>)>,
+    else_block_opt: Option<(KeywordKind, BlockExpr<T, U>)>,
 }
 
 pub struct MatchExpr {
     kw_match: KeywordKind,
-    scrutinee: Box<ExpressionKind>, // cannot be a struct expression
+    scrutinee: Box<dyn Expression>, // cannot be a struct expression
     open_brace: Brace,
     match_arms_opt: Option<MatchArms>,
     close_brace: Brace,
 }
 
 pub struct MatchArms {
-    arms: Vec<(MatchArm, FatArrow, ExpressionKind, Option<Comma>)>,
-    final_arm: (MatchArm, FatArrow, Box<ExpressionKind>, Option<Comma>),
+    arms: Vec<(MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>)>,
+    final_arm: (MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>),
 }
 
 pub struct MatchArm {
-    pattern: Box<PatternKind>,
+    pattern: Box<dyn Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
 
 pub struct MatchArmGuard {
     kw_if: KeywordKind,
-    condition: Box<ExpressionKind>,
+    condition: Box<dyn Expression>,
 }

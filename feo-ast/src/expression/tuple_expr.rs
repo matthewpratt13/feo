@@ -1,6 +1,6 @@
 use crate::type_utils::{Comma, Dot, Parenthesis};
 
-use super::ExpressionKind;
+use super::Expression;
 
 pub struct TupleExpr {
     open_parenthesis: Parenthesis,
@@ -9,12 +9,12 @@ pub struct TupleExpr {
 }
 
 pub struct TupleElements {
-    elements: Vec<(ExpressionKind, Comma)>,
-    trailing_element_opt: Option<Box<ExpressionKind>>,
+    elements: Vec<(Box<dyn Expression>, Comma)>,
+    trailing_element_opt: Option<Box<dyn Expression>>,
 }
 
 pub struct TupleIndexingExpr {
-    object: Box<ExpressionKind>,
+    object: Box<dyn Expression>,
     dot: Dot,
     index: usize,
 }

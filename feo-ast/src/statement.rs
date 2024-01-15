@@ -1,22 +1,23 @@
 #![allow(dead_code)]
 
 use crate::{
-    expression::{ExprWithoutBlockKind, ExpressionKind},
+    expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
-    item::ItemKind,
     keyword::KeywordKind,
     type_annotation::TypeAnnKind,
     type_utils::{Colon, Equals, Semicolon},
 };
 
-pub enum StatementKind {
-    Expr(ExprStatement),
-    Item(ItemKind),
-    Let(LetStatement),
-}
+pub trait Statement {}
 
-pub struct ExprStatement {
-    expr_without_block: ExprWithoutBlockKind,
+impl<T> Statement for ExprStatement<T> {}
+
+impl Statement for LetStatement {}
+
+impl<T> Statement for StatementWithExpr<T> {}
+
+pub struct ExprStatement<T> {
+    expr_without_block: Box<dyn ExprWithoutBlock<T>>,
     semicolon: Semicolon,
 }
 
@@ -26,11 +27,11 @@ pub struct LetStatement {
     identifier: Identifier,
     type_ann_opt: Option<(Colon, TypeAnnKind)>,
     equals: Equals,
-    value: Box<ExpressionKind>,
+    value: Box<dyn Expression>,
     semicolon: Semicolon,
 }
 
-pub struct StatementWithExpr {
-    statement: Box<StatementKind>,
-    expr_without_block: ExprWithoutBlockKind,
+pub struct StatementWithExpr<T> {
+    statement: Box<dyn Statement>,
+    expr_without_block: Box<dyn ExprWithoutBlock<T>>,
 }

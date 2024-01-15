@@ -1,11 +1,11 @@
 use crate::{
     expression::Attribute,
     identifier::Identifier,
-    type_utils::{Brace, Colon, Comma, Parenthesis},
     path::SimplePath,
+    type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::PatternKind;
+use super::Pattern;
 
 pub struct StructPatt {
     struct_path: SimplePath,
@@ -24,7 +24,7 @@ pub struct StructPattField {
     attributes: Vec<Attribute>,
     struct_pattern_kind: Identifier,
     colon: Colon,
-    data: Box<PatternKind>,
+    data: Box<dyn Pattern>,
 }
 
 pub struct TupleStructPatt {
@@ -35,7 +35,7 @@ pub struct TupleStructPatt {
 }
 
 pub struct TupleStructItems {
-    first_item: Box<PatternKind>,
-    subsequent_fields: Vec<(Comma, PatternKind)>,
+    first_item: Box<dyn Pattern>,
+    subsequent_fields: Vec<(Comma, Box<dyn Pattern>)>,
     trailing_comma_opt: Option<Comma>,
 }

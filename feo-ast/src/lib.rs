@@ -37,7 +37,6 @@ mod type_utils {
     pub type QuestionMark = PuncKind;
     pub type Semicolon = PuncKind;
     pub type ThinArrow = PuncKind;
-    pub type Underscore = PuncKind;
 
     pub type Brace = (DelimKind, DelimOrientation);
     pub type Bracket = (DelimKind, DelimOrientation);

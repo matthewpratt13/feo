@@ -5,12 +5,7 @@ use crate::{
     type_utils::{Brace, Semicolon},
 };
 
-use super::ItemKind;
-
-pub enum ModuleItemKind {
-    WithoutBody(ModWithoutBody),
-    WithBody(ModWithBody),
-}
+use super::Item;
 
 pub struct ModWithoutBody {
     kw_mod: KeywordKind,
@@ -23,6 +18,6 @@ pub struct ModWithBody {
     name: Identifier,
     open_brace: Brace,
     attributes: Vec<Attribute>,
-    items: Vec<ItemKind>,
+    items: Vec<Box<dyn Item>>,
     close_brace: Brace,
 }

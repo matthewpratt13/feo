@@ -1,18 +1,18 @@
 use crate::{
-    statement::{StatementKind, StatementWithExpr},
+    statement::{Statement, StatementWithExpr},
     type_utils::Brace,
 };
 
-use super::ExprWithoutBlockKind;
+use super::ExprWithoutBlock;
 
-pub enum StatementsKind {
-    ExprWithoutBlock(ExprWithoutBlockKind),
-    Statement(Box<StatementKind>),
-    StatementWithExpr(StatementWithExpr),
+pub enum StatementsKind<T, U> {
+    ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
+    Statement(Box<dyn Statement>),
+    StatementWithExpr(StatementWithExpr<U>),
 }
 
-pub struct BlockExpr {
+pub struct BlockExpr<T, U> {
     open_brace: Brace,
-    statements: StatementsKind,
+    statements: StatementsKind<T, U>,
     close_brace: Brace,
 }

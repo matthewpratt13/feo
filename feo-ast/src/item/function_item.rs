@@ -1,8 +1,8 @@
 use crate::{
-    expression::ExprWithBlockKind,
+    expression::ExprWithBlock,
     identifier::Identifier,
     keyword::KeywordKind,
-    pattern::PatternKind,
+    pattern::Pattern,
     ty::Type,
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
@@ -18,15 +18,15 @@ pub enum FuncOrMethodParam {
     Method(MethodParam),
 }
 
-pub struct FunctionItem {
+pub struct FunctionItem<T> {
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: KeywordKind,
     name: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Box<Type>)>,
-    func_body: ExprWithBlockKind,
+    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    func_body: Box<dyn ExprWithBlock<T>>,
 }
 
 pub struct FunctionSignature {
@@ -36,7 +36,7 @@ pub struct FunctionSignature {
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Type)>,
+    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
     semicolon: Semicolon,
 }
 
@@ -47,9 +47,9 @@ pub struct FuncParams {
 }
 
 pub struct FuncParam {
-    pattern: Box<PatternKind>,
+    pattern: Box<dyn Pattern>,
     colon: Colon,
-    param_type: Box<Type>,
+    param_type: Box<dyn Type>,
 }
 
 pub struct MethodParam {
@@ -61,5 +61,5 @@ pub struct SelfParam {
     kw_ref_opt: Option<KeywordKind>,
     kw_mut_opt: Option<KeywordKind>,
     kw_self: KeywordKind,
-    self_type_opt: Option<(Colon, Box<Type>)>,
+    self_type_opt: Option<(Colon, Box<dyn Type>)>,
 }
