@@ -3,17 +3,24 @@
 use crate::{
     expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
-    item::ItemKind,
     keyword::KeywordKind,
     type_annotation::TypeAnnKind,
     type_utils::{Colon, Equals, Semicolon},
 };
 
-pub enum StatementKind<T> {
-    Expr(ExprStatement<T>),
-    Item(ItemKind),
-    Let(LetStatement),
-}
+pub trait Statement {}
+
+impl<T> Statement for ExprStatement<T> {}
+
+impl Statement for LetStatement {}
+
+impl<T> Statement for StatementWithExpr<T> {}
+
+// pub enum StatementKind<T> {
+//     Expr(ExprStatement<T>),
+//     Item(Box<dyn Item>),
+//     Let(LetStatement),
+// }
 
 pub struct ExprStatement<T> {
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
@@ -30,7 +37,7 @@ pub struct LetStatement {
     semicolon: Semicolon,
 }
 
-pub struct StatementWithExpr<T, U> {
-    statement: Box<StatementKind<T>>,
-    expr_without_block: Box<dyn ExprWithoutBlock<U>>,
+pub struct StatementWithExpr<T> {
+    statement: Box<dyn Statement>,
+    expr_without_block: Box<dyn ExprWithoutBlock<T>>,
 }
