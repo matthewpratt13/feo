@@ -55,7 +55,7 @@ pub enum Item {
 }
 
 pub type Asterisk = PuncKind;
-pub type BangOrMinus = PuncKind;
+pub type Bang = PuncKind;
 pub type Colon = PuncKind;
 pub type Comma = PuncKind;
 pub type DblColon = PuncKind;

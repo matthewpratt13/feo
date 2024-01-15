@@ -1,5 +1,5 @@
 use crate::{
-    item::{BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
+    item::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
     keyword::KeywordKind,
     ty::Type,
 };
@@ -41,7 +41,7 @@ pub struct ComparisonExpr {
 }
 
 pub struct NegationExpr {
-    negator: BangOrMinus,
+    negator: Bang,
     expression: Box<Expression>,
 }
 

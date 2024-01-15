@@ -15,8 +15,8 @@ pub enum ConditionalExpr {
 pub struct IfExpr {
     kw_if: KeywordKind,
     condition: Box<Expression>, // cannot be a struct expression
-    block_expr: BlockExpr,
-    else_if_expr_opt: Option<(KeywordKind, Box<IfExpr>)>,
+    block: BlockExpr,
+    else_if_block_opt: Option<(KeywordKind, Box<IfExpr>)>,
     else_block_opt: Option<(KeywordKind, BlockExpr)>,
 }
 

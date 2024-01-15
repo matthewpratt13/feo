@@ -6,14 +6,14 @@ use crate::{
 
 use super::{Attribute, Expression};
 
-pub enum StructExpr {
-    Struct(Struct),
-    TupleStruct(TupleStruct),
-    UnitStruct(UnitStruct),
+pub enum StructExprKind {
+    Struct(StructExpr),
+    TupleStruct(TupleStructExpr),
+    UnitStruct(UnitStructExpr),
 }
 
-pub struct Struct {
-    path: SimplePath,
+pub struct StructExpr {
+    struct_path: SimplePath,
     open_brace: Brace,
     struct_expr_fields_opt: Option<StructExprFields>,
     close_brace: Brace,
@@ -29,8 +29,8 @@ pub struct StructExprField {
     data: (Identifier, Colon, Box<Expression>),
 }
 
-pub struct TupleStruct {
-    path: SimplePath,
+pub struct TupleStructExpr {
+    tuple_struct_path: SimplePath,
     open_parenthesis: Parenthesis,
     params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Comma)>,
     close_parenthesis: Parenthesis,
@@ -46,4 +46,4 @@ pub struct TupleStructExprField {
     data: Box<Expression>,
 }
 
-pub struct UnitStruct(SimplePath);
+pub struct UnitStructExpr(SimplePath);

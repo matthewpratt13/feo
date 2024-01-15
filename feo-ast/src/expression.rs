@@ -28,7 +28,7 @@ use self::{
     iteration_expr::IterationExpr,
     operator_expr::OperatorExpr,
     range_expr::RangeExprKind,
-    struct_expr::StructExpr,
+    struct_expr::StructExprKind,
     tuple_expr::{TupleExpr, TupleIndexingExpr},
 };
 
@@ -51,7 +51,7 @@ pub enum ExprWithoutBlock {
     Operator(OperatorExpr),
     Path(SimplePath),
     Range(RangeExprKind),
-    Struct(StructExpr),
+    Struct(StructExprKind),
     Tuple(TupleExpr),
     TupleIndexing(TupleIndexingExpr),
     Return(ReturnExpr),

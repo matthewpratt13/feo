@@ -6,9 +6,9 @@ use crate::{
 use super::ExprWithoutBlock;
 
 pub enum Statements {
+    ExprWithoutBlock(ExprWithoutBlock),
     Statement(Box<Statement>),
     StatementWithExpr(StatementWithExpr),
-    ExprWithoutBlock(ExprWithoutBlock),
 }
 
 pub struct BlockExpr {

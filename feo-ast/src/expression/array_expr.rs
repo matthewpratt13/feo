@@ -14,14 +14,14 @@ pub struct ArrayElements {
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayElementsFixedSize {
+pub struct ArrayDefinition {
     element_type: Box<Expression>,
     semicolon: Semicolon,
     num_elements: usize,
 }
 
 pub struct IndexExpr {
-    item: Box<Expression>,
+    object: Box<Expression>,
     open_bracket: Bracket,
     index: usize,
     close_bracket: Bracket,
