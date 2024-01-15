@@ -3,7 +3,7 @@ use crate::{identifier::Identifier, keyword::KeywordKind, path::SimplePath};
 use super::{Asterisk, Brace, Comma, DblColon, Semicolon};
 
 pub enum ImportTree {
-    EntirePath(EntirePath),
+    EntirePathContent(EntirePathContents),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
 }
@@ -14,7 +14,7 @@ pub struct ImportDeclItem {
     semicolon: Semicolon,
 }
 
-pub struct EntirePath {
+pub struct EntirePathContents {
     path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
@@ -27,7 +27,7 @@ pub struct PathSubsetRecursive {
 }
 
 pub struct PathWithAsClause {
-    path: SimplePath,
+    original_path: SimplePath,
     as_clause_opt: Option<AsClause>,
 }
 

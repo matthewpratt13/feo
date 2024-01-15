@@ -2,23 +2,13 @@
 
 mod associated_item;
 mod constant_item;
-
 mod enum_item;
-pub use self::enum_item::EnumItem;
-
 mod extern_crate_item;
-
 mod function_item;
-pub use self::function_item::FunctionItem;
-
 mod impl_item;
 mod import_decl_item;
 mod module_item;
-
 mod struct_item;
-pub use self::struct_item::StructItem;
-
-mod visibility;
 
 use crate::{
     delimiter::{DelimKind, DelimOrientation},
@@ -38,6 +28,10 @@ use self::{
     visibility::Visibility,
 };
 
+pub use self::enum_item::EnumItem;
+pub use self::function_item::FunctionItem;
+pub use self::struct_item::StructItemKind;
+
 pub enum Item {
     Visibility(Visibility),
     Associated(AssociatedItem),
@@ -49,7 +43,7 @@ pub enum Item {
     Impl(ImplItem),
     ImportDecl(ImportDeclItem),
     Module(ModuleItem),
-    Struct(StructItem),
+    Struct(StructItemKind),
     Trait(TraitItem),
     TypeAlias(TypeAliasItem),
 }
@@ -92,4 +86,22 @@ pub struct TypeAliasItem {
     name: Identifier,
     value_opt: Option<(Equals, Type)>,
     semicolon: Semicolon,
+}
+
+mod visibility {
+    use crate::keyword::KeywordKind;
+
+    use super::Parenthesis;
+
+    pub enum Visibility {
+        Pub(KeywordKind),
+        PubCrate(PubCrateVisibility),
+    }
+
+    pub struct PubCrateVisibility {
+        kw_pub: KeywordKind,
+        open_parenthesis: Parenthesis,
+        kw_crate: KeywordKind,
+        close_parenthesis: Parenthesis,
+    }
 }

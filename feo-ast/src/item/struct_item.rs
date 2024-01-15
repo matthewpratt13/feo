@@ -2,12 +2,12 @@ use crate::{expression::Attribute, identifier::Identifier, keyword::KeywordKind,
 
 use super::{Brace, Colon, Comma, Parenthesis, Semicolon, Visibility};
 
-pub enum StructItem {
-    Struct(Struct),
-    TupleStruct(TupleStruct),
+pub enum StructItemKind {
+    Struct(StructItem),
+    TupleStruct(TupleStructItem),
 }
 
-pub struct Struct {
+pub struct StructItem {
     kw_struct: KeywordKind,
     name: Identifier,
     open_brace: Brace,
@@ -29,7 +29,7 @@ pub struct StructItemField {
     field_type: Box<Type>,
 }
 
-pub struct TupleStruct {
+pub struct TupleStructItem {
     kw_struct: KeywordKind,
     name: Identifier,
     open_parenthesis: Parenthesis,

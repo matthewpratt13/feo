@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItem},
+    item::{Bracket, Comma, EnumItem, FunctionItem, Parenthesis, Semicolon, StructItemKind},
     literals::{
         BoolLiteral, Bytes32Literal, CharLiteral, FloatLiteral, IntLiteral, StringLiteral,
         U256Literal, UIntLiteral,
@@ -25,12 +25,12 @@ pub enum Type {
     F64(FloatLiteral),
     Bytes32(Bytes32Literal),
     Bool(BoolLiteral),
-    Struct(StructItem),
+    Struct(StructItemKind),
     Enum(EnumItem),
     Function(FunctionItem),
     Array(ArrayType),
-    Tuple(TupleType),
     TraitObject(TraitObjectType),
+    Tuple(TupleType),
     TypePath(SimplePath),
 }
 

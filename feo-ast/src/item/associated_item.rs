@@ -5,9 +5,9 @@ use super::{
 };
 
 pub enum AssociatedItemKind {
-    TypeAlias(TypeAliasItem),
     Constant(ConstantItem),
     Function(FunctionItem),
+    TypeAlias(TypeAliasItem),
 }
 
 pub struct AssociatedItem {
