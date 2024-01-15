@@ -11,12 +11,12 @@ use super::{BlockExpr, Expression};
 //     MatchExpr(MatchExpr),
 // }
 
-pub struct IfExpr<T> {
+pub struct IfExpr<T, U> {
     kw_if: KeywordKind,
     condition: Box<dyn Expression>, // cannot be a struct expression
-    block: BlockExpr<T>,
-    else_if_block_opt: Option<(KeywordKind, Box<IfExpr<T>>)>,
-    else_block_opt: Option<(KeywordKind, BlockExpr<T>)>,
+    block: BlockExpr<T, U>,
+    else_if_block_opt: Option<(KeywordKind, Box<IfExpr<T, U>>)>,
+    else_block_opt: Option<(KeywordKind, BlockExpr<T, U>)>,
 }
 
 pub struct MatchExpr {

@@ -7,6 +7,7 @@ use crate::{
     keyword::KeywordKind,
     path::SimplePath,
     punctuation::PuncKind,
+    statement::Statement,
     type_utils::{Bracket, Dot, HashSign, Parenthesis},
 };
 
@@ -102,8 +103,8 @@ impl Expression for Attribute {}
 impl<E> ExprWithBlock<E> for Attribute where E: Expression {}
 impl<E> ExprWithoutBlock<E> for Attribute where E: Expression {}
 
-impl<T> Expression for BlockExpr<T> {}
-impl<T, E> ExprWithBlock<E> for BlockExpr<T> where E: Expression {}
+impl<T, U> Expression for BlockExpr<T, U> {}
+impl<T, U, E> ExprWithBlock<E> for BlockExpr<T, U> where E: Expression {}
 
 impl Expression for BoolExpr {}
 impl<E> ExprWithoutBlock<E> for BoolExpr where E: Expression {}
@@ -119,6 +120,7 @@ impl<C, E> ExprWithBlock<E> for dyn ConditionalExpr<C> where E: Expression {}
 impl<E> Expression for dyn ExprWithBlock<E> {}
 
 impl<E> Expression for dyn ExprWithoutBlock<E> {}
+impl<E> Statement for dyn ExprWithoutBlock<E> {}
 
 impl Expression for FieldAccessExpr {}
 impl<E> ExprWithoutBlock<E> for FieldAccessExpr where E: Expression {}
@@ -129,22 +131,22 @@ impl<E> ExprWithoutBlock<E> for FunctionCallExpr where E: Expression {}
 impl Expression for GroupedExpr {}
 impl<E> ExprWithoutBlock<E> for GroupedExpr where E: Expression {}
 
-impl<T> Expression for IfExpr<T> {}
-impl<T, C> ConditionalExpr<C> for IfExpr<T> where C: Expression {}
-impl<T, E> ExprWithBlock<E> for IfExpr<T> where E: Expression {}
+impl<T, U> Expression for IfExpr<T, U> {}
+impl<T, U, C> ConditionalExpr<C> for IfExpr<T, U> where C: Expression {}
+impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> where E: Expression {}
 
 impl Expression for IndexExpr {}
 impl<E> ExprWithoutBlock<E> for IndexExpr where E: Expression {}
 
-impl<T> Expression for InfiniteLoopExpr<T> {}
-impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> where E: Expression {}
-impl<T, I> IterationExpr<I> for InfiniteLoopExpr<T> where I: Expression {}
+impl<T, U> Expression for InfiniteLoopExpr<T, U> {}
+impl<T, U, E> ExprWithBlock<E> for InfiniteLoopExpr<T, U> where E: Expression {}
+impl<T, U, I> IterationExpr<I> for InfiniteLoopExpr<T, U> where I: Expression {}
 
 impl<I> Expression for dyn IterationExpr<I> where I: Expression {}
 impl<I, E> ExprWithBlock<E> for dyn IterationExpr<I> where E: Expression {}
 
-impl<T> Expression for IterLoopExpr<T> {}
-impl<T, I> IterationExpr<I> for IterLoopExpr<T> where I: Expression {}
+impl<T, U> Expression for IterLoopExpr<T, U> {}
+impl<T, U, I> IterationExpr<I> for IterLoopExpr<T, U> where I: Expression {}
 
 impl Expression for KeywordKind {}
 impl<E> ExprWithoutBlock<E> for KeywordKind where E: Expression {}
@@ -166,9 +168,9 @@ impl<O> OperatorExpr<O> for NegationExpr where O: Expression {}
 impl<O> Expression for dyn OperatorExpr<O> where O: Expression {}
 impl<O, E> ExprWithoutBlock<E> for dyn OperatorExpr<O> where E: Expression {}
 
-impl<T> Expression for PredicateLoopExpr<T> {}
-impl<T, E> ExprWithBlock<E> for PredicateLoopExpr<T> where E: Expression {}
-impl<T, I> IterationExpr<I> for PredicateLoopExpr<T> where I: Expression {}
+impl<T, U> Expression for PredicateLoopExpr<T, U> {}
+impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> where E: Expression {}
+impl<T, U, I> IterationExpr<I> for PredicateLoopExpr<T, U> where I: Expression {}
 
 impl Expression for PuncKind {}
 impl<E> ExprWithoutBlock<E> for PuncKind where E: Expression {}
