@@ -3,7 +3,7 @@ use crate::{
     identifier::Identifier,
     keyword::KeywordKind,
     ty::Type,
-    type_utils::{Colon, Semicolon},
+    type_utils::{Colon, Semicolon, Equals},
 };
 
 use super::VisibilityKind;
@@ -14,7 +14,7 @@ pub struct ConstantItem {
     name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Colon, Box<dyn Expression>)>,
+    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
 
@@ -25,6 +25,6 @@ pub struct StaticItem {
     name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Colon, Box<dyn Expression>)>,
+    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
