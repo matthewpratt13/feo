@@ -8,6 +8,7 @@ mod impl_item;
 mod import_decl_item;
 mod module_item;
 mod struct_item;
+mod where_clause;
 
 use crate::identifier::Identifier;
 use crate::keyword::KeywordKind;
@@ -26,6 +27,7 @@ pub use self::enum_item::EnumItem;
 pub use self::function_item::{FunctionSignatureOnly, FunctionWithBody};
 pub use self::type_alias_item::TypeAliasItem;
 pub use self::visibility::VisibilityKind;
+pub use self::where_clause::{TypeParamBounds, WhereClause};
 
 pub trait Item {}
 
@@ -153,11 +155,11 @@ mod type_alias_item {
         expression::Attribute,
         identifier::Identifier,
         keyword::KeywordKind,
-        ty::{Type, TypeParamBounds, WhereClause},
+        ty::Type,
         type_utils::{Colon, Equals, Semicolon},
     };
 
-    use super::VisibilityKind;
+    use super::{TypeParamBounds, VisibilityKind, WhereClause};
 
     pub struct TypeAliasItem {
         attributes: Vec<Attribute>,

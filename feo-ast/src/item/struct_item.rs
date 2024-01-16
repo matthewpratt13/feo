@@ -6,13 +6,14 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
 
-use super::VisibilityKind;
+use super::{VisibilityKind, WhereClause};
 
 pub struct Struct {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KeywordKind,
     name: Identifier,
     open_brace: Brace,
+    where_clause_opt: WhereClause,
     struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }

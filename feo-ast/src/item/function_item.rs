@@ -3,11 +3,11 @@ use crate::{
     identifier::Identifier,
     keyword::KeywordKind,
     pattern::Pattern,
-    ty::{Type, WhereClause},
+    ty::Type,
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
-use super::VisibilityKind;
+use super::{VisibilityKind, WhereClause};
 
 pub enum FuncQualifier {
     Const(KeywordKind),
