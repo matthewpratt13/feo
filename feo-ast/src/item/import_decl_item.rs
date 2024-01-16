@@ -15,7 +15,7 @@ pub struct ImportDeclItem<T> {
 }
 
 pub struct EntirePathContentsItem {
-    path: Vec<Option<(Option<SimplePath>, DblColon)>>,
+    path: Option<(Option<SimplePath>, DblColon)>,
     asterisk: Asterisk,
 }
 
