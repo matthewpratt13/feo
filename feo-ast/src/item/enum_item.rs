@@ -6,7 +6,7 @@ use crate::{
 };
 
 use super::{
-    struct_item::{StructItemFields, TupleItemFields},
+    struct_item::{StructFields, TupleFields},
     VisibilityKind,
 };
 
@@ -39,12 +39,12 @@ pub struct EnumVariant {
 
 pub struct EnumVariantStruct {
     open_brace: Brace,
-    struct_item_fields_opt: Option<StructItemFields>,
+    struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
 
 pub struct EnumVariantTuple {
     open_parenthesis: Parenthesis,
-    tuple_item_fields_opt: Option<TupleItemFields>,
+    tuple_struct_fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
 }

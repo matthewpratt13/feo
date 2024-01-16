@@ -100,13 +100,13 @@ impl<T, I> ImplItem<I> for InherentImpl<T> where I: Item {}
 
 impl Item for KeywordKind {}
 
+impl<M> Item for dyn ModItem<M> {}
+
 impl Item for ModWithBody {}
 impl<M> ModItem<M> for ModWithBody where M: Item {}
 
 impl Item for ModWithoutBody {}
 impl<M> ModItem<M> for ModWithoutBody where M: Item {}
-
-impl<M> Item for dyn ModItem<M> {}
 
 impl<P> Item for PathSubsetRecursiveItem<P> {}
 impl<P, T> ImportTree<T> for PathSubsetRecursiveItem<P> where T: Item {}
@@ -117,6 +117,12 @@ impl<T> ImportTree<T> for PathWithAsClauseItem where T: Item {}
 impl Item for StaticItem {}
 
 impl<S> Item for dyn StructItem<S> {}
+
+impl Item for self::struct_item::Struct {}
+impl<S> StructItem<S> for self::struct_item::Struct where S: Item {}
+
+impl Item for self::struct_item::TupleStruct {}
+impl<S> StructItem<S> for self::struct_item::TupleStruct where S: Item {}
 
 impl<T> Item for TraitItem<T> {}
 

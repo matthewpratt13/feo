@@ -7,13 +7,6 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
-pub struct ModWithoutBody {
-    visibility_opt: Option<VisibilityKind>,
-    kw_mod: KeywordKind,
-    name: Identifier,
-    semicolon: Semicolon,
-}
-
 pub struct ModWithBody {
     visibility_opt: Option<VisibilityKind>,
     kw_mod: KeywordKind,
@@ -22,4 +15,11 @@ pub struct ModWithBody {
     attributes: Vec<Attribute>,
     items: Vec<Box<dyn Item>>,
     close_brace: Brace,
+}
+
+pub struct ModWithoutBody {
+    visibility_opt: Option<VisibilityKind>,
+    kw_mod: KeywordKind,
+    name: Identifier,
+    semicolon: Semicolon,
 }

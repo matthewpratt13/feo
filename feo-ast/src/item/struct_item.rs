@@ -8,22 +8,22 @@ use crate::{
 
 use super::VisibilityKind;
 
-pub struct StructItem {
+pub struct Struct {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KeywordKind,
     name: Identifier,
     open_brace: Brace,
-    struct_item_fields_opt: Option<StructItemFields>,
+    struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
 
-pub struct StructItemFields {
-    first_field: StructItemField,
-    subsequent_fields: Vec<(Comma, StructItemField)>,
+pub struct StructFields {
+    first_field: StructField,
+    subsequent_fields: Vec<(Comma, StructField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct StructItemField {
+pub struct StructField {
     attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
     field_name: Identifier,
@@ -31,23 +31,23 @@ pub struct StructItemField {
     field_type: Box<dyn Type>,
 }
 
-pub struct TupleStructItem {
+pub struct TupleStruct {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KeywordKind,
     name: Identifier,
     open_parenthesis: Parenthesis,
-    tuple_item_fields_opt: Option<TupleItemFields>,
+    tuple_fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
     semicolon: Semicolon,
 }
 
-pub struct TupleItemFields {
-    first_field: TupleItemField,
-    subsequent_fields: Vec<(Comma, TupleItemField)>,
+pub struct TupleFields {
+    first_field: TupleField,
+    subsequent_fields: Vec<(Comma, TupleField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct TupleItemField {
+pub struct TupleField {
     attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
     field_type: Box<dyn Type>,
