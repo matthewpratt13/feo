@@ -35,7 +35,7 @@ pub struct TupleStruct {
     params_opt: Option<(
         Box<dyn Expression>,
         Vec<(Comma, Box<dyn Expression>)>,
-        Comma,
+        Option<Comma>,
     )>,
     close_parenthesis: Parenthesis,
 }
