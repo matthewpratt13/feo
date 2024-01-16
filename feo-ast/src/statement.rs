@@ -10,16 +10,12 @@ use crate::{
 
 pub trait Statement {}
 
-impl<T> Statement for ExprStatement<T> {}
-
-impl Statement for LetStatement {}
-
-impl<T> Statement for StatementWithExpr<T> {}
-
 pub struct ExprStatement<T> {
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
     semicolon: Semicolon,
 }
+
+impl<T> Statement for ExprStatement<T> {}
 
 pub struct LetStatement {
     kw_let: KeywordKind,
@@ -31,7 +27,11 @@ pub struct LetStatement {
     semicolon: Semicolon,
 }
 
+impl Statement for LetStatement {}
+
 pub struct StatementWithExpr<T> {
     statement: Box<dyn Statement>,
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
 }
+
+impl<T> Statement for StatementWithExpr<T> {}
