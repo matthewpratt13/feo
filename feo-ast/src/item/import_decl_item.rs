@@ -15,18 +15,14 @@ pub struct ImportDeclItem<T> {
 }
 
 pub struct EntirePathContentsItem {
-    path: Option<(Option<SimplePath>, DblColon)>,
+    path_opt: Option<(Option<SimplePath>, DblColon)>,
     asterisk: Asterisk,
 }
 
 pub struct PathSubsetRecursiveItem<T> {
     path_root_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(
-        Box<dyn ImportTree<T>>,
-        Vec<(Comma, Box<dyn ImportTree<T>>)>,
-        Option<Comma>,
-    )>,
+    recursive_tree_opt: Option<(Vec<(Comma, Box<dyn ImportTree<T>>)>, Option<Comma>)>,
     close_brace: Brace,
 }
 
