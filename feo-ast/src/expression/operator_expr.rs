@@ -44,6 +44,18 @@ impl<E> ExprWithoutBlock<E> for AssignmentExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for AssignmentExpr where O: Expression {}
 
+impl Spanned for AssignmentExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = todo!();
+        let source = self.equals.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct BoolExpr {
     first_expression: Box<dyn Expression>,
     operator: OpBool,
