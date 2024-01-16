@@ -60,6 +60,18 @@ impl<E> ExprWithoutBlock<E> for TupleStruct where E: Expression {}
 
 impl<S> StructExpr<S> for TupleStruct where S: Expression {}
 
+impl Spanned for TupleStruct {
+    fn span(&self) -> Span {
+        let start_pos = self.tuple_struct_path.span().start();
+        let end_pos = self.close_parenthesis.span().end();
+        let source = self.tuple_struct_path.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct UnitStruct(SimplePath);
 
 impl Expression for UnitStruct {}
