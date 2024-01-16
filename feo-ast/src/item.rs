@@ -8,7 +8,6 @@ mod impl_item;
 mod import_decl_item;
 mod module_item;
 mod struct_item;
-mod where_clause;
 
 use crate::identifier::Identifier;
 use crate::keyword::KeywordKind;
