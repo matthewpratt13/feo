@@ -8,12 +8,6 @@ use crate::{
     type_utils::{Brace, Semicolon},
 };
 
-pub enum ProgramKind {
-    Contract,
-    Library,
-    Script,
-}
-
 pub trait ContractItem<C>
 where
     C: Item,
