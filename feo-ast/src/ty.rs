@@ -5,6 +5,8 @@ pub use self::trait_object_type::{TraitBound, TraitObjectType};
 pub trait Type {}
 
 mod array_type {
+    use feo_types::span::{Span, Spanned};
+
     use crate::type_utils::{Bracket, Semicolon};
 
     use super::Type;
@@ -17,11 +19,23 @@ mod array_type {
     }
 
     impl Type for ArrayType {}
+
+    impl Spanned for ArrayType {
+        fn span(&self) -> Span {
+            let start_pos = self.open_bracket.span().start();
+            let end_pos = self.close_bracket.span().end();
+            let source = self.open_bracket.span().source();
+
+            let span = Span::new(source.as_str(), start_pos, end_pos);
+
+            span
+        }
+    }
 }
 
 mod trait_object_type {
     use crate::{
-        keyword::KeywordKind,
+        keyword::Keyword,
         path::SimplePath,
         type_utils::{Plus, QuestionMark},
     };
@@ -29,7 +43,7 @@ mod trait_object_type {
     use super::Type;
 
     pub struct TraitObjectType {
-        kw_dyn: KeywordKind,
+        kw_dyn: Keyword,
         trait_bounds: TraitBounds,
     }
 
