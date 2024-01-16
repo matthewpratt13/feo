@@ -1,14 +1,15 @@
 use crate::{
-    expression::Expression,
+    expression::{Attribute, Expression},
     identifier::Identifier,
     keyword::KeywordKind,
     ty::Type,
-    type_utils::{Colon, Semicolon, Equals},
+    type_utils::{Colon, Equals, Semicolon},
 };
 
 use super::VisibilityKind;
 
 pub struct ConstantItem {
+    attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: KeywordKind,
     name: Identifier,

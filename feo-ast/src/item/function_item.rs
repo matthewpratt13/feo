@@ -1,5 +1,5 @@
 use crate::{
-    expression::ExprWithBlock,
+    expression::{Attribute, ExprWithBlock},
     identifier::Identifier,
     keyword::KeywordKind,
     pattern::Pattern,
@@ -21,6 +21,7 @@ pub enum FuncOrMethodParam {
 }
 
 pub struct FunctionWithBody<T> {
+    attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: KeywordKind,
@@ -33,6 +34,7 @@ pub struct FunctionWithBody<T> {
 }
 
 pub struct FunctionSignatureOnly {
+    attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<FuncQualifier>,
     kw_func: KeywordKind,

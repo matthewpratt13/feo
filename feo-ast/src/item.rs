@@ -150,6 +150,7 @@ mod trait_item {
 
 mod type_alias_item {
     use crate::{
+        expression::Attribute,
         identifier::Identifier,
         keyword::KeywordKind,
         ty::Type,
@@ -159,6 +160,7 @@ mod type_alias_item {
     use super::VisibilityKind;
 
     pub struct TypeAliasItem {
+        attributes: Vec<Attribute>,
         visibility_opt: Option<VisibilityKind>,
         kw_type: KeywordKind,
         name: Identifier,
