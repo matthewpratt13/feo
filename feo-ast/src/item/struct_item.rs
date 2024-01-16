@@ -9,6 +9,7 @@ use crate::{
 use super::VisibilityKind;
 
 pub struct StructItem {
+    visibility_opt: Option<VisibilityKind>,
     kw_struct: KeywordKind,
     name: Identifier,
     open_brace: Brace,
@@ -31,6 +32,7 @@ pub struct StructItemField {
 }
 
 pub struct TupleStructItem {
+    visibility_opt: Option<VisibilityKind>,
     kw_struct: KeywordKind,
     name: Identifier,
     open_parenthesis: Parenthesis,

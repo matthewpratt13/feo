@@ -16,6 +16,7 @@ pub enum EnumVariantType {
 }
 
 pub struct EnumItem {
+    visibility_opt: Option<VisibilityKind>,
     kw_enum: KeywordKind,
     name: Identifier,
     open_brace: Brace,

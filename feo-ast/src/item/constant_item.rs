@@ -6,7 +6,10 @@ use crate::{
     type_utils::{Colon, Semicolon},
 };
 
+use super::VisibilityKind;
+
 pub struct ConstantItem {
+    visibility_opt: Option<VisibilityKind>,
     kw_const: KeywordKind,
     name: Identifier,
     colon: Colon,
@@ -16,6 +19,7 @@ pub struct ConstantItem {
 }
 
 pub struct StaticItem {
+    visibility_opt: Option<VisibilityKind>,
     kw_static: KeywordKind,
     kw_mut_opt: Option<KeywordKind>,
     name: Identifier,

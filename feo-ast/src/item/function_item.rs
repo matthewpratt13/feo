@@ -7,6 +7,8 @@ use crate::{
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
+use super::VisibilityKind;
+
 pub enum FuncQualifier {
     Const(KeywordKind),
     Unsafe(KeywordKind),
@@ -18,7 +20,8 @@ pub enum FuncOrMethodParam {
     Method(MethodParam),
 }
 
-pub struct FunctionItem<T> {
+pub struct FunctionWithBody<T> {
+    visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: KeywordKind,
     name: Identifier,
@@ -29,7 +32,8 @@ pub struct FunctionItem<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
-pub struct FunctionSignature {
+pub struct FunctionSignatureOnly {
+    visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<FuncQualifier>,
     kw_func: KeywordKind,
     name: Identifier,

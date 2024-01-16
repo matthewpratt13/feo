@@ -5,9 +5,10 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-use super::ImportTree;
+use super::{ImportTree, VisibilityKind};
 
 pub struct ImportDeclItem<T> {
+    visibility_opt: Option<VisibilityKind>,
     kw_import: KeywordKind,
     import_tree: Box<dyn ImportTree<T>>,
     semicolon: Semicolon,

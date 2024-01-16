@@ -34,7 +34,7 @@ impl<S> Type for dyn StructItem<S> {}
 
 impl Type for EnumItem {}
 
-impl<T> Type for FunctionItem<T> {}
+impl<T> Type for dyn FunctionItem<T> {}
 
 impl Type for ArrayType {}
 

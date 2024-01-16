@@ -22,7 +22,7 @@ use self::{
 
 pub use self::constant_item::{ConstantItem, StaticItem};
 pub use self::enum_item::EnumItem;
-pub use self::function_item::FunctionItem;
+pub use self::function_item::{FunctionSignatureOnly, FunctionWithBody};
 pub use self::type_alias_item::TypeAliasItem;
 pub use self::visibility::VisibilityKind;
 
@@ -31,6 +31,11 @@ pub trait Item {}
 pub trait AssociatedItem<A>
 where
     A: Item,
+{
+}
+pub trait FunctionItem<F>
+where
+    F: Item,
 {
 }
 
@@ -70,8 +75,16 @@ impl<T> ImportTree<T> for EntirePathContentsItem where T: Item {}
 
 impl Item for ExternCrateItem {}
 
-impl<T> Item for FunctionItem<T> {}
-impl<T, A> AssociatedItem<A> for FunctionItem<T> where A: Item {}
+impl<T> Item for dyn FunctionItem<T> {}
+impl<T, A> AssociatedItem<A> for dyn FunctionItem<T> where A: Item {}
+
+impl Item for FunctionSignatureOnly {}
+impl<A> AssociatedItem<A> for FunctionSignatureOnly where A: Item {}
+impl<T> FunctionItem<T> for FunctionSignatureOnly where T: Item {}
+
+impl<T> Item for FunctionWithBody<T> {}
+impl<T, A> AssociatedItem<A> for FunctionWithBody<T> where A: Item {}
+impl<T, U> FunctionItem<T> for FunctionWithBody<U> where T: Item {}
 
 impl<I> Item for dyn ImplItem<I> {}
 
@@ -113,9 +126,10 @@ impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}
 mod trait_item {
     use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Brace};
 
-    use super::AssociatedItem;
+    use super::{AssociatedItem, VisibilityKind};
 
     pub struct TraitItem<T> {
+        visibility_opt: Option<VisibilityKind>,
         kw_unsafe_opt: Option<KeywordKind>,
         kw_impl: KeywordKind,
         name: Identifier,
@@ -133,7 +147,10 @@ mod type_alias_item {
         type_utils::{Equals, Semicolon},
     };
 
+    use super::VisibilityKind;
+
     pub struct TypeAliasItem {
+        visibility_opt: Option<VisibilityKind>,
         kw_type: KeywordKind,
         name: Identifier,
         value_opt: Option<(Equals, Box<dyn Type>)>,
