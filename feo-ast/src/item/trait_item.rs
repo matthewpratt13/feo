@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Brace, Colon},
 };
 
-use super::{AssociatedItem, TypeParamBounds, VisibilityKind, WhereClause};
+use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
 pub struct TraitItem<T> {
     visibility_opt: Option<VisibilityKind>,
@@ -19,3 +19,5 @@ pub struct TraitItem<T> {
     associated_items: Vec<Box<dyn AssociatedItem<T>>>,
     close_brace: Brace,
 }
+
+impl<T> Item for TraitItem<T> {}

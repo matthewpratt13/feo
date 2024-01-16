@@ -7,7 +7,7 @@ use crate::{
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
-use super::{VisibilityKind, WhereClause};
+use super::{AssociatedItem, FunctionItem, Item, VisibilityKind, WhereClause};
 
 pub enum FuncQualifier {
     Const(KeywordKind),
@@ -19,6 +19,25 @@ pub enum FuncOrMethodParam {
     Func(FuncParam),
     Method(MethodParam),
 }
+
+pub struct FunctionSignatureOnly {
+    attributes: Vec<Attribute>,
+    visibility_opt: Option<VisibilityKind>,
+    func_qualifiers_opt: Option<FuncQualifier>,
+    kw_func: KeywordKind,
+    name: Identifier,
+    open_parenthesis: Parenthesis,
+    func_params_opt: Option<FuncParams>,
+    close_parenthesis: Parenthesis,
+    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    semicolon: Semicolon,
+}
+
+impl Item for FunctionSignatureOnly {}
+
+impl<A> AssociatedItem<A> for FunctionSignatureOnly where A: Item {}
+
+impl<F> FunctionItem<F> for FunctionSignatureOnly where F: Item {}
 
 pub struct FunctionWithBody<T> {
     attributes: Vec<Attribute>,
@@ -34,18 +53,11 @@ pub struct FunctionWithBody<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
-pub struct FunctionSignatureOnly {
-    attributes: Vec<Attribute>,
-    visibility_opt: Option<VisibilityKind>,
-    func_qualifiers_opt: Option<FuncQualifier>,
-    kw_func: KeywordKind,
-    name: Identifier,
-    open_parenthesis: Parenthesis,
-    func_params_opt: Option<FuncParams>,
-    close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    semicolon: Semicolon,
-}
+impl<T> Item for FunctionWithBody<T> {}
+
+impl<T, A> AssociatedItem<A> for FunctionWithBody<T> where A: Item {}
+
+impl<T, F> FunctionItem<F> for FunctionWithBody<T> where F: Item {}
 
 pub struct FuncParams {
     first_param: FuncOrMethodParam,

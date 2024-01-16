@@ -6,7 +6,7 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-use super::VisibilityKind;
+use super::{AssociatedItem, Item, VisibilityKind};
 
 pub struct ConstantItem {
     attributes: Vec<Attribute>,
@@ -19,6 +19,10 @@ pub struct ConstantItem {
     semicolon: Semicolon,
 }
 
+impl Item for ConstantItem {}
+
+impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
+
 pub struct StaticItem {
     visibility_opt: Option<VisibilityKind>,
     kw_static: KeywordKind,
@@ -29,3 +33,5 @@ pub struct StaticItem {
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
+
+impl Item for StaticItem {}

@@ -1,6 +1,6 @@
 use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Semicolon};
 
-use super::{import_decl_item::AsClause, VisibilityKind};
+use super::{import_decl_item::AsClause, Item, VisibilityKind};
 
 pub enum CrateRefKind {
     Identifier(Identifier),
@@ -15,3 +15,5 @@ pub struct ExternCrateItem {
     as_clause_opt: Option<AsClause>,
     semicolon: Semicolon,
 }
+
+impl Item for ExternCrateItem {}

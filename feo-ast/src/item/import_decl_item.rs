@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-use super::{ImportTree, VisibilityKind};
+use super::{ImportTree, Item, VisibilityKind};
 
 pub struct ImportDeclItem<T> {
     visibility_opt: Option<VisibilityKind>,
@@ -14,10 +14,16 @@ pub struct ImportDeclItem<T> {
     semicolon: Semicolon,
 }
 
+impl<T> Item for ImportDeclItem<T> {}
+
 pub struct EntirePathContentsItem {
     path_opt: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
+
+impl Item for EntirePathContentsItem {}
+
+impl<I> ImportTree<I> for EntirePathContentsItem where I: Item {}
 
 pub struct PathSubsetRecursiveItem<T> {
     path_root_opt: Option<(Option<SimplePath>, DblColon)>,
@@ -25,6 +31,10 @@ pub struct PathSubsetRecursiveItem<T> {
     recursive_tree_opt: Option<(Vec<(Comma, Box<dyn ImportTree<T>>)>, Option<Comma>)>,
     close_brace: Brace,
 }
+
+impl<T> Item for PathSubsetRecursiveItem<T> {}
+
+impl<T, I> ImportTree<I> for PathSubsetRecursiveItem<T> where I: Item {}
 
 pub struct PathWithAsClauseItem {
     original_path: SimplePath,
@@ -35,3 +45,7 @@ pub struct AsClause {
     kw_as: KeywordKind,
     new_name: Identifier,
 }
+
+impl Item for PathWithAsClauseItem {}
+
+impl<I> ImportTree<I> for PathWithAsClauseItem where I: Item {}

@@ -6,7 +6,7 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-use super::{TypeParamBounds, VisibilityKind, WhereClause};
+use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
 pub struct TypeAliasItem {
     attributes: Vec<Attribute>,
@@ -18,3 +18,7 @@ pub struct TypeAliasItem {
     value_opt: Option<(Equals, Box<dyn Type>, Option<WhereClause>)>,
     semicolon: Semicolon,
 }
+
+impl Item for TypeAliasItem {}
+
+impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}

@@ -8,7 +8,10 @@ use feo_error::{
 
 use feo_types::span::{Position, Span, Spanned};
 
-use crate::token::{Token, Tokenize};
+use crate::{
+    item::Item,
+    token::{Token, Tokenize},
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum KeywordKind {
@@ -102,6 +105,8 @@ impl KeywordKind {
         }
     }
 }
+
+impl Item for KeywordKind {}
 
 impl FromStr for KeywordKind {
     type Err = TypeErrorKind;

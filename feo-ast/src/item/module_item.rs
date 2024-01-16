@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Brace, Semicolon},
 };
 
-use super::{Item, VisibilityKind};
+use super::{Item, ModItem, VisibilityKind};
 
 pub struct ModWithBody {
     visibility_opt: Option<VisibilityKind>,
@@ -18,6 +18,10 @@ pub struct ModWithBody {
     close_brace: Brace,
 }
 
+impl Item for ModWithBody {}
+
+impl<M> ModItem<M> for ModWithBody where M: Item {}
+
 pub struct ModWithoutBody {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: KeywordKind,
@@ -25,3 +29,7 @@ pub struct ModWithoutBody {
     name: Identifier,
     semicolon: Semicolon,
 }
+
+impl Item for ModWithoutBody {}
+
+impl<M> ModItem<M> for ModWithoutBody where M: Item {}

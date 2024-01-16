@@ -1,7 +1,10 @@
 use feo_error::handler::{ErrorEmitted, Handler};
 use feo_types::span::{Span, Spanned};
 
-use crate::token::{Token, Tokenize};
+use crate::{
+    item::Item,
+    token::{Token, Tokenize},
+};
 
 #[derive(Debug, Clone)]
 pub struct Identifier {
@@ -39,48 +42,14 @@ impl Spanned for Identifier {
     }
 }
 
+impl Item for Identifier {}
+
 pub fn is_keyword(iden: &str) -> bool {
     [
-        "abi",
-        "abstract",
-        "as",
-        "break",
-        "const",
-        "continue",
-        "contract",
-        "crate",
-        "deref",
-        "dyn",
-        "else",
-        "enum",
-        "export",
-        "extern",
-        "for",
-        "func",
-        "if",
-        "impl",
-        "import",
-        "in",
-        "let",
-        "library",
-        "loop",
-        "match",
-        "mod",
-        "mut",
-        "None",
-        "program",
-        "pub",
-        "ref",
-        "return",
-        "script",
-        "self",
-        "static",
-        "storage",
-        "struct",
-        "super",
-        "trait",
-        "type",
-        "unsafe",
+        "abi", "abstract", "as", "break", "const", "continue", "contract", "crate", "deref", "dyn",
+        "else", "enum", "export", "extern", "for", "func", "if", "impl", "import", "in", "let",
+        "library", "loop", "match", "mod", "mut", "None", "program", "pub", "ref", "return",
+        "script", "self", "static", "storage", "struct", "super", "trait", "type", "unsafe",
         "while",
     ]
     .contains(&iden)

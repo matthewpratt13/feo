@@ -2,7 +2,7 @@ use crate::{
     expression::Attribute, keyword::KeywordKind, path::SimplePath, ty::Type, type_utils::Brace,
 };
 
-use super::{AssociatedItem, VisibilityKind, WhereClause};
+use super::{AssociatedItem, ImplItem, Item, VisibilityKind, WhereClause};
 
 pub struct InherentImpl<T> {
     visibility_opt: Option<VisibilityKind>,
@@ -14,6 +14,10 @@ pub struct InherentImpl<T> {
     associated_items: Vec<Box<dyn AssociatedItem<T>>>,
     close_brace: Brace,
 }
+
+impl<T> Item for InherentImpl<T> {}
+
+impl<T, I> ImplItem<I> for InherentImpl<T> where I: Item {}
 
 pub struct TraitImpl<T> {
     visibility_opt: Option<VisibilityKind>,
@@ -28,3 +32,7 @@ pub struct TraitImpl<T> {
     associated_items: Vec<Box<dyn AssociatedItem<T>>>,
     close_brace: Brace,
 }
+
+impl<T> Item for TraitImpl<T> {}
+
+impl<T, I> ImplItem<I> for TraitImpl<T> where I: Item {}

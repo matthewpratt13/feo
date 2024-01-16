@@ -6,7 +6,7 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
 
-use super::{VisibilityKind, WhereClause};
+use super::{Item, StructItem, VisibilityKind, WhereClause};
 
 pub struct Struct {
     visibility_opt: Option<VisibilityKind>,
@@ -17,6 +17,10 @@ pub struct Struct {
     struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
+
+impl Item for Struct {}
+
+impl<S> StructItem<S> for Struct where S: Item {}
 
 pub struct StructFields {
     first_field: StructField,
@@ -42,6 +46,10 @@ pub struct TupleStruct {
     where_clause_opt: Option<WhereClause>,
     semicolon: Semicolon,
 }
+
+impl Item for TupleStruct {}
+
+impl<S> StructItem<S> for TupleStruct where S: Item {}
 
 pub struct TupleFields {
     first_field: TupleField,
