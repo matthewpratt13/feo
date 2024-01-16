@@ -1,9 +1,11 @@
-use crate::{keyword::KeywordKind, pattern::Pattern};
+use feo_types::span::{Span, Spanned};
+
+use crate::{keyword::Keyword, pattern::Pattern};
 
 use super::{BlockExpr, ExprWithBlock, Expression, IterationExpr};
 
 pub struct InfiniteLoopExpr<T, U> {
-    kw_loop: KeywordKind,
+    kw_loop: Keyword,
     block: BlockExpr<T, U>,
 }
 
@@ -13,8 +15,20 @@ impl<T, U, E> ExprWithBlock<E> for InfiniteLoopExpr<T, U> where E: Expression {}
 
 impl<T, U, I> IterationExpr<I> for InfiniteLoopExpr<T, U> where I: Expression {}
 
+impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
+    fn span(&self) -> Span {
+        let start_pos = self.kw_loop.span().start();
+        let end_pos = self.block.span().end();
+        let source = self.kw_loop.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct PredicateLoopExpr<T, U> {
-    kw_while: KeywordKind,
+    kw_while: Keyword,
     predicate: Box<dyn Expression>, // cannot be a struct expression
     block: BlockExpr<T, U>,
 }
@@ -25,10 +39,22 @@ impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> where E: Expression {
 
 impl<T, U, I> IterationExpr<I> for PredicateLoopExpr<T, U> where I: Expression {}
 
+impl<T, U> Spanned for PredicateLoopExpr<T, U> {
+    fn span(&self) -> Span {
+        let start_pos = self.kw_while.span().start();
+        let end_pos = self.block.span().end();
+        let source = self.kw_while.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct IterLoopExpr<T, U> {
-    kw_for: KeywordKind,
+    kw_for: Keyword,
     pattern: Box<dyn Pattern>,
-    kw_in: KeywordKind,
+    kw_in: Keyword,
     expression: Box<dyn Expression>, // cannot be a struct expression
     block: BlockExpr<T, U>,
 }
