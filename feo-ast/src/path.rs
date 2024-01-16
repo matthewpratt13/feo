@@ -1,9 +1,11 @@
 #![allow(dead_code)]
 
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
-    keyword::KeywordKind,
+    keyword::Keyword,
     pattern::Pattern,
     ty::Type,
     type_utils::DblColon,
@@ -11,9 +13,20 @@ use crate::{
 
 pub enum PathSegmentKind {
     Identifier(Identifier),
-    CrateKeyword(KeywordKind),
-    SelfKeyword(KeywordKind),
-    SuperKeyword(KeywordKind),
+    CrateKeyword(Keyword),
+    SelfKeyword(Keyword),
+    SuperKeyword(Keyword),
+}
+
+impl Spanned for PathSegmentKind {
+    fn span(&self) -> &Span {
+        match &self {
+            PathSegmentKind::Identifier(i) => i.span(),
+            PathSegmentKind::CrateKeyword(c) => c.span(),
+            PathSegmentKind::SelfKeyword(se) => se.span(),
+            PathSegmentKind::SuperKeyword(su) => su.span(),
+        }
+    }
 }
 
 pub struct SimplePath {
