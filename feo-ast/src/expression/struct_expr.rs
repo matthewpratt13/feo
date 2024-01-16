@@ -79,3 +79,15 @@ impl Expression for UnitStruct {}
 impl<E> ExprWithoutBlock<E> for UnitStruct where E: Expression {}
 
 impl<S> StructExpr<S> for UnitStruct where S: Expression {}
+
+impl Spanned for UnitStruct {
+    fn span(&self) -> Span {
+        let start_pos = self.0.span().start();
+        let end_pos = self.0.span().end();
+        let source = self.0.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
