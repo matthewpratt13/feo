@@ -1,7 +1,7 @@
 use crate::{
-    expression::{InnerAttr, OuterAttr},
+    expression::OuterAttr,
     identifier::Identifier,
-    item::{AssociatedItem, Item},
+    item::{AssociatedItem, FunctionItem, Item, VisibilityKind},
     keyword::KeywordKind,
     type_utils::{Brace, Semicolon},
 };
@@ -30,8 +30,8 @@ impl<L> Item for dyn LibraryItem<L> {}
 
 pub struct Storage<T> {
     attributes: Vec<OuterAttr>,
+    visibility_opt: Option<VisibilityKind>,
     kw_storage: KeywordKind,
-    name: Identifier,
     open_brace: Brace,
     items_opt: Option<Vec<Box<dyn AssociatedItem<T>>>>,
     close_brace: Brace,
@@ -39,27 +39,35 @@ pub struct Storage<T> {
 
 impl<T, C> ContractItem<C> for Storage<T> where C: Item {}
 
-pub struct Abi {}
+pub struct Abi<T> {
+    attributes: Vec<OuterAttr>,
+    visibility_opt: Option<VisibilityKind>,
+    kw_abi: KeywordKind,
+    contract_name: Identifier,
+    open_brace: Brace,
+    functions_opt: Option<Vec<Box<dyn FunctionItem<T>>>>,
+    close_brace: Brace,
+}
 
-impl<C> ContractItem<C> for Abi where C: Item {}
+impl<T, C> ContractItem<C> for Abi<T> where C: Item {}
 
 pub struct Contract<T> {
     attributes: Vec<OuterAttr>,
     kw_contract: KeywordKind,
     semicolon: Semicolon,
-    contract_items: Vec<Box<dyn ContractItem<T>>>,
+    contract_items_opt: Option<Vec<Box<dyn ContractItem<T>>>>,
 }
 
 pub struct Library<T> {
     attributes: Vec<OuterAttr>,
     kw_library: KeywordKind,
     semicolon: Semicolon,
-    items: Vec<Box<dyn LibraryItem<T>>>,
+    items_opt: Vec<Box<dyn LibraryItem<T>>>,
 }
 
 pub struct Script {
     attributes: Vec<OuterAttr>,
     kw_script: KeywordKind,
     semicolon: Semicolon,
-    items: Vec<Box<dyn Item>>,
+    items: Option<Vec<Box<dyn Item>>>,
 }
