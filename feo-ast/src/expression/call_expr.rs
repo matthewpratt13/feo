@@ -3,7 +3,7 @@ use crate::{
     type_utils::{Colon, Comma, Dot, Parenthesis},
 };
 
-use super::Expression;
+use super::{Expression, ExprWithoutBlock};
 
 pub struct FunctionCallExpr {
     function_path: PathSegmentKind,
@@ -11,6 +11,10 @@ pub struct FunctionCallExpr {
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
 }
+
+impl Expression for FunctionCallExpr {}
+
+impl<E> ExprWithoutBlock<E> for FunctionCallExpr where E: Expression {}
 
 pub struct CallParams {
     first_param: Box<dyn Expression>,
@@ -26,3 +30,7 @@ pub struct MethodCallExpr {
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
 }
+
+impl Expression for MethodCallExpr {}
+
+impl<E> ExprWithoutBlock<E> for MethodCallExpr where E: Expression {}

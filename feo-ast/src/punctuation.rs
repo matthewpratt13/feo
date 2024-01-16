@@ -8,7 +8,10 @@ use feo_error::{
 
 use feo_types::span::{Position, Span, Spanned};
 
-use crate::token::{Token, Tokenize};
+use crate::{
+    expression::{ExprWithoutBlock, Expression, RangeExpr},
+    token::{Token, Tokenize},
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum PuncKind {
@@ -111,6 +114,12 @@ impl PuncKind {
         }
     }
 }
+
+impl Expression for PuncKind {}
+
+impl<E> ExprWithoutBlock<E> for PuncKind where E: Expression {}
+
+impl<R> RangeExpr<R> for PuncKind where R: Expression {}
 
 impl FromStr for PuncKind {
     type Err = TypeErrorKind;

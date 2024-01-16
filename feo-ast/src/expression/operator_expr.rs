@@ -4,7 +4,7 @@ use crate::{
     type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
 };
 
-use super::Expression;
+use super::{ExprWithoutBlock, Expression, OperatorExpr};
 
 pub struct ArithmeticOrLogicalExpr {
     first_operand: Box<dyn Expression>,
@@ -12,11 +12,23 @@ pub struct ArithmeticOrLogicalExpr {
     second_operand: Box<dyn Expression>,
 }
 
+impl Expression for ArithmeticOrLogicalExpr {}
+
+impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for ArithmeticOrLogicalExpr where O: Expression {}
+
 pub struct AssignmentExpr {
     initial_value: Box<dyn Expression>,
     equals: Equals,
     new_value: Box<dyn Expression>,
 }
+
+impl Expression for AssignmentExpr {}
+
+impl<E> ExprWithoutBlock<E> for AssignmentExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for AssignmentExpr where O: Expression {}
 
 pub struct BoolExpr {
     first_expression: Box<dyn Expression>,
@@ -24,24 +36,54 @@ pub struct BoolExpr {
     second_expression: Box<dyn Expression>,
 }
 
+impl Expression for BoolExpr {}
+
+impl<E> ExprWithoutBlock<E> for BoolExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for BoolExpr where O: Expression {}
+
 pub struct ComparisonExpr {
     first_expression: Box<dyn Expression>,
     operator: OpComparison,
     second_expression: Box<dyn Expression>,
 }
 
+impl Expression for ComparisonExpr {}
+
+impl<E> ExprWithoutBlock<E> for ComparisonExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for ComparisonExpr where O: Expression {}
+
 pub struct NegationExpr {
     negator: Bang,
     expression: Box<dyn Expression>,
 }
+
+impl Expression for NegationExpr {}
+
+impl<E> ExprWithoutBlock<E> for NegationExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for NegationExpr where O: Expression {}
 
 pub struct ResultUnwrapExpr {
     expression: Box<dyn Expression>,
     question_mark: QuestionMark,
 }
 
+impl Expression for ResultUnwrapExpr {}
+
+impl<E> ExprWithoutBlock<E> for ResultUnwrapExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for ResultUnwrapExpr where O: Expression {}
+
 pub struct TypeCastExpr {
     original_expression: Box<dyn Expression>,
     kw_as: KeywordKind,
     new_type: Box<dyn Type>,
 }
+
+impl Expression for TypeCastExpr {}
+
+impl<E> ExprWithoutBlock<E> for TypeCastExpr where E: Expression {}
+
+impl<O> OperatorExpr<O> for TypeCastExpr where O: Expression {}

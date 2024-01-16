@@ -1,12 +1,16 @@
 use crate::type_utils::{Bracket, Comma, Semicolon};
 
-use super::Expression;
+use super::{ExprWithoutBlock, Expression};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
     elements_opt: Option<ArrayElements>,
     close_bracket: Bracket,
 }
+
+impl Expression for ArrayExpr {}
+
+impl<E> ExprWithoutBlock<E> for ArrayExpr where E: Expression {}
 
 pub struct ArrayElements {
     first_element: Box<dyn Expression>,
@@ -26,3 +30,7 @@ pub struct IndexExpr {
     index: usize,
     close_bracket: Bracket,
 }
+
+impl Expression for IndexExpr {}
+
+impl<E> ExprWithoutBlock<E> for IndexExpr where E: Expression {}

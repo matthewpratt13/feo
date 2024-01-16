@@ -9,6 +9,7 @@ use feo_error::{
 use feo_types::span::{Position, Span, Spanned};
 
 use crate::{
+    expression::{ExprWithoutBlock, Expression},
     item::Item,
     token::{Token, Tokenize},
 };
@@ -105,6 +106,10 @@ impl KeywordKind {
         }
     }
 }
+
+impl Expression for KeywordKind {}
+
+impl<E> ExprWithoutBlock<E> for KeywordKind where E: Expression {}
 
 impl Item for KeywordKind {}
 
