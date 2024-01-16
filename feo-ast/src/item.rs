@@ -153,8 +153,8 @@ mod type_alias_item {
         expression::Attribute,
         identifier::Identifier,
         keyword::KeywordKind,
-        ty::Type,
-        type_utils::{Equals, Semicolon},
+        ty::{Type, TypeParamBounds, WhereClause},
+        type_utils::{Colon, Equals, Semicolon},
     };
 
     use super::VisibilityKind;
@@ -164,7 +164,9 @@ mod type_alias_item {
         visibility_opt: Option<VisibilityKind>,
         kw_type: KeywordKind,
         name: Identifier,
-        value_opt: Option<(Equals, Box<dyn Type>)>,
+        type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
+        where_clause_opt: Option<WhereClause>,
+        value_opt: Option<(Equals, Box<dyn Type>, Option<WhereClause>)>,
         semicolon: Semicolon,
     }
 }

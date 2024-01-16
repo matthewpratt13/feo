@@ -11,7 +11,7 @@ use crate::{
 };
 
 pub use self::trait_object_type::{TraitBound, TraitObjectType};
-pub use self::where_clause::WhereClause;
+pub use self::where_clause::{TypeParamBounds, WhereClause};
 
 pub trait Type {}
 
