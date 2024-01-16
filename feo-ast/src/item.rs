@@ -9,6 +9,7 @@ mod import_decl_item;
 mod module_item;
 mod struct_item;
 
+use crate::identifier::Identifier;
 use crate::keyword::KeywordKind;
 
 use self::impl_item::{InherentImpl, TraitImpl};
@@ -85,6 +86,8 @@ impl<T> FunctionItem<T> for FunctionSignatureOnly where T: Item {}
 impl<T> Item for FunctionWithBody<T> {}
 impl<T, A> AssociatedItem<A> for FunctionWithBody<T> where A: Item {}
 impl<T, U> FunctionItem<T> for FunctionWithBody<U> where T: Item {}
+
+impl Item for Identifier {}
 
 impl<I> Item for dyn ImplItem<I> {}
 
