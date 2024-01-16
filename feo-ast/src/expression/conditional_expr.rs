@@ -61,6 +61,18 @@ impl<C> ConditionalExpr<C> for MatchExpr where C: Expression {}
 
 impl<E> ExprWithBlock<E> for MatchExpr where E: Expression {}
 
+impl Spanned for MatchExpr {
+    fn span(&self) -> Span {
+        let start_pos = self.kw_match.span().start();
+        let end_pos = self.close_brace.span().end();
+        let source = self.kw_match.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct MatchArms {
     arms: Vec<(MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>)>,
     final_arm: (MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>),
