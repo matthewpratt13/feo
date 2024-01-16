@@ -39,6 +39,8 @@ impl<A> AssociatedItem<A> for FunctionSignatureOnly where A: Item {}
 
 impl<F> FunctionItem<F> for FunctionSignatureOnly where F: Item {}
 
+impl Type for FunctionSignatureOnly {}
+
 pub struct FunctionWithBody<T> {
     attributes: Vec<Attribute>,
     visibility_opt: Option<VisibilityKind>,
@@ -58,6 +60,8 @@ impl<T> Item for FunctionWithBody<T> {}
 impl<T, A> AssociatedItem<A> for FunctionWithBody<T> where A: Item {}
 
 impl<T, F> FunctionItem<F> for FunctionWithBody<T> where F: Item {}
+
+impl<T> Type for FunctionWithBody<T> {}
 
 pub struct FuncParams {
     first_param: FuncOrMethodParam,

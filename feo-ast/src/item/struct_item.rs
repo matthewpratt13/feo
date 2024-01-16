@@ -22,6 +22,8 @@ impl Item for Struct {}
 
 impl<S> StructItem<S> for Struct where S: Item {}
 
+impl Type for Struct {}
+
 pub struct StructFields {
     first_field: StructField,
     subsequent_fields: Vec<(Comma, StructField)>,
@@ -50,6 +52,8 @@ pub struct TupleStruct {
 impl Item for TupleStruct {}
 
 impl<S> StructItem<S> for TupleStruct where S: Item {}
+
+impl Type for TupleStruct {}
 
 pub struct TupleFields {
     first_field: TupleField,
