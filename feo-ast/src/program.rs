@@ -1,4 +1,10 @@
-use crate::{item::Item, keyword::KeywordKind, type_utils::Semicolon};
+use crate::{
+    expression::{InnerAttr, OuterAttr},
+    identifier::Identifier,
+    item::{AssociatedItem, Item},
+    keyword::KeywordKind,
+    type_utils::{Brace, Semicolon},
+};
 
 pub enum ProgramKind {
     Contract,
@@ -22,20 +28,38 @@ where
 
 impl<L> Item for dyn LibraryItem<L> {}
 
-pub struct Storage {}
+pub struct Storage<T> {
+    attributes: Vec<OuterAttr>,
+    kw_storage: KeywordKind,
+    name: Identifier,
+    open_brace: Brace,
+    items_opt: Option<Vec<Box<dyn AssociatedItem<T>>>>,
+    close_brace: Brace,
+}
 
-impl<C> ContractItem<C> for Storage where C: Item {}
+impl<T, C> ContractItem<C> for Storage<T> where C: Item {}
 
 pub struct Abi {}
 
 impl<C> ContractItem<C> for Abi where C: Item {}
 
-pub struct Contract {}
+pub struct Contract<T> {
+    attributes: Vec<OuterAttr>,
+    kw_contract: KeywordKind,
+    semicolon: Semicolon,
+    contract_items: Vec<Box<dyn ContractItem<T>>>,
+}
 
 pub struct Library<T> {
+    attributes: Vec<OuterAttr>,
     kw_library: KeywordKind,
     semicolon: Semicolon,
     items: Vec<Box<dyn LibraryItem<T>>>,
 }
 
-pub struct Script {}
+pub struct Script {
+    attributes: Vec<OuterAttr>,
+    kw_script: KeywordKind,
+    semicolon: Semicolon,
+    items: Vec<Box<dyn Item>>,
+}
