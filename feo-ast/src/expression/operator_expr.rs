@@ -1,3 +1,5 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     keyword::KeywordKind,
     ty::Type,
@@ -17,6 +19,18 @@ impl Expression for ArithmeticOrLogicalExpr {}
 impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for ArithmeticOrLogicalExpr where O: Expression {}
+
+impl Spanned for ArithmeticOrLogicalExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = todo!();
+        let source = self.operator.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
 
 pub struct AssignmentExpr {
     initial_value: Box<dyn Expression>,
