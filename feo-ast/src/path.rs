@@ -35,6 +35,14 @@ pub struct SimplePath {
     subsequent_segments: Vec<(DblColon, PathSegmentKind)>,
 }
 
+impl Expression for SimplePath {}
+
+impl<E> ExprWithoutBlock<E> for SimplePath where E: Expression {}
+
+impl Pattern for SimplePath {}
+
+impl Type for SimplePath {}
+
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
         let start_pos = match &self.dbl_colon_opt {
@@ -57,11 +65,3 @@ impl Spanned for SimplePath {
         span
     }
 }
-
-impl Expression for SimplePath {}
-
-impl<E> ExprWithoutBlock<E> for SimplePath where E: Expression {}
-
-impl Pattern for SimplePath {}
-
-impl Type for SimplePath {}
