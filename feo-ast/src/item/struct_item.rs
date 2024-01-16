@@ -12,8 +12,8 @@ pub struct Struct {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KeywordKind,
     name: Identifier,
+    where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    where_clause_opt: WhereClause,
     struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
@@ -39,6 +39,7 @@ pub struct TupleStruct {
     open_parenthesis: Parenthesis,
     tuple_fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
+    where_clause_opt: Option<WhereClause>,
     semicolon: Semicolon,
 }
 
