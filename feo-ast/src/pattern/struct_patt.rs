@@ -15,6 +15,8 @@ pub struct StructPatt {
     close_brace: Brace,
 }
 
+impl Pattern for StructPatt {}
+
 pub struct StructPattFields {
     first_field: StructPattField,
     subsequent_fields: Vec<(Comma, StructPattField)>,
@@ -33,6 +35,8 @@ pub struct TupleStructPatt {
     tuple_struct_fields_opt: Option<TupleStructItems>,
     close_parenthesis: Parenthesis,
 }
+
+impl Pattern for TupleStructPatt {}
 
 pub struct TupleStructItems {
     first_item: Box<dyn Pattern>,

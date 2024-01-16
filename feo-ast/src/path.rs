@@ -4,7 +4,8 @@ use crate::{
     expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
     keyword::KeywordKind,
-    type_utils::DblColon, ty::Type,
+    ty::Type,
+    type_utils::DblColon, pattern::Pattern,
 };
 
 pub enum PathSegmentKind {
@@ -23,5 +24,7 @@ pub struct SimplePath {
 impl Expression for SimplePath {}
 
 impl<E> ExprWithoutBlock<E> for SimplePath where E: Expression {}
+
+impl Pattern for SimplePath {}
 
 impl Type for SimplePath {}

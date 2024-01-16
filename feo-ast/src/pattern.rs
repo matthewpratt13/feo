@@ -2,17 +2,9 @@
 
 use feo_types::U256;
 
-use crate::{path::SimplePath, punctuation::PuncKind, type_utils::Parenthesis};
-
 mod range_patt;
 mod struct_patt;
 mod tuple_patt;
-
-use self::{
-    identifier_patt::IdentifierPatt,
-    range_patt::{RangeFromPatt, RangeInclusivePatt, RangeToInclusivePatt},
-    struct_patt::{StructPatt, TupleStructPatt},
-};
 
 pub trait Pattern {}
 
@@ -21,6 +13,8 @@ where
     L: Pattern,
 {
 }
+
+impl<L> Pattern for dyn LiteralPatt<L> {}
 
 pub trait RangePatt<R>
 where
@@ -34,31 +28,7 @@ where
 {
 }
 
-impl Pattern for GroupedPatt {}
-
-impl Pattern for IdentifierPatt {}
-
-impl<L> Pattern for dyn LiteralPatt<L> {}
-
-impl Pattern for PuncKind {}
-impl<R> RangePatt<R> for PuncKind where R: Pattern {}
-
 impl<R> Pattern for dyn RangePatt<R> {}
-
-impl<T> Pattern for RangeFromPatt<T> {}
-impl<T, R> RangePatt<R> for RangeFromPatt<T> where R: Pattern {}
-
-impl<T> Pattern for RangeInclusivePatt<T> {}
-impl<T, R> RangePatt<R> for RangeInclusivePatt<T> where R: Pattern {}
-
-impl<T> Pattern for RangeToInclusivePatt<T> {}
-impl<T, R> RangePatt<R> for RangeToInclusivePatt<T> where R: Pattern {}
-
-impl Pattern for SimplePath {}
-
-impl Pattern for StructPatt {}
-
-impl Pattern for TupleStructPatt {}
 
 impl Pattern for char {}
 impl<L> LiteralPatt<L> for char where L: Pattern {}
@@ -92,18 +62,30 @@ impl Pattern for bool {}
 impl<L> LiteralPatt<L> for bool where L: Pattern {}
 impl<R> RangePattBound<R> for bool where R: Pattern {}
 
-pub struct GroupedPatt {
-    open_parenthesis: Parenthesis,
-    pattern: Box<dyn Pattern>,
-    close_parenthesis: Parenthesis,
+mod grouped_pattern {
+    use crate::type_utils::Parenthesis;
+
+    use super::Pattern;
+
+    pub struct GroupedPatt {
+        open_parenthesis: Parenthesis,
+        pattern: Box<dyn Pattern>,
+        close_parenthesis: Parenthesis,
+    }
+
+    impl Pattern for GroupedPatt {}
 }
 
 mod identifier_patt {
     use crate::{identifier::Identifier, keyword::KeywordKind};
+
+    use super::Pattern;
 
     pub struct IdentifierPatt {
         kw_ref_opt: Option<KeywordKind>,
         kw_mut_opt: Option<KeywordKind>,
         name: Identifier,
     }
+
+    impl Pattern for IdentifierPatt {}
 }
