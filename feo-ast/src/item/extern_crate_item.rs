@@ -1,6 +1,6 @@
 use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Semicolon};
 
-use super::{import_decl_item::AsClause, Item, VisibilityKind};
+use super::{AsClause, Item, VisibilityKind};
 
 pub enum CrateRefKind {
     Identifier(Identifier),

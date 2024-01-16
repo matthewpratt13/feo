@@ -6,10 +6,7 @@ use crate::{
     type_utils::{Brace, Comma, Parenthesis},
 };
 
-use super::{
-    struct_item::{StructFields, TupleFields},
-    Item, VisibilityKind, WhereClause,
-};
+use super::{Item, StructFields, TupleFields, VisibilityKind, WhereClause};
 
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),
