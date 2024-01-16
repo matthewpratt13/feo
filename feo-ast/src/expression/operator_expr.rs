@@ -138,6 +138,18 @@ impl<E> ExprWithoutBlock<E> for ResultUnwrapExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for ResultUnwrapExpr where O: Expression {}
 
+impl Spanned for ResultUnwrapExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = self.question_mark.span().end();
+        let source = self.question_mark.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct TypeCastExpr {
     original_expression: Box<dyn Expression>,
     kw_as: KeywordKind,
