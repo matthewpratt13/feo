@@ -11,7 +11,9 @@ use feo_types::span::{Position, Span, Spanned};
 use crate::{
     expression::{ExprWithoutBlock, Expression, RangeExpr},
     pattern::{Pattern, RangePatt},
-    token::{Token, Tokenize}, ty::Type,
+    statement::Statement,
+    token::{Token, Tokenize},
+    ty::Type,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -125,6 +127,8 @@ impl Pattern for PuncKind {}
 impl<R> RangeExpr<R> for PuncKind where R: Expression {}
 
 impl<R> RangePatt<R> for PuncKind where R: Pattern {}
+
+impl Statement for PuncKind {}
 
 impl Type for PuncKind {}
 

@@ -11,6 +11,7 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
+use crate::statement::Statement;
 use crate::ty::Type;
 
 pub use self::enum_item::EnumItem;
@@ -18,6 +19,8 @@ pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
 pub trait Item {}
+
+impl Statement for dyn Item {}
 
 pub trait AssociatedItem<A>
 where
