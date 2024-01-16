@@ -231,7 +231,7 @@ mod grouped_expr {
             let start_pos = self.open_parenthesis.span().start();
             let end_pos = self.close_parenthesis.span().end();
             let source = self.open_parenthesis.span().source();
-            
+
             let span = Span::new(source.as_str(), start_pos, end_pos);
 
             span
@@ -240,16 +240,25 @@ mod grouped_expr {
 }
 
 mod return_expr {
-    use crate::keyword::KeywordKind;
+    use feo_types::span::{Span, Spanned};
+
+    use crate::keyword::Keyword;
 
     use super::{ExprWithoutBlock, Expression};
 
     pub struct ReturnExpr {
-        kw_return: KeywordKind,
+        kw_return: Keyword,
         expression_opt: Option<Box<dyn Expression>>,
     }
 
     impl Expression for ReturnExpr {}
 
     impl<E> ExprWithoutBlock<E> for ReturnExpr where E: Expression {}
+
+    impl Spanned for ReturnExpr {
+        fn span(&self) -> Span {
+            let start_pos = self.kw_return.span().start();
+            todo!()
+        }
+    }
 }
