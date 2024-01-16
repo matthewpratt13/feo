@@ -8,7 +8,8 @@ mod impl_item;
 mod import_decl_item;
 mod module_item;
 mod struct_item;
-mod where_clause;
+mod trait_item;
+mod type_alias_item;
 
 use crate::identifier::Identifier;
 use crate::keyword::KeywordKind;
@@ -134,53 +135,6 @@ impl<T> Item for TraitItem<T> {}
 impl Item for TypeAliasItem {}
 impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}
 
-mod trait_item {
-    use crate::{
-        expression::Attribute,
-        identifier::Identifier,
-        keyword::KeywordKind,
-        type_utils::{Brace, Colon},
-    };
-
-    use super::{AssociatedItem, TypeParamBounds, VisibilityKind, WhereClause};
-
-    pub struct TraitItem<T> {
-        visibility_opt: Option<VisibilityKind>,
-        kw_unsafe_opt: Option<KeywordKind>,
-        kw_impl: KeywordKind,
-        name: Identifier,
-        type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
-        where_clause_opt: Option<WhereClause>,
-        open_brace: Brace,
-        attributes: Vec<Attribute>,
-        associated_items: Vec<Box<dyn AssociatedItem<T>>>,
-        close_brace: Brace,
-    }
-}
-
-mod type_alias_item {
-    use crate::{
-        expression::Attribute,
-        identifier::Identifier,
-        keyword::KeywordKind,
-        ty::Type,
-        type_utils::{Colon, Equals, Semicolon},
-    };
-
-    use super::{TypeParamBounds, VisibilityKind, WhereClause};
-
-    pub struct TypeAliasItem {
-        attributes: Vec<Attribute>,
-        visibility_opt: Option<VisibilityKind>,
-        kw_type: KeywordKind,
-        name: Identifier,
-        type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
-        where_clause_opt: Option<WhereClause>,
-        value_opt: Option<(Equals, Box<dyn Type>, Option<WhereClause>)>,
-        semicolon: Semicolon,
-    }
-}
-
 mod visibility {
     use crate::{keyword::KeywordKind, type_utils::Parenthesis};
 
@@ -194,5 +148,31 @@ mod visibility {
         open_parenthesis: Parenthesis,
         kw_crate: KeywordKind,
         close_parenthesis: Parenthesis,
+    }
+}
+
+mod where_clause {
+    use crate::{
+        keyword::KeywordKind,
+        ty::{TraitBound, Type},
+        type_utils::{Colon, Comma, Plus},
+    };
+
+    pub struct WhereClause {
+        kw_where: KeywordKind,
+        type_bounds: Vec<(TypeBound, Comma)>,
+        trailing_type_bound_opt: Option<TypeBound>,
+    }
+
+    pub struct TypeBound {
+        ty: Box<dyn Type>,
+        colon: Colon,
+        type_param_bounds_opt: Option<TypeParamBounds>,
+    }
+
+    pub struct TypeParamBounds {
+        first_bound: TraitBound,
+        subsequent_bounds: Vec<(Plus, TraitBound)>,
+        trailing_plus_opt: Option<Plus>,
     }
 }
