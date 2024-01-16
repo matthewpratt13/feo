@@ -20,6 +20,8 @@ impl Expression for ClosureWithoutReturnType {}
 
 impl<C> ClosureExpr<C> for ClosureWithoutReturnType where C: Expression {}
 
+impl Type for ClosureWithoutReturnType {}
+
 pub struct ClosureWithReturnType<T, U> {
     params: ClosureParamsOpt,
     thin_arrow: ThinArrow,
@@ -30,6 +32,8 @@ pub struct ClosureWithReturnType<T, U> {
 impl<T, U> Expression for ClosureWithReturnType<T, U> {}
 
 impl<T, U, C> ClosureExpr<C> for ClosureWithReturnType<T, U> where C: Expression {}
+
+impl<T, U> Type for ClosureWithReturnType<T, U> {}
 
 pub struct ClosureParams {
     first_param: ClosureParam,

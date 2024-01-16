@@ -14,6 +14,7 @@ mod struct_expr;
 mod tuple_expr;
 
 use crate::statement::Statement;
+use crate::ty::Type;
 
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
@@ -45,6 +46,8 @@ where
 }
 
 impl<C> Expression for dyn ClosureExpr<C> {}
+
+impl<C> Type for dyn ClosureExpr<C> {}
 
 pub trait ConditionalExpr<C>
 where
