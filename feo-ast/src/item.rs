@@ -69,10 +69,10 @@ impl<A> Item for dyn AssociatedItem<A> {}
 impl Item for ConstantItem {}
 impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
 
-impl Item for EnumItem {}
-
 impl Item for EntirePathContentsItem {}
 impl<T> ImportTree<T> for EntirePathContentsItem where T: Item {}
+
+impl Item for EnumItem {}
 
 impl Item for ExternCrateItem {}
 
@@ -116,18 +116,18 @@ impl<T> ImportTree<T> for PathWithAsClauseItem where T: Item {}
 
 impl Item for StaticItem {}
 
-impl<S> Item for dyn StructItem<S> {}
-
 impl Item for self::struct_item::Struct {}
 impl<S> StructItem<S> for self::struct_item::Struct where S: Item {}
+
+impl<S> Item for dyn StructItem<S> {}
 
 impl Item for self::struct_item::TupleStruct {}
 impl<S> StructItem<S> for self::struct_item::TupleStruct where S: Item {}
 
-impl<T> Item for TraitItem<T> {}
-
 impl<T> Item for TraitImpl<T> {}
 impl<T, I> ImplItem<I> for TraitImpl<T> where I: Item {}
+
+impl<T> Item for TraitItem<T> {}
 
 impl Item for TypeAliasItem {}
 impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}
