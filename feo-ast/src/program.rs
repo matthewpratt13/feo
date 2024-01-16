@@ -6,11 +6,13 @@ pub enum ProgramKind {
     Script,
 }
 
-pub enum ContractItemKind {
-    Item,
-    Storage,
-    Abi,
+pub trait ContractItem<C>
+where
+    C: Item,
+{
 }
+
+impl<C> Item for dyn ContractItem<C> {}
 
 pub trait LibraryItem<L>
 where
@@ -22,7 +24,11 @@ impl<L> Item for dyn LibraryItem<L> {}
 
 pub struct Storage {}
 
+impl<C> ContractItem<C> for Storage where C: Item {}
+
 pub struct Abi {}
+
+impl<C> ContractItem<C> for Abi where C: Item {}
 
 pub struct Contract {}
 

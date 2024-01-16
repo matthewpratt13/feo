@@ -11,7 +11,7 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
-use crate::program::LibraryItem;
+use crate::program::{ContractItem, LibraryItem};
 use crate::statement::Statement;
 use crate::ty::Type;
 
@@ -22,6 +22,8 @@ pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
 pub trait Item {}
+
+impl<C> ContractItem<C> for dyn Item where C: Item {}
 
 impl Statement for dyn Item {}
 
