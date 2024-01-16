@@ -62,3 +62,15 @@ pub struct IterLoopExpr<T, U> {
 impl<T, U> Expression for IterLoopExpr<T, U> {}
 
 impl<T, U, I> IterationExpr<I> for IterLoopExpr<T, U> where I: Expression {}
+
+impl<T, U> Spanned for IterLoopExpr<T, U> {
+    fn span(&self) -> Span {
+        let start_pos = self.kw_for.span().start();
+        let end_pos = self.block.span().end();
+        let source = self.kw_for.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
