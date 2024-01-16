@@ -221,7 +221,7 @@ impl Spanned for U256Literal {
 }
 
 #[derive(Debug, Clone)]
-pub struct Bytes32Literal(pub Literal<[u8; 32]>);
+pub struct Bytes32Literal(pub Literal<&'static[u8; 32]>);
 
 // TODO: implement Tokenize ?
 

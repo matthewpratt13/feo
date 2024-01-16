@@ -84,9 +84,9 @@ impl Pattern for f64 {}
 impl<L> LiteralPatt<L> for f64 where L: Pattern {}
 impl<R> RangePattBound<R> for f64 where R: Pattern {}
 
-impl Pattern for [u8; 32] {}
-impl<L> LiteralPatt<L> for [u8; 32] where L: Pattern {}
-impl<R> RangePattBound<R> for [u8; 32] where R: Pattern {}
+impl Pattern for &[u8; 32] {}
+impl<L> LiteralPatt<L> for &[u8; 32] where L: Pattern {}
+impl<R> RangePattBound<R> for &[u8; 32] where R: Pattern {}
 
 impl Pattern for bool {}
 impl<L> LiteralPatt<L> for bool where L: Pattern {}
