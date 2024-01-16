@@ -228,8 +228,8 @@ impl Tokenize for Punctuation {
 }
 
 impl Spanned for Punctuation {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }
 

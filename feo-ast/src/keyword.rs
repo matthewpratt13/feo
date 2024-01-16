@@ -209,7 +209,7 @@ impl Tokenize for Keyword {
 }
 
 impl Spanned for Keyword {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }

@@ -106,8 +106,8 @@ impl Tokenize for Delimiter {
 }
 
 impl Spanned for Delimiter {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }
 

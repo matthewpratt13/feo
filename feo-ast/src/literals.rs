@@ -41,7 +41,7 @@ impl Tokenize for CharLiteral {
 }
 
 impl Spanned for CharLiteral {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -70,7 +70,7 @@ impl Tokenize for StringLiteral {
 }
 
 impl Spanned for StringLiteral {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -107,7 +107,7 @@ impl Tokenize for IntLiteral {
 }
 
 impl Spanned for IntLiteral {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -177,7 +177,7 @@ impl Tokenize for UIntLiteral {
 }
 
 impl Spanned for UIntLiteral {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -224,7 +224,7 @@ impl Tokenize for U256Literal {
 }
 
 impl Spanned for U256Literal {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -237,7 +237,7 @@ pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
 // TODO: implement Tokenize ?
 
 impl Spanned for Bytes32Literal {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -275,7 +275,7 @@ impl Tokenize for FloatLiteral {
 }
 
 impl Spanned for FloatLiteral {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }
@@ -313,7 +313,7 @@ impl Tokenize for BoolLiteral {
 }
 
 impl Spanned for BoolLiteral {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         self.0.span()
     }
 }

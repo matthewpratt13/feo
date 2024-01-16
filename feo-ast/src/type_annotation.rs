@@ -131,8 +131,8 @@ impl Tokenize for TypeAnnotation {
 }
 
 impl Spanned for TypeAnnotation {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }
 

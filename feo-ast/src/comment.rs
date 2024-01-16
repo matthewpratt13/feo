@@ -66,7 +66,7 @@ impl Tokenize for Comment {
 }
 
 impl Spanned for Comment {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }

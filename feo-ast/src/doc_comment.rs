@@ -81,7 +81,7 @@ impl Tokenize for DocComment {
 }
 
 impl Spanned for DocComment {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }

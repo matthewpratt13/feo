@@ -49,7 +49,7 @@ pub enum Token {
 }
 
 impl Spanned for Token {
-    fn span(&self) -> &Span {
+    fn span(&self) -> Span {
         match self {
             Token::CharLit(c) => c.span(),
             Token::StringLit(s) => s.span(),
@@ -71,12 +71,12 @@ impl Spanned for Token {
 }
 
 #[derive(Debug, Clone)]
-pub struct TokenStream<T> {
+pub struct TokenStream<T: Clone> {
     tokens: Vec<Option<T>>,
     span: Span,
 }
 
-impl<T> TokenStream<T> {
+impl<T: Clone> TokenStream<T> {
     pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
         Self {
             tokens,
@@ -89,9 +89,9 @@ impl<T> TokenStream<T> {
     }
 }
 
-impl<T> Spanned for TokenStream<T> {
-    fn span(&self) -> &Span {
-        &self.span
+impl<T: Clone> Spanned for TokenStream<T> {
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }
 

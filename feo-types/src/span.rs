@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 pub trait Spanned {
-    fn span(&self) -> &Span;
+    fn span(&self) -> Span;
 }
 
 #[derive(Default, Debug, Clone)]

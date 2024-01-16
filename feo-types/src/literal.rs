@@ -26,7 +26,7 @@ impl<L> Spanned for Literal<L>
 where
     L: 'static + Primitive + Clone,
 {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }

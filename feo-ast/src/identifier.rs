@@ -37,8 +37,8 @@ impl Tokenize for Identifier {
 }
 
 impl Spanned for Identifier {
-    fn span(&self) -> &Span {
-        &self.span
+    fn span(&self) -> Span {
+        self.clone().span
     }
 }
 
