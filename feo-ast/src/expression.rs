@@ -109,6 +109,8 @@ impl Expression for u64 {}
 
 impl Expression for U256 {}
 
+impl Expression for f64 {}
+
 impl Expression for &[u8; 32] {}
 
 impl Expression for bool {}
