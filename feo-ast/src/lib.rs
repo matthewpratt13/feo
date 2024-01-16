@@ -25,6 +25,7 @@ mod type_utils {
     pub type Comma = PuncKind;
     pub type DblColon = PuncKind;
     pub type DblDot = PuncKind;
+    pub type DblPipe = PuncKind;
     pub type Dot = PuncKind;
     pub type DotDotEquals = PuncKind;
     pub type Equals = PuncKind;
@@ -33,6 +34,7 @@ mod type_utils {
     pub type OpArithmeticOrLogical = PuncKind;
     pub type OpBool = PuncKind;
     pub type OpComparison = PuncKind;
+    pub type Pipe = PuncKind;
     pub type Plus = PuncKind;
     pub type QuestionMark = PuncKind;
     pub type Semicolon = PuncKind;

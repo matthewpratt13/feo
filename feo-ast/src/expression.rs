@@ -5,6 +5,7 @@ use feo_types::U256;
 mod array_expr;
 mod block_expr;
 mod call_expr;
+mod closure_expr;
 mod conditional_expr;
 mod iteration_expr;
 mod operator_expr;
@@ -36,6 +37,14 @@ where
 impl<E> Expression for dyn ExprWithoutBlock<E> {}
 
 impl<E> Statement for dyn ExprWithoutBlock<E> {}
+
+pub trait ClosureExpr<C>
+where
+    C: Expression,
+{
+}
+
+impl<C> Expression for dyn ClosureExpr<C> {}
 
 pub trait ConditionalExpr<C>
 where
