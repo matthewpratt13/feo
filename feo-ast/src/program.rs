@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
@@ -27,17 +29,6 @@ where
 }
 
 impl<L> Item for dyn LibraryItem<L> {}
-
-pub struct Storage<T> {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_storage: KeywordKind,
-    open_brace: Brace,
-    items_opt: Option<Vec<Box<dyn AssociatedItem<T>>>>,
-    close_brace: Brace,
-}
-
-impl<T, C> ContractItem<C> for Storage<T> where C: Item {}
 
 pub struct Abi<T> {
     attributes: Vec<OuterAttr>,
@@ -69,5 +60,16 @@ pub struct Script {
     attributes: Vec<OuterAttr>,
     kw_script: KeywordKind,
     semicolon: Semicolon,
-    items: Option<Vec<Box<dyn Item>>>,
+    items_opt: Option<Vec<Box<dyn Item>>>,
 }
+
+pub struct Storage<T> {
+    attributes: Vec<OuterAttr>,
+    visibility_opt: Option<VisibilityKind>,
+    kw_storage: KeywordKind,
+    open_brace: Brace,
+    items_opt: Option<Vec<Box<dyn AssociatedItem<T>>>>,
+    close_brace: Brace,
+}
+
+impl<T, C> ContractItem<C> for Storage<T> where C: Item {}
