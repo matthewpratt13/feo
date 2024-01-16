@@ -2,6 +2,7 @@ use crate::{
     expression::InnerAttr,
     identifier::Identifier,
     keyword::KeywordKind,
+    program::LibraryItem,
     type_utils::{Brace, Colon},
 };
 
@@ -21,3 +22,5 @@ pub struct TraitItem<T> {
 }
 
 impl<T> Item for TraitItem<T> {}
+
+impl<T, L> LibraryItem<L> for TraitItem<T> where L: Item {}

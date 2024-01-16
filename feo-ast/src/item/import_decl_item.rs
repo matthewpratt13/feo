@@ -2,6 +2,7 @@ use crate::{
     identifier::Identifier,
     keyword::KeywordKind,
     path::SimplePath,
+    program::LibraryItem,
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
@@ -15,6 +16,8 @@ pub struct ImportDeclItem<T> {
 }
 
 impl<T> Item for ImportDeclItem<T> {}
+
+impl<T, L> LibraryItem<L> for ImportDeclItem<T> where L: Item {}
 
 pub struct EntirePathContentsItem {
     path_opt: Vec<Option<(Option<SimplePath>, DblColon)>>,

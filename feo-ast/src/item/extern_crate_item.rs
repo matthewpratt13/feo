@@ -1,4 +1,6 @@
-use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::Semicolon};
+use crate::{
+    identifier::Identifier, keyword::KeywordKind, program::LibraryItem, type_utils::Semicolon,
+};
 
 use super::{AsClause, Item, VisibilityKind};
 
@@ -17,3 +19,5 @@ pub struct ExternCrateItem {
 }
 
 impl Item for ExternCrateItem {}
+
+impl<L> LibraryItem<L> for ExternCrateItem where L: Item {}

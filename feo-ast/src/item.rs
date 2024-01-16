@@ -11,6 +11,7 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
+use crate::program::LibraryItem;
 use crate::statement::Statement;
 use crate::ty::Type;
 
@@ -31,6 +32,8 @@ where
 }
 
 impl<A> Item for dyn AssociatedItem<A> {}
+
+impl<A, L> LibraryItem<L> for dyn AssociatedItem<A> where L: Item {}
 
 pub trait FunctionItem<F>
 where
