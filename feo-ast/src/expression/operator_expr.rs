@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    keyword::KeywordKind,
+    keyword::Keyword,
     ty::Type,
     type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
 };
@@ -152,7 +152,7 @@ impl Spanned for ResultUnwrapExpr {
 
 pub struct TypeCastExpr {
     original_expression: Box<dyn Expression>,
-    kw_as: KeywordKind,
+    kw_as: Keyword,
     new_type: Box<dyn Type>, // cannot be trait object
 }
 
@@ -161,3 +161,16 @@ impl Expression for TypeCastExpr {}
 impl<E> ExprWithoutBlock<E> for TypeCastExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for TypeCastExpr where O: Expression {}
+
+impl Spanned for TypeCastExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = todo!();
+        let source = self.kw_as.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
