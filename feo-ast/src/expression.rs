@@ -100,20 +100,28 @@ impl<S> Expression for dyn StructExpr<S> where S: Expression {}
 impl<S, E> ExprWithoutBlock<E> for dyn StructExpr<S> where E: Expression {}
 
 impl Expression for char {}
+impl<L> LiteralExpr<L> for char where L: Expression {}
 
 impl Expression for &'static str {}
+impl<L> LiteralExpr<L> for &'static str where L: Expression {}
 
 impl Expression for i64 {}
+impl<L> LiteralExpr<L> for i64 where L: Expression {}
 
 impl Expression for u64 {}
+impl<L> LiteralExpr<L> for u64 where L: Expression {}
 
 impl Expression for U256 {}
+impl<L> LiteralExpr<L> for U256 where L: Expression {}
 
 impl Expression for f64 {}
+impl<L> LiteralExpr<L> for f64 where L: Expression {}
 
 impl Expression for &[u8; 32] {}
+impl<L> LiteralExpr<L> for &[u8; 32] where L: Expression {}
 
 impl Expression for bool {}
+impl<L> LiteralExpr<L> for bool where L: Expression {}
 
 pub struct Attribute {
     hash: HashSign,
