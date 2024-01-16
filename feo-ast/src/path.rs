@@ -50,13 +50,10 @@ impl Spanned for SimplePath {
             None => self.first_segment.span().start(),
         };
 
-        let end_pos = self
-            .subsequent_segments
-            .last()
-            .expect("No subsequent path segments")
-            .1
-            .span()
-            .end();
+        let end_pos = match self.subsequent_segments.last() {
+            Some(s) => s.1.span().end(),
+            None => self.first_segment.span().end(),
+        };
 
         let source = self.first_segment.span().source();
 
