@@ -9,6 +9,7 @@ use super::{Item, VisibilityKind};
 
 pub struct ModWithBody {
     visibility_opt: Option<VisibilityKind>,
+    kw_unsafe_opt: KeywordKind,
     kw_mod: KeywordKind,
     name: Identifier,
     open_brace: Brace,
@@ -19,6 +20,7 @@ pub struct ModWithBody {
 
 pub struct ModWithoutBody {
     visibility_opt: Option<VisibilityKind>,
+    kw_unsafe_opt: KeywordKind,
     kw_mod: KeywordKind,
     name: Identifier,
     semicolon: Semicolon,
