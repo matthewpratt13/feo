@@ -92,6 +92,18 @@ impl<E> ExprWithoutBlock<E> for ComparisonExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for ComparisonExpr where O: Expression {}
 
+impl Spanned for ComparisonExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = todo!();
+        let source = self.operator.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct NegationExpr {
     negator: Bang,
     expression: Box<dyn Expression>,
