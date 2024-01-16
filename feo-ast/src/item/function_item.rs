@@ -3,7 +3,6 @@ use crate::{
     identifier::Identifier,
     keyword::KeywordKind,
     pattern::Pattern,
-    program::LibraryItem,
     ty::Type,
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
@@ -39,8 +38,6 @@ impl Item for FunctionSignatureOnly {}
 impl<A> AssociatedItem<A> for FunctionSignatureOnly where A: Item {}
 
 impl<F> FunctionItem<F> for FunctionSignatureOnly where F: Item {}
-
-impl<L> LibraryItem<L> for FunctionSignatureOnly where L: Item {}
 
 impl Type for FunctionSignatureOnly {}
 

@@ -2,6 +2,7 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::KeywordKind,
+    program::LibraryItem,
     ty::Type,
     type_utils::{Brace, Comma, Parenthesis},
 };
@@ -24,6 +25,8 @@ pub struct EnumItem {
 }
 
 impl Item for EnumItem {}
+
+impl<L> LibraryItem<L> for EnumItem where L: Item {}
 
 impl Type for EnumItem {}
 

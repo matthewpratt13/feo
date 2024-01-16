@@ -71,6 +71,8 @@ where
 {
 }
 
+impl<M, L> LibraryItem<L> for dyn ModItem<M> where L: Item {}
+
 impl<M> Item for dyn ModItem<M> {}
 
 pub trait StructItem<S>
@@ -80,6 +82,8 @@ where
 }
 
 impl<S> Item for dyn StructItem<S> {}
+
+impl<S, L> LibraryItem<L> for dyn StructItem<S> where L: Item {}
 
 impl<S> Type for dyn StructItem<S> {}
 
