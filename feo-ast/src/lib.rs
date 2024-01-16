@@ -31,6 +31,7 @@ mod type_utils {
     pub type Equals = PuncKind;
     pub type FatArrow = PuncKind;
     pub type HashSign = PuncKind;
+    pub type HashBang = PuncKind;
     pub type OpArithmeticOrLogical = PuncKind;
     pub type OpBool = PuncKind;
     pub type OpComparison = PuncKind;

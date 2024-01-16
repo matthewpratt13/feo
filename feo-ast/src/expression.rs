@@ -135,14 +135,13 @@ impl<L> LiteralExpr<L> for bool where L: Expression {}
 mod attribute {
     use crate::{
         path::SimplePath,
-        type_utils::{Bang, Bracket, HashSign},
+        type_utils::{Bracket, HashBang, HashSign},
     };
 
     use super::{ExprWithBlock, ExprWithoutBlock, Expression};
 
     pub struct InnerAttr {
-        hash: HashSign,
-        bang: Bang,
+        hash_bang: HashBang,
         open_bracket: Bracket,
         attribute_path: SimplePath,
         close_bracket: Bracket,
