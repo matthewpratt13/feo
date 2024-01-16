@@ -133,6 +133,8 @@ impl Expression for bool {}
 impl<L> LiteralExpr<L> for bool where L: Expression {}
 
 mod attribute {
+    use feo_types::span::{Span, Spanned};
+
     use crate::{
         path::SimplePath,
         type_utils::{Bracket, HashBang, HashSign},
@@ -153,6 +155,18 @@ mod attribute {
 
     impl<E> ExprWithoutBlock<E> for InnerAttr where E: Expression {}
 
+    impl Spanned for InnerAttr {
+        fn span(&self) -> Span {
+            let start_pos = self.hash_bang.span().start();
+            let end_pos = self.close_bracket.span().end();
+            let source = self.hash_bang.span().source();
+
+            let span = Span::new(source.as_str(), start_pos, end_pos);
+
+            span
+        }
+    }
+
     pub struct OuterAttr {
         hash: HashSign,
         open_bracket: Bracket,
@@ -165,6 +179,18 @@ mod attribute {
     impl<E> ExprWithBlock<E> for OuterAttr where E: Expression {}
 
     impl<E> ExprWithoutBlock<E> for OuterAttr where E: Expression {}
+
+    impl Spanned for OuterAttr {
+        fn span(&self) -> Span {
+            let start_pos = self.hash.span().start();
+            let end_pos = self.close_bracket.span().end();
+            let source = self.hash.span().source();
+
+            let span = Span::new(source.as_str(), start_pos, end_pos);
+
+            span
+        }
+    }
 }
 
 mod field_access_expr {
