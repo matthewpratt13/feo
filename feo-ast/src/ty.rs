@@ -108,6 +108,8 @@ mod trait_object_type {
 }
 
 mod tuple_type {
+    use feo_types::span::{Span, Spanned};
+
     use crate::type_utils::{Comma, Parenthesis};
 
     use super::Type;
@@ -120,4 +122,16 @@ mod tuple_type {
     }
 
     impl Type for TupleType {}
+
+    impl Spanned for TupleType {
+        fn span(&self) -> Span {
+            let start_pos = self.open_parenthesis.span().start();
+            let end_pos = self.close_parenthesis.span().end();
+            let source = self.open_parenthesis.span().source();
+
+            let span = Span::new(source.as_str(), start_pos, end_pos);
+
+            span
+        }
+    }
 }
