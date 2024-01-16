@@ -3,7 +3,7 @@ use crate::{
     identifier::Identifier,
     keyword::KeywordKind,
     pattern::Pattern,
-    ty::Type,
+    ty::{Type, WhereClause},
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
@@ -30,6 +30,7 @@ pub struct FunctionWithBody<T> {
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    where_clause_opt: Option<WhereClause>,
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
