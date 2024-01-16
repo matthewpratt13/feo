@@ -210,6 +210,8 @@ mod field_access_expr {
 }
 
 mod grouped_expr {
+    use feo_types::span::{Span, Spanned};
+
     use crate::type_utils::Parenthesis;
 
     use super::{ExprWithoutBlock, Expression};
@@ -223,6 +225,18 @@ mod grouped_expr {
     impl Expression for GroupedExpr {}
 
     impl<E> ExprWithoutBlock<E> for GroupedExpr where E: Expression {}
+
+    impl Spanned for GroupedExpr {
+        fn span(&self) -> Span {
+            let start_pos = self.open_parenthesis.span().start();
+            let end_pos = self.close_parenthesis.span().end();
+            let source = self.open_parenthesis.span().source();
+            
+            let span = Span::new(source.as_str(), start_pos, end_pos);
+
+            span
+        }
+    }
 }
 
 mod return_expr {
