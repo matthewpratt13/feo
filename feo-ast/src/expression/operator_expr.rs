@@ -115,6 +115,18 @@ impl<E> ExprWithoutBlock<E> for NegationExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for NegationExpr where O: Expression {}
 
+impl Spanned for NegationExpr {
+    fn span(&self) -> Span {
+        let start_pos = self.negator.span().start();
+        let end_pos = todo!();
+        let source = self.negator.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct ResultUnwrapExpr {
     expression: Box<dyn Expression>,
     question_mark: QuestionMark,
