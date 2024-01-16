@@ -1,5 +1,5 @@
 use crate::{
-    expression::Attribute, keyword::KeywordKind, path::SimplePath, ty::Type, type_utils::Brace,
+    expression::InnerAttr, keyword::KeywordKind, path::SimplePath, ty::Type, type_utils::Brace,
 };
 
 use super::{AssociatedItem, ImplItem, Item, VisibilityKind, WhereClause};
@@ -10,7 +10,7 @@ pub struct InherentImpl<T> {
     object_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    attributes: Vec<Attribute>,
+    attributes: Vec<InnerAttr>,
     associated_items: Vec<Box<dyn AssociatedItem<T>>>,
     close_brace: Brace,
 }
@@ -28,7 +28,7 @@ pub struct TraitImpl<T> {
     object_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    attributes: Vec<Attribute>,
+    attributes: Vec<InnerAttr>,
     associated_items: Vec<Box<dyn AssociatedItem<T>>>,
     close_brace: Brace,
 }

@@ -1,5 +1,5 @@
 use crate::{
-    expression::Attribute,
+    expression::OuterAttr,
     identifier::Identifier,
     path::SimplePath,
     type_utils::{Brace, Colon, Comma, Parenthesis},
@@ -23,7 +23,7 @@ pub struct StructPattFields {
 }
 
 pub struct StructPattField {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     struct_pattern_kind: Identifier,
     colon: Colon,
     data: Box<dyn Pattern>,

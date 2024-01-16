@@ -1,5 +1,5 @@
 use crate::{
-    expression::Attribute,
+    expression::InnerAttr,
     identifier::Identifier,
     keyword::KeywordKind,
     type_utils::{Brace, Semicolon},
@@ -13,7 +13,7 @@ pub struct ModWithBody {
     kw_mod: KeywordKind,
     name: Identifier,
     open_brace: Brace,
-    attributes: Vec<Attribute>,
+    attributes: Vec<InnerAttr>,
     items: Vec<Box<dyn Item>>,
     close_brace: Brace,
 }

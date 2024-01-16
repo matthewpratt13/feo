@@ -33,7 +33,6 @@ impl fmt::Display for ParserErrorKind {
 
 impl Error for ParserErrorKind {}
 
-
 #[derive(Default, Debug, Clone)]
 pub struct ParserError {
     pub error_kind: ParserErrorKind,
@@ -51,4 +50,3 @@ impl fmt::Display for ParserError {
         )
     }
 }
-

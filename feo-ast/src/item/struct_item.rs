@@ -1,5 +1,5 @@
 use crate::{
-    expression::Attribute,
+    expression::OuterAttr,
     identifier::Identifier,
     keyword::KeywordKind,
     ty::Type,
@@ -31,7 +31,7 @@ pub struct StructFields {
 }
 
 pub struct StructField {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_name: Identifier,
     colon: Colon,
@@ -62,7 +62,7 @@ pub struct TupleFields {
 }
 
 pub struct TupleField {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_type: Box<dyn Type>,
 }

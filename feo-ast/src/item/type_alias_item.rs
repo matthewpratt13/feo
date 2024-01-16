@@ -1,5 +1,5 @@
 use crate::{
-    expression::Attribute,
+    expression::OuterAttr,
     identifier::Identifier,
     keyword::KeywordKind,
     ty::Type,
@@ -9,7 +9,7 @@ use crate::{
 use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
 pub struct TypeAliasItem {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_type: KeywordKind,
     name: Identifier,

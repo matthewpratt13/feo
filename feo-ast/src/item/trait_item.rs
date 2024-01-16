@@ -1,5 +1,5 @@
 use crate::{
-    expression::Attribute,
+    expression::InnerAttr,
     identifier::Identifier,
     keyword::KeywordKind,
     type_utils::{Brace, Colon},
@@ -15,7 +15,7 @@ pub struct TraitItem<T> {
     type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    attributes: Vec<Attribute>,
+    attributes: Vec<InnerAttr>,
     associated_items: Vec<Box<dyn AssociatedItem<T>>>,
     close_brace: Brace,
 }

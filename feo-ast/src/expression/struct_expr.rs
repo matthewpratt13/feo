@@ -4,7 +4,7 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::{Attribute, ExprWithoutBlock, Expression, StructExpr};
+use super::{ExprWithoutBlock, Expression, OuterAttr, StructExpr};
 
 pub struct Struct {
     struct_path: SimplePath,
@@ -25,7 +25,7 @@ pub struct StructExprFields {
 }
 
 pub struct StructExprField {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     data: (Identifier, Colon, Box<dyn Expression>),
 }
 
@@ -45,16 +45,6 @@ impl Expression for TupleStruct {}
 impl<E> ExprWithoutBlock<E> for TupleStruct where E: Expression {}
 
 impl<S> StructExpr<S> for TupleStruct where S: Expression {}
-
-pub struct TupleStructExprFields {
-    first_field: TupleStructExprField,
-    subsequent_fields: Vec<(Comma, TupleStructExprField)>,
-}
-
-pub struct TupleStructExprField {
-    attributes: Vec<Attribute>,
-    data: Box<dyn Expression>,
-}
 
 pub struct UnitStruct(SimplePath);
 

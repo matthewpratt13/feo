@@ -1,5 +1,5 @@
 use crate::{
-    expression::{Attribute, Expression},
+    expression::{Expression, OuterAttr},
     identifier::Identifier,
     keyword::KeywordKind,
     ty::Type,
@@ -9,7 +9,7 @@ use crate::{
 use super::{AssociatedItem, Item, VisibilityKind};
 
 pub struct ConstantItem {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: KeywordKind,
     name: Identifier,

@@ -1,12 +1,11 @@
 use crate::type_utils::DotDotEquals;
 
-use super::{RangePattBound, Pattern, RangePatt};
+use super::{Pattern, RangePatt, RangePattBound};
 
 pub struct RangeFromPatt<T> {
     from: Box<dyn RangePattBound<T>>,
     dot_dot_equals: DotDotEquals,
 }
-
 
 impl<T> Pattern for RangeFromPatt<T> {}
 

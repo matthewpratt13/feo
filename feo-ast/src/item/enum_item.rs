@@ -1,8 +1,9 @@
 use crate::{
-    expression::Attribute,
+    expression::OuterAttr,
     identifier::Identifier,
     keyword::KeywordKind,
-    type_utils::{Brace, Comma, Parenthesis}, ty::Type,
+    ty::Type,
+    type_utils::{Brace, Comma, Parenthesis},
 };
 
 use super::{
@@ -36,7 +37,7 @@ pub struct EnumVariants {
 }
 
 pub struct EnumVariant {
-    attributes: Vec<Attribute>,
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     name: Identifier,
     variant_type_opt: Option<EnumVariantType>,

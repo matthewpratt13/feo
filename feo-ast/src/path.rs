@@ -4,8 +4,9 @@ use crate::{
     expression::{ExprWithoutBlock, Expression},
     identifier::Identifier,
     keyword::KeywordKind,
+    pattern::Pattern,
     ty::Type,
-    type_utils::DblColon, pattern::Pattern,
+    type_utils::DblColon,
 };
 
 pub enum PathSegmentKind {

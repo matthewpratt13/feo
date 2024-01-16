@@ -3,7 +3,7 @@ use crate::{
     type_utils::{Colon, Comma, Dot, Parenthesis},
 };
 
-use super::{Expression, ExprWithoutBlock};
+use super::{ExprWithoutBlock, Expression};
 
 pub struct FunctionCallExpr {
     operand: Box<dyn Expression>,

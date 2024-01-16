@@ -12,12 +12,9 @@ mod range_expr;
 mod struct_expr;
 mod tuple_expr;
 
-use crate::{
-    path::SimplePath,
-    statement::Statement,
-    type_utils::{Bracket, HashSign},
-};
+use crate::statement::Statement;
 
+pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 
 pub trait Expression {}
@@ -123,18 +120,41 @@ impl<L> LiteralExpr<L> for &[u8; 32] where L: Expression {}
 impl Expression for bool {}
 impl<L> LiteralExpr<L> for bool where L: Expression {}
 
-pub struct Attribute {
-    hash: HashSign,
-    open_bracket: Bracket,
-    attribute_path: SimplePath,
-    close_bracket: Bracket,
+mod attribute {
+    use crate::{
+        path::SimplePath,
+        type_utils::{Bang, Bracket, HashSign},
+    };
+
+    use super::{ExprWithBlock, ExprWithoutBlock, Expression};
+
+    pub struct InnerAttr {
+        hash: HashSign,
+        bang: Bang,
+        open_bracket: Bracket,
+        attribute_path: SimplePath,
+        close_bracket: Bracket,
+    }
+
+    impl Expression for InnerAttr {}
+
+    impl<E> ExprWithBlock<E> for InnerAttr where E: Expression {}
+
+    impl<E> ExprWithoutBlock<E> for InnerAttr where E: Expression {}
+
+    pub struct OuterAttr {
+        hash: HashSign,
+        open_bracket: Bracket,
+        attribute_path: SimplePath,
+        close_bracket: Bracket,
+    }
+
+    impl Expression for OuterAttr {}
+
+    impl<E> ExprWithBlock<E> for OuterAttr where E: Expression {}
+
+    impl<E> ExprWithoutBlock<E> for OuterAttr where E: Expression {}
 }
-
-impl Expression for Attribute {}
-
-impl<E> ExprWithBlock<E> for Attribute where E: Expression {}
-
-impl<E> ExprWithoutBlock<E> for Attribute where E: Expression {}
 
 mod field_access_expr {
     use crate::{identifier::Identifier, type_utils::Dot};
