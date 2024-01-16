@@ -79,7 +79,7 @@ impl<O> OperatorExpr<O> for ResultUnwrapExpr where O: Expression {}
 pub struct TypeCastExpr {
     original_expression: Box<dyn Expression>,
     kw_as: KeywordKind,
-    new_type: Box<dyn Type>,
+    new_type: Box<dyn Type>, // cannot be trait object
 }
 
 impl Expression for TypeCastExpr {}

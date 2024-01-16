@@ -20,7 +20,7 @@ pub struct TupleElements {
 pub struct TupleIndexingExpr {
     object: Box<dyn Expression>,
     dot: Dot,
-    index: usize,
+    index: u64,
 }
 
 impl Expression for TupleIndexingExpr {}
