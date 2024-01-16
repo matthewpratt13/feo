@@ -7,7 +7,7 @@ use crate::{
 
 use super::{
     struct_item::{StructFields, TupleFields},
-    VisibilityKind,
+    VisibilityKind, WhereClause,
 };
 
 pub enum EnumVariantType {
@@ -19,6 +19,7 @@ pub struct EnumItem {
     visibility_opt: Option<VisibilityKind>,
     kw_enum: KeywordKind,
     name: Identifier,
+    where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     enum_variants_opt: Option<EnumVariants>,
     close_brace: Brace,
