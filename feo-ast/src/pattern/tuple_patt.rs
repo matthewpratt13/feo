@@ -8,6 +8,8 @@ pub struct TuplePatt {
     close_parenthesis: Parenthesis,
 }
 
+impl Pattern for TuplePatt {}
+
 pub struct TuplePattElements {
     first_element: Box<dyn Pattern>,
     subsequent_elements: Vec<(Comma, Box<dyn Pattern>)>,
