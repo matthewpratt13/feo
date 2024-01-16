@@ -6,7 +6,7 @@ use crate::{
 use super::{Expression, ExprWithoutBlock};
 
 pub struct FunctionCallExpr {
-    function_path: PathSegmentKind,
+    operand: Box<dyn Expression>,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,

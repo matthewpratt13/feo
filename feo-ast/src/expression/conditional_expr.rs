@@ -4,7 +4,7 @@ use crate::{
     type_utils::{Brace, Comma, FatArrow},
 };
 
-use super::{BlockExpr, ConditionalExpr, ExprWithBlock, Expression};
+use super::{Attribute, BlockExpr, ConditionalExpr, ExprWithBlock, Expression};
 
 pub struct IfExpr<T, U> {
     kw_if: KeywordKind,
@@ -24,6 +24,7 @@ pub struct MatchExpr {
     kw_match: KeywordKind,
     scrutinee: Box<dyn Expression>, // cannot be a struct expression
     open_brace: Brace,
+    attributes: Vec<Attribute>,
     match_arms_opt: Option<MatchArms>,
     close_brace: Brace,
 }
@@ -40,6 +41,7 @@ pub struct MatchArms {
 }
 
 pub struct MatchArm {
+    attributes: Vec<Attribute>,
     pattern: Box<dyn Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
