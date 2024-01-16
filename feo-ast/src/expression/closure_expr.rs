@@ -1,3 +1,5 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     pattern::Pattern,
     ty::Type,
@@ -9,6 +11,23 @@ use super::{BlockExpr, ClosureExpr, Expression, OuterAttr};
 pub enum ClosureParamsOpt {
     None(DblPipe),
     MaybeSome((Pipe, Option<ClosureParams>, Pipe)),
+}
+
+impl Spanned for ClosureParamsOpt {
+    fn span(&self) -> Span {
+        match self {
+            ClosureParamsOpt::None(n) => n.span(),
+            ClosureParamsOpt::MaybeSome(ms) => {
+                let start_pos = ms.0.span().start();
+                let end_pos = ms.2.span().end();
+                let source = ms.0.span().source();
+
+                let span = Span::new(source.as_str(), start_pos, end_pos);
+
+                span
+            }
+        }
+    }
 }
 
 pub struct ClosureWithoutReturnType {
