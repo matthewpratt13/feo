@@ -88,7 +88,7 @@ impl<R> RangeExpr<R> for RangeInclusiveExpr where R: Expression {}
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!()
+        let start_pos = todo!();
         let end_pos = todo!();
         let source = self.dot_dot_equals.span().source();
 
