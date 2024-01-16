@@ -53,7 +53,13 @@ mod trait_object_type {
 
     impl Spanned for TraitObjectType {
         fn span(&self) -> Span {
-            todo!()
+            let start_pos = self.kw_dyn.span().start();
+            let end_pos = self.trait_bounds.span().end();
+            let source = self.trait_bounds.span().source();
+
+            let span = Span::new(source.as_str(), start_pos, end_pos);
+
+            span
         }
     }
 
