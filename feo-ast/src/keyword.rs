@@ -56,6 +56,7 @@ pub enum KeywordKind {
     KwTrait,
     KwType,
     KwUnsafe,
+    KwWhere,
     KwWhile,
 }
 
@@ -102,6 +103,7 @@ impl KeywordKind {
             KeywordKind::KwTrait => "trait",
             KeywordKind::KwType => "type",
             KeywordKind::KwUnsafe => "unsafe",
+            KeywordKind::KwWhere => "where",
             KeywordKind::KwWhile => "while",
         }
     }
@@ -158,6 +160,7 @@ impl FromStr for KeywordKind {
             "trait" => Ok(KeywordKind::KwTrait),
             "type" => Ok(KeywordKind::KwType),
             "unsafe" => Ok(KeywordKind::KwUnsafe),
+            "where" => Ok(KeywordKind::KwWhere),
             "while" => Ok(KeywordKind::KwWhile),
             _ => Err(TypeErrorKind::UnrecognizedKeyword),
         }?;
