@@ -11,6 +11,8 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
+use crate::ty::Type;
+
 pub use self::enum_item::EnumItem;
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
@@ -34,6 +36,8 @@ where
 impl<T> Item for dyn FunctionItem<T> {}
 
 impl<T, A> AssociatedItem<A> for dyn FunctionItem<T> where A: Item {}
+
+impl<T> Type for dyn FunctionItem<T> {}
 
 pub trait ImplItem<I>
 where
@@ -66,6 +70,8 @@ where
 }
 
 impl<S> Item for dyn StructItem<S> {}
+
+impl<S> Type for dyn StructItem<S> {}
 
 mod visibility {
     use crate::{keyword::KeywordKind, type_utils::Parenthesis};

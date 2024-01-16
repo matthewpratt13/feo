@@ -1,6 +1,11 @@
 #![allow(dead_code)]
 
-use crate::{identifier::Identifier, keyword::KeywordKind, type_utils::DblColon, expression::{Expression, ExprWithoutBlock}};
+use crate::{
+    expression::{ExprWithoutBlock, Expression},
+    identifier::Identifier,
+    keyword::KeywordKind,
+    type_utils::DblColon, ty::Type,
+};
 
 pub enum PathSegmentKind {
     Identifier(Identifier),
@@ -18,3 +23,5 @@ pub struct SimplePath {
 impl Expression for SimplePath {}
 
 impl<E> ExprWithoutBlock<E> for SimplePath where E: Expression {}
+
+impl Type for SimplePath {}

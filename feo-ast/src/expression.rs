@@ -2,12 +2,6 @@
 
 use feo_types::U256;
 
-use crate::{
-    path::SimplePath,
-    statement::Statement,
-    type_utils::{Bracket, HashSign},
-};
-
 mod array_expr;
 mod block_expr;
 mod call_expr;
@@ -17,6 +11,12 @@ mod operator_expr;
 mod range_expr;
 mod struct_expr;
 mod tuple_expr;
+
+use crate::{
+    path::SimplePath,
+    statement::Statement,
+    type_utils::{Bracket, HashSign},
+};
 
 pub use self::block_expr::BlockExpr;
 

@@ -8,6 +8,7 @@ use feo_types::span::{Position, Span, Spanned};
 use feo_types::{Literal, PrimitiveType, U256};
 
 use crate::token::{Token, Tokenize};
+use crate::ty::Type;
 
 #[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
@@ -45,6 +46,8 @@ impl Spanned for CharLiteral {
     }
 }
 
+impl Type for CharLiteral {}
+
 #[derive(Debug, Clone)]
 pub struct StringLiteral(pub Literal<String>);
 
@@ -71,6 +74,8 @@ impl Spanned for StringLiteral {
         self.0.span()
     }
 }
+
+impl Type for StringLiteral {}
 
 #[derive(Debug, Clone)]
 pub struct IntLiteral(pub Literal<i64>);
@@ -106,6 +111,8 @@ impl Spanned for IntLiteral {
         self.0.span()
     }
 }
+
+impl Type for IntLiteral {}
 
 #[derive(Debug, Clone)]
 pub struct UIntLiteral(pub Literal<u64>);
@@ -175,6 +182,8 @@ impl Spanned for UIntLiteral {
     }
 }
 
+impl Type for UIntLiteral {}
+
 #[derive(Debug, Clone)]
 pub struct U256Literal(pub Literal<U256>);
 
@@ -220,8 +229,10 @@ impl Spanned for U256Literal {
     }
 }
 
+impl Type for U256Literal {}
+
 #[derive(Debug, Clone)]
-pub struct Bytes32Literal(pub Literal<&'static[u8; 32]>);
+pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
 
 // TODO: implement Tokenize ?
 
@@ -230,6 +241,8 @@ impl Spanned for Bytes32Literal {
         self.0.span()
     }
 }
+
+impl Type for Bytes32Literal {}
 
 #[derive(Debug, Clone)]
 pub struct FloatLiteral(pub Literal<f64>);
@@ -267,6 +280,8 @@ impl Spanned for FloatLiteral {
     }
 }
 
+impl Type for FloatLiteral {}
+
 #[derive(Debug, Clone)]
 pub struct BoolLiteral(pub Literal<bool>);
 
@@ -302,3 +317,5 @@ impl Spanned for BoolLiteral {
         self.0.span()
     }
 }
+
+impl Type for BoolLiteral {}

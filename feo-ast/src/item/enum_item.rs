@@ -2,7 +2,7 @@ use crate::{
     expression::Attribute,
     identifier::Identifier,
     keyword::KeywordKind,
-    type_utils::{Brace, Comma, Parenthesis},
+    type_utils::{Brace, Comma, Parenthesis}, ty::Type,
 };
 
 use super::{
@@ -26,6 +26,8 @@ pub struct EnumItem {
 }
 
 impl Item for EnumItem {}
+
+impl Type for EnumItem {}
 
 pub struct EnumVariants {
     first_variant: EnumVariant,
