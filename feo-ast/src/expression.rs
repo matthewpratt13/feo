@@ -19,7 +19,7 @@ use crate::ty::Type;
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 
-pub trait Expression {}
+pub trait Expression where Self: Spanned {}
 
 pub trait ExprWithBlock<E>
 where

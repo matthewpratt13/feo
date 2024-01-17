@@ -58,7 +58,7 @@ impl Statement for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.object.span().start();
         let end_pos = self.close_bracket.span().end();
         let source = self.open_bracket.span().source();
 
