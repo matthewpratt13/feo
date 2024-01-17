@@ -21,7 +21,7 @@ pub struct BlockExpr<T, U> {
 
 impl<T, U> Expression for BlockExpr<T, U> {}
 
-impl<T, U, E> ExprWithBlock<E> for BlockExpr<T, U> where E: Expression {}
+impl<T, U, E> ExprWithBlock<E> for BlockExpr<T, U> {}
 
 impl<T, U> Spanned for BlockExpr<T, U> {
     fn span(&self) -> Span {

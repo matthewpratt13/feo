@@ -37,6 +37,18 @@ pub struct TupleIndexingExpr {
     index: usize,
 }
 
+impl Spanned for TupleIndexingExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = todo!();
+        let source = self.dot.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 impl Expression for TupleIndexingExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleIndexingExpr where E: Expression {}

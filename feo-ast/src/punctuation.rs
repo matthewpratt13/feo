@@ -120,11 +120,11 @@ impl PuncKind {
 
 impl Expression for PuncKind {}
 
-impl<E> ExprWithoutBlock<E> for PuncKind where E: Expression {}
+impl<E> ExprWithoutBlock<E> for PuncKind {}
 
 impl Pattern for PuncKind {}
 
-impl<R> RangeExpr<R> for PuncKind where R: Expression {}
+impl<R, E> RangeExpr<R, E> for PuncKind {}
 
 impl<R> RangePatt<R> for PuncKind where R: Pattern {}
 

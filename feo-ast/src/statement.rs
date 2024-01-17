@@ -19,17 +19,17 @@ pub struct ExprStatement<T> {
 
 impl<T> Statement for ExprStatement<T> {}
 
-// impl<T> Spanned for ExprStatement<T> {
-//     fn span(&self) -> Span {
-//         let start_pos = todo!();
-//         let end_pos = self.semicolon.span().end();
-//         let source = self.semicolon.span().source();
+impl<T> Spanned for ExprStatement<T> {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = self.semicolon.span().end();
+        let source = self.semicolon.span().source();
 
-//         let span = Span::new(source.as_str(), start_pos, end_pos);
+        let span = Span::new(source.as_str(), start_pos, end_pos);
 
-//         span
-//     }
-// }
+        span
+    }
+}
 
 pub struct LetStatement {
     kw_let: Keyword,

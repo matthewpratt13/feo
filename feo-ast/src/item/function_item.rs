@@ -100,30 +100,30 @@ impl<T, F> FunctionItem<F> for FunctionWithBody<T> where F: Item {}
 
 impl<T> Type for FunctionWithBody<T> {}
 
-// impl<T> Spanned for FunctionWithBody<T> {
-//     fn span(&self) -> Span {
-//         let start_pos = match self.attributes.first() {
-//             Some(a) => a.span().start(),
-//             None => match &self.visibility_opt {
-//                 Some(v) => v.span().start(),
-//                 None => match &self.func_qualifiers_opt {
-//                     Some(fq) => match fq.first() {
-//                         Some(q) => q.span().start(),
-//                         None => self.kw_func.span().start(),
-//                     },
-//                     None => self.kw_func.span().start(),
-//                 },
-//             },
-//         };
+impl<T> Spanned for FunctionWithBody<T> {
+    fn span(&self) -> Span {
+        let start_pos = match self.attributes.first() {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => match &self.func_qualifiers_opt {
+                    Some(fq) => match fq.first() {
+                        Some(q) => q.span().start(),
+                        None => self.kw_func.span().start(),
+                    },
+                    None => self.kw_func.span().start(),
+                },
+            },
+        };
 
-//         let end_pos = todo!();
-//         let source = self.name.span().source();
+        let end_pos = todo!();
+        let source = self.name.span().source();
 
-//         let span = Span::new(source.as_str(), start_pos, end_pos);
+        let span = Span::new(source.as_str(), start_pos, end_pos);
 
-//         span
-//     }
-// }
+        span
+    }
+}
 
 pub struct FuncParams {
     first_param: FuncOrMethodParam,

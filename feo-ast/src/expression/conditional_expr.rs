@@ -20,9 +20,9 @@ pub struct IfExpr<T, U> {
 
 impl<T, U> Expression for IfExpr<T, U> {}
 
-impl<T, U, C> ConditionalExpr<C> for IfExpr<T, U> where C: Expression {}
+impl<T, U, C, E> ConditionalExpr<C, E> for IfExpr<T, U> {}
 
-impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> where E: Expression {}
+impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> {}
 
 impl<T, U> Spanned for IfExpr<T, U> {
     fn span(&self) -> Span {
@@ -57,9 +57,9 @@ pub struct MatchExpr {
 
 impl Expression for MatchExpr {}
 
-impl<C> ConditionalExpr<C> for MatchExpr where C: Expression {}
+impl<C, E> ConditionalExpr<C, E> for MatchExpr {}
 
-impl<E> ExprWithBlock<E> for MatchExpr where E: Expression {}
+impl<E> ExprWithBlock<E> for MatchExpr {}
 
 impl Spanned for MatchExpr {
     fn span(&self) -> Span {

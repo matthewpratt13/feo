@@ -11,9 +11,9 @@ pub struct InfiniteLoopExpr<T, U> {
 
 impl<T, U> Expression for InfiniteLoopExpr<T, U> {}
 
-impl<T, U, E> ExprWithBlock<E> for InfiniteLoopExpr<T, U> where E: Expression {}
+impl<T, U, E> ExprWithBlock<E> for InfiniteLoopExpr<T, U> {}
 
-impl<T, U, I> IterationExpr<I> for InfiniteLoopExpr<T, U> where I: Expression {}
+impl<T, U, I, E> IterationExpr<I, E> for InfiniteLoopExpr<T, U> {}
 
 impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
     fn span(&self) -> Span {
@@ -35,9 +35,9 @@ pub struct PredicateLoopExpr<T, U> {
 
 impl<T, U> Expression for PredicateLoopExpr<T, U> {}
 
-impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> where E: Expression {}
+impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> {}
 
-impl<T, U, I> IterationExpr<I> for PredicateLoopExpr<T, U> where I: Expression {}
+impl<T, U, I, E> IterationExpr<I, E> for PredicateLoopExpr<T, U> {}
 
 impl<T, U> Spanned for PredicateLoopExpr<T, U> {
     fn span(&self) -> Span {
@@ -61,7 +61,7 @@ pub struct IterLoopExpr<T, U> {
 
 impl<T, U> Expression for IterLoopExpr<T, U> {}
 
-impl<T, U, I> IterationExpr<I> for IterLoopExpr<T, U> where I: Expression {}
+impl<T, U, I, E> IterationExpr<I, E> for IterLoopExpr<T, U> {}
 
 impl<T, U> Spanned for IterLoopExpr<T, U> {
     fn span(&self) -> Span {

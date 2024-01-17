@@ -17,9 +17,9 @@ pub struct Struct {
 
 impl Expression for Struct {}
 
-impl<E> ExprWithoutBlock<E> for Struct where E: Expression {}
+impl<E> ExprWithoutBlock<E> for Struct {}
 
-impl<S> StructExpr<S> for Struct where S: Expression {}
+impl<S, E> StructExpr<S, E> for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -56,9 +56,9 @@ pub struct TupleStruct {
 
 impl Expression for TupleStruct {}
 
-impl<E> ExprWithoutBlock<E> for TupleStruct where E: Expression {}
+impl<E> ExprWithoutBlock<E> for TupleStruct {}
 
-impl<S> StructExpr<S> for TupleStruct where S: Expression {}
+impl<S, E> StructExpr<S, E> for TupleStruct {}
 
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
@@ -76,9 +76,9 @@ pub struct UnitStruct(SimplePath);
 
 impl Expression for UnitStruct {}
 
-impl<E> ExprWithoutBlock<E> for UnitStruct where E: Expression {}
+impl<E> ExprWithoutBlock<E> for UnitStruct {}
 
-impl<S> StructExpr<S> for UnitStruct where S: Expression {}
+impl<S, E> StructExpr<S, E> for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {

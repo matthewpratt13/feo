@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use feo_types::span::Spanned;
 use feo_types::U256;
 
 mod array_expr;
@@ -13,7 +14,6 @@ mod range_expr;
 mod struct_expr;
 mod tuple_expr;
 
-use crate::statement::Statement;
 use crate::ty::Type;
 
 pub use self::attribute::{InnerAttr, OuterAttr};
@@ -23,114 +23,73 @@ pub trait Expression {}
 
 pub trait ExprWithBlock<E>
 where
-    E: Expression,
+    Self: Expression + Spanned,
 {
 }
-
-impl<E> Expression for dyn ExprWithBlock<E> {}
 
 pub trait ExprWithoutBlock<E>
 where
-    E: Expression,
+    Self: Expression,
 {
 }
-
-impl<E> Expression for dyn ExprWithoutBlock<E> {}
-
-impl<E> Statement for dyn ExprWithoutBlock<E> {}
 
 pub trait ClosureExpr<C>
 where
-    C: Expression,
+    Self: Sized + Expression + Type,
 {
 }
 
-impl<C> Expression for dyn ClosureExpr<C> {}
-
-impl<C> Type for dyn ClosureExpr<C> {}
-
-pub trait ConditionalExpr<C>
+pub trait ConditionalExpr<C, E>
 where
-    C: Expression,
+    Self: Sized + Expression + Spanned + ExprWithBlock<E>,
 {
 }
 
-impl<C> Expression for dyn ConditionalExpr<C> {}
-
-impl<C, E> ExprWithBlock<E> for dyn ConditionalExpr<C> where E: Expression {}
-
-pub trait IterationExpr<I>
+pub trait IterationExpr<I, E>
 where
-    I: Expression,
+    Self: Sized + Expression + Spanned,
 {
 }
 
-impl<I> Expression for dyn IterationExpr<I> where I: Expression {}
-
-impl<I, E> ExprWithBlock<E> for dyn IterationExpr<I> where E: Expression {}
-
-pub trait LiteralExpr<L>
+pub trait LiteralExpr<L, E>
 where
-    L: Expression,
+    Self: Sized,
 {
 }
 
-impl<L> Expression for dyn LiteralExpr<L> where L: Expression {}
-
-impl<L, E> ExprWithoutBlock<E> for dyn LiteralExpr<L> where E: Expression {}
-
-pub trait OperatorExpr<O>
+pub trait OperatorExpr
 where
-    O: Expression,
+    Self: Sized + Expression + Spanned,
 {
 }
 
-impl<O> Expression for dyn OperatorExpr<O> where O: Expression {}
-
-impl<O, E> ExprWithoutBlock<E> for dyn OperatorExpr<O> where E: Expression {}
-
-pub trait RangeExpr<R>
+pub trait RangeExpr<R, E>
 where
-    R: Expression,
+    Self: Sized + Expression,
 {
 }
 
-impl<R> Expression for dyn RangeExpr<R> where R: Expression {}
-impl<R, E> ExprWithoutBlock<E> for dyn RangeExpr<R> where E: Expression {}
-
-pub trait StructExpr<S>
+pub trait StructExpr<S, E>
 where
-    S: Expression,
+    Self: Sized + Expression + Spanned + ExprWithoutBlock<E>,
 {
 }
 
-impl<S> Expression for dyn StructExpr<S> where S: Expression {}
+impl<L, E> LiteralExpr<L, E> for char {}
 
-impl<S, E> ExprWithoutBlock<E> for dyn StructExpr<S> where E: Expression {}
+impl<L, E> LiteralExpr<L, E> for &'static str {}
 
-impl Expression for char {}
-impl<L> LiteralExpr<L> for char where L: Expression {}
+impl<L, E> LiteralExpr<L, E> for i64 {}
 
-impl Expression for &'static str {}
-impl<L> LiteralExpr<L> for &'static str where L: Expression {}
+impl<L, E> LiteralExpr<L, E> for u64 {}
 
-impl Expression for i64 {}
-impl<L> LiteralExpr<L> for i64 where L: Expression {}
+impl<L, E> LiteralExpr<L, E> for U256 {}
 
-impl Expression for u64 {}
-impl<L> LiteralExpr<L> for u64 where L: Expression {}
+impl<L, E> LiteralExpr<L, E> for f64 {}
 
-impl Expression for U256 {}
-impl<L> LiteralExpr<L> for U256 where L: Expression {}
+impl<L, E> LiteralExpr<L, E> for &[u8; 32] {}
 
-impl Expression for f64 {}
-impl<L> LiteralExpr<L> for f64 where L: Expression {}
-
-impl Expression for &[u8; 32] {}
-impl<L> LiteralExpr<L> for &[u8; 32] where L: Expression {}
-
-impl Expression for bool {}
-impl<L> LiteralExpr<L> for bool where L: Expression {}
+impl<L, E> LiteralExpr<L, E> for bool {}
 
 mod attribute {
     use feo_types::span::{Span, Spanned};
@@ -151,9 +110,9 @@ mod attribute {
 
     impl Expression for InnerAttr {}
 
-    impl<E> ExprWithBlock<E> for InnerAttr where E: Expression {}
+    impl<E> ExprWithBlock<E> for InnerAttr {}
 
-    impl<E> ExprWithoutBlock<E> for InnerAttr where E: Expression {}
+    impl<E> ExprWithoutBlock<E> for InnerAttr {}
 
     impl Spanned for InnerAttr {
         fn span(&self) -> Span {
@@ -176,9 +135,9 @@ mod attribute {
 
     impl Expression for OuterAttr {}
 
-    impl<E> ExprWithBlock<E> for OuterAttr where E: Expression {}
+    impl<E> ExprWithBlock<E> for OuterAttr {}
 
-    impl<E> ExprWithoutBlock<E> for OuterAttr where E: Expression {}
+    impl<E> ExprWithoutBlock<E> for OuterAttr {}
 
     impl Spanned for OuterAttr {
         fn span(&self) -> Span {
@@ -194,7 +153,7 @@ mod attribute {
 }
 
 mod field_access_expr {
-    // use feo_types::span::{Span, Spanned};
+    use feo_types::span::{Span, Spanned};
 
     use crate::{identifier::Identifier, type_utils::Dot};
 
@@ -208,19 +167,19 @@ mod field_access_expr {
 
     impl Expression for FieldAccessExpr {}
 
-    impl<E> ExprWithoutBlock<E> for FieldAccessExpr where E: Expression {}
+    impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
 
-    // impl Spanned for FieldAccessExpr {
-    //     fn span(&self) -> Span {
-    //         let start_pos = todo!();
-    //         let end_pos = self.field_name.span().end();
-    //         let source = self.field_name.span().source()
+    impl Spanned for FieldAccessExpr {
+        fn span(&self) -> Span {
+            let start_pos = todo!();
+            let end_pos = self.field_name.span().end();
+            let source = self.field_name.span().source();
 
-    //         let span = Span::new(source.as_str(), start_pos, end_pos);
+            let span = Span::new(source.as_str(), start_pos, end_pos);
 
-    //         span
-    //     }
-    // }
+            span
+        }
+    }
 }
 
 mod grouped_expr {
@@ -238,7 +197,7 @@ mod grouped_expr {
 
     impl Expression for GroupedExpr {}
 
-    impl<E> ExprWithoutBlock<E> for GroupedExpr where E: Expression {}
+    impl<E> ExprWithoutBlock<E> for GroupedExpr {}
 
     impl Spanned for GroupedExpr {
         fn span(&self) -> Span {
@@ -254,7 +213,7 @@ mod grouped_expr {
 }
 
 mod return_expr {
-    // use feo_types::span::{Span, Spanned};
+    use feo_types::span::{Span, Spanned};
 
     use crate::keyword::Keyword;
 
@@ -267,17 +226,17 @@ mod return_expr {
 
     impl Expression for ReturnExpr {}
 
-    impl<E> ExprWithoutBlock<E> for ReturnExpr where E: Expression {}
+    impl<E> ExprWithoutBlock<E> for ReturnExpr {}
 
-    // impl Spanned for ReturnExpr {
-    //     fn span(&self) -> Span {
-    //         let start_pos = self.kw_return.span().start();
-    //         let end_pos = todo!();
-    //         let source = self.kw_return.span().source();
+    impl Spanned for ReturnExpr {
+        fn span(&self) -> Span {
+            let start_pos = self.kw_return.span().start();
+            let end_pos = todo!();
+            let source = self.kw_return.span().source();
 
-    //         let span = Span::new(source.as_str(), start_pos, end_pos);
+            let span = Span::new(source.as_str(), start_pos, end_pos);
 
-    //         span
-    //     }
-    // }
+            span
+        }
+    }
 }

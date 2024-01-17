@@ -12,7 +12,7 @@ pub struct ArrayExpr {
 
 impl Expression for ArrayExpr {}
 
-impl<E> ExprWithoutBlock<E> for ArrayExpr where E: Expression {}
+impl<E> ExprWithoutBlock<E> for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
@@ -47,16 +47,16 @@ pub struct IndexExpr {
 
 impl Expression for IndexExpr {}
 
-impl<E> ExprWithoutBlock<E> for IndexExpr where E: Expression {}
+impl<E> ExprWithoutBlock<E> for IndexExpr {}
 
-// impl Spanned for IndexExpr {
-//     fn span(&self) -> Span {
-//         let start_pos = todo!();
-//         let end_pos = self.close_bracket.span().end();
-//         let source = self.open_bracket.span().source();
+impl Spanned for IndexExpr {
+    fn span(&self) -> Span {
+        let start_pos = todo!();
+        let end_pos = self.close_bracket.span().end();
+        let source = self.open_bracket.span().source();
 
-//         let span = Span::new(source.as_str(), start_pos, end_pos);
+        let span = Span::new(source.as_str(), start_pos, end_pos);
 
-//         span
-//     }
-// }
+        span
+    }
+}
