@@ -50,7 +50,7 @@ pub struct MethodCallExpr {
 
 impl Expression for MethodCallExpr {}
 
-impl<E> ExprWithoutBlock<E> for MethodCallExpr where E: Expression {}
+impl<E> ExprWithoutBlock<E> for MethodCallExpr {}
 
 impl Statement for MethodCallExpr {}
 
