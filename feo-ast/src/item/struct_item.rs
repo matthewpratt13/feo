@@ -74,6 +74,23 @@ impl<S> StructItem<S> for TupleStruct where S: Item {}
 
 impl Type for TupleStruct {}
 
+impl Spanned for TupleStruct {
+    fn span(&self) -> Span {
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
+        } else {
+            self.kw_struct.span().start()
+        };
+
+        let end_pos = self.semicolon.span().end();
+        let source = self.name.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct TupleFields {
     first_field: TupleField,
     subsequent_fields: Vec<(Comma, TupleField)>,
