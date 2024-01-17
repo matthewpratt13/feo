@@ -1,4 +1,4 @@
-use feo_types::span::{Span, Spanned};
+// use feo_types::span::{Span, Spanned};
 
 use crate::{
     path::PathSegmentKind,
@@ -18,17 +18,17 @@ impl Expression for FunctionCallExpr {}
 
 impl<E> ExprWithoutBlock<E> for FunctionCallExpr where E: Expression {}
 
-impl Spanned for FunctionCallExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.open_parenthesis.span().source();
+// impl Spanned for FunctionCallExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = self.close_parenthesis.span().end();
+//         let source = self.open_parenthesis.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct CallParams {
     first_param: Box<dyn Expression>,
@@ -49,14 +49,14 @@ impl Expression for MethodCallExpr {}
 
 impl<E> ExprWithoutBlock<E> for MethodCallExpr where E: Expression {}
 
-impl Spanned for MethodCallExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.method_path.span().source();
+// impl Spanned for MethodCallExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = self.close_parenthesis.span().end();
+//         let source = self.method_path.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }

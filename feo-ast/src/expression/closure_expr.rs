@@ -41,17 +41,17 @@ impl<C> ClosureExpr<C> for ClosureWithoutReturnType where C: Expression {}
 
 impl Type for ClosureWithoutReturnType {}
 
-impl Spanned for ClosureWithoutReturnType {
-    fn span(&self) -> Span {
-        let start_pos = self.params.span().start();
-        let end_pos = todo!();
-        let source = self.params.span().source();
+// impl Spanned for ClosureWithoutReturnType {
+//     fn span(&self) -> Span {
+//         let start_pos = self.params.span().start();
+//         let end_pos = todo!();
+//         let source = self.params.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct ClosureWithReturnType<T, U> {
     params: ClosureParamsOpt,

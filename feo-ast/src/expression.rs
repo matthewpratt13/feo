@@ -194,7 +194,7 @@ mod attribute {
 }
 
 mod field_access_expr {
-    use feo_types::span::{Span, Spanned};
+    // use feo_types::span::{Span, Spanned};
 
     use crate::{identifier::Identifier, type_utils::Dot};
 
@@ -210,17 +210,17 @@ mod field_access_expr {
 
     impl<E> ExprWithoutBlock<E> for FieldAccessExpr where E: Expression {}
 
-    impl Spanned for FieldAccessExpr {
-        fn span(&self) -> Span {
-            let start_pos = todo!();
-            let end_pos = self.field_name.span().end();
-            let source = todo!();
+    // impl Spanned for FieldAccessExpr {
+    //     fn span(&self) -> Span {
+    //         let start_pos = todo!();
+    //         let end_pos = self.field_name.span().end();
+    //         let source = todo!();
 
-            let span = Span::new(source, start_pos, end_pos);
+    //         let span = Span::new(source, start_pos, end_pos);
 
-            span
-        }
-    }
+    //         span
+    //     }
+    // }
 }
 
 mod grouped_expr {
@@ -254,7 +254,7 @@ mod grouped_expr {
 }
 
 mod return_expr {
-    use feo_types::span::{Span, Spanned};
+    // use feo_types::span::{Span, Spanned};
 
     use crate::keyword::Keyword;
 
@@ -269,15 +269,15 @@ mod return_expr {
 
     impl<E> ExprWithoutBlock<E> for ReturnExpr where E: Expression {}
 
-    impl Spanned for ReturnExpr {
-        fn span(&self) -> Span {
-            let start_pos = self.kw_return.span().start();
-            let end_pos = todo!();
-            let source = self.kw_return.span().source();
+    // impl Spanned for ReturnExpr {
+    //     fn span(&self) -> Span {
+    //         let start_pos = self.kw_return.span().start();
+    //         let end_pos = todo!();
+    //         let source = self.kw_return.span().source();
 
-            let span = Span::new(source.as_str(), start_pos, end_pos);
+    //         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-            span
-        }
-    }
+    //         span
+    //     }
+    // }
 }

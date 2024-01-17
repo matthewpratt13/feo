@@ -49,14 +49,14 @@ impl Expression for IndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for IndexExpr where E: Expression {}
 
-impl Spanned for IndexExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = self.close_bracket.span().end();
-        let source = self.open_bracket.span().source();
+// impl Spanned for IndexExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = self.close_bracket.span().end();
+//         let source = self.open_bracket.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }

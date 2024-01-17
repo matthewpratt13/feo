@@ -1,4 +1,4 @@
-use feo_types::span::{Span, Spanned};
+// use feo_types::span::{Span, Spanned};
 
 use crate::{
     keyword::Keyword,
@@ -20,17 +20,17 @@ impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for ArithmeticOrLogicalExpr where O: Expression {}
 
-impl Spanned for ArithmeticOrLogicalExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
-        let source = self.operator.span().source();
+// impl Spanned for ArithmeticOrLogicalExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = todo!();
+//         let source = self.operator.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct AssignmentExpr {
     initial_value: Box<dyn Expression>,
@@ -44,17 +44,17 @@ impl<E> ExprWithoutBlock<E> for AssignmentExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for AssignmentExpr where O: Expression {}
 
-impl Spanned for AssignmentExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
-        let source = self.equals.span().source();
+// impl Spanned for AssignmentExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = todo!();
+//         let source = self.equals.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct BoolExpr {
     first_expression: Box<dyn Expression>,
@@ -68,17 +68,17 @@ impl<E> ExprWithoutBlock<E> for BoolExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for BoolExpr where O: Expression {}
 
-impl Spanned for BoolExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
-        let source = self.operator.span().source();
+// impl Spanned for BoolExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = todo!();
+//         let source = self.operator.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct ComparisonExpr {
     first_expression: Box<dyn Expression>,
@@ -92,17 +92,17 @@ impl<E> ExprWithoutBlock<E> for ComparisonExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for ComparisonExpr where O: Expression {}
 
-impl Spanned for ComparisonExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
-        let source = self.operator.span().source();
+// impl Spanned for ComparisonExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = todo!();
+//         let source = self.operator.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct NegationExpr {
     negator: Bang,
@@ -115,17 +115,17 @@ impl<E> ExprWithoutBlock<E> for NegationExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for NegationExpr where O: Expression {}
 
-impl Spanned for NegationExpr {
-    fn span(&self) -> Span {
-        let start_pos = self.negator.span().start();
-        let end_pos = todo!();
-        let source = self.negator.span().source();
+// impl Spanned for NegationExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = self.negator.span().start();
+//         let end_pos = todo!();
+//         let source = self.negator.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct ResultUnwrapExpr {
     expression: Box<dyn Expression>,
@@ -138,17 +138,17 @@ impl<E> ExprWithoutBlock<E> for ResultUnwrapExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for ResultUnwrapExpr where O: Expression {}
 
-impl Spanned for ResultUnwrapExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = self.question_mark.span().end();
-        let source = self.question_mark.span().source();
+// impl Spanned for ResultUnwrapExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = self.question_mark.span().end();
+//         let source = self.question_mark.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
 
 pub struct TypeCastExpr {
     original_expression: Box<dyn Expression>,
@@ -162,14 +162,14 @@ impl<E> ExprWithoutBlock<E> for TypeCastExpr where E: Expression {}
 
 impl<O> OperatorExpr<O> for TypeCastExpr where O: Expression {}
 
-impl Spanned for TypeCastExpr {
-    fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
-        let source = self.kw_as.span().source();
+// impl Spanned for TypeCastExpr {
+//     fn span(&self) -> Span {
+//         let start_pos = todo!();
+//         let end_pos = todo!();
+//         let source = self.kw_as.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
 
-        span
-    }
-}
+//         span
+//     }
+// }
