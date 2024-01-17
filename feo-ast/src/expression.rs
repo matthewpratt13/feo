@@ -19,7 +19,11 @@ use crate::ty::Type;
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 
-pub trait Expression where Self: Spanned {}
+pub trait Expression
+where
+    Self: Spanned,
+{
+}
 
 pub trait ExprWithBlock<E>
 where
@@ -160,7 +164,7 @@ mod field_access_expr {
 
     impl Spanned for FieldAccessExpr {
         fn span(&self) -> Span {
-            let start_pos = todo!();
+            let start_pos = self.object.span().start();
             let end_pos = self.field_name.span().end();
             let source = self.field_name.span().source();
 
@@ -224,7 +228,12 @@ mod return_expr {
     impl Spanned for ReturnExpr {
         fn span(&self) -> Span {
             let start_pos = self.kw_return.span().start();
-            let end_pos = todo!();
+            let end_pos = if let Some(e) = &self.expression_opt {
+                e.span().end()
+            } else {
+                self.kw_return.span().end()
+            };
+
             let source = self.kw_return.span().source();
 
             let span = Span::new(source.as_str(), start_pos, end_pos);
