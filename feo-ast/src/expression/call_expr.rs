@@ -23,7 +23,7 @@ impl Statement for FunctionCallExpr {}
 
 impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.operand.span().start();
         let end_pos = self.close_parenthesis.span().end();
         let source = self.open_parenthesis.span().source();
 
@@ -56,7 +56,7 @@ impl Statement for MethodCallExpr {}
 
 impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.object.span().start();
         let end_pos = self.close_parenthesis.span().end();
         let source = self.method_path.span().source();
 
