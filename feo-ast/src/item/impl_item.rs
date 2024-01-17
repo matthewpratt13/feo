@@ -55,3 +55,22 @@ pub struct TraitImpl<T> {
 impl<T> Item for TraitImpl<T> {}
 
 impl<T, I> ImplItem<I> for TraitImpl<T> where I: Item {}
+
+impl<T> Spanned for TraitImpl<T> {
+    fn span(&self) -> Span {
+        let start_pos = match &self.visibility_opt {
+            Some(v) => v.span().start(),
+            None => match &self.kw_unsafe_opt {
+                Some(k) => k.span().start(),
+                None => self.kw_impl.span().start(),
+            },
+        };
+
+        let end_pos = self.close_brace.span().end();
+        let source = self.trait_path.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
