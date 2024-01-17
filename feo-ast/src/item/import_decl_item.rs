@@ -1,6 +1,8 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     identifier::Identifier,
-    keyword::KeywordKind,
+    keyword::Keyword,
     path::SimplePath,
     program::LibraryItem,
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
@@ -10,7 +12,7 @@ use super::{ImportTree, Item, VisibilityKind};
 
 pub struct ImportDeclItem<T> {
     visibility_opt: Option<VisibilityKind>,
-    kw_import: KeywordKind,
+    kw_import: Keyword,
     import_tree: Box<dyn ImportTree<T>>,
     semicolon: Semicolon,
 }
@@ -18,6 +20,23 @@ pub struct ImportDeclItem<T> {
 impl<T> Item for ImportDeclItem<T> {}
 
 impl<T, L> LibraryItem<L> for ImportDeclItem<T> where L: Item {}
+
+impl<T> Spanned for ImportDeclItem<T> {
+    fn span(&self) -> Span {
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
+        } else {
+            self.kw_import.span().start()
+        };
+
+        let end_pos = self.semicolon.span().end();
+        let source = self.kw_import.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
 
 pub struct EntirePathContentsItem {
     path_opt: Vec<Option<(Option<SimplePath>, DblColon)>>,
@@ -45,7 +64,7 @@ pub struct PathWithAsClauseItem {
 }
 
 pub struct AsClause {
-    kw_as: KeywordKind,
+    kw_as: Keyword,
     new_name: Identifier,
 }
 
