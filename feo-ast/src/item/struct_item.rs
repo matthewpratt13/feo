@@ -1,7 +1,9 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
-    keyword::KeywordKind,
+    keyword::Keyword,
     ty::Type,
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
@@ -10,7 +12,7 @@ use super::{Item, StructItem, VisibilityKind, WhereClause};
 
 pub struct Struct {
     visibility_opt: Option<VisibilityKind>,
-    kw_struct: KeywordKind,
+    kw_struct: Keyword,
     name: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
@@ -23,6 +25,23 @@ impl Item for Struct {}
 impl<S> StructItem<S> for Struct where S: Item {}
 
 impl Type for Struct {}
+
+impl Spanned for Struct {
+    fn span(&self) -> Span {
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
+        } else {
+            self.kw_struct.span().start()
+        };
+
+        let end_pos = self.close_brace.span().end();
+        let source = self.name.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
 
 pub struct StructFields {
     first_field: StructField,
@@ -40,7 +59,7 @@ pub struct StructField {
 
 pub struct TupleStruct {
     visibility_opt: Option<VisibilityKind>,
-    kw_struct: KeywordKind,
+    kw_struct: Keyword,
     name: Identifier,
     open_parenthesis: Parenthesis,
     tuple_fields_opt: Option<TupleFields>,
