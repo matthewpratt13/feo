@@ -38,7 +38,7 @@ impl<T, U> Spanned for IfExpr<T, U> {
             None => temp_end,
         };
 
-        let source = self.kw_if.span().source();
+        let source = self.block.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
