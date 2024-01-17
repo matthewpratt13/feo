@@ -180,7 +180,7 @@ impl Statement for TypeCastExpr {}
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
         let start_pos = self.original_expression.span().start();
-        let end_pos = todo!();
+        let end_pos = self.new_type.span().end();
         let source = self.kw_as.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
