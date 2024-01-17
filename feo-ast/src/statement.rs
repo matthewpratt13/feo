@@ -10,7 +10,11 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-pub trait Statement {}
+pub trait Statement
+where
+    Self: Spanned,
+{
+}
 
 pub struct ExprStatement<T> {
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
@@ -62,14 +66,14 @@ pub struct StatementWithExpr<T> {
 
 impl<T> Statement for StatementWithExpr<T> {}
 
-// impl<T> Spanned for StatementWithExpr<T> {
-//     fn span(&self) -> Span {
-//         let start_pos = todo!();
-//         let end_pos = todo!();
-//         let source = todo!();
+impl<T> Spanned for StatementWithExpr<T> {
+    fn span(&self) -> Span {
+        let start_pos = self.statement.span().start();
+        let end_pos = self.expr_without_block.span().end();
+        let source = self.statement.span().source();
 
-//         let span = Span::new(source.as_str(), start_pos, end_pos);
+        let span = Span::new(source.as_str(), start_pos, end_pos);
 
-//         span
-//     }
-// }
+        span
+    }
+}
