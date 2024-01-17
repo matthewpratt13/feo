@@ -159,7 +159,7 @@ mod attribute {
         fn span(&self) -> Span {
             let start_pos = self.hash_bang.span().start();
             let end_pos = self.close_bracket.span().end();
-            let source = self.hash_bang.span().source();
+            let source = self.attribute_path.span().source();
 
             let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -184,7 +184,7 @@ mod attribute {
         fn span(&self) -> Span {
             let start_pos = self.hash.span().start();
             let end_pos = self.close_bracket.span().end();
-            let source = self.hash.span().source();
+            let source = self.attribute_path.span().source();
 
             let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -214,9 +214,9 @@ mod field_access_expr {
     //     fn span(&self) -> Span {
     //         let start_pos = todo!();
     //         let end_pos = self.field_name.span().end();
-    //         let source = todo!();
+    //         let source = self.field_name.span().source()
 
-    //         let span = Span::new(source, start_pos, end_pos);
+    //         let span = Span::new(source.as_str(), start_pos, end_pos);
 
     //         span
     //     }
