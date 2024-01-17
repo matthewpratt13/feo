@@ -1,8 +1,14 @@
 #![allow(dead_code)]
 
+use feo_types::span::Spanned;
+
 pub use self::trait_object_type::{TraitBound, TraitObjectType};
 
-pub trait Type {}
+pub trait Type
+where
+    Self: Spanned,
+{
+}
 
 mod array_type {
     use feo_types::span::{Span, Spanned};
