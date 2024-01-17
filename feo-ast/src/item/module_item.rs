@@ -4,7 +4,7 @@ use crate::{
     expression::InnerAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     type_utils::{Brace, Semicolon},
 };
@@ -21,6 +21,8 @@ pub struct ModWithBody {
     items: Vec<Box<dyn Item>>,
     close_brace: Brace,
 }
+
+impl ContractItem for ModWithBody {}
 
 impl Item for ModWithBody {}
 
@@ -56,6 +58,8 @@ pub struct ModWithoutBody {
     name: Identifier,
     semicolon: Semicolon,
 }
+
+impl ContractItem for ModWithoutBody {}
 
 impl Item for ModWithoutBody {}
 

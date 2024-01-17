@@ -4,7 +4,7 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
     type_utils::{Brace, Comma, Parenthesis},
@@ -26,6 +26,8 @@ pub struct EnumItem {
     enum_variants_opt: Option<EnumVariants>,
     close_brace: Brace,
 }
+
+impl ContractItem for EnumItem {}
 
 impl Item for EnumItem {}
 

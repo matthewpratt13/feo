@@ -4,7 +4,7 @@ use crate::{
     expression::{Expression, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
     type_utils::{Colon, Equals, Semicolon},
@@ -22,6 +22,8 @@ pub struct ConstantItem {
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for ConstantItem {}
 
 impl Item for ConstantItem {}
 
@@ -61,6 +63,8 @@ pub struct StaticItem {
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for StaticItem {}
 
 impl Item for StaticItem {}
 

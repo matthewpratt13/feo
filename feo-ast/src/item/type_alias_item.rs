@@ -4,9 +4,10 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
-    type_utils::{Colon, Equals, Semicolon}, program::LibraryItem,
+    type_utils::{Colon, Equals, Semicolon},
 };
 
 use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
@@ -21,6 +22,8 @@ pub struct TypeAliasItem {
     value_opt: Option<(Equals, Box<dyn Type>, Option<WhereClause>)>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for TypeAliasItem {}
 
 impl Item for TypeAliasItem {}
 

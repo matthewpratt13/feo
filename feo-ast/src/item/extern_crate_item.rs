@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    identifier::Identifier, keyword::Keyword, program::LibraryItem, statement::Statement,
+    identifier::Identifier, keyword::Keyword, program::{LibraryItem, ContractItem}, statement::Statement,
     type_utils::Semicolon,
 };
 
@@ -20,6 +20,8 @@ pub struct ExternCrateItem {
     as_clause_opt: Option<AsClause>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for ExternCrateItem {}
 
 impl Item for ExternCrateItem {}
 

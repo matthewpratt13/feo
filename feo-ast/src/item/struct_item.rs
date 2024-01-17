@@ -4,7 +4,7 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
@@ -21,6 +21,8 @@ pub struct Struct {
     struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
+
+impl ContractItem for Struct {}
 
 impl Item for Struct {}
 
@@ -73,6 +75,8 @@ pub struct TupleStruct {
     where_clause_opt: Option<WhereClause>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for TupleStruct {}
 
 impl Item for TupleStruct {}
 

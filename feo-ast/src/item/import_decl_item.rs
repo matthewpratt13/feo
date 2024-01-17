@@ -4,7 +4,7 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     path::SimplePath,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
@@ -17,6 +17,8 @@ pub struct ImportDeclItem {
     import_tree: Box<dyn ImportTree>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for ImportDeclItem {}
 
 impl Item for ImportDeclItem {}
 

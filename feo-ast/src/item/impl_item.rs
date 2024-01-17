@@ -1,8 +1,8 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::InnerAttr, keyword::Keyword, path::SimplePath, statement::Statement, ty::Type,
-    type_utils::Brace,
+    expression::InnerAttr, keyword::Keyword, path::SimplePath, program::ContractItem,
+    statement::Statement, ty::Type, type_utils::Brace,
 };
 
 use super::{AssociatedItem, ImplItem, Item, VisibilityKind, WhereClause};
@@ -17,6 +17,8 @@ pub struct InherentImpl {
     associated_items: Vec<Box<dyn AssociatedItem>>,
     close_brace: Brace,
 }
+
+impl ContractItem for InherentImpl {}
 
 impl Item for InherentImpl {}
 
@@ -54,6 +56,8 @@ pub struct TraitImpl {
     associated_items: Vec<Box<dyn AssociatedItem>>,
     close_brace: Brace,
 }
+
+impl ContractItem for TraitImpl {}
 
 impl Item for TraitImpl {}
 

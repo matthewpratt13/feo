@@ -5,7 +5,7 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
@@ -46,6 +46,8 @@ pub struct FunctionSignatureOnly {
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
     semicolon: Semicolon,
 }
+
+impl ContractItem for FunctionSignatureOnly {}
 
 impl Item for FunctionSignatureOnly {}
 
@@ -97,6 +99,8 @@ pub struct FunctionWithBody<T> {
     where_clause_opt: Option<WhereClause>,
     func_body: Box<dyn ExprWithBlock<T>>,
 }
+
+impl<T> ContractItem for FunctionWithBody<T> {}
 
 impl<T> Item for FunctionWithBody<T> {}
 

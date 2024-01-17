@@ -4,7 +4,7 @@ use crate::{
     expression::InnerAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::LibraryItem,
+    program::{ContractItem, LibraryItem},
     statement::Statement,
     type_utils::{Brace, Colon},
 };
@@ -23,6 +23,8 @@ pub struct TraitItem {
     associated_items: Vec<Box<dyn AssociatedItem>>,
     close_brace: Brace,
 }
+
+impl ContractItem for TraitItem {}
 
 impl Item for TraitItem {}
 
