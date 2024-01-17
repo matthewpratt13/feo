@@ -3,6 +3,7 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{
     item::Item,
+    statement::Statement,
     token::{Token, Tokenize},
 };
 
@@ -43,6 +44,8 @@ impl Spanned for Identifier {
 }
 
 impl Item for Identifier {}
+
+impl Statement for Identifier {}
 
 pub fn is_keyword(iden: &str) -> bool {
     [

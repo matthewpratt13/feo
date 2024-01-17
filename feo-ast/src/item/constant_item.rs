@@ -4,6 +4,8 @@ use crate::{
     expression::{Expression, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
+    program::LibraryItem,
+    statement::Statement,
     ty::Type,
     type_utils::{Colon, Equals, Semicolon},
 };
@@ -23,7 +25,11 @@ pub struct ConstantItem {
 
 impl Item for ConstantItem {}
 
-impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
+impl AssociatedItem for ConstantItem {}
+
+impl LibraryItem for ConstantItem {}
+
+impl Statement for ConstantItem {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
@@ -57,6 +63,8 @@ pub struct StaticItem {
 }
 
 impl Item for StaticItem {}
+
+impl Statement for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {

@@ -4,8 +4,9 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
+    statement::Statement,
     ty::Type,
-    type_utils::{Colon, Equals, Semicolon},
+    type_utils::{Colon, Equals, Semicolon}, program::LibraryItem,
 };
 
 use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
@@ -23,7 +24,11 @@ pub struct TypeAliasItem {
 
 impl Item for TypeAliasItem {}
 
-impl<A> AssociatedItem<A> for TypeAliasItem where A: Item {}
+impl AssociatedItem for TypeAliasItem {}
+
+impl LibraryItem for TypeAliasItem {}
+
+impl Statement for TypeAliasItem {}
 
 impl Spanned for TypeAliasItem {
     fn span(&self) -> Span {

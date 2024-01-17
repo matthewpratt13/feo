@@ -4,6 +4,8 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
+    program::LibraryItem,
+    statement::Statement,
     ty::Type,
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
@@ -22,7 +24,11 @@ pub struct Struct {
 
 impl Item for Struct {}
 
-impl<S> StructItem<S> for Struct where S: Item {}
+impl LibraryItem for Struct {}
+
+impl Statement for Struct {}
+
+impl StructItem for Struct {}
 
 impl Type for Struct {}
 
@@ -70,7 +76,11 @@ pub struct TupleStruct {
 
 impl Item for TupleStruct {}
 
-impl<S> StructItem<S> for TupleStruct where S: Item {}
+impl LibraryItem for TupleStruct {}
+
+impl StructItem for TupleStruct {}
+
+impl Statement for TupleStruct {}
 
 impl Type for TupleStruct {}
 

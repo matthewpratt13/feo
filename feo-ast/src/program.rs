@@ -8,46 +8,34 @@ use crate::{
     type_utils::{Brace, Semicolon},
 };
 
-pub trait ContractItem<C>
-where
-    C: Item,
-{
-}
+pub trait ContractItem {}
 
-impl<C> Item for dyn ContractItem<C> {}
+pub trait LibraryItem {}
 
-pub trait LibraryItem<L>
-where
-    L: Item,
-{
-}
-
-impl<L> Item for dyn LibraryItem<L> {}
-
-pub struct Abi<T> {
+pub struct Abi {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_abi: KeywordKind,
     contract_name: Identifier,
     open_brace: Brace,
-    functions_opt: Option<Vec<Box<dyn FunctionItem<T>>>>,
+    functions_opt: Option<Vec<Box<dyn FunctionItem>>>,
     close_brace: Brace,
 }
 
-impl<T, C> ContractItem<C> for Abi<T> where C: Item {}
+impl ContractItem for Abi {}
 
-pub struct Contract<T> {
+pub struct Contract {
     attributes: Vec<OuterAttr>,
     kw_contract: KeywordKind,
     semicolon: Semicolon,
-    contract_items_opt: Option<Vec<Box<dyn ContractItem<T>>>>,
+    contract_items_opt: Option<Vec<Box<dyn ContractItem>>>,
 }
 
-pub struct Library<T> {
+pub struct Library {
     attributes: Vec<OuterAttr>,
     kw_library: KeywordKind,
     semicolon: Semicolon,
-    items_opt: Vec<Box<dyn LibraryItem<T>>>,
+    items_opt: Vec<Box<dyn LibraryItem>>,
 }
 
 pub struct Script {
@@ -57,13 +45,13 @@ pub struct Script {
     items_opt: Option<Vec<Box<dyn Item>>>,
 }
 
-pub struct Storage<T> {
+pub struct Storage {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_storage: KeywordKind,
     open_brace: Brace,
-    items_opt: Option<Vec<Box<dyn AssociatedItem<T>>>>,
+    items_opt: Option<Vec<Box<dyn AssociatedItem>>>,
     close_brace: Brace,
 }
 
-impl<T, C> ContractItem<C> for Storage<T> where C: Item {}
+impl ContractItem for Storage {}

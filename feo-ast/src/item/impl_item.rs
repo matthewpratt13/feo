@@ -1,27 +1,30 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::InnerAttr, keyword::Keyword, path::SimplePath, ty::Type, type_utils::Brace,
+    expression::InnerAttr, keyword::Keyword, path::SimplePath, statement::Statement, ty::Type,
+    type_utils::Brace,
 };
 
 use super::{AssociatedItem, ImplItem, Item, VisibilityKind, WhereClause};
 
-pub struct InherentImpl<T> {
+pub struct InherentImpl {
     visibility_opt: Option<VisibilityKind>,
     kw_impl: Keyword,
     object_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem<T>>>,
+    associated_items: Vec<Box<dyn AssociatedItem>>,
     close_brace: Brace,
 }
 
-impl<T> Item for InherentImpl<T> {}
+impl Item for InherentImpl {}
 
-impl<T, I> ImplItem<I> for InherentImpl<T> where I: Item {}
+impl ImplItem for InherentImpl {}
 
-impl<T> Spanned for InherentImpl<T> {
+impl Statement for InherentImpl {}
+
+impl Spanned for InherentImpl {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()
@@ -38,7 +41,7 @@ impl<T> Spanned for InherentImpl<T> {
     }
 }
 
-pub struct TraitImpl<T> {
+pub struct TraitImpl {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
     kw_impl: Keyword,
@@ -48,15 +51,17 @@ pub struct TraitImpl<T> {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem<T>>>,
+    associated_items: Vec<Box<dyn AssociatedItem>>,
     close_brace: Brace,
 }
 
-impl<T> Item for TraitImpl<T> {}
+impl Item for TraitImpl {}
 
-impl<T, I> ImplItem<I> for TraitImpl<T> where I: Item {}
+impl ImplItem for TraitImpl {}
 
-impl<T> Spanned for TraitImpl<T> {
+impl Statement for TraitImpl {}
+
+impl Spanned for TraitImpl {
     fn span(&self) -> Span {
         let start_pos = match &self.visibility_opt {
             Some(v) => v.span().start(),

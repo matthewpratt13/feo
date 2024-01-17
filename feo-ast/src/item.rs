@@ -11,7 +11,9 @@ mod struct_item;
 mod trait_item;
 mod type_alias_item;
 
-use crate::program::{ContractItem, LibraryItem};
+use feo_types::span::Spanned;
+
+use crate::program::LibraryItem;
 use crate::statement::Statement;
 use crate::ty::Type;
 
@@ -21,71 +23,47 @@ pub use self::struct_item::{StructFields, TupleFields};
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
-pub trait Item {}
-
-impl<C> ContractItem<C> for dyn Item where C: Item {}
-
-impl Statement for dyn Item {}
-
-pub trait AssociatedItem<A>
+pub trait Item
 where
-    A: Item,
+    Self: Statement + Spanned,
 {
 }
 
-impl<A> Item for dyn AssociatedItem<A> {}
-
-impl<A, L> LibraryItem<L> for dyn AssociatedItem<A> where L: Item {}
-
-pub trait FunctionItem<F>
+pub trait AssociatedItem
 where
-    F: Item,
+    Self: Item + LibraryItem,
 {
 }
 
-impl<T> Item for dyn FunctionItem<T> {}
-
-impl<T, A> AssociatedItem<A> for dyn FunctionItem<T> where A: Item {}
-
-impl<T> Type for dyn FunctionItem<T> {}
-
-pub trait ImplItem<I>
+pub trait FunctionItem
 where
-    I: Item,
+    Self: Item + AssociatedItem + Type,
 {
 }
 
-impl<I> Item for dyn ImplItem<I> {}
-
-pub trait ImportTree<T>
+pub trait ImplItem
 where
-    T: Item,
+    Self: Item,
 {
 }
 
-impl<I> Item for dyn ImportTree<I> {}
-
-pub trait ModItem<M>
+pub trait ImportTree
 where
-    M: Item,
+    Self: Item,
 {
 }
 
-impl<M, L> LibraryItem<L> for dyn ModItem<M> where L: Item {}
-
-impl<M> Item for dyn ModItem<M> {}
-
-pub trait StructItem<S>
+pub trait ModItem
 where
-    S: Item,
+    Self: Item + LibraryItem,
 {
 }
 
-impl<S> Item for dyn StructItem<S> {}
-
-impl<S, L> LibraryItem<L> for dyn StructItem<S> where L: Item {}
-
-impl<S> Type for dyn StructItem<S> {}
+pub trait StructItem
+where
+    Self: Item + LibraryItem + Type,
+{
+}
 
 mod visibility {
     use feo_types::span::{Span, Spanned};

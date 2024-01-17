@@ -1,7 +1,8 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    identifier::Identifier, keyword::Keyword, program::LibraryItem, type_utils::Semicolon,
+    identifier::Identifier, keyword::Keyword, program::LibraryItem, statement::Statement,
+    type_utils::Semicolon,
 };
 
 use super::{AsClause, Item, VisibilityKind};
@@ -22,7 +23,9 @@ pub struct ExternCrateItem {
 
 impl Item for ExternCrateItem {}
 
-impl<L> LibraryItem<L> for ExternCrateItem where L: Item {}
+impl LibraryItem for ExternCrateItem {}
+
+impl Statement for ExternCrateItem {}
 
 impl Spanned for ExternCrateItem {
     fn span(&self) -> Span {

@@ -4,6 +4,8 @@ use crate::{
     expression::InnerAttr,
     identifier::Identifier,
     keyword::Keyword,
+    program::LibraryItem,
+    statement::Statement,
     type_utils::{Brace, Semicolon},
 };
 
@@ -22,7 +24,11 @@ pub struct ModWithBody {
 
 impl Item for ModWithBody {}
 
-impl<M> ModItem<M> for ModWithBody where M: Item {}
+impl LibraryItem for ModWithBody {}
+
+impl ModItem for ModWithBody {}
+
+impl Statement for ModWithBody {}
 
 impl Spanned for ModWithBody {
     fn span(&self) -> Span {
@@ -53,7 +59,11 @@ pub struct ModWithoutBody {
 
 impl Item for ModWithoutBody {}
 
-impl<M> ModItem<M> for ModWithoutBody where M: Item {}
+impl LibraryItem for ModWithoutBody {}
+
+impl ModItem for ModWithoutBody {}
+
+impl Statement for ModWithoutBody {}
 
 impl Spanned for ModWithoutBody {
     fn span(&self) -> Span {

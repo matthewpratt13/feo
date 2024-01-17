@@ -5,12 +5,13 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     program::LibraryItem,
+    statement::Statement,
     type_utils::{Brace, Colon},
 };
 
 use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
-pub struct TraitItem<T> {
+pub struct TraitItem {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
     kw_impl: Keyword,
@@ -19,15 +20,17 @@ pub struct TraitItem<T> {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem<T>>>,
+    associated_items: Vec<Box<dyn AssociatedItem>>,
     close_brace: Brace,
 }
 
-impl<T> Item for TraitItem<T> {}
+impl Item for TraitItem {}
 
-impl<T, L> LibraryItem<L> for TraitItem<T> where L: Item {}
+impl LibraryItem for TraitItem {}
 
-impl<T> Spanned for TraitItem<T> {
+impl Statement for TraitItem {}
+
+impl Spanned for TraitItem {
     fn span(&self) -> Span {
         let start_pos = match &self.visibility_opt {
             Some(v) => v.span().start(),

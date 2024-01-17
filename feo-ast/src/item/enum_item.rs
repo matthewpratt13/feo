@@ -5,6 +5,7 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     program::LibraryItem,
+    statement::Statement,
     ty::Type,
     type_utils::{Brace, Comma, Parenthesis},
 };
@@ -28,7 +29,9 @@ pub struct EnumItem {
 
 impl Item for EnumItem {}
 
-impl<L> LibraryItem<L> for EnumItem where L: Item {}
+impl LibraryItem for EnumItem {}
+
+impl Statement for EnumItem {}
 
 impl Type for EnumItem {}
 

@@ -5,6 +5,8 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
+    program::LibraryItem,
+    statement::Statement,
     ty::Type,
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
@@ -47,9 +49,13 @@ pub struct FunctionSignatureOnly {
 
 impl Item for FunctionSignatureOnly {}
 
-impl<A> AssociatedItem<A> for FunctionSignatureOnly where A: Item {}
+impl AssociatedItem for FunctionSignatureOnly {}
 
-impl<F> FunctionItem<F> for FunctionSignatureOnly where F: Item {}
+impl FunctionItem for FunctionSignatureOnly {}
+
+impl LibraryItem for FunctionSignatureOnly {}
+
+impl Statement for FunctionSignatureOnly {}
 
 impl Type for FunctionSignatureOnly {}
 
@@ -94,9 +100,13 @@ pub struct FunctionWithBody<T> {
 
 impl<T> Item for FunctionWithBody<T> {}
 
-impl<T, A> AssociatedItem<A> for FunctionWithBody<T> where A: Item {}
+impl<T> AssociatedItem for FunctionWithBody<T> {}
 
-impl<T, F> FunctionItem<F> for FunctionWithBody<T> where F: Item {}
+impl<T> FunctionItem for FunctionWithBody<T> {}
+
+impl<T> LibraryItem for FunctionWithBody<T> {}
+
+impl<T> Statement for FunctionWithBody<T> {}
 
 impl<T> Type for FunctionWithBody<T> {}
 
