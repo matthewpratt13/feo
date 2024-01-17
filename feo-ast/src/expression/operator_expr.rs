@@ -25,8 +25,8 @@ impl Statement for ArithmeticOrLogicalExpr {}
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.first_operand.span().start();
+        let end_pos = self.second_operand.span().end();
         let source = self.operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -51,8 +51,8 @@ impl Statement for AssignmentExpr {}
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.initial_value.span().start();
+        let end_pos = self.new_value.span().end();
         let source = self.equals.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -77,8 +77,8 @@ impl Statement for BoolExpr {}
 
 impl Spanned for BoolExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.first_expression.span().start();
+        let end_pos = self.second_expression.span().end();
         let source = self.operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -103,8 +103,8 @@ impl Statement for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.first_expression.span().start();
+        let end_pos = self.second_expression.span().start();
         let source = self.operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -129,7 +129,7 @@ impl Statement for NegationExpr {}
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
         let start_pos = self.negator.span().start();
-        let end_pos = todo!();
+        let end_pos = self.expression.span().end();
         let source = self.negator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -153,7 +153,7 @@ impl Statement for ResultUnwrapExpr {}
 
 impl Spanned for ResultUnwrapExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.expression.span().start();
         let end_pos = self.question_mark.span().end();
         let source = self.question_mark.span().source();
 
@@ -179,7 +179,7 @@ impl Statement for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.original_expression.span().start();
         let end_pos = todo!();
         let source = self.kw_as.span().source();
 
