@@ -21,7 +21,7 @@ impl<T> Statement for ExprStatement<T> {}
 
 impl<T> Spanned for ExprStatement<T> {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.expr_without_block.span().start();
         let end_pos = self.semicolon.span().end();
         let source = self.semicolon.span().source();
 

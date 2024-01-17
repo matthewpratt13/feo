@@ -116,7 +116,7 @@ impl<T> Spanned for FunctionWithBody<T> {
             },
         };
 
-        let end_pos = todo!();
+        let end_pos = self.func_body.span().end();
         let source = self.name.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
