@@ -45,7 +45,7 @@ impl Spanned for ModWithBody {
 
 pub struct ModWithoutBody {
     visibility_opt: Option<VisibilityKind>,
-    kw_unsafe_opt: Keyword,
+    kw_unsafe_opt: Option<Keyword>,
     kw_mod: Keyword,
     name: Identifier,
     semicolon: Semicolon,
@@ -54,3 +54,22 @@ pub struct ModWithoutBody {
 impl Item for ModWithoutBody {}
 
 impl<M> ModItem<M> for ModWithoutBody where M: Item {}
+
+impl Spanned for ModWithoutBody {
+    fn span(&self) -> Span {
+        let start_pos = match &self.visibility_opt {
+            Some(v) => v.span().start(),
+            None => match &self.kw_unsafe_opt {
+                Some(ku) => ku.span().start(),
+                None => self.kw_mod.span().start(),
+            },
+        };
+
+        let end_pos = self.semicolon.span().end();
+        let source = self.kw_mod.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
