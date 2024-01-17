@@ -28,9 +28,9 @@ impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.last() {
-            Some(oa) => match &self.visibility_opt {
-                Some(vk) => vk.span().start(),
-                None => oa.span().start(),
+            Some(a) => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => a.span().start(),
             },
             None => self.kw_const.span().start(),
         };
@@ -59,8 +59,8 @@ impl Item for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {
-        let start_pos = if let Some(vk) = &self.visibility_opt {
-            vk.span().start()
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
         } else {
             self.kw_static.span().start()
         };

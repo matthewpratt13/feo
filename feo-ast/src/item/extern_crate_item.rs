@@ -26,8 +26,8 @@ impl<L> LibraryItem<L> for ExternCrateItem where L: Item {}
 
 impl Spanned for ExternCrateItem {
     fn span(&self) -> Span {
-        let start_pos = if let Some(vk) = &self.visibility_opt {
-            vk.span().start()
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
         } else {
             self.semicolon.span().start()
         };

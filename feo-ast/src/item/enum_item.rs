@@ -34,8 +34,8 @@ impl Type for EnumItem {}
 
 impl Spanned for EnumItem {
     fn span(&self) -> Span {
-        let start_pos = if let Some(vk) = &self.visibility_opt {
-            vk.span().start()
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
         } else {
             self.kw_enum.span().start()
         };

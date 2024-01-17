@@ -1,7 +1,9 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     expression::{ExprWithBlock, OuterAttr},
     identifier::Identifier,
-    keyword::KeywordKind,
+    keyword::Keyword,
     pattern::Pattern,
     ty::Type,
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
@@ -10,9 +12,19 @@ use crate::{
 use super::{AssociatedItem, FunctionItem, Item, VisibilityKind, WhereClause};
 
 pub enum FuncQualifier {
-    Const(KeywordKind),
-    Unsafe(KeywordKind),
-    Extern(KeywordKind),
+    Const(Keyword),
+    Unsafe(Keyword),
+    Extern(Keyword),
+}
+
+impl Spanned for FuncQualifier {
+    fn span(&self) -> Span {
+        match self {
+            FuncQualifier::Const(c) => c.span(),
+            FuncQualifier::Unsafe(u) => u.span(),
+            FuncQualifier::Extern(e) => e.span(),
+        }
+    }
 }
 
 pub enum FuncOrMethodParam {
@@ -24,7 +36,7 @@ pub struct FunctionSignatureOnly {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<FuncQualifier>,
-    kw_func: KeywordKind,
+    kw_func: Keyword,
     name: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
@@ -41,11 +53,33 @@ impl<F> FunctionItem<F> for FunctionSignatureOnly where F: Item {}
 
 impl Type for FunctionSignatureOnly {}
 
+impl Spanned for FunctionSignatureOnly {
+    fn span(&self) -> Span {
+        let start_pos = match self.attributes.first() {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => match &self.func_qualifiers_opt {
+                    Some(fq) => fq.span().start(),
+                    None => self.kw_func.span().start(),
+                },
+            },
+        };
+
+        let end_pos = self.semicolon.span().end();
+        let source = self.name.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct FunctionWithBody<T> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
-    kw_func: KeywordKind,
+    kw_func: Keyword,
     name: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
@@ -81,8 +115,8 @@ pub struct MethodParam {
 }
 
 pub struct SelfParam {
-    kw_ref_opt: Option<KeywordKind>,
-    kw_mut_opt: Option<KeywordKind>,
-    kw_self: KeywordKind,
+    kw_ref_opt: Option<Keyword>,
+    kw_mut_opt: Option<Keyword>,
+    kw_self: Keyword,
     self_type_opt: Option<(Colon, Box<dyn Type>)>,
 }
