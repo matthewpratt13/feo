@@ -27,7 +27,7 @@ impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
-        let start_pos = match self.attributes.last() {
+        let start_pos = match self.attributes.first() {
             Some(a) => match &self.visibility_opt {
                 Some(v) => v.span().start(),
                 None => a.span().start(),
@@ -45,6 +45,7 @@ impl Spanned for ConstantItem {
 }
 
 pub struct StaticItem {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_static: Keyword,
     kw_mut_opt: Option<Keyword>,
@@ -59,10 +60,12 @@ impl Item for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {
-        let start_pos = if let Some(v) = &self.visibility_opt {
-            v.span().start()
-        } else {
-            self.kw_static.span().start()
+        let start_pos = match self.attributes.first() {
+            Some(a) => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => a.span().start(),
+            },
+            None => self.kw_static.span().start(),
         };
 
         let end_pos = self.semicolon.span().end();
