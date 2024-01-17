@@ -10,7 +10,11 @@ use crate::{
 
 pub trait ContractItem {}
 
-pub trait LibraryItem {}
+pub trait LibraryItem
+where
+    Self: Item,
+{
+}
 
 pub struct Abi {
     attributes: Vec<OuterAttr>,
