@@ -1,7 +1,10 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    identifier::Identifier, keyword::Keyword, program::{LibraryItem, ContractItem}, statement::Statement,
+    identifier::Identifier,
+    keyword::Keyword,
+    program::{ContractItem, LibraryItem},
+    statement::Statement,
     type_utils::Semicolon,
 };
 
