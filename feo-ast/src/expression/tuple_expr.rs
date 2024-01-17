@@ -44,8 +44,8 @@ pub struct TupleIndexingExpr {
 
 impl Spanned for TupleIndexingExpr {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.object.span().start();
+        let end_pos = self.dot.span().end() + format!("{}", self.index).len();
         let source = self.dot.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
