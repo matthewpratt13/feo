@@ -28,11 +28,11 @@ impl<A> AssociatedItem<A> for ConstantItem where A: Item {}
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
-            Some(a) => match &self.visibility_opt {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
                 Some(v) => v.span().start(),
-                None => a.span().start(),
+                None => self.kw_const.span().start(),
             },
-            None => self.kw_const.span().start(),
         };
 
         let end_pos = self.semicolon.span().end();
@@ -61,11 +61,11 @@ impl Item for StaticItem {}
 impl Spanned for StaticItem {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
-            Some(a) => match &self.visibility_opt {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
                 Some(v) => v.span().start(),
-                None => a.span().start(),
+                None => self.kw_static.span().start(),
             },
-            None => self.kw_static.span().start(),
         };
 
         let end_pos = self.semicolon.span().end();
