@@ -56,3 +56,20 @@ pub struct StaticItem {
 }
 
 impl Item for StaticItem {}
+
+impl Spanned for StaticItem {
+    fn span(&self) -> Span {
+        let start_pos = if let Some(vk) = &self.visibility_opt {
+            vk.span().start()
+        } else {
+            self.kw_static.span().start()
+        };
+
+        let end_pos = self.semicolon.span().end();
+        let source = self.name.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
