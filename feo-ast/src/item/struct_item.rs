@@ -82,9 +82,9 @@ impl Item for TupleStruct {}
 
 impl LibraryItem for TupleStruct {}
 
-impl StructItem for TupleStruct {}
-
 impl Statement for TupleStruct {}
+
+impl StructItem for TupleStruct {}
 
 impl Type for TupleStruct {}
 

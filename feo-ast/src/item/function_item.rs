@@ -47,11 +47,11 @@ pub struct FunctionSignatureOnly {
     semicolon: Semicolon,
 }
 
+impl AssociatedItem for FunctionSignatureOnly {}
+
 impl ContractItem for FunctionSignatureOnly {}
 
 impl Item for FunctionSignatureOnly {}
-
-impl AssociatedItem for FunctionSignatureOnly {}
 
 impl FunctionItem for FunctionSignatureOnly {}
 
@@ -100,11 +100,11 @@ pub struct FunctionWithBody<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
+impl<T> AssociatedItem for FunctionWithBody<T> {}
+
 impl<T> ContractItem for FunctionWithBody<T> {}
 
 impl<T> Item for FunctionWithBody<T> {}
-
-impl<T> AssociatedItem for FunctionWithBody<T> {}
 
 impl<T> FunctionItem for FunctionWithBody<T> {}
 

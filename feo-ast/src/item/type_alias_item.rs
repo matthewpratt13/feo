@@ -23,11 +23,11 @@ pub struct TypeAliasItem {
     semicolon: Semicolon,
 }
 
+impl AssociatedItem for TypeAliasItem {}
+
 impl ContractItem for TypeAliasItem {}
 
 impl Item for TypeAliasItem {}
-
-impl AssociatedItem for TypeAliasItem {}
 
 impl LibraryItem for TypeAliasItem {}
 

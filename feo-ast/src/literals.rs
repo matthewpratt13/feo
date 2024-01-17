@@ -357,8 +357,6 @@ impl Spanned for FloatLiteral {
 
 impl Expression for FloatLiteral {}
 
-impl Statement for FloatLiteral {}
-
 impl<E> ExprWithoutBlock<E> for FloatLiteral {}
 
 impl LiteralPatt for FloatLiteral {}
@@ -366,6 +364,8 @@ impl LiteralPatt for FloatLiteral {}
 impl Pattern for FloatLiteral {}
 
 impl RangePattBound for FloatLiteral {}
+
+impl Statement for FloatLiteral {}
 
 impl Type for FloatLiteral {}
 

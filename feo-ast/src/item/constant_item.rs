@@ -23,11 +23,11 @@ pub struct ConstantItem {
     semicolon: Semicolon,
 }
 
+impl AssociatedItem for ConstantItem {}
+
 impl ContractItem for ConstantItem {}
 
 impl Item for ConstantItem {}
-
-impl AssociatedItem for ConstantItem {}
 
 impl LibraryItem for ConstantItem {}
 
