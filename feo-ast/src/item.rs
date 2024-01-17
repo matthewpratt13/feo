@@ -88,30 +88,30 @@ impl<S, L> LibraryItem<L> for dyn StructItem<S> where L: Item {}
 impl<S> Type for dyn StructItem<S> {}
 
 mod visibility {
-    use crate::{keyword::KeywordKind, type_utils::Parenthesis};
+    use crate::{keyword::Keyword, type_utils::Parenthesis};
 
     pub enum VisibilityKind {
-        Pub(KeywordKind),
+        Pub(Keyword),
         PubCrate(PubCrateVisibility),
     }
 
     pub struct PubCrateVisibility {
-        kw_pub: KeywordKind,
+        kw_pub: Keyword,
         open_parenthesis: Parenthesis,
-        kw_crate: KeywordKind,
+        kw_crate: Keyword,
         close_parenthesis: Parenthesis,
     }
 }
 
 mod where_clause {
     use crate::{
-        keyword::KeywordKind,
+        keyword::Keyword,
         ty::{TraitBound, Type},
         type_utils::{Colon, Comma, Plus},
     };
 
     pub struct WhereClause {
-        kw_where: KeywordKind,
+        kw_where: Keyword,
         type_bounds: Vec<(TypeBound, Comma)>,
         trailing_type_bound_opt: Option<TypeBound>,
     }
