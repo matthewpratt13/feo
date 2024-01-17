@@ -19,7 +19,7 @@ impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
     fn span(&self) -> Span {
         let start_pos = self.kw_loop.span().start();
         let end_pos = self.block.span().end();
-        let source = self.kw_loop.span().source();
+        let source = self.block.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -43,7 +43,7 @@ impl<T, U> Spanned for PredicateLoopExpr<T, U> {
     fn span(&self) -> Span {
         let start_pos = self.kw_while.span().start();
         let end_pos = self.block.span().end();
-        let source = self.kw_while.span().source();
+        let source = self.block.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -67,7 +67,7 @@ impl<T, U> Spanned for IterLoopExpr<T, U> {
     fn span(&self) -> Span {
         let start_pos = self.kw_for.span().start();
         let end_pos = self.block.span().end();
-        let source = self.kw_for.span().source();
+        let source = self.block.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
