@@ -118,20 +118,6 @@ impl PuncKind {
     }
 }
 
-impl Expression for PuncKind {}
-
-impl<E> ExprWithoutBlock<E> for PuncKind {}
-
-impl Pattern for PuncKind {}
-
-impl<R, E> RangeExpr<R, E> for PuncKind {}
-
-impl<R> RangePatt<R> for PuncKind where R: Pattern {}
-
-impl Statement for PuncKind {}
-
-impl Type for PuncKind {}
-
 impl FromStr for PuncKind {
     type Err = TypeErrorKind;
 
@@ -232,6 +218,20 @@ impl Spanned for Punctuation {
         self.clone().span
     }
 }
+
+impl Expression for Punctuation {}
+
+impl<E> ExprWithoutBlock<E> for Punctuation {}
+
+impl Pattern for Punctuation {}
+
+impl<E> RangeExpr<E> for Punctuation {}
+
+impl<R> RangePatt<R> for Punctuation where R: Pattern {}
+
+impl Statement for Punctuation {}
+
+impl Type for Punctuation {}
 
 pub fn is_quote(c: char) -> bool {
     ['\'', '"'].contains(&c)

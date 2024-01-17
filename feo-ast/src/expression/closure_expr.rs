@@ -2,11 +2,12 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{
     pattern::Pattern,
+    statement::Statement,
     ty::Type,
     type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
-use super::{BlockExpr, ClosureExpr, Expression, OuterAttr};
+use super::{BlockExpr, ClosureExpr, ExprWithoutBlock, Expression, OuterAttr};
 
 pub enum ClosureParamsOpt {
     None(DblPipe),
@@ -37,7 +38,11 @@ pub struct ClosureWithoutReturnType {
 
 impl Expression for ClosureWithoutReturnType {}
 
-impl<C> ClosureExpr<C> for ClosureWithoutReturnType {}
+impl ClosureExpr for ClosureWithoutReturnType {}
+
+impl<E> ExprWithoutBlock<E> for ClosureWithoutReturnType {}
+
+impl Statement for ClosureWithoutReturnType {}
 
 impl Type for ClosureWithoutReturnType {}
 
@@ -62,7 +67,11 @@ pub struct ClosureWithReturnType<T, U> {
 
 impl<T, U> Expression for ClosureWithReturnType<T, U> {}
 
-impl<T, U, C> ClosureExpr<C> for ClosureWithReturnType<T, U> where C: Expression {}
+impl<T, U> ClosureExpr for ClosureWithReturnType<T, U> {}
+
+impl<T, U, E> ExprWithoutBlock<E> for ClosureWithReturnType<T, U> {}
+
+impl<T, U> Statement for ClosureWithReturnType<T, U> {}
 
 impl<T, U> Type for ClosureWithReturnType<T, U> {}
 

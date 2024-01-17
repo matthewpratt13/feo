@@ -7,6 +7,8 @@ use feo_error::parser_error::{ParserError, ParserErrorKind};
 use feo_types::span::{Position, Span, Spanned};
 use feo_types::{Literal, PrimitiveType, U256};
 
+use crate::expression::{ExprWithoutBlock, Expression};
+use crate::statement::Statement;
 use crate::token::{Token, Tokenize};
 use crate::ty::Type;
 
@@ -46,6 +48,12 @@ impl Spanned for CharLiteral {
     }
 }
 
+impl Expression for CharLiteral {}
+
+impl<E> ExprWithoutBlock<E> for CharLiteral {}
+
+impl Statement for CharLiteral {}
+
 impl Type for CharLiteral {}
 
 #[derive(Debug, Clone)]
@@ -74,6 +82,12 @@ impl Spanned for StringLiteral {
         self.0.span()
     }
 }
+
+impl Expression for StringLiteral {}
+
+impl<E> ExprWithoutBlock<E> for StringLiteral {}
+
+impl Statement for StringLiteral {}
 
 impl Type for StringLiteral {}
 
@@ -111,6 +125,12 @@ impl Spanned for IntLiteral {
         self.0.span()
     }
 }
+
+impl Expression for IntLiteral {}
+
+impl<E> ExprWithoutBlock<E> for IntLiteral {}
+
+impl Statement for IntLiteral {}
 
 impl Type for IntLiteral {}
 
@@ -182,6 +202,12 @@ impl Spanned for UIntLiteral {
     }
 }
 
+impl Expression for UIntLiteral {}
+
+impl<E> ExprWithoutBlock<E> for UIntLiteral {}
+
+impl Statement for UIntLiteral {}
+
 impl Type for UIntLiteral {}
 
 #[derive(Debug, Clone)]
@@ -229,6 +255,12 @@ impl Spanned for U256Literal {
     }
 }
 
+impl Expression for U256Literal {}
+
+impl<E> ExprWithoutBlock<E> for U256Literal {}
+
+impl Statement for U256Literal {}
+
 impl Type for U256Literal {}
 
 #[derive(Debug, Clone)]
@@ -241,6 +273,12 @@ impl Spanned for Bytes32Literal {
         self.0.span()
     }
 }
+
+impl Expression for Bytes32Literal {}
+
+impl<E> ExprWithoutBlock<E> for Bytes32Literal {}
+
+impl Statement for Bytes32Literal {}
 
 impl Type for Bytes32Literal {}
 
@@ -279,6 +317,12 @@ impl Spanned for FloatLiteral {
         self.0.span()
     }
 }
+
+impl Expression for FloatLiteral {}
+
+impl Statement for FloatLiteral {}
+
+impl<E> ExprWithoutBlock<E> for FloatLiteral {}
 
 impl Type for FloatLiteral {}
 

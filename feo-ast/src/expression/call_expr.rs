@@ -2,6 +2,7 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{
     path::PathSegmentKind,
+    statement::Statement,
     type_utils::{Colon, Comma, Dot, Parenthesis},
 };
 
@@ -17,6 +18,8 @@ pub struct FunctionCallExpr {
 impl Expression for FunctionCallExpr {}
 
 impl<E> ExprWithoutBlock<E> for FunctionCallExpr {}
+
+impl Statement for FunctionCallExpr {}
 
 impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
@@ -48,6 +51,8 @@ pub struct MethodCallExpr {
 impl Expression for MethodCallExpr {}
 
 impl<E> ExprWithoutBlock<E> for MethodCallExpr where E: Expression {}
+
+impl Statement for MethodCallExpr {}
 
 impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {

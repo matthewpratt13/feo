@@ -2,6 +2,7 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{
     keyword::Keyword,
+    statement::Statement,
     ty::Type,
     type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
 };
@@ -18,7 +19,9 @@ impl Expression for ArithmeticOrLogicalExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
 
-impl OperatorExpr for ArithmeticOrLogicalExpr {}
+impl<E> OperatorExpr<E> for ArithmeticOrLogicalExpr {}
+
+impl Statement for ArithmeticOrLogicalExpr {}
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
@@ -42,7 +45,9 @@ impl Expression for AssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
 
-impl OperatorExpr for AssignmentExpr {}
+impl<E> OperatorExpr<E> for AssignmentExpr {}
+
+impl Statement for AssignmentExpr {}
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
@@ -66,7 +71,9 @@ impl Expression for BoolExpr {}
 
 impl<E> ExprWithoutBlock<E> for BoolExpr {}
 
-impl OperatorExpr for BoolExpr {}
+impl<E> OperatorExpr<E> for BoolExpr {}
+
+impl Statement for BoolExpr {}
 
 impl Spanned for BoolExpr {
     fn span(&self) -> Span {
@@ -90,7 +97,9 @@ impl Expression for ComparisonExpr {}
 
 impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
 
-impl OperatorExpr for ComparisonExpr {}
+impl<E> OperatorExpr<E> for ComparisonExpr {}
+
+impl Statement for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
@@ -113,7 +122,9 @@ impl Expression for NegationExpr {}
 
 impl<E> ExprWithoutBlock<E> for NegationExpr {}
 
-impl OperatorExpr for NegationExpr {}
+impl<E> OperatorExpr<E> for NegationExpr {}
+
+impl Statement for NegationExpr {}
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
@@ -136,7 +147,9 @@ impl Expression for ResultUnwrapExpr {}
 
 impl<E> ExprWithoutBlock<E> for ResultUnwrapExpr {}
 
-impl OperatorExpr for ResultUnwrapExpr {}
+impl<E> OperatorExpr<E> for ResultUnwrapExpr {}
+
+impl Statement for ResultUnwrapExpr {}
 
 impl Spanned for ResultUnwrapExpr {
     fn span(&self) -> Span {
@@ -160,7 +173,9 @@ impl Expression for TypeCastExpr {}
 
 impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
 
-impl OperatorExpr for TypeCastExpr {}
+impl<E> OperatorExpr<E> for TypeCastExpr {}
+
+impl Statement for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {

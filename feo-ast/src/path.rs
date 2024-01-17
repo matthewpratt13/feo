@@ -7,6 +7,7 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
+    statement::Statement,
     ty::Type,
     type_utils::DblColon,
 };
@@ -37,9 +38,11 @@ pub struct SimplePath {
 
 impl Expression for SimplePath {}
 
-impl<E> ExprWithoutBlock<E> for SimplePath where E: Expression {}
+impl<E> ExprWithoutBlock<E> for SimplePath {}
 
 impl Pattern for SimplePath {}
+
+impl Statement for SimplePath {}
 
 impl Type for SimplePath {}
 

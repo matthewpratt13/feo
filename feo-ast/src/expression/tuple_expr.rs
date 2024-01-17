@@ -1,6 +1,9 @@
 use feo_types::span::{Span, Spanned};
 
-use crate::type_utils::{Comma, Dot, Parenthesis};
+use crate::{
+    statement::Statement,
+    type_utils::{Comma, Dot, Parenthesis},
+};
 
 use super::{ExprWithoutBlock, Expression};
 
@@ -12,7 +15,9 @@ pub struct TupleExpr {
 
 impl Expression for TupleExpr {}
 
-impl<E> ExprWithoutBlock<E> for TupleExpr where E: Expression {}
+impl<E> ExprWithoutBlock<E> for TupleExpr {}
+
+impl Statement for TupleExpr {}
 
 impl Spanned for TupleExpr {
     fn span(&self) -> Span {
@@ -51,4 +56,6 @@ impl Spanned for TupleIndexingExpr {
 
 impl Expression for TupleIndexingExpr {}
 
-impl<E> ExprWithoutBlock<E> for TupleIndexingExpr where E: Expression {}
+impl<E> ExprWithoutBlock<E> for TupleIndexingExpr {}
+
+impl Statement for TupleIndexingExpr {}

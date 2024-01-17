@@ -20,7 +20,7 @@ pub struct IfExpr<T, U> {
 
 impl<T, U> Expression for IfExpr<T, U> {}
 
-impl<T, U, C, E> ConditionalExpr<C, E> for IfExpr<T, U> {}
+impl<T, U, E> ConditionalExpr<E> for IfExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> {}
 
@@ -57,7 +57,7 @@ pub struct MatchExpr {
 
 impl Expression for MatchExpr {}
 
-impl<C, E> ConditionalExpr<C, E> for MatchExpr {}
+impl<E> ConditionalExpr<E> for MatchExpr {}
 
 impl<E> ExprWithBlock<E> for MatchExpr {}
 

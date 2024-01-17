@@ -1,6 +1,9 @@
 use feo_types::span::{Span, Spanned};
 
-use crate::type_utils::{Bracket, Comma, Semicolon};
+use crate::{
+    statement::Statement,
+    type_utils::{Bracket, Comma, Semicolon},
+};
 
 use super::{ExprWithoutBlock, Expression};
 
@@ -13,6 +16,8 @@ pub struct ArrayExpr {
 impl Expression for ArrayExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArrayExpr {}
+
+impl Statement for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
@@ -48,6 +53,8 @@ pub struct IndexExpr {
 impl Expression for IndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for IndexExpr {}
+
+impl Statement for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {

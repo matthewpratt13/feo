@@ -11,6 +11,7 @@ use feo_types::span::{Position, Span, Spanned};
 use crate::{
     expression::{ExprWithoutBlock, Expression},
     item::Item,
+    statement::Statement,
     token::{Token, Tokenize},
 };
 
@@ -108,12 +109,6 @@ impl KeywordKind {
         }
     }
 }
-
-impl Expression for KeywordKind {}
-
-impl<E> ExprWithoutBlock<E> for KeywordKind where E: Expression {}
-
-impl Item for KeywordKind {}
 
 impl FromStr for KeywordKind {
     type Err = TypeErrorKind;
@@ -213,3 +208,11 @@ impl Spanned for Keyword {
         self.clone().span
     }
 }
+
+impl Expression for Keyword {}
+
+impl<E> ExprWithoutBlock<E> for Keyword {}
+
+impl Item for Keyword {}
+
+impl Statement for Keyword {}

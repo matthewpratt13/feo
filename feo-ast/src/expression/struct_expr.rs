@@ -3,6 +3,7 @@ use feo_types::span::{Span, Spanned};
 use crate::{
     identifier::Identifier,
     path::SimplePath,
+    statement::Statement,
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
@@ -19,7 +20,9 @@ impl Expression for Struct {}
 
 impl<E> ExprWithoutBlock<E> for Struct {}
 
-impl<S, E> StructExpr<S, E> for Struct {}
+impl<E> StructExpr<E> for Struct {}
+
+impl Statement for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -58,7 +61,9 @@ impl Expression for TupleStruct {}
 
 impl<E> ExprWithoutBlock<E> for TupleStruct {}
 
-impl<S, E> StructExpr<S, E> for TupleStruct {}
+impl<E> StructExpr<E> for TupleStruct {}
+
+impl Statement for TupleStruct {}
 
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
@@ -78,7 +83,9 @@ impl Expression for UnitStruct {}
 
 impl<E> ExprWithoutBlock<E> for UnitStruct {}
 
-impl<S, E> StructExpr<S, E> for UnitStruct {}
+impl<E> StructExpr<E> for UnitStruct {}
+
+impl Statement for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {

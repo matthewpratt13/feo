@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
 use feo_types::span::Spanned;
-use feo_types::U256;
 
 mod array_expr;
 mod block_expr;
@@ -14,6 +13,7 @@ mod range_expr;
 mod struct_expr;
 mod tuple_expr;
 
+use crate::statement::Statement;
 use crate::ty::Type;
 
 pub use self::attribute::{InnerAttr, OuterAttr};
@@ -29,73 +29,58 @@ where
 
 pub trait ExprWithoutBlock<E>
 where
-    Self: Expression,
+    Self: Expression + Statement + Spanned,
 {
 }
 
-pub trait ClosureExpr<C>
+pub trait ClosureExpr
 where
-    Self: Sized + Expression + Type,
+    Self: Sized + Expression + Type + Spanned,
 {
 }
 
-pub trait ConditionalExpr<C, E>
+pub trait ConditionalExpr<E>
 where
-    Self: Sized + Expression + Spanned + ExprWithBlock<E>,
+    Self: Sized + ExprWithBlock<E>,
 {
 }
 
-pub trait IterationExpr<I, E>
+pub trait IterationExpr<E>
 where
-    Self: Sized + Expression + Spanned,
+    Self: Sized + ExprWithBlock<E>,
 {
 }
 
-pub trait LiteralExpr<L, E>
+pub trait LiteralExpr<E>
 where
-    Self: Sized,
+    Self: Sized + ExprWithoutBlock<E>,
 {
 }
 
-pub trait OperatorExpr
+pub trait OperatorExpr<E>
 where
-    Self: Sized + Expression + Spanned,
+    Self: Sized + ExprWithoutBlock<E>,
 {
 }
 
-pub trait RangeExpr<R, E>
+pub trait RangeExpr<E>
 where
-    Self: Sized + Expression,
+    Self: Sized + ExprWithoutBlock<E>,
 {
 }
 
-pub trait StructExpr<S, E>
+pub trait StructExpr<E>
 where
-    Self: Sized + Expression + Spanned + ExprWithoutBlock<E>,
+    Self: Sized + ExprWithoutBlock<E>,
 {
 }
-
-impl<L, E> LiteralExpr<L, E> for char {}
-
-impl<L, E> LiteralExpr<L, E> for &'static str {}
-
-impl<L, E> LiteralExpr<L, E> for i64 {}
-
-impl<L, E> LiteralExpr<L, E> for u64 {}
-
-impl<L, E> LiteralExpr<L, E> for U256 {}
-
-impl<L, E> LiteralExpr<L, E> for f64 {}
-
-impl<L, E> LiteralExpr<L, E> for &[u8; 32] {}
-
-impl<L, E> LiteralExpr<L, E> for bool {}
 
 mod attribute {
     use feo_types::span::{Span, Spanned};
 
     use crate::{
         path::SimplePath,
+        statement::Statement,
         type_utils::{Bracket, HashBang, HashSign},
     };
 
@@ -110,9 +95,9 @@ mod attribute {
 
     impl Expression for InnerAttr {}
 
-    impl<E> ExprWithBlock<E> for InnerAttr {}
-
     impl<E> ExprWithoutBlock<E> for InnerAttr {}
+
+    impl Statement for InnerAttr {}
 
     impl Spanned for InnerAttr {
         fn span(&self) -> Span {
@@ -139,6 +124,8 @@ mod attribute {
 
     impl<E> ExprWithoutBlock<E> for OuterAttr {}
 
+    impl Statement for OuterAttr {}
+
     impl Spanned for OuterAttr {
         fn span(&self) -> Span {
             let start_pos = self.hash.span().start();
@@ -155,7 +142,7 @@ mod attribute {
 mod field_access_expr {
     use feo_types::span::{Span, Spanned};
 
-    use crate::{identifier::Identifier, type_utils::Dot};
+    use crate::{identifier::Identifier, statement::Statement, type_utils::Dot};
 
     use super::{ExprWithoutBlock, Expression};
 
@@ -168,6 +155,8 @@ mod field_access_expr {
     impl Expression for FieldAccessExpr {}
 
     impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
+
+    impl Statement for FieldAccessExpr {}
 
     impl Spanned for FieldAccessExpr {
         fn span(&self) -> Span {
@@ -185,7 +174,7 @@ mod field_access_expr {
 mod grouped_expr {
     use feo_types::span::{Span, Spanned};
 
-    use crate::type_utils::Parenthesis;
+    use crate::{statement::Statement, type_utils::Parenthesis};
 
     use super::{ExprWithoutBlock, Expression};
 
@@ -198,6 +187,8 @@ mod grouped_expr {
     impl Expression for GroupedExpr {}
 
     impl<E> ExprWithoutBlock<E> for GroupedExpr {}
+
+    impl Statement for GroupedExpr {}
 
     impl Spanned for GroupedExpr {
         fn span(&self) -> Span {
@@ -215,7 +206,7 @@ mod grouped_expr {
 mod return_expr {
     use feo_types::span::{Span, Spanned};
 
-    use crate::keyword::Keyword;
+    use crate::{keyword::Keyword, statement::Statement};
 
     use super::{ExprWithoutBlock, Expression};
 
@@ -227,6 +218,8 @@ mod return_expr {
     impl Expression for ReturnExpr {}
 
     impl<E> ExprWithoutBlock<E> for ReturnExpr {}
+
+    impl Statement for ReturnExpr {}
 
     impl Spanned for ReturnExpr {
         fn span(&self) -> Span {
