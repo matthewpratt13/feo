@@ -35,7 +35,7 @@ pub enum FuncOrMethodParam {
 pub struct FunctionSignatureOnly {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    func_qualifiers_opt: Option<FuncQualifier>,
+    func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: Keyword,
     name: Identifier,
     open_parenthesis: Parenthesis,
@@ -60,7 +60,10 @@ impl Spanned for FunctionSignatureOnly {
             None => match &self.visibility_opt {
                 Some(v) => v.span().start(),
                 None => match &self.func_qualifiers_opt {
-                    Some(fq) => fq.span().start(),
+                    Some(fq) => match fq.first() {
+                        Some(q) => q.span().start(),
+                        None => self.kw_func.span().start(),
+                    },
                     None => self.kw_func.span().start(),
                 },
             },
@@ -96,6 +99,31 @@ impl<T, A> AssociatedItem<A> for FunctionWithBody<T> where A: Item {}
 impl<T, F> FunctionItem<F> for FunctionWithBody<T> where F: Item {}
 
 impl<T> Type for FunctionWithBody<T> {}
+
+// impl<T> Spanned for FunctionWithBody<T> {
+//     fn span(&self) -> Span {
+//         let start_pos = match self.attributes.first() {
+//             Some(a) => a.span().start(),
+//             None => match &self.visibility_opt {
+//                 Some(v) => v.span().start(),
+//                 None => match &self.func_qualifiers_opt {
+//                     Some(fq) => match fq.first() {
+//                         Some(q) => q.span().start(),
+//                         None => self.kw_func.span().start(),
+//                     },
+//                     None => self.kw_func.span().start(),
+//                 },
+//             },
+//         };
+
+//         let end_pos = todo!();
+//         let source = self.name.span().source();
+
+//         let span = Span::new(source.as_str(), start_pos, end_pos);
+
+//         span
+//     }
+// }
 
 pub struct FuncParams {
     first_param: FuncOrMethodParam,
