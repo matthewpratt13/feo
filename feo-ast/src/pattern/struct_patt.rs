@@ -1,3 +1,5 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
@@ -16,6 +18,18 @@ pub struct StructPatt {
 }
 
 impl Pattern for StructPatt {}
+
+impl Spanned for StructPatt {
+    fn span(&self) -> Span {
+        let start_pos = self.struct_path.span().start();
+        let end_pos = self.close_brace.span().end();
+        let source = self.struct_path.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
 
 pub struct StructPattFields {
     first_field: StructPattField,
@@ -37,6 +51,18 @@ pub struct TupleStructPatt {
 }
 
 impl Pattern for TupleStructPatt {}
+
+impl Spanned for TupleStructPatt {
+    fn span(&self) -> Span {
+        let start_pos = self.tuple_struct_path.span().start();
+        let end_pos = self.close_parenthesis.span().end();
+        let source = self.tuple_struct_path.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
 
 pub struct TupleStructItems {
     first_item: Box<dyn Pattern>,
