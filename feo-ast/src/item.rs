@@ -97,6 +97,15 @@ mod visibility {
         PubCrate(PubCrateVisibility),
     }
 
+    impl Spanned for VisibilityKind {
+        fn span(&self) -> Span {
+            match self {
+                VisibilityKind::Pub(p) => p.span(),
+                VisibilityKind::PubCrate(pc) => pc.span(),
+            }
+        }
+    }
+
     pub struct PubCrateVisibility {
         kw_pub: Keyword,
         open_parenthesis: Parenthesis,
