@@ -1,66 +1,34 @@
 #![allow(dead_code)]
 
-use feo_types::U256;
+use feo_types::span::Spanned;
 
 mod range_patt;
 mod struct_patt;
 mod tuple_patt;
 
-pub trait Pattern {}
-
-pub trait LiteralPatt<L>
+pub trait Pattern
 where
-    L: Pattern,
+    Self: Spanned,
 {
 }
 
-impl<L> Pattern for dyn LiteralPatt<L> {}
-
-pub trait RangePatt<R>
+pub trait LiteralPatt
 where
-    R: Pattern,
+    Self: Pattern,
 {
 }
 
-pub trait RangePattBound<R>
+pub trait RangePatt
 where
-    R: Pattern,
+    Self: Pattern,
 {
 }
 
-impl<R> Pattern for dyn RangePatt<R> {}
-
-impl Pattern for char {}
-impl<L> LiteralPatt<L> for char where L: Pattern {}
-impl<R> RangePattBound<R> for char where R: Pattern {}
-
-impl Pattern for &'static str {}
-impl<L> LiteralPatt<L> for &'static str where L: Pattern {}
-impl<R> RangePattBound<R> for &'static str where R: Pattern {}
-
-impl Pattern for i64 {}
-impl<L> LiteralPatt<L> for i64 where L: Pattern {}
-impl<R> RangePattBound<R> for i64 where R: Pattern {}
-
-impl Pattern for u64 {}
-impl<L> LiteralPatt<L> for u64 where L: Pattern {}
-impl<R> RangePattBound<R> for u64 where R: Pattern {}
-
-impl Pattern for U256 {}
-impl<L> LiteralPatt<L> for U256 where L: Pattern {}
-impl<R> RangePattBound<R> for U256 where R: Pattern {}
-
-impl Pattern for f64 {}
-impl<L> LiteralPatt<L> for f64 where L: Pattern {}
-impl<R> RangePattBound<R> for f64 where R: Pattern {}
-
-impl Pattern for &[u8; 32] {}
-impl<L> LiteralPatt<L> for &[u8; 32] where L: Pattern {}
-impl<R> RangePattBound<R> for &[u8; 32] where R: Pattern {}
-
-impl Pattern for bool {}
-impl<L> LiteralPatt<L> for bool where L: Pattern {}
-impl<R> RangePattBound<R> for bool where R: Pattern {}
+pub trait RangePattBound
+where
+    Self: Pattern,
+{
+}
 
 mod grouped_pattern {
     use feo_types::span::{Span, Spanned};

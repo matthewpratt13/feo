@@ -227,7 +227,7 @@ impl Pattern for Punctuation {}
 
 impl<E> RangeExpr<E> for Punctuation {}
 
-impl<R> RangePatt<R> for Punctuation where R: Pattern {}
+impl RangePatt for Punctuation {}
 
 impl Statement for Punctuation {}
 

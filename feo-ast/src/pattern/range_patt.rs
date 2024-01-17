@@ -4,18 +4,18 @@ use crate::type_utils::DotDotEquals;
 
 use super::{Pattern, RangePatt, RangePattBound};
 
-pub struct RangeFromPatt<T> {
-    from: Box<dyn RangePattBound<T>>,
+pub struct RangeFromPatt {
+    from: Box<dyn RangePattBound>,
     dot_dot_equals: DotDotEquals,
 }
 
-impl<T> Pattern for RangeFromPatt<T> {}
+impl Pattern for RangeFromPatt {}
 
-impl<T, R> RangePatt<R> for RangeFromPatt<T> where R: Pattern {}
+impl RangePatt for RangeFromPatt {}
 
-impl<T> Spanned for RangeFromPatt<T> {
+impl Spanned for RangeFromPatt {
     fn span(&self) -> Span {
-        let start_pos = todo!();
+        let start_pos = self.from.span().start();
         let end_pos = self.dot_dot_equals.span().end();
         let source = self.dot_dot_equals.span().source();
 
@@ -25,20 +25,20 @@ impl<T> Spanned for RangeFromPatt<T> {
     }
 }
 
-pub struct RangeInclusivePatt<T> {
-    from: Box<dyn RangePattBound<T>>,
+pub struct RangeInclusivePatt {
+    from: Box<dyn RangePattBound>,
     dot_dot_equals: DotDotEquals,
-    to: Box<dyn RangePattBound<T>>,
+    to: Box<dyn RangePattBound>,
 }
 
-impl<T> Pattern for RangeInclusivePatt<T> {}
+impl Pattern for RangeInclusivePatt {}
 
-impl<T, R> RangePatt<R> for RangeInclusivePatt<T> where R: Pattern {}
+impl RangePatt for RangeInclusivePatt {}
 
-impl<T> Spanned for RangeInclusivePatt<T> {
+impl Spanned for RangeInclusivePatt {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.from.span().start();
+        let end_pos = self.to.span().end();
         let source = self.dot_dot_equals.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -47,20 +47,20 @@ impl<T> Spanned for RangeInclusivePatt<T> {
     }
 }
 
-pub struct RangeToInclusivePatt<T> {
-    from: Box<dyn RangePattBound<T>>,
+pub struct RangeToInclusivePatt {
+    from: Box<dyn RangePattBound>,
     dot_dot_equals: DotDotEquals,
-    to: Box<dyn RangePattBound<T>>,
+    to: Box<dyn RangePattBound>,
 }
 
-impl<T> Pattern for RangeToInclusivePatt<T> {}
+impl Pattern for RangeToInclusivePatt {}
 
-impl<T, R> RangePatt<R> for RangeToInclusivePatt<T> where R: Pattern {}
+impl RangePatt for RangeToInclusivePatt {}
 
-impl<T> Spanned for RangeToInclusivePatt<T> {
+impl Spanned for RangeToInclusivePatt {
     fn span(&self) -> Span {
-        let start_pos = todo!();
-        let end_pos = todo!();
+        let start_pos = self.from.span().start();
+        let end_pos = self.to.span().end();
         let source = self.dot_dot_equals.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
