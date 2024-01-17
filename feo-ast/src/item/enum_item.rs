@@ -1,7 +1,9 @@
+use feo_types::span::{Span, Spanned};
+
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
-    keyword::KeywordKind,
+    keyword::Keyword,
     program::LibraryItem,
     ty::Type,
     type_utils::{Brace, Comma, Parenthesis},
@@ -16,7 +18,7 @@ pub enum EnumVariantType {
 
 pub struct EnumItem {
     visibility_opt: Option<VisibilityKind>,
-    kw_enum: KeywordKind,
+    kw_enum: Keyword,
     name: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
@@ -29,6 +31,23 @@ impl Item for EnumItem {}
 impl<L> LibraryItem<L> for EnumItem where L: Item {}
 
 impl Type for EnumItem {}
+
+impl Spanned for EnumItem {
+    fn span(&self) -> Span {
+        let start_pos = if let Some(vk) = &self.visibility_opt {
+            vk.span().start()
+        } else {
+            self.kw_enum.span().start()
+        };
+
+        let end_pos = self.close_brace.span().end();
+        let source = self.name.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
 
 pub struct EnumVariants {
     first_variant: EnumVariant,
