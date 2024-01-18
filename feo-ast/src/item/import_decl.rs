@@ -1,4 +1,4 @@
-use feo_types::span::{Position, Span, Spanned};
+use feo_types::span::{Span, Spanned};
 
 use crate::{
     keyword::Keyword,
