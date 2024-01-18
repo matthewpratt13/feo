@@ -44,7 +44,7 @@ impl Spanned for ImportDeclItem {
 }
 
 pub struct EntirePathContentsItem {
-    path_opt: Vec<Option<(Option<SimplePath>, DblColon)>>,
+    path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
 
