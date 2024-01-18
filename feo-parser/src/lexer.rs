@@ -366,7 +366,7 @@ impl<'a> Lexer<'a> {
                                         '\\' => buf.push('\\'),
                                         '0' => buf.push('\0'),
                                         '\'' => buf.push('\''),
-                                        '"' => buf.push('"'),
+                                        '\"' => buf.push('"'),
                                         _ => {
                                             return Err(
                                                 self.log_error(LexErrorKind::InvalidEscapeSequence)
@@ -463,7 +463,7 @@ impl<'a> Lexer<'a> {
 
                                     Some('\'') => CharLiteral::tokenize(
                                         &self.input,
-                                        "'",
+                                        "\'",
                                         start_pos,
                                         self.pos + 1,
                                         &mut self.handler,
