@@ -11,7 +11,7 @@ use crate::{
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
-use super::{AssociatedItem, FunctionDef, Item, VisibilityKind, WhereClause};
+use super::{AssociatedItem, FunctionDef, Item, VisibilityKind};
 
 pub enum FuncQualifier {
     Const(Keyword),
@@ -96,7 +96,6 @@ pub struct FunctionWithBody<T> {
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    where_clause_opt: Option<WhereClause>,
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
