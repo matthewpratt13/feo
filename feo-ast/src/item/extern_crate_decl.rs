@@ -15,7 +15,7 @@ pub enum CrateRefKind {
     KwSelf(Keyword),
 }
 
-pub struct ExternCrateItem {
+pub struct ExternCrateDecl {
     visibility_opt: Option<VisibilityKind>,
     kw_extern: Keyword,
     kw_crate: Keyword,
@@ -24,15 +24,15 @@ pub struct ExternCrateItem {
     semicolon: Semicolon,
 }
 
-impl ContractItem for ExternCrateItem {}
+impl ContractItem for ExternCrateDecl {}
 
-impl Item for ExternCrateItem {}
+impl Item for ExternCrateDecl {}
 
-impl LibraryItem for ExternCrateItem {}
+impl LibraryItem for ExternCrateDecl {}
 
-impl Statement for ExternCrateItem {}
+impl Statement for ExternCrateDecl {}
 
-impl Spanned for ExternCrateItem {
+impl Spanned for ExternCrateDecl {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()

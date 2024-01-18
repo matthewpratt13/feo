@@ -2,7 +2,7 @@
 
 mod constant_item;
 mod enum_item;
-mod extern_crate_item;
+mod extern_crate_decl;
 mod function_def;
 mod impl_item;
 mod import_decl_item;
