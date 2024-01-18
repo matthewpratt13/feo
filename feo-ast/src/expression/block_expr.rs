@@ -5,7 +5,7 @@ use crate::{
     type_utils::Brace,
 };
 
-use super::{ExprWithBlock, ExprWithoutBlock, Expression};
+use super::{ExprWithBlock, ExprWithoutBlock, Expression, Constant};
 
 pub enum StatementsKind<T, U> {
     ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
@@ -28,6 +28,8 @@ pub struct BlockExpr<T, U> {
     statements: StatementsKind<T, U>,
     close_brace: Brace,
 }
+
+impl<T, U> Constant for BlockExpr<T, U> {}
 
 impl<T, U> Expression for BlockExpr<T, U> {}
 

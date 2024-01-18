@@ -9,7 +9,7 @@ use feo_error::{
 use feo_types::span::{Position, Span, Spanned};
 
 use crate::{
-    expression::{ExprWithoutBlock, Expression, RangeExpr},
+    expression::{Constant, ExprWithoutBlock, Expression, RangeExpr},
     pattern::{Pattern, RangePatt},
     statement::Statement,
     token::{Token, Tokenize},
@@ -218,6 +218,8 @@ impl Spanned for Punctuation {
         self.clone().span
     }
 }
+
+impl Constant for Punctuation {}
 
 impl Expression for Punctuation {}
 

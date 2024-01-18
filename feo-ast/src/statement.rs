@@ -3,7 +3,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{ExprWithoutBlock, Expression},
+    expression::{ExprWithoutBlock, Expression, Constant},
     identifier::Identifier,
     keyword::Keyword,
     type_annotation::TypeAnnKind,
@@ -20,6 +20,8 @@ pub struct ExprStatement<T> {
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
     semicolon: Semicolon,
 }
+
+impl<T> Constant for ExprStatement<T> {}
 
 impl<T> Statement for ExprStatement<T> {}
 
@@ -44,6 +46,8 @@ pub struct LetStatement {
     value: Box<dyn Expression>,
     semicolon: Semicolon,
 }
+
+impl Constant for LetStatement {}
 
 impl Statement for LetStatement {}
 

@@ -23,6 +23,8 @@ use crate::ty::Type;
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 
+pub trait Constant {}
+
 pub trait Expression
 where
     Self: Spanned,
@@ -49,7 +51,7 @@ where
 
 pub trait ConditionalExpr<E>
 where
-    Self: Sized + ExprWithBlock<E>,
+    Self: Sized + Constant + ExprWithBlock<E>,
 {
 }
 
@@ -61,7 +63,7 @@ where
 
 pub trait LiteralExpr<E>
 where
-    Self: Sized + ExprWithoutBlock<E>,
+    Self: Sized + Constant + ExprWithoutBlock<E>,
 {
 }
 
@@ -73,12 +75,12 @@ where
 
 pub trait RangeExpr<E>
 where
-    Self: Sized + ExprWithoutBlock<E>,
+    Self: Sized + Constant + ExprWithoutBlock<E>,
 {
 }
 
 pub trait StructExpr<E>
 where
-    Self: Sized + ExprWithoutBlock<E>,
+    Self: Sized + Constant + ExprWithoutBlock<E>,
 {
 }

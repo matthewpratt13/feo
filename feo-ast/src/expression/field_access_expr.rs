@@ -2,13 +2,15 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{identifier::Identifier, statement::Statement, type_utils::Dot};
 
-use super::{ExprWithoutBlock, Expression};
+use super::{Constant, ExprWithoutBlock, Expression};
 
 pub struct FieldAccessExpr {
     object: Box<dyn Expression>,
     dot: Dot,
     field_name: Identifier,
 }
+
+impl Constant for FieldAccessExpr {}
 
 impl Expression for FieldAccessExpr {}
 

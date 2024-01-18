@@ -7,7 +7,7 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::{ExprWithoutBlock, Expression, OuterAttr, StructExpr};
+use super::{Constant, ExprWithoutBlock, Expression, OuterAttr, StructExpr};
 
 pub struct Struct {
     item_path: SimplePath,
@@ -15,6 +15,8 @@ pub struct Struct {
     struct_expr_fields_opt: Option<StructExprFields>,
     close_brace: Brace,
 }
+
+impl Constant for Struct {}
 
 impl Expression for Struct {}
 
@@ -57,6 +59,8 @@ pub struct TupleStruct {
     close_parenthesis: Parenthesis,
 }
 
+impl Constant for TupleStruct {}
+
 impl Expression for TupleStruct {}
 
 impl<E> ExprWithoutBlock<E> for TupleStruct {}
@@ -78,6 +82,8 @@ impl Spanned for TupleStruct {
 }
 
 pub struct UnitStruct(SimplePath);
+
+impl Constant for UnitStruct {}
 
 impl Expression for UnitStruct {}
 

@@ -3,7 +3,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{ExprWithoutBlock, Expression},
+    expression::{Constant, ExprWithoutBlock, Expression},
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
@@ -35,6 +35,8 @@ pub struct SimplePath {
     first_segment: PathSegmentKind,
     subsequent_segments: Vec<(DblColon, PathSegmentKind)>,
 }
+
+impl Constant for SimplePath {}
 
 impl Expression for SimplePath {}
 

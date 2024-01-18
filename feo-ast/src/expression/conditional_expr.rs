@@ -6,7 +6,9 @@ use crate::{
     type_utils::{Brace, Comma, FatArrow},
 };
 
-use super::{BlockExpr, ConditionalExpr, ExprWithBlock, Expression, InnerAttr, OuterAttr};
+use super::{
+    BlockExpr, ConditionalExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr,
+};
 
 pub struct IfExpr<T, U> {
     kw_if: Keyword,
@@ -17,6 +19,8 @@ pub struct IfExpr<T, U> {
     else_if_block_opt: Option<(Keyword, Box<IfExpr<T, U>>)>,
     else_block_opt: Option<(Keyword, BlockExpr<T, U>)>,
 }
+
+impl<T, U> Constant for IfExpr<T, U> {}
 
 impl<T, U> Expression for IfExpr<T, U> {}
 
@@ -54,6 +58,8 @@ pub struct MatchExpr {
     match_arms_opt: Option<MatchArms>,
     close_brace: Brace,
 }
+
+impl Constant for MatchExpr {}
 
 impl Expression for MatchExpr {}
 

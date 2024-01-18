@@ -6,13 +6,15 @@ use crate::{
     type_utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{ExprWithoutBlock, Expression};
+use super::{Constant, ExprWithoutBlock, Expression};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
     elements_opt: Option<ArrayElements>,
     close_bracket: Bracket,
 }
+
+impl Constant for ArrayExpr {}
 
 impl Expression for ArrayExpr {}
 
@@ -50,6 +52,8 @@ pub struct IndexExpr {
     index: UIntValue,
     close_bracket: Bracket,
 }
+
+impl Constant for IndexExpr {}
 
 impl Expression for IndexExpr {}
 

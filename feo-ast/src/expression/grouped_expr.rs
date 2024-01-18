@@ -2,13 +2,15 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{statement::Statement, type_utils::Parenthesis};
 
-use super::{ExprWithoutBlock, Expression};
+use super::{Constant, ExprWithoutBlock, Expression};
 
 pub struct GroupedExpr {
     open_parenthesis: Parenthesis,
     expression: Box<dyn Expression>,
     close_parenthesis: Parenthesis,
 }
+
+impl Constant for GroupedExpr {}
 
 impl Expression for GroupedExpr {}
 

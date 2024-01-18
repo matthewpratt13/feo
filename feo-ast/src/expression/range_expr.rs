@@ -5,13 +5,15 @@ use crate::{
     type_utils::{DblDot, DotDotEquals},
 };
 
-use super::{ExprWithoutBlock, Expression, RangeExpr};
+use super::{Constant, ExprWithoutBlock, Expression, RangeExpr};
 
 pub struct RangeFromToExpr {
     from_expression: Box<dyn Expression>,
     dbl_dot: DblDot,
     to_expression_excl: Box<dyn Expression>,
 }
+
+impl Constant for RangeFromToExpr {}
 
 impl Expression for RangeFromToExpr {}
 
@@ -38,6 +40,8 @@ pub struct RangeFromExpr {
     dbl_dot: DblDot,
 }
 
+impl Constant for RangeFromExpr {}
+
 impl Expression for RangeFromExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
@@ -62,6 +66,8 @@ pub struct RangeToExpr {
     dbl_dot: DblDot,
     to_expression: Box<dyn Expression>,
 }
+
+impl Constant for RangeToExpr {}
 
 impl Expression for RangeToExpr {}
 
@@ -89,6 +95,8 @@ pub struct RangeInclusiveExpr {
     to_expression_incl: Box<dyn Expression>,
 }
 
+impl Constant for RangeInclusiveExpr {}
+
 impl Expression for RangeInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
@@ -113,6 +121,8 @@ pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
     to_expression_incl: Box<dyn Expression>,
 }
+
+impl Constant for RangeToInclusiveExpr {}
 
 impl Expression for RangeToInclusiveExpr {}
 

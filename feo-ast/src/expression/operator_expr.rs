@@ -7,13 +7,15 @@ use crate::{
     type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
 };
 
-use super::{ExprWithoutBlock, Expression, OperatorExpr};
+use super::{Constant, ExprWithoutBlock, Expression, OperatorExpr};
 
 pub struct ArithmeticOrLogicalExpr {
     first_operand: Box<dyn Expression>,
     operator: OpArithmeticOrLogical,
     second_operand: Box<dyn Expression>,
 }
+
+impl Constant for ArithmeticOrLogicalExpr {}
 
 impl Expression for ArithmeticOrLogicalExpr {}
 
@@ -41,6 +43,8 @@ pub struct AssignmentExpr {
     new_value: Box<dyn Expression>,
 }
 
+impl Constant for AssignmentExpr {}
+
 impl Expression for AssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
@@ -66,6 +70,8 @@ pub struct BoolExpr {
     operator: OpBool,
     second_expression: Box<dyn Expression>,
 }
+
+impl Constant for BoolExpr {}
 
 impl Expression for BoolExpr {}
 
@@ -93,6 +99,8 @@ pub struct ComparisonExpr {
     second_expression: Box<dyn Expression>,
 }
 
+impl Constant for ComparisonExpr {}
+
 impl Expression for ComparisonExpr {}
 
 impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
@@ -117,6 +125,8 @@ pub struct NegationExpr {
     negator: Bang,
     expression: Box<dyn Expression>,
 }
+
+impl Constant for NegationExpr {}
 
 impl Expression for NegationExpr {}
 
@@ -168,6 +178,8 @@ pub struct TypeCastExpr {
     kw_as: Keyword,
     new_type: Box<dyn Type>, // cannot be a trait object
 }
+
+impl Constant for TypeCastExpr {}
 
 impl Expression for TypeCastExpr {}
 

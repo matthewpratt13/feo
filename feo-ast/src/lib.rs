@@ -52,11 +52,13 @@ mod primitive_wrapper {
     use feo_types::span::{Span, Spanned};
     use feo_types::U256;
 
-    use crate::expression::{ExprWithoutBlock, Expression, LiteralExpr};
+    use crate::expression::{Constant, ExprWithoutBlock, Expression, LiteralExpr};
     use crate::pattern::{LiteralPatt, Pattern, RangePattBound};
     use crate::statement::Statement;
 
     pub struct CharValue(char);
+
+    impl Constant for CharValue {}
 
     impl Expression for CharValue {}
 
@@ -86,6 +88,8 @@ mod primitive_wrapper {
 
     pub struct StrValue(&'static str);
 
+    impl Constant for StrValue {}
+
     impl Expression for StrValue {}
 
     impl<E> ExprWithoutBlock<E> for StrValue {}
@@ -113,6 +117,8 @@ mod primitive_wrapper {
     }
 
     pub struct IntValue(i64);
+
+    impl Constant for IntValue {}
 
     impl Expression for IntValue {}
 
@@ -152,6 +158,8 @@ mod primitive_wrapper {
     //     }
     // }
 
+    impl Constant for UIntValue {}
+
     impl Expression for UIntValue {}
 
     impl<E> ExprWithoutBlock<E> for UIntValue {}
@@ -179,6 +187,8 @@ mod primitive_wrapper {
     }
 
     pub struct U256Value(U256);
+
+    impl Constant for U256Value {}
 
     impl Expression for U256Value {}
 
@@ -208,6 +218,8 @@ mod primitive_wrapper {
 
     pub struct FloatValue(f64);
 
+    impl Constant for FloatValue {}
+
     impl Expression for FloatValue {}
 
     impl<E> ExprWithoutBlock<E> for FloatValue {}
@@ -236,6 +248,8 @@ mod primitive_wrapper {
 
     pub struct Bytes32Value(&'static [u8; 32]);
 
+    impl Constant for Bytes32Value {}
+
     impl Expression for Bytes32Value {}
 
     impl<E> ExprWithoutBlock<E> for Bytes32Value {}
@@ -263,6 +277,8 @@ mod primitive_wrapper {
     }
 
     pub struct BoolValue(bool);
+
+    impl Constant for BoolValue {}
 
     impl Expression for BoolValue {}
 

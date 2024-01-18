@@ -2,7 +2,7 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{keyword::Keyword, pattern::Pattern};
 
-use super::{BlockExpr, ExprWithBlock, Expression, IterationExpr};
+use super::{BlockExpr, Constant, ExprWithBlock, Expression, IterationExpr};
 
 pub struct InfiniteLoopExpr<T, U> {
     kw_loop: Keyword,
@@ -33,6 +33,8 @@ pub struct PredicateLoopExpr<T, U> {
     block: BlockExpr<T, U>,
 }
 
+impl<T, U> Constant for PredicateLoopExpr<T, U> {}
+
 impl<T, U> Expression for PredicateLoopExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> {}
@@ -58,6 +60,8 @@ pub struct IterLoopExpr<T, U> {
     expression: Box<dyn Expression>, // cannot be a struct expression
     block: BlockExpr<T, U>,
 }
+
+impl<T, U> Constant for IterLoopExpr<T, U> {}
 
 impl<T, U> Expression for IterLoopExpr<T, U> {}
 
