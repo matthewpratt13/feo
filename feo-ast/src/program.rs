@@ -3,7 +3,7 @@
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
-    item::{AssociatedItem, FunctionItem, Item, VisibilityKind},
+    item::{AssociatedItem, FunctionDef, Item, VisibilityKind},
     keyword::Keyword,
     type_utils::{Brace, Semicolon},
 };
@@ -22,7 +22,7 @@ pub struct Abi {
     kw_abi: Keyword,
     contract_name: Identifier,
     open_brace: Brace,
-    functions_opt: Option<Vec<Box<dyn FunctionItem>>>,
+    functions_opt: Option<Vec<Box<dyn FunctionDef>>>,
     close_brace: Brace,
 }
 

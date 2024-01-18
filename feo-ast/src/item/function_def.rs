@@ -11,7 +11,7 @@ use crate::{
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
-use super::{AssociatedItem, FunctionItem, Item, VisibilityKind, WhereClause};
+use super::{AssociatedItem, FunctionDef, Item, VisibilityKind, WhereClause};
 
 pub enum FuncQualifier {
     Const(Keyword),
@@ -53,7 +53,7 @@ impl ContractItem for FunctionSignatureOnly {}
 
 impl Item for FunctionSignatureOnly {}
 
-impl FunctionItem for FunctionSignatureOnly {}
+impl FunctionDef for FunctionSignatureOnly {}
 
 impl LibraryItem for FunctionSignatureOnly {}
 
@@ -106,7 +106,7 @@ impl<T> ContractItem for FunctionWithBody<T> {}
 
 impl<T> Item for FunctionWithBody<T> {}
 
-impl<T> FunctionItem for FunctionWithBody<T> {}
+impl<T> FunctionDef for FunctionWithBody<T> {}
 
 impl<T> LibraryItem for FunctionWithBody<T> {}
 

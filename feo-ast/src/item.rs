@@ -3,7 +3,7 @@
 mod constant_item;
 mod enum_item;
 mod extern_crate_item;
-mod function_item;
+mod function_def;
 mod impl_item;
 mod import_decl_item;
 mod module_item;
@@ -36,7 +36,7 @@ where
 {
 }
 
-pub trait FunctionItem
+pub trait FunctionDef
 where
     Self: Item + AssociatedItem + Type,
 {
