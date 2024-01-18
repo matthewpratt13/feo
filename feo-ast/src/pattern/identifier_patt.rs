@@ -15,11 +15,11 @@ impl Pattern for IdentifierPatt {}
 impl Spanned for IdentifierPatt {
     fn span(&self) -> Span {
         let start_pos = match &self.kw_ref_opt {
-            Some(kwr) => match &self.kw_mut_opt {
+            Some(kwr) => kwr.span().start(),
+            None => match &self.kw_mut_opt {
                 Some(kwm) => kwm.span().start(),
-                None => kwr.span().start(),
+                None => self.name.span().start(),
             },
-            None => self.name.span().start(),
         };
 
         let end_pos = self.name.span().end();
