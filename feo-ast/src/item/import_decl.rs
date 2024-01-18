@@ -11,22 +11,22 @@ use crate::{
 
 use super::{ImportTree, Item, VisibilityKind};
 
-pub struct ImportDeclItem {
+pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,
     kw_import: Keyword,
     import_tree: Box<dyn ImportTree>,
     semicolon: Semicolon,
 }
 
-impl ContractItem for ImportDeclItem {}
+impl ContractItem for ImportDecl {}
 
-impl Item for ImportDeclItem {}
+impl Item for ImportDecl {}
 
-impl LibraryItem for ImportDeclItem {}
+impl LibraryItem for ImportDecl {}
 
-impl Statement for ImportDeclItem {}
+impl Statement for ImportDecl {}
 
-impl Spanned for ImportDeclItem {
+impl Spanned for ImportDecl {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()

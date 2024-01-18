@@ -5,7 +5,7 @@ mod enum_item;
 mod extern_crate_decl;
 mod function_def;
 mod impl_item;
-mod import_decl_item;
+mod import_decl;
 mod module_item;
 mod struct_item;
 mod trait_item;
@@ -19,7 +19,7 @@ use crate::statement::Statement;
 use crate::ty::Type;
 
 pub use self::enum_item::EnumItem;
-pub use self::import_decl_item::AsClause;
+pub use self::import_decl::AsClause;
 pub use self::struct_item::{StructFields, TupleFields};
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
