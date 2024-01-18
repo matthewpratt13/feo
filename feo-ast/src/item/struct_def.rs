@@ -12,7 +12,7 @@ use crate::{
 
 use super::{Item, StructItem, VisibilityKind, WhereClause};
 
-pub struct Struct {
+pub struct StructDef {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
     identifier: Identifier,
@@ -22,19 +22,19 @@ pub struct Struct {
     close_brace: Brace,
 }
 
-impl ContractItem for Struct {}
+impl ContractItem for StructDef {}
 
-impl Item for Struct {}
+impl Item for StructDef {}
 
-impl LibraryItem for Struct {}
+impl LibraryItem for StructDef {}
 
-impl Statement for Struct {}
+impl Statement for StructDef {}
 
-impl StructItem for Struct {}
+impl StructItem for StructDef {}
 
-impl Type for Struct {}
+impl Type for StructDef {}
 
-impl Spanned for Struct {
+impl Spanned for StructDef {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()
@@ -65,7 +65,7 @@ pub struct StructField {
     field_type: Box<dyn Type>,
 }
 
-pub struct TupleStruct {
+pub struct TupleStructDef {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
     identifier: Identifier,
@@ -76,19 +76,19 @@ pub struct TupleStruct {
     semicolon: Semicolon,
 }
 
-impl ContractItem for TupleStruct {}
+impl ContractItem for TupleStructDef {}
 
-impl Item for TupleStruct {}
+impl Item for TupleStructDef {}
 
-impl LibraryItem for TupleStruct {}
+impl LibraryItem for TupleStructDef {}
 
-impl Statement for TupleStruct {}
+impl Statement for TupleStructDef {}
 
-impl StructItem for TupleStruct {}
+impl StructItem for TupleStructDef {}
 
-impl Type for TupleStruct {}
+impl Type for TupleStructDef {}
 
-impl Spanned for TupleStruct {
+impl Spanned for TupleStructDef {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()
