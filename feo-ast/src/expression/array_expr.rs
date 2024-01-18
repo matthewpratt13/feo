@@ -1,6 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
+    primitive_wrapper::UIntValue,
     statement::Statement,
     type_utils::{Bracket, Comma, Semicolon},
 };
@@ -40,13 +41,13 @@ pub struct ArrayElements {
 pub struct ArrayDefinition {
     element_type: Box<dyn Expression>,
     semicolon: Semicolon,
-    num_elements: usize,
+    num_elements: UIntValue,
 }
 
 pub struct IndexExpr {
     object: Box<dyn Expression>,
     open_bracket: Bracket,
-    index: usize,
+    index: UIntValue,
     close_bracket: Bracket,
 }
 

@@ -1,6 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
+    primitive_wrapper::UIntValue,
     statement::Statement,
     type_utils::{Comma, Dot, Parenthesis},
 };
@@ -39,7 +40,7 @@ pub struct TupleElements {
 pub struct TupleIndexingExpr {
     object: Box<dyn Expression>,
     dot: Dot,
-    index: usize,
+    index: UIntValue,
 }
 
 impl Spanned for TupleIndexingExpr {

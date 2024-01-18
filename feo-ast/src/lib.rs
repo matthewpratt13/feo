@@ -46,186 +46,236 @@ mod type_utils {
     pub type Parenthesis = Delimiter;
 }
 
-// mod primitive_wrapper {
-//     use feo_types::span::{Span, Spanned};
-//     use feo_types::U256;
+mod primitive_wrapper {
+    use std::fmt;
 
-//     use crate::expression::{ExprWithoutBlock, Expression, LiteralExpr};
-//     use crate::pattern::{LiteralPatt, Pattern, RangePattBound};
-//     use crate::statement::Statement;
+    use feo_types::span::{Span, Spanned};
+    use feo_types::U256;
 
-//     pub struct CharValue(char);
+    use crate::expression::{ExprWithoutBlock, Expression, LiteralExpr};
+    use crate::pattern::{LiteralPatt, Pattern, RangePattBound};
+    use crate::statement::Statement;
 
-//     impl Expression for CharValue {}
+    pub struct CharValue(char);
 
-//     impl<E> ExprWithoutBlock<E> for CharValue {}
+    impl Expression for CharValue {}
 
-//     impl<E> LiteralExpr<E> for CharValue {}
+    impl<E> ExprWithoutBlock<E> for CharValue {}
 
-//     impl LiteralPatt for CharValue {}
+    impl<E> LiteralExpr<E> for CharValue {}
 
-//     impl Pattern for CharValue {}
+    impl LiteralPatt for CharValue {}
 
-//     impl RangePattBound for CharValue {}
+    impl Pattern for CharValue {}
 
-//     impl Statement for CharValue {}
+    impl RangePattBound for CharValue {}
 
-//     impl Spanned for CharValue {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
+    impl Statement for CharValue {}
 
-//     pub struct StrValue(&'static str);
+    impl Spanned for CharValue {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl Expression for StrValue {}
+    impl fmt::Display for CharValue {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
 
-//     impl<E> ExprWithoutBlock<E> for StrValue {}
+    pub struct StrValue(&'static str);
 
-//     impl<E> LiteralExpr<E> for StrValue {}
+    impl Expression for StrValue {}
 
-//     impl LiteralPatt for StrValue {}
+    impl<E> ExprWithoutBlock<E> for StrValue {}
 
-//     impl Pattern for StrValue {}
+    impl<E> LiteralExpr<E> for StrValue {}
 
-//     impl RangePattBound for StrValue {}
+    impl LiteralPatt for StrValue {}
 
-//     impl Statement for StrValue {}
+    impl Pattern for StrValue {}
 
-//     impl Spanned for StrValue {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
+    impl RangePattBound for StrValue {}
 
-//     pub struct IntValue(i64);
+    impl Statement for StrValue {}
 
-//     impl Expression for IntValue {}
+    impl Spanned for StrValue {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl<E> ExprWithoutBlock<E> for IntValue {}
+    impl fmt::Display for StrValue {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
 
-//     impl<E> LiteralExpr<E> for IntValue {}
+    pub struct IntValue(i64);
 
-//     impl LiteralPatt for IntValue {}
+    impl Expression for IntValue {}
 
-//     impl Pattern for IntValue {}
+    impl<E> ExprWithoutBlock<E> for IntValue {}
 
-//     impl RangePattBound for IntValue {}
+    impl<E> LiteralExpr<E> for IntValue {}
 
-//     impl Statement for IntValue {}
+    impl LiteralPatt for IntValue {}
 
-//     impl Spanned for IntValue {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
+    impl Pattern for IntValue {}
 
-//     pub struct UIntValue(u64);
+    impl RangePattBound for IntValue {}
 
-//     impl Expression for UIntValue {}
+    impl Statement for IntValue {}
 
-//     impl<E> ExprWithoutBlock<E> for UIntValue {}
+    impl Spanned for IntValue {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl<E> LiteralExpr<E> for UIntValue {}
+    impl fmt::Display for IntValue {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
 
-//     impl LiteralPatt for UIntValue {}
+    pub struct UIntValue(u64);
 
-//     impl Pattern for UIntValue {}
+    impl Expression for UIntValue {}
 
-//     impl RangePattBound for UIntValue {}
+    impl<E> ExprWithoutBlock<E> for UIntValue {}
 
-//     impl Statement for UIntValue {}
+    impl<E> LiteralExpr<E> for UIntValue {}
 
-//     impl Spanned for UIntValue {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
+    impl LiteralPatt for UIntValue {}
 
-//     pub struct U256Value(U256);
+    impl Pattern for UIntValue {}
 
-//     impl Expression for U256Value {}
+    impl RangePattBound for UIntValue {}
 
-//     impl<E> ExprWithoutBlock<E> for U256Value {}
+    impl Statement for UIntValue {}
 
-//     impl<E> LiteralExpr<E> for U256Value {}
+    impl Spanned for UIntValue {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl LiteralPatt for U256Value {}
+    impl fmt::Display for UIntValue {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
 
-//     impl Pattern for U256Value {}
+    pub struct U256Value(U256);
 
-//     impl RangePattBound for U256Value {}
+    impl Expression for U256Value {}
 
-//     impl Statement for U256Value {}
+    impl<E> ExprWithoutBlock<E> for U256Value {}
 
-//     impl Spanned for U256Value {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
+    impl<E> LiteralExpr<E> for U256Value {}
 
-//     pub struct FloatValue(f64);
+    impl LiteralPatt for U256Value {}
 
-//     impl Expression for FloatValue {}
+    impl Pattern for U256Value {}
 
-//     impl<E> ExprWithoutBlock<E> for FloatValue {}
+    impl RangePattBound for U256Value {}
 
-//     impl<E> LiteralExpr<E> for FloatValue {}
+    impl Statement for U256Value {}
 
-//     impl LiteralPatt for FloatValue {}
+    impl Spanned for U256Value {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl Pattern for FloatValue {}
+    impl fmt::Display for U256Value {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
 
-//     impl RangePattBound for FloatValue {}
+    pub struct FloatValue(f64);
 
-//     impl Statement for FloatValue {}
+    impl Expression for FloatValue {}
 
-//     impl Spanned for FloatValue {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
+    impl<E> ExprWithoutBlock<E> for FloatValue {}
 
-//     pub struct Bytes32Value(&'static [u8; 32]);
+    impl<E> LiteralExpr<E> for FloatValue {}
 
-//     impl Expression for Bytes32Value {}
+    impl LiteralPatt for FloatValue {}
 
-//     impl<E> ExprWithoutBlock<E> for Bytes32Value {}
+    impl Pattern for FloatValue {}
 
-//     impl<E> LiteralExpr<E> for Bytes32Value {}
+    impl RangePattBound for FloatValue {}
 
-//     impl LiteralPatt for Bytes32Value {}
+    impl Statement for FloatValue {}
 
-//     impl Pattern for Bytes32Value {}
+    impl Spanned for FloatValue {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl RangePattBound for Bytes32Value {}
+    impl fmt::Display for FloatValue {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
 
-//     impl Statement for Bytes32Value {}
+    pub struct Bytes32Value(&'static [u8; 32]);
 
-//     impl Spanned for Bytes32Value {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
-//     pub struct BoolValue(bool);
+    impl Expression for Bytes32Value {}
 
-//     impl Expression for BoolValue {}
+    impl<E> ExprWithoutBlock<E> for Bytes32Value {}
 
-//     impl<E> ExprWithoutBlock<E> for BoolValue {}
+    impl<E> LiteralExpr<E> for Bytes32Value {}
 
-//     impl<E> LiteralExpr<E> for BoolValue {}
+    impl LiteralPatt for Bytes32Value {}
 
-//     impl LiteralPatt for BoolValue {}
+    impl Pattern for Bytes32Value {}
 
-//     impl Pattern for BoolValue {}
+    impl RangePattBound for Bytes32Value {}
 
-//     impl RangePattBound for BoolValue {}
+    impl Statement for Bytes32Value {}
 
-//     impl Statement for BoolValue {}
+    impl Spanned for Bytes32Value {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
 
-//     impl Spanned for BoolValue {
-//         fn span(&self) -> Span {
-//             Span::default()
-//         }
-//     }
-// }
+    impl fmt::Display for Bytes32Value {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
+    pub struct BoolValue(bool);
+
+    impl Expression for BoolValue {}
+
+    impl<E> ExprWithoutBlock<E> for BoolValue {}
+
+    impl<E> LiteralExpr<E> for BoolValue {}
+
+    impl LiteralPatt for BoolValue {}
+
+    impl Pattern for BoolValue {}
+
+    impl RangePattBound for BoolValue {}
+
+    impl Statement for BoolValue {}
+
+    impl Spanned for BoolValue {
+        fn span(&self) -> Span {
+            Span::default()
+        }
+    }
+
+    impl fmt::Display for BoolValue {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self)
+        }
+    }
+}
