@@ -1,4 +1,4 @@
-use feo_types::span::{Span, Spanned};
+use feo_types::span::{Position, Span, Spanned};
 
 use crate::{
     keyword::Keyword,
@@ -8,7 +8,7 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-use super::{ImportTree, Item, VisibilityKind};
+use super::{AsClause, ImportTree, Item, VisibilityKind};
 
 pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,
@@ -108,6 +108,36 @@ impl Spanned for PathSubsetRecursive {
 
         let end_pos = self.close_brace.span().end();
         let source = self.open_brace.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
+pub struct PathWithAsClause {
+    path_prefix: SimplePath,
+    as_clause_opt: Option<AsClause>,
+}
+
+impl ContractItem for PathWithAsClause {}
+
+impl ImportTree for PathWithAsClause {}
+
+impl Item for PathWithAsClause {}
+
+impl Statement for PathWithAsClause {}
+
+impl Spanned for PathWithAsClause {
+    fn span(&self) -> Span {
+        let start_pos = self.path_prefix.span().start();
+        let end_pos = if let Some(a) = self.as_clause_opt {
+            a.span().end()
+        } else {
+            self.path_prefix.span().end()
+        };
+
+        let source = self.path_prefix.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
