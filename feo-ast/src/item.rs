@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 mod constant_item;
-mod enum_item;
+mod enum_def;
 mod extern_crate_decl;
 mod function_def;
 mod impl_item;
@@ -18,7 +18,7 @@ use crate::program::LibraryItem;
 use crate::statement::Statement;
 use crate::ty::Type;
 
-pub use self::enum_item::EnumItem;
+pub use self::enum_def::EnumDef;
 pub use self::import_decl::AsClause;
 pub use self::struct_def::{StructFields, TupleFields};
 pub use self::visibility::VisibilityKind;
