@@ -38,7 +38,7 @@ where
 
 pub trait FunctionDef
 where
-    Self: Item + AssociatedItem + Type,
+    Self: Item + Type,
 {
 }
 
