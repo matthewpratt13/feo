@@ -32,8 +32,6 @@ pub struct FunctionSignatureOnly {
 
 impl AssociatedItem for FunctionSignatureOnly {}
 
-impl ContractItem for FunctionSignatureOnly {}
-
 impl Item for FunctionSignatureOnly {}
 
 impl FunctionDef for FunctionSignatureOnly {}
@@ -74,8 +72,6 @@ pub struct FunctionWithBody<T> {
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
     func_body: Box<dyn ExprWithBlock<T>>,
 }
-
-impl<T> AssociatedItem for FunctionWithBody<T> {}
 
 impl<T> ContractItem for FunctionWithBody<T> {}
 
