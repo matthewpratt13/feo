@@ -16,7 +16,7 @@ pub struct ConstantItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
@@ -44,7 +44,7 @@ impl Spanned for ConstantItem {
         };
 
         let end_pos = self.semicolon.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_const.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -57,7 +57,7 @@ pub struct StaticItem {
     visibility_opt: Option<VisibilityKind>,
     kw_static: Keyword,
     kw_mut_opt: Option<Keyword>,
-    name: Identifier,
+    identifier: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
@@ -81,7 +81,7 @@ impl Spanned for StaticItem {
         };
 
         let end_pos = self.semicolon.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_static.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
