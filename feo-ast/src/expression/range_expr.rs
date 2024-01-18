@@ -25,7 +25,7 @@ impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
         let start_pos = self.from_expression.span().start();
         let end_pos = self.to_expression_excl.span().end();
-        let source = self.dbl_dot.span().source();
+        let source = self.from_expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -50,7 +50,7 @@ impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
         let start_pos = self.from_expression.span().start();
         let end_pos = self.dbl_dot.span().end();
-        let source = self.dbl_dot.span().source();
+        let source = self.from_expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -101,7 +101,7 @@ impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
         let start_pos = self.from_expression.span().start();
         let end_pos = self.to_expression_incl.span().end();
-        let source = self.dot_dot_equals.span().source();
+        let source = self.from_expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 

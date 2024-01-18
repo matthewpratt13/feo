@@ -105,7 +105,7 @@ impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
         let start_pos = self.first_expression.span().start();
         let end_pos = self.second_expression.span().end();
-        let source = self.operator.span().source();
+        let source = self.first_expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -155,7 +155,7 @@ impl Spanned for ResultUnwrapExpr {
     fn span(&self) -> Span {
         let start_pos = self.expression.span().start();
         let end_pos = self.question_mark.span().end();
-        let source = self.question_mark.span().source();
+        let source = self.expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -166,7 +166,7 @@ impl Spanned for ResultUnwrapExpr {
 pub struct TypeCastExpr {
     original_expression: Box<dyn Expression>,
     kw_as: Keyword,
-    new_type: Box<dyn Type>, // cannot be trait object
+    new_type: Box<dyn Type>, // cannot be a trait object
 }
 
 impl Expression for TypeCastExpr {}
@@ -181,7 +181,7 @@ impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
         let start_pos = self.original_expression.span().start();
         let end_pos = self.new_type.span().end();
-        let source = self.kw_as.span().source();
+        let source = self.original_expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
