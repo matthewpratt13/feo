@@ -44,20 +44,15 @@ impl Spanned for ImportDecl {
 }
 
 pub struct EntirePathContentsItem {
-    path: Vec<Option<(Option<SimplePath>, DblColon)>>,
+    item_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
 
 pub struct PathSubsetRecursiveItem {
-    path_root_opt: Option<(Option<SimplePath>, DblColon)>,
+    item_path_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
     recursive_tree_opt: Option<(Vec<(Comma, Box<dyn ImportTree>)>, Option<Comma>)>,
     close_brace: Brace,
-}
-
-pub struct PathWithAsClauseItem {
-    original_path: SimplePath,
-    as_clause_opt: Option<AsClause>,
 }
 
 pub struct AsClause {
