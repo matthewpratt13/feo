@@ -10,9 +10,9 @@ use crate::{
 use super::Pattern;
 
 pub struct StructPatt {
-    struct_path: SimplePath,
+    object_path: SimplePath,
     open_brace: Brace,
-    struct_patt_fields_opt: Option<StructPattFields>,
+    fields_opt: Option<StructPattFields>,
     trailing_comma_opt: Option<Comma>,
     close_brace: Brace,
 }
@@ -21,9 +21,9 @@ impl Pattern for StructPatt {}
 
 impl Spanned for StructPatt {
     fn span(&self) -> Span {
-        let start_pos = self.struct_path.span().start();
+        let start_pos = self.object_path.span().start();
         let end_pos = self.close_brace.span().end();
-        let source = self.struct_path.span().source();
+        let source = self.object_path.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -44,9 +44,9 @@ pub struct StructPattField {
 }
 
 pub struct TupleStructPatt {
-    tuple_struct_path: SimplePath,
+    object_path: SimplePath,
     open_parenthesis: Parenthesis,
-    tuple_struct_fields_opt: Option<TupleStructItems>,
+    fields_opt: Option<TupleStructItems>,
     close_parenthesis: Parenthesis,
 }
 
@@ -54,9 +54,9 @@ impl Pattern for TupleStructPatt {}
 
 impl Spanned for TupleStructPatt {
     fn span(&self) -> Span {
-        let start_pos = self.tuple_struct_path.span().start();
+        let start_pos = self.object_path.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.tuple_struct_path.span().source();
+        let source = self.object_path.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
