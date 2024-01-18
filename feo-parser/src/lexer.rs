@@ -888,7 +888,7 @@ mod tests {
             Blue
         }
 
-        pub abi SomeAbstractContract {
+        extern abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
         "#;
