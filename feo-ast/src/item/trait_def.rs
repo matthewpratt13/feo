@@ -11,7 +11,7 @@ use crate::{
 
 use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
-pub struct TraitItem {
+pub struct TraitDef {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
     kw_impl: Keyword,
@@ -24,15 +24,15 @@ pub struct TraitItem {
     close_brace: Brace,
 }
 
-impl ContractItem for TraitItem {}
+impl ContractItem for TraitDef {}
 
-impl Item for TraitItem {}
+impl Item for TraitDef {}
 
-impl LibraryItem for TraitItem {}
+impl LibraryItem for TraitDef {}
 
-impl Statement for TraitItem {}
+impl Statement for TraitDef {}
 
-impl Spanned for TraitItem {
+impl Spanned for TraitDef {
     fn span(&self) -> Span {
         let start_pos = match &self.visibility_opt {
             Some(v) => v.span().start(),

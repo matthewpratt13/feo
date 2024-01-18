@@ -8,7 +8,7 @@ mod impl_item;
 mod import_decl;
 mod module_item;
 mod struct_def;
-mod trait_item;
+mod trait_def;
 mod type_alias_def;
 mod visibility;
 
