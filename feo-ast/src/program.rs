@@ -4,7 +4,7 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     item::{AssociatedItem, FunctionItem, Item, VisibilityKind},
-    keyword::KeywordKind,
+    keyword::Keyword,
     type_utils::{Brace, Semicolon},
 };
 
@@ -19,7 +19,7 @@ where
 pub struct Abi {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_abi: KeywordKind,
+    kw_abi: Keyword,
     contract_name: Identifier,
     open_brace: Brace,
     functions_opt: Option<Vec<Box<dyn FunctionItem>>>,
@@ -30,21 +30,21 @@ impl ContractItem for Abi {}
 
 pub struct Contract {
     attributes: Vec<OuterAttr>,
-    kw_contract: KeywordKind,
+    kw_contract: Keyword,
     semicolon: Semicolon,
     contract_items_opt: Option<Vec<Box<dyn ContractItem>>>,
 }
 
 pub struct Library {
     attributes: Vec<OuterAttr>,
-    kw_library: KeywordKind,
+    kw_library: Keyword,
     semicolon: Semicolon,
     items_opt: Vec<Box<dyn LibraryItem>>,
 }
 
 pub struct Script {
     attributes: Vec<OuterAttr>,
-    kw_script: KeywordKind,
+    kw_script: Keyword,
     semicolon: Semicolon,
     items_opt: Option<Vec<Box<dyn Item>>>,
 }
@@ -52,7 +52,7 @@ pub struct Script {
 pub struct Storage {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_storage: KeywordKind,
+    kw_storage: Keyword,
     open_brace: Brace,
     items_opt: Option<Vec<Box<dyn AssociatedItem>>>,
     close_brace: Brace,

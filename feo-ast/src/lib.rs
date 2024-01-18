@@ -142,6 +142,16 @@ mod primitive_wrapper {
 
     pub struct UIntValue(u64);
 
+    // impl UIntValue {
+    //     fn trim_leading_zeros(self) -> Self {
+    //         let uint_string = format!("{}", self.0);
+    //         let stripped = uint_string.as_str().trim_start_matches('0');
+    //         let new_uint = u64::from_str_radix(stripped, 10).expect("Unable to parse str to u64");
+
+    //         Self(new_uint)
+    //     }
+    // }
+
     impl Expression for UIntValue {}
 
     impl<E> ExprWithoutBlock<E> for UIntValue {}
