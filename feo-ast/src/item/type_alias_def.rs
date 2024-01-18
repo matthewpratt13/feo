@@ -19,7 +19,7 @@ pub struct TypeAliasDef {
     identifier: Identifier,
     type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
     where_clause_opt: Option<WhereClause>,
-    value_opt: Option<(Equals, Box<dyn Type>, Option<WhereClause>)>,
+    value_opt: Option<(Equals, Box<dyn Type>)>,
     semicolon: Semicolon,
 }
 
