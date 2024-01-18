@@ -10,7 +10,7 @@ use crate::{
 use super::{ExprWithoutBlock, Expression, OuterAttr, StructExpr};
 
 pub struct Struct {
-    object_path: SimplePath,
+    item_path: SimplePath,
     open_brace: Brace,
     struct_expr_fields_opt: Option<StructExprFields>,
     close_brace: Brace,
@@ -26,9 +26,9 @@ impl<E> StructExpr<E> for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
-        let start_pos = self.object_path.span().start();
+        let start_pos = self.item_path.span().start();
         let end_pos = self.close_brace.span().end();
-        let source = self.object_path.span().source();
+        let source = self.item_path.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -47,7 +47,7 @@ pub struct StructExprField {
 }
 
 pub struct TupleStruct {
-    object_path: SimplePath,
+    item_path: SimplePath,
     open_parenthesis: Parenthesis,
     params_opt: Option<(
         Box<dyn Expression>,
@@ -67,9 +67,9 @@ impl<E> StructExpr<E> for TupleStruct {}
 
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
-        let start_pos = self.object_path.span().start();
+        let start_pos = self.item_path.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.object_path.span().source();
+        let source = self.item_path.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
