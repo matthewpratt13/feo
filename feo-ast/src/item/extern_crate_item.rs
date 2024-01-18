@@ -37,7 +37,7 @@ impl Spanned for ExternCrateItem {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()
         } else {
-            self.semicolon.span().start()
+            self.kw_extern.span().start()
         };
 
         let end_pos = self.semicolon.span().end();
