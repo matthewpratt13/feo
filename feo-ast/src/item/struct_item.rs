@@ -15,7 +15,7 @@ use super::{Item, StructItem, VisibilityKind, WhereClause};
 pub struct Struct {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     struct_fields_opt: Option<StructFields>,
@@ -43,7 +43,7 @@ impl Spanned for Struct {
         };
 
         let end_pos = self.close_brace.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_struct.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -68,7 +68,7 @@ pub struct StructField {
 pub struct TupleStruct {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     open_parenthesis: Parenthesis,
     tuple_fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
@@ -97,7 +97,7 @@ impl Spanned for TupleStruct {
         };
 
         let end_pos = self.semicolon.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_struct.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
