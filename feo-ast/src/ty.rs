@@ -13,7 +13,10 @@ where
 mod array_type {
     use feo_types::span::{Span, Spanned};
 
-    use crate::{type_utils::{Bracket, Semicolon}, expression::Expression};
+    use crate::{
+        expression::Expression,
+        type_utils::{Bracket, Semicolon},
+    };
 
     use super::Type;
 
@@ -62,7 +65,7 @@ mod trait_object_type {
         fn span(&self) -> Span {
             let start_pos = self.kw_dyn.span().start();
             let end_pos = self.trait_bounds.span().end();
-            let source = self.trait_bounds.span().source();
+            let source = self.kw_dyn.span().source();
 
             let span = Span::new(source.as_str(), start_pos, end_pos);
 
