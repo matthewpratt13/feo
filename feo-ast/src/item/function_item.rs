@@ -160,5 +160,5 @@ pub struct SelfParam {
     kw_ref_opt: Option<Keyword>,
     kw_mut_opt: Option<Keyword>,
     kw_self: Keyword,
-    self_type_opt: Option<(Colon, Box<dyn Type>)>,
+    type_annotation_opt: Option<(Colon, Box<dyn Type>)>,
 }
