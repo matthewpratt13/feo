@@ -23,7 +23,11 @@ use crate::ty::Type;
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 
-pub trait Constant {}
+pub trait Constant
+where
+    Self: Sized,
+{
+}
 
 pub trait Expression
 where
