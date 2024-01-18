@@ -33,7 +33,7 @@ pub struct PredicateLoopExpr<T, U> {
     block: BlockExpr<T, U>,
 }
 
-impl<T, U> Constant for PredicateLoopExpr<T, U> {}
+impl<T: 'static, U: 'static> Constant for PredicateLoopExpr<T, U> {}
 
 impl<T, U> Expression for PredicateLoopExpr<T, U> {}
 
@@ -61,7 +61,7 @@ pub struct IterLoopExpr<T, U> {
     block: BlockExpr<T, U>,
 }
 
-impl<T, U> Constant for IterLoopExpr<T, U> {}
+impl<T: 'static, U: 'static> Constant for IterLoopExpr<T, U> {}
 
 impl<T, U> Expression for IterLoopExpr<T, U> {}
 

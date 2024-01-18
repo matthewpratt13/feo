@@ -20,11 +20,11 @@ pub struct IfExpr<T, U> {
     else_block_opt: Option<(Keyword, BlockExpr<T, U>)>,
 }
 
-impl<T, U> Constant for IfExpr<T, U> {}
+impl<T: 'static, U: 'static> Constant for IfExpr<T, U> {}
 
 impl<T, U> Expression for IfExpr<T, U> {}
 
-impl<T, U, E> ConditionalExpr<E> for IfExpr<T, U> {}
+impl<T: 'static, U: 'static, E> ConditionalExpr<E> for IfExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> {}
 

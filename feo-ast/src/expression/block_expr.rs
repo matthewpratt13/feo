@@ -29,7 +29,7 @@ pub struct BlockExpr<T, U> {
     close_brace: Brace,
 }
 
-impl<T, U> Constant for BlockExpr<T, U> {}
+impl<T: 'static, U: 'static> Constant for BlockExpr<T, U> {}
 
 impl<T, U> Expression for BlockExpr<T, U> {}
 

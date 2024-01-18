@@ -25,7 +25,7 @@ pub use self::block_expr::BlockExpr;
 
 pub trait Constant
 where
-    Self: Sized,
+    Self: Sized + 'static,
 {
 }
 
