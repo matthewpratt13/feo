@@ -65,7 +65,7 @@ impl Spanned for MatchExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_match.span().start();
         let end_pos = self.close_brace.span().end();
-        let source = self.kw_match.span().source();
+        let source = self.open_brace.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
