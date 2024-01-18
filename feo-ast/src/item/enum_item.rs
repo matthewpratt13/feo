@@ -20,7 +20,7 @@ pub enum EnumVariantType {
 pub struct EnumItem {
     visibility_opt: Option<VisibilityKind>,
     kw_enum: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     enum_variants_opt: Option<EnumVariants>,
@@ -46,7 +46,7 @@ impl Spanned for EnumItem {
         };
 
         let end_pos = self.close_brace.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_enum.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
