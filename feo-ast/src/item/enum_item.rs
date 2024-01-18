@@ -69,12 +69,12 @@ pub struct EnumVariant {
 
 pub struct EnumVariantStruct {
     open_brace: Brace,
-    struct_fields_opt: Option<StructFields>,
+    fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
 
 pub struct EnumVariantTuple {
     open_parenthesis: Parenthesis,
-    tuple_struct_fields_opt: Option<TupleFields>,
+    fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
 }
