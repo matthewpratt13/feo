@@ -9,8 +9,8 @@ use crate::token::{Token, Tokenize};
 
 #[derive(Debug, Clone)]
 pub enum DocCommentKind {
-    InnerDocComment,
-    OuterDocComment,
+    InnerDocComment, // slash-slash-bang
+    OuterDocComment, // slash-slash-slash
 }
 
 #[derive(Debug, Clone)]
@@ -40,25 +40,25 @@ impl Tokenize for DocComment {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let mut outer_doc_comment = String::from("//");
-        outer_doc_comment.push('!');
+        let mut inner_doc_comment = String::from("//");
+        inner_doc_comment.push('!');
 
         let doc_comment = match content {
             _ if content.starts_with("///") => DocComment::new(
-                DocCommentKind::InnerDocComment,
+                DocCommentKind::OuterDocComment,
                 content
                     .strip_prefix("///")
-                    .expect("Unable to process inner doc comment")
+                    .expect("Unable to process outer doc comment")
                     .trim()
                     .to_string(),
                 span,
             ),
 
-            _ if content.starts_with(&outer_doc_comment) => DocComment::new(
-                DocCommentKind::OuterDocComment,
+            _ if content.starts_with(&inner_doc_comment) => DocComment::new(
+                DocCommentKind::InnerDocComment,
                 content
-                    .strip_prefix(&outer_doc_comment)
-                    .expect("Unable to process outer doc comment")
+                    .strip_prefix(&inner_doc_comment)
+                    .expect("Unable to process inner doc comment")
                     .trim()
                     .to_string(),
                 span,

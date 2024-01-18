@@ -9,8 +9,8 @@ use crate::token::{Token, Tokenize};
 
 #[derive(Debug, Clone)]
 pub enum CommentKind {
-    LineComment,
-    BlockComment,
+    LineComment, // slash-slash
+    BlockComment, // open: slash-asterisk | close: asterisk-slash
 }
 
 #[derive(Debug, Clone)]
