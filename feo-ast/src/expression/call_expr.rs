@@ -25,7 +25,7 @@ impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.open_parenthesis.span().source();
+        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -58,7 +58,7 @@ impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
         let start_pos = self.object.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.method_path.span().source();
+        let source = self.object.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
