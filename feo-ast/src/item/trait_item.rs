@@ -15,7 +15,7 @@ pub struct TraitItem {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
     kw_impl: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
@@ -37,13 +37,13 @@ impl Spanned for TraitItem {
         let start_pos = match &self.visibility_opt {
             Some(v) => v.span().start(),
             None => match &self.kw_unsafe_opt {
-                Some(k) => k.span().start(),
+                Some(ku) => ku.span().start(),
                 None => self.kw_impl.span().start(),
             },
         };
 
-        let end_pos = self.name.span().end();
-        let source = self.name.span().source();
+        let end_pos = self.close_brace.span().end();
+        let source = self.kw_impl.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
