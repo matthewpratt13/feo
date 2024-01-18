@@ -261,6 +261,7 @@ mod primitive_wrapper {
             write!(f, "{}", self)
         }
     }
+
     pub struct BoolValue(bool);
 
     impl Expression for BoolValue {}
