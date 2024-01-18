@@ -39,7 +39,7 @@ pub struct FunctionSignatureOnly {
     visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
@@ -78,7 +78,7 @@ impl Spanned for FunctionSignatureOnly {
         };
 
         let end_pos = self.semicolon.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_func.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -91,7 +91,7 @@ pub struct FunctionWithBody<T> {
     visibility_opt: Option<VisibilityKind>,
     func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
@@ -131,7 +131,7 @@ impl<T> Spanned for FunctionWithBody<T> {
         };
 
         let end_pos = self.func_body.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_func.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
