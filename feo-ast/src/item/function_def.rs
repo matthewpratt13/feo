@@ -13,6 +13,22 @@ use crate::{
 
 use super::{AssociatedItem, FunctionDef, Item, VisibilityKind};
 
+pub enum FuncQualifier {
+    Const(Keyword),
+    Unsafe(Keyword),
+    Extern(Keyword),
+}
+
+impl Spanned for FuncQualifier {
+    fn span(&self) -> Span {
+        match self {
+            FuncQualifier::Const(c) => c.span(),
+            FuncQualifier::Unsafe(u) => u.span(),
+            FuncQualifier::Extern(e) => e.span(),
+        }
+    }
+}
+
 pub enum FuncOrMethodParam {
     Func(FuncParam),
     Method(MethodParam),
@@ -21,6 +37,7 @@ pub enum FuncOrMethodParam {
 pub struct FunctionSignatureOnly {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
+    func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: Keyword,
     identifier: Identifier,
     open_parenthesis: Parenthesis,
@@ -50,7 +67,13 @@ impl Spanned for FunctionSignatureOnly {
             Some(a) => a.span().start(),
             None => match &self.visibility_opt {
                 Some(v) => v.span().start(),
-                None => self.kw_func.span().start(),
+                None => match &self.func_qualifiers_opt {
+                    Some(fq) => match fq.first() {
+                        Some(q) => q.span().start(),
+                        None => self.kw_func.span().start(),
+                    },
+                    None => self.kw_func.span().start(),
+                },
             },
         };
 
@@ -66,6 +89,7 @@ impl Spanned for FunctionSignatureOnly {
 pub struct FunctionWithBody<T> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
+    func_qualifiers_opt: Option<Vec<FuncQualifier>>,
     kw_func: Keyword,
     identifier: Identifier,
     open_parenthesis: Parenthesis,
@@ -95,7 +119,13 @@ impl<T> Spanned for FunctionWithBody<T> {
             Some(a) => a.span().start(),
             None => match &self.visibility_opt {
                 Some(v) => v.span().start(),
-                None => self.kw_func.span().start(),
+                None => match &self.func_qualifiers_opt {
+                    Some(fq) => match fq.first() {
+                        Some(q) => q.span().start(),
+                        None => self.kw_func.span().start(),
+                    },
+                    None => self.kw_func.span().start(),
+                },
             },
         };
 

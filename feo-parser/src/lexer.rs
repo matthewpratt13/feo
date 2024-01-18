@@ -766,8 +766,7 @@ mod tests {
             func bar() -> str; 
         }
         
-        #[extern]
-        func hello_world() {
+        extern func hello_world() {
             print!("hello world");
         }
 
@@ -879,7 +878,6 @@ mod tests {
         // `src/contract/some_abstract_contract.feo`
         ////////////////////////////////////////////////////////////////////////////////
 
-        #![abstract]
         contract;
 
         #[export]
@@ -889,7 +887,7 @@ mod tests {
             Blue
         }
 
-        abi SomeAbstractContract {
+        abstract abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
         "#;
