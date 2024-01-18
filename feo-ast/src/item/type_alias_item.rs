@@ -16,7 +16,7 @@ pub struct TypeAliasItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_type: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
     where_clause_opt: Option<WhereClause>,
     value_opt: Option<(Equals, Box<dyn Type>, Option<WhereClause>)>,
@@ -44,7 +44,7 @@ impl Spanned for TypeAliasItem {
         };
 
         let end_pos = self.semicolon.span().end();
-        let source = self.name.span().source();
+        let source = self.kw_type.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
