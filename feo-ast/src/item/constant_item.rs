@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{Expression, OuterAttr},
+    expression::{Constant, Expression, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
     program::{ContractItem, LibraryItem},
@@ -24,6 +24,8 @@ pub struct ConstantItem {
 }
 
 impl AssociatedItem for ConstantItem {}
+
+impl Constant for ConstantItem {}
 
 impl ContractItem for ConstantItem {}
 
@@ -63,6 +65,8 @@ pub struct StaticItem {
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
+
+impl Constant for StaticItem {}
 
 impl ContractItem for StaticItem {}
 
