@@ -131,7 +131,7 @@ impl Statement for PathWithAsClause {}
 impl Spanned for PathWithAsClause {
     fn span(&self) -> Span {
         let start_pos = self.path_prefix.span().start();
-        let end_pos = if let Some(a) = self.as_clause_opt {
+        let end_pos = if let Some(a) = &self.as_clause_opt {
             a.span().end()
         } else {
             self.path_prefix.span().end()

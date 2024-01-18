@@ -53,3 +53,15 @@ pub struct AsClause {
     kw_as: Keyword,
     new_name: Identifier,
 }
+
+impl Spanned for AsClause {
+    fn span(&self) -> Span {
+        let start_pos = self.kw_as.span().start();
+        let end_pos = self.new_name.span().end();
+        let source = self.kw_as.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
