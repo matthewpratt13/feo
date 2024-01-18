@@ -47,6 +47,20 @@ pub struct PathWildcard {
     asterisk: Asterisk,
 }
 
+impl ContractItem for PathWildcard {}
+
+impl ImportTree for PathWildcard {}
+
+impl Item for PathWildcard {}
+
+impl Statement for PathWildcard {}
+
+impl Spanned for PathWildcard {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
+
 pub struct PathSubsetRecursive {
     path_prefix_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
@@ -56,4 +70,18 @@ pub struct PathSubsetRecursive {
         Option<Comma>,
     )>,
     close_brace: Brace,
+}
+
+impl ContractItem for PathSubsetRecursive {}
+
+impl ImportTree for PathSubsetRecursive {}
+
+impl Item for PathSubsetRecursive {}
+
+impl Statement for PathSubsetRecursive {}
+
+impl Spanned for PathSubsetRecursive {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
