@@ -70,13 +70,13 @@ impl Spanned for TraitImpl {
         let start_pos = match &self.visibility_opt {
             Some(v) => v.span().start(),
             None => match &self.kw_unsafe_opt {
-                Some(k) => k.span().start(),
+                Some(ku) => ku.span().start(),
                 None => self.kw_impl.span().start(),
             },
         };
 
         let end_pos = self.close_brace.span().end();
-        let source = self.trait_path.span().source();
+        let source = self.kw_impl.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
