@@ -19,7 +19,6 @@ use crate::statement::Statement;
 use crate::ty::Type;
 
 pub use self::enum_def::EnumDef;
-pub use self::import_decl::AsClause;
 pub use self::struct_def::{StructFields, TupleFields};
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};

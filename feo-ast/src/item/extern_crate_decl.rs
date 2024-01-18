@@ -8,7 +8,7 @@ use crate::{
     type_utils::Semicolon,
 };
 
-use super::{AsClause, Item, VisibilityKind};
+use super::{Item, VisibilityKind};
 
 pub enum CrateRefKind {
     Identifier(Identifier),
@@ -47,4 +47,9 @@ impl Spanned for ExternCrateDecl {
 
         span
     }
+}
+
+pub struct AsClause {
+    kw_as: Keyword,
+    new_name: Identifier,
 }

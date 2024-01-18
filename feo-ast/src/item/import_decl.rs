@@ -55,7 +55,3 @@ pub struct PathSubsetRecursiveItem {
     close_brace: Brace,
 }
 
-pub struct AsClause {
-    kw_as: Keyword,
-    new_name: Identifier,
-}
