@@ -3,7 +3,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{ExprWithoutBlock, Expression, Constant},
+    expression::{Constant, ExprWithoutBlock, Expression},
     identifier::Identifier,
     keyword::Keyword,
     type_annotation::TypeAnnKind,
