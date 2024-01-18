@@ -9,7 +9,7 @@ mod import_decl;
 mod module_item;
 mod struct_item;
 mod trait_item;
-mod type_alias_item;
+mod type_alias_def;
 mod visibility;
 
 use feo_types::span::Spanned;

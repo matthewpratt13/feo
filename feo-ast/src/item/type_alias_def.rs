@@ -12,7 +12,7 @@ use crate::{
 
 use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
-pub struct TypeAliasItem {
+pub struct TypeAliasDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_type: Keyword,
@@ -23,17 +23,17 @@ pub struct TypeAliasItem {
     semicolon: Semicolon,
 }
 
-impl AssociatedItem for TypeAliasItem {}
+impl AssociatedItem for TypeAliasDef {}
 
-impl ContractItem for TypeAliasItem {}
+impl ContractItem for TypeAliasDef {}
 
-impl Item for TypeAliasItem {}
+impl Item for TypeAliasDef {}
 
-impl LibraryItem for TypeAliasItem {}
+impl LibraryItem for TypeAliasDef {}
 
-impl Statement for TypeAliasItem {}
+impl Statement for TypeAliasDef {}
 
-impl Spanned for TypeAliasItem {
+impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
