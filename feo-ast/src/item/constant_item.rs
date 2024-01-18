@@ -74,6 +74,8 @@ impl Item for StaticItem {}
 
 impl Statement for StaticItem {}
 
+unsafe impl Sync for StaticItem {}
+
 impl Spanned for StaticItem {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
