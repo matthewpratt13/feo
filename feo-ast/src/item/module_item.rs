@@ -15,7 +15,7 @@ pub struct ModWithBody {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
     kw_mod: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
     items: Vec<Box<dyn Item>>,
@@ -55,7 +55,7 @@ pub struct ModWithoutBody {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
     kw_mod: Keyword,
-    name: Identifier,
+    identifier: Identifier,
     semicolon: Semicolon,
 }
 
