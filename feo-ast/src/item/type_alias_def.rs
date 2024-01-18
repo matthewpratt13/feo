@@ -10,7 +10,7 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
+use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind};
 
 pub struct TypeAliasDef {
     attributes: Vec<OuterAttr>,
@@ -18,7 +18,6 @@ pub struct TypeAliasDef {
     kw_type: Keyword,
     identifier: Identifier,
     type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
-    where_clause_opt: Option<WhereClause>,
     value_opt: Option<(Equals, Box<dyn Type>)>,
     semicolon: Semicolon,
 }
