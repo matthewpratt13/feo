@@ -98,6 +98,19 @@ impl Statement for PathSubsetRecursive {}
 
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
-        todo!()
+        let start_pos = match &self.path_prefix_opt {
+            Some(p) => match &p.0 {
+                Some(q) => q.span().start(),
+                None => self.open_brace.span().start(),
+            },
+            None => self.open_brace.span().start(),
+        };
+
+        let end_pos = self.close_brace.span().end();
+        let source = self.open_brace.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
     }
 }
