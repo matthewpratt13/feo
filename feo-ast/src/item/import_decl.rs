@@ -50,6 +50,10 @@ pub struct EntirePathContentsItem {
 pub struct PathSubsetRecursiveItem {
     item_path_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(Vec<(Comma, Box<dyn ImportTree>)>, Option<Comma>)>,
+    recursive_tree_opt: Option<(
+        Box<dyn ImportTree>,
+        Vec<(Comma, Box<dyn ImportTree>)>,
+        Option<Comma>,
+    )>,
     close_brace: Brace,
 }
