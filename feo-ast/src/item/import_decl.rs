@@ -57,7 +57,23 @@ impl Statement for PathWildcard {}
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
-        todo!()
+        let start_pos = match self.path_prefix.first() {
+            Some(p) => match p {
+                Some(q) => match &q.0 {
+                    Some(r) => r.span().start(),
+                    None => self.asterisk.span().start(),
+                },
+                None => self.asterisk.span().start(),
+            },
+            None => self.asterisk.span().start(),
+        };
+
+        let end_pos = self.asterisk.span().end();
+        let source = self.asterisk.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
     }
 }
 
