@@ -13,7 +13,7 @@ where
 mod array_type {
     use feo_types::span::{Span, Spanned};
 
-    use crate::type_utils::{Bracket, Semicolon};
+    use crate::{type_utils::{Bracket, Semicolon}, expression::Expression};
 
     use super::Type;
 
@@ -21,6 +21,7 @@ mod array_type {
         open_bracket: Bracket,
         element_type: Box<dyn Type>,
         semicolon: Semicolon,
+        num_elements: Box<dyn Expression>,
         close_bracket: Bracket,
     }
 
