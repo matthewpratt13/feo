@@ -42,13 +42,13 @@ impl Spanned for ImportDecl {
     }
 }
 
-pub struct EntirePathContentsItem {
-    item_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
+pub struct PathWildcard {
+    path_prefix: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
 
-pub struct PathSubsetRecursiveItem {
-    item_path_opt: Option<(Option<SimplePath>, DblColon)>,
+pub struct PathSubsetRecursive {
+    path_prefix_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
     recursive_tree_opt: Option<(
         Box<dyn ImportTree>,
