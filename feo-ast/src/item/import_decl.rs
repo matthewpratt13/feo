@@ -1,7 +1,6 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    identifier::Identifier,
     keyword::Keyword,
     path::SimplePath,
     program::{ContractItem, LibraryItem},
@@ -54,4 +53,3 @@ pub struct PathSubsetRecursiveItem {
     recursive_tree_opt: Option<(Vec<(Comma, Box<dyn ImportTree>)>, Option<Comma>)>,
     close_brace: Brace,
 }
-
