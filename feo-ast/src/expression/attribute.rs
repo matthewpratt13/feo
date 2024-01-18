@@ -1,6 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
+    keyword::Keyword,
     path::SimplePath,
     statement::Statement,
     type_utils::{Bracket, HashBang, HashSign},
@@ -8,10 +9,19 @@ use crate::{
 
 use super::{ExprWithBlock, ExprWithoutBlock, Expression};
 
+pub enum AttributeKind {
+    AbstractKeyword(Keyword),
+    ExportKeyword(Keyword),
+    ExternKeyword(Keyword),
+    UnsafeKeyword(Keyword),
+
+    Path(SimplePath),
+}
+
 pub struct InnerAttr {
     hash_bang: HashBang,
     open_bracket: Bracket,
-    attribute_path: SimplePath,
+    attribute: AttributeKind,
     close_bracket: Bracket,
 }
 
@@ -36,7 +46,7 @@ impl Spanned for InnerAttr {
 pub struct OuterAttr {
     hash: HashSign,
     open_bracket: Bracket,
-    attribute_path: SimplePath,
+    attribute: AttributeKind,
     close_bracket: Bracket,
 }
 
