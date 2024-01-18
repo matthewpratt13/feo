@@ -13,6 +13,16 @@ pub enum StatementsKind<T, U> {
     StatementWithExpr(StatementWithExpr<U>),
 }
 
+impl<T, U> Spanned for StatementsKind<T, U> {
+    fn span(&self) -> Span {
+        match self {
+            StatementsKind::ExprWithoutBlock(e) => e.span(),
+            StatementsKind::Statement(s) => s.span(),
+            StatementsKind::StatementWithExpr(swe) => swe.span(),
+        }
+    }
+}
+
 pub struct BlockExpr<T, U> {
     open_brace: Brace,
     statements: StatementsKind<T, U>,
@@ -27,7 +37,7 @@ impl<T, U> Spanned for BlockExpr<T, U> {
     fn span(&self) -> Span {
         let start_pos = self.open_brace.span().start();
         let end_pos = self.close_brace.span().end();
-        let source = self.open_brace.span().source();
+        let source = self.statements.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
