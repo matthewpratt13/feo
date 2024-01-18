@@ -759,14 +759,15 @@ mod tests {
         ////////////////////////////////////////////////////////////////////////////////
         // `src/lib/some_library.feo`
         ////////////////////////////////////////////////////////////////////////////////
-            
+
         library;
 
         pub trait SomeTrait {
             func bar() -> str; 
         }
         
-        extern func hello_world() {
+        #[extern]
+        func hello_world() {
             print!("hello world");
         }
 
@@ -814,8 +815,7 @@ mod tests {
 
         mod some_abstract_contract;
         
-        #[export]
-        import self::some_abstract_contract::SomeAbstractContract;
+        import self::some_abstract_contract::{SomeAbstractContract, Colour};
 
         struct Foo {
             field1: String,
@@ -879,16 +879,17 @@ mod tests {
         // `src/contract/some_abstract_contract.feo`
         ////////////////////////////////////////////////////////////////////////////////
 
-        #[abstract]
+        #![abstract]
         contract;
 
+        #[export]
         pub enum Colour {
             Red,
             Green, 
             Blue
         }
 
-        extern abi SomeAbstractContract {
+        abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
         "#;
