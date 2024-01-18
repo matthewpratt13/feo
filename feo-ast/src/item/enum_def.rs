@@ -10,7 +10,7 @@ use crate::{
     type_utils::{Brace, Comma, Parenthesis},
 };
 
-use super::{Item, StructFields, TupleFields, VisibilityKind, WhereClause};
+use super::{Item, StructFields, TupleFields, VisibilityKind};
 
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),
@@ -21,7 +21,6 @@ pub struct EnumDef {
     visibility_opt: Option<VisibilityKind>,
     kw_enum: Keyword,
     identifier: Identifier,
-    where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     enum_variants_opt: Option<EnumVariants>,
     close_brace: Brace,
