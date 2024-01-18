@@ -38,7 +38,7 @@ impl<T, U> Spanned for IfExpr<T, U> {
             None => temp_end,
         };
 
-        let source = self.block.span().source();
+        let source = self.kw_if.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -65,7 +65,7 @@ impl Spanned for MatchExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_match.span().start();
         let end_pos = self.close_brace.span().end();
-        let source = self.open_brace.span().source();
+        let source = self.kw_match.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 

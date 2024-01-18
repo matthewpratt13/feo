@@ -37,7 +37,7 @@ impl<T, U> Spanned for BlockExpr<T, U> {
     fn span(&self) -> Span {
         let start_pos = self.open_brace.span().start();
         let end_pos = self.close_brace.span().end();
-        let source = self.statements.span().source();
+        let source = self.open_brace.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 

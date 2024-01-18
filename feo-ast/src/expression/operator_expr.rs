@@ -27,7 +27,7 @@ impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
         let start_pos = self.first_operand.span().start();
         let end_pos = self.second_operand.span().end();
-        let source = self.operator.span().source();
+        let source = self.first_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -53,7 +53,7 @@ impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
         let start_pos = self.initial_value.span().start();
         let end_pos = self.new_value.span().end();
-        let source = self.equals.span().source();
+        let source = self.initial_value.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -79,7 +79,7 @@ impl Spanned for BoolExpr {
     fn span(&self) -> Span {
         let start_pos = self.first_expression.span().start();
         let end_pos = self.second_expression.span().end();
-        let source = self.operator.span().source();
+        let source = self.first_expression.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -104,7 +104,7 @@ impl Statement for ComparisonExpr {}
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
         let start_pos = self.first_expression.span().start();
-        let end_pos = self.second_expression.span().start();
+        let end_pos = self.second_expression.span().end();
         let source = self.operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);

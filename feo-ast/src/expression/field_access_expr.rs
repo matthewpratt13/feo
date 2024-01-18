@@ -20,7 +20,7 @@ impl Spanned for FieldAccessExpr {
     fn span(&self) -> Span {
         let start_pos = self.object.span().start();
         let end_pos = self.field_name.span().end();
-        let source = self.field_name.span().source();
+        let source = self.object.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
