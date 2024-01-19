@@ -15,7 +15,7 @@ use super::{AssociatedItem, ImplItem, Item, WhereClause};
 pub struct InherentImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: Keyword,
-    object_type: Box<dyn Type>,
+    nominal_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
