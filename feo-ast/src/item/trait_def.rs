@@ -14,7 +14,7 @@ use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 pub struct TraitDef {
     visibility_opt: Option<VisibilityKind>,
     kw_unsafe_opt: Option<Keyword>,
-    kw_impl: Keyword,
+    kw_trait: Keyword,
     identifier: Identifier,
     type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
     where_clause_opt: Option<WhereClause>,
@@ -38,12 +38,12 @@ impl Spanned for TraitDef {
             Some(v) => v.span().start(),
             None => match &self.kw_unsafe_opt {
                 Some(ku) => ku.span().start(),
-                None => self.kw_impl.span().start(),
+                None => self.kw_trait.span().start(),
             },
         };
 
         let end_pos = self.close_brace.span().end();
-        let source = self.kw_impl.span().source();
+        let source = self.kw_trait.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
