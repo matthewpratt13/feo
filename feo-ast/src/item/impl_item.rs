@@ -57,13 +57,13 @@ impl Spanned for InherentImpl {
 pub struct TraitImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: Keyword,
-    trait_path: SimplePath,
+    implemented_trait_path: SimplePath,
     kw_for: Keyword,
-    nominal_type: Box<dyn Type>,
+    implementing_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem>>,
+    associated_items: Vec<Box<dyn AssociatedItem>>, // cannot contain `TypeAliasDef`
     close_brace: Brace,
 }
 
