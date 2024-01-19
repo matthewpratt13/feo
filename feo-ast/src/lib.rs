@@ -52,9 +52,15 @@ mod primitive_wrapper {
     use feo_types::span::{Span, Spanned};
     use feo_types::U256;
 
-    use crate::expression::{Constant, ExprWithoutBlock, Expression, LiteralExpr};
+    use crate::expression::{Constant, ExprWithoutBlock, Expression};
     use crate::pattern::{LiteralPatt, Pattern, RangePattBound};
     use crate::statement::Statement;
+
+    pub trait LiteralExpr<E>
+    where
+        Self: Sized + Constant + ExprWithoutBlock<E>,
+    {
+    }
 
     pub struct CharValue(char);
 

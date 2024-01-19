@@ -7,7 +7,13 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression, OuterAttr, StructExpr};
+use super::{Constant, ExprWithoutBlock, Expression, OuterAttr};
+
+pub trait StructExpr<E>
+where
+    Self: Sized + Constant + ExprWithoutBlock<E>,
+{
+}
 
 pub struct Struct {
     item_path: SimplePath,

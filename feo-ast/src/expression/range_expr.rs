@@ -5,7 +5,13 @@ use crate::{
     type_utils::{DblDot, DotDotEquals},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression, RangeExpr};
+use super::{Constant, ExprWithoutBlock, Expression};
+
+pub trait RangeExpr<E>
+where
+    Self: Sized + Constant + ExprWithoutBlock<E>,
+{
+}
 
 pub struct RangeFromToExpr {
     from_expression: Box<dyn Expression>,

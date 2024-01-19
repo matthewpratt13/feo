@@ -2,7 +2,13 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{keyword::Keyword, pattern::Pattern};
 
-use super::{BlockExpr, Constant, ExprWithBlock, Expression, IterationExpr};
+use super::{BlockExpr, Constant, ExprWithBlock, Expression};
+
+pub trait IterationExpr<E>
+where
+    Self: Sized + ExprWithBlock<E>,
+{
+}
 
 pub struct InfiniteLoopExpr<T, U> {
     kw_loop: Keyword,

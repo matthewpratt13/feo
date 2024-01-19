@@ -7,7 +7,13 @@ use crate::{
     type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression, OperatorExpr};
+use super::{Constant, ExprWithoutBlock, Expression};
+
+pub trait OperatorExpr<E>
+where
+    Self: Sized + ExprWithoutBlock<E>,
+{
+}
 
 pub struct ArithmeticOrLogicalExpr {
     first_operand: Box<dyn Expression>,

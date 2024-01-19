@@ -7,7 +7,13 @@ use crate::{
     type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
-use super::{BlockExpr, ClosureExpr, ExprWithoutBlock, Expression, OuterAttr};
+use super::{BlockExpr, ExprWithoutBlock, Expression, OuterAttr};
+
+pub trait ClosureExpr
+where
+    Self: Sized + Expression + Type + Spanned,
+{
+}
 
 pub enum ClosureParamsOpt {
     None(DblPipe),

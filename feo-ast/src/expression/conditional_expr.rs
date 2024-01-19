@@ -6,9 +6,13 @@ use crate::{
     type_utils::{Brace, Comma, FatArrow},
 };
 
-use super::{
-    BlockExpr, ConditionalExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr,
-};
+use super::{BlockExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr};
+
+pub trait ConditionalExpr<E>
+where
+    Self: Sized + Constant + ExprWithBlock<E>,
+{
+}
 
 pub struct IfExpr<T, U> {
     kw_if: Keyword,
