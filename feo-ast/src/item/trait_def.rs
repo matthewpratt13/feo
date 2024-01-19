@@ -15,7 +15,7 @@ pub struct TraitDef {
     outer_attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_trait: Keyword,
-    identifier: Identifier,
+    trait_name: Identifier,
     type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
@@ -24,13 +24,13 @@ pub struct TraitDef {
     close_brace: Brace,
 }
 
-impl ContractItem for TraitDef {}
-
 impl Item for TraitDef {}
+
+impl Statement for TraitDef {}
 
 impl LibraryItem for TraitDef {}
 
-impl Statement for TraitDef {}
+impl ContractItem for TraitDef {}
 
 impl Spanned for TraitDef {
     fn span(&self) -> Span {

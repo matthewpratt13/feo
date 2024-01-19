@@ -16,24 +16,24 @@ pub struct ConstantItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: Keyword,
-    identifier: Identifier,
+    item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
+    assignment_opt: Option<(Equals, Box<dyn Expression>)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
 
+impl Item for ConstantItem {}
+
+impl Statement for ConstantItem {}
+
 impl AssociatedItem for ConstantItem {}
+
+impl LibraryItem for ConstantItem {}
 
 impl Constant for ConstantItem {}
 
 impl ContractItem for ConstantItem {}
-
-impl Item for ConstantItem {}
-
-impl LibraryItem for ConstantItem {}
-
-impl Statement for ConstantItem {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
@@ -59,20 +59,20 @@ pub struct StaticItem {
     visibility_opt: Option<VisibilityKind>,
     kw_static: Keyword,
     kw_mut_opt: Option<Keyword>,
-    identifier: Identifier,
+    item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
     assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
 
-impl Constant for StaticItem {}
-
-impl ContractItem for StaticItem {}
-
 impl Item for StaticItem {}
 
 impl Statement for StaticItem {}
+
+impl Constant for StaticItem {}
+
+impl ContractItem for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {
