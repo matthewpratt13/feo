@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 mod constant_item;
-mod enum_def;
+mod enum_type;
 mod extern_crate_decl;
 mod function_item;
 mod impl_item;

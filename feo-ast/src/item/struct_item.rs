@@ -19,9 +19,10 @@ where
 }
 
 pub struct StructType {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
-    identifier: Identifier,
+    struct_name: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     struct_fields_opt: Option<StructFields>,
@@ -42,10 +43,12 @@ impl ContractItem for StructType {}
 
 impl Spanned for StructType {
     fn span(&self) -> Span {
-        let start_pos = if let Some(v) = &self.visibility_opt {
-            v.span().start()
-        } else {
-            self.kw_struct.span().start()
+        let start_pos = match self.attributes.first() {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => self.kw_struct.span().start(),
+            },
         };
 
         let end_pos = self.close_brace.span().end();
@@ -72,9 +75,10 @@ pub struct StructField {
 }
 
 pub struct TupleStructType {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
-    identifier: Identifier,
+    struct_name: Identifier,
     open_parenthesis: Parenthesis,
     tuple_fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
@@ -96,10 +100,12 @@ impl ContractItem for TupleStructType {}
 
 impl Spanned for TupleStructType {
     fn span(&self) -> Span {
-        let start_pos = if let Some(v) = &self.visibility_opt {
-            v.span().start()
-        } else {
-            self.kw_struct.span().start()
+        let start_pos = match self.attributes.first() {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => self.kw_struct.span().start(),
+            },
         };
 
         let end_pos = self.semicolon.span().end();
@@ -124,9 +130,10 @@ pub struct TupleField {
 }
 
 pub struct UnitStructType {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
-    identifier: Identifier,
+    struct_name: Identifier,
     open_brace: Brace,
     close_brace: Brace,
 }
@@ -147,10 +154,12 @@ impl ContractItem for UnitStructType {}
 
 impl Spanned for UnitStructType {
     fn span(&self) -> Span {
-        let start_pos = if let Some(v) = &self.visibility_opt {
-            v.span().start()
-        } else {
-            self.kw_struct.span().start()
+        let start_pos = match self.attributes.first() {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => self.kw_struct.span().start(),
+            },
         };
 
         let end_pos = self.close_brace.span().end();

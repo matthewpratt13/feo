@@ -17,33 +17,35 @@ pub enum EnumVariantType {
     Tuple(EnumVariantTuple),
 }
 
-pub struct EnumDef {
+pub struct EnumType {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_enum: Keyword,
-    identifier: Identifier,
+    enum_name: Identifier,
     open_brace: Brace,
     enum_variants_opt: Option<EnumVariants>,
     close_brace: Brace,
 }
 
-impl ContractItem for EnumDef {}
+impl Item for EnumType {}
 
-impl Item for EnumDef {}
+impl Statement for EnumType {}
 
-impl LibraryItem for EnumDef {}
+impl LibraryItem for EnumType {}
 
-impl Statement for EnumDef {}
+impl Type for EnumType {}
 
-impl Type for EnumDef {}
+impl ContractItem for EnumType {}
 
-impl Spanned for EnumDef {
+impl Spanned for EnumType {
     fn span(&self) -> Span {
-        let start_pos = if let Some(v) = &self.visibility_opt {
-            v.span().start()
-        } else {
-            self.kw_enum.span().start()
+        let start_pos = match self.attributes.first() {
+            Some(a) => a.span().start(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span().start(),
+                None => self.kw_enum.span().start(),
+            },
         };
-
         let end_pos = self.close_brace.span().end();
         let source = self.kw_enum.span().source();
 
@@ -62,7 +64,7 @@ pub struct EnumVariants {
 pub struct EnumVariant {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    name: Identifier,
+    variant_name: Identifier,
     variant_type_opt: Option<EnumVariantType>,
 }
 
