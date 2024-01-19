@@ -20,7 +20,7 @@ pub enum FuncOrMethodParam {
 
 pub trait FunctionItem
 where
-    Self: Item + AssociatedItem + Type,
+    Self: Item + Type,
 {
 }
 
@@ -28,7 +28,7 @@ pub struct FunctionDefWithoutBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
-    identifier: Identifier,
+    func_name: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
@@ -36,15 +36,15 @@ pub struct FunctionDefWithoutBody {
     semicolon: Semicolon,
 }
 
-impl AssociatedItem for FunctionDefWithoutBody {}
+impl FunctionItem for FunctionDefWithoutBody {}
 
 impl Item for FunctionDefWithoutBody {}
 
-impl FunctionItem for FunctionDefWithoutBody {}
+impl Statement for FunctionDefWithoutBody {}
+
+impl AssociatedItem for FunctionDefWithoutBody {}
 
 impl LibraryItem for FunctionDefWithoutBody {}
-
-impl Statement for FunctionDefWithoutBody {}
 
 impl Type for FunctionDefWithoutBody {}
 
@@ -71,7 +71,7 @@ pub struct FunctionDefWithBody<T> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
-    identifier: Identifier,
+    func_name: Identifier,
     open_parenthesis: Parenthesis,
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
@@ -79,17 +79,15 @@ pub struct FunctionDefWithBody<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
-impl<T> AssociatedItem for FunctionDefWithBody<T> {}
-
-impl<T> ContractItem for FunctionDefWithBody<T> {}
+impl<T> FunctionItem for FunctionDefWithBody<T> {}
 
 impl<T> Item for FunctionDefWithBody<T> {}
 
-impl<T> FunctionItem for FunctionDefWithBody<T> {}
+impl<T> Statement for FunctionDefWithBody<T> {}
 
 impl<T> LibraryItem for FunctionDefWithBody<T> {}
 
-impl<T> Statement for FunctionDefWithBody<T> {}
+impl<T> ContractItem for FunctionDefWithBody<T> {}
 
 impl<T> Type for FunctionDefWithBody<T> {}
 
@@ -119,7 +117,7 @@ pub struct FuncParams {
 }
 
 pub struct FuncParam {
-    pattern: Box<dyn Pattern>,
+    param_pattern: Box<dyn Pattern>,
     colon: Colon,
     param_type: Box<dyn Type>,
 }

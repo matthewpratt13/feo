@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::OuterAttr,
+    expression::{Constant, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
     program::{ContractItem, LibraryItem},
@@ -72,8 +72,24 @@ pub struct EnumVariantStruct {
     close_brace: Brace,
 }
 
+impl Constant for EnumVariantStruct {}
+
+impl Spanned for EnumVariantStruct {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
+
 pub struct EnumVariantTuple {
     open_parenthesis: Parenthesis,
     fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
+}
+
+impl Constant for EnumVariantTuple {}
+
+impl Spanned for EnumVariantTuple {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }

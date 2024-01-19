@@ -766,8 +766,7 @@ mod tests {
             func bar() -> str; 
         }
         
-        #[extern]
-        func hello_world() {
+        pub func hello_world() {
             print!("hello world");
         }
 
@@ -889,7 +888,7 @@ mod tests {
             Blue
         }
 
-        abi SomeAbstractContract {
+        pub abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
         "#;
