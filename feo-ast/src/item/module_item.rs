@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{InnerAttr, OuterAttr},
+    expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
     program::{ContractItem, LibraryItem},
@@ -17,7 +17,6 @@ pub struct ModWithBody {
     kw_mod: Keyword,
     identifier: Identifier,
     open_brace: Brace,
-    inner_attributes: Vec<InnerAttr>,
     items: Vec<Box<dyn Item>>,
     close_brace: Brace,
 }
