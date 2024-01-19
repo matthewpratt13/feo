@@ -23,13 +23,13 @@ pub struct ImportDecl {
     semicolon: Semicolon,
 }
 
-impl ContractItem for ImportDecl {}
-
 impl Item for ImportDecl {}
+
+impl Statement for ImportDecl {}
 
 impl LibraryItem for ImportDecl {}
 
-impl Statement for ImportDecl {}
+impl ContractItem for ImportDecl {}
 
 impl Spanned for ImportDecl {
     fn span(&self) -> Span {
@@ -49,11 +49,9 @@ impl Spanned for ImportDecl {
 }
 
 pub struct PathWildcard {
-    path_prefix: Vec<Option<(Option<SimplePath>, DblColon)>>,
+    full_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
-
-impl ContractItem for PathWildcard {}
 
 impl ImportTree for PathWildcard {}
 
@@ -61,9 +59,11 @@ impl Item for PathWildcard {}
 
 impl Statement for PathWildcard {}
 
+impl ContractItem for PathWildcard {}
+
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
-        let start_pos = match self.path_prefix.first() {
+        let start_pos = match self.full_path.first() {
             Some(p) => match p {
                 Some(q) => match &q.0 {
                     Some(r) => r.span().start(),
@@ -94,13 +94,13 @@ pub struct PathSubsetRecursive {
     close_brace: Brace,
 }
 
-impl ContractItem for PathSubsetRecursive {}
-
 impl ImportTree for PathSubsetRecursive {}
 
 impl Item for PathSubsetRecursive {}
 
 impl Statement for PathSubsetRecursive {}
+
+impl ContractItem for PathSubsetRecursive {}
 
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
@@ -126,13 +126,13 @@ pub struct PathWithAsClause {
     as_clause_opt: Option<AsClause>,
 }
 
-impl ContractItem for PathWithAsClause {}
-
 impl ImportTree for PathWithAsClause {}
 
 impl Item for PathWithAsClause {}
 
 impl Statement for PathWithAsClause {}
+
+impl ContractItem for PathWithAsClause {}
 
 impl Spanned for PathWithAsClause {
     fn span(&self) -> Span {
