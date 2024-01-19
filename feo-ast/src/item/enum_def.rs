@@ -76,7 +76,13 @@ impl Constant for EnumVariantStruct {}
 
 impl Spanned for EnumVariantStruct {
     fn span(&self) -> Span {
-        todo!()
+        let start_pos = self.open_brace.span().start();
+        let end_pos = self.close_brace.span().end();
+        let source = self.open_brace.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
     }
 }
 
@@ -90,6 +96,12 @@ impl Constant for EnumVariantTuple {}
 
 impl Spanned for EnumVariantTuple {
     fn span(&self) -> Span {
-        todo!()
+        let start_pos = self.open_parenthesis.span().start();
+        let end_pos = self.close_parenthesis.span().end();
+        let source = self.open_parenthesis.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
     }
 }
