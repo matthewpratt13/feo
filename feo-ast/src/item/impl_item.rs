@@ -19,7 +19,7 @@ pub struct InherentImpl {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem>>,
+    associated_items: Vec<Box<dyn AssociatedItem>>, // excludes type alias
     close_brace: Brace,
 }
 
