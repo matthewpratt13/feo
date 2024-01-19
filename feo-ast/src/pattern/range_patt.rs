@@ -2,7 +2,19 @@ use feo_types::span::{Span, Spanned};
 
 use crate::type_utils::DotDotEquals;
 
-use super::{Pattern, RangePatt, RangePattBound};
+use super::Pattern;
+
+pub trait RangePatt
+where
+    Self: Sized + 'static + Pattern,
+{
+}
+
+pub trait RangePattBound
+where
+    Self: Pattern,
+{
+}
 
 pub struct RangeFromPatt {
     from: Box<dyn RangePattBound>,

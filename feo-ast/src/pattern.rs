@@ -8,6 +8,8 @@ mod range_patt;
 mod struct_patt;
 mod tuple_patt;
 
+pub use self::range_patt::{RangePatt, RangePattBound};
+
 pub trait Pattern
 where
     Self: Spanned,
@@ -16,18 +18,6 @@ where
 
 pub trait LiteralPatt
 where
-    Self: Pattern,
-{
-}
-
-pub trait RangePatt
-where
-    Self: Pattern,
-{
-}
-
-pub trait RangePattBound
-where
-    Self: Pattern,
+    Self: Sized + 'static + Pattern,
 {
 }
