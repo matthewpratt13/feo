@@ -16,21 +16,21 @@ pub struct TypeAliasDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_type: Keyword,
-    identifier: Identifier,
+    type_name: Identifier,
     type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
-    value_opt: Option<(Equals, Box<dyn Type>)>,
+    assignment_opt: Option<(Equals, Box<dyn Type>)>,
     semicolon: Semicolon,
 }
 
-impl AssociatedItem for TypeAliasDef {}
-
-impl ContractItem for TypeAliasDef {}
-
 impl Item for TypeAliasDef {}
+
+impl Statement for TypeAliasDef {}
+
+impl AssociatedItem for TypeAliasDef {}
 
 impl LibraryItem for TypeAliasDef {}
 
-impl Statement for TypeAliasDef {}
+impl ContractItem for TypeAliasDef {}
 
 impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {
