@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    expression::InnerAttr,
+    expression::{InnerAttr, OuterAttr},
     identifier::Identifier,
     item::{AssociatedItem, FunctionDef, Item, VisibilityKind},
     keyword::Keyword,
@@ -17,6 +17,7 @@ where
 }
 
 pub struct Abi {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_abi: Keyword,
     contract_name: Identifier,
@@ -49,6 +50,7 @@ pub struct Script {
 }
 
 pub struct Storage {
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_storage: Keyword,
     open_brace: Brace,
