@@ -3,11 +3,11 @@
 mod constant_item;
 mod enum_def;
 mod extern_crate_decl;
-mod function_def;
+mod function_item;
 mod impl_item;
 mod import_decl;
-mod module_item;
-mod struct_def;
+mod mod_item;
+mod struct_item;
 mod trait_def;
 mod type_alias_def;
 mod visibility;
@@ -16,11 +16,10 @@ use feo_types::span::Spanned;
 
 use crate::program::LibraryItem;
 use crate::statement::Statement;
-use crate::ty::Type;
 
-pub use self::enum_def::EnumDef;
 pub use self::extern_crate_decl::AsClause;
-pub use self::struct_def::{StructFields, TupleFields};
+pub use self::function_item::FunctionItem;
+pub use self::struct_item::{StructFields, TupleFields};
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
@@ -33,36 +32,6 @@ where
 pub trait AssociatedItem
 where
     Self: Item + LibraryItem,
-{
-}
-
-pub trait FunctionDef
-where
-    Self: Item + AssociatedItem + Type,
-{
-}
-
-pub trait ImplItem
-where
-    Self: Item,
-{
-}
-
-pub trait ImportTree
-where
-    Self: Item,
-{
-}
-
-pub trait ModItem
-where
-    Self: Item,
-{
-}
-
-pub trait StructItem
-where
-    Self: Item + LibraryItem + Type,
 {
 }
 

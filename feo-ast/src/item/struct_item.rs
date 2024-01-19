@@ -10,7 +10,13 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
 
-use super::{Item, StructItem, VisibilityKind, WhereClause};
+use super::{Item, VisibilityKind, WhereClause};
+
+pub trait StructItem
+where
+    Self: Item + LibraryItem + Type,
+{
+}
 
 pub struct StructDef {
     visibility_opt: Option<VisibilityKind>,

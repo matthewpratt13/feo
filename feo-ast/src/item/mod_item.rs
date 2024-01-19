@@ -8,7 +8,13 @@ use crate::{
     type_utils::{Brace, Semicolon},
 };
 
-use super::{Item, ModItem, VisibilityKind};
+use super::{Item, VisibilityKind};
+
+pub trait ModItem
+where
+    Self: Item,
+{
+}
 
 pub struct ModWithBody {
     outer_attributes: Vec<OuterAttr>,

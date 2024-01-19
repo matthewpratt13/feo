@@ -8,7 +8,13 @@ use crate::{
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };
 
-use super::{AsClause, ImportTree, Item, VisibilityKind};
+use super::{AsClause, Item, VisibilityKind};
+
+pub trait ImportTree
+where
+    Self: Item,
+{
+}
 
 pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,

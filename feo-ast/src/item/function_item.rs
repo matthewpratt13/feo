@@ -11,14 +11,20 @@ use crate::{
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
-use super::{AssociatedItem, FunctionDef, Item, VisibilityKind};
+use super::{AssociatedItem, Item, VisibilityKind};
 
 pub enum FuncOrMethodParam {
     Func(FuncParam),
     Method(MethodParam),
 }
 
-pub struct FunctionSignatureOnly {
+pub trait FunctionItem
+where
+    Self: Item + AssociatedItem + Type,
+{
+}
+
+pub struct FunctionDefWithoutBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
@@ -30,19 +36,19 @@ pub struct FunctionSignatureOnly {
     semicolon: Semicolon,
 }
 
-impl AssociatedItem for FunctionSignatureOnly {}
+impl AssociatedItem for FunctionDefWithoutBody {}
 
-impl Item for FunctionSignatureOnly {}
+impl Item for FunctionDefWithoutBody {}
 
-impl FunctionDef for FunctionSignatureOnly {}
+impl FunctionItem for FunctionDefWithoutBody {}
 
-impl LibraryItem for FunctionSignatureOnly {}
+impl LibraryItem for FunctionDefWithoutBody {}
 
-impl Statement for FunctionSignatureOnly {}
+impl Statement for FunctionDefWithoutBody {}
 
-impl Type for FunctionSignatureOnly {}
+impl Type for FunctionDefWithoutBody {}
 
-impl Spanned for FunctionSignatureOnly {
+impl Spanned for FunctionDefWithoutBody {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -61,7 +67,7 @@ impl Spanned for FunctionSignatureOnly {
     }
 }
 
-pub struct FunctionWithBody<T> {
+pub struct FunctionDefWithBody<T> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
@@ -73,21 +79,21 @@ pub struct FunctionWithBody<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
-impl<T> AssociatedItem for FunctionWithBody<T> {}
+impl<T> AssociatedItem for FunctionDefWithBody<T> {}
 
-impl<T> ContractItem for FunctionWithBody<T> {}
+impl<T> ContractItem for FunctionDefWithBody<T> {}
 
-impl<T> Item for FunctionWithBody<T> {}
+impl<T> Item for FunctionDefWithBody<T> {}
 
-impl<T> FunctionDef for FunctionWithBody<T> {}
+impl<T> FunctionItem for FunctionDefWithBody<T> {}
 
-impl<T> LibraryItem for FunctionWithBody<T> {}
+impl<T> LibraryItem for FunctionDefWithBody<T> {}
 
-impl<T> Statement for FunctionWithBody<T> {}
+impl<T> Statement for FunctionDefWithBody<T> {}
 
-impl<T> Type for FunctionWithBody<T> {}
+impl<T> Type for FunctionDefWithBody<T> {}
 
-impl<T> Spanned for FunctionWithBody<T> {
+impl<T> Spanned for FunctionDefWithBody<T> {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),

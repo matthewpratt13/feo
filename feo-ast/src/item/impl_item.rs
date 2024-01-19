@@ -10,7 +10,14 @@ use crate::{
     type_utils::Brace,
 };
 
-use super::{AssociatedItem, ImplItem, Item, WhereClause};
+use super::{AssociatedItem, Item, WhereClause};
+
+
+pub trait ImplItem
+where
+    Self: Item,
+{
+}
 
 pub struct InherentImpl {
     outer_attributes: Vec<OuterAttr>,
