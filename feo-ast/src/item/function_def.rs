@@ -73,6 +73,8 @@ pub struct FunctionWithBody<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
+impl<T> AssociatedItem for FunctionWithBody<T> {}
+
 impl<T> ContractItem for FunctionWithBody<T> {}
 
 impl<T> Item for FunctionWithBody<T> {}
