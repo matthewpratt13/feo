@@ -4,7 +4,6 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::ContractItem,
     statement::Statement,
     type_utils::{Brace, Semicolon},
 };
