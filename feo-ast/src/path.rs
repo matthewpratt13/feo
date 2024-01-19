@@ -13,19 +13,19 @@ use crate::{
 };
 
 pub enum PathSegmentKind {
-    Identifier(Identifier),
-    CrateKeyword(Keyword),
-    SelfKeyword(Keyword),
-    SuperKeyword(Keyword),
+    Iden(Identifier),
+    KwCrate(Keyword),
+    KwSelf(Keyword),
+    KwSuper(Keyword),
 }
 
 impl Spanned for PathSegmentKind {
     fn span(&self) -> Span {
         match &self {
-            PathSegmentKind::Identifier(i) => i.span(),
-            PathSegmentKind::CrateKeyword(c) => c.span(),
-            PathSegmentKind::SelfKeyword(se) => se.span(),
-            PathSegmentKind::SuperKeyword(su) => su.span(),
+            PathSegmentKind::Iden(i) => i.span(),
+            PathSegmentKind::KwCrate(c) => c.span(),
+            PathSegmentKind::KwSelf(se) => se.span(),
+            PathSegmentKind::KwSuper(su) => su.span(),
         }
     }
 }

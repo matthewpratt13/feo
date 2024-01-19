@@ -10,10 +10,10 @@ use crate::{
 use super::{ExprWithBlock, ExprWithoutBlock, Expression};
 
 pub enum AttributeKind {
-    AbstractKeyword(Keyword),
-    ExportKeyword(Keyword),
-    ExternKeyword(Keyword),
-    UnsafeKeyword(Keyword),
+    KwAbstract(Keyword),
+    KwExport(Keyword),
+    KwExtern(Keyword),
+    KwUnsafe(Keyword),
 
     Path(SimplePath),
 }
