@@ -29,13 +29,13 @@ pub struct InherentImpl {
     close_brace: Brace,
 }
 
-impl ContractItem for InherentImpl {}
+impl ImplItem for InherentImpl {}
 
 impl Item for InherentImpl {}
 
-impl ImplItem for InherentImpl {}
-
 impl Statement for InherentImpl {}
+
+impl ContractItem for InherentImpl {}
 
 impl Spanned for InherentImpl {
     fn span(&self) -> Span {
@@ -67,13 +67,13 @@ pub struct TraitImpl {
     close_brace: Brace,
 }
 
-impl ContractItem for TraitImpl {}
+impl ImplItem for TraitImpl {}
 
 impl Item for TraitImpl {}
 
-impl ImplItem for TraitImpl {}
-
 impl Statement for TraitImpl {}
+
+impl ContractItem for TraitImpl {}
 
 impl Spanned for TraitImpl {
     fn span(&self) -> Span {
