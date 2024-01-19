@@ -56,7 +56,7 @@ where
 
 pub trait ModItem
 where
-    Self: Item + LibraryItem,
+    Self: Item,
 {
 }
 

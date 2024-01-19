@@ -4,7 +4,7 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::{ContractItem, LibraryItem},
+    program::ContractItem,
     statement::Statement,
     type_utils::{Brace, Semicolon},
 };
@@ -24,8 +24,6 @@ pub struct ModWithBody {
 impl ContractItem for ModWithBody {}
 
 impl Item for ModWithBody {}
-
-impl LibraryItem for ModWithBody {}
 
 impl ModItem for ModWithBody {}
 
@@ -61,8 +59,6 @@ pub struct ModWithoutBody {
 impl ContractItem for ModWithoutBody {}
 
 impl Item for ModWithoutBody {}
-
-impl LibraryItem for ModWithoutBody {}
 
 impl ModItem for ModWithoutBody {}
 
