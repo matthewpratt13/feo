@@ -30,8 +30,8 @@ mod type_utils {
     pub type DotDotEquals = Punctuation;
     pub type Equals = Punctuation;
     pub type FatArrow = Punctuation;
-    pub type HashSign = Punctuation;
     pub type HashBang = Punctuation;
+    pub type HashSign = Punctuation;
     pub type OpArithmeticOrLogical = Punctuation;
     pub type OpBool = Punctuation;
     pub type OpComparison = Punctuation;
