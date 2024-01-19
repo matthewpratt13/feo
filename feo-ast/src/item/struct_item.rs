@@ -14,7 +14,7 @@ use super::{Item, VisibilityKind, WhereClause};
 
 pub trait StructItem
 where
-    Self: Item + LibraryItem + Type,
+    Self: Sized + 'static + Item + LibraryItem + Type,
 {
 }
 

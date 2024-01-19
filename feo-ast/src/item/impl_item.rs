@@ -15,7 +15,7 @@ use super::{AssociatedItem, Item, WhereClause};
 
 pub trait ImplItem
 where
-    Self: Item,
+    Self: Sized + Item,
 {
 }
 
