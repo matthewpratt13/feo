@@ -17,7 +17,7 @@ where
 }
 
 pub struct ModWithBody {
-    outer_attributes: Vec<OuterAttr>,
+    attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_mod: Keyword,
     name: Identifier,
@@ -34,7 +34,7 @@ impl Statement for ModWithBody {}
 
 impl Spanned for ModWithBody {
     fn span(&self) -> Span {
-        let start_pos = match self.outer_attributes.first() {
+        let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
             None => match &self.visibility_opt {
                 Some(v) => v.span().start(),
