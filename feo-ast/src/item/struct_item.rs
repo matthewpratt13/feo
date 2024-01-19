@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::OuterAttr,
+    expression::{Constant, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
     program::{ContractItem, LibraryItem},
@@ -18,7 +18,7 @@ where
 {
 }
 
-pub struct StructDef {
+pub struct StructType {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
     identifier: Identifier,
@@ -28,19 +28,19 @@ pub struct StructDef {
     close_brace: Brace,
 }
 
-impl ContractItem for StructDef {}
+impl StructItem for StructType {}
 
-impl Item for StructDef {}
+impl Item for StructType {}
 
-impl LibraryItem for StructDef {}
+impl Statement for StructType {}
 
-impl Statement for StructDef {}
+impl LibraryItem for StructType {}
 
-impl StructItem for StructDef {}
+impl Type for StructType {}
 
-impl Type for StructDef {}
+impl ContractItem for StructType {}
 
-impl Spanned for StructDef {
+impl Spanned for StructType {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()
@@ -71,7 +71,7 @@ pub struct StructField {
     field_type: Box<dyn Type>,
 }
 
-pub struct TupleStructDef {
+pub struct TupleStructType {
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
     identifier: Identifier,
@@ -82,19 +82,19 @@ pub struct TupleStructDef {
     semicolon: Semicolon,
 }
 
-impl ContractItem for TupleStructDef {}
+impl StructItem for TupleStructType {}
 
-impl Item for TupleStructDef {}
+impl Item for TupleStructType {}
 
-impl LibraryItem for TupleStructDef {}
+impl Statement for TupleStructType {}
 
-impl Statement for TupleStructDef {}
+impl LibraryItem for TupleStructType {}
 
-impl StructItem for TupleStructDef {}
+impl Type for TupleStructType {}
 
-impl Type for TupleStructDef {}
+impl ContractItem for TupleStructType {}
 
-impl Spanned for TupleStructDef {
+impl Spanned for TupleStructType {
     fn span(&self) -> Span {
         let start_pos = if let Some(v) = &self.visibility_opt {
             v.span().start()
@@ -121,4 +121,43 @@ pub struct TupleField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_type: Box<dyn Type>,
+}
+
+pub struct UnitStructType {
+    visibility_opt: Option<VisibilityKind>,
+    kw_struct: Keyword,
+    identifier: Identifier,
+    open_brace: Brace,
+    close_brace: Brace,
+}
+
+impl StructItem for UnitStructType {}
+
+impl Item for UnitStructType {}
+
+impl Statement for UnitStructType {}
+
+impl LibraryItem for UnitStructType {}
+
+impl Constant for UnitStructType {}
+
+impl Type for UnitStructType {}
+
+impl ContractItem for UnitStructType {}
+
+impl Spanned for UnitStructType {
+    fn span(&self) -> Span {
+        let start_pos = if let Some(v) = &self.visibility_opt {
+            v.span().start()
+        } else {
+            self.kw_struct.span().start()
+        };
+
+        let end_pos = self.close_brace.span().end();
+        let source = self.kw_struct.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
 }
