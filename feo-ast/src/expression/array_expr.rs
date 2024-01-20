@@ -14,13 +14,13 @@ pub struct ArrayExpr {
     close_bracket: Bracket,
 }
 
-impl Constant for ArrayExpr {}
-
 impl Expression for ArrayExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArrayExpr {}
 
 impl Statement for ArrayExpr {}
+
+impl Constant for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
@@ -53,13 +53,13 @@ pub struct IndexExpr {
     close_bracket: Bracket,
 }
 
-impl Constant for IndexExpr {}
-
 impl Expression for IndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for IndexExpr {}
 
 impl Statement for IndexExpr {}
+
+impl Constant for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {

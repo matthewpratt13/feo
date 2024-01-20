@@ -24,13 +24,13 @@ pub struct IfExpr<T, U> {
     else_block_opt: Option<(Keyword, BlockExpr<T, U>)>,
 }
 
-impl<T: 'static, U: 'static> Constant for IfExpr<T, U> {}
+impl<T: 'static, U: 'static, E> ConditionalExpr<E> for IfExpr<T, U> {}
 
 impl<T, U> Expression for IfExpr<T, U> {}
 
-impl<T: 'static, U: 'static, E> ConditionalExpr<E> for IfExpr<T, U> {}
-
 impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> {}
+
+impl<T: 'static, U: 'static> Constant for IfExpr<T, U> {}
 
 impl<T, U> Spanned for IfExpr<T, U> {
     fn span(&self) -> Span {
@@ -63,13 +63,13 @@ pub struct MatchExpr {
     close_brace: Brace,
 }
 
-impl Constant for MatchExpr {}
+impl<E> ConditionalExpr<E> for MatchExpr {}
 
 impl Expression for MatchExpr {}
 
-impl<E> ConditionalExpr<E> for MatchExpr {}
-
 impl<E> ExprWithBlock<E> for MatchExpr {}
+
+impl Constant for MatchExpr {}
 
 impl Pattern for MatchExpr {}
 

@@ -10,13 +10,13 @@ pub struct FieldAccessExpr {
     field_name: Identifier,
 }
 
-impl Constant for FieldAccessExpr {}
-
 impl Expression for FieldAccessExpr {}
 
 impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
 
 impl Statement for FieldAccessExpr {}
+
+impl Constant for FieldAccessExpr {}
 
 impl Spanned for FieldAccessExpr {
     fn span(&self) -> Span {

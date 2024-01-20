@@ -23,17 +23,17 @@ pub struct Struct {
     close_brace: Brace,
 }
 
-impl Constant for Struct {}
+impl<E> StructExpr<E> for Struct {}
 
 impl Expression for Struct {}
 
 impl<E> ExprWithoutBlock<E> for Struct {}
 
-impl Pattern for Struct {}
-
 impl Statement for Struct {}
 
-impl<E> StructExpr<E> for Struct {}
+impl Constant for Struct {}
+
+impl Pattern for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -68,7 +68,7 @@ pub struct TupleStruct {
     close_parenthesis: Parenthesis,
 }
 
-impl Constant for TupleStruct {}
+impl<E> StructExpr<E> for TupleStruct {}
 
 impl Expression for TupleStruct {}
 
@@ -76,9 +76,9 @@ impl<E> ExprWithoutBlock<E> for TupleStruct {}
 
 impl Statement for TupleStruct {}
 
-impl Pattern for TupleStruct {}
+impl Constant for TupleStruct {}
 
-impl<E> StructExpr<E> for TupleStruct {}
+impl Pattern for TupleStruct {}
 
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
@@ -94,7 +94,7 @@ impl Spanned for TupleStruct {
 
 pub struct UnitStruct(SimplePath);
 
-impl Constant for UnitStruct {}
+impl<E> StructExpr<E> for UnitStruct {}
 
 impl Expression for UnitStruct {}
 
@@ -102,9 +102,9 @@ impl<E> ExprWithoutBlock<E> for UnitStruct {}
 
 impl Statement for UnitStruct {}
 
-impl Pattern for UnitStruct {}
+impl Constant for UnitStruct {}
 
-impl<E> StructExpr<E> for UnitStruct {}
+impl Pattern for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {

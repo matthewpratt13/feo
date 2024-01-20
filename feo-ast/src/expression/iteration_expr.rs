@@ -15,11 +15,11 @@ pub struct InfiniteLoopExpr<T, U> {
     block: BlockExpr<T, U>,
 }
 
+impl<T, U, E> IterationExpr<E> for InfiniteLoopExpr<T, U> {}
+
 impl<T, U> Expression for InfiniteLoopExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for InfiniteLoopExpr<T, U> {}
-
-impl<T, U, E> IterationExpr<E> for InfiniteLoopExpr<T, U> {}
 
 impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
     fn span(&self) -> Span {
@@ -39,13 +39,13 @@ pub struct PredicateLoopExpr<T, U> {
     block: BlockExpr<T, U>,
 }
 
-impl<T: 'static, U: 'static> Constant for PredicateLoopExpr<T, U> {}
+impl<T, U, E> IterationExpr<E> for PredicateLoopExpr<T, U> {}
 
 impl<T, U> Expression for PredicateLoopExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> {}
 
-impl<T, U, E> IterationExpr<E> for PredicateLoopExpr<T, U> {}
+impl<T: 'static, U: 'static> Constant for PredicateLoopExpr<T, U> {}
 
 impl<T, U> Spanned for PredicateLoopExpr<T, U> {
     fn span(&self) -> Span {
@@ -67,13 +67,13 @@ pub struct IterLoopExpr<T, U> {
     block: BlockExpr<T, U>,
 }
 
-impl<T: 'static, U: 'static> Constant for IterLoopExpr<T, U> {}
+impl<T, U, E> IterationExpr<E> for IterLoopExpr<T, U> {}
 
 impl<T, U> Expression for IterLoopExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for IterLoopExpr<T, U> {}
 
-impl<T, U, E> IterationExpr<E> for IterLoopExpr<T, U> {}
+impl<T: 'static, U: 'static> Constant for IterLoopExpr<T, U> {}
 
 impl<T, U> Pattern for IterLoopExpr<T, U> {}
 

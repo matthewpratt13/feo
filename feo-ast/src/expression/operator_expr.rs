@@ -21,15 +21,15 @@ pub struct ArithmeticOrLogicalExpr {
     second_operand: Box<dyn Expression>,
 }
 
-impl Constant for ArithmeticOrLogicalExpr {}
+impl<E> OperatorExpr<E> for ArithmeticOrLogicalExpr {}
 
 impl Expression for ArithmeticOrLogicalExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
 
-impl<E> OperatorExpr<E> for ArithmeticOrLogicalExpr {}
-
 impl Statement for ArithmeticOrLogicalExpr {}
+
+impl Constant for ArithmeticOrLogicalExpr {}
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
@@ -49,15 +49,15 @@ pub struct AssignmentExpr {
     new_value: Box<dyn Expression>,
 }
 
-impl Constant for AssignmentExpr {}
+impl<E> OperatorExpr<E> for AssignmentExpr {}
 
 impl Expression for AssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
 
-impl<E> OperatorExpr<E> for AssignmentExpr {}
-
 impl Statement for AssignmentExpr {}
+
+impl Constant for AssignmentExpr {}
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
@@ -77,15 +77,15 @@ pub struct BoolExpr {
     second_expression: Box<dyn Expression>,
 }
 
-impl Constant for BoolExpr {}
+impl<E> OperatorExpr<E> for BoolExpr {}
 
 impl Expression for BoolExpr {}
 
 impl<E> ExprWithoutBlock<E> for BoolExpr {}
 
-impl<E> OperatorExpr<E> for BoolExpr {}
-
 impl Statement for BoolExpr {}
+
+impl Constant for BoolExpr {}
 
 impl Spanned for BoolExpr {
     fn span(&self) -> Span {
@@ -105,15 +105,15 @@ pub struct ComparisonExpr {
     second_expression: Box<dyn Expression>,
 }
 
-impl Constant for ComparisonExpr {}
+impl<E> OperatorExpr<E> for ComparisonExpr {}
 
 impl Expression for ComparisonExpr {}
 
 impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
 
-impl<E> OperatorExpr<E> for ComparisonExpr {}
-
 impl Statement for ComparisonExpr {}
+
+impl Constant for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
@@ -132,15 +132,15 @@ pub struct NegationExpr {
     expression: Box<dyn Expression>,
 }
 
-impl Constant for NegationExpr {}
+impl<E> OperatorExpr<E> for NegationExpr {}
 
 impl Expression for NegationExpr {}
 
 impl<E> ExprWithoutBlock<E> for NegationExpr {}
 
-impl<E> OperatorExpr<E> for NegationExpr {}
-
 impl Statement for NegationExpr {}
+
+impl Constant for NegationExpr {}
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
@@ -159,11 +159,11 @@ pub struct ResultUnwrapExpr {
     question_mark: QuestionMark,
 }
 
+impl<E> OperatorExpr<E> for ResultUnwrapExpr {}
+
 impl Expression for ResultUnwrapExpr {}
 
 impl<E> ExprWithoutBlock<E> for ResultUnwrapExpr {}
-
-impl<E> OperatorExpr<E> for ResultUnwrapExpr {}
 
 impl Statement for ResultUnwrapExpr {}
 
@@ -185,15 +185,15 @@ pub struct TypeCastExpr {
     new_type: Box<dyn Type>, // cannot be a trait object
 }
 
-impl Constant for TypeCastExpr {}
+impl<E> OperatorExpr<E> for TypeCastExpr {}
 
 impl Expression for TypeCastExpr {}
 
 impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
 
-impl<E> OperatorExpr<E> for TypeCastExpr {}
-
 impl Statement for TypeCastExpr {}
+
+impl Constant for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {

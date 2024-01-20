@@ -9,7 +9,7 @@ use super::{Constant, ExprWithoutBlock, Expression};
 
 pub trait RangeExpr<E>
 where
-    Self: Sized + Constant + ExprWithoutBlock<E>,
+    Self: Sized + ExprWithoutBlock<E> + Constant,
 {
 }
 
@@ -19,15 +19,15 @@ pub struct RangeFromToExpr {
     to_expression_excl: Box<dyn Expression>,
 }
 
-impl Constant for RangeFromToExpr {}
+impl<E> RangeExpr<E> for RangeFromToExpr {}
 
 impl Expression for RangeFromToExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromToExpr {}
 
-impl<E> RangeExpr<E> for RangeFromToExpr {}
-
 impl Statement for RangeFromToExpr {}
+
+impl Constant for RangeFromToExpr {}
 
 impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
@@ -46,15 +46,15 @@ pub struct RangeFromExpr {
     dbl_dot: DblDot,
 }
 
-impl Constant for RangeFromExpr {}
+impl<E> RangeExpr<E> for RangeFromExpr {}
 
 impl Expression for RangeFromExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
 
-impl<E> RangeExpr<E> for RangeFromExpr {}
-
 impl Statement for RangeFromExpr {}
+
+impl Constant for RangeFromExpr {}
 
 impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
@@ -73,15 +73,15 @@ pub struct RangeToExpr {
     to_expression: Box<dyn Expression>,
 }
 
-impl Constant for RangeToExpr {}
+impl<E> RangeExpr<E> for RangeToExpr {}
 
 impl Expression for RangeToExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeToExpr {}
 
-impl<E> RangeExpr<E> for RangeToExpr {}
-
 impl Statement for RangeToExpr {}
+
+impl Constant for RangeToExpr {}
 
 impl Spanned for RangeToExpr {
     fn span(&self) -> Span {
@@ -101,15 +101,15 @@ pub struct RangeInclusiveExpr {
     to_expression_incl: Box<dyn Expression>,
 }
 
-impl Constant for RangeInclusiveExpr {}
+impl<E> RangeExpr<E> for RangeInclusiveExpr {}
 
 impl Expression for RangeInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
 
-impl<E> RangeExpr<E> for RangeInclusiveExpr {}
-
 impl Statement for RangeInclusiveExpr {}
+
+impl Constant for RangeInclusiveExpr {}
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
@@ -128,15 +128,15 @@ pub struct RangeToInclusiveExpr {
     to_expression_incl: Box<dyn Expression>,
 }
 
-impl Constant for RangeToInclusiveExpr {}
+impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
 
 impl Expression for RangeToInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeToInclusiveExpr {}
 
-impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
-
 impl Statement for RangeToInclusiveExpr {}
+
+impl Constant for RangeToInclusiveExpr {}
 
 impl Spanned for RangeToInclusiveExpr {
     fn span(&self) -> Span {

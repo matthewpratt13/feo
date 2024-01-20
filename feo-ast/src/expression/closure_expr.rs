@@ -42,9 +42,9 @@ pub struct ClosureWithoutReturnType {
     expression: Box<dyn Expression>,
 }
 
-impl Expression for ClosureWithoutReturnType {}
-
 impl ClosureExpr for ClosureWithoutReturnType {}
+
+impl Expression for ClosureWithoutReturnType {}
 
 impl<E> ExprWithoutBlock<E> for ClosureWithoutReturnType {}
 
@@ -71,9 +71,9 @@ pub struct ClosureWithReturnType<T, U> {
     block: BlockExpr<T, U>,
 }
 
-impl<T, U> Expression for ClosureWithReturnType<T, U> {}
-
 impl<T, U> ClosureExpr for ClosureWithReturnType<T, U> {}
+
+impl<T, U> Expression for ClosureWithReturnType<T, U> {}
 
 impl<T, U, E> ExprWithoutBlock<E> for ClosureWithReturnType<T, U> {}
 

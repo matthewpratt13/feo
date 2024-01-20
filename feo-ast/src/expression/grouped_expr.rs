@@ -10,13 +10,13 @@ pub struct GroupedExpr {
     close_parenthesis: Parenthesis,
 }
 
-impl Constant for GroupedExpr {}
-
 impl Expression for GroupedExpr {}
 
 impl<E> ExprWithoutBlock<E> for GroupedExpr {}
 
 impl Statement for GroupedExpr {}
+
+impl Constant for GroupedExpr {}
 
 impl Spanned for GroupedExpr {
     fn span(&self) -> Span {

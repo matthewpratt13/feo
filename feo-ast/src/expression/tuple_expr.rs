@@ -14,13 +14,13 @@ pub struct TupleExpr {
     close_parenthesis: Parenthesis,
 }
 
-impl Constant for TupleExpr {}
-
 impl Expression for TupleExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleExpr {}
 
 impl Statement for TupleExpr {}
+
+impl Constant for TupleExpr {}
 
 impl Spanned for TupleExpr {
     fn span(&self) -> Span {
