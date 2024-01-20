@@ -46,9 +46,9 @@ impl Spanned for CallParams {
     fn span(&self) -> Span {
         let start_pos = self.first_param.span().start();
         let end_pos = match self.subsequent_params.last() {
-            Some(s) => match &self.trailing_comma_opt {
-                Some(t) => t.span().end(),
-                None => s.1.span().end(),
+            Some(sp) => match &self.trailing_comma_opt {
+                Some(tc) => tc.span().end(),
+                None => sp.1.span().end(),
             },
             None => self.first_param.span().end(),
         };
