@@ -18,7 +18,7 @@ where
 
 pub struct ExprStatement<T> {
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
-    semicolon: Semicolon,
+    semicolon_opt: Option<Semicolon>,
 }
 
 impl<T> Statement for ExprStatement<T> {}
@@ -28,7 +28,12 @@ impl<T: 'static> Constant for ExprStatement<T> {}
 impl<T> Spanned for ExprStatement<T> {
     fn span(&self) -> Span {
         let start_pos = self.expr_without_block.span().start();
-        let end_pos = self.semicolon.span().end();
+        let end_pos = if let Some(s) = &self.semicolon_opt {
+            s.span().end()
+        } else {
+            self.expr_without_block.span().end()
+        };
+
         let source = self.expr_without_block.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
