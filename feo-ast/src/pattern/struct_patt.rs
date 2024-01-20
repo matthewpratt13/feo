@@ -13,7 +13,6 @@ pub struct StructPatt {
     object_path: SimplePath,
     open_brace: Brace,
     fields_opt: Option<StructPattFields>,
-    trailing_comma_opt: Option<Comma>,
     close_brace: Brace,
 }
 
