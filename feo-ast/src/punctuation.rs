@@ -10,7 +10,7 @@ use feo_types::span::{Position, Span, Spanned};
 
 use crate::{
     expression::{Constant, ExprWithoutBlock, Expression, RangeExpr},
-    pattern::{Pattern, RangePatt},
+    pattern::{Pattern, RangePattBound},
     statement::Statement,
     token::{Token, Tokenize},
     ty::Type,
@@ -229,7 +229,7 @@ impl Pattern for Punctuation {}
 
 impl<E> RangeExpr<E> for Punctuation {}
 
-impl RangePatt for Punctuation {}
+impl RangePattBound for Punctuation {}
 
 impl Statement for Punctuation {}
 

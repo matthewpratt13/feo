@@ -98,8 +98,6 @@ impl LiteralPatt for StringLiteral {}
 
 impl Pattern for StringLiteral {}
 
-impl RangePattBound for StringLiteral {}
-
 impl Statement for StringLiteral {}
 
 impl Type for StringLiteral {}
@@ -313,8 +311,6 @@ impl LiteralPatt for Bytes32Literal {}
 
 impl Pattern for Bytes32Literal {}
 
-impl RangePattBound for Bytes32Literal {}
-
 impl Statement for Bytes32Literal {}
 
 impl Type for Bytes32Literal {}
@@ -412,8 +408,6 @@ impl<E> ExprWithoutBlock<E> for BoolLiteral {}
 impl LiteralPatt for BoolLiteral {}
 
 impl Pattern for BoolLiteral {}
-
-impl RangePattBound for BoolLiteral {}
 
 impl Statement for BoolLiteral {}
 
