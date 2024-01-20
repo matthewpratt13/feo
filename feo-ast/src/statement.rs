@@ -6,6 +6,7 @@ use crate::{
     expression::{Constant, ExprWithoutBlock, Expression},
     identifier::Identifier,
     keyword::Keyword,
+    pattern::Pattern,
     type_annotation::TypeAnnKind,
     type_utils::{Colon, Equals, Semicolon},
 };
@@ -48,6 +49,8 @@ pub struct LetStatement {
 }
 
 impl Constant for LetStatement {}
+
+impl Pattern for LetStatement {}
 
 impl Statement for LetStatement {}
 

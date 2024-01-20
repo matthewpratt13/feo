@@ -2,6 +2,7 @@ use feo_types::span::{Span, Spanned};
 
 use crate::{
     path::PathSegmentKind,
+    pattern::Pattern,
     statement::Statement,
     type_utils::{Colon, Comma, Dot, Parenthesis},
 };
@@ -38,6 +39,8 @@ pub struct CallParams {
     subsequent_params: Vec<(Colon, Box<dyn Expression>)>,
     trailing_comma_opt: Option<Comma>,
 }
+
+// impl Pattern for CallParams {}
 
 pub struct MethodCallExpr {
     object: Box<dyn Expression>,
