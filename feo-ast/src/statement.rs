@@ -3,11 +3,10 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{Constant, ExprWithoutBlock, Expression},
-    identifier::Identifier,
+    expression::{Constant, ExprWithoutBlock, Expression, OuterAttr},
     keyword::Keyword,
     pattern::Pattern,
-    type_annotation::TypeAnnKind,
+    ty::Type,
     type_utils::{Colon, Equals, Semicolon},
 };
 
@@ -39,12 +38,11 @@ impl<T> Spanned for ExprStatement<T> {
 }
 
 pub struct LetStatement {
+    attributes: Vec<OuterAttr>,
     kw_let: Keyword,
-    kw_mut_opt: Option<Keyword>,
-    identifier: Identifier,
-    type_ann_opt: Option<(Colon, TypeAnnKind)>,
-    equals: Equals,
-    value: Box<dyn Expression>,
+    pattern: Box<dyn Pattern>,
+    type_ann_opt: Option<(Colon, Box<dyn Type>)>,
+    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
     semicolon: Semicolon,
 }
 
@@ -56,7 +54,12 @@ impl Constant for LetStatement {}
 
 impl Spanned for LetStatement {
     fn span(&self) -> Span {
-        let start_pos = self.kw_let.span().start();
+        let start_pos = if let Some(a) = self.attributes.first() {
+            a.span().start()
+        } else {
+            self.kw_let.span().start()
+        };
+
         let end_pos = self.semicolon.span().end();
         let source = self.kw_let.span().source();
 
