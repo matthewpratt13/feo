@@ -28,7 +28,7 @@ impl<T: 'static> Constant for ExprStatement<T> {}
 impl<T> Spanned for ExprStatement<T> {
     fn span(&self) -> Span {
         let start_pos = self.expr_without_block.span().start();
-        
+
         let end_pos = if let Some(s) = &self.semicolon_opt {
             s.span().end()
         } else {

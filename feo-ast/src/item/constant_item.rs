@@ -4,10 +4,11 @@ use crate::{
     expression::{Constant, Expression, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
+    pattern::Pattern,
     program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
-    type_utils::{Colon, Equals, Semicolon}, pattern::Pattern,
+    type_utils::{Colon, Equals, Semicolon},
 };
 
 use super::{AssociatedItem, Item, VisibilityKind};
