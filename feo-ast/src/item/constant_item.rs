@@ -7,7 +7,7 @@ use crate::{
     program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
-    type_utils::{Colon, Equals, Semicolon},
+    type_utils::{Colon, Equals, Semicolon}, pattern::Pattern,
 };
 
 use super::{AssociatedItem, Item, VisibilityKind};
@@ -30,6 +30,8 @@ impl Statement for ConstantItem {}
 impl AssociatedItem for ConstantItem {}
 
 impl LibraryItem for ConstantItem {}
+
+impl Pattern for ConstantItem {}
 
 impl Constant for ConstantItem {}
 

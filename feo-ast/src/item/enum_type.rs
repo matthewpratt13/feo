@@ -4,6 +4,7 @@ use crate::{
     expression::{Constant, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
+    pattern::Pattern,
     program::{ContractItem, LibraryItem},
     statement::Statement,
     ty::Type,
@@ -74,6 +75,8 @@ pub struct EnumVariantStruct {
     close_brace: Brace,
 }
 
+impl Pattern for EnumVariantStruct {}
+
 impl Constant for EnumVariantStruct {}
 
 impl Spanned for EnumVariantStruct {
@@ -93,6 +96,8 @@ pub struct EnumVariantTuple {
     fields_opt: Option<TupleFields>,
     close_parenthesis: Parenthesis,
 }
+
+impl Pattern for EnumVariantTuple {}
 
 impl Constant for EnumVariantTuple {}
 

@@ -6,7 +6,6 @@ use crate::{
     expression::{Constant, ExprWithoutBlock, Expression},
     identifier::Identifier,
     keyword::Keyword,
-    pattern::{Pattern, RangePattBound},
     statement::Statement,
     ty::Type,
     type_utils::DblColon,
@@ -41,10 +40,6 @@ impl Constant for SimplePath {}
 impl Expression for SimplePath {}
 
 impl<E> ExprWithoutBlock<E> for SimplePath {}
-
-impl Pattern for SimplePath {}
-
-impl RangePattBound for SimplePath {}
 
 impl Statement for SimplePath {}
 
