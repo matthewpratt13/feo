@@ -53,12 +53,18 @@ mod primitive_wrapper {
     use feo_types::U256;
 
     use crate::expression::{Constant, ExprWithoutBlock, Expression};
-    use crate::pattern::{LiteralPatt, Pattern, RangePattBound};
+    use crate::pattern::{Pattern, RangePattBound};
     use crate::statement::Statement;
 
     pub trait LiteralExpr<E>
     where
         Self: Sized + Constant + ExprWithoutBlock<E>,
+    {
+    }
+
+    pub trait LiteralPatt
+    where
+        Self: Sized + 'static + Pattern,
     {
     }
 
@@ -105,8 +111,6 @@ mod primitive_wrapper {
     impl LiteralPatt for StrValue {}
 
     impl Pattern for StrValue {}
-
-    impl RangePattBound for StrValue {}
 
     impl Statement for StrValue {}
 
@@ -266,8 +270,6 @@ mod primitive_wrapper {
 
     impl Pattern for Bytes32Value {}
 
-    impl RangePattBound for Bytes32Value {}
-
     impl Statement for Bytes32Value {}
 
     impl Spanned for Bytes32Value {
@@ -295,8 +297,6 @@ mod primitive_wrapper {
     impl LiteralPatt for BoolValue {}
 
     impl Pattern for BoolValue {}
-
-    impl RangePattBound for BoolValue {}
 
     impl Statement for BoolValue {}
 

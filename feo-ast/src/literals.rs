@@ -8,7 +8,6 @@ use feo_types::span::{Position, Span, Spanned};
 use feo_types::{Literal, PrimitiveType, U256};
 
 use crate::expression::{ExprWithoutBlock, Expression};
-use crate::pattern::{LiteralPatt, Pattern, RangePattBound};
 use crate::statement::Statement;
 use crate::token::{Token, Tokenize};
 use crate::ty::Type;
@@ -53,12 +52,6 @@ impl Expression for CharLiteral {}
 
 impl<E> ExprWithoutBlock<E> for CharLiteral {}
 
-impl LiteralPatt for CharLiteral {}
-
-impl Pattern for CharLiteral {}
-
-impl RangePattBound for CharLiteral {}
-
 impl Statement for CharLiteral {}
 
 impl Type for CharLiteral {}
@@ -93,10 +86,6 @@ impl Spanned for StringLiteral {
 impl Expression for StringLiteral {}
 
 impl<E> ExprWithoutBlock<E> for StringLiteral {}
-
-impl LiteralPatt for StringLiteral {}
-
-impl Pattern for StringLiteral {}
 
 impl Statement for StringLiteral {}
 
@@ -140,12 +129,6 @@ impl Spanned for IntLiteral {
 impl Expression for IntLiteral {}
 
 impl<E> ExprWithoutBlock<E> for IntLiteral {}
-
-impl LiteralPatt for IntLiteral {}
-
-impl Pattern for IntLiteral {}
-
-impl RangePattBound for IntLiteral {}
 
 impl Statement for IntLiteral {}
 
@@ -223,12 +206,6 @@ impl Expression for UIntLiteral {}
 
 impl<E> ExprWithoutBlock<E> for UIntLiteral {}
 
-impl LiteralPatt for UIntLiteral {}
-
-impl Pattern for UIntLiteral {}
-
-impl RangePattBound for UIntLiteral {}
-
 impl Statement for UIntLiteral {}
 
 impl Type for UIntLiteral {}
@@ -282,12 +259,6 @@ impl Expression for U256Literal {}
 
 impl<E> ExprWithoutBlock<E> for U256Literal {}
 
-impl LiteralPatt for U256Literal {}
-
-impl Pattern for U256Literal {}
-
-impl RangePattBound for U256Literal {}
-
 impl Statement for U256Literal {}
 
 impl Type for U256Literal {}
@@ -306,10 +277,6 @@ impl Spanned for Bytes32Literal {
 impl Expression for Bytes32Literal {}
 
 impl<E> ExprWithoutBlock<E> for Bytes32Literal {}
-
-impl LiteralPatt for Bytes32Literal {}
-
-impl Pattern for Bytes32Literal {}
 
 impl Statement for Bytes32Literal {}
 
@@ -355,12 +322,6 @@ impl Expression for FloatLiteral {}
 
 impl<E> ExprWithoutBlock<E> for FloatLiteral {}
 
-impl LiteralPatt for FloatLiteral {}
-
-impl Pattern for FloatLiteral {}
-
-impl RangePattBound for FloatLiteral {}
-
 impl Statement for FloatLiteral {}
 
 impl Type for FloatLiteral {}
@@ -404,10 +365,6 @@ impl Spanned for BoolLiteral {
 impl Expression for BoolLiteral {}
 
 impl<E> ExprWithoutBlock<E> for BoolLiteral {}
-
-impl LiteralPatt for BoolLiteral {}
-
-impl Pattern for BoolLiteral {}
 
 impl Statement for BoolLiteral {}
 
