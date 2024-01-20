@@ -219,21 +219,21 @@ impl Spanned for Punctuation {
     }
 }
 
-impl Constant for Punctuation {}
-
 impl Expression for Punctuation {}
 
 impl<E> ExprWithoutBlock<E> for Punctuation {}
 
-impl Pattern for Punctuation {}
-
 impl<E> RangeExpr<E> for Punctuation {}
-
-impl RangePattBound for Punctuation {}
 
 impl Statement for Punctuation {}
 
+impl Pattern for Punctuation {}
+
+impl RangePattBound for Punctuation {}
+
 impl Type for Punctuation {}
+
+impl Constant for Punctuation {}
 
 pub fn is_quote(c: char) -> bool {
     ['\'', '"'].contains(&c)

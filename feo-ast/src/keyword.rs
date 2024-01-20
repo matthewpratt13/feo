@@ -216,6 +216,6 @@ impl Expression for Keyword {}
 
 impl<E> ExprWithoutBlock<E> for Keyword {}
 
-impl Item for Keyword {}
-
 impl Statement for Keyword {}
+
+impl Item for Keyword {}
