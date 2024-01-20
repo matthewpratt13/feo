@@ -41,9 +41,9 @@ impl<E> ExprWithoutBlock<E> for SimplePath {}
 
 impl Statement for SimplePath {}
 
-impl Type for SimplePath {}
-
 impl Constant for SimplePath {}
+
+impl Type for SimplePath {}
 
 impl Spanned for SimplePath {
     fn span(&self) -> Span {

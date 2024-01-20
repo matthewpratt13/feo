@@ -48,11 +48,11 @@ pub struct LetStatement {
     semicolon: Semicolon,
 }
 
-impl Constant for LetStatement {}
+impl Statement for LetStatement {}
 
 impl Pattern for LetStatement {}
 
-impl Statement for LetStatement {}
+impl Constant for LetStatement {}
 
 impl Spanned for LetStatement {
     fn span(&self) -> Span {
