@@ -19,7 +19,7 @@ where
 {
 }
 
-pub struct CharValue(char);
+pub struct CharValue(pub char);
 
 impl<E> LiteralExpr<E> for CharValue {}
 
@@ -49,7 +49,7 @@ impl fmt::Display for CharValue {
     }
 }
 
-pub struct StrValue(&'static str);
+pub struct StrValue(pub &'static str);
 
 impl<E> LiteralExpr<E> for StrValue {}
 
@@ -77,7 +77,7 @@ impl fmt::Display for StrValue {
     }
 }
 
-pub struct IntValue(i64);
+pub struct IntValue(pub i64);
 
 impl<E> LiteralExpr<E> for IntValue {}
 
@@ -107,7 +107,7 @@ impl fmt::Display for IntValue {
     }
 }
 
-pub struct UIntValue(u64);
+pub struct UIntValue(pub u64);
 
 // impl UIntValue {
 //     fn trim_leading_zeros(self) -> Self {
@@ -147,7 +147,7 @@ impl fmt::Display for UIntValue {
     }
 }
 
-pub struct U256Value(U256);
+pub struct U256Value(pub U256);
 
 impl<E> LiteralExpr<E> for U256Value {}
 
@@ -177,7 +177,7 @@ impl fmt::Display for U256Value {
     }
 }
 
-pub struct FloatValue(f64);
+pub struct FloatValue(pub f64);
 
 impl<E> LiteralExpr<E> for FloatValue {}
 
@@ -207,7 +207,7 @@ impl fmt::Display for FloatValue {
     }
 }
 
-pub struct Bytes32Value(&'static [u8; 32]);
+pub struct Bytes32Value(pub &'static [u8; 32]);
 
 impl<E> LiteralExpr<E> for Bytes32Value {}
 
@@ -235,7 +235,7 @@ impl fmt::Display for Bytes32Value {
     }
 }
 
-pub struct BoolValue(bool);
+pub struct BoolValue(pub bool);
 
 impl<E> LiteralExpr<E> for BoolValue {}
 
