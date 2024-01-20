@@ -71,6 +71,8 @@ impl<E> ConditionalExpr<E> for MatchExpr {}
 
 impl<E> ExprWithBlock<E> for MatchExpr {}
 
+impl Pattern for MatchExpr {}
+
 impl Spanned for MatchExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_match.span().start();
