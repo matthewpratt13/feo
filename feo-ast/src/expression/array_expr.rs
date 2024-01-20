@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    primitive_wrapper::UIntValue,
+    primitive_wrappers::UIntValue,
     statement::Statement,
     type_utils::{Bracket, Comma, Semicolon},
 };
