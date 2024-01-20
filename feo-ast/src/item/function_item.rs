@@ -13,15 +13,15 @@ use crate::{
 
 use super::{AssociatedItem, Item, VisibilityKind};
 
-pub enum FuncOrMethodParam {
-    Func(FuncParam),
-    Method(MethodParam),
-}
-
 pub trait FunctionItem
 where
     Self: Item + Type,
 {
+}
+
+pub enum FuncOrMethodParam {
+    Func(FuncParam),
+    Method(MethodParam),
 }
 
 pub struct FunctionDefWithoutBody {
