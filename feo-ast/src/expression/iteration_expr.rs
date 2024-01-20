@@ -75,6 +75,8 @@ impl<T, U, E> ExprWithBlock<E> for IterLoopExpr<T, U> {}
 
 impl<T, U, E> IterationExpr<E> for IterLoopExpr<T, U> {}
 
+impl<T, U> Pattern for IterLoopExpr<T, U> {}
+
 impl<T, U> Spanned for IterLoopExpr<T, U> {
     fn span(&self) -> Span {
         let start_pos = self.kw_for.span().start();
