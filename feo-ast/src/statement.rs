@@ -22,9 +22,9 @@ pub struct ExprStatement<T> {
     semicolon: Semicolon,
 }
 
-impl<T: 'static> Constant for ExprStatement<T> {}
-
 impl<T> Statement for ExprStatement<T> {}
+
+impl<T: 'static> Constant for ExprStatement<T> {}
 
 impl<T> Spanned for ExprStatement<T> {
     fn span(&self) -> Span {
