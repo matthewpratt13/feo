@@ -150,7 +150,7 @@ impl Spanned for IntLiteral {
 #[derive(Debug, Clone)]
 pub struct UIntLiteral(pub Literal<u64>);
 
-// impl UIntValue {
+// impl UIntLiteral {
 //     fn trim_leading_zeros(self) -> Self {
 //         let uint_string = format!("{}", self.0);
 //         let stripped = uint_string.as_str().trim_start_matches('0');
