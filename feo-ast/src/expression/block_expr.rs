@@ -34,7 +34,12 @@ impl<T, U> Expression for BlockExpr<T, U> {}
 
 impl<T, U, E> ExprWithBlock<E> for BlockExpr<T, U> {}
 
-impl<T: 'static, U: 'static> Constant for BlockExpr<T, U> {}
+impl<T, U> Constant for BlockExpr<T, U>
+where
+    T: 'static,
+    U: 'static,
+{
+}
 
 impl<T, U> Spanned for BlockExpr<T, U> {
     fn span(&self) -> Span {
