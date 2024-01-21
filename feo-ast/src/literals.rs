@@ -7,10 +7,23 @@ use feo_error::parser_error::{ParserError, ParserErrorKind};
 use feo_types::span::{Position, Span, Spanned};
 use feo_types::{Literal, PrimitiveType, U256};
 
-use crate::expression::{ExprWithoutBlock, Expression};
+use crate::expression::{Constant, ExprWithoutBlock, Expression};
+use crate::pattern::{Pattern, RangePattBound};
 use crate::statement::Statement;
 use crate::token::{Token, Tokenize};
 use crate::ty::Type;
+
+pub trait LiteralExpr<E>
+where
+    Self: Sized + Constant + ExprWithoutBlock<E>,
+{
+}
+
+pub trait LiteralPatt
+where
+    Self: Sized + 'static + Pattern,
+{
+}
 
 #[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
@@ -42,19 +55,29 @@ impl Tokenize for CharLiteral {
     }
 }
 
+impl<E> LiteralExpr<E> for CharLiteral {} // raw value
+
+impl Expression for CharLiteral {} // raw value
+
+impl<E> ExprWithoutBlock<E> for CharLiteral {} // raw value
+
+impl Statement for CharLiteral {} // raw value
+
+impl Constant for CharLiteral {} // raw value
+
+impl LiteralPatt for CharLiteral {} // raw value
+
+impl Pattern for CharLiteral {} // raw value
+
+impl RangePattBound for CharLiteral {} // raw value
+
+impl Type for CharLiteral {}
+
 impl Spanned for CharLiteral {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
-
-impl Expression for CharLiteral {}
-
-impl<E> ExprWithoutBlock<E> for CharLiteral {}
-
-impl Statement for CharLiteral {}
-
-impl Type for CharLiteral {}
 
 #[derive(Debug, Clone)]
 pub struct StringLiteral(pub Literal<String>);
@@ -77,19 +100,27 @@ impl Tokenize for StringLiteral {
     }
 }
 
+impl<E> LiteralExpr<E> for StringLiteral {} // raw value
+
+impl Expression for StringLiteral {} // raw value
+
+impl<E> ExprWithoutBlock<E> for StringLiteral {} // raw value
+
+impl Statement for StringLiteral {} // raw value
+
+impl Constant for StringLiteral {} // raw value
+
+impl LiteralPatt for StringLiteral {} // raw value
+
+impl Pattern for StringLiteral {} // raw value
+
+impl Type for StringLiteral {}
+
 impl Spanned for StringLiteral {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
-
-impl Expression for StringLiteral {}
-
-impl<E> ExprWithoutBlock<E> for StringLiteral {}
-
-impl Statement for StringLiteral {}
-
-impl Type for StringLiteral {}
 
 #[derive(Debug, Clone)]
 pub struct IntLiteral(pub Literal<i64>);
@@ -120,22 +151,42 @@ impl Tokenize for IntLiteral {
     }
 }
 
+impl<E> LiteralExpr<E> for IntLiteral {} // raw value
+
+impl Expression for IntLiteral {} // raw value
+
+impl<E> ExprWithoutBlock<E> for IntLiteral {} // raw value
+
+impl Statement for IntLiteral {} // raw value
+
+impl Constant for IntLiteral {} // raw value
+
+impl LiteralPatt for IntLiteral {} // raw value
+
+impl Pattern for IntLiteral {} // raw value
+
+impl RangePattBound for IntLiteral {} // raw value
+
+impl Type for IntLiteral {}
+
 impl Spanned for IntLiteral {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
 
-impl Expression for IntLiteral {}
-
-impl<E> ExprWithoutBlock<E> for IntLiteral {}
-
-impl Statement for IntLiteral {}
-
-impl Type for IntLiteral {}
-
 #[derive(Debug, Clone)]
 pub struct UIntLiteral(pub Literal<u64>);
+
+// impl UIntValue {
+//     fn trim_leading_zeros(self) -> Self {
+//         let uint_string = format!("{}", self.0);
+//         let stripped = uint_string.as_str().trim_start_matches('0');
+//         let new_uint = u64::from_str_radix(stripped, 10).expect("Unable to parse str to u64");
+
+//         Self(new_uint)
+//     }
+// }
 
 impl Tokenize for UIntLiteral {
     fn tokenize(
@@ -196,19 +247,29 @@ impl Tokenize for UIntLiteral {
     }
 }
 
+impl<E> LiteralExpr<E> for UIntLiteral {} // raw value
+
+impl Expression for UIntLiteral {} // raw value
+
+impl<E> ExprWithoutBlock<E> for UIntLiteral {} // raw value
+
+impl Statement for UIntLiteral {} // raw value
+
+impl Constant for UIntLiteral {} // raw value
+
+impl LiteralPatt for UIntLiteral {} // raw value
+
+impl Pattern for UIntLiteral {} // raw value
+
+impl RangePattBound for UIntLiteral {} // raw value
+
+impl Type for UIntLiteral {}
+
 impl Spanned for UIntLiteral {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
-
-impl Expression for UIntLiteral {}
-
-impl<E> ExprWithoutBlock<E> for UIntLiteral {}
-
-impl Statement for UIntLiteral {}
-
-impl Type for UIntLiteral {}
 
 #[derive(Debug, Clone)]
 pub struct U256Literal(pub Literal<U256>);
@@ -249,38 +310,29 @@ impl Tokenize for U256Literal {
     }
 }
 
+impl<E> LiteralExpr<E> for U256Literal {} // raw value
+
+impl Expression for U256Literal {} // raw value
+
+impl<E> ExprWithoutBlock<E> for U256Literal {} // raw value
+
+impl Statement for U256Literal {} // raw value
+
+impl Constant for U256Literal {} // raw value
+
+impl LiteralPatt for U256Literal {} // raw value
+
+impl Pattern for U256Literal {} // raw value
+
+impl RangePattBound for U256Literal {} // raw value
+
+impl Type for U256Literal {}
+
 impl Spanned for U256Literal {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
-
-impl Expression for U256Literal {}
-
-impl<E> ExprWithoutBlock<E> for U256Literal {}
-
-impl Statement for U256Literal {}
-
-impl Type for U256Literal {}
-
-#[derive(Debug, Clone)]
-pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
-
-// TODO: implement Tokenize ?
-
-impl Spanned for Bytes32Literal {
-    fn span(&self) -> Span {
-        self.0.span()
-    }
-}
-
-impl Expression for Bytes32Literal {}
-
-impl<E> ExprWithoutBlock<E> for Bytes32Literal {}
-
-impl Statement for Bytes32Literal {}
-
-impl Type for Bytes32Literal {}
 
 #[derive(Debug, Clone)]
 pub struct FloatLiteral(pub Literal<f64>);
@@ -312,19 +364,56 @@ impl Tokenize for FloatLiteral {
     }
 }
 
+impl<E> LiteralExpr<E> for FloatLiteral {} // raw value
+
+impl Expression for FloatLiteral {} // raw value
+
+impl<E> ExprWithoutBlock<E> for FloatLiteral {} // raw value
+
+impl Statement for FloatLiteral {} // raw value
+
+impl Constant for FloatLiteral {} // raw value
+
+impl LiteralPatt for FloatLiteral {} // raw value
+
+impl Pattern for FloatLiteral {} // raw value
+
+impl RangePattBound for FloatLiteral {} // raw value
+
+impl Type for FloatLiteral {}
+
 impl Spanned for FloatLiteral {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
 
-impl Expression for FloatLiteral {}
+#[derive(Debug, Clone)]
+pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
 
-impl<E> ExprWithoutBlock<E> for FloatLiteral {}
+// TODO: implement Tokenize ?
 
-impl Statement for FloatLiteral {}
+impl<E> LiteralExpr<E> for Bytes32Literal {} // raw value
 
-impl Type for FloatLiteral {}
+impl Expression for Bytes32Literal {} // raw value
+
+impl<E> ExprWithoutBlock<E> for Bytes32Literal {} // raw value
+
+impl Statement for Bytes32Literal {} // raw value
+
+impl Constant for Bytes32Literal {} // raw value
+
+impl LiteralPatt for Bytes32Literal {} // raw value
+
+impl Pattern for Bytes32Literal {} // raw value
+
+impl Type for Bytes32Literal {}
+
+impl Spanned for Bytes32Literal {
+    fn span(&self) -> Span {
+        self.0.span()
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct BoolLiteral(pub Literal<bool>);
@@ -356,16 +445,24 @@ impl Tokenize for BoolLiteral {
     }
 }
 
+impl<E> LiteralExpr<E> for BoolLiteral {} // raw value
+
+impl Expression for BoolLiteral {} // raw value
+
+impl<E> ExprWithoutBlock<E> for BoolLiteral {} // raw value
+
+impl Statement for BoolLiteral {} // raw value
+
+impl Constant for BoolLiteral {} // raw value
+
+impl LiteralPatt for BoolLiteral {} // raw value
+
+impl Pattern for BoolLiteral {} // raw value
+
+impl Type for BoolLiteral {}
+
 impl Spanned for BoolLiteral {
     fn span(&self) -> Span {
         self.0.span()
     }
 }
-
-impl Expression for BoolLiteral {}
-
-impl<E> ExprWithoutBlock<E> for BoolLiteral {}
-
-impl Statement for BoolLiteral {}
-
-impl Type for BoolLiteral {}
