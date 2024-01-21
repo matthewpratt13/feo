@@ -8,7 +8,6 @@ pub mod keyword;
 pub mod literals;
 pub mod path;
 pub mod pattern;
-pub mod primitive_wrappers;
 pub mod program;
 pub mod punctuation;
 pub mod statement;
