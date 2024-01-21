@@ -47,14 +47,16 @@ impl Type for SimplePath {}
 
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
-        let start_pos = match &self.dbl_colon_opt {
-            Some(d) => d.span().start(),
-            None => self.first_segment.span().start(),
+        let start_pos = if let Some(d) = &self.dbl_colon_opt {
+            d.span().start()
+        } else {
+            self.first_segment.span().start()
         };
 
-        let end_pos = match self.subsequent_segments.last() {
-            Some(s) => s.1.span().end(),
-            None => self.first_segment.span().end(),
+        let end_pos = if let Some(s) = self.subsequent_segments.last() {
+            s.1.span().end()
+        } else {
+            self.first_segment.span().end()
         };
 
         let source = self.first_segment.span().source();
