@@ -20,7 +20,7 @@ mod type_utils {
     use crate::punctuation::Punctuation;
 
     pub type Asterisk = Punctuation;
-    pub type Bang = Punctuation;
+    pub type BangOrMinus = Punctuation;
     pub type Colon = Punctuation;
     pub type Comma = Punctuation;
     pub type DblColon = Punctuation;

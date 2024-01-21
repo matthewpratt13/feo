@@ -4,7 +4,7 @@ use crate::{
     keyword::Keyword,
     statement::Statement,
     ty::Type,
-    type_utils::{Bang, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
+    type_utils::{BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
 };
 
 use super::{Constant, ExprWithoutBlock, Expression};
@@ -181,7 +181,7 @@ impl Spanned for DerefExpr {
 }
 
 pub struct NegationExpr {
-    negator: Bang,
+    negator: BangOrMinus,
     expression: Box<dyn Expression>,
 }
 
@@ -208,7 +208,7 @@ impl Spanned for NegationExpr {
 }
 
 pub struct ResultUnwrapExpr {
-    expression: Box<dyn Expression>,
+    expression: Box<dyn Expression>, // can only be applied to `Option` and `Result`
     question_mark: QuestionMark,
 }
 
