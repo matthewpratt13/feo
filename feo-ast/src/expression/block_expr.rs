@@ -10,7 +10,7 @@ use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression, InnerAttr};
 pub enum StatementKind<T, U> {
     Statement(Box<dyn Statement>),
     ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
-    StatementWithExpr(StatementsWithExpr<U>),
+    StatementsWithExpr(StatementsWithExpr<U>),
 }
 
 impl<T, U> Spanned for StatementKind<T, U> {
@@ -18,7 +18,7 @@ impl<T, U> Spanned for StatementKind<T, U> {
         match self {
             StatementKind::ExprWithoutBlock(e) => e.span(),
             StatementKind::Statement(s) => s.span(),
-            StatementKind::StatementWithExpr(swe) => swe.span(),
+            StatementKind::StatementsWithExpr(swe) => swe.span(),
         }
     }
 }
