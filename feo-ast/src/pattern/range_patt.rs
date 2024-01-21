@@ -12,7 +12,7 @@ where
 
 pub trait RangePattBound
 where
-    Self: Pattern,
+    Self: Spanned,
 {
 }
 

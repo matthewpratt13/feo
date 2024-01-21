@@ -35,6 +35,10 @@ impl<L> Statement for Literal<L> where L: 'static + Clone + Primitive {} // raw 
 
 impl<L> Constant for Literal<L> where L: 'static + Clone + Primitive {} // raw value
 
+impl<L> LiteralPatt for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+
+impl<L> Pattern for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+
 #[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
 
@@ -64,10 +68,6 @@ impl Tokenize for CharLiteral {
         Ok(Some(token))
     }
 }
-
-impl LiteralPatt for CharLiteral {} // raw value
-
-impl Pattern for CharLiteral {} // raw value
 
 impl RangePattBound for CharLiteral {} // raw value
 
@@ -99,9 +99,6 @@ impl Tokenize for StringLiteral {
         Ok(Some(token))
     }
 }
-impl LiteralPatt for StringLiteral {} // raw value
-
-impl Pattern for StringLiteral {} // raw value
 
 impl Type for StringLiteral {}
 
@@ -139,10 +136,6 @@ impl Tokenize for IntLiteral {
         Ok(Some(token))
     }
 }
-
-impl LiteralPatt for IntLiteral {} // raw value
-
-impl Pattern for IntLiteral {} // raw value
 
 impl RangePattBound for IntLiteral {} // raw value
 
@@ -226,10 +219,6 @@ impl Tokenize for UIntLiteral {
     }
 }
 
-impl LiteralPatt for UIntLiteral {} // raw value
-
-impl Pattern for UIntLiteral {} // raw value
-
 impl RangePattBound for UIntLiteral {} // raw value
 
 impl Type for UIntLiteral {}
@@ -279,10 +268,6 @@ impl Tokenize for U256Literal {
     }
 }
 
-impl LiteralPatt for U256Literal {} // raw value
-
-impl Pattern for U256Literal {} // raw value
-
 impl RangePattBound for U256Literal {} // raw value
 
 impl Type for U256Literal {}
@@ -323,10 +308,6 @@ impl Tokenize for FloatLiteral {
     }
 }
 
-impl LiteralPatt for FloatLiteral {} // raw value
-
-impl Pattern for FloatLiteral {} // raw value
-
 impl RangePattBound for FloatLiteral {} // raw value
 
 impl Type for FloatLiteral {}
@@ -341,10 +322,6 @@ impl Spanned for FloatLiteral {
 pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
 
 // TODO: implement Tokenize ?
-
-impl LiteralPatt for Bytes32Literal {} // raw value
-
-impl Pattern for Bytes32Literal {} // raw value
 
 impl Type for Bytes32Literal {}
 
@@ -383,10 +360,6 @@ impl Tokenize for BoolLiteral {
         Ok(Some(token))
     }
 }
-
-impl LiteralPatt for BoolLiteral {} // raw value
-
-impl Pattern for BoolLiteral {} // raw value
 
 impl Type for BoolLiteral {}
 
