@@ -5,7 +5,7 @@ use crate::{
     type_utils::Brace,
 };
 
-use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression};
+use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression, InnerAttr};
 
 pub enum StatementsKind<T, U> {
     Statement(Box<dyn Statement>),
@@ -24,6 +24,7 @@ impl<T, U> Spanned for StatementsKind<T, U> {
 }
 
 pub struct BlockExpr<T, U> {
+    attributes: Vec<InnerAttr>,
     open_brace: Brace,
     statements: StatementsKind<T, U>,
     close_brace: Brace,
@@ -37,7 +38,12 @@ impl<T: 'static, U: 'static> Constant for BlockExpr<T, U> {}
 
 impl<T, U> Spanned for BlockExpr<T, U> {
     fn span(&self) -> Span {
-        let start_pos = self.open_brace.span().start();
+        let start_pos = if let Some(a) = self.attributes.first() {
+            a.span().start()
+        } else {
+            self.open_brace.span().start()
+        };
+
         let end_pos = self.close_brace.span().end();
         let source = self.open_brace.span().source();
 
