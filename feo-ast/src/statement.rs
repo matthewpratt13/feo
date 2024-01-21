@@ -76,7 +76,7 @@ impl Spanned for LetStatement {
 }
 
 pub struct StatementsWithExpr<T> {
-    statement: Vec<Box<dyn Statement>>,
+    statements: Vec<Box<dyn Statement>>,
     expr_without_block: Box<dyn ExprWithoutBlock<T>>,
 }
 
@@ -84,7 +84,7 @@ impl<T> Statement for StatementsWithExpr<T> {}
 
 impl<T> Spanned for StatementsWithExpr<T> {
     fn span(&self) -> Span {
-        let start_pos = if let Some(s) = self.statement.first() {
+        let start_pos = if let Some(s) = self.statements.first() {
             s.span().start()
         } else {
             self.expr_without_block.span().start()

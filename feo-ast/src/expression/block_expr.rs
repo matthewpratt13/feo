@@ -7,18 +7,18 @@ use crate::{
 
 use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression, InnerAttr};
 
-pub enum StatementsKind<T, U> {
+pub enum StatementKind<T, U> {
     Statement(Box<dyn Statement>),
     ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
     StatementWithExpr(StatementsWithExpr<U>),
 }
 
-impl<T, U> Spanned for StatementsKind<T, U> {
+impl<T, U> Spanned for StatementKind<T, U> {
     fn span(&self) -> Span {
         match self {
-            StatementsKind::ExprWithoutBlock(e) => e.span(),
-            StatementsKind::Statement(s) => s.span(),
-            StatementsKind::StatementWithExpr(swe) => swe.span(),
+            StatementKind::ExprWithoutBlock(e) => e.span(),
+            StatementKind::Statement(s) => s.span(),
+            StatementKind::StatementWithExpr(swe) => swe.span(),
         }
     }
 }
@@ -26,7 +26,7 @@ impl<T, U> Spanned for StatementsKind<T, U> {
 pub struct BlockExpr<T, U> {
     attributes: Vec<InnerAttr>,
     open_brace: Brace,
-    statements: Vec<StatementsKind<T, U>>,
+    statements: Vec<StatementKind<T, U>>,
     close_brace: Brace,
 }
 
