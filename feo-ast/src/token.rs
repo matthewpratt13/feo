@@ -34,8 +34,8 @@ pub enum Token {
     IntLit(IntLiteral),
     UIntLit(UIntLiteral),
     U256Lit(U256Literal),
-    Bytes32Lit(Bytes32Literal),
     FloatLit(FloatLiteral),
+    Bytes32Lit(Bytes32Literal),
 
     Iden(Identifier),
     Keyword(Keyword),
