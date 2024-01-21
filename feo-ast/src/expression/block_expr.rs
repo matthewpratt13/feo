@@ -1,16 +1,16 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    statement::{Statement, StatementWithExpr},
+    statement::{Statement, StatementsWithExpr},
     type_utils::Brace,
 };
 
 use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression};
 
 pub enum StatementsKind<T, U> {
-    ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
     Statement(Box<dyn Statement>),
-    StatementWithExpr(StatementWithExpr<U>),
+    ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
+    StatementWithExpr(StatementsWithExpr<U>),
 }
 
 impl<T, U> Spanned for StatementsKind<T, U> {
