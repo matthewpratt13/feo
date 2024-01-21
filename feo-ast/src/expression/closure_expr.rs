@@ -11,7 +11,7 @@ use super::{BlockExpr, ExprWithoutBlock, Expression, OuterAttr};
 
 pub trait ClosureExpr
 where
-    Self: Sized + Expression + Type + Spanned,
+    Self: Sized + Expression + Type,
 {
 }
 

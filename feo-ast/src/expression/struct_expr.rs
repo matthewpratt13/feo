@@ -12,7 +12,7 @@ use super::{Constant, ExprWithoutBlock, Expression, OuterAttr};
 
 pub trait StructExpr<E>
 where
-    Self: Sized + Constant + ExprWithoutBlock<E>,
+    Self: Constant + ExprWithoutBlock<E>,
 {
 }
 

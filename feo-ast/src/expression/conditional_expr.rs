@@ -10,7 +10,7 @@ use super::{BlockExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr
 
 pub trait ConditionalExpr<E>
 where
-    Self: Sized + Constant + ExprWithBlock<E>,
+    Self: Constant + ExprWithBlock<E>,
 {
 }
 

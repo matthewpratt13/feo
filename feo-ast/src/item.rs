@@ -12,8 +12,6 @@ mod trait_def;
 mod type_alias_def;
 mod visibility;
 
-use feo_types::span::Spanned;
-
 use crate::program::LibraryItem;
 use crate::statement::Statement;
 
@@ -25,7 +23,7 @@ pub use self::where_clause::{TypeParamBounds, WhereClause};
 
 pub trait Item
 where
-    Self: Statement + Spanned,
+    Self: Statement,
 {
 }
 

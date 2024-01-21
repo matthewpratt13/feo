@@ -37,12 +37,12 @@ where
 
 pub trait ExprWithBlock<E>
 where
-    Self: Expression + Spanned,
+    Self: Expression,
 {
 }
 
 pub trait ExprWithoutBlock<E>
 where
-    Self: Expression + Statement + Spanned,
+    Self: Expression + Statement,
 {
 }

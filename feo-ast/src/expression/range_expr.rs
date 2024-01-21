@@ -9,7 +9,7 @@ use super::{Constant, ExprWithoutBlock, Expression};
 
 pub trait RangeExpr<E>
 where
-    Self: Sized + ExprWithoutBlock<E> + Constant,
+    Self: Constant + ExprWithoutBlock<E>,
 {
 }
 
