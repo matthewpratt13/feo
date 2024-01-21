@@ -82,9 +82,10 @@ mod trait_object_type {
         fn span(&self) -> Span {
             let start_pos = self.first_trait_bound.span().start();
 
-            let end_pos = match self.subsequent_trait_bounds.last() {
-                Some(t) => t.1.span().end(),
-                None => self.first_trait_bound.span().end(),
+            let end_pos = if let Some(s) = self.subsequent_trait_bounds.last() {
+                s.1.span().end()
+            } else {
+                self.first_trait_bound.span().end()
             };
 
             let source = self.first_trait_bound.span().source();
@@ -102,9 +103,10 @@ mod trait_object_type {
 
     impl Spanned for TraitBound {
         fn span(&self) -> Span {
-            let start_pos = match &self.question_mark_opt {
-                Some(q) => q.span().start(),
-                None => self.trait_path.span().start(),
+            let start_pos = if let Some(q) = &self.question_mark_opt {
+                q.span().start()
+            } else {
+                self.trait_path.span().start()
             };
 
             let end_pos = self.trait_path.span().end();
