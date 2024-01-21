@@ -15,7 +15,7 @@ use crate::ty::Type;
 
 pub trait LiteralExpr<E>
 where
-    Self: Sized + Constant + ExprWithoutBlock<E>,
+    Self: Sized + ExprWithoutBlock<E> + Constant,
 {
 }
 
