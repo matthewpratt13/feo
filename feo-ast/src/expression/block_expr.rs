@@ -26,7 +26,7 @@ impl<T, U> Spanned for StatementsKind<T, U> {
 pub struct BlockExpr<T, U> {
     attributes: Vec<InnerAttr>,
     open_brace: Brace,
-    statements: StatementsKind<T, U>,
+    statements: Vec<StatementsKind<T, U>>,
     close_brace: Brace,
 }
 
