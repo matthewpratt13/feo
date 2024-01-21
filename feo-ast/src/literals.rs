@@ -5,7 +5,7 @@ use feo_error::handler::{ErrorEmitted, Handler};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
 use feo_types::span::{Position, Span, Spanned};
-use feo_types::{Literal, PrimitiveType, U256};
+use feo_types::{Literal, Primitive, PrimitiveType, U256};
 
 use crate::expression::{Constant, ExprWithoutBlock, Expression};
 use crate::pattern::{Pattern, RangePattBound};
@@ -24,6 +24,16 @@ where
     Self: Sized + 'static + Pattern,
 {
 }
+
+impl<L, E> LiteralExpr<E> for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+
+impl<L, E> ExprWithoutBlock<E> for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+
+impl<L> Expression for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+
+impl<L> Statement for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+
+impl<L> Constant for Literal<L> where L: 'static + Clone + Primitive {} // raw value
 
 #[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
@@ -54,16 +64,6 @@ impl Tokenize for CharLiteral {
         Ok(Some(token))
     }
 }
-
-impl<E> LiteralExpr<E> for CharLiteral {} // raw value
-
-impl Expression for CharLiteral {} // raw value
-
-impl<E> ExprWithoutBlock<E> for CharLiteral {} // raw value
-
-impl Statement for CharLiteral {} // raw value
-
-impl Constant for CharLiteral {} // raw value
 
 impl LiteralPatt for CharLiteral {} // raw value
 
@@ -99,17 +99,6 @@ impl Tokenize for StringLiteral {
         Ok(Some(token))
     }
 }
-
-impl<E> LiteralExpr<E> for StringLiteral {} // raw value
-
-impl Expression for StringLiteral {} // raw value
-
-impl<E> ExprWithoutBlock<E> for StringLiteral {} // raw value
-
-impl Statement for StringLiteral {} // raw value
-
-impl Constant for StringLiteral {} // raw value
-
 impl LiteralPatt for StringLiteral {} // raw value
 
 impl Pattern for StringLiteral {} // raw value
@@ -150,16 +139,6 @@ impl Tokenize for IntLiteral {
         Ok(Some(token))
     }
 }
-
-impl<E> LiteralExpr<E> for IntLiteral {} // raw value
-
-impl Expression for IntLiteral {} // raw value
-
-impl<E> ExprWithoutBlock<E> for IntLiteral {} // raw value
-
-impl Statement for IntLiteral {} // raw value
-
-impl Constant for IntLiteral {} // raw value
 
 impl LiteralPatt for IntLiteral {} // raw value
 
@@ -247,16 +226,6 @@ impl Tokenize for UIntLiteral {
     }
 }
 
-impl<E> LiteralExpr<E> for UIntLiteral {} // raw value
-
-impl Expression for UIntLiteral {} // raw value
-
-impl<E> ExprWithoutBlock<E> for UIntLiteral {} // raw value
-
-impl Statement for UIntLiteral {} // raw value
-
-impl Constant for UIntLiteral {} // raw value
-
 impl LiteralPatt for UIntLiteral {} // raw value
 
 impl Pattern for UIntLiteral {} // raw value
@@ -310,16 +279,6 @@ impl Tokenize for U256Literal {
     }
 }
 
-impl<E> LiteralExpr<E> for U256Literal {} // raw value
-
-impl Expression for U256Literal {} // raw value
-
-impl<E> ExprWithoutBlock<E> for U256Literal {} // raw value
-
-impl Statement for U256Literal {} // raw value
-
-impl Constant for U256Literal {} // raw value
-
 impl LiteralPatt for U256Literal {} // raw value
 
 impl Pattern for U256Literal {} // raw value
@@ -364,16 +323,6 @@ impl Tokenize for FloatLiteral {
     }
 }
 
-impl<E> LiteralExpr<E> for FloatLiteral {} // raw value
-
-impl Expression for FloatLiteral {} // raw value
-
-impl<E> ExprWithoutBlock<E> for FloatLiteral {} // raw value
-
-impl Statement for FloatLiteral {} // raw value
-
-impl Constant for FloatLiteral {} // raw value
-
 impl LiteralPatt for FloatLiteral {} // raw value
 
 impl Pattern for FloatLiteral {} // raw value
@@ -392,16 +341,6 @@ impl Spanned for FloatLiteral {
 pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
 
 // TODO: implement Tokenize ?
-
-impl<E> LiteralExpr<E> for Bytes32Literal {} // raw value
-
-impl Expression for Bytes32Literal {} // raw value
-
-impl<E> ExprWithoutBlock<E> for Bytes32Literal {} // raw value
-
-impl Statement for Bytes32Literal {} // raw value
-
-impl Constant for Bytes32Literal {} // raw value
 
 impl LiteralPatt for Bytes32Literal {} // raw value
 
@@ -444,16 +383,6 @@ impl Tokenize for BoolLiteral {
         Ok(Some(token))
     }
 }
-
-impl<E> LiteralExpr<E> for BoolLiteral {} // raw value
-
-impl Expression for BoolLiteral {} // raw value
-
-impl<E> ExprWithoutBlock<E> for BoolLiteral {} // raw value
-
-impl Statement for BoolLiteral {} // raw value
-
-impl Constant for BoolLiteral {} // raw value
 
 impl LiteralPatt for BoolLiteral {} // raw value
 
