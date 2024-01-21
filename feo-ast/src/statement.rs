@@ -23,7 +23,7 @@ pub struct ExprStatement<T> {
 
 impl<T> Statement for ExprStatement<T> {}
 
-impl<T: 'static> Constant for ExprStatement<T> {}
+impl<T> Constant for ExprStatement<T> where T: 'static {}
 
 impl<T> Spanned for ExprStatement<T> {
     fn span(&self) -> Span {

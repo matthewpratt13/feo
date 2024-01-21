@@ -7,13 +7,13 @@ use crate::{
 
 use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression, InnerAttr};
 
-pub enum StatementKind<T, U> {
+pub enum StatementKind<T> {
     Statement(Box<dyn Statement>),
     ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
-    StatementsWithExpr(StatementsWithExpr<U>),
+    StatementsWithExpr(StatementsWithExpr<T>),
 }
 
-impl<T, U> Spanned for StatementKind<T, U> {
+impl<T> Spanned for StatementKind<T> {
     fn span(&self) -> Span {
         match self {
             StatementKind::ExprWithoutBlock(e) => e.span(),
@@ -23,25 +23,24 @@ impl<T, U> Spanned for StatementKind<T, U> {
     }
 }
 
-pub struct BlockExpr<T, U> {
+pub struct BlockExpr<T> {
     attributes: Vec<InnerAttr>,
     open_brace: Brace,
-    statements: Vec<StatementKind<T, U>>,
+    statements: Vec<StatementKind<T>>,
     close_brace: Brace,
 }
 
-impl<T, U> Expression for BlockExpr<T, U> {}
+impl<T> Expression for BlockExpr<T> {}
 
-impl<T, U, E> ExprWithBlock<E> for BlockExpr<T, U> {}
+impl<T,E> ExprWithBlock<E> for BlockExpr<T> {}
 
-impl<T, U> Constant for BlockExpr<T, U>
+impl<T> Constant for BlockExpr<T>
 where
     T: 'static,
-    U: 'static,
 {
 }
 
-impl<T, U> Spanned for BlockExpr<T, U> {
+impl<T> Spanned for BlockExpr<T> {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.attributes.first() {
             a.span().start()

@@ -64,24 +64,24 @@ impl Spanned for ClosureWithoutReturnType {
     }
 }
 
-pub struct ClosureWithReturnType<T, U> {
+pub struct ClosureWithReturnType<T> {
     params: ClosureParamsOpt,
     thin_arrow: ThinArrow,
     type_bounds: Box<dyn Type>, // cannot be trait object
-    block: BlockExpr<T, U>,
+    block: BlockExpr<T>,
 }
 
-impl<T, U> ClosureExpr for ClosureWithReturnType<T, U> {}
+impl<T> ClosureExpr for ClosureWithReturnType<T> {}
 
-impl<T, U> Expression for ClosureWithReturnType<T, U> {}
+impl<T> Expression for ClosureWithReturnType<T> {}
 
-impl<T, U, E> ExprWithoutBlock<E> for ClosureWithReturnType<T, U> {}
+impl<T, E> ExprWithoutBlock<E> for ClosureWithReturnType<T> {}
 
-impl<T, U> Statement for ClosureWithReturnType<T, U> {}
+impl<T> Statement for ClosureWithReturnType<T> {}
 
-impl<T, U> Type for ClosureWithReturnType<T, U> {}
+impl<T> Type for ClosureWithReturnType<T> {}
 
-impl<T, U> Spanned for ClosureWithReturnType<T, U> {
+impl<T> Spanned for ClosureWithReturnType<T> {
     fn span(&self) -> Span {
         let start_pos = self.params.span().start();
         let end_pos = self.block.span().end();

@@ -10,18 +10,18 @@ where
 {
 }
 
-pub struct InfiniteLoopExpr<T, U> {
+pub struct InfiniteLoopExpr<T> {
     kw_loop: Keyword,
-    block: BlockExpr<T, U>,
+    block: BlockExpr<T>,
 }
 
-impl<T, U, E> IterationExpr<E> for InfiniteLoopExpr<T, U> {}
+impl<T, E> IterationExpr<E> for InfiniteLoopExpr<T> {}
 
-impl<T, U> Expression for InfiniteLoopExpr<T, U> {}
+impl<T> Expression for InfiniteLoopExpr<T> {}
 
-impl<T, U, E> ExprWithBlock<E> for InfiniteLoopExpr<T, U> {}
+impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> {}
 
-impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
+impl<T> Spanned for InfiniteLoopExpr<T> {
     fn span(&self) -> Span {
         let start_pos = self.kw_loop.span().start();
         let end_pos = self.block.span().end();
@@ -33,21 +33,21 @@ impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
     }
 }
 
-pub struct PredicateLoopExpr<T, U> {
+pub struct PredicateLoopExpr<T> {
     kw_while: Keyword,
     predicate: Box<dyn Expression>, // cannot be a struct expression
-    block: BlockExpr<T, U>,
+    block: BlockExpr<T>,
 }
 
-impl<T, U, E> IterationExpr<E> for PredicateLoopExpr<T, U> {}
+impl<T, E> IterationExpr<E> for PredicateLoopExpr<T> {}
 
-impl<T, U> Expression for PredicateLoopExpr<T, U> {}
+impl<T> Expression for PredicateLoopExpr<T> {}
 
-impl<T, U, E> ExprWithBlock<E> for PredicateLoopExpr<T, U> {}
+impl<T, E> ExprWithBlock<E> for PredicateLoopExpr<T> {}
 
-impl<T: 'static, U: 'static> Constant for PredicateLoopExpr<T, U> {}
+impl<T> Constant for PredicateLoopExpr<T> where T: 'static {}
 
-impl<T, U> Spanned for PredicateLoopExpr<T, U> {
+impl<T> Spanned for PredicateLoopExpr<T> {
     fn span(&self) -> Span {
         let start_pos = self.kw_while.span().start();
         let end_pos = self.block.span().end();
@@ -59,25 +59,25 @@ impl<T, U> Spanned for PredicateLoopExpr<T, U> {
     }
 }
 
-pub struct IterLoopExpr<T, U> {
+pub struct IterLoopExpr<T> {
     kw_for: Keyword,
     pattern: Box<dyn Pattern>,
     kw_in: Keyword,
     expression: Box<dyn Expression>, // cannot be a struct expression
-    block: BlockExpr<T, U>,
+    block: BlockExpr<T>,
 }
 
-impl<T, U, E> IterationExpr<E> for IterLoopExpr<T, U> {}
+impl<T, E> IterationExpr<E> for IterLoopExpr<T> {}
 
-impl<T, U> Expression for IterLoopExpr<T, U> {}
+impl<T> Expression for IterLoopExpr<T> {}
 
-impl<T, U, E> ExprWithBlock<E> for IterLoopExpr<T, U> {}
+impl<T, E> ExprWithBlock<E> for IterLoopExpr<T> {}
 
-impl<T: 'static, U: 'static> Constant for IterLoopExpr<T, U> {}
+impl<T> Constant for IterLoopExpr<T> where T: 'static {}
 
-impl<T, U> Pattern for IterLoopExpr<T, U> {}
+impl<T> Pattern for IterLoopExpr<T> {}
 
-impl<T, U> Spanned for IterLoopExpr<T, U> {
+impl<T> Spanned for IterLoopExpr<T> {
     fn span(&self) -> Span {
         let start_pos = self.kw_for.span().start();
         let end_pos = self.block.span().end();

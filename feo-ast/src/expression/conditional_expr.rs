@@ -14,25 +14,25 @@ where
 {
 }
 
-pub struct IfExpr<T, U> {
+pub struct IfExpr<T> {
     kw_if: Keyword,
     condition: Box<dyn Expression>, // cannot be a struct expression
-    block: BlockExpr<T, U>,
+    block: BlockExpr<T>,
 
     // TODO: should these rather be enum variants?
-    else_if_block_opt: Option<(Keyword, Box<IfExpr<T, U>>)>,
-    else_block_opt: Option<(Keyword, BlockExpr<T, U>)>,
+    else_if_block_opt: Option<(Keyword, Box<IfExpr<T>>)>,
+    else_block_opt: Option<(Keyword, BlockExpr<T>)>,
 }
 
-impl<T: 'static, U: 'static, E> ConditionalExpr<E> for IfExpr<T, U> {}
+impl<T, E> ConditionalExpr<E> for IfExpr<T> where T: 'static {}
 
-impl<T, U> Expression for IfExpr<T, U> {}
+impl<T> Expression for IfExpr<T> {}
 
-impl<T, U, E> ExprWithBlock<E> for IfExpr<T, U> {}
+impl<T, E> ExprWithBlock<E> for IfExpr<T> {}
 
-impl<T: 'static, U: 'static> Constant for IfExpr<T, U> {}
+impl<T> Constant for IfExpr<T> where T: 'static {}
 
-impl<T, U> Spanned for IfExpr<T, U> {
+impl<T> Spanned for IfExpr<T> {
     fn span(&self) -> Span {
         let start_pos = self.kw_if.span().start();
         let temp_end = self.block.span().end();
