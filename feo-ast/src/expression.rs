@@ -47,9 +47,3 @@ where
     Self: Expression + Statement,
 {
 }
-
-pub trait LiteralExpr<E>
-where
-    Self: Constant + ExprWithoutBlock<E>,
-{
-}
