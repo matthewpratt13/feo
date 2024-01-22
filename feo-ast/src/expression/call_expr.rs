@@ -35,7 +35,7 @@ impl Spanned for FunctionCallExpr {
 }
 
 pub struct MethodCallExpr {
-    object: Box<dyn Expression>,
+    receiver: Box<dyn Expression>,
     dot: Dot,
     method_path: PathSegmentKind,
     open_parenthesis: Parenthesis,
@@ -51,9 +51,9 @@ impl Statement for MethodCallExpr {}
 
 impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
-        let start_pos = self.object.span().start();
+        let start_pos = self.receiver.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.object.span().source();
+        let source = self.receiver.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
