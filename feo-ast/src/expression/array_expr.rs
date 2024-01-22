@@ -1,7 +1,9 @@
-use feo_types::span::{Span, Spanned};
+use feo_types::{
+    span::{Span, Spanned},
+    Literal,
+};
 
 use crate::{
-    literals::UIntLiteral,
     statement::Statement,
     type_utils::{Bracket, Comma, Semicolon},
 };
@@ -43,13 +45,13 @@ pub struct ArrayElements {
 pub struct ArrayDef {
     element_type: Box<dyn Expression>,
     semicolon: Semicolon,
-    num_elements: UIntLiteral,
+    num_elements: Literal<u64>,
 }
 
 pub struct IndexExpr {
     object: Box<dyn Expression>,
     open_bracket: Bracket,
-    index: UIntLiteral,
+    index: Literal<u64>,
     close_bracket: Bracket,
 }
 
