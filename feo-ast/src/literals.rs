@@ -25,19 +25,31 @@ where
 {
 }
 
-impl<L, E> LiteralExpr<E> for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L, E> LiteralExpr<E> for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl<L, E> ExprWithoutBlock<E> for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L, E> ExprWithoutBlock<E> for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl<L> Expression for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L> Expression for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl<L> Statement for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L> Statement for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl<L> Constant for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L> Constant for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl<L> LiteralPatt for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L> LiteralPatt for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl<L> Pattern for Literal<L> where L: 'static + Clone + Primitive {} // raw value
+impl<L> Pattern for Literal<L> where L: 'static + Clone + Primitive {}
+
+impl RangePattBound for Literal<char> {}
+
+impl RangePattBound for Literal<i64> {}
+
+impl RangePattBound for Literal<u64> {}
+
+impl RangePattBound for Literal<U256> {}
+
+impl RangePattBound for Literal<f64> {}
+
+impl<L> Type for Literal<L> where L: 'static + Clone + Primitive {}
 
 #[derive(Debug, Clone)]
 pub struct CharLiteral(pub Literal<char>);
@@ -69,10 +81,6 @@ impl Tokenize for CharLiteral {
     }
 }
 
-impl RangePattBound for CharLiteral {} // raw value
-
-impl Type for CharLiteral {}
-
 impl Spanned for CharLiteral {
     fn span(&self) -> Span {
         self.0.span()
@@ -99,8 +107,6 @@ impl Tokenize for StringLiteral {
         Ok(Some(token))
     }
 }
-
-impl Type for StringLiteral {}
 
 impl Spanned for StringLiteral {
     fn span(&self) -> Span {
@@ -136,10 +142,6 @@ impl Tokenize for IntLiteral {
         Ok(Some(token))
     }
 }
-
-impl RangePattBound for IntLiteral {} // raw value
-
-impl Type for IntLiteral {}
 
 impl Spanned for IntLiteral {
     fn span(&self) -> Span {
@@ -219,10 +221,6 @@ impl Tokenize for UIntLiteral {
     }
 }
 
-impl RangePattBound for UIntLiteral {} // raw value
-
-impl Type for UIntLiteral {}
-
 impl Spanned for UIntLiteral {
     fn span(&self) -> Span {
         self.0.span()
@@ -268,10 +266,6 @@ impl Tokenize for U256Literal {
     }
 }
 
-impl RangePattBound for U256Literal {} // raw value
-
-impl Type for U256Literal {}
-
 impl Spanned for U256Literal {
     fn span(&self) -> Span {
         self.0.span()
@@ -308,10 +302,6 @@ impl Tokenize for FloatLiteral {
     }
 }
 
-impl RangePattBound for FloatLiteral {} // raw value
-
-impl Type for FloatLiteral {}
-
 impl Spanned for FloatLiteral {
     fn span(&self) -> Span {
         self.0.span()
@@ -322,8 +312,6 @@ impl Spanned for FloatLiteral {
 pub struct Bytes32Literal(pub Literal<&'static [u8; 32]>);
 
 // TODO: implement Tokenize ?
-
-impl Type for Bytes32Literal {}
 
 impl Spanned for Bytes32Literal {
     fn span(&self) -> Span {
@@ -360,8 +348,6 @@ impl Tokenize for BoolLiteral {
         Ok(Some(token))
     }
 }
-
-impl Type for BoolLiteral {}
 
 impl Spanned for BoolLiteral {
     fn span(&self) -> Span {
