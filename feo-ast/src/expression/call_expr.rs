@@ -4,7 +4,7 @@ use crate::{
     path::PathSegmentKind,
     pattern::Pattern,
     statement::Statement,
-    type_utils::{Colon, Comma, Dot, Parenthesis},
+    type_utils::{Comma, Dot, Parenthesis},
 };
 
 use super::{ExprWithoutBlock, Expression};
@@ -63,7 +63,7 @@ impl Spanned for MethodCallExpr {
 
 pub struct CallParams {
     first_param: Box<dyn Expression>,
-    subsequent_params: Vec<(Colon, Box<dyn Expression>)>,
+    subsequent_params: Vec<(Comma, Box<dyn Expression>)>,
     trailing_comma_opt: Option<Comma>,
 }
 
