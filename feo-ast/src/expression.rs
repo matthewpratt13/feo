@@ -22,6 +22,7 @@ use crate::statement::Statement;
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 pub use self::range_expr::RangeExpr;
+pub use self::struct_expr::StructExpr;
 
 pub trait Constant
 where

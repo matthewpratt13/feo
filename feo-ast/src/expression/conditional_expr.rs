@@ -16,7 +16,7 @@ where
 
 pub struct IfExpr<T> {
     kw_if: Keyword,
-    condition: Box<dyn Expression>, // cannot be a struct expression
+    condition: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
     block: BlockExpr<T>,
 
     // TODO: should these rather be enum variants?
@@ -56,7 +56,7 @@ impl<T> Spanned for IfExpr<T> {
 
 pub struct MatchExpr {
     kw_match: Keyword,
-    scrutinee: Box<dyn Expression>, // cannot be a struct expression
+    scrutinee: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
     match_arms_opt: Option<MatchArms>,

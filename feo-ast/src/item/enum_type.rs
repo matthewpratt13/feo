@@ -1,7 +1,7 @@
 use feo_types::span::{Span, Spanned};
 
 use crate::{
-    expression::{Constant, OuterAttr},
+    expression::{Constant, ExprWithoutBlock, Expression, OuterAttr, StructExpr},
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
@@ -74,6 +74,14 @@ pub struct EnumVariantStruct {
     fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
+
+impl<E> StructExpr<E> for EnumVariantStruct {}
+
+impl Expression for EnumVariantStruct {}
+
+impl<E> ExprWithoutBlock<E> for EnumVariantStruct {}
+
+impl Statement for EnumVariantStruct {}
 
 impl Pattern for EnumVariantStruct {}
 
