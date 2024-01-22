@@ -9,10 +9,10 @@ use feo_ast::{
     doc_comment::DocComment,
     identifier::Identifier,
     keyword::Keyword,
-    literals::{
+    punctuation::Punctuation,
+    token::{
         BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
     },
-    punctuation::Punctuation,
     token::{Token, TokenStream, Tokenize},
     type_annotation::{TypeAnnKind, TypeAnnotation},
 };
