@@ -40,7 +40,7 @@ pub struct ArrayElements {
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayDefinition {
+pub struct ArrayDef {
     element_type: Box<dyn Expression>,
     semicolon: Semicolon,
     num_elements: UIntLiteral,
