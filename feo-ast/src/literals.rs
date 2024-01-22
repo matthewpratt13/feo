@@ -41,7 +41,15 @@ impl<L> Pattern for Literal<L> where L: 'static + Clone + Primitive {}
 
 impl RangePattBound for Literal<char> {}
 
+impl RangePattBound for Literal<i32> {}
+
 impl RangePattBound for Literal<i64> {}
+
+impl RangePattBound for Literal<u8> {}
+
+impl RangePattBound for Literal<u16> {}
+
+impl RangePattBound for Literal<u32> {}
 
 impl RangePattBound for Literal<u64> {}
 
