@@ -15,3 +15,9 @@ where
     Self: Spanned,
 {
 }
+
+pub trait LiteralPatt
+where
+    Self: Sized + 'static + Pattern,
+{
+}
