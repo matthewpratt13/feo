@@ -10,9 +10,6 @@ use feo_ast::{
     identifier::Identifier,
     keyword::Keyword,
     punctuation::Punctuation,
-    token::{
-        BoolLiteral, CharLiteral, FloatLiteral, IntLiteral, StringLiteral, U256Literal, UIntLiteral,
-    },
     token::{Token, TokenStream, Tokenize},
     type_annotation::{TypeAnnKind, TypeAnnotation},
 };
@@ -22,7 +19,8 @@ use feo_error::{
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
 };
-use feo_types::span::Position;
+
+use feo_types::{span::Position, Literal, U256};
 
 struct Lexer<'a> {
     input: &'a str,
@@ -208,7 +206,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if buf == "true" || buf == "false" {
-                        let bool_literal = BoolLiteral::tokenize(
+                        let bool_literal = Literal::<bool>::tokenize(
                             &self.input,
                             &buf,
                             start_pos, // global `start_pos`
@@ -386,7 +384,7 @@ impl<'a> Lexer<'a> {
 
                                 string_literal_open = false;
 
-                                let string_literal = StringLiteral::tokenize(
+                                let string_literal = Literal::<String>::tokenize(
                                     &self.input,
                                     &buf,
                                     start_pos,
@@ -421,7 +419,7 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // skip '\'
 
                                 let esc_char_literal = match self.current_char() {
-                                    Some('n') => CharLiteral::tokenize(
+                                    Some('n') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\n",
                                         start_pos,
@@ -429,7 +427,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?,
 
-                                    Some('r') => CharLiteral::tokenize(
+                                    Some('r') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\r",
                                         start_pos,
@@ -437,7 +435,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?,
 
-                                    Some('t') => CharLiteral::tokenize(
+                                    Some('t') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\t",
                                         start_pos,
@@ -445,7 +443,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?,
 
-                                    Some('\\') => CharLiteral::tokenize(
+                                    Some('\\') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\\",
                                         start_pos,
@@ -453,7 +451,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?,
 
-                                    Some('0') => CharLiteral::tokenize(
+                                    Some('0') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\0",
                                         start_pos,
@@ -461,7 +459,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?,
 
-                                    Some('\'') => CharLiteral::tokenize(
+                                    Some('\'') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\'",
                                         start_pos,
@@ -469,7 +467,7 @@ impl<'a> Lexer<'a> {
                                         &mut self.handler,
                                     )?,
 
-                                    Some('"') => CharLiteral::tokenize(
+                                    Some('"') => Literal::<char>::tokenize(
                                         &self.input,
                                         "\"",
                                         start_pos,
@@ -508,7 +506,7 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // return next (regular) char
 
                                 if self.current_char() == Some('\'') {
-                                    let char_literal = CharLiteral::tokenize(
+                                    let char_literal = Literal::<char>::tokenize(
                                         &self.input,
                                         &c.to_string(),
                                         start_pos,
@@ -566,7 +564,7 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_u256 {
-                        let u256_literal = U256Literal::tokenize(
+                        let u256_literal = Literal::<U256>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -576,7 +574,7 @@ impl<'a> Lexer<'a> {
 
                         tokens.push(u256_literal);
                     } else {
-                        let uint_literal = UIntLiteral::tokenize(
+                        let uint_literal = Literal::<u64>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -619,7 +617,7 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_float {
-                        let float_literal = FloatLiteral::tokenize(
+                        let float_literal = Literal::<f64>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -632,7 +630,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if is_negative {
-                        let int_literal = IntLiteral::tokenize(
+                        let int_literal = Literal::<i64>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -642,7 +640,7 @@ impl<'a> Lexer<'a> {
 
                         tokens.push(int_literal);
                     } else {
-                        let uint_literal = UIntLiteral::tokenize(
+                        let uint_literal = Literal::<u64>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -900,14 +898,14 @@ mod tests {
         if let Ok(t) = lexer.lex() {
             for token in t.tokens() {
                 match token.as_ref().expect("Token not found") {
-                    Token::CharLit(c) => println!("CharLit: {:?}", c.0.raw_value()),
-                    Token::StringLit(s) => println!("StringLit: {:?}", s.0.raw_value()),
-                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.0.raw_value()),
-                    Token::IntLit(i) => println!("IntLit: {:?}", i.0.raw_value()),
-                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.0.raw_value()),
-                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.0.raw_value()),
-                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.0.raw_value()),
-                    Token::Bytes32Lit(by) => println!("Bytes32Lit: {:?}", by.0.raw_value()),
+                    Token::CharLit(c) => println!("CharLit: {:?}", c.raw_value()),
+                    Token::StringLit(s) => println!("StringLit: {:?}", s.raw_value()),
+                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.raw_value()),
+                    Token::IntLit(i) => println!("IntLit: {:?}", i.raw_value()),
+                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.raw_value()),
+                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.raw_value()),
+                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.raw_value()),
+                    Token::Bytes32Lit(by) => println!("Bytes32Lit: {:?}", by.raw_value()),
                     Token::Iden(id) => println!("Iden: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
                     Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),
