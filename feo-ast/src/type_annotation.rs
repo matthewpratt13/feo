@@ -11,9 +11,9 @@ use crate::token::{Token, Tokenize};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TypeAnnKind {
-    // primitives, memory allocated at compile time (static types allocated on assignment)
+    // primitives: pushed to the stack, memory allocated at compile time
     TypeAnnChar, // 8-bit (`u8`) ASCII value
-    TypeAnnStr,  // arbitrary length, static, immutable; for fixed length, use `[char; N]`
+    TypeAnnStr,  // arbitrary length, static, immutable; for fixed length, use `[char; n]`
     TypeAnnBool,
     TypeAnnI32,
     TypeAnnI64,
@@ -21,12 +21,12 @@ pub enum TypeAnnKind {
     TypeAnnU16,
     TypeAnnU32,
     TypeAnnU64,  // default numeric type
-    TypeAnnU256, // `&[u64; 4]`, fixed length, static, immutable
+    TypeAnnU256, // equivalent to `&[u64; 4]`; fixed length, static, immutable
     TypeAnnF32,
     TypeAnnF64,
-    TypeAnnBytes32, // `&[u8; 32]`, fixed length, static, immutable
+    TypeAnnBytes32, // equivalent to `&[u8; 32]`; fixed length, static, immutable
 
-    // built-in complex types, memory allocated at compile time (cannot be static)
+    // built-in dynamic types: stored on the heap, memory allocated at runtime
     TypeAnnString, // arbitrary length, dynamic, mutable string
     TypeAnnVec,    // arbitrary length, dynamic, mutable array
 
