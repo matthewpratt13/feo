@@ -80,8 +80,3 @@ where
     Self: Expression + Statement,
 {
 }
-
-pub struct Punctuated<T, U> {
-    pub pairs: Vec<(T, U)>,
-    pub final_value_opt: Option<T>,
-}
