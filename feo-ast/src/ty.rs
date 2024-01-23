@@ -10,6 +10,10 @@ where
 {
 }
 
+// also:
+// - primitive literals (char, str, int, uint, float, bytes32, bool)
+// - path
+
 mod array_type {
     use feo_types::span::{Span, Spanned};
 
