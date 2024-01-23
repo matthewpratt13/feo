@@ -99,32 +99,6 @@ impl Spanned for BoolExpr {
     }
 }
 
-pub struct BorrowExpr {
-    kw_ref: Keyword,
-    kw_mut_opt: Option<Keyword>,
-    expression: Box<dyn Expression>,
-}
-
-impl<E> OperatorExpr<E> for BorrowExpr {}
-
-impl Expression for BorrowExpr {}
-
-impl<E> ExprWithoutBlock<E> for BorrowExpr {}
-
-impl Statement for BorrowExpr {}
-
-impl Spanned for BorrowExpr {
-    fn span(&self) -> Span {
-        let start_pos = self.kw_ref.span().start();
-        let end_pos = self.expression.span().end();
-        let source = self.kw_ref.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
-    }
-}
-
 pub struct ComparisonExpr {
     first_expression: Box<dyn Expression>,
     operator: OpComparison,
@@ -200,6 +174,32 @@ impl Spanned for NegationExpr {
         let start_pos = self.negator.span().start();
         let end_pos = self.expression.span().end();
         let source = self.negator.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
+pub struct RefExpr {
+    kw_ref: Keyword,
+    kw_mut_opt: Option<Keyword>,
+    expression: Box<dyn Expression>,
+}
+
+impl<E> OperatorExpr<E> for RefExpr {}
+
+impl Expression for RefExpr {}
+
+impl<E> ExprWithoutBlock<E> for RefExpr {}
+
+impl Statement for RefExpr {}
+
+impl Spanned for RefExpr {
+    fn span(&self) -> Span {
+        let start_pos = self.kw_ref.span().start();
+        let end_pos = self.expression.span().end();
+        let source = self.kw_ref.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
