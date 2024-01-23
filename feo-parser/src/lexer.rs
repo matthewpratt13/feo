@@ -737,7 +737,7 @@ mod tests {
     #[test]
     fn lex() {
         let source_code = r#"   
-        //! outer doc comment
+        //! inner doc comment
         
         // line comment
 
@@ -745,7 +745,7 @@ mod tests {
         block comment
         */
 
-        /// doc comment
+        /// outer doc comment
                
         ////////////////////////////////////////////////////////////////////////////////
         // `src/lib.feo`
