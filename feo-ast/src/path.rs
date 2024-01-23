@@ -29,6 +29,7 @@ impl Spanned for PathSegmentKind {
     }
 }
 
+// points to either a local variable or an item
 pub struct SimplePath {
     dbl_colon_opt: Option<DblColon>,
     first_segment: PathSegmentKind,

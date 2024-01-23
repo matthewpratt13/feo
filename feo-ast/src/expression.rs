@@ -24,6 +24,39 @@ pub use self::block_expr::BlockExpr;
 pub use self::range_expr::RangeExpr;
 pub use self::struct_expr::StructExpr;
 
+// expressions always produce / evaluate to a value, and may have (side) effects
+
+// expressions:
+// - array, index
+// - block
+// - function / method call
+// - closure
+// - if, match
+// - field access
+// - grouped
+// - literal (char, string, int, uint, float, bytes32, bool)
+// - loop / while / for..in
+// - operators:
+//      - arithmetic / logical
+//      - assignment / compound assignment
+//      - bool
+//      - borrow
+//      - comparison
+//      - deref
+//      - negation
+//      - result / option unwrap
+//      - type cast
+// - path
+// - range:
+//      - from..to
+//      - from..
+//      - ..to
+//      - from..=to
+//      - ..=to
+// - return
+// - struct / tuple struct / unit struct
+// - tuple
+
 pub trait Constant
 where
     Self: Sized + 'static + Spanned,

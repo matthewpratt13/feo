@@ -10,6 +10,16 @@ use feo_types::span::Spanned;
 
 pub use self::range_patt::{RangePatt, RangePattBound};
 
+// patterns are used: to match values against structures; in variable declarations; as func params
+
+// patterns:
+// - literals (char, string, int, uint, float, bytes32, bool)
+// - identifier
+// - struct, tuple struct
+// - tuple
+// - grouped
+// - path
+
 pub trait Pattern
 where
     Self: Spanned,

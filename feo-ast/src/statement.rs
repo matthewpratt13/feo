@@ -10,6 +10,13 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
+// statement: component of a block, which is a component of an outer expression / function
+
+// statements:
+//  - let declaration
+//  - item declaration
+//  - expression statement
+
 pub trait Statement
 where
     Self: Spanned,

@@ -21,6 +21,20 @@ pub use self::struct_item::{StructFields, TupleFields};
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
+// items are components of a crate, organized by a set of modules
+
+// items:
+// - constant, static vars
+// - enum definition
+// - external crate declaration
+// - function, method definitions
+// - implementation
+// - import declaration
+// - module
+// - struct, tuple struct definitions
+// - trait definition
+// - type alias definition
+
 pub trait Item
 where
     Self: Statement,

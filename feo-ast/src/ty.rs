@@ -10,9 +10,13 @@ where
 {
 }
 
-// also:
-// - primitive literals (char, str, int, uint, float, bytes32, bool)
+// built-in types:
+// - array
+// - literals (char, str, int, uint, float, bytes32, bool)
+// - function, closure
 // - path
+// - trait object
+// - tuple
 
 mod array_type {
     use feo_types::span::{Span, Spanned};
