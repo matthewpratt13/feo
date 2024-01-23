@@ -8,11 +8,11 @@ use crate::{
     type_utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression};
+use super::{Constant, ExprWithoutBlock, Expression, Punctuated};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
-    elements_opt: Option<ArrayElements>,
+    elements_opt: Option<Punctuated<Box<dyn Expression>, Comma>>,
     close_bracket: Bracket,
 }
 
@@ -34,12 +34,6 @@ impl Spanned for ArrayExpr {
 
         span
     }
-}
-
-pub struct ArrayElements {
-    first_element: Box<dyn Expression>,
-    subsequent_elements: Vec<(Comma, Box<dyn Expression>)>,
-    trailing_comma_opt: Option<Comma>,
 }
 
 pub struct ArrayDef {
