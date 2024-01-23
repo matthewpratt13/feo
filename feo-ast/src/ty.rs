@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use feo_types::span::Spanned;
+use crate::span::Spanned;
 
 pub use self::trait_object_type::{TraitBound, TraitObjectType};
 
@@ -19,10 +19,9 @@ where
 // - tuple
 
 mod array_type {
-    use feo_types::span::{Span, Spanned};
-
     use crate::{
         expression::Expression,
+        span::{Span, Spanned},
         type_utils::{Bracket, Semicolon},
     };
 
@@ -52,11 +51,10 @@ mod array_type {
 }
 
 mod trait_object_type {
-    use feo_types::span::{Span, Spanned};
-
     use crate::{
         keyword::Keyword,
         path::SimplePath,
+        span::{Span, Spanned},
         type_utils::{Plus, QuestionMark},
     };
 
@@ -128,9 +126,10 @@ mod trait_object_type {
 }
 
 mod tuple_type {
-    use feo_types::span::{Span, Spanned};
-
-    use crate::type_utils::{Comma, Parenthesis};
+    use crate::{
+        span::{Span, Spanned},
+        type_utils::{Comma, Parenthesis},
+    };
 
     use super::Type;
 

@@ -1,6 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::{keyword::Keyword, statement::Statement};
+use crate::{
+    keyword::Keyword,
+    span::{Span, Spanned},
+    statement::Statement,
+};
 
 use super::{ExprWithoutBlock, Expression};
 

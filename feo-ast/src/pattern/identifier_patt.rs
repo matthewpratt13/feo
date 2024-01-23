@@ -1,6 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::{identifier::Identifier, keyword::Keyword};
+use crate::{
+    identifier::Identifier,
+    keyword::Keyword,
+    span::{Span, Spanned},
+};
 
 use super::Pattern;
 

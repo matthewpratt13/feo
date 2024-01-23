@@ -1,9 +1,6 @@
-use feo_types::{
-    span::{Span, Spanned},
-    Literal,
-};
-
 use crate::{
+    literal::Literal,
+    span::{Span, Spanned},
     statement::Statement,
     type_utils::{Bracket, Comma, Semicolon},
 };

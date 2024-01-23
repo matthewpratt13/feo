@@ -1,8 +1,7 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     keyword::Keyword,
     pattern::Pattern,
+    span::{Span, Spanned},
     type_utils::{Brace, Comma, FatArrow},
 };
 

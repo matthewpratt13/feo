@@ -1,6 +1,9 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::{identifier::Identifier, statement::Statement, type_utils::Dot};
+use crate::{
+    identifier::Identifier,
+    span::{Span, Spanned},
+    statement::Statement,
+    type_utils::Dot,
+};
 
 use super::{Constant, ExprWithoutBlock, Expression};
 

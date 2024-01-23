@@ -1,6 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::{keyword::Keyword, type_utils::Parenthesis};
+use crate::{
+    keyword::Keyword,
+    span::{Span, Spanned},
+    type_utils::Parenthesis,
+};
 
 pub enum VisibilityKind {
     Pub(Keyword),

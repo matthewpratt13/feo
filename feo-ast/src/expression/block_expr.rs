@@ -1,6 +1,5 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
+    span::{Span, Spanned},
     statement::{Statement, StatementsWithExpr},
     type_utils::Brace,
 };

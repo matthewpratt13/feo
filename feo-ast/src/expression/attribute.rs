@@ -1,8 +1,7 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     keyword::Keyword,
     path::SimplePath,
+    span::{Span, Spanned},
     statement::Statement,
     type_utils::{Bracket, HashBang, HashSign},
 };

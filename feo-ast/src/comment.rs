@@ -1,11 +1,12 @@
+use crate::{
+    span::{Span, Spanned},
+    token::{Token, Tokenize},
+};
 use feo_error::{
-    error::CompilerError,
+    error::{CompilerError, Position},
     handler::{ErrorEmitted, Handler},
     type_error::{TypeError, TypeErrorKind},
 };
-use feo_types::span::{Position, Span, Spanned};
-
-use crate::token::{Token, Tokenize};
 
 #[derive(Debug, Clone)]
 pub enum CommentKind {

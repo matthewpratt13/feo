@@ -1,9 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     keyword::Keyword,
     path::SimplePath,
     program::{ContractItem, LibraryItem},
+    span::{Span, Spanned},
     statement::Statement,
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
 };

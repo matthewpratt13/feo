@@ -9,18 +9,18 @@ use feo_ast::{
     doc_comment::DocComment,
     identifier::Identifier,
     keyword::Keyword,
+    literal::Literal,
     punctuation::Punctuation,
     token::{Token, TokenStream, Tokenize},
     type_annotation::{TypeAnnKind, TypeAnnotation},
+    U256,
 };
 
 use feo_error::{
-    error::CompilerError,
+    error::{CompilerError, Position},
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
 };
-
-use feo_types::{span::Position, Literal, U256};
 
 struct Lexer<'a> {
     input: &'a str,
@@ -730,7 +730,7 @@ impl<'a> Lexer<'a> {
 
 #[cfg(test)]
 mod tests {
-    use feo_types::PrimitiveType;
+    use feo_ast::primitive::PrimitiveType;
 
     use super::*;
 

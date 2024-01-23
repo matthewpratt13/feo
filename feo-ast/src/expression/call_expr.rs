@@ -1,8 +1,7 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     path::PathSegmentKind,
     pattern::Pattern,
+    span::{Span, Spanned},
     statement::Statement,
     type_utils::{Comma, Dot, Parenthesis},
 };

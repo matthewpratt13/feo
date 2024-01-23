@@ -1,7 +1,6 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     pattern::Pattern,
+    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
     type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},

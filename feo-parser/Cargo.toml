@@ -9,4 +9,3 @@ edition = "2021"
 bnum = "0.10.0"
 feo-ast = { path = "../feo-ast" }
 feo-error = { path = "../feo-error" }
-feo-types = { path = "../feo-types" }

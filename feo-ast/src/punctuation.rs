@@ -1,16 +1,15 @@
 use std::str::FromStr;
 
 use feo_error::{
-    error::CompilerError,
+    error::{CompilerError, Position},
     handler::{ErrorEmitted, Handler},
     type_error::{TypeError, TypeErrorKind},
 };
 
-use feo_types::span::{Position, Span, Spanned};
-
 use crate::{
     expression::{Constant, ExprWithoutBlock, Expression, RangeExpr},
     pattern::{Pattern, RangePattBound},
+    span::{Span, Spanned},
     statement::Statement,
     token::{Token, Tokenize},
     ty::Type,

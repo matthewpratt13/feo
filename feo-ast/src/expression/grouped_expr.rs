@@ -1,6 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::{statement::Statement, type_utils::Parenthesis};
+use crate::{
+    span::{Span, Spanned},
+    statement::Statement,
+    type_utils::Parenthesis,
+};
 
 use super::{Constant, ExprWithoutBlock, Expression};
 

@@ -1,9 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
+    span::{Span, Spanned},
     statement::Statement,
     type_utils::{Brace, Semicolon},
 };

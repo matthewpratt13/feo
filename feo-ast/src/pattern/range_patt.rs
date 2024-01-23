@@ -1,6 +1,7 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::type_utils::DotDotEquals;
+use crate::{
+    span::{Span, Spanned},
+    type_utils::DotDotEquals,
+};
 
 use super::Pattern;
 

@@ -1,10 +1,9 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     expression::{Constant, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
     program::{ContractItem, LibraryItem},
+    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},

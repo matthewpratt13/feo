@@ -1,11 +1,10 @@
 #![allow(dead_code)]
 
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     expression::{Constant, ExprWithoutBlock, Expression, OuterAttr},
     keyword::Keyword,
     pattern::Pattern,
+    span::{Span, Spanned},
     ty::Type,
     type_utils::{Colon, Equals, Semicolon},
 };

@@ -5,9 +5,10 @@ use feo_error::{
     type_error::TypeErrorKind,
 };
 
-use feo_types::span::{Span, Spanned};
-
-use crate::token::{Token, Tokenize};
+use crate::{
+    span::{Span, Spanned},
+    token::{Token, Tokenize},
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TypeAnnKind {

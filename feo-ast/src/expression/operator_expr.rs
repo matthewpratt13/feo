@@ -1,7 +1,6 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     keyword::Keyword,
+    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
     type_utils::{BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},

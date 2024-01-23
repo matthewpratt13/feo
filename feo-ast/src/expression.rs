@@ -15,9 +15,7 @@ mod return_expr;
 mod struct_expr;
 mod tuple_expr;
 
-use feo_types::span::Spanned;
-
-use crate::statement::Statement;
+use crate::{span::Spanned, statement::Statement};
 
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;

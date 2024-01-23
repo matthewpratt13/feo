@@ -1,8 +1,8 @@
 use feo_error::handler::{ErrorEmitted, Handler};
-use feo_types::span::{Span, Spanned};
 
 use crate::{
     item::Item,
+    span::{Span, Spanned},
     statement::Statement,
     token::{Token, Tokenize},
 };

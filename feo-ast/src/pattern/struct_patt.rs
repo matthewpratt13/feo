@@ -1,9 +1,8 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     path::SimplePath,
+    span::{Span, Spanned},
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 

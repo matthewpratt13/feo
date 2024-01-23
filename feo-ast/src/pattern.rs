@@ -6,7 +6,7 @@ mod range_patt;
 mod struct_patt;
 mod tuple_patt;
 
-use feo_types::span::Spanned;
+use crate::span::Spanned;
 
 pub use self::range_patt::{RangePatt, RangePattBound};
 

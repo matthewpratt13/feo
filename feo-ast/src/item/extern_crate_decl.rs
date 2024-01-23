@@ -1,7 +1,9 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
-    identifier::Identifier, keyword::Keyword, statement::Statement, type_utils::Semicolon,
+    identifier::Identifier,
+    keyword::Keyword,
+    span::{Span, Spanned},
+    statement::Statement,
+    type_utils::Semicolon,
 };
 
 use super::Item;

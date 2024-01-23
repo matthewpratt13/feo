@@ -1,13 +1,14 @@
 use bnum::cast::As;
 
-use feo_error::error::CompilerError;
+use feo_error::error::{CompilerError, Position};
 use feo_error::handler::{ErrorEmitted, Handler};
 use feo_error::parser_error::{ParserError, ParserErrorKind};
 
-use feo_types::PrimitiveType;
-use feo_types::{
-    span::{Position, Span, Spanned},
-    Literal, U256,
+use crate::primitive::PrimitiveType;
+use crate::{
+    literal::Literal,
+    span::{Span, Spanned},
+    U256,
 };
 
 use crate::{

@@ -1,10 +1,9 @@
-use feo_types::span::{Span, Spanned};
-
 use crate::{
     expression::{InnerAttr, OuterAttr},
     keyword::Keyword,
     path::SimplePath,
     program::ContractItem,
+    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
     type_utils::Brace,
