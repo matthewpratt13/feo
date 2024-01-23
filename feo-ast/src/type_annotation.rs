@@ -22,9 +22,9 @@ pub enum TypeAnnKind {
     TypeAnnU32,
     TypeAnnU64,
     TypeAnnU256,
-    TypeAnnBytes32,
     TypeAnnF32,
     TypeAnnF64,
+    TypeAnnBytes32,
     TypeAnnVec,
 
     CustomTypeAnn(String),
@@ -45,9 +45,9 @@ impl TypeAnnKind {
             TypeAnnKind::TypeAnnU32 => "u32",
             TypeAnnKind::TypeAnnU64 => "u64",
             TypeAnnKind::TypeAnnU256 => "u256",
-            TypeAnnKind::TypeAnnBytes32 => "bytes32",
             TypeAnnKind::TypeAnnF32 => "f32",
             TypeAnnKind::TypeAnnF64 => "f64",
+            TypeAnnKind::TypeAnnBytes32 => "bytes32",
             TypeAnnKind::TypeAnnVec => "Vec",
             TypeAnnKind::CustomTypeAnn(t) => t.as_str(),
             TypeAnnKind::UnknownTypeAnn => "_",
@@ -138,8 +138,8 @@ impl Spanned for TypeAnnotation {
 
 pub fn is_built_in_type_annotation(iden: &str) -> bool {
     [
-        "char", "String", "str", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256",
-        "bytes32", "f32", "f64", "Vec",
+        "char", "String", "str", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32",
+        "f64", "bytes32", "Vec",
     ]
     .contains(&iden)
 }
