@@ -9,7 +9,7 @@ use crate::{
     type_utils::{Bang, Equals, Minus, QuestionMark},
 };
 
-use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, CastableExpr, Constant, ExprWithoutBlock, Expression};
 
 pub trait OperatorExpr<E>
 where
@@ -341,7 +341,7 @@ where
 }
 
 pub struct TypeCastExpr {
-    operand: Box<dyn Expression>,
+    operand: Box<dyn CastableExpr>,
     kw_as: Keyword,
     new_type: Box<dyn Type>, // cannot be a trait object
 }

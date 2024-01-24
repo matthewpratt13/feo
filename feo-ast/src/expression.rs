@@ -19,9 +19,9 @@ use crate::{span::Spanned, statement::Statement};
 
 pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
+pub use self::operator_expr::OperatorExpr;
 pub use self::range_expr::RangeExpr;
 pub use self::struct_expr::StructExpr;
-pub use self::operator_expr::OperatorExpr;
 
 // expressions always produce / evaluate to a value, and may have (side) effects
 
@@ -56,6 +56,18 @@ pub use self::operator_expr::OperatorExpr;
 // - struct / tuple struct / unit struct
 // - tuple
 
+pub trait AssignableExpr
+where
+    Self: Expression,
+{
+}
+
+pub trait CastableExpr
+where
+    Self: 'static + Spanned,
+{
+}
+
 pub trait Constant
 where
     Self: Sized + 'static + Spanned,
@@ -77,11 +89,5 @@ where
 pub trait ExprWithoutBlock<E>
 where
     Self: Expression + Statement,
-{
-}
-
-pub trait AssignableExpr
-where
-    Self: Expression,
 {
 }
