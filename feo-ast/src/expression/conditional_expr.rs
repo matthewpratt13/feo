@@ -15,7 +15,7 @@ where
 
 pub struct IfExpr<T> {
     kw_if: Keyword,
-    condition: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
+    operand: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
     block: BlockExpr<T>,
 
     // TODO: should these rather be enum variants?
@@ -97,5 +97,5 @@ pub struct MatchArm {
 
 pub struct MatchArmGuard {
     kw_if: Keyword,
-    condition: Box<dyn Expression>,
+    operand: Box<dyn Expression>,
 }

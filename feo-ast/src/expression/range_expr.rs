@@ -13,9 +13,9 @@ where
 }
 
 pub struct RangeFromToExpr {
-    from_expression: Box<dyn Expression>,
+    from_operand: Box<dyn Expression>,
     dbl_dot: DblDot,
-    to_expression_excl: Box<dyn Expression>,
+    to_operand_excl: Box<dyn Expression>,
 }
 
 impl<E> RangeExpr<E> for RangeFromToExpr {}
@@ -30,9 +30,9 @@ impl Constant for RangeFromToExpr {}
 
 impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
-        let start_pos = self.from_expression.span().start();
-        let end_pos = self.to_expression_excl.span().end();
-        let source = self.from_expression.span().source();
+        let start_pos = self.from_operand.span().start();
+        let end_pos = self.to_operand_excl.span().end();
+        let source = self.from_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -41,7 +41,7 @@ impl Spanned for RangeFromToExpr {
 }
 
 pub struct RangeFromExpr {
-    from_expression: Box<dyn Expression>,
+    from_operand: Box<dyn Expression>,
     dbl_dot: DblDot,
 }
 
@@ -57,9 +57,9 @@ impl Constant for RangeFromExpr {}
 
 impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
-        let start_pos = self.from_expression.span().start();
+        let start_pos = self.from_operand.span().start();
         let end_pos = self.dbl_dot.span().end();
-        let source = self.from_expression.span().source();
+        let source = self.from_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -69,7 +69,7 @@ impl Spanned for RangeFromExpr {
 
 pub struct RangeToExpr {
     dbl_dot: DblDot,
-    to_expression: Box<dyn Expression>,
+    to_operand: Box<dyn Expression>,
 }
 
 impl<E> RangeExpr<E> for RangeToExpr {}
@@ -85,7 +85,7 @@ impl Constant for RangeToExpr {}
 impl Spanned for RangeToExpr {
     fn span(&self) -> Span {
         let start_pos = self.dbl_dot.span().start();
-        let end_pos = self.to_expression.span().end();
+        let end_pos = self.to_operand.span().end();
         let source = self.dbl_dot.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -95,9 +95,9 @@ impl Spanned for RangeToExpr {
 }
 
 pub struct RangeInclusiveExpr {
-    from_expression: Box<dyn Expression>,
+    from_operand: Box<dyn Expression>,
     dot_dot_equals: DotDotEquals,
-    to_expression_incl: Box<dyn Expression>,
+    to_operand_incl: Box<dyn Expression>,
 }
 
 impl<E> RangeExpr<E> for RangeInclusiveExpr {}
@@ -112,9 +112,9 @@ impl Constant for RangeInclusiveExpr {}
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
-        let start_pos = self.from_expression.span().start();
-        let end_pos = self.to_expression_incl.span().end();
-        let source = self.from_expression.span().source();
+        let start_pos = self.from_operand.span().start();
+        let end_pos = self.to_operand_incl.span().end();
+        let source = self.from_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -124,7 +124,7 @@ impl Spanned for RangeInclusiveExpr {
 
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
-    to_expression_incl: Box<dyn Expression>,
+    to_operand_incl: Box<dyn Expression>,
 }
 
 impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
@@ -140,7 +140,7 @@ impl Constant for RangeToInclusiveExpr {}
 impl Spanned for RangeToInclusiveExpr {
     fn span(&self) -> Span {
         let start_pos = self.dot_dot_equals.span().start();
-        let end_pos = self.to_expression_incl.span().end();
+        let end_pos = self.to_operand_incl.span().end();
         let source = self.dot_dot_equals.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);

@@ -46,9 +46,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 }
 
 pub struct AssignmentExpr {
-    initial_value: Box<dyn Expression>,
+    first_operand: Box<dyn Expression>,
     equals: Equals,
-    new_value: Box<dyn Expression>,
+    second_operand: Box<dyn Expression>,
 }
 
 impl<E> OperatorExpr<E> for AssignmentExpr {}
@@ -63,9 +63,9 @@ impl Constant for AssignmentExpr {}
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
-        let start_pos = self.initial_value.span().start();
-        let end_pos = self.new_value.span().end();
-        let source = self.initial_value.span().source();
+        let start_pos = self.first_operand.span().start();
+        let end_pos = self.second_operand.span().end();
+        let source = self.first_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -74,9 +74,9 @@ impl Spanned for AssignmentExpr {
 }
 
 pub struct CompoundAssignmentExpr {
-    operand: Box<dyn AssignableExpr>,
+    first_operand: Box<dyn AssignableExpr>,
     arithmetic_punc_equals: ArithmeticPuncEquals,
-    new_value: Box<dyn Expression>,
+    second_operand: Box<dyn Expression>,
 }
 
 impl<E> OperatorExpr<E> for CompoundAssignmentExpr {}
@@ -91,9 +91,9 @@ impl Constant for CompoundAssignmentExpr {}
 
 impl Spanned for CompoundAssignmentExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operand.span().start();
-        let end_pos = self.new_value.span().end();
-        let source = self.operand.span().source();
+        let start_pos = self.first_operand.span().start();
+        let end_pos = self.second_operand.span().end();
+        let source = self.first_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -102,9 +102,9 @@ impl Spanned for CompoundAssignmentExpr {
 }
 
 pub struct BoolExpr {
-    first_expression: Box<dyn Expression>,
+    first_operand: Box<dyn Expression>,
     operator: OpBool,
-    second_expression: Box<dyn Expression>,
+    second_operand: Box<dyn Expression>,
 }
 
 impl<E> OperatorExpr<E> for BoolExpr {}
@@ -119,9 +119,9 @@ impl Constant for BoolExpr {}
 
 impl Spanned for BoolExpr {
     fn span(&self) -> Span {
-        let start_pos = self.first_expression.span().start();
-        let end_pos = self.second_expression.span().end();
-        let source = self.first_expression.span().source();
+        let start_pos = self.first_operand.span().start();
+        let end_pos = self.second_operand.span().end();
+        let source = self.first_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -130,9 +130,9 @@ impl Spanned for BoolExpr {
 }
 
 pub struct ComparisonExpr {
-    first_expression: Box<dyn Expression>,
+    first_operand: Box<dyn Expression>,
     operator: OpComparison,
-    second_expression: Box<dyn Expression>,
+    second_operand: Box<dyn Expression>,
 }
 
 impl<E> OperatorExpr<E> for ComparisonExpr {}
@@ -147,9 +147,9 @@ impl Constant for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
-        let start_pos = self.first_expression.span().start();
-        let end_pos = self.second_expression.span().end();
-        let source = self.first_expression.span().source();
+        let start_pos = self.first_operand.span().start();
+        let end_pos = self.second_operand.span().end();
+        let source = self.first_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -186,7 +186,7 @@ impl Spanned for DerefExpr {
 
 pub struct NegationExpr {
     negator: BangOrMinus,
-    expression: Box<dyn Expression>,
+    operand: Box<dyn Expression>,
 }
 
 impl<E> OperatorExpr<E> for NegationExpr {}
@@ -202,7 +202,7 @@ impl Constant for NegationExpr {}
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
         let start_pos = self.negator.span().start();
-        let end_pos = self.expression.span().end();
+        let end_pos = self.operand.span().end();
         let source = self.negator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -238,7 +238,7 @@ impl Spanned for RefExpr {
 }
 
 pub struct ResultUnwrapExpr {
-    expression: Box<dyn Expression>, // can only be applied to `Option` and `Result`
+    operand: Box<dyn Expression>, // can only be applied to `Option` and `Result`
     question_mark: QuestionMark,
 }
 
@@ -252,9 +252,9 @@ impl Statement for ResultUnwrapExpr {}
 
 impl Spanned for ResultUnwrapExpr {
     fn span(&self) -> Span {
-        let start_pos = self.expression.span().start();
+        let start_pos = self.operand.span().start();
         let end_pos = self.question_mark.span().end();
-        let source = self.expression.span().source();
+        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -263,7 +263,7 @@ impl Spanned for ResultUnwrapExpr {
 }
 
 pub struct TypeCastExpr {
-    original_expression: Box<dyn Expression>,
+    operand: Box<dyn Expression>,
     kw_as: Keyword,
     new_type: Box<dyn Type>, // cannot be a trait object
 }
@@ -280,9 +280,9 @@ impl Constant for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
-        let start_pos = self.original_expression.span().start();
+        let start_pos = self.operand.span().start();
         let end_pos = self.new_type.span().end();
-        let source = self.original_expression.span().source();
+        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
