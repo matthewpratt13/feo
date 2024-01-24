@@ -21,6 +21,7 @@ pub use self::attribute::{InnerAttr, OuterAttr};
 pub use self::block_expr::BlockExpr;
 pub use self::range_expr::RangeExpr;
 pub use self::struct_expr::StructExpr;
+pub use self::operator_expr::OperatorExpr;
 
 // expressions always produce / evaluate to a value, and may have (side) effects
 

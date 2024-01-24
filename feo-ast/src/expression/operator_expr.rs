@@ -237,20 +237,20 @@ impl Spanned for RefExpr {
     }
 }
 
-pub struct ResultUnwrapExpr {
+pub struct UnwrapExpr {
     operand: Box<dyn Expression>, // can only be applied to `Option` and `Result`
     question_mark: QuestionMark,
 }
 
-impl<E> OperatorExpr<E> for ResultUnwrapExpr {}
+impl<E> OperatorExpr<E> for UnwrapExpr {}
 
-impl Expression for ResultUnwrapExpr {}
+impl Expression for UnwrapExpr {}
 
-impl<E> ExprWithoutBlock<E> for ResultUnwrapExpr {}
+impl<E> ExprWithoutBlock<E> for UnwrapExpr {}
 
-impl Statement for ResultUnwrapExpr {}
+impl Statement for UnwrapExpr {}
 
-impl Spanned for ResultUnwrapExpr {
+impl Spanned for UnwrapExpr {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
         let end_pos = self.question_mark.span().end();

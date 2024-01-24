@@ -7,7 +7,7 @@ use feo_error::{
 };
 
 use crate::{
-    expression::{ExprWithoutBlock, Expression},
+    expression::{ExprWithoutBlock, Expression, OperatorExpr},
     item::Item,
     span::{Span, Spanned},
     statement::Statement,
@@ -212,6 +212,8 @@ impl Spanned for Keyword {
 }
 
 impl Expression for Keyword {}
+
+impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`
 
 impl<E> ExprWithoutBlock<E> for Keyword {}
 
