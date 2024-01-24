@@ -78,3 +78,21 @@ where
     Self: Expression + Statement,
 {
 }
+
+pub trait AssignableExpr
+where
+    Self: Expression,
+{
+}
+
+pub trait ReferenceExpr
+where
+    Self: Expression,
+{
+}
+
+pub trait ValueExpr
+where
+    Self: Expression,
+{
+}
