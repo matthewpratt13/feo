@@ -7,7 +7,7 @@ mod call_expr;
 mod closure_expr;
 mod conditional_expr;
 mod field_access_expr;
-mod grouped_expr;
+mod parenthesized_expr;
 mod iteration_expr;
 mod operator_expr;
 mod range_expr;

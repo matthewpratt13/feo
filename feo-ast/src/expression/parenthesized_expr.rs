@@ -6,21 +6,21 @@ use crate::{
 
 use super::{Constant, ExprWithoutBlock, Expression};
 
-pub struct GroupedExpr {
+pub struct ParenthesizedExpr {
     open_parenthesis: Parenthesis,
-    expression: Box<dyn Expression>,
+    enclosed_operand: Box<dyn Expression>,
     close_parenthesis: Parenthesis,
 }
 
-impl Expression for GroupedExpr {}
+impl Expression for ParenthesizedExpr {}
 
-impl<E> ExprWithoutBlock<E> for GroupedExpr {}
+impl<E> ExprWithoutBlock<E> for ParenthesizedExpr {}
 
-impl Statement for GroupedExpr {}
+impl Statement for ParenthesizedExpr {}
 
-impl Constant for GroupedExpr {}
+impl Constant for ParenthesizedExpr {}
 
-impl Spanned for GroupedExpr {
+impl Spanned for ParenthesizedExpr {
     fn span(&self) -> Span {
         let start_pos = self.open_parenthesis.span().start();
         let end_pos = self.close_parenthesis.span().end();
