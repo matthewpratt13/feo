@@ -3,6 +3,7 @@
 use crate::{
     expression::{Constant, ExprWithoutBlock, Expression},
     identifier::Identifier,
+    item::Item,
     keyword::Keyword,
     span::{Span, Spanned},
     statement::Statement,
@@ -16,6 +17,10 @@ pub enum PathSegmentKind {
     KwSelf(Keyword),
     KwSuper(Keyword),
 }
+
+impl Item for PathSegmentKind {}
+
+impl Statement for PathSegmentKind {}
 
 impl Spanned for PathSegmentKind {
     fn span(&self) -> Span {
@@ -42,6 +47,8 @@ impl<E> ExprWithoutBlock<E> for SimplePath {}
 impl Statement for SimplePath {}
 
 impl Constant for SimplePath {}
+
+impl Item for SimplePath {}
 
 impl Type for SimplePath {}
 
