@@ -39,10 +39,10 @@ pub struct ArrayElements {
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayDef {
-    element_type: Box<dyn Expression>,
+pub struct ArrayWithSingleRepeatedValue {
+    repeated_value: Box<dyn Expression>,
     semicolon: Semicolon,
-    num_elements: Literal<u64>,
+    num_of_repeats: Literal<u64>,
 }
 
 pub struct IndexExpr {
