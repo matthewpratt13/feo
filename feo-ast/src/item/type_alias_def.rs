@@ -2,7 +2,6 @@ use crate::{
     expression::OuterAttr,
     identifier::Identifier,
     keyword::Keyword,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -26,10 +25,6 @@ impl Item for TypeAliasDef {}
 impl Statement for TypeAliasDef {}
 
 impl AssociatedItem for TypeAliasDef {}
-
-impl LibraryItem for TypeAliasDef {}
-
-impl ContractItem for TypeAliasDef {}
 
 impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {

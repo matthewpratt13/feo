@@ -1,7 +1,6 @@
 use crate::{
     keyword::Keyword,
     path::SimplePath,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
@@ -25,10 +24,6 @@ pub struct ImportDecl {
 impl Item for ImportDecl {}
 
 impl Statement for ImportDecl {}
-
-impl LibraryItem for ImportDecl {}
-
-impl ContractItem for ImportDecl {}
 
 impl Spanned for ImportDecl {
     fn span(&self) -> Span {
@@ -57,8 +52,6 @@ impl ImportTree for PathWildcard {}
 impl Item for PathWildcard {}
 
 impl Statement for PathWildcard {}
-
-impl ContractItem for PathWildcard {}
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
@@ -99,8 +92,6 @@ impl Item for PathSubsetRecursive {}
 
 impl Statement for PathSubsetRecursive {}
 
-impl ContractItem for PathSubsetRecursive {}
-
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
         let start_pos = match &self.path_prefix_opt {
@@ -130,8 +121,6 @@ impl ImportTree for PathWithAsClause {}
 impl Item for PathWithAsClause {}
 
 impl Statement for PathWithAsClause {}
-
-impl ContractItem for PathWithAsClause {}
 
 impl Spanned for PathWithAsClause {
     fn span(&self) -> Span {

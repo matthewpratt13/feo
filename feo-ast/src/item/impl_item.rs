@@ -2,7 +2,6 @@ use crate::{
     expression::{InnerAttr, OuterAttr},
     keyword::Keyword,
     path::SimplePath,
-    program::ContractItem,
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -33,8 +32,6 @@ impl ImplItem for InherentImpl {}
 impl Item for InherentImpl {}
 
 impl Statement for InherentImpl {}
-
-impl ContractItem for InherentImpl {}
 
 impl Spanned for InherentImpl {
     fn span(&self) -> Span {
@@ -71,8 +68,6 @@ impl ImplItem for TraitImpl {}
 impl Item for TraitImpl {}
 
 impl Statement for TraitImpl {}
-
-impl ContractItem for TraitImpl {}
 
 impl Spanned for TraitImpl {
     fn span(&self) -> Span {

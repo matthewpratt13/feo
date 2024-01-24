@@ -3,7 +3,6 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -29,13 +28,9 @@ impl Statement for ConstantItem {}
 
 impl AssociatedItem for ConstantItem {}
 
-impl LibraryItem for ConstantItem {}
-
 impl Pattern for ConstantItem {}
 
 impl Constant for ConstantItem {}
-
-impl ContractItem for ConstantItem {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
@@ -73,8 +68,6 @@ impl Item for StaticItem {}
 impl Statement for StaticItem {}
 
 impl Constant for StaticItem {}
-
-impl ContractItem for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {

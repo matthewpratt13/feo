@@ -3,7 +3,6 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -43,8 +42,6 @@ impl Statement for FunctionDefWithoutBody {}
 
 impl AssociatedItem for FunctionDefWithoutBody {}
 
-impl LibraryItem for FunctionDefWithoutBody {}
-
 impl Type for FunctionDefWithoutBody {}
 
 impl Spanned for FunctionDefWithoutBody {
@@ -83,10 +80,6 @@ impl<T> FunctionItem for FunctionDefWithBody<T> {}
 impl<T> Item for FunctionDefWithBody<T> {}
 
 impl<T> Statement for FunctionDefWithBody<T> {}
-
-impl<T> LibraryItem for FunctionDefWithBody<T> {}
-
-impl<T> ContractItem for FunctionDefWithBody<T> {}
 
 impl<T> Type for FunctionDefWithBody<T> {}
 

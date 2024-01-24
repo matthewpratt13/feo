@@ -11,7 +11,6 @@ pub mod literal;
 pub mod path;
 pub mod pattern;
 pub mod primitive;
-pub mod program;
 pub mod punctuation;
 pub mod span;
 pub mod statement;

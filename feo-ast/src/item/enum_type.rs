@@ -3,7 +3,6 @@ use crate::{
     identifier::Identifier,
     keyword::Keyword,
     pattern::Pattern,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -31,11 +30,7 @@ impl Item for EnumType {}
 
 impl Statement for EnumType {}
 
-impl LibraryItem for EnumType {}
-
 impl Type for EnumType {}
-
-impl ContractItem for EnumType {}
 
 impl Spanned for EnumType {
     fn span(&self) -> Span {

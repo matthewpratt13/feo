@@ -12,7 +12,6 @@ mod trait_def;
 mod type_alias_def;
 mod visibility;
 
-use crate::program::LibraryItem;
 use crate::statement::Statement;
 
 pub use self::extern_crate_decl::AsClause;
@@ -43,7 +42,7 @@ where
 
 pub trait AssociatedItem
 where
-    Self: Item + LibraryItem,
+    Self: Item,
 {
 }
 

@@ -2,7 +2,6 @@ use crate::{
     expression::{InnerAttr, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     type_utils::{Brace, Colon},
@@ -26,10 +25,6 @@ pub struct TraitDef {
 impl Item for TraitDef {}
 
 impl Statement for TraitDef {}
-
-impl LibraryItem for TraitDef {}
-
-impl ContractItem for TraitDef {}
 
 impl Spanned for TraitDef {
     fn span(&self) -> Span {

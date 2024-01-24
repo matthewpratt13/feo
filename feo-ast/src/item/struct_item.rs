@@ -2,7 +2,6 @@ use crate::{
     expression::{Constant, OuterAttr},
     identifier::Identifier,
     keyword::Keyword,
-    program::{ContractItem, LibraryItem},
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -13,7 +12,7 @@ use super::{Item, VisibilityKind, WhereClause};
 
 pub trait StructItem
 where
-    Self: Sized + 'static + Item + LibraryItem + Type,
+    Self: Sized + 'static + Item + Type,
 {
 }
 
@@ -34,11 +33,7 @@ impl Item for StructType {}
 
 impl Statement for StructType {}
 
-impl LibraryItem for StructType {}
-
 impl Type for StructType {}
-
-impl ContractItem for StructType {}
 
 impl Spanned for StructType {
     fn span(&self) -> Span {
@@ -91,11 +86,7 @@ impl Item for TupleStructType {}
 
 impl Statement for TupleStructType {}
 
-impl LibraryItem for TupleStructType {}
-
 impl Type for TupleStructType {}
-
-impl ContractItem for TupleStructType {}
 
 impl Spanned for TupleStructType {
     fn span(&self) -> Span {
@@ -143,13 +134,9 @@ impl Item for UnitStructType {}
 
 impl Statement for UnitStructType {}
 
-impl LibraryItem for UnitStructType {}
-
 impl Constant for UnitStructType {}
 
 impl Type for UnitStructType {}
-
-impl ContractItem for UnitStructType {}
 
 impl Spanned for UnitStructType {
     fn span(&self) -> Span {
