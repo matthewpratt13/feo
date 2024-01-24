@@ -1,25 +1,100 @@
+use feo_error::error::CompilerError;
+
 use crate::{
     keyword::Keyword,
+    punctuation::Punctuation,
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::{
-        ArithmeticPuncEquals, BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison,
-        QuestionMark,
-    },
+    type_utils::{Bang, Equals, Minus, QuestionMark},
 };
 
 use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
 
 pub trait OperatorExpr<E>
 where
-    Self: Sized + ExprWithoutBlock<E>,
+    Self: ExprWithoutBlock<E>,
 {
+}
+
+pub enum ArithmeticOrLogicalOperatorKind {
+    Plus(Punctuation),
+    Minus(Punctuation),
+    Multiply(Punctuation),
+    Divide(Punctuation),
+    Modulus(Punctuation),
+    LogicalAnd(Punctuation),
+    LogicalOr(Punctuation),
+}
+
+pub enum ComparisonOperatorKind {
+    Equality(Punctuation),
+    NotEqual(Punctuation),
+    LessThan(Punctuation),
+    GreaterThan(Punctuation),
+    LessThanOrEqual(Punctuation),
+    GreaterThanOrEqual(Punctuation),
+}
+
+pub enum CompoundAssignmentOperatorKind {
+    PlusEquals(Punctuation),
+    MinusEquals(Punctuation),
+    MultiplyEquals(Punctuation),
+    DivideEquals(Punctuation),
+    ModulusEquals(Punctuation),
+}
+
+pub enum LazyBoolOperatorKind {
+    And(Punctuation),
+    Or(Punctuation),
+}
+
+pub enum NegationOperatorKind {
+    InvertNumeric(Minus),
+    InvertBool(Bang),
+}
+
+impl Spanned for NegationOperatorKind {
+    fn span(&self) -> Span {
+        match self {
+            NegationOperatorKind::InvertNumeric(n) => n.span(),
+            NegationOperatorKind::InvertBool(b) => b.span(),
+        }
+    }
+}
+
+pub enum UnwrapOperationKind<T: Spanned> {
+    Option(Option<T>),
+    Result(Result<T, CompilerError>),
+}
+
+impl<T> Spanned for UnwrapOperationKind<T>
+where
+    T: Spanned,
+{
+    fn span(&self) -> Span {
+        match self {
+            UnwrapOperationKind::Option(o) => {
+                if let Some(t) = o {
+                    t.span()
+                } else {
+                    Span::default()
+                }
+            }
+            UnwrapOperationKind::Result(r) => {
+                if let Ok(t) = r {
+                    t.span()
+                } else {
+                    Span::default()
+                }
+            }
+        }
+    }
 }
 
 pub struct ArithmeticOrLogicalExpr {
     first_operand: Box<dyn Expression>,
-    operator: OpArithmeticOrLogical,
+    operator: ArithmeticOrLogicalOperatorKind,
     second_operand: Box<dyn Expression>,
 }
 
@@ -75,7 +150,7 @@ impl Spanned for AssignmentExpr {
 
 pub struct CompoundAssignmentExpr {
     first_operand: Box<dyn AssignableExpr>,
-    arithmetic_punc_equals: ArithmeticPuncEquals,
+    operator: CompoundAssignmentOperatorKind,
     second_operand: Box<dyn Expression>,
 }
 
@@ -101,37 +176,9 @@ impl Spanned for CompoundAssignmentExpr {
     }
 }
 
-pub struct BoolExpr {
-    first_operand: Box<dyn Expression>,
-    operator: OpBool,
-    second_operand: Box<dyn Expression>,
-}
-
-impl<E> OperatorExpr<E> for BoolExpr {}
-
-impl Expression for BoolExpr {}
-
-impl<E> ExprWithoutBlock<E> for BoolExpr {}
-
-impl Statement for BoolExpr {}
-
-impl Constant for BoolExpr {}
-
-impl Spanned for BoolExpr {
-    fn span(&self) -> Span {
-        let start_pos = self.first_operand.span().start();
-        let end_pos = self.second_operand.span().end();
-        let source = self.first_operand.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
-    }
-}
-
 pub struct ComparisonExpr {
     first_operand: Box<dyn Expression>,
-    operator: OpComparison,
+    operator: ComparisonOperatorKind,
     second_operand: Box<dyn Expression>,
 }
 
@@ -184,8 +231,36 @@ impl Spanned for DerefExpr {
     }
 }
 
+pub struct LazyBoolExpr {
+    first_operand: Box<dyn Expression>,
+    operator: LazyBoolOperatorKind,
+    second_operand: Box<dyn Expression>,
+}
+
+impl<E> OperatorExpr<E> for LazyBoolExpr {}
+
+impl Expression for LazyBoolExpr {}
+
+impl<E> ExprWithoutBlock<E> for LazyBoolExpr {}
+
+impl Statement for LazyBoolExpr {}
+
+impl Constant for LazyBoolExpr {}
+
+impl Spanned for LazyBoolExpr {
+    fn span(&self) -> Span {
+        let start_pos = self.first_operand.span().start();
+        let end_pos = self.second_operand.span().end();
+        let source = self.first_operand.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
 pub struct NegationExpr {
-    negator: BangOrMinus,
+    negator: NegationOperatorKind,
     operand: Box<dyn Expression>,
 }
 
@@ -237,20 +312,23 @@ impl Spanned for RefExpr {
     }
 }
 
-pub struct UnwrapExpr {
-    operand: Box<dyn Expression>, // can only be applied to `Option` and `Result`
+pub struct UnwrapExpr<T: Spanned> {
+    operand: UnwrapOperationKind<T>,
     question_mark: QuestionMark,
 }
 
-impl<E> OperatorExpr<E> for UnwrapExpr {}
+impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned {}
 
-impl Expression for UnwrapExpr {}
+impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
 
-impl<E> ExprWithoutBlock<E> for UnwrapExpr {}
+impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
 
-impl Statement for UnwrapExpr {}
+impl<T> Statement for UnwrapExpr<T> where T: Spanned {}
 
-impl Spanned for UnwrapExpr {
+impl<T> Spanned for UnwrapExpr<T>
+where
+    T: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
         let end_pos = self.question_mark.span().end();

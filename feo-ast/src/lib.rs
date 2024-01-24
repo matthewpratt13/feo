@@ -22,9 +22,8 @@ mod type_utils {
     use crate::delimiter::Delimiter;
     use crate::punctuation::Punctuation;
 
-    pub type ArithmeticPuncEquals = Punctuation;
     pub type Asterisk = Punctuation;
-    pub type BangOrMinus = Punctuation;
+    pub type Bang = Punctuation;
     pub type Colon = Punctuation;
     pub type Comma = Punctuation;
     pub type DblColon = Punctuation;
@@ -36,9 +35,7 @@ mod type_utils {
     pub type FatArrow = Punctuation;
     pub type HashBang = Punctuation;
     pub type HashSign = Punctuation;
-    pub type OpArithmeticOrLogical = Punctuation;
-    pub type OpBool = Punctuation;
-    pub type OpComparison = Punctuation;
+    pub type Minus = Punctuation;
     pub type Pipe = Punctuation;
     pub type Plus = Punctuation;
     pub type QuestionMark = Punctuation;

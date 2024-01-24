@@ -213,7 +213,7 @@ impl Spanned for Keyword {
 
 impl Expression for Keyword {}
 
-impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`
+impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`, `as`
 
 impl<E> ExprWithoutBlock<E> for Keyword {}
 

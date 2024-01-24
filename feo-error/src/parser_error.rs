@@ -39,6 +39,8 @@ pub struct ParserError {
     pub position: Position,
 }
 
+impl Error for ParserError {}
+
 impl fmt::Display for ParserError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

@@ -7,7 +7,7 @@ use feo_error::{
 };
 
 use crate::{
-    expression::{AssignableExpr, Constant, ExprWithoutBlock, Expression, RangeExpr},
+    expression::{AssignableExpr, Constant, ExprWithoutBlock, Expression, OperatorExpr, RangeExpr},
     pattern::{Pattern, RangePattBound},
     span::{Span, Spanned},
     statement::Statement,
@@ -221,6 +221,8 @@ impl Spanned for Punctuation {
 impl Expression for Punctuation {}
 
 impl<E> ExprWithoutBlock<E> for Punctuation {}
+
+impl<E> OperatorExpr<E> for Punctuation {} // `-` (negate int)  and `!` (logical NOT)
 
 impl<E> RangeExpr<E> for Punctuation {}
 
