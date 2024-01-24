@@ -4,11 +4,11 @@ use crate::{
     span::{Span, Spanned},
 };
 
-use super::{BlockExpr, Constant, ExprWithBlock, Expression};
+use super::{BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, IterableExpr};
 
 pub trait IterationExpr<E>
 where
-    Self: Sized + ExprWithBlock<E>,
+    Self: Sized + ExprWithBlock<E> + BooleanOperand + IterableExpr,
 {
 }
 
@@ -23,13 +23,17 @@ pub struct InfiniteLoopExpr<T> {
     block: BlockExpr<T>,
 }
 
-impl<T, E> IterationExpr<E> for InfiniteLoopExpr<T> {}
+impl<T, E> IterationExpr<E> for InfiniteLoopExpr<T> where T: 'static {}
 
 impl<T> Expression for InfiniteLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> {}
 
+impl<T> BooleanOperand for InfiniteLoopExpr<T> where T: 'static {}
+
 impl<T> Constant for InfiniteLoopExpr<T> where T: 'static {}
+
+impl<T> IterableExpr for InfiniteLoopExpr<T> where T: 'static {}
 
 impl<T> Spanned for InfiniteLoopExpr<T> {
     fn span(&self) -> Span {
@@ -45,17 +49,21 @@ impl<T> Spanned for InfiniteLoopExpr<T> {
 
 pub struct PredicateLoopExpr<T> {
     kw_while: Keyword,
-    conditional_operand: Box<dyn Expression>, // cannot be a struct expression
+    conditional_operand: Box<dyn BooleanOperand>,
     block: BlockExpr<T>,
 }
 
-impl<T, E> IterationExpr<E> for PredicateLoopExpr<T> {}
+impl<T, E> IterationExpr<E> for PredicateLoopExpr<T> where T: 'static {}
 
 impl<T> Expression for PredicateLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for PredicateLoopExpr<T> {}
 
+impl<T> BooleanOperand for PredicateLoopExpr<T> where T: 'static {}
+
 impl<T> Constant for PredicateLoopExpr<T> where T: 'static {}
+
+impl<T> IterableExpr for PredicateLoopExpr<T> where T: 'static {}
 
 impl<T> Spanned for PredicateLoopExpr<T> {
     fn span(&self) -> Span {
@@ -73,15 +81,19 @@ pub struct IterLoopExpr<T> {
     kw_for: Keyword,
     pattern: Box<dyn Pattern>,
     kw_in: Keyword,
-    iterator: Box<dyn Expression>, // cannot be a struct expression
+    iterator: Box<dyn IterableExpr>,
     block: BlockExpr<T>,
 }
 
-impl<T, E> IterationExpr<E> for IterLoopExpr<T> {}
+impl<T, E> IterationExpr<E> for IterLoopExpr<T> where T: 'static {}
 
 impl<T> Expression for IterLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for IterLoopExpr<T> {}
+
+impl<T> BooleanOperand for IterLoopExpr<T> where T: 'static {}
+
+impl<T> IterableExpr for IterLoopExpr<T> where T: 'static {}
 
 impl<T> Pattern for IterLoopExpr<T> {}
 

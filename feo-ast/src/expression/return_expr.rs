@@ -4,7 +4,7 @@ use crate::{
     statement::Statement,
 };
 
-use super::{ExprWithoutBlock, Expression};
+use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct ReturnExpr {
     kw_return: Keyword,
@@ -16,6 +16,10 @@ impl Expression for ReturnExpr {}
 impl<E> ExprWithoutBlock<E> for ReturnExpr {}
 
 impl Statement for ReturnExpr {}
+
+impl BooleanOperand for ReturnExpr {}
+
+impl IterableExpr for ReturnExpr {}
 
 impl Spanned for ReturnExpr {
     fn span(&self) -> Span {

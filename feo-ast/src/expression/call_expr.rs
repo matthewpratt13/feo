@@ -6,7 +6,7 @@ use crate::{
     type_utils::{Comma, Dot, Parenthesis},
 };
 
-use super::{ExprWithoutBlock, Expression};
+use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct FunctionCallExpr {
     function_operand: Box<dyn Expression>,
@@ -20,6 +20,10 @@ impl Expression for FunctionCallExpr {}
 impl<E> ExprWithoutBlock<E> for FunctionCallExpr {}
 
 impl Statement for FunctionCallExpr {}
+
+impl BooleanOperand for FunctionCallExpr {}
+
+impl IterableExpr for FunctionCallExpr {}
 
 impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
@@ -47,6 +51,10 @@ impl Expression for MethodCallExpr {}
 impl<E> ExprWithoutBlock<E> for MethodCallExpr {}
 
 impl Statement for MethodCallExpr {}
+
+impl BooleanOperand for MethodCallExpr {}
+
+impl IterableExpr for MethodCallExpr {}
 
 impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {

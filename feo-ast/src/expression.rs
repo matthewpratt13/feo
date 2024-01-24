@@ -62,6 +62,12 @@ where
 {
 }
 
+pub trait BooleanOperand
+where
+    Self: Expression + 'static,
+{
+}
+
 pub trait Castable
 where
     Self: 'static + Spanned,
@@ -89,5 +95,11 @@ where
 pub trait ExprWithoutBlock<E>
 where
     Self: Expression + Statement,
+{
+}
+
+pub trait IterableExpr
+where
+    Self: 'static + Expression,
 {
 }

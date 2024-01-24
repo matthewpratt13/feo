@@ -5,7 +5,7 @@ use crate::{
     type_utils::Dot,
 };
 
-use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct FieldAccessExpr {
     container_operand: Box<dyn AssignableExpr>,
@@ -19,7 +19,11 @@ impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
 
 impl Statement for FieldAccessExpr {}
 
+impl BooleanOperand for FieldAccessExpr {}
+
 impl Constant for FieldAccessExpr {}
+
+impl IterableExpr for FieldAccessExpr {}
 
 impl Spanned for FieldAccessExpr {
     fn span(&self) -> Span {

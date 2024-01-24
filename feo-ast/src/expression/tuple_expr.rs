@@ -7,7 +7,7 @@ use crate::{
     type_utils::{Comma, Dot, Parenthesis},
 };
 
-use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub enum TupleKind {
     Tuple(TupleType),
@@ -37,7 +37,11 @@ impl Statement for TupleExpr {}
 
 impl AssignableExpr for TupleExpr {}
 
+impl BooleanOperand for TupleExpr {}
+
 impl Constant for TupleExpr {}
+
+impl IterableExpr for TupleExpr {}
 
 impl Spanned for TupleExpr {
     fn span(&self) -> Span {
@@ -77,5 +81,7 @@ impl Spanned for TupleIndexExpr {
 impl Expression for TupleIndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleIndexExpr {}
+
+impl BooleanOperand for TupleIndexExpr {}
 
 impl Statement for TupleIndexExpr {}

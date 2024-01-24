@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    expression::{Constant, ExprWithoutBlock, Expression},
+    expression::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr},
     identifier::Identifier,
     item::Item,
     keyword::Keyword,
@@ -47,6 +47,10 @@ impl<E> ExprWithoutBlock<E> for SimplePath {}
 impl Statement for SimplePath {}
 
 impl Constant for SimplePath {}
+
+impl BooleanOperand for SimplePath {}
+
+impl IterableExpr for SimplePath {}
 
 impl Item for SimplePath {}
 

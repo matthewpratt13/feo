@@ -6,7 +6,7 @@ use crate::{
     type_utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression};
+use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
@@ -20,7 +20,11 @@ impl<E> ExprWithoutBlock<E> for ArrayExpr {}
 
 impl Statement for ArrayExpr {}
 
+impl BooleanOperand for ArrayExpr {}
+
 impl Constant for ArrayExpr {}
+
+impl IterableExpr for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
@@ -59,7 +63,11 @@ impl<E> ExprWithoutBlock<E> for IndexExpr {}
 
 impl Statement for IndexExpr {}
 
+impl BooleanOperand for IndexExpr {}
+
 impl Constant for IndexExpr {}
+
+impl IterableExpr for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {

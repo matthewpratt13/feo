@@ -5,17 +5,20 @@ use crate::{
     type_utils::{Brace, Comma, FatArrow},
 };
 
-use super::{AssignableExpr, BlockExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr};
+use super::{
+    AssignableExpr, BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, InnerAttr,
+    IterableExpr, OuterAttr,
+};
 
 pub trait ConditionalExpr<E>
 where
-    Self: Constant + ExprWithBlock<E>,
+    Self: Constant + ExprWithBlock<E> + BooleanOperand + IterableExpr,
 {
 }
 
 pub struct IfExpr<T> {
     kw_if: Keyword,
-    conditional_operand: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
+    conditional_operand: Box<dyn BooleanOperand>,
     block: BlockExpr<T>,
     else_if_block_opt: Option<(Keyword, Box<IfExpr<T>>)>,
     else_block_opt: Option<(Keyword, BlockExpr<T>)>,
@@ -27,7 +30,11 @@ impl<T> Expression for IfExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for IfExpr<T> {}
 
+impl<T> BooleanOperand for IfExpr<T> where T: 'static {}
+
 impl<T> Constant for IfExpr<T> where T: 'static {}
+
+impl<T> IterableExpr for IfExpr<T> where T: 'static {}
 
 impl<T> Spanned for IfExpr<T> {
     fn span(&self) -> Span {
@@ -66,7 +73,11 @@ impl Expression for MatchExpr {}
 
 impl<E> ExprWithBlock<E> for MatchExpr {}
 
+impl BooleanOperand for MatchExpr {}
+
 impl Constant for MatchExpr {}
+
+impl IterableExpr for MatchExpr {}
 
 impl Pattern for MatchExpr {}
 

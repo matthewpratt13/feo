@@ -6,11 +6,11 @@ use crate::{
     type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
-use super::{BlockExpr, ExprWithoutBlock, Expression, OuterAttr};
+use super::{BlockExpr, BooleanOperand, ExprWithoutBlock, Expression, IterableExpr, OuterAttr};
 
 pub trait ClosureExpr
 where
-    Self: Sized + Expression + Type,
+    Self: Sized + Expression + BooleanOperand + IterableExpr + Type,
 {
 }
 
@@ -49,6 +49,10 @@ impl<E> ExprWithoutBlock<E> for ClosureWithoutReturnType {}
 
 impl Statement for ClosureWithoutReturnType {}
 
+impl BooleanOperand for ClosureWithoutReturnType {}
+
+impl IterableExpr for ClosureWithoutReturnType {}
+
 impl TypeWithoutBounds for ClosureWithoutReturnType {}
 
 impl Type for ClosureWithoutReturnType {}
@@ -71,13 +75,17 @@ pub struct ClosureWithReturnType<T> {
     block: BlockExpr<T>,
 }
 
-impl<T> ClosureExpr for ClosureWithReturnType<T> {}
+impl<T> ClosureExpr for ClosureWithReturnType<T> where T: 'static {}
 
 impl<T> Expression for ClosureWithReturnType<T> {}
 
 impl<T, E> ExprWithoutBlock<E> for ClosureWithReturnType<T> {}
 
 impl<T> Statement for ClosureWithReturnType<T> {}
+
+impl<T> BooleanOperand for ClosureWithReturnType<T> where T: 'static {}
+
+impl<T> IterableExpr for ClosureWithReturnType<T> where T: 'static {}
 
 impl<T> TypeWithoutBounds for ClosureWithReturnType<T> {}
 

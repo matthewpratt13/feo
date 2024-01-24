@@ -4,7 +4,7 @@ use crate::{
     type_utils::Brace,
 };
 
-use super::{Constant, ExprWithBlock, ExprWithoutBlock, Expression};
+use super::{BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr};
 
 pub enum StatementKind<T> {
     Statement(Box<dyn Statement>),
@@ -32,7 +32,11 @@ impl<T> Expression for BlockExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for BlockExpr<T> {}
 
+impl<T> BooleanOperand for BlockExpr<T> where T: 'static {}
+
 impl<T> Constant for BlockExpr<T> where T: 'static {}
+
+impl<T> IterableExpr for BlockExpr<T> where T: 'static {}
 
 impl<T> Spanned for BlockExpr<T> {
     fn span(&self) -> Span {

@@ -8,11 +8,13 @@ use crate::{
     type_utils::{Bang, Equals, Minus, QuestionMark},
 };
 
-use super::{AssignableExpr, Castable, Constant, ExprWithoutBlock, Expression};
+use super::{
+    AssignableExpr, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+};
 
 pub trait OperatorExpr<E>
 where
-    Self: ExprWithoutBlock<E>,
+    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
 {
 }
 
@@ -109,7 +111,11 @@ impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
 
 impl Statement for ArithmeticOrLogicalExpr {}
 
+impl BooleanOperand for ArithmeticOrLogicalExpr {}
+
 impl Constant for ArithmeticOrLogicalExpr {}
+
+impl IterableExpr for ArithmeticOrLogicalExpr {}
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
@@ -137,7 +143,11 @@ impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
 
 impl Statement for AssignmentExpr {}
 
+impl BooleanOperand for AssignmentExpr {}
+
 impl Constant for AssignmentExpr {}
+
+impl IterableExpr for AssignmentExpr {}
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
@@ -165,7 +175,11 @@ impl<E> ExprWithoutBlock<E> for CompoundAssignmentExpr {}
 
 impl Statement for CompoundAssignmentExpr {}
 
+impl BooleanOperand for CompoundAssignmentExpr {}
+
 impl Constant for CompoundAssignmentExpr {}
+
+impl IterableExpr for CompoundAssignmentExpr {}
 
 impl Spanned for CompoundAssignmentExpr {
     fn span(&self) -> Span {
@@ -193,7 +207,11 @@ impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
 
 impl Statement for ComparisonExpr {}
 
+impl BooleanOperand for ComparisonExpr {}
+
 impl Constant for ComparisonExpr {}
+
+impl IterableExpr for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
@@ -220,7 +238,11 @@ impl<E> ExprWithoutBlock<E> for DerefExpr {}
 
 impl Statement for DerefExpr {}
 
+impl BooleanOperand for DerefExpr {}
+
 impl Constant for DerefExpr {}
+
+impl IterableExpr for DerefExpr {}
 
 impl Spanned for DerefExpr {
     fn span(&self) -> Span {
@@ -248,7 +270,11 @@ impl<E> ExprWithoutBlock<E> for LazyBoolExpr {}
 
 impl Statement for LazyBoolExpr {}
 
+impl BooleanOperand for LazyBoolExpr {}
+
 impl Constant for LazyBoolExpr {}
+
+impl IterableExpr for LazyBoolExpr {}
 
 impl Spanned for LazyBoolExpr {
     fn span(&self) -> Span {
@@ -275,7 +301,11 @@ impl<E> ExprWithoutBlock<E> for NegationExpr {}
 
 impl Statement for NegationExpr {}
 
+impl BooleanOperand for NegationExpr {}
+
 impl Constant for NegationExpr {}
+
+impl IterableExpr for NegationExpr {}
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
@@ -303,39 +333,15 @@ impl<E> ExprWithoutBlock<E> for RefExpr {}
 
 impl Statement for RefExpr {}
 
+impl BooleanOperand for RefExpr {}
+
+impl IterableExpr for RefExpr {}
+
 impl Spanned for RefExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_ref.span().start();
         let end_pos = self.operand.span().end();
         let source = self.kw_ref.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
-    }
-}
-
-pub struct UnwrapExpr<T: Spanned> {
-    operand: UnwrapOperationKind<T>,
-    question_mark: QuestionMark,
-}
-
-impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned {}
-
-impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
-
-impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
-
-impl<T> Statement for UnwrapExpr<T> where T: Spanned {}
-
-impl<T> Spanned for UnwrapExpr<T>
-where
-    T: Spanned,
-{
-    fn span(&self) -> Span {
-        let start_pos = self.operand.span().start();
-        let end_pos = self.question_mark.span().end();
-        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -357,13 +363,49 @@ impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
 
 impl Statement for TypeCastExpr {}
 
+impl BooleanOperand for TypeCastExpr {}
+
 impl Constant for TypeCastExpr {}
+
+impl IterableExpr for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
         let start_pos = self.lhs.span().start();
         let end_pos = self.rhs.span().end();
         let source = self.lhs.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
+pub struct UnwrapExpr<T: Spanned> {
+    operand: UnwrapOperationKind<T>,
+    question_mark: QuestionMark,
+}
+
+impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned + 'static {}
+
+impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
+
+impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
+
+impl<T> Statement for UnwrapExpr<T> where T: Spanned {}
+
+impl<T> BooleanOperand for UnwrapExpr<T> where T: 'static + Spanned {}
+
+impl<T> IterableExpr for UnwrapExpr<T> where T: 'static + Spanned {}
+
+impl<T> Spanned for UnwrapExpr<T>
+where
+    T: Spanned,
+{
+    fn span(&self) -> Span {
+        let start_pos = self.operand.span().start();
+        let end_pos = self.question_mark.span().end();
+        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 

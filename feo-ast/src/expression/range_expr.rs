@@ -4,17 +4,21 @@ use crate::{
     type_utils::{DblDot, DotDotEquals},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression};
+use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub trait RangeExpr<E>
 where
-    Self: Constant + ExprWithoutBlock<E>,
+    Self: Constant + ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
 {
 }
 
 pub type RangeFullExpr = DblDot;
 
 impl<E> RangeExpr<E> for RangeFullExpr {}
+
+impl BooleanOperand for RangeFullExpr {}
+
+impl IterableExpr for RangeFullExpr {}
 
 pub struct RangeFromToExpr {
     from_operand: Box<dyn Expression>,
@@ -30,7 +34,11 @@ impl<E> ExprWithoutBlock<E> for RangeFromToExpr {}
 
 impl Statement for RangeFromToExpr {}
 
+impl BooleanOperand for RangeFromToExpr {}
+
 impl Constant for RangeFromToExpr {}
+
+impl IterableExpr for RangeFromToExpr {}
 
 impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
@@ -57,7 +65,11 @@ impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
 
 impl Statement for RangeFromExpr {}
 
+impl BooleanOperand for RangeFromExpr {}
+
 impl Constant for RangeFromExpr {}
+
+impl IterableExpr for RangeFromExpr {}
 
 impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
@@ -84,7 +96,11 @@ impl<E> ExprWithoutBlock<E> for RangeToExpr {}
 
 impl Statement for RangeToExpr {}
 
+impl BooleanOperand for RangeToExpr {}
+
 impl Constant for RangeToExpr {}
+
+impl IterableExpr for RangeToExpr {}
 
 impl Spanned for RangeToExpr {
     fn span(&self) -> Span {
@@ -112,7 +128,11 @@ impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
 
 impl Statement for RangeInclusiveExpr {}
 
+impl BooleanOperand for RangeInclusiveExpr {}
+
 impl Constant for RangeInclusiveExpr {}
+
+impl IterableExpr for RangeInclusiveExpr {}
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
@@ -139,7 +159,11 @@ impl<E> ExprWithoutBlock<E> for RangeToInclusiveExpr {}
 
 impl Statement for RangeToInclusiveExpr {}
 
+impl BooleanOperand for RangeToInclusiveExpr {}
+
 impl Constant for RangeToInclusiveExpr {}
+
+impl IterableExpr for RangeToInclusiveExpr {}
 
 impl Spanned for RangeToInclusiveExpr {
     fn span(&self) -> Span {
