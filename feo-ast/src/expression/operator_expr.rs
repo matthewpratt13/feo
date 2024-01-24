@@ -5,11 +5,10 @@ use crate::{
     punctuation::Punctuation,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
     type_utils::{Bang, Equals, Minus, QuestionMark},
 };
 
-use super::{AssignableExpr, CastableExpr, Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, Castable, Constant, ExprWithoutBlock, Expression};
 
 pub trait OperatorExpr<E>
 where
@@ -341,9 +340,9 @@ where
 }
 
 pub struct TypeCastExpr {
-    operand: Box<dyn CastableExpr>,
+    operand: Box<dyn Castable>,
     kw_as: Keyword,
-    new_type: Box<dyn Type>, // cannot be a trait object
+    new_type: Box<dyn Castable>,
 }
 
 impl<E> OperatorExpr<E> for TypeCastExpr {}

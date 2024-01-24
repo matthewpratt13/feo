@@ -62,7 +62,7 @@ where
 {
 }
 
-pub trait CastableExpr
+pub trait Castable
 where
     Self: 'static + Spanned,
 {

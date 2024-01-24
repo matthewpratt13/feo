@@ -1,4 +1,4 @@
-use crate::expression::{CastableExpr, Constant, ExprWithoutBlock, Expression};
+use crate::expression::{Castable, Constant, ExprWithoutBlock, Expression};
 use crate::pattern::{Pattern, RangePattBound};
 use crate::statement::Statement;
 use crate::ty::Type;
@@ -54,27 +54,27 @@ impl<L, E> ExprWithoutBlock<E> for Literal<L> where L: 'static + Clone + Primiti
 
 impl<L> Expression for Literal<L> where L: 'static + Clone + Primitive {}
 
-impl CastableExpr for Literal<char> {}
+impl Castable for Literal<char> {}
 
-impl CastableExpr for Literal<u8> {}
+impl Castable for Literal<u8> {}
 
-impl CastableExpr for Literal<u16> {}
+impl Castable for Literal<u16> {}
 
-impl CastableExpr for Literal<u32> {}
+impl Castable for Literal<u32> {}
 
-impl CastableExpr for Literal<u64> {}
+impl Castable for Literal<u64> {}
 
-impl CastableExpr for Literal<U256> {}
+impl Castable for Literal<U256> {}
 
-impl CastableExpr for Literal<i32> {}
+impl Castable for Literal<i32> {}
 
-impl CastableExpr for Literal<i64> {}
+impl Castable for Literal<i64> {}
 
-impl CastableExpr for Literal<f32> {}
+impl Castable for Literal<f32> {}
 
-impl CastableExpr for Literal<f64> {}
+impl Castable for Literal<f64> {}
 
-impl CastableExpr for Literal<bool> {}
+impl Castable for Literal<bool> {}
 
 impl<L> Statement for Literal<L> where L: 'static + Clone + Primitive {}
 
