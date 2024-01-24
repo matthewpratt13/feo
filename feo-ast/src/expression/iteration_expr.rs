@@ -23,6 +23,8 @@ impl<T> Expression for InfiniteLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> {}
 
+impl<T> Constant for InfiniteLoopExpr<T> where T: 'static {}
+
 impl<T> Spanned for InfiniteLoopExpr<T> {
     fn span(&self) -> Span {
         let start_pos = self.kw_loop.span().start();
@@ -74,8 +76,6 @@ impl<T, E> IterationExpr<E> for IterLoopExpr<T> {}
 impl<T> Expression for IterLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for IterLoopExpr<T> {}
-
-impl<T> Constant for IterLoopExpr<T> where T: 'static {}
 
 impl<T> Pattern for IterLoopExpr<T> {}
 
