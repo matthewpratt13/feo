@@ -2,7 +2,7 @@ use crate::{
     pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
+    ty::{Type, TypeWithoutBounds},
     type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
@@ -38,7 +38,7 @@ impl Spanned for ClosureParamsOpt {
 
 pub struct ClosureWithoutReturnType {
     params: ClosureParamsOpt,
-    operand: Box<dyn Expression>,
+    body_operand: Box<dyn Expression>,
 }
 
 impl ClosureExpr for ClosureWithoutReturnType {}
@@ -49,12 +49,14 @@ impl<E> ExprWithoutBlock<E> for ClosureWithoutReturnType {}
 
 impl Statement for ClosureWithoutReturnType {}
 
+impl TypeWithoutBounds for ClosureWithoutReturnType {}
+
 impl Type for ClosureWithoutReturnType {}
 
 impl Spanned for ClosureWithoutReturnType {
     fn span(&self) -> Span {
         let start_pos = self.params.span().start();
-        let end_pos = self.operand.span().end();
+        let end_pos = self.body_operand.span().end();
         let source = self.params.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -65,8 +67,7 @@ impl Spanned for ClosureWithoutReturnType {
 
 pub struct ClosureWithReturnType<T> {
     params: ClosureParamsOpt,
-    thin_arrow: ThinArrow,
-    type_bounds: Box<dyn Type>, // cannot be trait object
+    return_type_opt: Option<(ThinArrow, Box<dyn TypeWithoutBounds>)>,
     block: BlockExpr<T>,
 }
 
@@ -77,6 +78,8 @@ impl<T> Expression for ClosureWithReturnType<T> {}
 impl<T, E> ExprWithoutBlock<E> for ClosureWithReturnType<T> {}
 
 impl<T> Statement for ClosureWithReturnType<T> {}
+
+impl<T> TypeWithoutBounds for ClosureWithReturnType<T> {}
 
 impl<T> Type for ClosureWithReturnType<T> {}
 

@@ -91,6 +91,10 @@ where
     }
 }
 
+pub type CastOperator = Keyword;
+pub type DerefOperator = Keyword;
+pub type RefOperator = Keyword;
+
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,
     operator: ArithmeticOrLogicalOperatorKind,
@@ -204,7 +208,7 @@ impl Spanned for ComparisonExpr {
 }
 
 pub struct DerefExpr {
-    kw_deref: Keyword,
+    kw_deref: DerefOperator,
     operand: Box<dyn AssignableExpr>,
 }
 
@@ -286,7 +290,7 @@ impl Spanned for NegationExpr {
 }
 
 pub struct RefExpr {
-    kw_ref: Keyword,
+    kw_ref: RefOperator,
     kw_mut_opt: Option<Keyword>,
     operand: Box<dyn AssignableExpr>,
 }
@@ -341,7 +345,7 @@ where
 
 pub struct TypeCastExpr {
     lhs: Box<dyn Castable>,
-    kw_as: Keyword,
+    kw_as: CastOperator,
     rhs: Box<dyn Castable>,
 }
 

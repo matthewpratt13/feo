@@ -5,7 +5,7 @@ use crate::{
     pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
+    ty::{Type, TypeWithoutBounds},
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
@@ -13,7 +13,7 @@ use super::{AssociatedItem, Item, VisibilityKind};
 
 pub trait FunctionItem
 where
-    Self: Item + Type,
+    Self: Item + TypeWithoutBounds,
 {
 }
 
@@ -41,6 +41,8 @@ impl Item for FunctionDefWithoutBody {}
 impl Statement for FunctionDefWithoutBody {}
 
 impl AssociatedItem for FunctionDefWithoutBody {}
+
+impl TypeWithoutBounds for FunctionDefWithoutBody {}
 
 impl Type for FunctionDefWithoutBody {}
 
@@ -80,6 +82,8 @@ impl<T> FunctionItem for FunctionDefWithBody<T> {}
 impl<T> Item for FunctionDefWithBody<T> {}
 
 impl<T> Statement for FunctionDefWithBody<T> {}
+
+impl<T> TypeWithoutBounds for FunctionDefWithBody<T> {}
 
 impl<T> Type for FunctionDefWithBody<T> {}
 

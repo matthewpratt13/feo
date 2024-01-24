@@ -9,7 +9,7 @@ use crate::{
 use super::{ExprWithoutBlock, Expression};
 
 pub struct FunctionCallExpr {
-    operand: Box<dyn Expression>,
+    function_operand: Box<dyn Expression>,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
@@ -23,9 +23,9 @@ impl Statement for FunctionCallExpr {}
 
 impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operand.span().start();
+        let start_pos = self.function_operand.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.operand.span().source();
+        let source = self.function_operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -34,7 +34,7 @@ impl Spanned for FunctionCallExpr {
 }
 
 pub struct MethodCallExpr {
-    operand: Box<dyn Expression>,
+    receiver: Box<dyn Expression>,
     dot: Dot,
     method_path: PathSegmentKind,
     open_parenthesis: Parenthesis,
@@ -50,9 +50,9 @@ impl Statement for MethodCallExpr {}
 
 impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operand.span().start();
+        let start_pos = self.receiver.span().start();
         let end_pos = self.close_parenthesis.span().end();
-        let source = self.operand.span().source();
+        let source = self.receiver.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 

@@ -20,7 +20,10 @@ pub mod type_annotation;
 
 mod type_utils {
     use crate::delimiter::Delimiter;
+    use crate::expression::AssignableExpr;
+    use crate::pattern::Pattern;
     use crate::punctuation::Punctuation;
+    use crate::ty::{Type, TypeWithoutBounds};
 
     pub type Asterisk = Punctuation;
     pub type Bang = Punctuation;
@@ -41,6 +44,12 @@ mod type_utils {
     pub type QuestionMark = Punctuation;
     pub type Semicolon = Punctuation;
     pub type ThinArrow = Punctuation;
+
+    pub type Underscore = Punctuation;
+    impl AssignableExpr for Underscore {}
+    impl Pattern for Underscore {}
+    impl TypeWithoutBounds for Underscore {}
+    impl Type for Underscore {}
 
     pub type Brace = Delimiter;
     pub type Bracket = Delimiter;

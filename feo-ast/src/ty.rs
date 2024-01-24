@@ -2,11 +2,25 @@
 
 use crate::span::Spanned;
 
+pub use self::array_type::ArrayType;
 pub use self::trait_object_type::{TraitBound, TraitObjectType};
+pub use self::tuple_type::TupleType;
 
 pub trait Type
 where
     Self: Spanned,
+{
+}
+
+pub trait TypeWithBounds
+where
+    Self: Type,
+{
+}
+
+pub trait TypeWithoutBounds
+where
+    Self: Type,
 {
 }
 
@@ -25,7 +39,7 @@ mod array_type {
         type_utils::{Bracket, Semicolon},
     };
 
-    use super::Type;
+    use super::{Type, TypeWithoutBounds};
 
     pub struct ArrayType {
         open_bracket: Bracket,
@@ -34,6 +48,8 @@ mod array_type {
         num_elements: Box<dyn Expression>,
         close_bracket: Bracket,
     }
+
+    impl TypeWithoutBounds for ArrayType {}
 
     impl Type for ArrayType {}
 
@@ -58,12 +74,14 @@ mod trait_object_type {
         type_utils::{Plus, QuestionMark},
     };
 
-    use super::Type;
+    use super::{Type, TypeWithBounds};
 
     pub struct TraitObjectType {
         kw_dyn: Keyword,
         trait_bounds: TraitBounds,
     }
+
+    impl TypeWithBounds for TraitObjectType {}
 
     impl Type for TraitObjectType {}
 
@@ -131,7 +149,7 @@ mod tuple_type {
         type_utils::{Comma, Parenthesis},
     };
 
-    use super::Type;
+    use super::{Type, TypeWithoutBounds};
 
     pub struct TupleType {
         open_parenthesis: Parenthesis,
@@ -139,6 +157,8 @@ mod tuple_type {
         trailing_element: Box<dyn Type>,
         close_parenthesis: Parenthesis,
     }
+
+    impl TypeWithoutBounds for TupleType {}
 
     impl Type for TupleType {}
 

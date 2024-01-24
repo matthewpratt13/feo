@@ -12,6 +12,10 @@ where
 {
 }
 
+pub type RangeFullExpr = DblDot;
+
+impl<E> RangeExpr<E> for RangeFullExpr {}
+
 pub struct RangeFromToExpr {
     from_operand: Box<dyn Expression>,
     dbl_dot: DblDot,

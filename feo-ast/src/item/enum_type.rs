@@ -5,7 +5,7 @@ use crate::{
     pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
+    ty::{Type, TypeWithoutBounds},
     type_utils::{Brace, Comma, Parenthesis},
 };
 
@@ -29,6 +29,8 @@ pub struct EnumType {
 impl Item for EnumType {}
 
 impl Statement for EnumType {}
+
+impl TypeWithoutBounds for EnumType {}
 
 impl Type for EnumType {}
 

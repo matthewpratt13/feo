@@ -8,7 +8,6 @@ use feo_error::{
 
 use crate::{
     expression::{ExprWithoutBlock, Expression, OperatorExpr},
-    item::Item,
     span::{Span, Spanned},
     statement::Statement,
     token::{Token, Tokenize},
@@ -53,7 +52,7 @@ pub enum KeywordKind {
     KwStatic,
     KwStorage,
     KwStruct,
-    KwSuper, // only relevant in path expressions
+    KwSuper,
     KwTrait,
     KwType,
     KwUnsafe,
@@ -218,5 +217,3 @@ impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`, `as`
 impl<E> ExprWithoutBlock<E> for Keyword {}
 
 impl Statement for Keyword {}
-
-impl Item for Keyword {}

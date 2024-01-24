@@ -12,6 +12,12 @@ where
 {
 }
 
+#[allow(dead_code)]
+pub type BreakExpr = Keyword;
+
+#[allow(dead_code)]
+pub type ContinueExpr = Keyword;
+
 pub struct InfiniteLoopExpr<T> {
     kw_loop: Keyword,
     block: BlockExpr<T>,
@@ -39,7 +45,7 @@ impl<T> Spanned for InfiniteLoopExpr<T> {
 
 pub struct PredicateLoopExpr<T> {
     kw_while: Keyword,
-    predicate: Box<dyn Expression>, // cannot be a struct expression
+    conditional_operand: Box<dyn Expression>, // cannot be a struct expression
     block: BlockExpr<T>,
 }
 
@@ -67,7 +73,7 @@ pub struct IterLoopExpr<T> {
     kw_for: Keyword,
     pattern: Box<dyn Pattern>,
     kw_in: Keyword,
-    operand: Box<dyn Expression>, // cannot be a struct expression
+    iterator: Box<dyn Expression>, // cannot be a struct expression
     block: BlockExpr<T>,
 }
 

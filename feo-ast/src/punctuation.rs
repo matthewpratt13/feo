@@ -7,12 +7,10 @@ use feo_error::{
 };
 
 use crate::{
-    expression::{AssignableExpr, Constant, ExprWithoutBlock, Expression, OperatorExpr, RangeExpr},
-    pattern::{Pattern, RangePattBound},
+    expression::{Constant, ExprWithoutBlock, Expression, OperatorExpr},
     span::{Span, Spanned},
     statement::Statement,
     token::{Token, Tokenize},
-    ty::Type,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -222,19 +220,9 @@ impl Expression for Punctuation {}
 
 impl<E> ExprWithoutBlock<E> for Punctuation {}
 
-impl<E> OperatorExpr<E> for Punctuation {} // `-` (negate int)  and `!` (logical NOT)
-
-impl<E> RangeExpr<E> for Punctuation {}
+impl<E> OperatorExpr<E> for Punctuation {}
 
 impl Statement for Punctuation {}
-
-impl AssignableExpr for Punctuation {}
-
-impl Pattern for Punctuation {}
-
-impl RangePattBound for Punctuation {}
-
-impl Type for Punctuation {}
 
 impl Constant for Punctuation {}
 

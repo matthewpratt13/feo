@@ -15,10 +15,8 @@ where
 
 pub struct IfExpr<T> {
     kw_if: Keyword,
-    operand: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
+    conditional_operand: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
     block: BlockExpr<T>,
-
-    // TODO: should these rather be enum variants?
     else_if_block_opt: Option<(Keyword, Box<IfExpr<T>>)>,
     else_block_opt: Option<(Keyword, BlockExpr<T>)>,
 }

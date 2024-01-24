@@ -7,7 +7,7 @@ use crate::{
     keyword::Keyword,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
+    ty::{Type, TypeWithoutBounds},
     type_utils::DblColon,
 };
 
@@ -49,6 +49,8 @@ impl Statement for SimplePath {}
 impl Constant for SimplePath {}
 
 impl Item for SimplePath {}
+
+impl TypeWithoutBounds for SimplePath {}
 
 impl Type for SimplePath {}
 

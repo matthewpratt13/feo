@@ -4,7 +4,7 @@ use crate::{
     keyword::Keyword,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
+    ty::{Type, TypeWithoutBounds},
     type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
 
@@ -12,9 +12,11 @@ use super::{Item, VisibilityKind, WhereClause};
 
 pub trait StructItem
 where
-    Self: Sized + 'static + Item + Type,
+    Self: Sized + 'static + Item + TypeWithoutBounds,
 {
 }
+
+pub type StructFieldName = Identifier;
 
 pub struct StructType {
     attributes: Vec<OuterAttr>,
@@ -32,6 +34,8 @@ impl StructItem for StructType {}
 impl Item for StructType {}
 
 impl Statement for StructType {}
+
+impl TypeWithoutBounds for StructType {}
 
 impl Type for StructType {}
 
@@ -63,7 +67,7 @@ pub struct StructFields {
 pub struct StructField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    field_name: Identifier,
+    field_name: StructFieldName,
     colon: Colon,
     field_type: Box<dyn Type>,
 }
@@ -85,6 +89,8 @@ impl StructItem for TupleStructType {}
 impl Item for TupleStructType {}
 
 impl Statement for TupleStructType {}
+
+impl TypeWithoutBounds for TupleStructType {}
 
 impl Type for TupleStructType {}
 
@@ -135,6 +141,8 @@ impl Item for UnitStructType {}
 impl Statement for UnitStructType {}
 
 impl Constant for UnitStructType {}
+
+impl TypeWithoutBounds for UnitStructType {}
 
 impl Type for UnitStructType {}
 

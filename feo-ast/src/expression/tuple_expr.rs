@@ -1,11 +1,27 @@
 use crate::{
+    item::TupleStructType,
     literal::Literal,
     span::{Span, Spanned},
     statement::Statement,
+    ty::TupleType,
     type_utils::{Comma, Dot, Parenthesis},
 };
 
 use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
+
+pub enum TupleKind {
+    Tuple(TupleType),
+    TupleStruct(TupleStructType),
+}
+
+impl Spanned for TupleKind {
+    fn span(&self) -> Span {
+        match self {
+            TupleKind::Tuple(t) => t.span(),
+            TupleKind::TupleStruct(ts) => ts.span(),
+        }
+    }
+}
 
 pub struct TupleExpr {
     open_parenthesis: Parenthesis,
@@ -36,17 +52,17 @@ impl Spanned for TupleExpr {
 }
 
 pub struct TupleElements {
-    elements: Vec<(Box<dyn Expression>, Comma)>,
-    trailing_element_opt: Option<Box<dyn Expression>>,
+    initializer_operands: Vec<(Box<dyn Expression>, Comma)>,
+    trailing_operand_opt: Option<Box<dyn Expression>>,
 }
 
-pub struct TupleIndexingExpr {
-    operand: Box<dyn Expression>,
+pub struct TupleIndexExpr {
+    operand: TupleKind,
     dot: Dot,
     index: Literal<u64>,
 }
 
-impl Spanned for TupleIndexingExpr {
+impl Spanned for TupleIndexExpr {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
         let end_pos = self.dot.span().end() + format!("{:?}", self.index).len();
@@ -58,8 +74,8 @@ impl Spanned for TupleIndexingExpr {
     }
 }
 
-impl Expression for TupleIndexingExpr {}
+impl Expression for TupleIndexExpr {}
 
-impl<E> ExprWithoutBlock<E> for TupleIndexingExpr {}
+impl<E> ExprWithoutBlock<E> for TupleIndexExpr {}
 
-impl Statement for TupleIndexingExpr {}
+impl Statement for TupleIndexExpr {}

@@ -2,10 +2,11 @@ use crate::{
     literal::Literal,
     span::{Span, Spanned},
     statement::Statement,
+    ty::ArrayType,
     type_utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
+use super::{Constant, ExprWithoutBlock, Expression};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
@@ -46,7 +47,7 @@ pub struct ArrayWithSingleRepeatedValue {
 }
 
 pub struct IndexExpr {
-    operand: Box<dyn AssignableExpr>,
+    operand: ArrayType,
     open_bracket: Bracket,
     index: Literal<u64>,
     close_bracket: Bracket,
