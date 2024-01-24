@@ -85,7 +85,7 @@ where
 {
 }
 
-pub trait ReferenceExpr
+pub trait PlaceExpr
 where
     Self: Expression,
 {
