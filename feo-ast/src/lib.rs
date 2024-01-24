@@ -22,6 +22,7 @@ mod type_utils {
     use crate::delimiter::Delimiter;
     use crate::punctuation::Punctuation;
 
+    pub type ArithmeticPuncEquals = Punctuation;
     pub type Asterisk = Punctuation;
     pub type BangOrMinus = Punctuation;
     pub type Colon = Punctuation;

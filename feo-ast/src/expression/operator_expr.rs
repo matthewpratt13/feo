@@ -3,10 +3,13 @@ use crate::{
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::{BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison, QuestionMark},
+    type_utils::{
+        ArithmeticPuncEquals, BangOrMinus, Equals, OpArithmeticOrLogical, OpBool, OpComparison,
+        QuestionMark,
+    },
 };
 
-use super::{Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
 
 pub trait OperatorExpr<E>
 where
@@ -63,6 +66,34 @@ impl Spanned for AssignmentExpr {
         let start_pos = self.initial_value.span().start();
         let end_pos = self.new_value.span().end();
         let source = self.initial_value.span().source();
+
+        let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        span
+    }
+}
+
+pub struct CompoundAssignmentExpr {
+    operand: Box<dyn AssignableExpr>,
+    arithmetic_punc_equals: ArithmeticPuncEquals,
+    new_value: Box<dyn Expression>,
+}
+
+impl<E> OperatorExpr<E> for CompoundAssignmentExpr {}
+
+impl Expression for CompoundAssignmentExpr {}
+
+impl<E> ExprWithoutBlock<E> for CompoundAssignmentExpr {}
+
+impl Statement for CompoundAssignmentExpr {}
+
+impl Constant for CompoundAssignmentExpr {}
+
+impl Spanned for CompoundAssignmentExpr {
+    fn span(&self) -> Span {
+        let start_pos = self.operand.span().start();
+        let end_pos = self.new_value.span().end();
+        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -128,7 +159,7 @@ impl Spanned for ComparisonExpr {
 
 pub struct DerefExpr {
     kw_deref: Keyword,
-    expression: Box<dyn Expression>,
+    operand: Box<dyn AssignableExpr>,
 }
 
 impl<E> OperatorExpr<E> for DerefExpr {}
@@ -144,7 +175,7 @@ impl Constant for DerefExpr {}
 impl Spanned for DerefExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_deref.span().start();
-        let end_pos = self.expression.span().end();
+        let end_pos = self.operand.span().end();
         let source = self.kw_deref.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -183,7 +214,7 @@ impl Spanned for NegationExpr {
 pub struct RefExpr {
     kw_ref: Keyword,
     kw_mut_opt: Option<Keyword>,
-    expression: Box<dyn Expression>,
+    operand: Box<dyn AssignableExpr>,
 }
 
 impl<E> OperatorExpr<E> for RefExpr {}
@@ -197,7 +228,7 @@ impl Statement for RefExpr {}
 impl Spanned for RefExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_ref.span().start();
-        let end_pos = self.expression.span().end();
+        let end_pos = self.operand.span().end();
         let source = self.kw_ref.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);

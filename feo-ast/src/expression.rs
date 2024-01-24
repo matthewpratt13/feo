@@ -84,15 +84,3 @@ where
     Self: Expression,
 {
 }
-
-pub trait PlaceExpr
-where
-    Self: Expression,
-{
-}
-
-pub trait ValueExpr
-where
-    Self: Expression,
-{
-}

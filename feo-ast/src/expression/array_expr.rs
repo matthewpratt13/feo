@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
@@ -46,7 +46,7 @@ pub struct ArrayDef {
 }
 
 pub struct IndexExpr {
-    object: Box<dyn Expression>,
+    operand: Box<dyn AssignableExpr>,
     open_bracket: Bracket,
     index: Literal<u64>,
     close_bracket: Bracket,
@@ -62,9 +62,9 @@ impl Constant for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {
-        let start_pos = self.object.span().start();
+        let start_pos = self.operand.span().start();
         let end_pos = self.close_bracket.span().end();
-        let source = self.object.span().source();
+        let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 

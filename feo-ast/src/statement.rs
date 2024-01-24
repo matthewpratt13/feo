@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    expression::{Constant, ExprWithoutBlock, Expression, OuterAttr},
+    expression::{AssignableExpr, Constant, ExprWithoutBlock, OuterAttr},
     keyword::Keyword,
     pattern::Pattern,
     span::{Span, Spanned},
@@ -54,7 +54,7 @@ pub struct LetStatement {
     kw_let: Keyword,
     pattern: Box<dyn Pattern>,
     type_ann_opt: Option<(Colon, Box<dyn Type>)>,
-    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
+    assignment_opt: Option<(Equals, Box<dyn AssignableExpr>)>,
     semicolon: Semicolon,
 }
 

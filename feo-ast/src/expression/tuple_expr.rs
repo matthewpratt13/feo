@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Comma, Dot, Parenthesis},
 };
 
-use super::{Constant, ExprWithoutBlock, Expression};
+use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression};
 
 pub struct TupleExpr {
     open_parenthesis: Parenthesis,
@@ -18,6 +18,8 @@ impl Expression for TupleExpr {}
 impl<E> ExprWithoutBlock<E> for TupleExpr {}
 
 impl Statement for TupleExpr {}
+
+impl AssignableExpr for TupleExpr {}
 
 impl Constant for TupleExpr {}
 

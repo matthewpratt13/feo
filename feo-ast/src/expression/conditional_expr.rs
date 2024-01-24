@@ -5,7 +5,7 @@ use crate::{
     type_utils::{Brace, Comma, FatArrow},
 };
 
-use super::{BlockExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr};
+use super::{AssignableExpr, BlockExpr, Constant, ExprWithBlock, Expression, InnerAttr, OuterAttr};
 
 pub trait ConditionalExpr<E>
 where
@@ -55,7 +55,7 @@ impl<T> Spanned for IfExpr<T> {
 
 pub struct MatchExpr {
     kw_match: Keyword,
-    scrutinee: Box<dyn Expression>, // cannot be a struct expression (unless in parentheses)
+    scrutinee: Box<dyn AssignableExpr>,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
     match_arms_opt: Option<MatchArms>,
