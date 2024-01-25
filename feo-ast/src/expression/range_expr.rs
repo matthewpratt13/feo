@@ -8,7 +8,7 @@ use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr
 
 pub trait RangeExpr<E>
 where
-    Self: Constant + ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
+    Self: ExprWithoutBlock<E> + IterableExpr + BooleanOperand + Constant,
 {
 }
 

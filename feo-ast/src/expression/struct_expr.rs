@@ -11,7 +11,7 @@ use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression, OuterAttr};
 
 pub trait StructExpr<E>
 where
-    Self: Constant + ExprWithoutBlock<E>,
+    Self: ExprWithoutBlock<E> + Constant,
 {
 }
 

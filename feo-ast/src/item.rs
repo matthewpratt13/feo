@@ -12,6 +12,7 @@ mod trait_def;
 mod type_alias_def;
 mod visibility;
 
+use crate::span::Spanned;
 use crate::statement::Statement;
 
 pub use self::extern_crate_decl::AsClause;
@@ -36,7 +37,7 @@ pub use self::where_clause::{TypeParamBounds, WhereClause};
 
 pub trait Item
 where
-    Self: Statement,
+    Self: Statement + Spanned,
 {
 }
 

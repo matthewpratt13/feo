@@ -14,7 +14,7 @@ use super::{
 
 pub trait OperatorExpr<E>
 where
-    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
+    Self: ExprWithoutBlock<E> + IterableExpr + BooleanOperand,
 {
 }
 

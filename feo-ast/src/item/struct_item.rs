@@ -12,7 +12,7 @@ use super::{Item, VisibilityKind, WhereClause};
 
 pub trait StructItem
 where
-    Self: Sized + 'static + Item,
+    Self: Item + Sized + 'static,
 {
 }
 

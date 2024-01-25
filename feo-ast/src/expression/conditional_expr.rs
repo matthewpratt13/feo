@@ -12,7 +12,7 @@ use super::{
 
 pub trait ConditionalExpr<E>
 where
-    Self: Constant + ExprWithBlock<E> + BooleanOperand + IterableExpr,
+    Self: ExprWithBlock<E> + IterableExpr + BooleanOperand + Constant,
 {
 }
 

@@ -64,7 +64,7 @@ where
 
 pub trait BooleanOperand
 where
-    Self: 'static + Expression,
+    Self: Expression + 'static,
 {
 }
 
@@ -100,6 +100,6 @@ where
 
 pub trait IterableExpr
 where
-    Self: 'static + Expression,
+    Self: Expression + 'static,
 {
 }

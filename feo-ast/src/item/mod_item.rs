@@ -11,7 +11,7 @@ use super::{Item, VisibilityKind};
 
 pub trait ModItem
 where
-    Self: Sized + Item,
+    Self: Item + Sized,
 {
 }
 

@@ -7,7 +7,7 @@ use super::Pattern;
 
 pub trait RangePatt
 where
-    Self: Sized + 'static + Pattern,
+    Self: Pattern + Sized + 'static,
 {
 }
 
