@@ -46,20 +46,32 @@ impl Type for FunctionDefWithoutBody {}
 
 impl Spanned for FunctionDefWithoutBody {
     fn span(&self) -> Span {
-        let start_pos = match self.attributes.first() {
-            Some(a) => a.span().start(),
+        let s1 = match self.attributes.first() {
+            Some(a) => a.span(),
             None => match &self.visibility_opt {
-                Some(v) => v.span().start(),
-                None => self.kw_func.span().start(),
+                Some(v) => v.span(),
+                None => self.kw_func.span(),
             },
         };
 
-        let end_pos = self.semicolon.span().end();
-        let source = self.kw_func.span().source();
+        let s2 = self.semicolon.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = match self.attributes.first() {
+        //     Some(a) => a.span().start(),
+        //     None => match &self.visibility_opt {
+        //         Some(v) => v.span().start(),
+        //         None => self.kw_func.span().start(),
+        //     },
+        // };
+
+        // let end_pos = self.semicolon.span().end();
+        // let source = self.kw_func.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 

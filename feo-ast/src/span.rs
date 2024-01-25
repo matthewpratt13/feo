@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{cmp, sync::Arc};
 
 pub trait Spanned {
     fn span(&self) -> Span;
@@ -47,6 +47,14 @@ impl Span {
 
     pub fn end(&self) -> usize {
         self.end
+    }
+
+    pub fn join(s1: Span, s2: Span) -> Span {
+        Span {
+            src: s1.src,
+            start: cmp::min(s1.start, s2.start),
+            end: cmp::max(s1.end, s2.end),
+        }
     }
 
     pub fn as_str(&self) -> &str {
