@@ -20,7 +20,7 @@ pub mod type_annotation;
 
 mod type_utils {
     use crate::delimiter::Delimiter;
-    use crate::expression::AssignableExpr;
+    use crate::expression::Assignable;
     use crate::pattern::{Pattern, PatternWithoutRange};
     use crate::punctuation::Punctuation;
     use crate::ty::Type;
@@ -46,7 +46,7 @@ mod type_utils {
     pub type ThinArrow = Punctuation;
 
     pub type Underscore = Punctuation;
-    impl AssignableExpr for Underscore {}
+    impl Assignable for Underscore {}
     impl Pattern for Underscore {}
     impl PatternWithoutRange for Underscore {}
     impl Type for Underscore {}

@@ -56,9 +56,9 @@ pub use self::struct_expr::StructExpr;
 // - struct / tuple struct / unit struct
 // - tuple
 
-pub trait AssignableExpr
+pub trait Assignable
 where
-    Self: Expression,
+    Self: Spanned,
 {
 }
 

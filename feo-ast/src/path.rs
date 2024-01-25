@@ -2,7 +2,7 @@
 
 use crate::{
     expression::{
-        AssignableExpr, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr,
+        Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr,
     },
     identifier::Identifier,
     item::Item,
@@ -57,7 +57,7 @@ impl Spanned for PathIdenSegmentKind {
 }
 
 pub type PathExprSegment = PathIdenSegmentKind;
-pub type TypePathSegment = PathIdenSegmentKind;
+pub type PathTypeSegment = PathIdenSegmentKind;
 
 pub type PathExpr = PathInExpr;
 
@@ -67,7 +67,7 @@ impl<E> ExprWithoutBlock<E> for PathExpr {}
 
 impl Statement for PathExpr {}
 
-impl AssignableExpr for PathExpr {}
+impl Assignable for PathExpr {}
 
 impl BooleanOperand for PathExpr {}
 
@@ -142,15 +142,15 @@ pub struct PathInExpr {
     subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
-pub struct TypePath {
+pub struct PathType {
     dbl_colon_opt: Option<DblColon>,
-    first_segment: TypePathSegment,
+    first_segment: PathTypeSegment,
     subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
-impl Type for TypePath {}
+impl Type for PathType {}
 
-impl Spanned for TypePath {
+impl Spanned for PathType {
     fn span(&self) -> Span {
         let start_pos = if let Some(d) = &self.dbl_colon_opt {
             d.span().start()

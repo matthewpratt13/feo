@@ -6,7 +6,7 @@ use crate::{
 };
 
 use super::{
-    AssignableExpr, BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, InnerAttr,
+    Assignable, BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, InnerAttr,
     IterableExpr, OuterAttr,
 };
 
@@ -72,7 +72,7 @@ impl<T> Spanned for IfExpr<T> {
 
 pub struct MatchExpr {
     kw_match: Keyword,
-    scrutinee: Box<dyn AssignableExpr>,
+    scrutinee: Box<dyn Assignable>,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
     match_arms_opt: Option<MatchArms>,

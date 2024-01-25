@@ -74,7 +74,7 @@ pub struct TupleStruct {
     kw_struct: Keyword,
     struct_name: Identifier,
     open_parenthesis: Parenthesis,
-    tuple_fields_opt: Option<TupleFields>,
+    tuple_elements_opt: Option<TupleElements>,
     close_parenthesis: Parenthesis,
     where_clause_opt: Option<WhereClause>,
     semicolon: Semicolon,
@@ -105,7 +105,7 @@ impl Spanned for TupleStruct {
     }
 }
 
-pub struct TupleFields {
+pub struct TupleElements {
     first_field: TupleField,
     subsequent_fields: Vec<(Comma, TupleField)>,
     trailing_comma_opt: Option<Comma>,

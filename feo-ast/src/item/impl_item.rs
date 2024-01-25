@@ -1,14 +1,14 @@
 use crate::{
     expression::{InnerAttr, OuterAttr},
     keyword::Keyword,
-    path::TypePath,
+    path::PathType,
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
     type_utils::Brace,
 };
 
-use super::{AssociatedItem, Item, WhereClause};
+use super::{AssociatedImplItem, AssociatedTraitItem, Item, WhereClause};
 
 pub trait ImplItem
 where
@@ -23,7 +23,7 @@ pub struct InherentImpl {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem>>, // excludes type alias
+    associated_items: Vec<Box<dyn AssociatedImplItem>>, // excludes type alias
     close_brace: Brace,
 }
 
@@ -53,13 +53,13 @@ impl Spanned for InherentImpl {
 pub struct TraitImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: Keyword,
-    implemented_trait_path: TypePath,
+    implemented_trait_path: PathType,
     kw_for: Keyword,
     implementing_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem>>, // cannot contain `TypeAliasDef`
+    associated_items: Vec<Box<dyn AssociatedTraitItem>>,
     close_brace: Brace,
 }
 

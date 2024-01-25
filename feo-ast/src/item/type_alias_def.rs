@@ -8,7 +8,7 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind};
+use super::{AssociatedImplItem, AssociatedTraitItem, Item, TypeParamBounds, VisibilityKind};
 
 pub struct TypeAliasDef {
     attributes: Vec<OuterAttr>,
@@ -24,7 +24,9 @@ impl Item for TypeAliasDef {}
 
 impl Statement for TypeAliasDef {}
 
-impl AssociatedItem for TypeAliasDef {}
+impl AssociatedImplItem for TypeAliasDef {}
+
+impl AssociatedTraitItem for TypeAliasDef {}
 
 impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {

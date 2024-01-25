@@ -9,7 +9,7 @@ use crate::{
     type_utils::{Colon, Equals, Semicolon},
 };
 
-use super::{AssociatedItem, Item, VisibilityKind};
+use super::{AssociatedImplItem, AssociatedTraitItem, Item, VisibilityKind};
 
 pub struct ConstantItem {
     attributes: Vec<OuterAttr>,
@@ -26,7 +26,9 @@ impl Item for ConstantItem {}
 
 impl Statement for ConstantItem {}
 
-impl AssociatedItem for ConstantItem {}
+impl AssociatedImplItem for ConstantItem {}
+
+impl AssociatedTraitItem for ConstantItem {}
 
 impl Pattern for ConstantItem {}
 

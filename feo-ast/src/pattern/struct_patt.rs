@@ -38,7 +38,7 @@ pub struct StructPattFields {
 
 pub struct StructPattField {
     attributes: Vec<OuterAttr>,
-    struct_pattern_kind: Identifier,
+    field_name: Identifier,
     colon: Colon,
     data: Box<dyn Pattern>,
 }

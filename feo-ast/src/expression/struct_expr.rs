@@ -7,7 +7,7 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::{AssignableExpr, Constant, ExprWithoutBlock, Expression, OuterAttr};
+use super::{Assignable, Constant, ExprWithoutBlock, Expression, OuterAttr};
 
 pub trait StructExpr<E>
 where
@@ -30,7 +30,7 @@ impl<E> ExprWithoutBlock<E> for Struct {}
 
 impl Statement for Struct {}
 
-impl AssignableExpr for Struct {}
+impl Assignable for Struct {}
 
 impl Constant for Struct {}
 
@@ -77,7 +77,7 @@ impl<E> ExprWithoutBlock<E> for TupleStruct {}
 
 impl Statement for TupleStruct {}
 
-impl AssignableExpr for TupleStruct {}
+impl Assignable for TupleStruct {}
 
 impl Constant for TupleStruct {}
 
@@ -105,7 +105,7 @@ impl<E> ExprWithoutBlock<E> for UnitStruct {}
 
 impl Statement for UnitStruct {}
 
-impl AssignableExpr for UnitStruct {}
+impl Assignable for UnitStruct {}
 
 impl Constant for UnitStruct {}
 

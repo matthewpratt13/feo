@@ -7,7 +7,7 @@ use crate::{
     type_utils::{Comma, Dot, Parenthesis},
 };
 
-use super::{AssignableExpr, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub enum TupleKind {
     Tuple(TupleType),
@@ -35,7 +35,7 @@ impl<E> ExprWithoutBlock<E> for TupleExpr {}
 
 impl Statement for TupleExpr {}
 
-impl AssignableExpr for TupleExpr {}
+impl Assignable for TupleExpr {}
 
 impl BooleanOperand for TupleExpr {}
 

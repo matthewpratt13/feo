@@ -1,9 +1,8 @@
 use feo_error::handler::{ErrorEmitted, Handler};
 
 use crate::{
-    item::Item,
+    expression::Assignable,
     span::{Span, Spanned},
-    statement::Statement,
     token::{Token, Tokenize},
 };
 
@@ -43,9 +42,7 @@ impl Spanned for Identifier {
     }
 }
 
-impl Item for Identifier {}
-
-impl Statement for Identifier {}
+impl Assignable for Identifier {}
 
 pub fn is_keyword(iden: &str) -> bool {
     [

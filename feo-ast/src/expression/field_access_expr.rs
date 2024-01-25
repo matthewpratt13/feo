@@ -5,10 +5,10 @@ use crate::{
     type_utils::Dot,
 };
 
-use super::{AssignableExpr, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct FieldAccessExpr {
-    container_operand: Box<dyn AssignableExpr>,
+    container_operand: Box<dyn Assignable>,
     dot: Dot,
     field_name: StructFieldName,
 }

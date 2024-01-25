@@ -7,7 +7,7 @@ use crate::{
     type_utils::{Brace, Colon},
 };
 
-use super::{AssociatedItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
+use super::{AssociatedTraitItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
 
 pub struct TraitDef {
     outer_attributes: Vec<OuterAttr>,
@@ -18,7 +18,7 @@ pub struct TraitDef {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedItem>>,
+    associated_items: Vec<Box<dyn AssociatedTraitItem>>,
     close_brace: Brace,
 }
 

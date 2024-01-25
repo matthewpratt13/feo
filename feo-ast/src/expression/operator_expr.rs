@@ -11,7 +11,7 @@ use crate::{
 };
 
 use super::{
-    AssignableExpr, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+    Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
 };
 
 pub trait OperatorExpr<E>
@@ -164,7 +164,7 @@ impl Spanned for AssignmentExpr {
 }
 
 pub struct CompoundAssignmentExpr {
-    assignee: Box<dyn AssignableExpr>,
+    assignee: Box<dyn Assignable>,
     operator: CompoundAssignmentOperatorKind,
     new_value: Box<dyn Expression>,
 }
@@ -229,7 +229,7 @@ impl Spanned for ComparisonExpr {
 
 pub struct DerefExpr {
     kw_deref: DerefOperator,
-    operand: Box<dyn AssignableExpr>,
+    operand: Box<dyn Assignable>,
 }
 
 impl<E> OperatorExpr<E> for DerefExpr {}
@@ -324,7 +324,7 @@ impl Spanned for NegationExpr {
 pub struct RefExpr {
     kw_ref: RefOperator,
     kw_mut_opt: Option<Keyword>,
-    operand: Box<dyn AssignableExpr>,
+    operand: Box<dyn Assignable>,
 }
 
 impl<E> OperatorExpr<E> for RefExpr {}

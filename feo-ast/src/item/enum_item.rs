@@ -9,7 +9,7 @@ use crate::{
     type_utils::{Brace, Comma, Parenthesis},
 };
 
-use super::{Item, StructFields, TupleFields, VisibilityKind};
+use super::{Item, StructFields, TupleElements, VisibilityKind};
 
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),
@@ -95,7 +95,7 @@ impl Spanned for EnumVariantStruct {
 
 pub struct EnumVariantTuple {
     open_parenthesis: Parenthesis,
-    fields_opt: Option<TupleFields>,
+    fields_opt: Option<TupleElements>,
     close_parenthesis: Parenthesis,
 }
 
