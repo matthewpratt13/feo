@@ -1,5 +1,5 @@
 use crate::{
-    expression::Expression,
+    literal::Literal,
     span::{Span, Spanned},
     type_utils::{Bracket, Semicolon},
 };
@@ -10,7 +10,7 @@ pub struct ArrayType {
     open_bracket: Bracket,
     element_type: Box<dyn Type>,
     semicolon: Semicolon,
-    num_elements: Box<dyn Expression>,
+    num_elements: Literal<u64>,
     close_bracket: Bracket,
 }
 
