@@ -38,23 +38,35 @@ impl<T> IterableExpr for IfExpr<T> where T: 'static {}
 
 impl<T> Spanned for IfExpr<T> {
     fn span(&self) -> Span {
-        let start_pos = self.kw_if.span().start();
-        let temp_end = self.block.span().end();
-
-        let end_pos = match &self.else_if_block_opt {
+        let s1 = self.kw_if.span();
+        let s2 = match &self.else_if_block_opt {
             Some(s) => match &self.else_block_opt {
-                Some(t) => t.1.span().end(),
-                None => s.1.span().end(),
+                Some(t) => t.1.span(),
+                None => s.1.span(),
             },
 
-            None => temp_end,
+            None => self.block.span(),
         };
 
-        let source = self.kw_if.span().source();
+        Span::join(s1, s2)
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        // let start_pos = self.kw_if.span().start();
+        // let temp_end = self.block.span().end();
 
-        span
+        // let end_pos = match &self.else_if_block_opt {
+        //     Some(s) => match &self.else_block_opt {
+        //         Some(t) => t.1.span().end(),
+        //         None => s.1.span().end(),
+        //     },
+
+        //     None => temp_end,
+        // };
+
+        // let source = self.kw_if.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -83,13 +95,18 @@ impl Pattern for MatchExpr {}
 
 impl Spanned for MatchExpr {
     fn span(&self) -> Span {
-        let start_pos = self.kw_match.span().start();
-        let end_pos = self.close_brace.span().end();
-        let source = self.kw_match.span().source();
+        let s1 = self.kw_match.span();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.kw_match.span().start();
+        // let end_pos = self.close_brace.span().end();
+        // let source = self.kw_match.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 

@@ -1,5 +1,7 @@
 use feo_error::error::CompilerError;
 
+// TODO: start using `Span::join()` from here
+
 use crate::{
     keyword::Keyword,
     punctuation::Punctuation,

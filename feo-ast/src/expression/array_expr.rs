@@ -28,13 +28,18 @@ impl IterableExpr for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
-        let start_pos = self.open_bracket.span().start();
-        let end_pos = self.close_bracket.span().end();
-        let source = self.open_bracket.span().source();
+        let s1 = self.open_bracket.span();
+        let s2 = self.close_bracket.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.open_bracket.span().start();
+        // let end_pos = self.close_bracket.span().end();
+        // let source = self.open_bracket.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -71,12 +76,17 @@ impl IterableExpr for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operand.span().start();
-        let end_pos = self.close_bracket.span().end();
-        let source = self.operand.span().source();
+        let s1 = self.operand.span();
+        let s2 = self.close_bracket.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.operand.span().start();
+        // let end_pos = self.close_bracket.span().end();
+        // let source = self.operand.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }

@@ -40,12 +40,17 @@ impl<T> IterableExpr for BlockExpr<T> where T: 'static {}
 
 impl<T> Spanned for BlockExpr<T> {
     fn span(&self) -> Span {
-        let start_pos = self.open_brace.span().start();
-        let end_pos = self.close_brace.span().end();
-        let source = self.open_brace.span().source();
+        let s1 = self.open_brace.span();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.open_brace.span().start();
+        // let end_pos = self.close_brace.span().end();
+        // let source = self.open_brace.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }

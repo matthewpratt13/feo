@@ -57,13 +57,18 @@ impl Type for ClosureWithoutReturnType {}
 
 impl Spanned for ClosureWithoutReturnType {
     fn span(&self) -> Span {
-        let start_pos = self.params.span().start();
-        let end_pos = self.body_operand.span().end();
-        let source = self.params.span().source();
+        let s1 = self.params.span();
+        let s2 = self.body_operand.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.params.span().start();
+        // let end_pos = self.body_operand.span().end();
+        // let source = self.params.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -89,13 +94,18 @@ impl<T> Type for ClosureWithReturnType<T> {}
 
 impl<T> Spanned for ClosureWithReturnType<T> {
     fn span(&self) -> Span {
-        let start_pos = self.params.span().start();
-        let end_pos = self.block.span().end();
-        let source = self.params.span().source();
+        let s1 = self.params.span();
+        let s2 = self.block.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.params.span().start();
+        // let end_pos = self.block.span().end();
+        // let source = self.params.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -109,20 +119,31 @@ impl Pattern for ClosureParams {}
 
 impl Spanned for ClosureParams {
     fn span(&self) -> Span {
-        let start_pos = self.first_param.span().start();
-        let end_pos = match self.subsequent_params.last() {
+        let s1 = self.first_param.span();
+        let s2 = match self.subsequent_params.last() {
             Some(sp) => match &self.trailing_comma_opt {
-                Some(tc) => tc.span().end(),
-                None => sp.1.span().end(),
+                Some(tc) => tc.span(),
+                None => sp.1.span(),
             },
-            None => self.first_param.span().end(),
+            None => self.first_param.span(),
         };
 
-        let source = self.first_param.span().source();
+        Span::join(s1, s2)
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        // let start_pos = self.first_param.span().start();
+        // let end_pos = match self.subsequent_params.last() {
+        //     Some(sp) => match &self.trailing_comma_opt {
+        //         Some(tc) => tc.span().end(),
+        //         None => sp.1.span().end(),
+        //     },
+        //     None => self.first_param.span().end(),
+        // };
 
-        span
+        // let source = self.first_param.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -136,22 +157,36 @@ impl Pattern for ClosureParam {}
 
 impl Spanned for ClosureParam {
     fn span(&self) -> Span {
-        let start_pos = if let Some(a) = self.attributes.first() {
-            a.span().start()
+        let s1 = if let Some(a) = self.attributes.first() {
+            a.span()
         } else {
-            self.pattern.span().start()
+            self.pattern.span()
         };
 
-        let end_pos = if let Some(ta) = &self.type_annotation_opt {
-            ta.1.span().end()
+        let s2 = if let Some(ta) = &self.type_annotation_opt {
+            ta.1.span()
         } else {
-            self.pattern.span().end()
+            self.pattern.span()
         };
 
-        let source = self.pattern.span().source();
+        Span::join(s1, s2)
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        // let start_pos = if let Some(a) = self.attributes.first() {
+        //     a.span().start()
+        // } else {
+        //     self.pattern.span().start()
+        // };
 
-        span
+        // let end_pos = if let Some(ta) = &self.type_annotation_opt {
+        //     ta.1.span().end()
+        // } else {
+        //     self.pattern.span().end()
+        // };
+
+        // let source = self.pattern.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }

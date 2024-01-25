@@ -37,13 +37,18 @@ impl<T> IterableExpr for InfiniteLoopExpr<T> where T: 'static {}
 
 impl<T> Spanned for InfiniteLoopExpr<T> {
     fn span(&self) -> Span {
-        let start_pos = self.kw_loop.span().start();
-        let end_pos = self.block.span().end();
-        let source = self.kw_loop.span().source();
+        let s1 = self.kw_loop.span();
+        let s2 = self.block.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.kw_loop.span().start();
+        // let end_pos = self.block.span().end();
+        // let source = self.kw_loop.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -67,13 +72,18 @@ impl<T> IterableExpr for PredicateLoopExpr<T> where T: 'static {}
 
 impl<T> Spanned for PredicateLoopExpr<T> {
     fn span(&self) -> Span {
-        let start_pos = self.kw_while.span().start();
-        let end_pos = self.block.span().end();
-        let source = self.kw_while.span().source();
+        let s1 = self.kw_while.span();
+        let s2 = self.block.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.kw_while.span().start();
+        // let end_pos = self.block.span().end();
+        // let source = self.kw_while.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
 
@@ -99,12 +109,17 @@ impl<T> Pattern for IterLoopExpr<T> {}
 
 impl<T> Spanned for IterLoopExpr<T> {
     fn span(&self) -> Span {
-        let start_pos = self.kw_for.span().start();
-        let end_pos = self.block.span().end();
-        let source = self.kw_for.span().source();
+        let s1 = self.kw_for.span();
+        let s2 = self.block.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        Span::join(s1, s2)
 
-        span
+        // let start_pos = self.kw_for.span().start();
+        // let end_pos = self.block.span().end();
+        // let source = self.kw_for.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
     }
 }
