@@ -842,7 +842,7 @@ mod tests {
                     vec.push(num as f64);
                 }
 
-                vec.push(5.0);
+                vec.push(-5.0);
 
                 return Ok(Foo {
                     field1: String::from("foo"),
