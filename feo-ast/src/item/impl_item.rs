@@ -1,7 +1,7 @@
 use crate::{
     expression::{InnerAttr, OuterAttr},
     keyword::Keyword,
-    path::SimplePath,
+    path::TypePath,
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -53,7 +53,7 @@ impl Spanned for InherentImpl {
 pub struct TraitImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: Keyword,
-    implemented_trait_path: SimplePath,
+    implemented_trait_path: TypePath,
     kw_for: Keyword,
     implementing_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,

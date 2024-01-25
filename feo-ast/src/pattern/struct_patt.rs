@@ -1,7 +1,7 @@
 use crate::{
     expression::OuterAttr,
     identifier::Identifier,
-    path::SimplePath,
+    path::PathInExpr,
     span::{Span, Spanned},
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
@@ -9,7 +9,7 @@ use crate::{
 use super::{Pattern, PatternWithoutRange};
 
 pub struct StructPatt {
-    object_path: SimplePath,
+    object_path: PathInExpr,
     open_brace: Brace,
     fields_opt: Option<StructPattFields>,
     close_brace: Brace,
@@ -44,7 +44,7 @@ pub struct StructPattField {
 }
 
 pub struct TupleStructPatt {
-    object_path: SimplePath,
+    object_path: PathInExpr,
     open_parenthesis: Parenthesis,
     elements_opt: Option<TupleStructElements>,
     close_parenthesis: Parenthesis,

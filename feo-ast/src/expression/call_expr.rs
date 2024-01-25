@@ -1,5 +1,5 @@
 use crate::{
-    path::PathSegmentKind,
+    path::PathExprSegment,
     pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
@@ -40,7 +40,7 @@ impl Spanned for FunctionCallExpr {
 pub struct MethodCallExpr {
     receiver: Box<dyn Expression>,
     dot: Dot,
-    method_path: PathSegmentKind,
+    method_path: PathExprSegment,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,

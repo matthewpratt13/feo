@@ -1,6 +1,6 @@
 use crate::{
     keyword::Keyword,
-    path::SimplePath,
+    path::TypePath,
     span::{Span, Spanned},
     type_utils::QuestionMark,
 };
@@ -29,7 +29,7 @@ impl Spanned for ImplTraitType {
 
 pub struct TraitBound {
     question_mark_opt: Option<QuestionMark>,
-    trait_path: SimplePath,
+    trait_path: TypePath,
 }
 
 impl Spanned for TraitBound {

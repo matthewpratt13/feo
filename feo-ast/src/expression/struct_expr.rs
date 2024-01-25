@@ -1,6 +1,6 @@
 use crate::{
     identifier::Identifier,
-    path::SimplePath,
+    path::PathInExpr,
     span::{Span, Spanned},
     statement::Statement,
     ty::Type,
@@ -16,7 +16,7 @@ where
 }
 
 pub struct Struct {
-    item_path: SimplePath,
+    item_path: PathInExpr,
     open_brace: Brace,
     struct_expr_fields_opt: Option<StructExprFields>,
     close_brace: Brace,
@@ -59,7 +59,7 @@ pub struct StructExprField {
 }
 
 pub struct TupleStruct {
-    item_path: SimplePath,
+    item_path: PathInExpr,
     open_parenthesis: Parenthesis,
     params_opt: Option<(
         Box<dyn Expression>,
@@ -95,7 +95,7 @@ impl Spanned for TupleStruct {
     }
 }
 
-pub struct UnitStruct(SimplePath);
+pub struct UnitStruct(PathInExpr);
 
 impl<E> StructExpr<E> for UnitStruct {}
 
