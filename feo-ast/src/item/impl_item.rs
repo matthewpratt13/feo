@@ -12,7 +12,7 @@ use super::{AssociatedItem, Item, WhereClause};
 
 pub trait ImplItem
 where
-    Self: Sized + Item + Type,
+    Self: Sized + Item,
 {
 }
 
@@ -32,8 +32,6 @@ impl ImplItem for InherentImpl {}
 impl Item for InherentImpl {}
 
 impl Statement for InherentImpl {}
-
-impl Type for InherentImpl {}
 
 impl Spanned for InherentImpl {
     fn span(&self) -> Span {
@@ -70,8 +68,6 @@ impl ImplItem for TraitImpl {}
 impl Item for TraitImpl {}
 
 impl Statement for TraitImpl {}
-
-impl Type for TraitImpl {}
 
 impl Spanned for TraitImpl {
     fn span(&self) -> Span {
