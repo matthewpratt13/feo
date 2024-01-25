@@ -5,7 +5,6 @@ use crate::{
     pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
     type_utils::{Brace, Comma, Parenthesis},
 };
 
@@ -29,8 +28,6 @@ pub struct EnumItem {
 impl Item for EnumItem {}
 
 impl Statement for EnumItem {}
-
-impl Type for EnumItem {}
 
 impl Spanned for EnumItem {
     fn span(&self) -> Span {

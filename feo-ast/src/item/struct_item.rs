@@ -12,7 +12,7 @@ use super::{Item, VisibilityKind, WhereClause};
 
 pub trait StructItem
 where
-    Self: Sized + 'static + Item + Type,
+    Self: Sized + 'static + Item,
 {
 }
 
@@ -34,8 +34,6 @@ impl StructItem for Struct {}
 impl Item for Struct {}
 
 impl Statement for Struct {}
-
-impl Type for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -88,8 +86,6 @@ impl Item for TupleStruct {}
 
 impl Statement for TupleStruct {}
 
-impl Type for TupleStruct {}
-
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
@@ -137,8 +133,6 @@ impl Item for UnitStruct {}
 impl Statement for UnitStruct {}
 
 impl Constant for UnitStruct {}
-
-impl Type for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {
