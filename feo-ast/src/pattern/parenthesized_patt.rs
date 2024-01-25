@@ -5,15 +5,15 @@ use crate::{
 
 use super::Pattern;
 
-pub struct GroupedPatt {
+pub struct ParenthesizedPatt {
     open_parenthesis: Parenthesis,
     pattern: Box<dyn Pattern>,
     close_parenthesis: Parenthesis,
 }
 
-impl Pattern for GroupedPatt {}
+impl Pattern for ParenthesizedPatt {}
 
-impl Spanned for GroupedPatt {
+impl Spanned for ParenthesizedPatt {
     fn span(&self) -> Span {
         let start_pos = self.open_parenthesis.span().start();
         let end_pos = self.close_parenthesis.span().end();

@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-mod grouped_patt;
+mod parenthesized_patt;
 mod identifier_patt;
 mod range_patt;
 mod struct_patt;
