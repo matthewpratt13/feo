@@ -11,13 +11,21 @@ pub use self::trait_object_type::{TraitBound, TraitObjectType};
 pub use self::tuple_type::TupleType;
 
 // built-in types:
-// - array
-// - literals (char, str, int, uint, float, bytes32, bool)
-// - function, closure
-// - path
-// - trait object
-// - tuple
+// - primitives (char, str, int, uint, float, bytes32, bool)
+// - sequence types (array, tuple)
 // - unit type
+//
+// user-defined types:
+// - struct
+// - enum
+//
+// function types:
+// - function
+// - closure
+//
+// trait types:
+// - trait object
+// - impl trait
 
 pub trait Type
 where
