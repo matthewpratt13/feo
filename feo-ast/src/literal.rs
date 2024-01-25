@@ -3,7 +3,6 @@ use crate::expression::{
 };
 use crate::pattern::{Pattern, PatternWithoutRange, RangePattBound};
 use crate::statement::Statement;
-use crate::ty::Type;
 use crate::U256;
 use crate::{
     primitive::{Primitive, PrimitiveType},
@@ -11,13 +10,14 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct Literal<L: 'static + Clone + Primitive> {
+pub struct Literal<L> {
     raw_value: L,
     span: Span,
 }
 
 impl<L> PrimitiveType<L> for Literal<L>
 where
+    Self: Sized,
     L: 'static + Clone + Primitive,
 {
     fn new(raw_value: L, span: Span) -> Self {
@@ -111,5 +111,3 @@ impl RangePattBound for Literal<U256> {}
 impl RangePattBound for Literal<f32> {}
 
 impl RangePattBound for Literal<f64> {}
-
-impl<L> Type for Literal<L> where L: 'static + Clone + Primitive {}
