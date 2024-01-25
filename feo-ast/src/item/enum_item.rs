@@ -16,7 +16,7 @@ pub enum EnumVariantType {
     Tuple(EnumVariantTuple),
 }
 
-pub struct EnumType {
+pub struct EnumItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_enum: Keyword,
@@ -26,13 +26,13 @@ pub struct EnumType {
     close_brace: Brace,
 }
 
-impl Item for EnumType {}
+impl Item for EnumItem {}
 
-impl Statement for EnumType {}
+impl Statement for EnumItem {}
 
-impl Type for EnumType {}
+impl Type for EnumItem {}
 
-impl Spanned for EnumType {
+impl Spanned for EnumItem {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
