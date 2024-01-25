@@ -3,11 +3,11 @@
 use crate::span::Spanned;
 
 mod array_type;
-mod trait_object_type;
+mod impl_trait_type;
 mod tuple_type;
 
 pub use self::array_type::ArrayType;
-pub use self::trait_object_type::{TraitBound, TraitObjectType};
+pub use self::impl_trait_type::{TraitBound, ImplTraitType};
 pub use self::tuple_type::TupleType;
 
 // built-in types:
@@ -24,8 +24,8 @@ pub use self::tuple_type::TupleType;
 // - closure
 //
 // trait types:
-// - trait object
-// - impl trait
+// - trait object (not used)
+// - impl trait (one bound only)
 
 pub trait Type
 where
