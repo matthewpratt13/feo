@@ -23,7 +23,7 @@ mod type_utils {
     use crate::expression::AssignableExpr;
     use crate::pattern::{Pattern, PatternWithoutRange};
     use crate::punctuation::Punctuation;
-    use crate::ty::{Type, TypeWithoutBounds};
+    use crate::ty::Type;
 
     pub type Asterisk = Punctuation;
     pub type Bang = Punctuation;
@@ -49,7 +49,6 @@ mod type_utils {
     impl AssignableExpr for Underscore {}
     impl Pattern for Underscore {}
     impl PatternWithoutRange for Underscore {}
-    impl TypeWithoutBounds for Underscore {}
     impl Type for Underscore {}
 
     pub type Brace = Delimiter;

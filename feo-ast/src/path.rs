@@ -8,7 +8,7 @@ use crate::{
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
     span::{Span, Spanned},
     statement::Statement,
-    ty::{Type, TypeWithoutBounds},
+    ty::Type,
     type_utils::DblColon,
 };
 
@@ -60,8 +60,6 @@ impl Pattern for SimplePath {}
 impl PatternWithoutRange for SimplePath {}
 
 impl RangePattBound for SimplePath {}
-
-impl TypeWithoutBounds for SimplePath {}
 
 impl Type for SimplePath {}
 

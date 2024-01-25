@@ -2,7 +2,7 @@ use crate::{
     pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
-    ty::{Type, TypeWithoutBounds},
+    ty::Type,
     type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
@@ -53,8 +53,6 @@ impl BooleanOperand for ClosureWithoutReturnType {}
 
 impl IterableExpr for ClosureWithoutReturnType {}
 
-impl TypeWithoutBounds for ClosureWithoutReturnType {}
-
 impl Type for ClosureWithoutReturnType {}
 
 impl Spanned for ClosureWithoutReturnType {
@@ -71,7 +69,7 @@ impl Spanned for ClosureWithoutReturnType {
 
 pub struct ClosureWithReturnType<T> {
     params: ClosureParamsOpt,
-    return_type_opt: Option<(ThinArrow, Box<dyn TypeWithoutBounds>)>,
+    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
     block: BlockExpr<T>,
 }
 
@@ -86,8 +84,6 @@ impl<T> Statement for ClosureWithReturnType<T> {}
 impl<T> BooleanOperand for ClosureWithReturnType<T> where T: 'static {}
 
 impl<T> IterableExpr for ClosureWithReturnType<T> where T: 'static {}
-
-impl<T> TypeWithoutBounds for ClosureWithReturnType<T> {}
 
 impl<T> Type for ClosureWithReturnType<T> {}
 

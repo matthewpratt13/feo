@@ -12,18 +12,6 @@ where
 {
 }
 
-pub trait TypeWithBounds
-where
-    Self: 'static + Type,
-{
-}
-
-pub trait TypeWithoutBounds
-where
-    Self: Type,
-{
-}
-
 // built-in types:
 // - array
 // - literals (char, str, int, uint, float, bytes32, bool)
@@ -39,7 +27,7 @@ mod array_type {
         type_utils::{Bracket, Semicolon},
     };
 
-    use super::{Type, TypeWithoutBounds};
+    use super::Type;
 
     pub struct ArrayType {
         open_bracket: Bracket,
@@ -48,8 +36,6 @@ mod array_type {
         num_elements: Box<dyn Expression>,
         close_bracket: Bracket,
     }
-
-    impl TypeWithoutBounds for ArrayType {}
 
     impl Type for ArrayType {}
 
@@ -66,6 +52,7 @@ mod array_type {
     }
 }
 
+// only one bound
 mod trait_object_type {
     use crate::{
         keyword::Keyword,
@@ -74,14 +61,12 @@ mod trait_object_type {
         type_utils::{Plus, QuestionMark},
     };
 
-    use super::{Type, TypeWithBounds};
+    use super::Type;
 
     pub struct TraitObjectType {
         kw_dyn: Keyword,
         trait_bounds: TraitBounds,
     }
-
-    impl TypeWithBounds for TraitObjectType {}
 
     impl Type for TraitObjectType {}
 
@@ -149,7 +134,7 @@ mod tuple_type {
         type_utils::{Comma, Parenthesis},
     };
 
-    use super::{Type, TypeWithoutBounds};
+    use super::Type;
 
     pub struct TupleType {
         open_parenthesis: Parenthesis,
@@ -157,8 +142,6 @@ mod tuple_type {
         trailing_element: Box<dyn Type>,
         close_parenthesis: Parenthesis,
     }
-
-    impl TypeWithoutBounds for TupleType {}
 
     impl Type for TupleType {}
 

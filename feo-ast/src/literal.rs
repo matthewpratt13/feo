@@ -3,7 +3,7 @@ use crate::expression::{
 };
 use crate::pattern::{Pattern, PatternWithoutRange, RangePattBound};
 use crate::statement::Statement;
-use crate::ty::{Type, TypeWithoutBounds};
+use crate::ty::Type;
 use crate::U256;
 use crate::{
     primitive::{Primitive, PrimitiveType},
@@ -111,7 +111,5 @@ impl RangePattBound for Literal<U256> {}
 impl RangePattBound for Literal<f32> {}
 
 impl RangePattBound for Literal<f64> {}
-
-impl<L> TypeWithoutBounds for Literal<L> where L: 'static + Clone + Primitive {}
 
 impl<L> Type for Literal<L> where L: 'static + Clone + Primitive {}
