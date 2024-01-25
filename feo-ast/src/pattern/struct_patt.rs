@@ -46,7 +46,7 @@ pub struct StructPattField {
 pub struct TupleStructPatt {
     object_path: SimplePath,
     open_parenthesis: Parenthesis,
-    fields_opt: Option<TupleStructItems>,
+    elements_opt: Option<TupleStructElements>,
     close_parenthesis: Parenthesis,
 }
 
@@ -66,7 +66,7 @@ impl Spanned for TupleStructPatt {
     }
 }
 
-pub struct TupleStructItems {
+pub struct TupleStructElements {
     first_item: Box<dyn Pattern>,
     subsequent_fields: Vec<(Comma, Box<dyn Pattern>)>,
     trailing_comma_opt: Option<Comma>,

@@ -1,7 +1,6 @@
 use crate::{
     identifier::Identifier,
     path::SimplePath,
-    pattern::Pattern,
     span::{Span, Spanned},
     statement::Statement,
     type_utils::{Brace, Colon, Comma, Parenthesis},
@@ -33,8 +32,6 @@ impl Statement for Struct {}
 impl AssignableExpr for Struct {}
 
 impl Constant for Struct {}
-
-impl Pattern for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -81,8 +78,6 @@ impl AssignableExpr for TupleStruct {}
 
 impl Constant for TupleStruct {}
 
-impl Pattern for TupleStruct {}
-
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = self.item_path.span().start();
@@ -108,8 +103,6 @@ impl Statement for UnitStruct {}
 impl AssignableExpr for UnitStruct {}
 
 impl Constant for UnitStruct {}
-
-impl Pattern for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {
