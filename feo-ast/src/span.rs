@@ -4,7 +4,6 @@ pub trait Spanned {
     fn span(&self) -> Span;
 }
 
-
 #[derive(Default, Debug, Clone)]
 pub struct Span {
     src: Arc<String>,

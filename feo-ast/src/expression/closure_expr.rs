@@ -10,7 +10,7 @@ use super::{BlockExpr, BooleanOperand, ExprWithoutBlock, Expression, IterableExp
 
 pub trait ClosureExpr
 where
-    Self: Sized + Expression  + IterableExpr + BooleanOperand + Type,
+    Self: Sized + Expression + IterableExpr + BooleanOperand + Type,
 {
 }
 

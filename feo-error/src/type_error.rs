@@ -39,7 +39,6 @@ pub struct TypeError {
 
 impl Error for TypeError {}
 
-
 impl fmt::Display for TypeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

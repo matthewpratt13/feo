@@ -7,7 +7,7 @@ mod impl_trait_type;
 mod tuple_type;
 
 pub use self::array_type::ArrayType;
-pub use self::impl_trait_type::{TraitBound, ImplTraitType};
+pub use self::impl_trait_type::{ImplTraitType, TraitBound};
 pub use self::tuple_type::TupleType;
 
 // built-in types:
