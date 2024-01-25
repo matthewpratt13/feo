@@ -8,7 +8,7 @@ use crate::{
     type_utils::Brace,
 };
 
-use super::{AssociatedImplItem, AssociatedTraitItem, Item, WhereClause};
+use super::{AssociatedImplItem, Item, WhereClause};
 
 pub trait ImplItem
 where
@@ -59,7 +59,7 @@ pub struct TraitImpl {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedTraitItem>>,
+    associated_items: Vec<Box<dyn AssociatedImplItem>>,
     close_brace: Brace,
 }
 
