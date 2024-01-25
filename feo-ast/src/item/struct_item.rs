@@ -18,7 +18,7 @@ where
 
 pub type StructFieldName = Identifier;
 
-pub struct StructType {
+pub struct Struct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
@@ -29,15 +29,15 @@ pub struct StructType {
     close_brace: Brace,
 }
 
-impl StructItem for StructType {}
+impl StructItem for Struct {}
 
-impl Item for StructType {}
+impl Item for Struct {}
 
-impl Statement for StructType {}
+impl Statement for Struct {}
 
-impl Type for StructType {}
+impl Type for Struct {}
 
-impl Spanned for StructType {
+impl Spanned for Struct {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -70,7 +70,7 @@ pub struct StructField {
     field_type: Box<dyn Type>,
 }
 
-pub struct TupleStructType {
+pub struct TupleStruct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
@@ -82,15 +82,15 @@ pub struct TupleStructType {
     semicolon: Semicolon,
 }
 
-impl StructItem for TupleStructType {}
+impl StructItem for TupleStruct {}
 
-impl Item for TupleStructType {}
+impl Item for TupleStruct {}
 
-impl Statement for TupleStructType {}
+impl Statement for TupleStruct {}
 
-impl Type for TupleStructType {}
+impl Type for TupleStruct {}
 
-impl Spanned for TupleStructType {
+impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -121,7 +121,7 @@ pub struct TupleField {
     field_type: Box<dyn Type>,
 }
 
-pub struct UnitStructType {
+pub struct UnitStruct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: Keyword,
@@ -130,17 +130,17 @@ pub struct UnitStructType {
     close_brace: Brace,
 }
 
-impl StructItem for UnitStructType {}
+impl StructItem for UnitStruct {}
 
-impl Item for UnitStructType {}
+impl Item for UnitStruct {}
 
-impl Statement for UnitStructType {}
+impl Statement for UnitStruct {}
 
-impl Constant for UnitStructType {}
+impl Constant for UnitStruct {}
 
-impl Type for UnitStructType {}
+impl Type for UnitStruct {}
 
-impl Spanned for UnitStructType {
+impl Spanned for UnitStruct {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),

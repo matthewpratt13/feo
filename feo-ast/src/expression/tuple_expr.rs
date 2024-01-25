@@ -1,5 +1,5 @@
 use crate::{
-    item::TupleStructType,
+    item::TupleStruct,
     literal::Literal,
     span::{Span, Spanned},
     statement::Statement,
@@ -11,7 +11,7 @@ use super::{AssignableExpr, BooleanOperand, Constant, ExprWithoutBlock, Expressi
 
 pub enum TupleKind {
     Tuple(TupleType),
-    TupleStruct(TupleStructType),
+    TupleStruct(TupleStruct),
 }
 
 impl Spanned for TupleKind {

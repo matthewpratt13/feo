@@ -16,7 +16,7 @@ use crate::statement::Statement;
 
 pub use self::extern_crate_decl::AsClause;
 pub use self::function_item::{FunctionDefWithoutBody, FunctionItem};
-pub use self::struct_item::{StructFieldName, StructFields, TupleFields, TupleStructType};
+pub use self::struct_item::{StructFieldName, StructFields, TupleFields, TupleStruct};
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
