@@ -61,8 +61,6 @@ impl PatternWithoutRange for SimplePath {}
 
 impl RangePattBound for SimplePath {}
 
-impl Type for SimplePath {}
-
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
         let start_pos = if let Some(d) = &self.dbl_colon_opt {
