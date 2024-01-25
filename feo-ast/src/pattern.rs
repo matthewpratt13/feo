@@ -32,7 +32,7 @@ where
 {
 }
 
-mod ref_pattern {
+mod reference_patt {
     use crate::{
         keyword::Keyword,
         span::{Span, Spanned},
@@ -40,17 +40,17 @@ mod ref_pattern {
 
     use super::{Pattern, PatternWithoutRange};
 
-    pub struct RefPattern {
+    pub struct ReferencePatt {
         kw_ref: Keyword,
         kw_mut_opt: Option<Keyword>,
         pattern: Box<dyn PatternWithoutRange>,
     }
 
-    impl PatternWithoutRange for RefPattern {}
+    impl PatternWithoutRange for ReferencePatt {}
 
-    impl Pattern for RefPattern {}
+    impl Pattern for ReferencePatt {}
 
-    impl Spanned for RefPattern {
+    impl Spanned for ReferencePatt {
         fn span(&self) -> Span {
             let start_pos = self.kw_ref.span().start();
             let end_pos = self.pattern.span().end();

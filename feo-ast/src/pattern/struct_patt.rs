@@ -6,7 +6,7 @@ use crate::{
     type_utils::{Brace, Colon, Comma, Parenthesis},
 };
 
-use super::Pattern;
+use super::{Pattern, PatternWithoutRange};
 
 pub struct StructPatt {
     object_path: SimplePath,
@@ -16,6 +16,8 @@ pub struct StructPatt {
 }
 
 impl Pattern for StructPatt {}
+
+impl PatternWithoutRange for StructPatt {}
 
 impl Spanned for StructPatt {
     fn span(&self) -> Span {
@@ -49,6 +51,8 @@ pub struct TupleStructPatt {
 }
 
 impl Pattern for TupleStructPatt {}
+
+impl PatternWithoutRange for TupleStructPatt {}
 
 impl Spanned for TupleStructPatt {
     fn span(&self) -> Span {

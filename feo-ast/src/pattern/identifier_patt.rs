@@ -4,7 +4,7 @@ use crate::{
     span::{Span, Spanned},
 };
 
-use super::Pattern;
+use super::{Pattern, PatternWithoutRange};
 
 pub struct IdentifierPatt {
     kw_ref_opt: Option<Keyword>,
@@ -13,6 +13,8 @@ pub struct IdentifierPatt {
 }
 
 impl Pattern for IdentifierPatt {}
+
+impl PatternWithoutRange for IdentifierPatt {}
 
 impl Spanned for IdentifierPatt {
     fn span(&self) -> Span {

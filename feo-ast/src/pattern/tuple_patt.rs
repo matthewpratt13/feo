@@ -3,7 +3,7 @@ use crate::{
     type_utils::{Comma, Parenthesis},
 };
 
-use super::Pattern;
+use super::{Pattern, PatternWithoutRange};
 
 pub struct TuplePatt {
     open_parenthesis: Parenthesis,
@@ -12,6 +12,8 @@ pub struct TuplePatt {
 }
 
 impl Pattern for TuplePatt {}
+
+impl PatternWithoutRange for TuplePatt {}
 
 impl Spanned for TuplePatt {
     fn span(&self) -> Span {

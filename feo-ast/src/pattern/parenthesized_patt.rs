@@ -3,7 +3,7 @@ use crate::{
     type_utils::Parenthesis,
 };
 
-use super::Pattern;
+use super::{Pattern, PatternWithoutRange};
 
 pub struct ParenthesizedPatt {
     open_parenthesis: Parenthesis,
@@ -12,6 +12,8 @@ pub struct ParenthesizedPatt {
 }
 
 impl Pattern for ParenthesizedPatt {}
+
+impl PatternWithoutRange for ParenthesizedPatt {}
 
 impl Spanned for ParenthesizedPatt {
     fn span(&self) -> Span {

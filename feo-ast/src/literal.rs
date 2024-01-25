@@ -1,5 +1,7 @@
-use crate::expression::{BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr};
-use crate::pattern::{Pattern, RangePattBound};
+use crate::expression::{
+    BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+};
+use crate::pattern::{Pattern, PatternWithoutRange, RangePattBound};
 use crate::statement::Statement;
 use crate::ty::{Type, TypeWithoutBounds};
 use crate::U256;
@@ -87,6 +89,8 @@ impl<L> IterableExpr for Literal<L> where L: 'static + Clone + Primitive {}
 impl<L> LiteralPatt for Literal<L> where L: 'static + Clone + Primitive {}
 
 impl<L> Pattern for Literal<L> where L: 'static + Clone + Primitive {}
+
+impl<L> PatternWithoutRange for Literal<L> where L: 'static + Clone + Primitive {}
 
 impl RangePattBound for Literal<char> {}
 

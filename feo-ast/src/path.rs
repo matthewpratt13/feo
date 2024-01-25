@@ -5,7 +5,7 @@ use crate::{
     identifier::Identifier,
     item::Item,
     keyword::Keyword,
-    pattern::RangePattBound,
+    pattern::{Pattern, PatternWithoutRange, RangePattBound},
     span::{Span, Spanned},
     statement::Statement,
     ty::{Type, TypeWithoutBounds},
@@ -54,6 +54,10 @@ impl BooleanOperand for SimplePath {}
 impl IterableExpr for SimplePath {}
 
 impl Item for SimplePath {}
+
+impl Pattern for SimplePath {}
+
+impl PatternWithoutRange for SimplePath {}
 
 impl RangePattBound for SimplePath {}
 
