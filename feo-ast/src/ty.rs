@@ -14,7 +14,7 @@ where
 
 pub trait TypeWithBounds
 where
-    Self: Type,
+    Self: 'static + Type,
 {
 }
 
