@@ -17,6 +17,7 @@ pub use self::tuple_type::TupleType;
 // - path
 // - trait object
 // - tuple
+// - unit type
 
 pub trait Type
 where
