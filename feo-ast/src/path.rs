@@ -8,7 +8,6 @@ use crate::{
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
     span::{Span, Spanned},
     statement::Statement,
-    ty::Type,
     type_utils::DblColon,
 };
 
