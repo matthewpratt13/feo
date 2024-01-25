@@ -10,7 +10,7 @@ use super::{BlockExpr, BooleanOperand, ExprWithoutBlock, Expression, IterableExp
 
 pub trait ClosureExpr
 where
-    Self: Sized + Expression + BooleanOperand + IterableExpr + Type,
+    Self: Sized + Expression + BooleanOperand + IterableExpr,
 {
 }
 
@@ -53,8 +53,6 @@ impl BooleanOperand for ClosureWithoutReturnType {}
 
 impl IterableExpr for ClosureWithoutReturnType {}
 
-impl Type for ClosureWithoutReturnType {}
-
 impl Spanned for ClosureWithoutReturnType {
     fn span(&self) -> Span {
         let start_pos = self.params.span().start();
@@ -84,8 +82,6 @@ impl<T> Statement for ClosureWithReturnType<T> {}
 impl<T> BooleanOperand for ClosureWithReturnType<T> where T: 'static {}
 
 impl<T> IterableExpr for ClosureWithReturnType<T> where T: 'static {}
-
-impl<T> Type for ClosureWithReturnType<T> {}
 
 impl<T> Spanned for ClosureWithReturnType<T> {
     fn span(&self) -> Span {

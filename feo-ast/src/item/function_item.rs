@@ -13,7 +13,7 @@ use super::{AssociatedItem, Item, VisibilityKind};
 
 pub trait FunctionItem
 where
-    Self: Item + Type,
+    Self: Item,
 {
 }
 
@@ -41,8 +41,6 @@ impl Item for FunctionDefWithoutBody {}
 impl Statement for FunctionDefWithoutBody {}
 
 impl AssociatedItem for FunctionDefWithoutBody {}
-
-impl Type for FunctionDefWithoutBody {}
 
 impl Spanned for FunctionDefWithoutBody {
     fn span(&self) -> Span {
@@ -80,8 +78,6 @@ impl<T> FunctionItem for FunctionDefWithBody<T> {}
 impl<T> Item for FunctionDefWithBody<T> {}
 
 impl<T> Statement for FunctionDefWithBody<T> {}
-
-impl<T> Type for FunctionDefWithBody<T> {}
 
 impl<T> Spanned for FunctionDefWithBody<T> {
     fn span(&self) -> Span {
