@@ -36,63 +36,27 @@ impl Spanned for ClosureParamsOpt {
     }
 }
 
-pub struct ClosureWithoutReturnType {
-    params: ClosureParamsOpt,
-    body_operand: Box<dyn Expression>,
-}
-
-impl ClosureExpr for ClosureWithoutReturnType {}
-
-impl Expression for ClosureWithoutReturnType {}
-
-impl<E> ExprWithoutBlock<E> for ClosureWithoutReturnType {}
-
-impl Statement for ClosureWithoutReturnType {}
-
-impl BooleanOperand for ClosureWithoutReturnType {}
-
-impl IterableExpr for ClosureWithoutReturnType {}
-
-impl Type for ClosureWithoutReturnType {}
-
-impl Spanned for ClosureWithoutReturnType {
-    fn span(&self) -> Span {
-        let s1 = self.params.span();
-        let s2 = self.body_operand.span();
-
-        Span::join(s1, s2)
-
-        // let start_pos = self.params.span().start();
-        // let end_pos = self.body_operand.span().end();
-        // let source = self.params.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
-    }
-}
-
-pub struct ClosureWithReturnType<T> {
+pub struct ClosureWithBlock<T> {
     params: ClosureParamsOpt,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
     block: BlockExpr<T>,
 }
 
-impl<T> ClosureExpr for ClosureWithReturnType<T> where T: 'static {}
+impl<T> ClosureExpr for ClosureWithBlock<T> where T: 'static {}
 
-impl<T> Expression for ClosureWithReturnType<T> {}
+impl<T> Expression for ClosureWithBlock<T> {}
 
-impl<T, E> ExprWithoutBlock<E> for ClosureWithReturnType<T> {}
+impl<T, E> ExprWithoutBlock<E> for ClosureWithBlock<T> {}
 
-impl<T> Statement for ClosureWithReturnType<T> {}
+impl<T> Statement for ClosureWithBlock<T> {}
 
-impl<T> BooleanOperand for ClosureWithReturnType<T> where T: 'static {}
+impl<T> BooleanOperand for ClosureWithBlock<T> where T: 'static {}
 
-impl<T> IterableExpr for ClosureWithReturnType<T> where T: 'static {}
+impl<T> IterableExpr for ClosureWithBlock<T> where T: 'static {}
 
-impl<T> Type for ClosureWithReturnType<T> {}
+impl<T> Type for ClosureWithBlock<T> {}
 
-impl<T> Spanned for ClosureWithReturnType<T> {
+impl<T> Spanned for ClosureWithBlock<T> {
     fn span(&self) -> Span {
         let s1 = self.params.span();
         let s2 = self.block.span();
@@ -101,6 +65,42 @@ impl<T> Spanned for ClosureWithReturnType<T> {
 
         // let start_pos = self.params.span().start();
         // let end_pos = self.block.span().end();
+        // let source = self.params.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
+    }
+}
+
+pub struct ClosureWithoutBlock {
+    params: ClosureParamsOpt,
+    body_operand: Box<dyn Expression>,
+}
+
+impl ClosureExpr for ClosureWithoutBlock {}
+
+impl Expression for ClosureWithoutBlock {}
+
+impl<E> ExprWithoutBlock<E> for ClosureWithoutBlock {}
+
+impl Statement for ClosureWithoutBlock {}
+
+impl BooleanOperand for ClosureWithoutBlock {}
+
+impl IterableExpr for ClosureWithoutBlock {}
+
+impl Type for ClosureWithoutBlock {}
+
+impl Spanned for ClosureWithoutBlock {
+    fn span(&self) -> Span {
+        let s1 = self.params.span();
+        let s2 = self.body_operand.span();
+
+        Span::join(s1, s2)
+
+        // let start_pos = self.params.span().start();
+        // let end_pos = self.body_operand.span().end();
         // let source = self.params.span().source();
 
         // let span = Span::new(source.as_str(), start_pos, end_pos);
