@@ -95,9 +95,9 @@ where
     }
 }
 
-pub type CastOperator = Keyword;
-pub type DerefOperator = Keyword;
-pub type RefOperator = Keyword;
+pub type CastOperator = Keyword; // `as`
+pub type DerefOperator = Keyword; // `deref`
+pub type RefOperator = Keyword; // `ref`
 
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,
