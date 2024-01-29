@@ -22,57 +22,6 @@ pub enum FuncOrMethodParam {
     MethodParam(MethodParam),
 }
 
-pub struct FunctionSig {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_func: Keyword,
-    func_name: Identifier,
-    open_parenthesis: Parenthesis,
-    func_params_opt: Option<FuncParams>,
-    close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    semicolon: Semicolon,
-}
-
-impl FunctionItem for FunctionSig {}
-
-impl Item for FunctionSig {}
-
-impl Statement for FunctionSig {}
-
-impl Type for FunctionSig {}
-
-impl Spanned for FunctionSig {
-    fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_func.span(),
-            },
-        };
-
-        let s2 = self.semicolon.span();
-
-        Span::join(s1, s2)
-
-        // let start_pos = match self.attributes.first() {
-        //     Some(a) => a.span().start(),
-        //     None => match &self.visibility_opt {
-        //         Some(v) => v.span().start(),
-        //         None => self.kw_func.span().start(),
-        //     },
-        // };
-
-        // let end_pos = self.semicolon.span().end();
-        // let source = self.kw_func.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
-    }
-}
-
 pub struct FunctionDef<T> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -116,6 +65,57 @@ impl<T> Spanned for FunctionDef<T> {
         // };
 
         // let end_pos = self.func_body.span().end();
+        // let source = self.kw_func.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
+    }
+}
+
+pub struct FunctionSig {
+    attributes: Vec<OuterAttr>,
+    visibility_opt: Option<VisibilityKind>,
+    kw_func: Keyword,
+    func_name: Identifier,
+    open_parenthesis: Parenthesis,
+    func_params_opt: Option<FuncParams>,
+    close_parenthesis: Parenthesis,
+    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    semicolon: Semicolon,
+}
+
+impl FunctionItem for FunctionSig {}
+
+impl Item for FunctionSig {}
+
+impl Statement for FunctionSig {}
+
+impl Type for FunctionSig {}
+
+impl Spanned for FunctionSig {
+    fn span(&self) -> Span {
+        let s1 = match self.attributes.first() {
+            Some(a) => a.span(),
+            None => match &self.visibility_opt {
+                Some(v) => v.span(),
+                None => self.kw_func.span(),
+            },
+        };
+
+        let s2 = self.semicolon.span();
+
+        Span::join(s1, s2)
+
+        // let start_pos = match self.attributes.first() {
+        //     Some(a) => a.span().start(),
+        //     None => match &self.visibility_opt {
+        //         Some(v) => v.span().start(),
+        //         None => self.kw_func.span().start(),
+        //     },
+        // };
+
+        // let end_pos = self.semicolon.span().end();
         // let source = self.kw_func.span().source();
 
         // let span = Span::new(source.as_str(), start_pos, end_pos);
