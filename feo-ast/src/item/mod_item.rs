@@ -25,9 +25,9 @@ pub struct ModWithBody {
     close_brace: Brace,
 }
 
-impl Item for ModWithBody {}
-
 impl ModItem for ModWithBody {}
+
+impl Item for ModWithBody {}
 
 impl Statement for ModWithBody {}
 
@@ -58,9 +58,9 @@ pub struct ModWithoutBody {
     semicolon: Semicolon,
 }
 
-impl Item for ModWithoutBody {}
-
 impl ModItem for ModWithoutBody {}
+
+impl Item for ModWithoutBody {}
 
 impl Statement for ModWithoutBody {}
 
