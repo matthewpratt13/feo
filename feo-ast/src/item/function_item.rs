@@ -11,21 +11,21 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
-pub enum FunctionType<T> {
+pub enum FunctionItem<T> {
     FuncSig((FunctionSig, Semicolon)),
     FuncDef(FunctionDef<T>),
 }
 
-impl<T> Item for FunctionType<T> {}
+impl<T> Item for FunctionItem<T> {}
 
-impl<T> Statement for FunctionType<T> {}
+impl<T> Statement for FunctionItem<T> {}
 
-impl<T> Type for FunctionType<T> {}
+impl<T> Type for FunctionItem<T> {}
 
-impl<T> Spanned for FunctionType<T> {
+impl<T> Spanned for FunctionItem<T> {
     fn span(&self) -> Span {
         match self {
-            FunctionType::FuncSig(fs) => {
+            FunctionItem::FuncSig(fs) => {
                 let s1 = match fs.0.attributes.first() {
                     Some(a) => a.span(),
                     None => match &fs.0.visibility_opt {
@@ -38,7 +38,7 @@ impl<T> Spanned for FunctionType<T> {
 
                 Span::join(s1, s2)
             }
-            FunctionType::FuncDef(fd) => fd.span(),
+            FunctionItem::FuncDef(fd) => fd.span(),
         }
     }
 }

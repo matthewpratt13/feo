@@ -8,7 +8,7 @@ use crate::{
 
 use super::{AsClause, Item, VisibilityKind};
 
-pub enum ImportTreeKind {
+pub enum ImportTree {
     Wildcard(PathWildcard),
     SubsetRecursive(PathSubsetRecursive),
     WithAsClause(PathWithAsClause),
@@ -17,7 +17,7 @@ pub enum ImportTreeKind {
 pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,
     kw_import: Keyword,
-    import_tree: ImportTreeKind,
+    import_tree: ImportTree,
     semicolon: Semicolon,
 }
 
@@ -76,7 +76,7 @@ impl Spanned for PathWildcard {
 pub struct PathSubsetRecursive {
     path_prefix_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(Box<ImportTreeKind>, Vec<(Comma, ImportTreeKind)>, Option<Comma>)>,
+    recursive_tree_opt: Option<(Box<ImportTree>, Vec<(Comma, ImportTree)>, Option<Comma>)>,
     close_brace: Brace,
 }
 
