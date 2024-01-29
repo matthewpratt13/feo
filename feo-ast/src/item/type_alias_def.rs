@@ -16,7 +16,7 @@ pub struct TypeAliasDef {
     kw_type: Keyword,
     type_name: Identifier,
     type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
-    assignment_opt: Option<(Equals, Box<dyn Type>)>, // `None` only allowed in `TraitDef`
+    assignment_opt: Option<(Equals, Box<dyn Type>)>,
     semicolon: Semicolon,
 }
 
