@@ -15,9 +15,11 @@ mod visibility;
 use crate::span::Spanned;
 use crate::statement::Statement;
 
+pub use self::constant_item::ConstantItem;
 pub use self::extern_crate_decl::AsClause;
-pub use self::function_item::{FunctionDefWithoutBody, FunctionItem};
+pub use self::function_item::{FunctionDefWithBody, FunctionDefWithoutBody};
 pub use self::struct_item::{StructFieldName, StructFields, TupleElements, TupleStruct};
+pub use self::type_alias_def::TypeAliasDef;
 pub use self::visibility::VisibilityKind;
 pub use self::where_clause::{TypeParamBounds, WhereClause};
 
@@ -38,18 +40,6 @@ pub use self::where_clause::{TypeParamBounds, WhereClause};
 pub trait Item
 where
     Self: Statement + Spanned,
-{
-}
-
-pub trait AssociatedImplItem
-where
-    Self: Item,
-{
-}
-
-pub trait AssociatedTraitItem
-where
-    Self: Item,
 {
 }
 

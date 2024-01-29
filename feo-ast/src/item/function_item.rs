@@ -9,7 +9,7 @@ use crate::{
     type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
-use super::{AssociatedImplItem, AssociatedTraitItem, Item, VisibilityKind};
+use super::{Item, VisibilityKind};
 
 pub trait FunctionItem
 where
@@ -39,8 +39,6 @@ impl FunctionItem for FunctionDefWithoutBody {}
 impl Item for FunctionDefWithoutBody {}
 
 impl Statement for FunctionDefWithoutBody {}
-
-impl AssociatedTraitItem for FunctionDefWithoutBody {}
 
 impl Type for FunctionDefWithoutBody {}
 
@@ -92,10 +90,6 @@ impl<T> FunctionItem for FunctionDefWithBody<T> {}
 impl<T> Item for FunctionDefWithBody<T> {}
 
 impl<T> Statement for FunctionDefWithBody<T> {}
-
-impl<T> AssociatedImplItem for FunctionDefWithBody<T> {}
-
-impl<T> AssociatedTraitItem for FunctionDefWithBody<T> {}
 
 impl<T> Type for FunctionDefWithBody<T> {}
 

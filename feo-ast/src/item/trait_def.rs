@@ -7,9 +7,19 @@ use crate::{
     type_utils::{Brace, Colon},
 };
 
-use super::{AssociatedTraitItem, Item, TypeParamBounds, VisibilityKind, WhereClause};
+use super::{
+    ConstantItem, FunctionDefWithBody, FunctionDefWithoutBody, Item, TypeAliasDef, TypeParamBounds,
+    VisibilityKind, WhereClause,
+};
 
-pub struct TraitDef {
+pub enum TraitDefItem<T> {
+    Constant(ConstantItem),
+    FunctionDef(FunctionDefWithBody<T>),
+    FunctionSig(FunctionDefWithoutBody),
+    TypeAlias(TypeAliasDef),
+}
+
+pub struct TraitDef<T> {
     outer_attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_trait: Keyword,
@@ -18,15 +28,15 @@ pub struct TraitDef {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<Box<dyn AssociatedTraitItem>>,
+    associated_items: Vec<TraitDefItem<T>>,
     close_brace: Brace,
 }
 
-impl Item for TraitDef {}
+impl<T> Item for TraitDef<T> {}
 
-impl Statement for TraitDef {}
+impl<T> Statement for TraitDef<T> {}
 
-impl Spanned for TraitDef {
+impl<T> Spanned for TraitDef<T> {
     fn span(&self) -> Span {
         let start_pos = match self.outer_attributes.first() {
             Some(a) => a.span().start(),
