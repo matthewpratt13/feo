@@ -8,16 +8,16 @@ use crate::{
 
 use super::{AsClause, Item, VisibilityKind};
 
-pub trait ImportTree
-where
-    Self: Item,
-{
+pub enum ImportTree {
+    Wildcard(PathWildcard),
+    SubsetRecursive(PathSubsetRecursive),
+    WithAsClause(PathWithAsClause),
 }
 
 pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,
     kw_import: Keyword,
-    import_tree: Box<dyn ImportTree>,
+    import_tree: ImportTree,
     semicolon: Semicolon,
 }
 
@@ -46,8 +46,6 @@ pub struct PathWildcard {
     full_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
-
-impl ImportTree for PathWildcard {}
 
 impl Item for PathWildcard {}
 
@@ -78,15 +76,9 @@ impl Spanned for PathWildcard {
 pub struct PathSubsetRecursive {
     path_prefix_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
-    recursive_tree_opt: Option<(
-        Box<dyn ImportTree>,
-        Vec<(Comma, Box<dyn ImportTree>)>,
-        Option<Comma>,
-    )>,
+    recursive_tree_opt: Option<(Box<ImportTree>, Vec<(Comma, ImportTree)>, Option<Comma>)>,
     close_brace: Brace,
 }
-
-impl ImportTree for PathSubsetRecursive {}
 
 impl Item for PathSubsetRecursive {}
 
@@ -115,8 +107,6 @@ pub struct PathWithAsClause {
     path_prefix: SimplePath,
     as_clause_opt: Option<AsClause>,
 }
-
-impl ImportTree for PathWithAsClause {}
 
 impl Item for PathWithAsClause {}
 
