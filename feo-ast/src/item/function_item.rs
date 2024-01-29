@@ -11,10 +11,36 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
-pub trait FunctionItem
-where
-    Self: Item + Type,
-{
+pub enum FunctionType<T> {
+    FuncSig((FunctionSig, Semicolon)),
+    FuncDef(FunctionDef<T>),
+}
+
+impl<T> Item for FunctionType<T> {}
+
+impl<T> Statement for FunctionType<T> {}
+
+impl<T> Type for FunctionType<T> {}
+
+impl<T> Spanned for FunctionType<T> {
+    fn span(&self) -> Span {
+        match self {
+            FunctionType::FuncSig(fs) => {
+                let s1 = match fs.0.attributes.first() {
+                    Some(a) => a.span(),
+                    None => match &fs.0.visibility_opt {
+                        Some(v) => v.span(),
+                        None => fs.0.kw_func.span(),
+                    },
+                };
+
+                let s2 = fs.1.span();
+
+                Span::join(s1, s2)
+            }
+            FunctionType::FuncDef(fd) => fd.span(),
+        }
+    }
 }
 
 pub enum FuncOrMethodParam {
@@ -23,53 +49,23 @@ pub enum FuncOrMethodParam {
 }
 
 pub struct FunctionDef<T> {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_func: Keyword,
-    func_name: Identifier,
-    open_parenthesis: Parenthesis,
-    func_params_opt: Option<FuncParams>,
-    close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    func_sig: FunctionSig,
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
-impl<T> FunctionItem for FunctionDef<T> {}
-
-impl<T> Item for FunctionDef<T> {}
-
-impl<T> Statement for FunctionDef<T> {}
-
-impl<T> Type for FunctionDef<T> {}
-
 impl<T> Spanned for FunctionDef<T> {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
+        let s1 = match self.func_sig.attributes.first() {
             Some(a) => a.span(),
-            None => match &self.visibility_opt {
+            None => match &self.func_sig.visibility_opt {
                 Some(v) => v.span(),
-                None => self.kw_func.span(),
+                None => self.func_sig.kw_func.span(),
             },
         };
 
         let s2 = self.func_body.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = match self.attributes.first() {
-        //     Some(a) => a.span().start(),
-        //     None => match &self.visibility_opt {
-        //         Some(v) => v.span().start(),
-        //         None => self.kw_func.span().start(),
-        //     },
-        // };
-
-        // let end_pos = self.func_body.span().end();
-        // let source = self.kw_func.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -82,16 +78,7 @@ pub struct FunctionSig {
     func_params_opt: Option<FuncParams>,
     close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    semicolon: Semicolon,
 }
-
-impl FunctionItem for FunctionSig {}
-
-impl Item for FunctionSig {}
-
-impl Statement for FunctionSig {}
-
-impl Type for FunctionSig {}
 
 impl Spanned for FunctionSig {
     fn span(&self) -> Span {
@@ -103,24 +90,12 @@ impl Spanned for FunctionSig {
             },
         };
 
-        let s2 = self.semicolon.span();
+        let s2 = match &self.return_type_opt {
+            Some(rt) => rt.1.span(),
+            None => self.close_parenthesis.span(),
+        };
 
         Span::join(s1, s2)
-
-        // let start_pos = match self.attributes.first() {
-        //     Some(a) => a.span().start(),
-        //     None => match &self.visibility_opt {
-        //         Some(v) => v.span().start(),
-        //         None => self.kw_func.span().start(),
-        //     },
-        // };
-
-        // let end_pos = self.semicolon.span().end();
-        // let source = self.kw_func.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
