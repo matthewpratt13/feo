@@ -22,7 +22,7 @@ pub enum FuncOrMethodParam {
     Method(MethodParam),
 }
 
-pub struct FunctionDefWithoutBody {
+pub struct FunctionSig {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
@@ -34,15 +34,15 @@ pub struct FunctionDefWithoutBody {
     semicolon: Semicolon,
 }
 
-impl FunctionItem for FunctionDefWithoutBody {}
+impl FunctionItem for FunctionSig {}
 
-impl Item for FunctionDefWithoutBody {}
+impl Item for FunctionSig {}
 
-impl Statement for FunctionDefWithoutBody {}
+impl Statement for FunctionSig {}
 
-impl Type for FunctionDefWithoutBody {}
+impl Type for FunctionSig {}
 
-impl Spanned for FunctionDefWithoutBody {
+impl Spanned for FunctionSig {
     fn span(&self) -> Span {
         let s1 = match self.attributes.first() {
             Some(a) => a.span(),
@@ -73,7 +73,7 @@ impl Spanned for FunctionDefWithoutBody {
     }
 }
 
-pub struct FunctionDefWithBody<T> {
+pub struct FunctionDef<T> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
@@ -85,15 +85,15 @@ pub struct FunctionDefWithBody<T> {
     func_body: Box<dyn ExprWithBlock<T>>,
 }
 
-impl<T> FunctionItem for FunctionDefWithBody<T> {}
+impl<T> FunctionItem for FunctionDef<T> {}
 
-impl<T> Item for FunctionDefWithBody<T> {}
+impl<T> Item for FunctionDef<T> {}
 
-impl<T> Statement for FunctionDefWithBody<T> {}
+impl<T> Statement for FunctionDef<T> {}
 
-impl<T> Type for FunctionDefWithBody<T> {}
+impl<T> Type for FunctionDef<T> {}
 
-impl<T> Spanned for FunctionDefWithBody<T> {
+impl<T> Spanned for FunctionDef<T> {
     fn span(&self) -> Span {
         let s1 = match self.attributes.first() {
             Some(a) => a.span(),

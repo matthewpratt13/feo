@@ -17,7 +17,7 @@ use crate::statement::Statement;
 
 pub use self::constant_item::ConstantItem;
 pub use self::extern_crate_decl::AsClause;
-pub use self::function_item::{FunctionDefWithBody, FunctionDefWithoutBody};
+pub use self::function_item::{FunctionDef, FunctionSig};
 pub use self::struct_item::{StructFieldName, StructFields, TupleElements, TupleStruct};
 pub use self::type_alias_def::TypeAliasDef;
 pub use self::visibility::VisibilityKind;

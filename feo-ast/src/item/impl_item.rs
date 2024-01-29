@@ -8,7 +8,7 @@ use crate::{
     type_utils::Brace,
 };
 
-use super::{ConstantItem, FunctionDefWithBody, Item, TypeAliasDef, WhereClause};
+use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};
 
 pub trait ImplItem
 where
@@ -18,12 +18,12 @@ where
 
 pub enum InherentImplItem<T> {
     Constant(ConstantItem),
-    FunctionDef(FunctionDefWithBody<T>),
+    FuncDef(FunctionDef<T>),
 }
 
 pub enum TraitImplItem<T> {
     Constant(ConstantItem),
-    FunctionDef(FunctionDefWithBody<T>),
+    FuncDef(FunctionDef<T>),
     TypeAlias(TypeAliasDef),
 }
 

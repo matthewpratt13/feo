@@ -8,14 +8,14 @@ use crate::{
 };
 
 use super::{
-    ConstantItem, FunctionDefWithBody, FunctionDefWithoutBody, Item, TypeAliasDef, TypeParamBounds,
+    ConstantItem, FunctionDef, FunctionSig, Item, TypeAliasDef, TypeParamBounds,
     VisibilityKind, WhereClause,
 };
 
 pub enum TraitDefItem<T> {
     Constant(ConstantItem),
-    FunctionDef(FunctionDefWithBody<T>),
-    FunctionSig(FunctionDefWithoutBody),
+    FuncDef(FunctionDef<T>),
+    FuncSig(FunctionSig),
     TypeAlias(TypeAliasDef),
 }
 
