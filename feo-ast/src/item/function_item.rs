@@ -44,7 +44,7 @@ impl<T> Spanned for FunctionItem<T> {
 }
 
 pub enum FuncOrMethodParam {
-    FunctionParam(FunctionParam),
+    FuncParam(FunctionParam),
     MethodParam(MethodParam),
 }
 
