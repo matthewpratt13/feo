@@ -18,8 +18,8 @@ where
 }
 
 pub enum FuncOrMethodParam {
-    Func(FuncParam),
-    Method(MethodParam),
+    FuncParam(FuncParam),
+    MethodParam(MethodParam),
 }
 
 pub struct FunctionSig {
