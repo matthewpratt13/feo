@@ -44,26 +44,26 @@ impl<T> Spanned for FunctionItem<T> {
 }
 
 pub enum FuncOrMethodParam {
-    FuncParam(FuncParam),
+    FunctionParam(FunctionParam),
     MethodParam(MethodParam),
 }
 
 pub struct FunctionDef<T> {
-    func_sig: FunctionSig,
-    func_body: Box<dyn ExprWithBlock<T>>,
+    function_sig: FunctionSig,
+    function_body: Box<dyn ExprWithBlock<T>>,
 }
 
 impl<T> Spanned for FunctionDef<T> {
     fn span(&self) -> Span {
-        let s1 = match self.func_sig.attributes.first() {
+        let s1 = match self.function_sig.attributes.first() {
             Some(a) => a.span(),
-            None => match &self.func_sig.visibility_opt {
+            None => match &self.function_sig.visibility_opt {
                 Some(v) => v.span(),
-                None => self.func_sig.kw_func.span(),
+                None => self.function_sig.kw_func.span(),
             },
         };
 
-        let s2 = self.func_body.span();
+        let s2 = self.function_body.span();
 
         Span::join(s1, s2)
     }
@@ -73,9 +73,9 @@ pub struct FunctionSig {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: Keyword,
-    func_name: Identifier,
+    function_name: Identifier,
     open_parenthesis: Parenthesis,
-    func_params_opt: Option<FuncParams>,
+    function_params_opt: Option<FunctionParams>,
     close_parenthesis: Parenthesis,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
 }
@@ -99,13 +99,13 @@ impl Spanned for FunctionSig {
     }
 }
 
-pub struct FuncParams {
+pub struct FunctionParams {
     first_param: FuncOrMethodParam,
-    subsequent_params: Vec<(Comma, FuncParam)>,
+    subsequent_params: Vec<(Comma, FunctionParam)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct FuncParam {
+pub struct FunctionParam {
     param_pattern: Box<dyn Pattern>,
     colon: Colon,
     param_type: Box<dyn Type>,
