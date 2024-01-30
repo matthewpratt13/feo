@@ -35,7 +35,7 @@ where
     L: 'static + Clone + Primitive,
 {
     fn span(&self) -> Span {
-        self.clone().span
+        self.span.clone()
     }
 }
 
