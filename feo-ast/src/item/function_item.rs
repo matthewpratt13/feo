@@ -1,12 +1,14 @@
+use feo_types::{
+    span::{Span, Spanned},
+    utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
+    Identifier, Keyword,
+};
+
 use crate::{
     expression::{ExprWithBlock, OuterAttr},
-    identifier::Identifier,
-    keyword::Keyword,
     pattern::Pattern,
-    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
 };
 
 use super::{Item, VisibilityKind};

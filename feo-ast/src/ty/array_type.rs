@@ -1,8 +1,9 @@
-use crate::{
-    literal::Literal,
+use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Bracket, Semicolon},
+    utils::{Bracket, Semicolon},
 };
+
+use crate::Literal;
 
 use super::Type;
 

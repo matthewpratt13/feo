@@ -1,8 +1,9 @@
-use crate::{
-    keyword::Keyword,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
+    Keyword,
 };
+
+use crate::statement::Statement;
 
 use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 

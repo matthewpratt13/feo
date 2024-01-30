@@ -1,9 +1,10 @@
-use crate::{
-    keyword::Keyword,
-    pattern::Pattern,
+use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Brace, Comma, FatArrow},
+    utils::{Brace, Comma, FatArrow},
+    Keyword,
 };
+
+use crate::pattern::Pattern;
 
 use super::{
     Assignable, BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, InnerAttr,

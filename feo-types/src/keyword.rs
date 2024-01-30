@@ -1,16 +1,8 @@
 use std::str::FromStr;
 
-use feo_error::{
-    error::{CompilerError, Position},
-    handler::{ErrorEmitted, Handler},
-    type_error::{TypeError, TypeErrorKind},
-};
-
 use crate::{
-    expression::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr, OperatorExpr},
     span::{Span, Spanned},
-    statement::Statement,
-    token::{Token, Tokenize},
+    utils::TypeErrorKind,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -177,47 +169,8 @@ impl Keyword {
     }
 }
 
-impl Tokenize for Keyword {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let error = TypeError {
-            error_kind: TypeErrorKind::UnrecognizedKeyword,
-            position: Position::new(src, start),
-        };
-
-        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
-        let keyword_kind = KeywordKind::from_str(content)
-            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
-
-        let keyword = Keyword::new(keyword_kind, span);
-
-        let token = Token::Keyword(keyword);
-
-        Ok(Some(token))
-    }
-}
-
 impl Spanned for Keyword {
     fn span(&self) -> Span {
         self.clone().span
     }
 }
-
-impl Expression for Keyword {}
-
-impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`, `as`
-
-impl BooleanOperand for Keyword {}
-
-impl<E> ExprWithoutBlock<E> for Keyword {}
-
-impl Statement for Keyword {}
-
-impl IterableExpr for Keyword {}

@@ -1,7 +1,6 @@
-use crate::{
-    identifier::Identifier,
-    keyword::Keyword,
+use feo_types::{
     span::{Span, Spanned},
+    Identifier, Keyword,
 };
 
 use super::{Pattern, PatternWithoutRange};

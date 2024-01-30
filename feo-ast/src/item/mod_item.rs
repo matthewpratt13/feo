@@ -1,11 +1,10 @@
-use crate::{
-    expression::OuterAttr,
-    identifier::Identifier,
-    keyword::Keyword,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::{Brace, Semicolon},
+    utils::{Brace, Semicolon},
+    Identifier, Keyword,
 };
+
+use crate::{expression::OuterAttr, statement::Statement};
 
 use super::{Item, VisibilityKind};
 

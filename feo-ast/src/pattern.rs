@@ -1,14 +1,14 @@
 #![allow(dead_code)]
 
+use feo_types::span::Spanned;
+
 mod identifier_patt;
 mod parenthesized_patt;
 mod range_patt;
 mod struct_patt;
 mod tuple_patt;
 
-use crate::span::Spanned;
-
-pub use self::range_patt::{RangePatt, RangePattBound};
+pub use self::range_patt::RangePattBound;
 
 // patterns are used: to match values against structures; in variable declarations; as func params
 
@@ -33,10 +33,8 @@ where
 }
 
 mod reference_patt {
-    use crate::{
-        keyword::Keyword,
-        span::{Span, Spanned},
-    };
+    use feo_types::span::{Span, Spanned};
+    use feo_types::Keyword;
 
     use super::{Pattern, PatternWithoutRange};
 

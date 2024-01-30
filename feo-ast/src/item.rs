@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use feo_types::span::Spanned;
+
 mod constant_item;
 mod enum_item;
 mod extern_crate_decl;
@@ -12,16 +14,17 @@ mod trait_def;
 mod type_alias_def;
 mod visibility;
 
-use crate::span::Spanned;
 use crate::statement::Statement;
 
-pub use self::constant_item::ConstantItem;
-pub use self::extern_crate_decl::AsClause;
-pub use self::function_item::{FunctionDef, FunctionSig};
-pub use self::struct_item::{StructFieldName, StructFields, TupleElements, TupleStruct};
-pub use self::type_alias_def::TypeAliasDef;
-pub use self::visibility::VisibilityKind;
-pub use self::where_clause::{TypeParamBounds, WhereClause};
+pub use self::{
+    constant_item::ConstantItem,
+    extern_crate_decl::AsClause,
+    function_item::{FunctionDef, FunctionSig},
+    struct_item::{StructFieldName, StructFields, TupleElements, TupleStruct},
+    type_alias_def::TypeAliasDef,
+    visibility::VisibilityKind,
+    where_clause::{TypeParamBounds, WhereClause},
+};
 
 // items are components of a crate, organized by a set of modules
 
@@ -44,11 +47,10 @@ where
 }
 
 mod where_clause {
-    use crate::{
-        keyword::Keyword,
-        ty::{TraitBound, Type},
-        type_utils::{Colon, Comma, Plus},
-    };
+    use feo_types::utils::{Colon, Comma, Plus};
+    use feo_types::Keyword;
+
+    use crate::ty::{TraitBound, Type};
 
     pub struct WhereClause {
         kw_where: Keyword,

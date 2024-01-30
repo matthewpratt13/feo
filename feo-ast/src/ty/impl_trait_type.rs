@@ -1,8 +1,9 @@
-use crate::{
-    keyword::Keyword,
-    path::PathType,
+use feo_types::{
     span::{Span, Spanned},
+    Keyword,
 };
+
+use crate::path::PathType;
 
 use super::Type;
 

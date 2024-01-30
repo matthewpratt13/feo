@@ -1,10 +1,10 @@
-use crate::{
-    keyword::Keyword,
-    path::SimplePath,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
+    utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
+    Keyword,
 };
+
+use crate::{path::SimplePath, statement::Statement};
 
 use super::{AsClause, Item, VisibilityKind};
 

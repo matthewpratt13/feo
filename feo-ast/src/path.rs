@@ -1,17 +1,19 @@
 #![allow(dead_code)]
 
+use feo_types::{
+    span::{Span, Spanned},
+    utils::DblColon,
+    Identifier, Keyword,
+};
+
 use crate::{
     expression::{
         Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr,
     },
-    identifier::Identifier,
     item::Item,
-    keyword::Keyword,
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
-    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::DblColon,
 };
 
 pub enum SimplePathSegmentKind {

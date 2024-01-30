@@ -1,8 +1,9 @@
-use crate::{
-    keyword::Keyword,
-    pattern::Pattern,
+use feo_types::{
     span::{Span, Spanned},
+    Keyword,
 };
+
+use crate::pattern::Pattern;
 
 use super::{BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, IterableExpr};
 

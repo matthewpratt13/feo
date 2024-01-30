@@ -1,6 +1,7 @@
-use std::{error::Error, fmt};
+use std::error::Error;
+use std::fmt;
 
-use crate::error::Position;
+use feo_types::span::Position;
 
 #[derive(Default, Debug, Copy, Clone, PartialEq)]
 pub enum LexErrorKind {

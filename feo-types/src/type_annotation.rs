@@ -1,13 +1,8 @@
 use std::str::FromStr;
 
-use feo_error::{
-    handler::{ErrorEmitted, Handler},
-    type_error::TypeErrorKind,
-};
-
 use crate::{
     span::{Span, Spanned},
-    token::{Token, Tokenize},
+    utils::TypeErrorKind,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -84,18 +79,6 @@ impl FromStr for TypeAnnKind {
     }
 }
 
-impl TryFrom<Token> for TypeAnnKind {
-    type Error = TypeAnnKind;
-
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
-        if let Token::TypeAnn(t) = value {
-            Ok(t.type_ann_kind)
-        } else {
-            Err(TypeAnnKind::CustomTypeAnn)
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct TypeAnnotation {
     pub type_ann_kind: TypeAnnKind,
@@ -108,26 +91,6 @@ impl TypeAnnotation {
             type_ann_kind,
             span,
         }
-    }
-}
-
-impl Tokenize for TypeAnnotation {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        _handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let type_ann_kind = TypeAnnKind::from_str(content).unwrap_or(TypeAnnKind::CustomTypeAnn);
-
-        let type_annotation = TypeAnnotation::new(type_ann_kind, span);
-
-        let token = Token::TypeAnn(type_annotation);
-
-        Ok(Some(token))
     }
 }
 

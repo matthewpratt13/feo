@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
+
 mod array_expr;
 mod attribute;
 mod block_expr;
@@ -15,13 +17,13 @@ mod return_expr;
 mod struct_expr;
 mod tuple_expr;
 
-use crate::{span::Spanned, statement::Statement};
+use crate::statement::Statement;
 
-pub use self::attribute::{InnerAttr, OuterAttr};
-pub use self::block_expr::BlockExpr;
-pub use self::operator_expr::OperatorExpr;
-pub use self::range_expr::RangeExpr;
-pub use self::struct_expr::StructExpr;
+pub use self::{
+    attribute::{InnerAttr, OuterAttr},
+    block_expr::BlockExpr,
+    struct_expr::StructExpr,
+};
 
 // expressions always produce / evaluate to a value, and may have (side) effects
 
@@ -62,11 +64,15 @@ where
 {
 }
 
+impl Assignable for Identifier {}
+
 pub trait BooleanOperand
 where
     Self: Expression + 'static,
 {
 }
+
+impl BooleanOperand for Keyword {}
 
 pub trait Castable
 where
@@ -80,11 +86,17 @@ where
 {
 }
 
+impl Constant for Punctuation {}
+
 pub trait Expression
 where
     Self: Spanned,
 {
 }
+
+impl Expression for Keyword {}
+
+impl Expression for Punctuation {}
 
 pub trait ExprWithBlock<E>
 where
@@ -98,8 +110,14 @@ where
 {
 }
 
+impl<E> ExprWithoutBlock<E> for Keyword {}
+
+impl<E> ExprWithoutBlock<E> for Punctuation {}
+
 pub trait IterableExpr
 where
     Self: Expression + 'static,
 {
 }
+
+impl IterableExpr for Keyword {}

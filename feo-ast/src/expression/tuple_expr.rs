@@ -1,11 +1,9 @@
-use crate::{
-    item::TupleStruct,
-    literal::Literal,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    ty::TupleType,
-    type_utils::{Comma, Dot, Parenthesis},
+    utils::{Comma, Dot, Parenthesis},
 };
+
+use crate::{item::TupleStruct, literal::Literal, statement::Statement, ty::TupleType};
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 

@@ -1,11 +1,10 @@
-use crate::{
-    identifier::Identifier,
-    path::PathInExpr,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    ty::Type,
-    type_utils::{Brace, Colon, Comma, Parenthesis},
+    utils::{Brace, Colon, Comma, Parenthesis},
+    Identifier,
 };
+
+use crate::{path::PathInExpr, statement::Statement, ty::Type};
 
 use super::{Assignable, Constant, ExprWithoutBlock, Expression, OuterAttr};
 

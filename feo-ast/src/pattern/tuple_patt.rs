@@ -1,6 +1,6 @@
-use crate::{
+use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Comma, Parenthesis},
+    utils::{Comma, Parenthesis},
 };
 
 use super::{Pattern, PatternWithoutRange};

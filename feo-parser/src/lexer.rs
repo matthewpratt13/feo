@@ -1,23 +1,20 @@
 #![allow(dead_code)]
 
-use std::iter::Peekable;
-use std::sync::Arc;
+use std::{iter::Peekable, sync::Arc};
 
 use feo_ast::{
-    comment::Comment,
-    delimiter::Delimiter,
-    doc_comment::DocComment,
-    identifier::Identifier,
-    keyword::Keyword,
-    literal::Literal,
-    punctuation::Punctuation,
     token::{Token, TokenStream, Tokenize},
+    Literal,
+};
+
+use feo_types::{
+    span::Position,
     type_annotation::{TypeAnnKind, TypeAnnotation},
-    U256,
+    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 use feo_error::{
-    error::{CompilerError, Position},
+    error::CompilerError,
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
 };
@@ -218,7 +215,7 @@ impl<'a> Lexer<'a> {
                         continue;
                     }
 
-                    if feo_ast::type_annotation::is_built_in_type_annotation(&buf) {
+                    if feo_types::type_annotation::is_built_in_type_annotation(&buf) {
                         let type_annotation = TypeAnnotation::tokenize(
                             &self.input,
                             &buf,
@@ -228,7 +225,7 @@ impl<'a> Lexer<'a> {
                         )?;
 
                         tokens.push(type_annotation);
-                    } else if feo_ast::identifier::is_keyword(&buf) {
+                    } else if feo_types::identifier::is_keyword(&buf) {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
@@ -685,9 +682,9 @@ impl<'a> Lexer<'a> {
                 | '|' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation()
-                            && !feo_ast::delimiter::is_delimiter(c)
-                            && !feo_ast::punctuation::is_quote(c)
-                            && !feo_ast::punctuation::is_separator(c)
+                            && !feo_types::delimiter::is_delimiter(c)
+                            && !feo_types::punctuation::is_quote(c)
+                            && !feo_types::punctuation::is_separator(c)
                         {
                             self.advance();
                         } else {
@@ -730,7 +727,7 @@ impl<'a> Lexer<'a> {
 
 #[cfg(test)]
 mod tests {
-    use feo_ast::primitive::PrimitiveType;
+    use feo_types::primitive::PrimitiveType;
 
     use super::*;
 

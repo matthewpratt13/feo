@@ -1,10 +1,10 @@
-use crate::{
-    keyword::Keyword,
-    path::SimplePath,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::{Bracket, HashBang, HashSign},
+    utils::{Bracket, HashBang, HashSign},
+    Keyword,
 };
+
+use crate::{path::SimplePath, statement::Statement};
 
 use super::{ExprWithBlock, ExprWithoutBlock, Expression};
 

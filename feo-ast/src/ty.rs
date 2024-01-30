@@ -1,14 +1,12 @@
 #![allow(dead_code)]
 
-use crate::span::Spanned;
+use feo_types::{span::Spanned, U256};
 
 mod array_type;
 mod impl_trait_type;
 mod tuple_type;
 
-pub use self::array_type::ArrayType;
-pub use self::impl_trait_type::{ImplTraitType, TraitBound};
-pub use self::tuple_type::TupleType;
+pub use self::{array_type::ArrayType, impl_trait_type::TraitBound, tuple_type::TupleType};
 
 // built-in types:
 // - primitives (char, str, int, uint, float, bytes32, bool)
@@ -33,10 +31,36 @@ where
 {
 }
 
+impl Type for char {}
+
+impl Type for String {}
+
+impl Type for i32 {}
+
+impl Type for i64 {}
+
+impl Type for u8 {}
+
+impl Type for u16 {}
+
+impl Type for u32 {}
+
+impl Type for u64 {}
+
+impl Type for U256 {}
+
+impl Type for f32 {}
+
+impl Type for f64 {}
+
+impl Type for [u8; 32] {}
+
+impl Type for bool {}
+
 mod parenthesized_type {
-    use crate::{
+    use feo_types::{
         span::{Span, Spanned},
-        type_utils::Parenthesis,
+        utils::Parenthesis,
     };
 
     use super::Type;

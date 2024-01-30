@@ -1,8 +1,9 @@
-use crate::{
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::Parenthesis,
+    utils::Parenthesis,
 };
+
+use crate::statement::Statement;
 
 use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 

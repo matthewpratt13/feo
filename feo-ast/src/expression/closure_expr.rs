@@ -1,10 +1,9 @@
-use crate::{
-    pattern::Pattern,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    ty::Type,
-    type_utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
+    utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
+
+use crate::{pattern::Pattern, statement::Statement, ty::Type};
 
 use super::{BlockExpr, BooleanOperand, ExprWithoutBlock, Expression, IterableExpr, OuterAttr};
 

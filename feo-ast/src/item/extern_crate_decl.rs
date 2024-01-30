@@ -1,10 +1,10 @@
-use crate::{
-    identifier::Identifier,
-    keyword::Keyword,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::Semicolon,
+    utils::Semicolon,
+    Identifier, Keyword,
 };
+
+use crate::statement::Statement;
 
 use super::Item;
 

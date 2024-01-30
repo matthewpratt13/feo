@@ -1,11 +1,14 @@
+use feo_types::{
+    span::{Span, Spanned},
+    utils::Brace,
+    Keyword,
+};
+
 use crate::{
     expression::{InnerAttr, OuterAttr},
-    keyword::Keyword,
     path::PathType,
-    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::Brace,
 };
 
 use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};

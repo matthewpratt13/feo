@@ -1,15 +1,17 @@
+use feo_types::{
+    span::{Span, Spanned},
+    utils::{Brace, Colon},
+    Identifier, Keyword,
+};
+
 use crate::{
     expression::{InnerAttr, OuterAttr},
-    identifier::Identifier,
-    keyword::Keyword,
-    span::{Span, Spanned},
     statement::Statement,
-    type_utils::{Brace, Colon},
 };
 
 use super::{
-    ConstantItem, FunctionDef, FunctionSig, Item, TypeAliasDef, TypeParamBounds,
-    VisibilityKind, WhereClause,
+    ConstantItem, FunctionDef, FunctionSig, Item, TypeAliasDef, TypeParamBounds, VisibilityKind,
+    WhereClause,
 };
 
 pub enum TraitDefItem<T> {

@@ -1,10 +1,9 @@
-use crate::{
-    literal::Literal,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    ty::ArrayType,
-    type_utils::{Bracket, Comma, Semicolon},
+    utils::{Bracket, Comma, Semicolon},
 };
+
+use crate::{literal::Literal, statement::Statement, ty::ArrayType};
 
 use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 

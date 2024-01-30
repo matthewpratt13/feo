@@ -1,10 +1,9 @@
-use crate::{
-    path::PathExprSegment,
-    pattern::Pattern,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::{Comma, Dot, Parenthesis},
+    utils::{Comma, Dot, Parenthesis},
 };
+
+use crate::{path::PathExprSegment, pattern::Pattern, statement::Statement};
 
 use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 

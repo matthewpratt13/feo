@@ -1,12 +1,13 @@
-use crate::expression::{
-    BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
-};
-use crate::pattern::{Pattern, PatternWithoutRange, RangePattBound};
-use crate::statement::Statement;
-use crate::U256;
-use crate::{
+use feo_types::{
     primitive::{Primitive, PrimitiveType},
     span::{Span, Spanned},
+    U256,
+};
+
+use crate::{
+    expression::{BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr},
+    pattern::{Pattern, PatternWithoutRange, RangePattBound},
+    statement::Statement,
 };
 
 #[derive(Debug, Clone)]

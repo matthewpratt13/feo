@@ -1,12 +1,15 @@
 #![allow(dead_code)]
 
+use feo_types::{
+    span::{Span, Spanned},
+    utils::{Colon, Equals, Semicolon},
+    Keyword, Punctuation,
+};
+
 use crate::{
     expression::{Assignable, Constant, ExprWithoutBlock, OuterAttr},
-    keyword::Keyword,
     pattern::Pattern,
-    span::{Span, Spanned},
     ty::Type,
-    type_utils::{Colon, Equals, Semicolon},
 };
 
 // statement: component of a block, which is a component of an outer expression / function
@@ -49,6 +52,8 @@ impl<T> Spanned for ExprStatement<T> {
     }
 }
 
+impl Statement for Keyword {}
+
 pub struct LetStatement {
     attributes: Vec<OuterAttr>,
     kw_let: Keyword,
@@ -80,6 +85,8 @@ impl Spanned for LetStatement {
         span
     }
 }
+
+impl Statement for Punctuation {}
 
 pub struct StatementsWithExpr<T> {
     statements: Vec<Box<dyn Statement>>,

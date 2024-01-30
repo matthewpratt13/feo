@@ -1,16 +1,8 @@
 use std::str::FromStr;
 
-use feo_error::{
-    error::{CompilerError, Position},
-    handler::{ErrorEmitted, Handler},
-    type_error::{TypeError, TypeErrorKind},
-};
-
 use crate::{
-    expression::{Constant, ExprWithoutBlock, Expression, OperatorExpr},
     span::{Span, Spanned},
-    statement::Statement,
-    token::{Token, Tokenize},
+    utils::TypeErrorKind,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -183,48 +175,11 @@ impl Punctuation {
     }
 }
 
-impl Tokenize for Punctuation {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let error = TypeError {
-            error_kind: TypeErrorKind::UnexpectedPunctuation,
-            position: Position::new(src, start),
-        };
-
-        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
-        let punc_kind = PuncKind::from_str(content)
-            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
-
-        let punctuation = Punctuation::new(punc_kind, span);
-
-        let token = Token::Punc(punctuation);
-
-        Ok(Some(token))
-    }
-}
-
 impl Spanned for Punctuation {
     fn span(&self) -> Span {
         self.clone().span
     }
 }
-
-impl Expression for Punctuation {}
-
-impl<E> ExprWithoutBlock<E> for Punctuation {}
-
-impl<E> OperatorExpr<E> for Punctuation {}
-
-impl Statement for Punctuation {}
-
-impl Constant for Punctuation {}
 
 pub fn is_quote(c: char) -> bool {
     ['\'', '"'].contains(&c)

@@ -1,12 +1,14 @@
+use feo_types::{
+    span::{Span, Spanned},
+    utils::{Brace, Comma, Parenthesis},
+    Identifier, Keyword,
+};
+
 use crate::{
     expression::{Constant, ExprWithoutBlock, Expression, OuterAttr, StructExpr},
-    identifier::Identifier,
-    keyword::Keyword,
     pattern::Pattern,
-    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::{Brace, Comma, Parenthesis},
 };
 
 use super::{Item, StructFields, TupleElements, VisibilityKind};

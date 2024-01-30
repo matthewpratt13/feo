@@ -1,20 +1,27 @@
 use bnum::cast::As;
+use std::str::FromStr;
 
-use feo_error::error::{CompilerError, Position};
-use feo_error::handler::{ErrorEmitted, Handler};
-use feo_error::parser_error::{ParserError, ParserErrorKind};
-
-use crate::primitive::PrimitiveType;
-use crate::{
-    literal::Literal,
-    span::{Span, Spanned},
-    U256,
+use feo_error::{
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
+    parser_error::{ParserError, ParserErrorKind},
+    type_error::TypeError,
 };
 
-use crate::{
-    comment::Comment, delimiter::Delimiter, doc_comment::DocComment, identifier::Identifier,
-    keyword::Keyword, punctuation::Punctuation, type_annotation::TypeAnnotation,
+use feo_types::{
+    comment::{Comment, CommentKind},
+    delimiter::{DelimKind, DelimOrientation, Delimiter},
+    doc_comment::{DocComment, DocCommentKind},
+    keyword::{Keyword, KeywordKind},
+    primitive::PrimitiveType,
+    punctuation::{PuncKind, Punctuation},
+    span::{Position, Span, Spanned},
+    type_annotation::{TypeAnnKind, TypeAnnotation},
+    utils::TypeErrorKind,
+    Identifier, U256,
 };
+
+use crate::Literal;
 
 pub trait Tokenize {
     fn tokenize(
@@ -106,6 +113,167 @@ impl TokenTree {
 
     pub fn tokens(&self) -> &[Option<Token>] {
         self.0.tokens.as_slice()
+    }
+}
+
+impl Tokenize for Comment {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let comment = match content {
+            _ if content.starts_with("//") => {
+                Comment::new(CommentKind::LineComment, content.to_string(), span)
+            }
+
+            _ if content.starts_with("/*") => {
+                Comment::new(CommentKind::BlockComment, content.to_string(), span)
+            }
+
+            _ => {
+                let error = TypeError {
+                    error_kind: TypeErrorKind::UnrecognizedCommentOpener,
+                    position: Position::new(src, start),
+                };
+
+                return Err(handler.emit_err(CompilerError::Type(error)));
+            }
+        };
+
+        let token = Token::Comment(comment);
+
+        Ok(Some(token))
+    }
+}
+
+impl Tokenize for Delimiter {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let error = TypeError {
+            error_kind: TypeErrorKind::UnrecognizedDelimiter,
+            position: Position::new(src, start),
+        };
+
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
+        let delim_kind = DelimKind::from_str(content)
+            .map_err(|_| handler.emit_err(CompilerError::Type(error.clone())))?;
+
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
+        let delim_orientation = DelimOrientation::from_str(content)
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
+
+        let delimiter = Delimiter::new(delim_kind, delim_orientation, span);
+
+        let token = Token::Delim(delimiter);
+
+        Ok(Some(token))
+    }
+}
+
+impl Tokenize for DocComment {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let mut inner_doc_comment = String::from("//");
+        inner_doc_comment.push('!');
+
+        let doc_comment = match content {
+            _ if content.starts_with("///") => DocComment::new(
+                DocCommentKind::OuterDocComment,
+                content
+                    .strip_prefix("///")
+                    .expect("Unable to process outer doc comment")
+                    .trim()
+                    .to_string(),
+                span,
+            ),
+
+            _ if content.starts_with(&inner_doc_comment) => DocComment::new(
+                DocCommentKind::InnerDocComment,
+                content
+                    .strip_prefix(&inner_doc_comment)
+                    .expect("Unable to process inner doc comment")
+                    .trim()
+                    .to_string(),
+                span,
+            ),
+
+            _ => {
+                let error = TypeError {
+                    error_kind: TypeErrorKind::UnrecognizedCommentOpener,
+                    position: Position::new(src, start),
+                };
+
+                return Err(handler.emit_err(CompilerError::Type(error)));
+            }
+        };
+
+        let token = Token::DocComment(doc_comment);
+
+        Ok(Some(token))
+    }
+}
+
+impl Tokenize for Identifier {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        _handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let identifier = Identifier::new(content.to_string(), span);
+
+        let token = Token::Iden(identifier);
+
+        Ok(Some(token))
+    }
+}
+
+impl Tokenize for Keyword {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let error = TypeError {
+            error_kind: TypeErrorKind::UnrecognizedKeyword,
+            position: Position::new(src, start),
+        };
+
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
+        let keyword_kind = KeywordKind::from_str(content)
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
+
+        let keyword = Keyword::new(keyword_kind, span);
+
+        let token = Token::Keyword(keyword);
+
+        Ok(Some(token))
     }
 }
 
@@ -326,5 +494,64 @@ impl Tokenize for Literal<bool> {
         let token = Token::BoolLit(literal);
 
         Ok(Some(token))
+    }
+}
+
+impl Tokenize for Punctuation {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let error = TypeError {
+            error_kind: TypeErrorKind::UnexpectedPunctuation,
+            position: Position::new(src, start),
+        };
+
+        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
+        let punc_kind = PuncKind::from_str(content)
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
+
+        let punctuation = Punctuation::new(punc_kind, span);
+
+        let token = Token::Punc(punctuation);
+
+        Ok(Some(token))
+    }
+}
+
+impl Tokenize for TypeAnnotation {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        _handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let type_ann_kind = TypeAnnKind::from_str(content).unwrap_or(TypeAnnKind::CustomTypeAnn);
+
+        let type_annotation = TypeAnnotation::new(type_ann_kind, span);
+
+        let token = Token::TypeAnn(type_annotation);
+
+        Ok(Some(token))
+    }
+}
+
+impl TryFrom<Token> for TypeAnnKind {
+    type Error = TypeAnnKind;
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        if let Token::TypeAnn(t) = value {
+            Ok(t.type_ann_kind)
+        } else {
+            Err(TypeAnnKind::CustomTypeAnn)
+        }
     }
 }

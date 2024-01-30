@@ -1,11 +1,13 @@
+use feo_types::{
+    span::{Span, Spanned},
+    utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
+    Identifier, Keyword,
+};
+
 use crate::{
     expression::{Constant, OuterAttr},
-    identifier::Identifier,
-    keyword::Keyword,
-    span::{Span, Spanned},
     statement::Statement,
     ty::Type,
-    type_utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
 };
 
 use super::{Item, VisibilityKind, WhereClause};

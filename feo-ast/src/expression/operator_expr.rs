@@ -1,14 +1,14 @@
 use feo_error::error::CompilerError;
 
+use feo_types::{
+    span::{Span, Spanned},
+    utils::{Bang, Equals, Minus, QuestionMark},
+    Keyword, Punctuation,
+};
+
 // TODO: start using `Span::join()` from here
 
-use crate::{
-    keyword::Keyword,
-    punctuation::Punctuation,
-    span::{Span, Spanned},
-    statement::Statement,
-    type_utils::{Bang, Equals, Minus, QuestionMark},
-};
+use crate::statement::Statement;
 
 use super::{
     Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
@@ -414,3 +414,7 @@ where
         span
     }
 }
+
+impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`, `as`
+
+impl<E> OperatorExpr<E> for Punctuation {}

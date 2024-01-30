@@ -1,9 +1,9 @@
-use crate::{
-    item::StructFieldName,
+use feo_types::{
     span::{Span, Spanned},
-    statement::Statement,
-    type_utils::Dot,
+    utils::Dot,
 };
+
+use crate::{item::StructFieldName, statement::Statement};
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 

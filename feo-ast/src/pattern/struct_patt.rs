@@ -1,10 +1,10 @@
-use crate::{
-    expression::OuterAttr,
-    identifier::Identifier,
-    path::PathInExpr,
+use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Brace, Colon, Comma, Parenthesis},
+    utils::{Brace, Colon, Comma, Parenthesis},
+    Identifier,
 };
+
+use crate::{expression::OuterAttr, path::PathInExpr};
 
 use super::{Pattern, PatternWithoutRange};
 

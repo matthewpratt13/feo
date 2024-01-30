@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 bnum = { version = "0.10", features = ["numtraits"] }
 feo-error = { path = "../feo-error" }
+feo-types = { path = "../feo-types" }

@@ -1,7 +1,6 @@
 use core::cell::RefCell;
 
-use crate::error::CompilerError;
-use crate::warning::CompilerWarning;
+use crate::{error::CompilerError, warning::CompilerWarning};
 
 #[derive(Default, Debug, Clone)]
 pub struct Handler {
