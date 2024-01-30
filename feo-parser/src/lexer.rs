@@ -7,16 +7,16 @@ use feo_ast::{
     Literal,
 };
 
-use feo_types::{
-    span::Position,
-    type_annotation::{TypeAnnKind, TypeAnnotation},
-    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
-};
-
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
     lex_error::{LexError, LexErrorKind},
+};
+
+use feo_types::{
+    span::Position,
+    type_annotation::{TypeAnnKind, TypeAnnotation},
+    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 struct Lexer<'a> {

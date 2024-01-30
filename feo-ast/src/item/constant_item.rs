@@ -28,9 +28,9 @@ impl Item for ConstantItem {}
 
 impl Statement for ConstantItem {}
 
-impl Pattern for ConstantItem {}
-
 impl Constant for ConstantItem {}
+
+impl Pattern for ConstantItem {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {

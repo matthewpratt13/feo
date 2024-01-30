@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 
-use feo_types::{span::Spanned, U256};
-
 mod array_type;
 mod impl_trait_type;
 mod tuple_type;
+
+use feo_types::{span::Spanned, U256};
 
 pub use self::{array_type::ArrayType, impl_trait_type::TraitBound, tuple_type::TupleType};
 

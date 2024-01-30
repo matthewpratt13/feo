@@ -9,7 +9,7 @@ use super::{BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, Iter
 
 pub trait IterationExpr<E>
 where
-    Self: Sized + ExprWithBlock<E> + IterableExpr + BooleanOperand,
+    Self: Sized + ExprWithBlock<E> + BooleanOperand + IterableExpr,
 {
 }
 
@@ -32,9 +32,9 @@ impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> {}
 
 impl<T> BooleanOperand for InfiniteLoopExpr<T> where T: 'static {}
 
-impl<T> Constant for InfiniteLoopExpr<T> where T: 'static {}
-
 impl<T> IterableExpr for InfiniteLoopExpr<T> where T: 'static {}
+
+impl<T> Constant for InfiniteLoopExpr<T> where T: 'static {}
 
 impl<T> Spanned for InfiniteLoopExpr<T> {
     fn span(&self) -> Span {
@@ -67,9 +67,9 @@ impl<T, E> ExprWithBlock<E> for PredicateLoopExpr<T> {}
 
 impl<T> BooleanOperand for PredicateLoopExpr<T> where T: 'static {}
 
-impl<T> Constant for PredicateLoopExpr<T> where T: 'static {}
-
 impl<T> IterableExpr for PredicateLoopExpr<T> where T: 'static {}
+
+impl<T> Constant for PredicateLoopExpr<T> where T: 'static {}
 
 impl<T> Spanned for PredicateLoopExpr<T> {
     fn span(&self) -> Span {

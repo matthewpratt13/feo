@@ -13,7 +13,7 @@ use super::{
 
 pub trait ConditionalExpr<E>
 where
-    Self: ExprWithBlock<E> + IterableExpr + BooleanOperand + Constant,
+    Self: ExprWithBlock<E> + BooleanOperand + IterableExpr + Constant,
 {
 }
 
@@ -33,9 +33,9 @@ impl<T, E> ExprWithBlock<E> for IfExpr<T> {}
 
 impl<T> BooleanOperand for IfExpr<T> where T: 'static {}
 
-impl<T> Constant for IfExpr<T> where T: 'static {}
-
 impl<T> IterableExpr for IfExpr<T> where T: 'static {}
+
+impl<T> Constant for IfExpr<T> where T: 'static {}
 
 impl<T> Spanned for IfExpr<T> {
     fn span(&self) -> Span {
@@ -88,9 +88,9 @@ impl<E> ExprWithBlock<E> for MatchExpr {}
 
 impl BooleanOperand for MatchExpr {}
 
-impl Constant for MatchExpr {}
-
 impl IterableExpr for MatchExpr {}
+
+impl Constant for MatchExpr {}
 
 impl Pattern for MatchExpr {}
 

@@ -17,13 +17,13 @@ impl Expression for ParenthesizedExpr {}
 
 impl<E> ExprWithoutBlock<E> for ParenthesizedExpr {}
 
-impl BooleanOperand for ParenthesizedExpr {}
-
 impl Statement for ParenthesizedExpr {}
 
-impl Constant for ParenthesizedExpr {}
+impl BooleanOperand for ParenthesizedExpr {}
 
 impl IterableExpr for ParenthesizedExpr {}
+
+impl Constant for ParenthesizedExpr {}
 
 impl Spanned for ParenthesizedExpr {
     fn span(&self) -> Span {

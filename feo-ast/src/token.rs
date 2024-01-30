@@ -1,6 +1,6 @@
-use bnum::cast::As;
 use std::str::FromStr;
 
+use bnum::cast::As;
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},

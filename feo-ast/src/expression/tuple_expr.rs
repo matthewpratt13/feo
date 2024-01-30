@@ -37,9 +37,9 @@ impl Assignable for TupleExpr {}
 
 impl BooleanOperand for TupleExpr {}
 
-impl Constant for TupleExpr {}
-
 impl IterableExpr for TupleExpr {}
+
+impl Constant for TupleExpr {}
 
 impl Spanned for TupleExpr {
     fn span(&self) -> Span {
@@ -80,6 +80,6 @@ impl Expression for TupleIndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleIndexExpr {}
 
-impl BooleanOperand for TupleIndexExpr {}
-
 impl Statement for TupleIndexExpr {}
+
+impl BooleanOperand for TupleIndexExpr {}

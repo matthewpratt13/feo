@@ -1,7 +1,5 @@
 #![allow(dead_code)]
 
-use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
-
 mod array_expr;
 mod attribute;
 mod block_expr;
@@ -16,6 +14,8 @@ mod range_expr;
 mod return_expr;
 mod struct_expr;
 mod tuple_expr;
+
+use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
 
 use crate::statement::Statement;
 

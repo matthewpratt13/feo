@@ -9,7 +9,7 @@ use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr
 
 pub trait RangeExpr<E>
 where
-    Self: ExprWithoutBlock<E> + IterableExpr + BooleanOperand + Constant,
+    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr + Constant,
 {
 }
 
@@ -37,9 +37,9 @@ impl Statement for RangeFromToExpr {}
 
 impl BooleanOperand for RangeFromToExpr {}
 
-impl Constant for RangeFromToExpr {}
-
 impl IterableExpr for RangeFromToExpr {}
+
+impl Constant for RangeFromToExpr {}
 
 impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
@@ -68,9 +68,9 @@ impl Statement for RangeFromExpr {}
 
 impl BooleanOperand for RangeFromExpr {}
 
-impl Constant for RangeFromExpr {}
-
 impl IterableExpr for RangeFromExpr {}
+
+impl Constant for RangeFromExpr {}
 
 impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
@@ -99,9 +99,9 @@ impl Statement for RangeToExpr {}
 
 impl BooleanOperand for RangeToExpr {}
 
-impl Constant for RangeToExpr {}
-
 impl IterableExpr for RangeToExpr {}
+
+impl Constant for RangeToExpr {}
 
 impl Spanned for RangeToExpr {
     fn span(&self) -> Span {
@@ -131,9 +131,9 @@ impl Statement for RangeInclusiveExpr {}
 
 impl BooleanOperand for RangeInclusiveExpr {}
 
-impl Constant for RangeInclusiveExpr {}
-
 impl IterableExpr for RangeInclusiveExpr {}
+
+impl Constant for RangeInclusiveExpr {}
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
@@ -162,9 +162,9 @@ impl Statement for RangeToInclusiveExpr {}
 
 impl BooleanOperand for RangeToInclusiveExpr {}
 
-impl Constant for RangeToInclusiveExpr {}
-
 impl IterableExpr for RangeToInclusiveExpr {}
+
+impl Constant for RangeToInclusiveExpr {}
 
 impl Spanned for RangeToInclusiveExpr {
     fn span(&self) -> Span {

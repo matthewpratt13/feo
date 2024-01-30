@@ -21,9 +21,9 @@ impl Statement for FieldAccessExpr {}
 
 impl BooleanOperand for FieldAccessExpr {}
 
-impl Constant for FieldAccessExpr {}
-
 impl IterableExpr for FieldAccessExpr {}
+
+impl Constant for FieldAccessExpr {}
 
 impl Spanned for FieldAccessExpr {
     fn span(&self) -> Span {

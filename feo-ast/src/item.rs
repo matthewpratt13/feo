@@ -1,7 +1,5 @@
 #![allow(dead_code)]
 
-use feo_types::span::Spanned;
-
 mod constant_item;
 mod enum_item;
 mod extern_crate_decl;
@@ -13,6 +11,8 @@ mod struct_item;
 mod trait_def;
 mod type_alias_def;
 mod visibility;
+
+use feo_types::span::Spanned;
 
 use crate::statement::Statement;
 

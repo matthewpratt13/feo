@@ -16,7 +16,7 @@ use super::{
 
 pub trait OperatorExpr<E>
 where
-    Self: ExprWithoutBlock<E> + IterableExpr + BooleanOperand,
+    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
 {
 }
 
@@ -115,9 +115,9 @@ impl Statement for ArithmeticOrLogicalExpr {}
 
 impl BooleanOperand for ArithmeticOrLogicalExpr {}
 
-impl Constant for ArithmeticOrLogicalExpr {}
-
 impl IterableExpr for ArithmeticOrLogicalExpr {}
+
+impl Constant for ArithmeticOrLogicalExpr {}
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
@@ -179,9 +179,9 @@ impl Statement for CompoundAssignmentExpr {}
 
 impl BooleanOperand for CompoundAssignmentExpr {}
 
-impl Constant for CompoundAssignmentExpr {}
-
 impl IterableExpr for CompoundAssignmentExpr {}
+
+impl Constant for CompoundAssignmentExpr {}
 
 impl Spanned for CompoundAssignmentExpr {
     fn span(&self) -> Span {
@@ -211,9 +211,9 @@ impl Statement for ComparisonExpr {}
 
 impl BooleanOperand for ComparisonExpr {}
 
-impl Constant for ComparisonExpr {}
-
 impl IterableExpr for ComparisonExpr {}
+
+impl Constant for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
@@ -242,9 +242,9 @@ impl Statement for DerefExpr {}
 
 impl BooleanOperand for DerefExpr {}
 
-impl Constant for DerefExpr {}
-
 impl IterableExpr for DerefExpr {}
+
+impl Constant for DerefExpr {}
 
 impl Spanned for DerefExpr {
     fn span(&self) -> Span {
@@ -274,9 +274,9 @@ impl Statement for LazyBoolExpr {}
 
 impl BooleanOperand for LazyBoolExpr {}
 
-impl Constant for LazyBoolExpr {}
-
 impl IterableExpr for LazyBoolExpr {}
+
+impl Constant for LazyBoolExpr {}
 
 impl Spanned for LazyBoolExpr {
     fn span(&self) -> Span {
@@ -305,9 +305,9 @@ impl Statement for NegationExpr {}
 
 impl BooleanOperand for NegationExpr {}
 
-impl Constant for NegationExpr {}
-
 impl IterableExpr for NegationExpr {}
+
+impl Constant for NegationExpr {}
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
@@ -367,9 +367,9 @@ impl Statement for TypeCastExpr {}
 
 impl BooleanOperand for TypeCastExpr {}
 
-impl Constant for TypeCastExpr {}
-
 impl IterableExpr for TypeCastExpr {}
+
+impl Constant for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
@@ -396,9 +396,9 @@ impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
 
 impl<T> Statement for UnwrapExpr<T> where T: Spanned {}
 
-impl<T> BooleanOperand for UnwrapExpr<T> where T: 'static + Spanned {}
+impl<T> BooleanOperand for UnwrapExpr<T> where T: Spanned + 'static {}
 
-impl<T> IterableExpr for UnwrapExpr<T> where T: 'static + Spanned {}
+impl<T> IterableExpr for UnwrapExpr<T> where T: Spanned + 'static {}
 
 impl<T> Spanned for UnwrapExpr<T>
 where

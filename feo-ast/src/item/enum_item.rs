@@ -79,9 +79,9 @@ impl<E> ExprWithoutBlock<E> for EnumVariantStruct {}
 
 impl Statement for EnumVariantStruct {}
 
-impl Pattern for EnumVariantStruct {}
-
 impl Constant for EnumVariantStruct {}
+
+impl Pattern for EnumVariantStruct {}
 
 impl Spanned for EnumVariantStruct {
     fn span(&self) -> Span {
@@ -101,9 +101,9 @@ pub struct EnumVariantTuple {
     close_parenthesis: Parenthesis,
 }
 
-impl Pattern for EnumVariantTuple {}
-
 impl Constant for EnumVariantTuple {}
+
+impl Pattern for EnumVariantTuple {}
 
 impl Spanned for EnumVariantTuple {
     fn span(&self) -> Span {

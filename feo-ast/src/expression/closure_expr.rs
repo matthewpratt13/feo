@@ -5,11 +5,13 @@ use feo_types::{
 
 use crate::{pattern::Pattern, statement::Statement, ty::Type};
 
-use super::{BlockExpr, BooleanOperand, ExprWithoutBlock, Expression, IterableExpr, OuterAttr};
+use super::{
+    BlockExpr, BooleanOperand, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr, OuterAttr,
+};
 
 pub trait ClosureExpr
 where
-    Self: Sized + Expression + IterableExpr + BooleanOperand + Type,
+    Self: Sized + Expression + BooleanOperand + IterableExpr + Type,
 {
 }
 
@@ -45,7 +47,7 @@ impl<T> ClosureExpr for ClosureWithBlock<T> where T: 'static {}
 
 impl<T> Expression for ClosureWithBlock<T> {}
 
-impl<T, E> ExprWithoutBlock<E> for ClosureWithBlock<T> {}
+impl<T, E> ExprWithBlock<E> for ClosureWithBlock<T> {}
 
 impl<T> Statement for ClosureWithBlock<T> {}
 
