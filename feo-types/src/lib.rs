@@ -1,4 +1,4 @@
-pub use bnum::types::U256;
+pub use bnum::types::U256 as U256;
 
 pub mod comment;
 pub use crate::comment::Comment;

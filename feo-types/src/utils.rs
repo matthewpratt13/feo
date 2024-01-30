@@ -3,30 +3,6 @@ use std::fmt;
 
 use crate::{delimiter::Delimiter, punctuation::Punctuation};
 
-pub type Asterisk = Punctuation;
-pub type Bang = Punctuation;
-pub type Colon = Punctuation;
-pub type Comma = Punctuation;
-pub type DblColon = Punctuation;
-pub type DblDot = Punctuation;
-pub type DblPipe = Punctuation;
-pub type Dot = Punctuation;
-pub type DotDotEquals = Punctuation;
-pub type Equals = Punctuation;
-pub type FatArrow = Punctuation;
-pub type HashBang = Punctuation;
-pub type HashSign = Punctuation;
-pub type Minus = Punctuation;
-pub type Pipe = Punctuation;
-pub type Plus = Punctuation;
-pub type QuestionMark = Punctuation;
-pub type Semicolon = Punctuation;
-pub type ThinArrow = Punctuation;
-pub type Underscore = Punctuation;
-pub type Brace = Delimiter;
-pub type Bracket = Delimiter;
-pub type Parenthesis = Delimiter;
-
 #[derive(Default, Debug, Copy, Clone, PartialEq)]
 pub enum TypeErrorKind {
     UnrecognizedCommentOpener,
@@ -55,3 +31,27 @@ impl fmt::Display for TypeErrorKind {
 }
 
 impl Error for TypeErrorKind {}
+
+pub type Asterisk = Punctuation;
+pub type Bang = Punctuation;
+pub type Colon = Punctuation;
+pub type Comma = Punctuation;
+pub type DblColon = Punctuation;
+pub type DblDot = Punctuation;
+pub type DblPipe = Punctuation;
+pub type Dot = Punctuation;
+pub type DotDotEquals = Punctuation;
+pub type Equals = Punctuation;
+pub type FatArrow = Punctuation;
+pub type HashBang = Punctuation;
+pub type HashSign = Punctuation;
+pub type Minus = Punctuation;
+pub type Pipe = Punctuation;
+pub type Plus = Punctuation;
+pub type QuestionMark = Punctuation;
+pub type Semicolon = Punctuation;
+pub type ThinArrow = Punctuation;
+pub type Underscore = Punctuation;
+pub type Brace = Delimiter;
+pub type Bracket = Delimiter;
+pub type Parenthesis = Delimiter;
