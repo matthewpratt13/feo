@@ -14,7 +14,7 @@ use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};
 
 pub trait ImplItem
 where
-    Self: Item + Sized,
+    Self: Sized + Item,
 {
 }
 

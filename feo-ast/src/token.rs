@@ -100,7 +100,7 @@ impl<T: Clone> TokenStream<T> {
 
 impl<T: Clone> Spanned for TokenStream<T> {
     fn span(&self) -> Span {
-        self.clone().span
+        self.span.clone()
     }
 }
 

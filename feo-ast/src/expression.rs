@@ -75,13 +75,13 @@ impl BooleanOperand for Keyword {}
 
 pub trait Castable
 where
-    Self: 'static + Spanned,
+    Self: Spanned + 'static,
 {
 }
 
 pub trait Constant
 where
-    Self: Sized + 'static + Spanned,
+    Self: Sized + Spanned + 'static,
 {
 }
 
