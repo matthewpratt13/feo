@@ -43,13 +43,13 @@ impl Spanned for ArrayExpr {
 }
 
 pub struct ArrayElements {
-    first_element: Box<dyn Expression>,
-    subsequent_elements: Vec<(Comma, Box<dyn Expression>)>,
+    first_element: Box<dyn IterableExpr>,
+    subsequent_elements: Vec<(Comma, Box<dyn IterableExpr>)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 pub struct ArrayWithSingleRepeatedValue {
-    repeated_value: Box<dyn Expression>,
+    repeat_operand: Box<dyn IterableExpr>,
     semicolon: Semicolon,
     num_repeats: Literal<u64>,
 }
