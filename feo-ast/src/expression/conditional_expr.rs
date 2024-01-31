@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Comma, FatArrow},
+    utils::{Brace, Comma, FatArrow, KwElse, KwIf},
     Keyword,
 };
 
@@ -18,11 +18,11 @@ where
 }
 
 pub struct IfExpr<T> {
-    kw_if: Keyword,
-    conditional_operand: Box<dyn BooleanOperand>,
-    block: BlockExpr<T>,
-    else_if_block_opt: Option<(Keyword, Box<IfExpr<T>>)>,
-    else_block_opt: Option<(Keyword, BlockExpr<T>)>,
+    kw_if: KwIf,
+    condition_operand: Box<dyn BooleanOperand>,
+    if_block: BlockExpr<T>,
+    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr<T>>)>>,
+    else_block_opt: Option<(KwElse, BlockExpr<T>)>,
 }
 
 impl<T, E> ConditionalExpr<E> for IfExpr<T> where T: 'static {}
@@ -40,13 +40,15 @@ impl<T> Constant for IfExpr<T> where T: 'static {}
 impl<T> Spanned for IfExpr<T> {
     fn span(&self) -> Span {
         let s1 = self.kw_if.span();
-        let s2 = match &self.else_if_block_opt {
-            Some(s) => match &self.else_block_opt {
-                Some(t) => t.1.span(),
-                None => s.1.span(),
+        let s2 = match &self.else_block_opt {
+            Some(e) => e.1.span(),
+            None => match &self.else_if_blocks_opt {
+                Some(ei) => match ei.last() {
+                    Some(b) => b.1.span(),
+                    None => self.if_block.span(),
+                },
+                None => self.if_block.span(),
             },
-
-            None => self.block.span(),
         };
 
         Span::join(s1, s2)

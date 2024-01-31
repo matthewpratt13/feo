@@ -20,9 +20,9 @@ impl<T, E> ExprWithBlock<E> for BlockExpr<T> {}
 
 impl<T> BooleanOperand for BlockExpr<T> where T: 'static {}
 
-impl<T> Constant for BlockExpr<T> where T: 'static {}
-
 impl<T> IterableExpr for BlockExpr<T> where T: 'static {}
+
+impl<T> Constant for BlockExpr<T> where T: 'static {}
 
 impl<T> Spanned for BlockExpr<T> {
     fn span(&self) -> Span {

@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-use crate::{delimiter::Delimiter, punctuation::Punctuation};
+use crate::{delimiter::Delimiter, punctuation::Punctuation, Keyword};
 
 #[derive(Default, Debug, Copy, Clone, PartialEq)]
 pub enum TypeErrorKind {
@@ -32,6 +32,13 @@ impl fmt::Display for TypeErrorKind {
 
 impl Error for TypeErrorKind {}
 
+pub type Brace = Delimiter;
+pub type Bracket = Delimiter;
+pub type Parenthesis = Delimiter;
+
+pub type KwElse = Keyword;
+pub type KwIf = Keyword;
+
 pub type Asterisk = Punctuation;
 pub type Bang = Punctuation;
 pub type Colon = Punctuation;
@@ -52,6 +59,3 @@ pub type QuestionMark = Punctuation;
 pub type Semicolon = Punctuation;
 pub type ThinArrow = Punctuation;
 pub type Underscore = Punctuation;
-pub type Brace = Delimiter;
-pub type Bracket = Delimiter;
-pub type Parenthesis = Delimiter;

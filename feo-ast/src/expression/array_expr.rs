@@ -19,11 +19,11 @@ impl<E> ExprWithoutBlock<E> for ArrayExpr {}
 
 impl BooleanOperand for ArrayExpr {}
 
+impl IterableExpr for ArrayExpr {}
+
 impl Assignable for ArrayExpr {}
 
 impl Constant for ArrayExpr {}
-
-impl IterableExpr for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
@@ -67,9 +67,9 @@ impl<E> ExprWithoutBlock<E> for IndexExpr {}
 
 impl BooleanOperand for IndexExpr {}
 
-impl Constant for IndexExpr {}
-
 impl IterableExpr for IndexExpr {}
+
+impl Constant for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {
