@@ -125,6 +125,6 @@ pub struct MatchArm {
 }
 
 pub struct MatchArmGuard {
-    kw_if: Keyword,
-    operand: Box<dyn Expression>,
+    kw_if: KwIf,
+    operand: Box<dyn BooleanOperand>,
 }
