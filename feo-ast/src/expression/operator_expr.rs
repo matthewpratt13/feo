@@ -8,8 +8,6 @@ use feo_types::{
 
 // TODO: start using `Span::join()` from here
 
-use crate::statement::Statement;
-
 use super::{
     Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
 };
@@ -111,8 +109,6 @@ impl Expression for ArithmeticOrLogicalExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
 
-impl Statement for ArithmeticOrLogicalExpr {}
-
 impl BooleanOperand for ArithmeticOrLogicalExpr {}
 
 impl IterableExpr for ArithmeticOrLogicalExpr {}
@@ -142,8 +138,6 @@ impl<E> OperatorExpr<E> for AssignmentExpr {}
 impl Expression for AssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
-
-impl Statement for AssignmentExpr {}
 
 impl BooleanOperand for AssignmentExpr {}
 
@@ -175,8 +169,6 @@ impl Expression for CompoundAssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for CompoundAssignmentExpr {}
 
-impl Statement for CompoundAssignmentExpr {}
-
 impl BooleanOperand for CompoundAssignmentExpr {}
 
 impl IterableExpr for CompoundAssignmentExpr {}
@@ -207,8 +199,6 @@ impl Expression for ComparisonExpr {}
 
 impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
 
-impl Statement for ComparisonExpr {}
-
 impl BooleanOperand for ComparisonExpr {}
 
 impl IterableExpr for ComparisonExpr {}
@@ -237,8 +227,6 @@ impl<E> OperatorExpr<E> for DerefExpr {}
 impl Expression for DerefExpr {}
 
 impl<E> ExprWithoutBlock<E> for DerefExpr {}
-
-impl Statement for DerefExpr {}
 
 impl BooleanOperand for DerefExpr {}
 
@@ -270,8 +258,6 @@ impl Expression for LazyBoolExpr {}
 
 impl<E> ExprWithoutBlock<E> for LazyBoolExpr {}
 
-impl Statement for LazyBoolExpr {}
-
 impl BooleanOperand for LazyBoolExpr {}
 
 impl IterableExpr for LazyBoolExpr {}
@@ -300,8 +286,6 @@ impl<E> OperatorExpr<E> for NegationExpr {}
 impl Expression for NegationExpr {}
 
 impl<E> ExprWithoutBlock<E> for NegationExpr {}
-
-impl Statement for NegationExpr {}
 
 impl BooleanOperand for NegationExpr {}
 
@@ -333,8 +317,6 @@ impl Expression for RefExpr {}
 
 impl<E> ExprWithoutBlock<E> for RefExpr {}
 
-impl Statement for RefExpr {}
-
 impl BooleanOperand for RefExpr {}
 
 impl IterableExpr for RefExpr {}
@@ -362,8 +344,6 @@ impl<E> OperatorExpr<E> for TypeCastExpr {}
 impl Expression for TypeCastExpr {}
 
 impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
-
-impl Statement for TypeCastExpr {}
 
 impl BooleanOperand for TypeCastExpr {}
 
@@ -393,8 +373,6 @@ impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned + 'static {}
 impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
 
 impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
-
-impl<T> Statement for UnwrapExpr<T> where T: Spanned {}
 
 impl<T> BooleanOperand for UnwrapExpr<T> where T: Spanned + 'static {}
 

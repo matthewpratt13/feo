@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Comma, Dot, Parenthesis},
 };
 
-use crate::{path::PathExprSegment, pattern::Pattern, statement::Statement};
+use crate::{path::PathExprSegment, pattern::Pattern};
 
 use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 
@@ -17,8 +17,6 @@ pub struct FunctionCallExpr {
 impl Expression for FunctionCallExpr {}
 
 impl<E> ExprWithoutBlock<E> for FunctionCallExpr {}
-
-impl Statement for FunctionCallExpr {}
 
 impl BooleanOperand for FunctionCallExpr {}
 
@@ -53,8 +51,6 @@ pub struct MethodCallExpr {
 impl Expression for MethodCallExpr {}
 
 impl<E> ExprWithoutBlock<E> for MethodCallExpr {}
-
-impl Statement for MethodCallExpr {}
 
 impl BooleanOperand for MethodCallExpr {}
 

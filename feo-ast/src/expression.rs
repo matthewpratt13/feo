@@ -17,8 +17,6 @@ mod tuple_expr;
 
 use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
 
-use crate::statement::Statement;
-
 pub use self::{
     attribute::{InnerAttr, OuterAttr},
     block_expr::BlockExpr,
@@ -106,7 +104,7 @@ where
 
 pub trait ExprWithoutBlock<E>
 where
-    Self: Expression + Statement,
+    Self: Expression,
 {
 }
 

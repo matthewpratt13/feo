@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{path::PathInExpr, statement::Statement, ty::Type};
+use crate::{path::PathInExpr, ty::Type};
 
 use super::{Assignable, Constant, ExprWithoutBlock, Expression, OuterAttr};
 
@@ -26,8 +26,6 @@ impl<E> StructExpr<E> for Struct {}
 impl Expression for Struct {}
 
 impl<E> ExprWithoutBlock<E> for Struct {}
-
-impl Statement for Struct {}
 
 impl Assignable for Struct {}
 
@@ -74,8 +72,6 @@ impl Expression for TupleStruct {}
 
 impl<E> ExprWithoutBlock<E> for TupleStruct {}
 
-impl Statement for TupleStruct {}
-
 impl Assignable for TupleStruct {}
 
 impl Constant for TupleStruct {}
@@ -101,8 +97,6 @@ impl<E> StructExpr<E> for UnitStruct {}
 impl Expression for UnitStruct {}
 
 impl<E> ExprWithoutBlock<E> for UnitStruct {}
-
-impl Statement for UnitStruct {}
 
 impl Assignable for UnitStruct {}
 

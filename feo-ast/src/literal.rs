@@ -7,7 +7,6 @@ use feo_types::{
 use crate::{
     expression::{BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr},
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
-    statement::Statement,
 };
 
 #[derive(Debug, Clone)]
@@ -80,8 +79,6 @@ impl Castable for Literal<f32> {}
 impl Castable for Literal<f64> {}
 
 impl Castable for Literal<bool> {}
-
-impl<L> Statement for Literal<L> where L: 'static + Clone + Primitive {}
 
 impl<L> Constant for Literal<L> where L: 'static + Clone + Primitive {}
 

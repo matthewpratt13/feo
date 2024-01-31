@@ -3,8 +3,6 @@ use feo_types::{
     utils::{DblDot, DotDotEquals},
 };
 
-use crate::statement::Statement;
-
 use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub trait RangeExpr<E>
@@ -32,8 +30,6 @@ impl<E> RangeExpr<E> for RangeFromToExpr {}
 impl Expression for RangeFromToExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromToExpr {}
-
-impl Statement for RangeFromToExpr {}
 
 impl BooleanOperand for RangeFromToExpr {}
 
@@ -64,8 +60,6 @@ impl Expression for RangeFromExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
 
-impl Statement for RangeFromExpr {}
-
 impl BooleanOperand for RangeFromExpr {}
 
 impl IterableExpr for RangeFromExpr {}
@@ -94,8 +88,6 @@ impl<E> RangeExpr<E> for RangeToExpr {}
 impl Expression for RangeToExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeToExpr {}
-
-impl Statement for RangeToExpr {}
 
 impl BooleanOperand for RangeToExpr {}
 
@@ -127,8 +119,6 @@ impl Expression for RangeInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
 
-impl Statement for RangeInclusiveExpr {}
-
 impl BooleanOperand for RangeInclusiveExpr {}
 
 impl IterableExpr for RangeInclusiveExpr {}
@@ -157,8 +147,6 @@ impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
 impl Expression for RangeToInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeToInclusiveExpr {}
-
-impl Statement for RangeToInclusiveExpr {}
 
 impl BooleanOperand for RangeToInclusiveExpr {}
 

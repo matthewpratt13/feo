@@ -4,7 +4,7 @@ use feo_types::{
     Keyword,
 };
 
-use crate::{path::SimplePath, statement::Statement};
+use crate::path::SimplePath;
 
 use super::{ExprWithBlock, ExprWithoutBlock, Expression};
 
@@ -27,8 +27,6 @@ pub struct InnerAttr {
 impl Expression for InnerAttr {}
 
 impl<E> ExprWithoutBlock<E> for InnerAttr {}
-
-impl Statement for InnerAttr {}
 
 impl Spanned for InnerAttr {
     fn span(&self) -> Span {
@@ -59,8 +57,6 @@ impl Expression for OuterAttr {}
 impl<E> ExprWithBlock<E> for OuterAttr {}
 
 impl<E> ExprWithoutBlock<E> for OuterAttr {}
-
-impl Statement for OuterAttr {}
 
 impl Spanned for OuterAttr {
     fn span(&self) -> Span {

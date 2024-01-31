@@ -3,7 +3,7 @@
 use feo_types::{
     span::{Span, Spanned},
     utils::{Colon, Equals, Semicolon},
-    Keyword, Punctuation,
+    Keyword,
 };
 
 use crate::{
@@ -52,8 +52,6 @@ impl Spanned for ExprStatement {
     }
 }
 
-impl Statement for Keyword {}
-
 pub struct LetStatement {
     attributes: Vec<OuterAttr>,
     kw_let: Keyword,
@@ -85,8 +83,6 @@ impl Spanned for LetStatement {
         span
     }
 }
-
-impl Statement for Punctuation {}
 
 pub struct StatementsWithExpr<T> {
     statements: Vec<Box<dyn Statement>>,

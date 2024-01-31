@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
-use crate::{pattern::Pattern, statement::Statement, ty::Type};
+use crate::{pattern::Pattern, ty::Type};
 
 use super::{
     BlockExpr, BooleanOperand, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr, OuterAttr,
@@ -49,8 +49,6 @@ impl<T> Expression for ClosureWithBlock<T> {}
 
 impl<T, E> ExprWithBlock<E> for ClosureWithBlock<T> {}
 
-impl<T> Statement for ClosureWithBlock<T> {}
-
 impl<T> BooleanOperand for ClosureWithBlock<T> where T: 'static {}
 
 impl<T> IterableExpr for ClosureWithBlock<T> where T: 'static {}
@@ -84,8 +82,6 @@ impl ClosureExpr for ClosureWithoutBlock {}
 impl Expression for ClosureWithoutBlock {}
 
 impl<E> ExprWithoutBlock<E> for ClosureWithoutBlock {}
-
-impl Statement for ClosureWithoutBlock {}
 
 impl BooleanOperand for ClosureWithoutBlock {}
 

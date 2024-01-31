@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Bracket, Comma, Semicolon},
 };
 
-use crate::{literal::Literal, statement::Statement};
+use crate::literal::Literal;
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
@@ -16,8 +16,6 @@ pub struct ArrayExpr {
 impl Expression for ArrayExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArrayExpr {}
-
-impl Statement for ArrayExpr {}
 
 impl BooleanOperand for ArrayExpr {}
 
@@ -66,8 +64,6 @@ pub struct IndexExpr {
 impl Expression for IndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for IndexExpr {}
-
-impl Statement for IndexExpr {}
 
 impl BooleanOperand for IndexExpr {}
 

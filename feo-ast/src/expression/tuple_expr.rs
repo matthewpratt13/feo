@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Comma, Dot, Parenthesis},
 };
 
-use crate::{item::TupleStruct, literal::Literal, statement::Statement, ty::TupleType};
+use crate::{item::TupleStruct, literal::Literal, ty::TupleType};
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
@@ -30,8 +30,6 @@ pub struct TupleExpr {
 impl Expression for TupleExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleExpr {}
-
-impl Statement for TupleExpr {}
 
 impl Assignable for TupleExpr {}
 
@@ -79,7 +77,5 @@ impl Spanned for TupleIndexExpr {
 impl Expression for TupleIndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleIndexExpr {}
-
-impl Statement for TupleIndexExpr {}
 
 impl BooleanOperand for TupleIndexExpr {}

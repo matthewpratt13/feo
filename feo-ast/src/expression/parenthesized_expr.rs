@@ -3,8 +3,6 @@ use feo_types::{
     utils::Parenthesis,
 };
 
-use crate::statement::Statement;
-
 use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct ParenthesizedExpr {
@@ -16,8 +14,6 @@ pub struct ParenthesizedExpr {
 impl Expression for ParenthesizedExpr {}
 
 impl<E> ExprWithoutBlock<E> for ParenthesizedExpr {}
-
-impl Statement for ParenthesizedExpr {}
 
 impl BooleanOperand for ParenthesizedExpr {}
 

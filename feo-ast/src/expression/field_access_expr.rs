@@ -3,7 +3,7 @@ use feo_types::{
     utils::Dot,
 };
 
-use crate::{item::StructFieldName, statement::Statement};
+use crate::item::StructFieldName;
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
@@ -16,8 +16,6 @@ pub struct FieldAccessExpr {
 impl Expression for FieldAccessExpr {}
 
 impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
-
-impl Statement for FieldAccessExpr {}
 
 impl BooleanOperand for FieldAccessExpr {}
 
