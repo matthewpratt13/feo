@@ -727,7 +727,6 @@ impl<'a> Lexer<'a> {
 
 #[cfg(test)]
 mod tests {
-    use feo_types::primitive::PrimitiveType;
 
     use super::*;
 
@@ -895,14 +894,14 @@ mod tests {
         if let Ok(t) = lexer.lex() {
             for token in t.tokens() {
                 match token.as_ref().expect("Token not found") {
-                    Token::CharLit(c) => println!("CharLit: {:?}", c.raw_value()),
-                    Token::StringLit(s) => println!("StringLit: {:?}", s.raw_value()),
-                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.raw_value()),
-                    Token::IntLit(i) => println!("IntLit: {:?}", i.raw_value()),
-                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.raw_value()),
-                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.raw_value()),
-                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.raw_value()),
-                    Token::Bytes32Lit(by) => println!("Bytes32Lit: {:?}", by.raw_value()),
+                    Token::CharLit(c) => println!("CharLit: {:?}", c.into_inner()),
+                    Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
+                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
+                    Token::IntLit(i) => println!("IntLit: {:?}", i.into_inner()),
+                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
+                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
+                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
+                    Token::Bytes32Lit(by) => println!("Bytes32Lit: {:?}", by.into_inner()),
                     Token::Iden(id) => println!("Iden: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
                     Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),

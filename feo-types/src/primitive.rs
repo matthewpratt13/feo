@@ -3,116 +3,101 @@ use crate::{
     U256,
 };
 
-pub trait Primitive {}
+#[derive(Debug, Clone, PartialEq)]
+pub struct Primitive<P>(pub P);
 
-impl Primitive for char {}
-
-impl Primitive for String {}
-
-impl Primitive for i32 {}
-
-impl Primitive for i64 {}
-
-impl Primitive for u8 {}
-
-impl Primitive for u16 {}
-
-impl Primitive for u32 {}
-
-impl Primitive for u64 {}
-
-impl Primitive for U256 {}
-
-impl Primitive for [u8; 32] {}
-
-impl Primitive for f32 {}
-
-impl Primitive for f64 {}
-
-impl Primitive for bool {}
-
-pub trait PrimitiveType<P>
+impl<P> Primitive<P>
 where
-    Self: Sized,
-    P: 'static + Clone + Primitive,
+    P: Clone,
 {
-    fn new(raw_value: P, span: Span) -> Self;
-    fn raw_value(&self) -> &P;
+    pub fn new(raw_value: P) -> Primitive<P> {
+        Primitive(raw_value)
+    }
+
+    pub fn raw_value(&self) -> P {
+        self.clone().0
+    }
 }
 
-impl Spanned for char {
+impl Spanned for Primitive<char> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for String {
+// impl Spanned for Primitive<&str> {
+//     fn span(&self) -> Span {
+//         Span::default()
+//     }
+// }
+
+impl Spanned for Primitive<String> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for i32 {
+impl Spanned for Primitive<u8> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for i64 {
+impl Spanned for Primitive<u16> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for u8 {
+impl Spanned for Primitive<u32> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for u16 {
+impl Spanned for Primitive<u64> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for u32 {
+impl Spanned for Primitive<U256> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for u64 {
+impl Spanned for Primitive<i32> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for U256 {
+impl Spanned for Primitive<i64> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for f32 {
+impl Spanned for Primitive<f32> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for f64 {
+impl Spanned for Primitive<f64> {
     fn span(&self) -> Span {
         Span::default()
     }
 }
 
-impl Spanned for [u8; 32] {
-    fn span(&self) -> Span {
-        Span::default()
-    }
-}
+// impl Spanned for Primitive<[u8; 32]> {
+//     fn span(&self) -> Span {
+//         Span::default()
+//     }
+// }
 
-impl Spanned for bool {
+impl Spanned for Primitive<bool> {
     fn span(&self) -> Span {
         Span::default()
     }
