@@ -3,9 +3,9 @@ use feo_types::{
     utils::{Bracket, Comma, Semicolon},
 };
 
-use crate::{literal::Literal, statement::Statement, ty::ArrayType};
+use crate::{literal::Literal, statement::Statement};
 
-use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
@@ -20,6 +20,8 @@ impl<E> ExprWithoutBlock<E> for ArrayExpr {}
 impl Statement for ArrayExpr {}
 
 impl BooleanOperand for ArrayExpr {}
+
+impl Assignable for ArrayExpr {}
 
 impl Constant for ArrayExpr {}
 
@@ -51,11 +53,11 @@ pub struct ArrayElements {
 pub struct ArrayWithSingleRepeatedValue {
     repeated_value: Box<dyn Expression>,
     semicolon: Semicolon,
-    num_of_repeats: Literal<u64>,
+    num_repeats: Literal<u64>,
 }
 
 pub struct IndexExpr {
-    operand: ArrayType,
+    indexed_operand: ArrayExpr,
     open_bracket: Bracket,
     index: Literal<u64>,
     close_bracket: Bracket,
@@ -75,14 +77,14 @@ impl IterableExpr for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {
-        let s1 = self.operand.span();
+        let s1 = self.indexed_operand.span();
         let s2 = self.close_bracket.span();
 
         Span::join(s1, s2)
 
-        // let start_pos = self.operand.span().start();
+        // let start_pos = self.indexed_operand.span().start();
         // let end_pos = self.close_bracket.span().end();
-        // let source = self.operand.span().source();
+        // let source = self.indexed_operand.span().source();
 
         // let span = Span::new(source.as_str(), start_pos, end_pos);
 

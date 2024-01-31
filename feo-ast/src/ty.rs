@@ -6,7 +6,7 @@ mod tuple_type;
 
 use feo_types::{span::Spanned, U256};
 
-pub use self::{array_type::ArrayType, impl_trait_type::TraitBound, tuple_type::TupleType};
+pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
 // built-in types:
 // - primitives (char, str, int, uint, float, bytes32, bool)
