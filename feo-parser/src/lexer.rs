@@ -3,8 +3,8 @@
 use std::{iter::Peekable, sync::Arc};
 
 use feo_ast::{
+    literal::Literal,
     token::{Token, TokenStream, Tokenize},
-    Literal,
 };
 
 use feo_error::{

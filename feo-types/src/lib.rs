@@ -1,4 +1,5 @@
-pub use bnum::types::U256 as U256;
+pub use bnum::types::U256;
+pub type Bytes32 = [u8; 32];
 
 pub mod comment;
 pub use crate::comment::Comment;

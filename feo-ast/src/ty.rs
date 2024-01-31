@@ -4,7 +4,7 @@ mod array_type;
 mod impl_trait_type;
 mod tuple_type;
 
-use feo_types::{primitive::Primitive, span::Spanned, U256};
+use feo_types::{primitive::Primitive, span::Spanned, Bytes32, U256};
 
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
@@ -33,8 +33,6 @@ where
 
 impl Type for Primitive<char> {}
 
-// impl Type for Primitive<&str> {}
-
 impl Type for Primitive<String> {}
 
 impl Type for Primitive<i32> {}
@@ -55,7 +53,7 @@ impl Type for Primitive<f32> {}
 
 impl Type for Primitive<f64> {}
 
-// impl Type for Primitive<[u8; 32]> {}
+impl Type for Primitive<Bytes32> {}
 
 impl Type for Primitive<bool> {}
 

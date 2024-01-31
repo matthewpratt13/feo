@@ -1,5 +1,5 @@
 use feo_types::{
-    primitive::Primitive,
+    primitive::{Primitive, PrimitiveType},
     span::{Span, Spanned},
     U256,
 };
@@ -10,14 +10,14 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct Literal<T> {
+pub struct Literal<T: Clone + PrimitiveType> {
     pub inner_value: Primitive<T>,
     span: Span,
 }
 
 impl<T> Literal<T>
 where
-    T: Clone,
+    T: Clone + PrimitiveType,
 {
     pub fn new(raw_value: Primitive<T>, span: Span) -> Literal<T> {
         Literal {
@@ -31,7 +31,10 @@ where
     }
 }
 
-impl<T> Spanned for Literal<T> {
+impl<T> Spanned for Literal<T>
+where
+    T: Clone + PrimitiveType,
+{
     fn span(&self) -> Span {
         self.span.clone()
     }
@@ -45,17 +48,17 @@ where
 
 pub trait LiteralPatt
 where
-    Self: Sized + 'static + Pattern,
+    Self: Sized + Pattern + 'static,
 {
 }
 
-impl<L, E> LiteralExpr<E> for Literal<L> where L: Clone + 'static {}
+impl<T, E> LiteralExpr<E> for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L, E> ExprWithoutBlock<E> for Literal<L> where L: Clone {}
+impl<T, E> ExprWithoutBlock<E> for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<L> Expression for Literal<L> where L: Clone {}
+impl<T> Expression for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<L> BooleanOperand for Literal<L> where L: Clone + 'static {}
+impl<T> BooleanOperand for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
 impl Castable for Literal<char> {}
 
@@ -79,15 +82,15 @@ impl Castable for Literal<f64> {}
 
 impl Castable for Literal<bool> {}
 
-impl<L> Constant for Literal<L> where L: Clone + 'static {}
+impl<T> Constant for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L> IterableExpr for Literal<L> where L: Clone + 'static {}
+impl<T> IterableExpr for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L> LiteralPatt for Literal<L> where L: Clone + 'static {}
+impl<T> LiteralPatt for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L> Pattern for Literal<L> where L: Clone {}
+impl<T> Pattern for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<L> PatternWithoutRange for Literal<L> where L: Clone {}
+impl<T> PatternWithoutRange for Literal<T> where T: Clone + PrimitiveType {}
 
 impl RangePattBound for Literal<char> {}
 

@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use bnum::cast::As;
+
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
@@ -18,10 +19,10 @@ use feo_types::{
     span::{Position, Span, Spanned},
     type_annotation::{TypeAnnKind, TypeAnnotation},
     utils::TypeErrorKind,
-    Identifier, U256,
+    Bytes32, Identifier, U256,
 };
 
-use crate::Literal;
+use crate::literal::Literal;
 
 pub trait Tokenize {
     fn tokenize(
@@ -43,7 +44,7 @@ pub enum Token {
     UIntLit(Literal<u64>),
     U256Lit(Literal<U256>),
     FloatLit(Literal<f64>),
-    Bytes32Lit(Literal<[u8; 32]>),
+    Bytes32Lit(Literal<Bytes32>),
 
     Iden(Identifier),
     Keyword(Keyword),
@@ -322,6 +323,33 @@ impl Tokenize for Literal<String> {
     }
 }
 
+impl Tokenize for Literal<bool> {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let error = ParserError {
+            error_kind: ParserErrorKind::ParseBoolError,
+            position: Position::new(src, start),
+        };
+
+        let parsed = content
+            .parse::<bool>()
+            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+
+        let literal = Literal::new(Primitive::new(parsed), span);
+
+        let token = Token::BoolLit(literal);
+
+        Ok(Some(token))
+    }
+}
+
 impl Tokenize for Literal<i64> {
     fn tokenize(
         src: &str,
@@ -470,32 +498,8 @@ impl Tokenize for Literal<f64> {
     }
 }
 
-impl Tokenize for Literal<bool> {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let error = ParserError {
-            error_kind: ParserErrorKind::ParseBoolError,
-            position: Position::new(src, start),
-        };
-
-        let parsed = content
-            .parse::<bool>()
-            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
-
-        let literal = Literal::new(Primitive::new(parsed), span);
-
-        let token = Token::BoolLit(literal);
-
-        Ok(Some(token))
-    }
-}
+// TODO:
+// impl Tokenize for Literal<Bytes32> {}
 
 impl Tokenize for Punctuation {
     fn tokenize(
