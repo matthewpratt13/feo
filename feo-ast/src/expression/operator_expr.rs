@@ -71,25 +71,25 @@ impl Spanned for NegationOperatorKind {
     }
 }
 
-pub enum UnwrapOperatorKind<T: Spanned> {
+pub enum UnwrapOperandKind<T: Spanned> {
     Option(Option<T>),
     Result(Result<T, CompilerError>),
 }
 
-impl<T> Spanned for UnwrapOperatorKind<T>
+impl<T> Spanned for UnwrapOperandKind<T>
 where
     T: Spanned,
 {
     fn span(&self) -> Span {
         match self {
-            UnwrapOperatorKind::Option(o) => {
+            UnwrapOperandKind::Option(o) => {
                 if let Some(t) = o {
                     t.span()
                 } else {
                     Span::default()
                 }
             }
-            UnwrapOperatorKind::Result(r) => {
+            UnwrapOperandKind::Result(r) => {
                 if let Ok(t) = r {
                     t.span()
                 } else {
@@ -226,7 +226,7 @@ impl Spanned for ComparisonExpr {
 }
 
 pub struct DerefExpr {
-    deref_operator: DerefOperator,
+    operator: DerefOperator,
     operand: Box<dyn Assignable>,
 }
 
@@ -244,9 +244,9 @@ impl Constant for DerefExpr {}
 
 impl Spanned for DerefExpr {
     fn span(&self) -> Span {
-        let start_pos = self.deref_operator.span().start();
+        let start_pos = self.operator.span().start();
         let end_pos = self.operand.span().end();
-        let source = self.deref_operator.span().source();
+        let source = self.operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -285,7 +285,7 @@ impl Spanned for LazyBoolExpr {
 }
 
 pub struct NegationExpr {
-    negator: NegationOperatorKind,
+    operator: NegationOperatorKind,
     operand: Box<dyn Expression>,
 }
 
@@ -303,9 +303,9 @@ impl Constant for NegationExpr {}
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
-        let start_pos = self.negator.span().start();
+        let start_pos = self.operator.span().start();
         let end_pos = self.operand.span().end();
-        let source = self.negator.span().source();
+        let source = self.operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -314,7 +314,7 @@ impl Spanned for NegationExpr {
 }
 
 pub struct RefExpr {
-    ref_operator: RefOperator,
+    operator: RefOperator,
     operand: Box<dyn Assignable>,
 }
 
@@ -330,10 +330,10 @@ impl IterableExpr for RefExpr {}
 
 impl Spanned for RefExpr {
     fn span(&self) -> Span {
-        let s1 = if let Some(r) = &self.ref_operator.0 {
+        let s1 = if let Some(r) = &self.operator.0 {
             r.span()
         } else {
-            self.ref_operator.1.span()
+            self.operator.1.span()
         };
 
         let s2 = self.operand.span();
@@ -344,7 +344,7 @@ impl Spanned for RefExpr {
 
 pub struct TypeCastExpr {
     lhs: Box<dyn Castable>,
-    cast_operator: CastOperator,
+    operator: CastOperator,
     rhs: Box<dyn Castable>,
 }
 
@@ -373,8 +373,8 @@ impl Spanned for TypeCastExpr {
 }
 
 pub struct UnwrapExpr<T: Spanned> {
-    operand: UnwrapOperatorKind<T>,
-    question_mark: QuestionMark,
+    operand: UnwrapOperandKind<T>,
+    operator: QuestionMark,
 }
 
 impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned + 'static {}
@@ -393,7 +393,7 @@ where
 {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
-        let end_pos = self.question_mark.span().end();
+        let end_pos = self.operator.span().end();
         let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
