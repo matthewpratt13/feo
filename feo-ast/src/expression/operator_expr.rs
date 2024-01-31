@@ -255,9 +255,9 @@ impl Spanned for DerefExpr {
 }
 
 pub struct LazyBoolExpr {
-    lhs: Box<dyn Expression>,
+    lhs: Box<dyn BooleanOperand>,
     operator: LazyBoolOperatorKind,
-    rhs: Box<dyn Expression>,
+    rhs: Box<dyn BooleanOperand>,
 }
 
 impl<E> OperatorExpr<E> for LazyBoolExpr {}
