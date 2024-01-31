@@ -2,8 +2,7 @@
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Equals, Semicolon},
-    Keyword,
+    utils::{Colon, Equals, KwLet, Semicolon},
 };
 
 use crate::{
@@ -54,7 +53,7 @@ impl Spanned for ExprStatement {
 
 pub struct LetStatement {
     attributes: Vec<OuterAttr>,
-    kw_let: Keyword,
+    kw_let: KwLet,
     pattern: Box<dyn Pattern>,
     type_ann_opt: Option<(Colon, Box<dyn Type>)>,
     assignment_opt: Option<(Equals, Box<dyn Assignable>)>,

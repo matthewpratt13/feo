@@ -1,7 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Asterisk, Brace, Comma, DblColon, Semicolon},
-    Keyword,
+    utils::{Asterisk, Brace, Comma, DblColon, KwImport, Semicolon},
 };
 
 use crate::{path::SimplePath, statement::Statement};
@@ -16,7 +15,7 @@ pub enum ImportTree {
 
 pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,
-    kw_import: Keyword,
+    kw_import: KwImport,
     import_tree: ImportTree,
     semicolon: Semicolon,
 }

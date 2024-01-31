@@ -15,7 +15,6 @@ pub enum KeywordKind {
     KwContinue,
     KwContract,
     KwCrate,
-    KwDeref, // replaces dereference operator ('*')
     KwDyn,
     KwElse,
     KwEnum,
@@ -36,7 +35,7 @@ pub enum KeywordKind {
     KwNone,
     KwProgram,
     KwPub,
-    KwRef, // replaces reference operator ('&')
+    KwRef,
     KwReturn,
     KwScript,
     KwSelf,
@@ -63,7 +62,6 @@ impl KeywordKind {
             KeywordKind::KwContinue => "continue",
             KeywordKind::KwContract => "contract",
             KeywordKind::KwCrate => "crate",
-            KeywordKind::KwDeref => "deref",
             KeywordKind::KwDyn => "dyn",
             KeywordKind::KwElse => "else",
             KeywordKind::KwEnum => "enum",
@@ -115,7 +113,6 @@ impl FromStr for KeywordKind {
             "continue" => Ok(KeywordKind::KwContinue),
             "contract" => Ok(KeywordKind::KwContract),
             "crate" => Ok(KeywordKind::KwCrate),
-            "deref" => Ok(KeywordKind::KwDeref),
             "dyn" => Ok(KeywordKind::KwDyn),
             "else" => Ok(KeywordKind::KwElse),
             "enum" => Ok(KeywordKind::KwEnum),

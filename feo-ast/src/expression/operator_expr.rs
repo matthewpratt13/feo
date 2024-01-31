@@ -4,9 +4,9 @@ use feo_types::{
     span::{Span, Spanned},
     utils::{
         Ampersand, Asterisk, AsteriskEquals, Bang, BangEquals, DblAmpersand, DblEquals, DblPipe,
-        Equals, ForwardSlash, ForwardSlashEquals, GreaterThan, GreaterThanEquals, KwAs, KwDeref,
-        KwMut, KwRef, LessThan, LessThanEquals, Minus, MinusEquals, Percent, PercentEquals, Pipe,
-        Plus, PlusEquals, QuestionMark,
+        Equals, ForwardSlash, ForwardSlashEquals, GreaterThan, GreaterThanEquals, KwAs, KwMut,
+        LessThan, LessThanEquals, Minus, MinusEquals, Percent, PercentEquals, Pipe, Plus,
+        PlusEquals, QuestionMark,
     },
 };
 
@@ -99,8 +99,8 @@ where
 
 pub type AssignOperator = Equals;
 pub type CastOperator = KwAs;
-pub type DerefOperator = KwDeref;
-pub type RefOperator = (Option<KwMut>, KwRef);
+pub type DerefOperator = Asterisk;
+pub type RefOperator = (Option<Ampersand>, KwMut);
 
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,

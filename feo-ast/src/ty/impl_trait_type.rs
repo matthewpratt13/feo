@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    Keyword,
+    utils::KwImpl,
 };
 
 use crate::path::PathType;
@@ -9,7 +9,7 @@ use super::Type;
 
 // (one bound)
 pub struct ImplTraitType {
-    kw_impl: Keyword,
+    kw_impl: KwImpl,
     trait_bound: TraitBound,
 }
 

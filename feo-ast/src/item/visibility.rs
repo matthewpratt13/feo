@@ -1,11 +1,10 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::Parenthesis,
-    Keyword,
+    utils::{KwCrate, KwPub, Parenthesis},
 };
 
 pub enum VisibilityKind {
-    Pub(Keyword),
+    Pub(KwPub),
     PubCrate(PubCrateVisibility),
 }
 
@@ -19,9 +18,9 @@ impl Spanned for VisibilityKind {
 }
 
 pub struct PubCrateVisibility {
-    kw_pub: Keyword,
+    kw_pub: KwPub,
     open_parenthesis: Parenthesis,
-    kw_crate: Keyword,
+    kw_crate: KwCrate,
     close_parenthesis: Parenthesis,
 }
 

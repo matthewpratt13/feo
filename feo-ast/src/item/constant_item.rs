@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Equals, Semicolon},
-    Identifier, Keyword,
+    utils::{Colon, Equals, KwConst, KwMut, KwStatic, Semicolon},
+    Identifier,
 };
 
 use crate::{
@@ -16,7 +16,7 @@ use super::{Item, VisibilityKind};
 pub struct ConstantItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_const: Keyword,
+    kw_const: KwConst,
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
@@ -54,8 +54,8 @@ impl Spanned for ConstantItem {
 pub struct StaticItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_static: Keyword,
-    kw_mut_opt: Option<Keyword>,
+    kw_static: KwStatic,
+    kw_mut_opt: Option<KwMut>,
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,

@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Colon},
-    Identifier, Keyword,
+    utils::{Brace, Colon, KwTrait},
+    Identifier,
 };
 
 use crate::{
@@ -24,7 +24,7 @@ pub enum TraitDefItem<T> {
 pub struct TraitDef<T> {
     outer_attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_trait: Keyword,
+    kw_trait: KwTrait,
     trait_name: Identifier,
     type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
     where_clause_opt: Option<WhereClause>,

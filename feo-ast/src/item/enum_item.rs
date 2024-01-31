@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Comma, Parenthesis},
-    Identifier, Keyword,
+    utils::{Brace, Comma, KwEnum, Parenthesis},
+    Identifier,
 };
 
 use crate::{
@@ -21,7 +21,7 @@ pub enum EnumVariantType {
 pub struct EnumItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_enum: Keyword,
+    kw_enum: KwEnum,
     enum_name: Identifier,
     open_brace: Brace,
     enum_variants_opt: Option<EnumVariants>,

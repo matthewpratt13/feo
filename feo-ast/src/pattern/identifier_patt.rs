@@ -1,13 +1,14 @@
 use feo_types::{
     span::{Span, Spanned},
-    Identifier, Keyword,
+    utils::{KwMut, KwRef},
+    Identifier,
 };
 
 use super::{Pattern, PatternWithoutRange};
 
 pub struct IdentifierPatt {
-    kw_ref_opt: Option<Keyword>,
-    kw_mut_opt: Option<Keyword>,
+    kw_ref_opt: Option<KwRef>,
+    kw_mut_opt: Option<KwMut>,
     name: Identifier,
 }
 

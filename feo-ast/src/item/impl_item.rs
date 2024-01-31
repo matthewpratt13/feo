@@ -1,7 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::Brace,
-    Keyword,
+    utils::{Brace, KwFor, KwImpl},
 };
 
 use crate::{
@@ -32,7 +31,7 @@ pub enum TraitImplItem<T> {
 
 pub struct InherentImpl<T> {
     outer_attributes: Vec<OuterAttr>,
-    kw_impl: Keyword,
+    kw_impl: KwImpl,
     nominal_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
@@ -66,9 +65,9 @@ impl<T> Spanned for InherentImpl<T> {
 
 pub struct TraitImpl<T> {
     outer_attributes: Vec<OuterAttr>,
-    kw_impl: Keyword,
+    kw_impl: KwImpl,
     implemented_trait_path: PathType,
-    kw_for: Keyword,
+    kw_for: KwFor,
     implementing_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,

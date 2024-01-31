@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Equals, Semicolon},
-    Identifier, Keyword,
+    utils::{Colon, Equals, KwType, Semicolon},
+    Identifier,
 };
 
 use crate::{expression::OuterAttr, statement::Statement, ty::Type};
@@ -11,7 +11,7 @@ use super::{Item, TypeParamBounds, VisibilityKind};
 pub struct TypeAliasDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_type: Keyword,
+    kw_type: KwType,
     type_name: Identifier,
     type_param_bounds_opt: Option<(Colon, TypeParamBounds)>,
     assignment_opt: Option<(Equals, Box<dyn Type>)>,

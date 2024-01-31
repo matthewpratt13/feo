@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Colon, Comma, Parenthesis, Semicolon},
-    Identifier, Keyword,
+    utils::{Brace, Colon, Comma, KwStruct, Parenthesis, Semicolon},
+    Identifier,
 };
 
 use crate::{
@@ -23,7 +23,7 @@ pub type StructFieldName = Identifier;
 pub struct Struct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_struct: Keyword,
+    kw_struct: KwStruct,
     struct_name: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
@@ -73,7 +73,7 @@ pub struct StructField {
 pub struct TupleStruct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_struct: Keyword,
+    kw_struct: KwStruct,
     struct_name: Identifier,
     open_parenthesis: Parenthesis,
     tuple_elements_opt: Option<TupleElements>,
@@ -122,7 +122,7 @@ pub struct TupleField {
 pub struct UnitStruct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_struct: Keyword,
+    kw_struct: KwStruct,
     struct_name: Identifier,
     open_brace: Brace,
     close_brace: Brace,

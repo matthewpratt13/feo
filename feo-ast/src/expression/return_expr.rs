@@ -1,12 +1,12 @@
 use feo_types::{
     span::{Span, Spanned},
-    Keyword,
+    utils::KwReturn,
 };
 
 use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct ReturnExpr {
-    kw_return: Keyword,
+    kw_return: KwReturn,
     expression_opt: Option<Box<dyn Expression>>,
 }
 

@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::Semicolon,
-    Identifier, Keyword,
+    utils::{KwAs, KwCrate, KwExtern, KwSelfType, Semicolon},
+    Identifier,
 };
 
 use crate::statement::Statement;
@@ -10,11 +10,11 @@ use super::Item;
 
 pub enum CrateRefKind {
     Iden(Identifier),
-    KwSelf(Keyword),
+    KwSelfType(KwSelfType),
 }
 
 pub struct ExternCrateDecl {
-    kw_extern_crate: (Keyword, Keyword),
+    kw_extern_crate: (KwExtern, KwCrate),
     crate_name: CrateRefKind,
     as_clause_opt: Option<AsClause>,
     semicolon: Semicolon,
@@ -37,7 +37,7 @@ impl Spanned for ExternCrateDecl {
 }
 
 pub struct AsClause {
-    kw_as: Keyword,
+    kw_as: KwAs,
     new_name: Identifier,
 }
 

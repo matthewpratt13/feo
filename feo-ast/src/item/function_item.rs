@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Comma, Parenthesis, Semicolon, ThinArrow},
-    Identifier, Keyword,
+    utils::{Colon, Comma, KwFunc, KwMut, KwRef, KwSelf, Parenthesis, Semicolon, ThinArrow},
+    Identifier,
 };
 
 use crate::{
@@ -74,7 +74,7 @@ impl<T> Spanned for FunctionDef<T> {
 pub struct FunctionSig {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_func: Keyword,
+    kw_func: KwFunc,
     function_name: Identifier,
     open_parenthesis: Parenthesis,
     function_params_opt: Option<FunctionParams>,
@@ -119,8 +119,8 @@ pub struct MethodParam {
 }
 
 pub struct SelfParam {
-    kw_ref_opt: Option<Keyword>,
-    kw_mut_opt: Option<Keyword>,
-    kw_self: Keyword,
+    kw_ref_opt: Option<KwRef>,
+    kw_mut_opt: Option<KwMut>,
+    kw_self: KwSelf,
     type_annotation_opt: Option<(Colon, Box<dyn Type>)>,
 }

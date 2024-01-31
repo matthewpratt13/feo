@@ -1,7 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Semicolon},
-    Identifier, Keyword,
+    utils::{Brace, KwMod, Semicolon},
+    Identifier,
 };
 
 use crate::{expression::OuterAttr, statement::Statement};
@@ -17,7 +17,7 @@ where
 pub struct ModWithBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_mod: Keyword,
+    kw_mod: KwMod,
     mod_name: Identifier,
     open_brace: Brace,
     items: Vec<Box<dyn Item>>,
@@ -52,7 +52,7 @@ impl Spanned for ModWithBody {
 pub struct ModWithoutBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    kw_mod: Keyword,
+    kw_mod: KwMod,
     mod_name: Identifier,
     semicolon: Semicolon,
 }
