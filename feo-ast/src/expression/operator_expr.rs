@@ -20,7 +20,7 @@ where
 {
 }
 
-pub enum ArithmeticOrLogicalOperatorKind {
+pub enum ArithmeticOrLogicalOpKind {
     Plus(Punctuation),
     Minus(Punctuation),
     Multiply(Punctuation),
@@ -30,7 +30,7 @@ pub enum ArithmeticOrLogicalOperatorKind {
     LogicalOr(Punctuation),
 }
 
-pub enum ComparisonOperatorKind {
+pub enum ComparisonOpKind {
     Equality(Punctuation),
     NotEqual(Punctuation),
     LessThan(Punctuation),
@@ -39,52 +39,52 @@ pub enum ComparisonOperatorKind {
     GreaterThanOrEqual(Punctuation),
 }
 
-pub enum CompoundAssignmentOperatorKind {
-    PlusEquals(Punctuation),
-    MinusEquals(Punctuation),
-    MultiplyEquals(Punctuation),
-    DivideEquals(Punctuation),
-    ModulusEquals(Punctuation),
+pub enum CompoundAssignOpKind {
+    PlusAssign(Punctuation),
+    MinusAssign(Punctuation),
+    MultiplyAssign(Punctuation),
+    DivideAssign(Punctuation),
+    ModulusAssign(Punctuation),
 }
 
-pub enum LazyBoolOperatorKind {
-    And(Punctuation),
-    Or(Punctuation),
+pub enum LazyBoolOpKind {
+    LazyAnd(Punctuation),
+    LazyOr(Punctuation),
 }
 
-pub enum NegationOperatorKind {
+pub enum NegationOpKind {
     InvertNumeric(Minus),
     InvertBool(Bang),
 }
 
-impl Spanned for NegationOperatorKind {
+impl Spanned for NegationOpKind {
     fn span(&self) -> Span {
         match self {
-            NegationOperatorKind::InvertNumeric(n) => n.span(),
-            NegationOperatorKind::InvertBool(b) => b.span(),
+            NegationOpKind::InvertNumeric(n) => n.span(),
+            NegationOpKind::InvertBool(b) => b.span(),
         }
     }
 }
 
-pub enum UnwrapOperationKind<T: Spanned> {
+pub enum UnwrapOpKind<T: Spanned> {
     Option(Option<T>),
     Result(Result<T, CompilerError>),
 }
 
-impl<T> Spanned for UnwrapOperationKind<T>
+impl<T> Spanned for UnwrapOpKind<T>
 where
     T: Spanned,
 {
     fn span(&self) -> Span {
         match self {
-            UnwrapOperationKind::Option(o) => {
+            UnwrapOpKind::Option(o) => {
                 if let Some(t) = o {
                     t.span()
                 } else {
                     Span::default()
                 }
             }
-            UnwrapOperationKind::Result(r) => {
+            UnwrapOpKind::Result(r) => {
                 if let Ok(t) = r {
                     t.span()
                 } else {
@@ -101,7 +101,7 @@ pub type RefOperator = Keyword; // `ref`
 
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,
-    operator: ArithmeticOrLogicalOperatorKind,
+    operator: ArithmeticOrLogicalOpKind,
     rhs: Box<dyn Expression>,
 }
 
@@ -165,7 +165,7 @@ impl Spanned for AssignmentExpr {
 
 pub struct CompoundAssignmentExpr {
     assignee: Box<dyn Assignable>,
-    operator: CompoundAssignmentOperatorKind,
+    operator: CompoundAssignOpKind,
     new_value: Box<dyn Expression>,
 }
 
@@ -197,7 +197,7 @@ impl Spanned for CompoundAssignmentExpr {
 
 pub struct ComparisonExpr {
     lhs: Box<dyn Expression>,
-    operator: ComparisonOperatorKind,
+    operator: ComparisonOpKind,
     rhs: Box<dyn Expression>,
 }
 
@@ -260,7 +260,7 @@ impl Spanned for DerefExpr {
 
 pub struct LazyBoolExpr {
     lhs: Box<dyn Expression>,
-    operator: LazyBoolOperatorKind,
+    operator: LazyBoolOpKind,
     rhs: Box<dyn Expression>,
 }
 
@@ -291,7 +291,7 @@ impl Spanned for LazyBoolExpr {
 }
 
 pub struct NegationExpr {
-    negator: NegationOperatorKind,
+    negator: NegationOpKind,
     operand: Box<dyn Expression>,
 }
 
@@ -384,7 +384,7 @@ impl Spanned for TypeCastExpr {
 }
 
 pub struct UnwrapExpr<T: Spanned> {
-    operand: UnwrapOperationKind<T>,
+    operand: UnwrapOpKind<T>,
     question_mark: QuestionMark,
 }
 
