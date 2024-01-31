@@ -2,7 +2,7 @@ use feo_error::error::CompilerError;
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Bang, Equals, Minus, QuestionMark},
+    utils::{Bang, Equals, KwAs, KwDeref, KwMut, KwRef, Minus, QuestionMark},
     Keyword, Punctuation,
 };
 
@@ -93,9 +93,9 @@ where
     }
 }
 
-pub type CastOperator = Keyword; // `as`
-pub type DerefOperator = Keyword; // `deref`
-pub type RefOperator = Keyword; // `ref`
+pub type CastOperator = KwAs;
+pub type DerefOperator = KwDeref;
+pub type RefOperator = (Option<KwMut>, KwRef);
 
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,
@@ -306,8 +306,7 @@ impl Spanned for NegationExpr {
 }
 
 pub struct RefExpr {
-    kw_ref: RefOperator,
-    kw_mut_opt: Option<Keyword>,
+    ref_operator: RefOperator,
     operand: Box<dyn Assignable>,
 }
 
@@ -323,13 +322,15 @@ impl IterableExpr for RefExpr {}
 
 impl Spanned for RefExpr {
     fn span(&self) -> Span {
-        let start_pos = self.kw_ref.span().start();
-        let end_pos = self.operand.span().end();
-        let source = self.kw_ref.span().source();
+        let s1 = if let Some(r) = &self.ref_operator.0 {
+            r.span()
+        } else {
+            self.ref_operator.1.span()
+        };
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        let s2 = self.operand.span();
 
-        span
+        Span::join(s1, s2)
     }
 }
 

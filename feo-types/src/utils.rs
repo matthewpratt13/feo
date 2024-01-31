@@ -36,8 +36,12 @@ pub type Brace = Delimiter;
 pub type Bracket = Delimiter;
 pub type Parenthesis = Delimiter;
 
+pub type KwAs = Keyword;
+pub type KwDeref = Keyword;
 pub type KwElse = Keyword;
 pub type KwIf = Keyword;
+pub type KwMut = Keyword;
+pub type KwRef = Keyword;
 
 pub type Asterisk = Punctuation;
 pub type Bang = Punctuation;

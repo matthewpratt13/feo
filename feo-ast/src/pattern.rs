@@ -6,7 +6,7 @@ mod range_patt;
 mod struct_patt;
 mod tuple_patt;
 
-use feo_types::span::Spanned;
+use feo_types::{span::Spanned, utils::Underscore};
 
 pub use self::range_patt::RangePattBound;
 
@@ -60,5 +60,7 @@ mod reference_patt {
         }
     }
 }
+
+impl Pattern for Underscore {}
 
 // TODO: `OrPatt`
