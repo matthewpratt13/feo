@@ -3,6 +3,7 @@
 mod identifier_patt;
 mod parenthesized_patt;
 mod range_patt;
+mod reference_patt;
 mod struct_patt;
 mod tuple_patt;
 
@@ -30,35 +31,6 @@ pub trait PatternWithoutRange
 where
     Self: Pattern,
 {
-}
-
-mod reference_patt {
-    use feo_types::span::{Span, Spanned};
-    use feo_types::Keyword;
-
-    use super::{Pattern, PatternWithoutRange};
-
-    pub struct ReferencePatt {
-        kw_ref: Keyword,
-        kw_mut_opt: Option<Keyword>,
-        pattern: Box<dyn PatternWithoutRange>,
-    }
-
-    impl PatternWithoutRange for ReferencePatt {}
-
-    impl Pattern for ReferencePatt {}
-
-    impl Spanned for ReferencePatt {
-        fn span(&self) -> Span {
-            let start_pos = self.kw_ref.span().start();
-            let end_pos = self.pattern.span().end();
-            let source = self.kw_ref.span().source();
-
-            let span = Span::new(source.as_str(), start_pos, end_pos);
-
-            span
-        }
-    }
 }
 
 impl Pattern for Underscore {}

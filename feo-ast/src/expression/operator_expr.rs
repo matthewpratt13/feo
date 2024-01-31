@@ -3,10 +3,10 @@ use feo_error::error::CompilerError;
 use feo_types::{
     span::{Span, Spanned},
     utils::{
-        Ampersand, Asterisk, AsteriskEquals, Bang, BangEquals, DblAmpersand, DblEquals, DblPipe,
-        Equals, ForwardSlash, ForwardSlashEquals, GreaterThan, GreaterThanEquals, KwAs, KwMut,
-        LessThan, LessThanEquals, Minus, MinusEquals, Percent, PercentEquals, Pipe, Plus,
-        PlusEquals, QuestionMark,
+        Ampersand, Asterisk, AsteriskEquals, Bang, BangEquals, Caret, DblAmpersand, DblEquals,
+        DblGreaterThan, DblLessThan, DblPipe, Equals, ForwardSlash, ForwardSlashEquals,
+        GreaterThan, GreaterThanEquals, KwAs, KwMut, LessThan, LessThanEquals, Minus, MinusEquals,
+        Percent, PercentEquals, Pipe, Plus, PlusEquals, QuestionMark,
     },
 };
 
@@ -30,6 +30,9 @@ pub enum ArithmeticOrLogicalOperatorKind {
     Modulus(Percent),
     LogicalAnd(Ampersand),
     LogicalOr(Pipe),
+    LogicalXor(Caret),
+    ShiftLeft(DblLessThan),
+    ShiftRight(DblGreaterThan),
 }
 
 pub enum ComparisonOperatorKind {
