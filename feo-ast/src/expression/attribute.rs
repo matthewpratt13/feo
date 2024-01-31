@@ -1,7 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Bracket, HashBang, HashSign},
-    Keyword,
+    utils::{Bracket, HashBang, HashSign, KwAbstract, KwExport, KwExtern, KwUnsafe},
 };
 
 use crate::path::SimplePath;
@@ -9,10 +8,10 @@ use crate::path::SimplePath;
 use super::{ExprWithBlock, ExprWithoutBlock, Expression};
 
 pub enum AttributeKind {
-    KwAbstract(Keyword),
-    KwExport(Keyword),
-    KwExtern(Keyword),
-    KwUnsafe(Keyword),
+    KwAbstract(KwAbstract),
+    KwExport(KwExport),
+    KwExtern(KwExtern),
+    KwUnsafe(KwUnsafe),
 
     Path(SimplePath),
 }

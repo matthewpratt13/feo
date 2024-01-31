@@ -2,8 +2,12 @@ use feo_error::error::CompilerError;
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Bang, Equals, KwAs, KwDeref, KwMut, KwRef, Minus, QuestionMark},
-    Keyword, Punctuation,
+    utils::{
+        Ampersand, Asterisk, AsteriskEquals, Bang, BangEquals, DblAmpersand, DblEquals, DblPipe,
+        Equals, ForwardSlash, ForwardSlashEquals, GreaterThan, GreaterThanEquals, KwAs, KwDeref,
+        KwMut, KwRef, LessThan, LessThanEquals, Minus, MinusEquals, Percent, PercentEquals, Pipe,
+        Plus, PlusEquals, QuestionMark,
+    },
 };
 
 // TODO: start using `Span::join()` from here
@@ -18,71 +22,71 @@ where
 {
 }
 
-pub enum ArithmeticOrLogicalOpKind {
-    Plus(Punctuation),
-    Minus(Punctuation),
-    Multiply(Punctuation),
-    Divide(Punctuation),
-    Modulus(Punctuation),
-    LogicalAnd(Punctuation),
-    LogicalOr(Punctuation),
+pub enum ArithmeticOrLogicalOperatorKind {
+    Plus(Plus),
+    Minus(Minus),
+    Multiply(Asterisk),
+    Divide(ForwardSlash),
+    Modulus(Percent),
+    LogicalAnd(Ampersand),
+    LogicalOr(Pipe),
 }
 
-pub enum ComparisonOpKind {
-    Equality(Punctuation),
-    NotEqual(Punctuation),
-    LessThan(Punctuation),
-    GreaterThan(Punctuation),
-    LessThanOrEqual(Punctuation),
-    GreaterThanOrEqual(Punctuation),
+pub enum ComparisonOperatorKind {
+    Equality(DblEquals),
+    NotEqual(BangEquals),
+    LessThan(LessThan),
+    GreaterThan(GreaterThan),
+    LessThanOrEqual(LessThanEquals),
+    GreaterThanOrEqual(GreaterThanEquals),
 }
 
-pub enum CompoundAssignOpKind {
-    PlusAssign(Punctuation),
-    MinusAssign(Punctuation),
-    MultiplyAssign(Punctuation),
-    DivideAssign(Punctuation),
-    ModulusAssign(Punctuation),
+pub enum CompoundAssignOperatorKind {
+    PlusAssign(PlusEquals),
+    MinusAssign(MinusEquals),
+    MultiplyAssign(AsteriskEquals),
+    DivideAssign(ForwardSlashEquals),
+    ModulusAssign(PercentEquals),
 }
 
-pub enum LazyBoolOpKind {
-    LazyAnd(Punctuation),
-    LazyOr(Punctuation),
+pub enum LazyBoolOperatorKind {
+    LazyAnd(DblAmpersand),
+    LazyOr(DblPipe),
 }
 
-pub enum NegationOpKind {
+pub enum NegationOperatorKind {
     InvertNumeric(Minus),
     InvertBool(Bang),
 }
 
-impl Spanned for NegationOpKind {
+impl Spanned for NegationOperatorKind {
     fn span(&self) -> Span {
         match self {
-            NegationOpKind::InvertNumeric(n) => n.span(),
-            NegationOpKind::InvertBool(b) => b.span(),
+            NegationOperatorKind::InvertNumeric(n) => n.span(),
+            NegationOperatorKind::InvertBool(b) => b.span(),
         }
     }
 }
 
-pub enum UnwrapOpKind<T: Spanned> {
+pub enum UnwrapOperatorKind<T: Spanned> {
     Option(Option<T>),
     Result(Result<T, CompilerError>),
 }
 
-impl<T> Spanned for UnwrapOpKind<T>
+impl<T> Spanned for UnwrapOperatorKind<T>
 where
     T: Spanned,
 {
     fn span(&self) -> Span {
         match self {
-            UnwrapOpKind::Option(o) => {
+            UnwrapOperatorKind::Option(o) => {
                 if let Some(t) = o {
                     t.span()
                 } else {
                     Span::default()
                 }
             }
-            UnwrapOpKind::Result(r) => {
+            UnwrapOperatorKind::Result(r) => {
                 if let Ok(t) = r {
                     t.span()
                 } else {
@@ -93,13 +97,14 @@ where
     }
 }
 
+pub type AssignOperator = Equals;
 pub type CastOperator = KwAs;
 pub type DerefOperator = KwDeref;
 pub type RefOperator = (Option<KwMut>, KwRef);
 
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,
-    operator: ArithmeticOrLogicalOpKind,
+    operator: ArithmeticOrLogicalOperatorKind,
     rhs: Box<dyn Expression>,
 }
 
@@ -129,7 +134,7 @@ impl Spanned for ArithmeticOrLogicalExpr {
 
 pub struct AssignmentExpr {
     assignee: Box<dyn Expression>,
-    equals: Equals,
+    operator: AssignOperator,
     new_value: Box<dyn Expression>,
 }
 
@@ -159,7 +164,7 @@ impl Spanned for AssignmentExpr {
 
 pub struct CompoundAssignmentExpr {
     assignee: Box<dyn Assignable>,
-    operator: CompoundAssignOpKind,
+    operator: CompoundAssignOperatorKind,
     new_value: Box<dyn Expression>,
 }
 
@@ -189,7 +194,7 @@ impl Spanned for CompoundAssignmentExpr {
 
 pub struct ComparisonExpr {
     lhs: Box<dyn Expression>,
-    operator: ComparisonOpKind,
+    operator: ComparisonOperatorKind,
     rhs: Box<dyn Expression>,
 }
 
@@ -218,7 +223,7 @@ impl Spanned for ComparisonExpr {
 }
 
 pub struct DerefExpr {
-    kw_deref: DerefOperator,
+    deref_operator: DerefOperator,
     operand: Box<dyn Assignable>,
 }
 
@@ -236,9 +241,9 @@ impl Constant for DerefExpr {}
 
 impl Spanned for DerefExpr {
     fn span(&self) -> Span {
-        let start_pos = self.kw_deref.span().start();
+        let start_pos = self.deref_operator.span().start();
         let end_pos = self.operand.span().end();
-        let source = self.kw_deref.span().source();
+        let source = self.deref_operator.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
@@ -248,7 +253,7 @@ impl Spanned for DerefExpr {
 
 pub struct LazyBoolExpr {
     lhs: Box<dyn Expression>,
-    operator: LazyBoolOpKind,
+    operator: LazyBoolOperatorKind,
     rhs: Box<dyn Expression>,
 }
 
@@ -277,7 +282,7 @@ impl Spanned for LazyBoolExpr {
 }
 
 pub struct NegationExpr {
-    negator: NegationOpKind,
+    negator: NegationOperatorKind,
     operand: Box<dyn Expression>,
 }
 
@@ -336,7 +341,7 @@ impl Spanned for RefExpr {
 
 pub struct TypeCastExpr {
     lhs: Box<dyn Castable>,
-    kw_as: CastOperator,
+    cast_operator: CastOperator,
     rhs: Box<dyn Castable>,
 }
 
@@ -365,7 +370,7 @@ impl Spanned for TypeCastExpr {
 }
 
 pub struct UnwrapExpr<T: Spanned> {
-    operand: UnwrapOpKind<T>,
+    operand: UnwrapOperatorKind<T>,
     question_mark: QuestionMark,
 }
 
@@ -393,7 +398,3 @@ where
         span
     }
 }
-
-impl<E> OperatorExpr<E> for Keyword {} // `ref`, `ref mut`, `deref`, `as`
-
-impl<E> OperatorExpr<E> for Punctuation {}

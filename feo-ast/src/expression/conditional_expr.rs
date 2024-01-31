@@ -1,7 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Comma, FatArrow, KwElse, KwIf},
-    Keyword,
+    utils::{Brace, Comma, FatArrow, KwElse, KwIf, KwMatch},
 };
 
 use crate::pattern::Pattern;
@@ -74,7 +73,7 @@ impl<T> Spanned for IfExpr<T> {
 }
 
 pub struct MatchExpr {
-    kw_match: Keyword,
+    kw_match: KwMatch,
     scrutinee: Box<dyn Assignable>,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,

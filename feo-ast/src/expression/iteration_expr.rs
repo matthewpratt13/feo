@@ -1,5 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
+    utils::{KwFor, KwIn, KwLoop, KwWhile},
     Keyword,
 };
 
@@ -20,7 +21,7 @@ pub type BreakExpr = Keyword;
 pub type ContinueExpr = Keyword;
 
 pub struct InfiniteLoopExpr<T> {
-    kw_loop: Keyword,
+    kw_loop: KwLoop,
     block: BlockExpr<T>,
 }
 
@@ -54,7 +55,7 @@ impl<T> Spanned for InfiniteLoopExpr<T> {
 }
 
 pub struct PredicateLoopExpr<T> {
-    kw_while: Keyword,
+    kw_while: KwWhile,
     conditional_operand: Box<dyn BooleanOperand>,
     block: BlockExpr<T>,
 }
@@ -89,9 +90,9 @@ impl<T> Spanned for PredicateLoopExpr<T> {
 }
 
 pub struct IterLoopExpr<T> {
-    kw_for: Keyword,
+    kw_for: KwFor,
     pattern: Box<dyn Pattern>,
-    kw_in: Keyword,
+    kw_in: KwIn,
     iterator: Box<dyn IterableExpr>,
     block: BlockExpr<T>,
 }

@@ -2,8 +2,8 @@
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::DblColon,
-    Identifier, Keyword,
+    utils::{DblColon, KwCrate, KwSelf, KwSelfType, KwSuper},
+    Identifier,
 };
 
 use crate::{
@@ -18,9 +18,9 @@ use crate::{
 
 pub enum SimplePathSegmentKind {
     Iden(Identifier),
-    KwCrate(Keyword),
-    KwSelf(Keyword),
-    KwSuper(Keyword),
+    KwCrate(KwCrate),
+    KwSelf(KwSelf),
+    KwSuper(KwSuper),
 }
 
 impl Item for SimplePathSegmentKind {}
@@ -40,10 +40,10 @@ impl Spanned for SimplePathSegmentKind {
 
 pub enum PathIdenSegmentKind {
     Iden(Identifier),
-    KwCrate(Keyword),
-    KwSelf(Keyword),
-    KwSelfType(Keyword),
-    KwSuper(Keyword),
+    KwCrate(KwCrate),
+    KwSelf(KwSelf),
+    KwSelfType(KwSelfType),
+    KwSuper(KwSuper),
 }
 
 impl Spanned for PathIdenSegmentKind {
