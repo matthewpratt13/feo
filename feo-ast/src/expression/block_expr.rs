@@ -3,29 +3,14 @@ use feo_types::{
     utils::Brace,
 };
 
-use crate::statement::{Statement, StatementsWithExpr};
+use crate::statement::Statement;
 
 use super::{BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr};
 
-pub enum StatementKind<T> {
-    Statement(Box<dyn Statement>),
-    ExprWithoutBlock(Box<dyn ExprWithoutBlock<T>>),
-    StatementsWithExpr(StatementsWithExpr<T>),
-}
-
-impl<T> Spanned for StatementKind<T> {
-    fn span(&self) -> Span {
-        match self {
-            StatementKind::ExprWithoutBlock(e) => e.span(),
-            StatementKind::Statement(s) => s.span(),
-            StatementKind::StatementsWithExpr(swe) => swe.span(),
-        }
-    }
-}
-
 pub struct BlockExpr<T> {
     open_brace: Brace,
-    statements: Vec<StatementKind<T>>,
+    statements: Vec<Box<dyn Statement>>,
+    final_operand_opt: Option<Box<dyn ExprWithoutBlock<T>>>,
     close_brace: Brace,
 }
 

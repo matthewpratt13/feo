@@ -7,7 +7,7 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Assignable, Constant, ExprWithoutBlock, Expression, OuterAttr},
+    expression::{Assignable, Constant, Expression, OuterAttr},
     pattern::Pattern,
     ty::Type,
 };
@@ -77,30 +77,6 @@ impl Spanned for LetStatement {
 
         let end_pos = self.semicolon.span().end();
         let source = self.kw_let.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
-    }
-}
-
-pub struct StatementsWithExpr<T> {
-    statements: Vec<Box<dyn Statement>>,
-    expr_without_block: Box<dyn ExprWithoutBlock<T>>,
-}
-
-impl<T> Statement for StatementsWithExpr<T> {}
-
-impl<T> Spanned for StatementsWithExpr<T> {
-    fn span(&self) -> Span {
-        let start_pos = if let Some(s) = self.statements.first() {
-            s.span().start()
-        } else {
-            self.expr_without_block.span().start()
-        };
-
-        let end_pos = self.expr_without_block.span().end();
-        let source = self.expr_without_block.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
 
