@@ -843,7 +843,7 @@ mod tests {
                 return Ok(Foo {
                     field1: String::from("foo"),
                     field2: '\'',
-                    field3: 0x0123_4567_89AB_CDEF,
+                    field3: 0X0123_4567_89AB_CDEF,
                     field4: vec,
                     field5: -1234,
                     field6: true
