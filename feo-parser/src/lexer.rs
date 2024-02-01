@@ -14,9 +14,8 @@ use feo_error::{
 };
 
 use feo_types::{
-    span::Position,
-    type_annotation::{TypeAnnKind, TypeAnnotation},
-    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
+    span::Position, Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation,
+    TypeAnnotation, U256,
 };
 
 struct Lexer<'a> {
@@ -524,26 +523,12 @@ impl<'a> Lexer<'a> {
                 }
 
                 // check for hexadecimal prefix
-                _ if c == '0' && self.peek_next() == Some('x') => {
+                _ if c == '0'
+                    && self
+                        .peek_next()
+                        .is_some_and(|x| x.to_lowercase().to_string() == "x") =>
+                {
                     // `start_pos` is global `start_pos` (above)
-
-                    let mut is_u256 = false;
-
-                    let i = tokens.len() - 2; // go backwards: skip the '=', return the 'type_ann'
-
-                    let t = tokens
-                        .get(i)
-                        .expect("Token not found")
-                        .clone()
-                        .expect("Token not found");
-
-                    if let Ok(ta) = TypeAnnKind::try_from(t)
-                        .map_err(|_| self.log_error(LexErrorKind::InvalidTypeAnnotation))
-                    {
-                        if ta == TypeAnnKind::TypeAnnU256 {
-                            is_u256 = true;
-                        }
-                    }
 
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
@@ -560,27 +545,15 @@ impl<'a> Lexer<'a> {
 
                     let num_content = Arc::new(&data);
 
-                    if is_u256 {
-                        let u256_literal = Literal::<U256>::tokenize(
-                            &self.input,
-                            &num_content,
-                            start_pos,
-                            self.pos,
-                            &mut self.handler,
-                        )?;
+                    let u256_literal = Literal::<U256>::tokenize(
+                        &self.input,
+                        &num_content,
+                        start_pos,
+                        self.pos,
+                        &mut self.handler,
+                    )?;
 
-                        tokens.push(u256_literal);
-                    } else {
-                        let uint_literal = Literal::<u64>::tokenize(
-                            &self.input,
-                            &num_content,
-                            start_pos,
-                            self.pos,
-                            &mut self.handler,
-                        )?;
-
-                        tokens.push(uint_literal);
-                    }
+                    tokens.push(u256_literal);
                 }
 
                 _ if c.is_digit(10)
@@ -843,7 +816,7 @@ mod tests {
                 return Ok(Foo {
                     field1: String::from("foo"),
                     field2: '\'',
-                    field3: 0X0123_4567_89AB_CDEF,
+                    field3: 0x0123_4567_89AB_CDEF,
                     field4: vec,
                     field5: -1234,
                     field6: true
