@@ -18,13 +18,9 @@ impl Parser {
         }
     }
 
-    fn next_token(&mut self) -> Token {
-        if let Some(t) = self.stream.next() {
-            self.pos += 1;
-            t
-        } else {
-            Token::EOF
-        }
+    pub fn next_token(&mut self) -> Option<Token> {
+        self.pos += 1;
+        self.stream.next()
     }
 
     fn peek_next(&self) -> Option<Token> {
