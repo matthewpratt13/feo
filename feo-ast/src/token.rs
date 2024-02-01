@@ -13,7 +13,7 @@ use feo_types::{
     doc_comment::{DocComment, DocCommentKind},
     error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
-    primitive::Primitive,
+    primitive::{Primitive, PrimitiveType},
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
     Identifier, U256,
@@ -33,7 +33,10 @@ pub trait Tokenize {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
-    Numeric,
+    Int,
+    UInt,
+    U256,
+    Float,
     String,
     Char,
     Bool,
@@ -72,10 +75,10 @@ impl Token {
             Token::CharLit(_) => TokenType::Char,
             Token::StringLit(_) => TokenType::String,
             Token::BoolLit(_) => TokenType::Bool,
-            Token::IntLit(_) => TokenType::Numeric,
-            Token::UIntLit(_) => TokenType::Numeric,
-            Token::U256Lit(_) => TokenType::Numeric,
-            Token::FloatLit(_) => TokenType::Numeric,
+            Token::IntLit(_) => TokenType::Int,
+            Token::UIntLit(_) => TokenType::UInt,
+            Token::U256Lit(_) => TokenType::U256,
+            Token::FloatLit(_) => TokenType::Float,
             Token::Iden(_) => TokenType::Identifier,
             Token::Keyword(_) => TokenType::Keyword,
             Token::Comment(_) => TokenType::Comment,
@@ -554,5 +557,93 @@ impl Tokenize for Punctuation {
         let token = Token::Punc(punctuation);
 
         Ok(Some(token))
+    }
+}
+
+impl TryFrom<Token> for Literal<i64> {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::IntLit(i) => Ok(i),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for Literal<u64> {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::UIntLit(u) => Ok(u),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for Literal<U256> {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::U256Lit(u) => Ok(u),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for Literal<f64> {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::FloatLit(f) => Ok(f),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for Literal<bool> {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::BoolLit(b) => Ok(b),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for Identifier {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Iden(i) => Ok(i),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for Delimiter {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Delim(d) => Ok(d),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<Token> for PuncKind {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Punc(p) => Ok(p.punc_kind),
+            _ => Err(()),
+        }
     }
 }
