@@ -31,6 +31,20 @@ pub trait Tokenize {
     ) -> Result<Option<Token>, ErrorEmitted>;
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum TokenType {
+    Numeric,
+    String,
+    Char,
+    Bool,
+    Identifier,
+    Keyword,
+    Punctuation,
+    Delimiter,
+    Comment,
+    DocComment,
+}
+
 // token type
 #[derive(Debug, Clone)]
 pub enum Token {
@@ -50,6 +64,26 @@ pub enum Token {
 
     Delim(Delimiter),
     Punc(Punctuation),
+}
+
+impl Token {
+    pub fn token_type(&self) -> TokenType {
+        match self {
+            Token::CharLit(_) => TokenType::Char,
+            Token::StringLit(_) => TokenType::String,
+            Token::BoolLit(_) => TokenType::Bool,
+            Token::IntLit(_) => TokenType::Numeric,
+            Token::UIntLit(_) => TokenType::Numeric,
+            Token::U256Lit(_) => TokenType::Numeric,
+            Token::FloatLit(_) => TokenType::Numeric,
+            Token::Iden(_) => TokenType::Identifier,
+            Token::Keyword(_) => TokenType::Keyword,
+            Token::Comment(_) => TokenType::Comment,
+            Token::DocComment(_) => TokenType::DocComment,
+            Token::Delim(_) => TokenType::Delimiter,
+            Token::Punc(_) => TokenType::Punctuation,
+        }
+    }
 }
 
 impl Spanned for Token {
@@ -73,40 +107,43 @@ impl Spanned for Token {
 }
 
 #[derive(Debug, Clone)]
-pub struct TokenStream<T: Clone> {
-    tokens: Vec<Option<T>>,
+pub struct TokenStream {
+    tokens: Vec<Option<Token>>,
     span: Span,
 }
 
-impl<T: Clone> TokenStream<T> {
-    pub fn new(src: &str, tokens: Vec<Option<T>>, start: usize, end: usize) -> Self {
+impl TokenStream {
+    pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
         Self {
             tokens,
             span: Span::new(src, start, end),
         }
     }
 
-    pub fn tokens(&self) -> &[Option<T>] {
-        self.tokens.as_slice()
+    pub fn tokens(&self) -> &[Option<Token>] {
+        &self.tokens
+    }
+
+    pub fn len(&self) -> usize {
+        self.tokens.len()
     }
 }
 
-impl<T: Clone> Spanned for TokenStream<T> {
+impl Spanned for TokenStream {
     fn span(&self) -> Span {
         self.span.clone()
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct TokenTree(TokenStream<Token>);
+impl Iterator for TokenStream {
+    type Item = Token;
 
-impl TokenTree {
-    pub fn new(src: &str, tokens: Vec<Option<Token>>, start: usize, end: usize) -> Self {
-        Self(TokenStream::new(src, tokens, start, end))
-    }
-
-    pub fn tokens(&self) -> &[Option<Token>] {
-        self.0.tokens.as_slice()
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(s) = self.tokens().into_iter().next() {
+            s.clone()
+        } else {
+            None
+        }
     }
 }
 

@@ -20,7 +20,7 @@ use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
 pub use self::{
     attribute::{InnerAttr, OuterAttr},
     block_expr::BlockExpr,
-    operator_expr::DerefOperator,
+    operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
     struct_expr::StructExpr,
 };
 

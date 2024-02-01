@@ -7,6 +7,7 @@ use feo_types::{
 use crate::{
     expression::{BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr},
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
+    ty::Type,
 };
 
 #[derive(Debug, Clone)]
@@ -111,3 +112,5 @@ impl RangePattBound for Literal<U256> {}
 impl RangePattBound for Literal<f32> {}
 
 impl RangePattBound for Literal<f64> {}
+
+impl<T> Type for Literal<T> where T: Clone + PrimitiveType {}
