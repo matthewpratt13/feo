@@ -694,8 +694,7 @@ mod tests {
 
     #[test]
     fn lex() {
-        let source_code = 
-        r#"//! inner doc comment
+        let source_code = r#"//! inner doc comment
         
         // line comment
         

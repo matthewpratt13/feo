@@ -438,9 +438,6 @@ impl Tokenize for Literal<U256> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        println!("foo");
-        println!("bar");
-
         let error = ParserError {
             error_kind: ParserErrorKind::ParseU256Error,
             position: Position::new(src, start),
