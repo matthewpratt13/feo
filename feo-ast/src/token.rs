@@ -1,7 +1,5 @@
 use std::str::FromStr;
 
-use bnum::cast::As;
-
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
@@ -405,7 +403,7 @@ impl Tokenize for Literal<u64> {
             )
             .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?;
 
-            if content_as_hex_u256 > u64::MAX.as_::<U256>() {
+            if content_as_hex_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
                 u64::from_str_radix(
@@ -419,7 +417,7 @@ impl Tokenize for Literal<u64> {
                 U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
                     .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?;
 
-            if content_as_dec_u256 > u64::MAX.as_::<U256>() {
+            if content_as_dec_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
                 u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
