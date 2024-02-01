@@ -14,6 +14,7 @@ pub enum LexErrorKind {
     UnclosedBlockComment,
     UnclosedDelimiters,
     UnopenedDelimiters,
+    MismatchedDelimiters,
 
     InvalidChar(char),
 
@@ -33,6 +34,7 @@ impl fmt::Display for LexErrorKind {
             LexErrorKind::UnclosedBlockComment => write!(f, "unclosed block comment"),
             LexErrorKind::UnclosedDelimiters => write!(f, "unclosed delimiters"),
             LexErrorKind::UnopenedDelimiters => write!(f, "unopened delimiters"),
+            LexErrorKind::MismatchedDelimiters => write!(f, "mismatched delimiters"),
             LexErrorKind::InvalidChar(c) => write!(f, "invalid char (`{}`)", c),
             LexErrorKind::UnknownError => write!(f, "unknown error"),
         }
