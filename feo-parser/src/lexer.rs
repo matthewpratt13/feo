@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use std::{iter::Peekable, sync::Arc};
+use std::{iter::Peekable, str::Chars, sync::Arc};
 
 use feo_ast::{
     literal::Literal,
@@ -13,6 +13,7 @@ use feo_error::{
     lex_error::{LexError, LexErrorKind},
 };
 
+use feo_types::{delimiter, identifier, punctuation};
 use feo_types::{
     span::Position, Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -20,7 +21,7 @@ use feo_types::{
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
-    peekable_chars: Peekable<std::str::Chars<'a>>,
+    peekable_chars: Peekable<Chars<'a>>,
     handler: Handler,
 }
 
@@ -213,7 +214,7 @@ impl<'a> Lexer<'a> {
                         continue;
                     }
 
-                    if feo_types::identifier::is_keyword(&buf) {
+                    if identifier::is_keyword(&buf) {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
@@ -644,9 +645,9 @@ impl<'a> Lexer<'a> {
                 | '|' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation()
-                            && !feo_types::delimiter::is_delimiter(c)
-                            && !feo_types::punctuation::is_quote(c)
-                            && !feo_types::punctuation::is_separator(c)
+                            && !delimiter::is_delimiter(c)
+                            && !punctuation::is_quote(c)
+                            && !punctuation::is_separator(c)
                         {
                             self.advance();
                         } else {
