@@ -1,6 +1,3 @@
-#[derive(Debug, Clone, PartialEq)]
-pub struct Bytes32([u8; 32]);
-
 use uint::construct_uint;
 
 construct_uint! {
@@ -28,8 +25,5 @@ pub mod punctuation;
 pub use crate::punctuation::Punctuation;
 
 pub mod span;
-
-pub mod type_annotation;
-pub use crate::type_annotation::TypeAnnotation;
 
 pub mod utils;

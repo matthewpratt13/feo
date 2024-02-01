@@ -14,8 +14,7 @@ use feo_error::{
 };
 
 use feo_types::{
-    span::Position, Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation,
-    TypeAnnotation, U256,
+    span::Position, Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 struct Lexer<'a> {
@@ -214,17 +213,7 @@ impl<'a> Lexer<'a> {
                         continue;
                     }
 
-                    if feo_types::type_annotation::is_built_in_type_annotation(&buf) {
-                        let type_annotation = TypeAnnotation::tokenize(
-                            &self.input,
-                            &buf,
-                            start_pos,
-                            start_pos + buf.len(),
-                            &mut self.handler,
-                        )?;
-
-                        tokens.push(type_annotation);
-                    } else if feo_types::identifier::is_keyword(&buf) {
+                    if feo_types::identifier::is_keyword(&buf) {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
@@ -874,10 +863,8 @@ mod tests {
                     Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
                     Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
                     Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
-                    Token::Bytes32Lit(by) => println!("Bytes32Lit: {:?}", by.into_inner()),
                     Token::Iden(id) => println!("Iden: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
-                    Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),
                     Token::Comment(c) => println!("Comment: {:?}", c.data),
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
                     Token::Delim(d) => println!("Delim: {:?}", d.delim),

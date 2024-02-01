@@ -15,9 +15,8 @@ use feo_types::{
     primitive::Primitive,
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
-    type_annotation::{TypeAnnKind, TypeAnnotation},
     utils::TypeErrorKind,
-    Bytes32, Identifier, U256,
+    Identifier, U256,
 };
 
 use crate::literal::Literal;
@@ -42,11 +41,9 @@ pub enum Token {
     UIntLit(Literal<u64>),
     U256Lit(Literal<U256>),
     FloatLit(Literal<f64>),
-    Bytes32Lit(Literal<Bytes32>),
 
     Iden(Identifier),
     Keyword(Keyword),
-    TypeAnn(TypeAnnotation),
 
     Comment(Comment),
     DocComment(DocComment),
@@ -65,10 +62,8 @@ impl Spanned for Token {
             Token::UIntLit(ui) => ui.span(),
             Token::U256Lit(u) => u.span(),
             Token::FloatLit(f) => f.span(),
-            Token::Bytes32Lit(by) => by.span(),
             Token::Iden(id) => id.span(),
             Token::Keyword(k) => k.span(),
-            Token::TypeAnn(ta) => ta.span(),
             Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
@@ -456,7 +451,6 @@ impl Tokenize for Literal<U256> {
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
-
             U256::from_str_radix(
                 &without_prefix.split('_').collect::<Vec<&str>>().concat(),
                 16,
@@ -502,9 +496,6 @@ impl Tokenize for Literal<f64> {
     }
 }
 
-// TODO:
-// impl Tokenize for Literal<Bytes32> {}
-
 impl Tokenize for Punctuation {
     fn tokenize(
         src: &str,
@@ -529,37 +520,5 @@ impl Tokenize for Punctuation {
         let token = Token::Punc(punctuation);
 
         Ok(Some(token))
-    }
-}
-
-impl Tokenize for TypeAnnotation {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        _handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let type_ann_kind = TypeAnnKind::from_str(content).unwrap_or(TypeAnnKind::CustomTypeAnn);
-
-        let type_annotation = TypeAnnotation::new(type_ann_kind, span);
-
-        let token = Token::TypeAnn(type_annotation);
-
-        Ok(Some(token))
-    }
-}
-
-impl TryFrom<Token> for TypeAnnKind {
-    type Error = TypeAnnKind;
-
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
-        if let Token::TypeAnn(t) = value {
-            Ok(t.type_ann_kind)
-        } else {
-            Err(TypeAnnKind::CustomTypeAnn)
-        }
     }
 }

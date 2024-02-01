@@ -1,6 +1,6 @@
 use crate::{
     span::{Span, Spanned},
-    Bytes32, U256,
+    U256,
 };
 
 pub trait PrimitiveType {}
@@ -28,8 +28,6 @@ impl PrimitiveType for U256 {}
 impl PrimitiveType for f32 {}
 
 impl PrimitiveType for f64 {}
-
-impl PrimitiveType for Bytes32 {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Primitive<P: Clone + PrimitiveType>(P);
