@@ -923,7 +923,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 746,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 786,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
