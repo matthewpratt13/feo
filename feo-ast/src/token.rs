@@ -13,7 +13,7 @@ use feo_types::{
     doc_comment::{DocComment, DocCommentKind},
     error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
-    primitive::{Primitive, PrimitiveType},
+    primitive::Primitive,
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
     Identifier, U256,
@@ -31,7 +31,7 @@ pub trait Tokenize {
     ) -> Result<Option<Token>, ErrorEmitted>;
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub enum TokenType {
     Int,
     UInt,
@@ -44,11 +44,13 @@ pub enum TokenType {
     Keyword,
     Punctuation,
     Delimiter,
-    Comment,
     DocComment,
+    EOF,
+
+    #[default]
+    UnsupportedToken,
 }
 
-// token type
 #[derive(Debug, Clone)]
 pub enum Token {
     CharLit(Literal<char>),
@@ -67,6 +69,8 @@ pub enum Token {
 
     Delim(Delimiter),
     Punc(Punctuation),
+
+    EOF,
 }
 
 impl Token {
@@ -81,10 +85,11 @@ impl Token {
             Token::FloatLit(_) => TokenType::Float,
             Token::Iden(_) => TokenType::Identifier,
             Token::Keyword(_) => TokenType::Keyword,
-            Token::Comment(_) => TokenType::Comment,
+            Token::Comment(_) => TokenType::UnsupportedToken,
             Token::DocComment(_) => TokenType::DocComment,
             Token::Delim(_) => TokenType::Delimiter,
             Token::Punc(_) => TokenType::Punctuation,
+            Token::EOF => TokenType::EOF,
         }
     }
 }
@@ -105,6 +110,7 @@ impl Spanned for Token {
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
+            Token::EOF => Span::default(),
         }
     }
 }
@@ -142,8 +148,8 @@ impl Iterator for TokenStream {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(s) = self.tokens().into_iter().next() {
-            s.clone()
+        if let Some(s) = self.tokens().into_iter().next().cloned() {
+            s
         } else {
             None
         }

@@ -883,6 +883,7 @@ mod tests {
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
                     Token::Delim(d) => println!("Delim: {:?}", d.delim),
                     Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
+                    Token::EOF => println!("end of file"),
                 };
             }
         } else {
