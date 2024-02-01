@@ -1,9 +1,6 @@
 mod expression;
 mod item;
-
-mod literal;
-pub use crate::literal::Literal;
-
+pub mod literal;
 mod path;
 mod pattern;
 mod statement;

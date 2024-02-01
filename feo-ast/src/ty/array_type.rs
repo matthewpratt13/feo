@@ -1,9 +1,8 @@
 use feo_types::{
+    primitive::Primitive,
     span::{Span, Spanned},
     utils::{Bracket, Semicolon},
 };
-
-use crate::Literal;
 
 use super::Type;
 
@@ -11,7 +10,7 @@ pub struct ArrayType {
     open_bracket: Bracket,
     element_type: Box<dyn Type>,
     semicolon: Semicolon,
-    num_elements: Literal<u64>,
+    num_elements: Primitive<u64>,
     close_bracket: Bracket,
 }
 

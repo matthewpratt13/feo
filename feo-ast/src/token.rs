@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use bnum::cast::As;
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
@@ -12,16 +11,15 @@ use feo_types::{
     comment::{Comment, CommentKind},
     delimiter::{DelimKind, DelimOrientation, Delimiter},
     doc_comment::{DocComment, DocCommentKind},
+    error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
-    primitive::PrimitiveType,
+    primitive::Primitive,
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
-    type_annotation::{TypeAnnKind, TypeAnnotation},
-    utils::TypeErrorKind,
     Identifier, U256,
 };
 
-use crate::Literal;
+use crate::literal::Literal;
 
 pub trait Tokenize {
     fn tokenize(
@@ -43,11 +41,9 @@ pub enum Token {
     UIntLit(Literal<u64>),
     U256Lit(Literal<U256>),
     FloatLit(Literal<f64>),
-    Bytes32Lit(Literal<[u8; 32]>),
 
     Iden(Identifier),
     Keyword(Keyword),
-    TypeAnn(TypeAnnotation),
 
     Comment(Comment),
     DocComment(DocComment),
@@ -66,10 +62,8 @@ impl Spanned for Token {
             Token::UIntLit(ui) => ui.span(),
             Token::U256Lit(u) => u.span(),
             Token::FloatLit(f) => f.span(),
-            Token::Bytes32Lit(by) => by.span(),
             Token::Iden(id) => id.span(),
             Token::Keyword(k) => k.span(),
-            Token::TypeAnn(ta) => ta.span(),
             Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
@@ -99,7 +93,7 @@ impl<T: Clone> TokenStream<T> {
 
 impl<T: Clone> Spanned for TokenStream<T> {
     fn span(&self) -> Span {
-        self.clone().span
+        self.span.clone()
     }
 }
 
@@ -296,7 +290,7 @@ impl Tokenize for Literal<char> {
             .parse::<char>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
-        let char_lit = Literal::new(parsed, span);
+        let char_lit = Literal::new(Primitive::new(parsed), span);
 
         let token = Token::CharLit(char_lit);
 
@@ -314,9 +308,36 @@ impl Tokenize for Literal<String> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let literal = Literal::new(content.to_string(), span);
+        let literal = Literal::new(Primitive::new(content.to_string()), span);
 
         let token = Token::StringLit(literal);
+
+        Ok(Some(token))
+    }
+}
+
+impl Tokenize for Literal<bool> {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let error = ParserError {
+            error_kind: ParserErrorKind::ParseBoolError,
+            position: Position::new(src, start),
+        };
+
+        let parsed = content
+            .parse::<bool>()
+            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+
+        let literal = Literal::new(Primitive::new(parsed), span);
+
+        let token = Token::BoolLit(literal);
 
         Ok(Some(token))
     }
@@ -340,7 +361,7 @@ impl Tokenize for Literal<i64> {
         let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::new(parsed, span);
+        let literal = Literal::new(Primitive::new(parsed), span);
 
         let token = Token::IntLit(literal);
 
@@ -377,7 +398,7 @@ impl Tokenize for Literal<u64> {
             )
             .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?;
 
-            if content_as_hex_u256 > u64::MAX.as_::<U256>() {
+            if content_as_hex_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
                 u64::from_str_radix(
@@ -391,7 +412,7 @@ impl Tokenize for Literal<u64> {
                 U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
                     .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?;
 
-            if content_as_dec_u256 > u64::MAX.as_::<U256>() {
+            if content_as_dec_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
                 u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
@@ -399,7 +420,7 @@ impl Tokenize for Literal<u64> {
             }
         };
 
-        let literal = Literal::new(parsed, span);
+        let literal = Literal::new(Primitive::new(parsed), span);
 
         let token = Token::UIntLit(literal);
 
@@ -422,6 +443,8 @@ impl Tokenize for Literal<U256> {
             position: Position::new(src, start),
         };
 
+        let content = content.to_lowercase();
+
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
@@ -435,7 +458,7 @@ impl Tokenize for Literal<U256> {
                 .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
         };
 
-        let literal = Literal::new(parsed, span);
+        let literal = Literal::new(Primitive::new(parsed), span);
 
         let token = Token::U256Lit(literal);
 
@@ -462,36 +485,9 @@ impl Tokenize for Literal<f64> {
             .parse::<f64>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::new(parsed, span);
+        let literal = Literal::new(Primitive::new(parsed), span);
 
         let token = Token::FloatLit(literal);
-
-        Ok(Some(token))
-    }
-}
-
-impl Tokenize for Literal<bool> {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let error = ParserError {
-            error_kind: ParserErrorKind::ParseBoolError,
-            position: Position::new(src, start),
-        };
-
-        let parsed = content
-            .parse::<bool>()
-            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
-
-        let literal = Literal::new(parsed, span);
-
-        let token = Token::BoolLit(literal);
 
         Ok(Some(token))
     }
@@ -521,37 +517,5 @@ impl Tokenize for Punctuation {
         let token = Token::Punc(punctuation);
 
         Ok(Some(token))
-    }
-}
-
-impl Tokenize for TypeAnnotation {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        _handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let type_ann_kind = TypeAnnKind::from_str(content).unwrap_or(TypeAnnKind::CustomTypeAnn);
-
-        let type_annotation = TypeAnnotation::new(type_ann_kind, span);
-
-        let token = Token::TypeAnn(type_annotation);
-
-        Ok(Some(token))
-    }
-}
-
-impl TryFrom<Token> for TypeAnnKind {
-    type Error = TypeAnnKind;
-
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
-        if let Token::TypeAnn(t) = value {
-            Ok(t.type_ann_kind)
-        } else {
-            Err(TypeAnnKind::CustomTypeAnn)
-        }
     }
 }

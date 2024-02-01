@@ -1,9 +1,8 @@
 use feo_types::{
+    primitive::Primitive,
     span::{Span, Spanned},
     utils::{Bracket, Comma, Semicolon},
 };
-
-use crate::literal::Literal;
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
 
@@ -51,13 +50,13 @@ pub struct ArrayElements {
 pub struct ArrayWithSingleRepeatedValue {
     repeat_operand: Box<dyn IterableExpr>,
     semicolon: Semicolon,
-    num_repeats: Literal<u64>,
+    num_repeats: Primitive<u64>,
 }
 
 pub struct IndexExpr {
     indexed_operand: ArrayExpr,
     open_bracket: Bracket,
-    index: Literal<u64>,
+    index: Primitive<u64>,
     close_bracket: Bracket,
 }
 

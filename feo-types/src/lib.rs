@@ -1,4 +1,8 @@
-pub use bnum::types::U256 as U256;
+use uint::construct_uint;
+
+construct_uint! {
+    pub struct U256(4);
+}
 
 pub mod comment;
 pub use crate::comment::Comment;
@@ -8,6 +12,8 @@ pub use crate::delimiter::Delimiter;
 
 pub mod doc_comment;
 pub use crate::doc_comment::DocComment;
+
+pub mod error;
 
 pub mod identifier;
 pub use crate::identifier::Identifier;
@@ -21,8 +27,5 @@ pub mod punctuation;
 pub use crate::punctuation::Punctuation;
 
 pub mod span;
-
-pub mod type_annotation;
-pub use crate::type_annotation::TypeAnnotation;
 
 pub mod utils;

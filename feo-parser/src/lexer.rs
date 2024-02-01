@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 
-use std::{iter::Peekable, sync::Arc};
+use std::{iter::Peekable, str::Chars, sync::Arc};
 
 use feo_ast::{
+    literal::Literal,
     token::{Token, TokenStream, Tokenize},
-    Literal,
 };
 
 use feo_error::{
@@ -13,16 +13,15 @@ use feo_error::{
     lex_error::{LexError, LexErrorKind},
 };
 
+use feo_types::{delimiter, identifier, punctuation};
 use feo_types::{
-    span::Position,
-    type_annotation::{TypeAnnKind, TypeAnnotation},
-    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
+    span::Position, Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 struct Lexer<'a> {
     input: &'a str,
     pos: usize,
-    peekable_chars: Peekable<std::str::Chars<'a>>,
+    peekable_chars: Peekable<Chars<'a>>,
     handler: Handler,
 }
 
@@ -88,6 +87,7 @@ impl<'a> Lexer<'a> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut num_open_delimiters: usize = 0; // to check for unclosed delimiters
+        let mut num_closed_delimiters: usize = 0; // to check for opened delimiters
 
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
@@ -99,6 +99,7 @@ impl<'a> Lexer<'a> {
 
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     self.advance(); // skip first '/'
+                    let mut block_comment_open = false;
 
                     match self.current_char() {
                         Some('/') => {
@@ -108,6 +109,7 @@ impl<'a> Lexer<'a> {
                             if self.current_char() == Some('/') || self.current_char() == Some('!')
                             {
                                 self.advance(); // skip third '/' or '!'
+
                                 self.skip_whitespace();
 
                                 while let Some(c) = self.current_char() {
@@ -158,11 +160,13 @@ impl<'a> Lexer<'a> {
 
                         Some('*') => {
                             self.advance(); // skip '*'
+                            block_comment_open = true;
 
                             while let Some(c) = self.current_char() {
                                 if c == '*' {
                                     self.advance(); // skip closing '*'
                                     self.advance(); // skip closing '/'
+                                    block_comment_open = false;
                                     break;
                                 } else {
                                     self.advance();
@@ -185,6 +189,10 @@ impl<'a> Lexer<'a> {
                         }
 
                         Some(_) | None => (),
+                    }
+
+                    if block_comment_open {
+                        return Err(self.log_error(LexErrorKind::UnclosedBlockComment));
                     }
                 }
 
@@ -215,17 +223,7 @@ impl<'a> Lexer<'a> {
                         continue;
                     }
 
-                    if feo_types::type_annotation::is_built_in_type_annotation(&buf) {
-                        let type_annotation = TypeAnnotation::tokenize(
-                            &self.input,
-                            &buf,
-                            start_pos,
-                            start_pos + buf.len(),
-                            &mut self.handler,
-                        )?;
-
-                        tokens.push(type_annotation);
-                    } else if feo_types::identifier::is_keyword(&buf) {
+                    if identifier::is_keyword(&buf) {
                         let keyword = Keyword::tokenize(
                             &self.input,
                             &buf,
@@ -335,7 +333,11 @@ impl<'a> Lexer<'a> {
                         _ => unreachable!(),
                     };
 
-                    num_open_delimiters -= 1;
+                    num_closed_delimiters += 1;
+
+                    if num_closed_delimiters > num_open_delimiters {
+                        return Err(self.log_error(LexErrorKind::UnexpectedCloseDelimiter));
+                    }
                 }
 
                 '"' => {
@@ -524,26 +526,12 @@ impl<'a> Lexer<'a> {
                 }
 
                 // check for hexadecimal prefix
-                _ if c == '0' && self.peek_next() == Some('x') => {
+                _ if c == '0'
+                    && self
+                        .peek_next()
+                        .is_some_and(|x| x.to_lowercase().to_string() == "x") =>
+                {
                     // `start_pos` is global `start_pos` (above)
-
-                    let mut is_u256 = false;
-
-                    let i = tokens.len() - 2; // go backwards: skip the '=', return the 'type_ann'
-
-                    let t = tokens
-                        .get(i)
-                        .expect("Token not found")
-                        .clone()
-                        .expect("Token not found");
-
-                    if let Ok(ta) = TypeAnnKind::try_from(t)
-                        .map_err(|_| self.log_error(LexErrorKind::InvalidTypeAnnotation))
-                    {
-                        if ta == TypeAnnKind::TypeAnnU256 {
-                            is_u256 = true;
-                        }
-                    }
 
                     self.advance(); // skip '0'
                     self.advance(); // skip 'x'
@@ -560,27 +548,15 @@ impl<'a> Lexer<'a> {
 
                     let num_content = Arc::new(&data);
 
-                    if is_u256 {
-                        let u256_literal = Literal::<U256>::tokenize(
-                            &self.input,
-                            &num_content,
-                            start_pos,
-                            self.pos,
-                            &mut self.handler,
-                        )?;
+                    let u256_literal = Literal::<U256>::tokenize(
+                        &self.input,
+                        &num_content,
+                        start_pos,
+                        self.pos,
+                        &mut self.handler,
+                    )?;
 
-                        tokens.push(u256_literal);
-                    } else {
-                        let uint_literal = Literal::<u64>::tokenize(
-                            &self.input,
-                            &num_content,
-                            start_pos,
-                            self.pos,
-                            &mut self.handler,
-                        )?;
-
-                        tokens.push(uint_literal);
-                    }
+                    tokens.push(u256_literal);
                 }
 
                 _ if c.is_digit(10)
@@ -682,9 +658,9 @@ impl<'a> Lexer<'a> {
                 | '|' => {
                     while let Some(c) = self.current_char() {
                         if c.is_ascii_punctuation()
-                            && !feo_types::delimiter::is_delimiter(c)
-                            && !feo_types::punctuation::is_quote(c)
-                            && !feo_types::punctuation::is_separator(c)
+                            && !delimiter::is_delimiter(c)
+                            && !punctuation::is_quote(c)
+                            && !punctuation::is_separator(c)
                         {
                             self.advance();
                         } else {
@@ -711,9 +687,9 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        if num_open_delimiters > 0 {
-            panic!("Unclosed delimiters");
-        }
+        if num_closed_delimiters != num_open_delimiters {
+            return Err(self.log_error(LexErrorKind::UnclosedDelimiters));
+         }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
 
@@ -727,40 +703,39 @@ impl<'a> Lexer<'a> {
 
 #[cfg(test)]
 mod tests {
-    use feo_types::primitive::PrimitiveType;
 
     use super::*;
 
     #[test]
     fn lex() {
-        let source_code = r#"   
+        let source_code = r#" 
         //! inner doc comment
         
         // line comment
-
+        
         /*
         block comment
         */
 
         /// outer doc comment
-               
+        
         ////////////////////////////////////////////////////////////////////////////////
         // `src/lib.feo`
         ////////////////////////////////////////////////////////////////////////////////
-       
+        
         pub mod contract;
         pub mod some_library;
 
         ////////////////////////////////////////////////////////////////////////////////
         // `src/lib/some_library.feo`
         ////////////////////////////////////////////////////////////////////////////////
-
+        
         library;
-
+        
         pub trait SomeTrait {
             func bar() -> str; 
         }
-        
+
         pub func hello_world() {
             print!("hello world");
         }
@@ -882,7 +857,7 @@ mod tests {
             Green, 
             Blue
         }
-
+        
         pub abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
@@ -895,17 +870,15 @@ mod tests {
         if let Ok(t) = lexer.lex() {
             for token in t.tokens() {
                 match token.as_ref().expect("Token not found") {
-                    Token::CharLit(c) => println!("CharLit: {:?}", c.raw_value()),
-                    Token::StringLit(s) => println!("StringLit: {:?}", s.raw_value()),
-                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.raw_value()),
-                    Token::IntLit(i) => println!("IntLit: {:?}", i.raw_value()),
-                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.raw_value()),
-                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.raw_value()),
-                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.raw_value()),
-                    Token::Bytes32Lit(by) => println!("Bytes32Lit: {:?}", by.raw_value()),
+                    Token::CharLit(c) => println!("CharLit: {:?}", c.into_inner()),
+                    Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
+                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
+                    Token::IntLit(i) => println!("IntLit: {:?}", i.into_inner()),
+                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
+                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
+                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
                     Token::Iden(id) => println!("Iden: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
-                    Token::TypeAnn(ta) => println!("TypeAnn: {:?}", ta.type_ann_kind),
                     Token::Comment(c) => println!("Comment: {:?}", c.data),
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
                     Token::Delim(d) => println!("Delim: {:?}", d.delim),
@@ -916,7 +889,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 805,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 712,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }

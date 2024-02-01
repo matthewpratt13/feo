@@ -10,28 +10,30 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct Literal<L> {
-    raw_value: L,
+pub struct Literal<T: Clone + PrimitiveType> {
+    pub inner_value: Primitive<T>,
     span: Span,
 }
 
-impl<L> PrimitiveType<L> for Literal<L>
+impl<T> Literal<T>
 where
-    Self: Sized,
-    L: 'static + Clone + Primitive,
+    T: Clone + PrimitiveType,
 {
-    fn new(raw_value: L, span: Span) -> Self {
-        Self { raw_value, span }
+    pub fn new(raw_value: Primitive<T>, span: Span) -> Literal<T> {
+        Literal {
+            inner_value: raw_value,
+            span,
+        }
     }
 
-    fn raw_value(&self) -> &L {
-        &self.raw_value
+    pub fn into_inner(&self) -> T {
+        self.inner_value.raw_value()
     }
 }
 
-impl<L> Spanned for Literal<L>
+impl<T> Spanned for Literal<T>
 where
-    L: 'static + Clone + Primitive,
+    T: Clone + PrimitiveType,
 {
     fn span(&self) -> Span {
         self.span.clone()
@@ -46,17 +48,17 @@ where
 
 pub trait LiteralPatt
 where
-    Self: Sized + 'static + Pattern,
+    Self: Sized + Pattern + 'static,
 {
 }
 
-impl<L, E> LiteralExpr<E> for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T, E> LiteralExpr<E> for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L, E> ExprWithoutBlock<E> for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T, E> ExprWithoutBlock<E> for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<L> Expression for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> Expression for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<L> BooleanOperand for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> BooleanOperand for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
 impl Castable for Literal<char> {}
 
@@ -80,15 +82,15 @@ impl Castable for Literal<f64> {}
 
 impl Castable for Literal<bool> {}
 
-impl<L> Constant for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> Constant for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L> IterableExpr for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> IterableExpr for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L> LiteralPatt for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> LiteralPatt for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<L> Pattern for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> Pattern for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<L> PatternWithoutRange for Literal<L> where L: 'static + Clone + Primitive {}
+impl<T> PatternWithoutRange for Literal<T> where T: Clone + PrimitiveType {}
 
 impl RangePattBound for Literal<char> {}
 

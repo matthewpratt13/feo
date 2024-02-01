@@ -103,7 +103,7 @@ where
 pub type AssignOperator = Equals;
 pub type CastOperator = KwAs;
 pub type DerefOperator = Asterisk;
-pub type RefOperator = (Option<Ampersand>, KwMut);
+pub type RefOperator = (Ampersand, Option<KwMut>);
 
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<dyn Expression>,
@@ -255,9 +255,9 @@ impl Spanned for DerefExpr {
 }
 
 pub struct LazyBoolExpr {
-    lhs: Box<dyn Expression>,
+    lhs: Box<dyn BooleanOperand>,
     operator: LazyBoolOperatorKind,
-    rhs: Box<dyn Expression>,
+    rhs: Box<dyn BooleanOperand>,
 }
 
 impl<E> OperatorExpr<E> for LazyBoolExpr {}
@@ -330,12 +330,7 @@ impl IterableExpr for RefExpr {}
 
 impl Spanned for RefExpr {
     fn span(&self) -> Span {
-        let s1 = if let Some(r) = &self.operator.0 {
-            r.span()
-        } else {
-            self.operator.1.span()
-        };
-
+        let s1 = self.operator.0.span();
         let s2 = self.operand.span();
 
         Span::join(s1, s2)

@@ -1,8 +1,8 @@
 use std::str::FromStr;
 
 use crate::{
+    error::TypeErrorKind,
     span::{Span, Spanned},
-    utils::TypeErrorKind,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -17,15 +17,15 @@ pub enum PuncKind {
     DotDotEquals,
     DblColon,
 
-    Bang, // (exclamation point)
+    Bang,
     Hash,
     DollarSign,
-    Percent, // (modulus)
+    Percent,
     Ampersand,
-    Asterisk, // (multiply)
+    Asterisk,
     Plus,
     Minus,
-    ForwardSlash, // (divide)
+    ForwardSlash,
     LessThan,
     Equals,
     GreaterThan,
@@ -41,7 +41,6 @@ pub enum PuncKind {
     BangEquals,
     PercentEquals,
     AsteriskEquals,
-    DblAsterisk, // (exponent)
     DblAmpersand,
     PlusEquals,
     MinusEquals,
@@ -51,8 +50,8 @@ pub enum PuncKind {
     DblEquals,
     DblGreaterThan,
     GreaterThanEquals,
-    ThinArrow, // "->"
-    FatArrow,  // "=>"
+    ThinArrow,
+    FatArrow,
     DblPipe,
 }
 
@@ -90,7 +89,6 @@ impl PuncKind {
             PuncKind::BangEquals => "!=",
             PuncKind::PercentEquals => "%=",
             PuncKind::AsteriskEquals => "*=",
-            PuncKind::DblAsterisk => "**",
             PuncKind::DblAmpersand => "&&",
             PuncKind::PlusEquals => "+=",
             PuncKind::MinusEquals => "-=",
@@ -122,7 +120,7 @@ impl FromStr for PuncKind {
             "::" => Ok(PuncKind::DblColon),
             "!" => Ok(PuncKind::Bang),
             "#" => Ok(PuncKind::Hash),
-            "$" => Ok(PuncKind::DollarSign),
+            // "$" => Ok(PuncKind::DollarSign),
             "%" => Ok(PuncKind::Percent),
             "&" => Ok(PuncKind::Ampersand),
             "*" => Ok(PuncKind::Asterisk),
@@ -133,17 +131,16 @@ impl FromStr for PuncKind {
             "=" => Ok(PuncKind::Equals),
             ">" => Ok(PuncKind::GreaterThan),
             "?" => Ok(PuncKind::QuestionMark),
-            "@" => Ok(PuncKind::AtSign),
+            // "@" => Ok(PuncKind::AtSign),
             "\\" => Ok(PuncKind::Backslash),
             "^" => Ok(PuncKind::Caret),
-            "`" => Ok(PuncKind::BackTick),
+            // "`" => Ok(PuncKind::BackTick),
             "|" => Ok(PuncKind::Pipe),
-            "~" => Ok(PuncKind::Tilde),
+            // "~" => Ok(PuncKind::Tilde),
             "#!" => Ok(PuncKind::HashBang),
             "!=" => Ok(PuncKind::BangEquals),
             "%=" => Ok(PuncKind::PercentEquals),
             "*=" => Ok(PuncKind::AsteriskEquals),
-            "**" => Ok(PuncKind::DblAsterisk),
             "&&" => Ok(PuncKind::DblAmpersand),
             "+=" => Ok(PuncKind::PlusEquals),
             "-=" => Ok(PuncKind::MinusEquals),

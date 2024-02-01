@@ -4,7 +4,7 @@ mod array_type;
 mod impl_trait_type;
 mod tuple_type;
 
-use feo_types::{span::Spanned, U256};
+use feo_types::{primitive::Primitive, span::Spanned, U256};
 
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
@@ -31,31 +31,29 @@ where
 {
 }
 
-impl Type for char {}
+impl Type for Primitive<char> {}
 
-impl Type for String {}
+impl Type for Primitive<String> {}
 
-impl Type for i32 {}
+impl Type for Primitive<i32> {}
 
-impl Type for i64 {}
+impl Type for Primitive<i64> {}
 
-impl Type for u8 {}
+impl Type for Primitive<u8> {}
 
-impl Type for u16 {}
+impl Type for Primitive<u16> {}
 
-impl Type for u32 {}
+impl Type for Primitive<u32> {}
 
-impl Type for u64 {}
+impl Type for Primitive<u64> {}
 
-impl Type for U256 {}
+impl Type for Primitive<U256> {}
 
-impl Type for f32 {}
+impl Type for Primitive<f32> {}
 
-impl Type for f64 {}
+impl Type for Primitive<f64> {}
 
-impl Type for [u8; 32] {}
-
-impl Type for bool {}
+impl Type for Primitive<bool> {}
 
 mod parenthesized_type {
     use feo_types::{
