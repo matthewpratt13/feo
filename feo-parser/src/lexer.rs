@@ -336,7 +336,7 @@ impl<'a> Lexer<'a> {
                     num_closed_delimiters += 1;
 
                     if num_closed_delimiters > num_open_delimiters {
-                        return Err(self.log_error(LexErrorKind::UnopenedDelimiters));
+                        return Err(self.log_error(LexErrorKind::UnexpectedCloseDelimiter));
                     }
                 }
 
