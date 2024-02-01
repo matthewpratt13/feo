@@ -21,7 +21,7 @@ pub use self::{
     attribute::{InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
-    struct_expr::{Struct, StructExprField, StructExprFields},
+    struct_expr::{Struct, StructExpr, StructExprField, StructExprFields},
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects

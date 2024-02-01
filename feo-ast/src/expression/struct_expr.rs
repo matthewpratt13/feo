@@ -46,13 +46,13 @@ impl Spanned for Struct {
 }
 
 pub struct StructExprFields {
-    pub first_field: StructExprField,
+    first_field: StructExprField,
     subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
 pub struct StructExprField {
-    pub attributes: Vec<OuterAttr>,
-    pub data: (Identifier, Colon, Box<dyn Expression>),
+    attributes: Vec<OuterAttr>,
+    data: (Identifier, Colon, Box<dyn Expression>),
 }
 
 pub struct TupleStruct {
