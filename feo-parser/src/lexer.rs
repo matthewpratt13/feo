@@ -694,34 +694,34 @@ mod tests {
 
     #[test]
     fn lex() {
-        let source_code = r#"   
-        //! inner doc comment
+        let source_code = 
+        r#"//! inner doc comment
         
         // line comment
-
+        
         /*
         block comment
         */
 
         /// outer doc comment
-               
+        
         ////////////////////////////////////////////////////////////////////////////////
         // `src/lib.feo`
         ////////////////////////////////////////////////////////////////////////////////
-       
+        
         pub mod contract;
         pub mod some_library;
 
         ////////////////////////////////////////////////////////////////////////////////
         // `src/lib/some_library.feo`
         ////////////////////////////////////////////////////////////////////////////////
-
+        
         library;
-
+        
         pub trait SomeTrait {
             func bar() -> str; 
         }
-        
+
         pub func hello_world() {
             print!("hello world");
         }
@@ -847,6 +847,7 @@ mod tests {
         pub abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
+        
         "#;
 
         let handler = Handler::default();
@@ -875,7 +876,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 805,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 697,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
