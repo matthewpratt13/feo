@@ -1,9 +1,10 @@
-pub type Bytes32 = [u8; 32];
+#[derive(Debug, Clone, PartialEq)]
+pub struct Bytes32([u8; 32]);
 
 use uint::construct_uint;
 
 construct_uint! {
-	pub struct U256(4);
+    pub struct U256(4);
 }
 
 pub mod comment;
