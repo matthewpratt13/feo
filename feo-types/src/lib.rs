@@ -13,6 +13,8 @@ pub use crate::delimiter::Delimiter;
 pub mod doc_comment;
 pub use crate::doc_comment::DocComment;
 
+pub mod error;
+
 pub mod identifier;
 pub use crate::identifier::Identifier;
 

@@ -11,11 +11,11 @@ use feo_types::{
     comment::{Comment, CommentKind},
     delimiter::{DelimKind, DelimOrientation, Delimiter},
     doc_comment::{DocComment, DocCommentKind},
+    error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
     primitive::Primitive,
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
-    utils::TypeErrorKind,
     Identifier, U256,
 };
 

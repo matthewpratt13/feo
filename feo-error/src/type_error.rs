@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-use feo_types::{span::Position, utils::TypeErrorKind};
+use feo_types::{error::TypeErrorKind, span::Position};
 
 #[derive(Default, Debug, Clone)]
 pub struct TypeError {

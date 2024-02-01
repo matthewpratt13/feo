@@ -1,8 +1,8 @@
 use std::str::FromStr;
 
 use crate::{
+    error::TypeErrorKind,
     span::{Span, Spanned},
-    utils::TypeErrorKind,
 };
 
 #[derive(Debug, Clone, PartialEq)]
