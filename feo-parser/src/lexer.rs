@@ -72,10 +72,10 @@ impl<'a> Lexer<'a> {
     }
 
     // log and store information about an error encountered during the lexing process
-    fn log_error(&self, error_kind: LexErrorKind) -> ErrorEmitted {
+    fn log_error(&self, input: &str, pos: usize, error_kind: LexErrorKind) -> ErrorEmitted {
         let err = LexError {
             error_kind,
-            position: Position::new(self.input.trim_start_matches('\n'), self.pos),
+            position: Position::new(input.trim_start_matches('\n'), pos),
         };
 
         self.handler.emit_err(CompilerError::Lex(err))
@@ -87,6 +87,7 @@ impl<'a> Lexer<'a> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut num_open_delimiters: usize = 0; // to check for unclosed delimiters
+        let mut num_closed_delimiters: usize = 0; // to check for opened delimiters
 
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
@@ -191,7 +192,11 @@ impl<'a> Lexer<'a> {
                     }
 
                     if block_comment_open {
-                        return Err(self.log_error(LexErrorKind::UnclosedBlockComment));
+                        return Err(self.log_error(
+                            self.input,
+                            self.pos,
+                            LexErrorKind::UnclosedBlockComment,
+                        ));
                     }
                 }
 
@@ -332,7 +337,15 @@ impl<'a> Lexer<'a> {
                         _ => unreachable!(),
                     };
 
-                    num_open_delimiters -= 1;
+                    num_closed_delimiters += 1;
+
+                    if num_closed_delimiters > num_open_delimiters {
+                        return Err(self.log_error(
+                            self.input,
+                            self.pos,
+                            LexErrorKind::UnopenedDelimiters,
+                        ));
+                    }
                 }
 
                 '"' => {
@@ -360,16 +373,20 @@ impl<'a> Lexer<'a> {
                                         '\'' => buf.push('\''),
                                         '\"' => buf.push('"'),
                                         _ => {
-                                            return Err(
-                                                self.log_error(LexErrorKind::InvalidEscapeSequence)
-                                            )
+                                            return Err(self.log_error(
+                                                self.input,
+                                                self.pos,
+                                                LexErrorKind::InvalidEscapeSequence,
+                                            ))
                                         }
                                     };
                                 } else {
                                     // escape sequence is expected, but the input has ended
-                                    return Err(
-                                        self.log_error(LexErrorKind::ExpectedEscapeSequence)
-                                    );
+                                    return Err(self.log_error(
+                                        self.input,
+                                        self.pos,
+                                        LexErrorKind::ExpectedEscapeSequence,
+                                    ));
                                 }
                             }
 
@@ -470,9 +487,11 @@ impl<'a> Lexer<'a> {
                                     )?,
 
                                     _ => {
-                                        return Err(
-                                            self.log_error(LexErrorKind::InvalidEscapeSequence)
-                                        )?
+                                        return Err(self.log_error(
+                                            self.input,
+                                            self.pos,
+                                            LexErrorKind::InvalidEscapeSequence,
+                                        ))?
                                     }
                                 };
 
@@ -480,21 +499,31 @@ impl<'a> Lexer<'a> {
                                 self.advance(); // skip second char
 
                                 if self.current_char() != Some('\'') {
-                                    return Err(
-                                        self.log_error(LexErrorKind::ExpectedClosingSingleQuote)
-                                    );
+                                    return Err(self.log_error(
+                                        self.input,
+                                        self.pos,
+                                        LexErrorKind::ExpectedClosingSingleQuote,
+                                    ));
                                 }
 
                                 self.advance(); // skip closing '\'' (single quote)
                             }
 
                             '\'' => {
-                                return Err(self.log_error(LexErrorKind::EmptyCharLiteral));
+                                return Err(self.log_error(
+                                    self.input,
+                                    self.pos,
+                                    LexErrorKind::EmptyCharLiteral,
+                                ));
                             }
 
                             _ => {
                                 if c == ' ' {
-                                    return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
+                                    return Err(self.log_error(
+                                        self.input,
+                                        self.pos,
+                                        LexErrorKind::InvalidCharLiteral,
+                                    ));
                                 }
 
                                 self.advance(); // return next (regular) char
@@ -511,12 +540,20 @@ impl<'a> Lexer<'a> {
                                     tokens.push(char_literal);
                                     self.advance(); // skip closing '\'' (single quote)
                                 } else {
-                                    return Err(self.log_error(LexErrorKind::InvalidCharLiteral));
+                                    return Err(self.log_error(
+                                        self.input,
+                                        self.pos,
+                                        LexErrorKind::InvalidCharLiteral,
+                                    ));
                                 }
                             }
                         }
                     } else {
-                        return Err(self.log_error(LexErrorKind::ExpectedCharLiteral));
+                        return Err(self.log_error(
+                            self.input,
+                            self.pos,
+                            LexErrorKind::ExpectedCharLiteral,
+                        ));
                     }
                 }
 
@@ -678,12 +715,14 @@ impl<'a> Lexer<'a> {
                     tokens.push(punctuation);
                 }
 
-                _ => return Err(self.log_error(LexErrorKind::InvalidChar(c))),
+                _ => {
+                    return Err(self.log_error(self.input, self.pos, LexErrorKind::InvalidChar(c)))
+                }
             }
         }
 
-        if num_open_delimiters > 0 {
-            panic!("Unclosed delimiters");
+        if num_closed_delimiters != num_open_delimiters {
+            return Err(self.log_error(self.input, self.pos, LexErrorKind::UnclosedDelimiters));
         }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
@@ -710,7 +749,7 @@ mod tests {
         
         /*
         block comment
-                
+        */
 
         /// outer doc comment
         
@@ -852,7 +891,7 @@ mod tests {
             Green, 
             Blue
         }
-
+        
         pub abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
@@ -884,7 +923,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 707,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 746,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }

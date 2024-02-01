@@ -11,6 +11,9 @@ pub enum LexErrorKind {
     ExpectedClosingSingleQuote,
     InvalidEscapeSequence,
     ExpectedEscapeSequence,
+    UnclosedBlockComment,
+    UnclosedDelimiters,
+    UnopenedDelimiters,
 
     InvalidChar(char),
 
@@ -27,6 +30,9 @@ impl fmt::Display for LexErrorKind {
             LexErrorKind::ExpectedClosingSingleQuote => write!(f, "expected closing single quote"),
             LexErrorKind::InvalidEscapeSequence => write!(f, "invalid escape sequence"),
             LexErrorKind::ExpectedEscapeSequence => write!(f, "expected escape sequence"),
+            LexErrorKind::UnclosedBlockComment => write!(f, "unclosed block comment"),
+            LexErrorKind::UnclosedDelimiters => write!(f, "unclosed delimiters"),
+            LexErrorKind::UnopenedDelimiters => write!(f, "unopened delimiters"),
             LexErrorKind::InvalidChar(c) => write!(f, "invalid char (`{}`)", c),
             LexErrorKind::UnknownError => write!(f, "unknown error"),
         }
