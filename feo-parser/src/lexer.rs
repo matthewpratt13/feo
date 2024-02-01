@@ -98,6 +98,7 @@ impl<'a> Lexer<'a> {
 
                 _ if c == '/' && self.peek_next() == Some('/') || self.peek_next() == Some('*') => {
                     self.advance(); // skip first '/'
+                    let mut block_comment_open = false;
 
                     match self.current_char() {
                         Some('/') => {
@@ -107,6 +108,7 @@ impl<'a> Lexer<'a> {
                             if self.current_char() == Some('/') || self.current_char() == Some('!')
                             {
                                 self.advance(); // skip third '/' or '!'
+
                                 self.skip_whitespace();
 
                                 while let Some(c) = self.current_char() {
@@ -157,11 +159,13 @@ impl<'a> Lexer<'a> {
 
                         Some('*') => {
                             self.advance(); // skip '*'
+                            block_comment_open = true;
 
                             while let Some(c) = self.current_char() {
                                 if c == '*' {
                                     self.advance(); // skip closing '*'
                                     self.advance(); // skip closing '/'
+                                    block_comment_open = false;
                                     break;
                                 } else {
                                     self.advance();
@@ -184,6 +188,10 @@ impl<'a> Lexer<'a> {
                         }
 
                         Some(_) | None => (),
+                    }
+
+                    if block_comment_open {
+                        return Err(self.log_error(LexErrorKind::UnclosedBlockComment));
                     }
                 }
 
@@ -695,13 +703,14 @@ mod tests {
 
     #[test]
     fn lex() {
-        let source_code = r#"//! inner doc comment
+        let source_code = r#" 
+        //! inner doc comment
         
         // line comment
         
         /*
         block comment
-        */
+                
 
         /// outer doc comment
         
@@ -847,7 +856,6 @@ mod tests {
         pub abi SomeAbstractContract {
             func colour(arg: char) -> Option<Colour>;
         }
-        
         "#;
 
         let handler = Handler::default();
@@ -876,7 +884,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 697,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 707,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
