@@ -11,7 +11,6 @@ pub enum LexErrorKind {
     ExpectedClosingSingleQuote,
     InvalidEscapeSequence,
     ExpectedEscapeSequence,
-    InvalidTypeAnnotation,
 
     InvalidChar(char),
 
@@ -28,7 +27,6 @@ impl fmt::Display for LexErrorKind {
             LexErrorKind::ExpectedClosingSingleQuote => write!(f, "expected closing single quote"),
             LexErrorKind::InvalidEscapeSequence => write!(f, "invalid escape sequence"),
             LexErrorKind::ExpectedEscapeSequence => write!(f, "expected escape sequence"),
-            LexErrorKind::InvalidTypeAnnotation => write!(f, "detected invalid type annotation"),
             LexErrorKind::InvalidChar(c) => write!(f, "invalid char (`{}`)", c),
             LexErrorKind::UnknownError => write!(f, "unknown error"),
         }
