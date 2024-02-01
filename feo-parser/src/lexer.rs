@@ -689,7 +689,7 @@ impl<'a> Lexer<'a> {
 
         if num_closed_delimiters != num_open_delimiters {
             return Err(self.log_error(LexErrorKind::UnclosedDelimiters));
-        }
+         }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
 
