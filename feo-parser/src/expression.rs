@@ -9,7 +9,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    span::Span,
+    span::Spanned,
     Delimiter, Keyword, Punctuation,
 };
 
@@ -97,14 +97,18 @@ impl Parse for OuterAttr {
                                                             ) => Some(OuterAttr {
                                                                 hash: Punctuation {
                                                                     punc_kind: PuncKind::Hash,
-                                                                    span: Span::default(),
+                                                                    span: parser
+                                                                        .current_token()?
+                                                                        .span(),
                                                                 },
                                                                 open_bracket: Delimiter {
                                                                     delim: (
                                                                         DelimKind::Brace,
                                                                         DelimOrientation::Open,
                                                                     ),
-                                                                    span: Span::default(),
+                                                                    span: parser
+                                                                        .current_token()?
+                                                                        .span(),
                                                                 },
                                                                 attribute: attribute_kind,
                                                                 close_bracket: Delimiter {
@@ -112,7 +116,9 @@ impl Parse for OuterAttr {
                                                                         DelimKind::Brace,
                                                                         DelimOrientation::Close,
                                                                     ),
-                                                                    span: Span::default(),
+                                                                    span: parser
+                                                                        .current_token()?
+                                                                        .span(),
                                                                 },
                                                             }),
                                                             _ => todo!(),
@@ -134,14 +140,18 @@ impl Parse for OuterAttr {
                                                         ) => Some(OuterAttr {
                                                             hash: Punctuation {
                                                                 punc_kind: PuncKind::Hash,
-                                                                span: Span::default(),
+                                                                span: parser
+                                                                    .current_token()?
+                                                                    .span(),
                                                             },
                                                             open_bracket: Delimiter {
                                                                 delim: (
                                                                     DelimKind::Brace,
                                                                     DelimOrientation::Open,
                                                                 ),
-                                                                span: Span::default(),
+                                                                span: parser
+                                                                    .current_token()?
+                                                                    .span(),
                                                             },
                                                             attribute: attribute_kind,
                                                             close_bracket: Delimiter {
@@ -149,7 +159,9 @@ impl Parse for OuterAttr {
                                                                     DelimKind::Brace,
                                                                     DelimOrientation::Close,
                                                                 ),
-                                                                span: Span::default(),
+                                                                span: parser
+                                                                    .current_token()?
+                                                                    .span(),
                                                             },
                                                         }),
                                                         _ => todo!(),

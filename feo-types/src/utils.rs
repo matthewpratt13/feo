@@ -1,4 +1,4 @@
-use crate::{keyword::KeywordKind, Delimiter, Keyword, Punctuation};
+use crate::{Delimiter, Keyword, Punctuation};
 
 pub type Brace = Delimiter;
 pub type Bracket = Delimiter;
