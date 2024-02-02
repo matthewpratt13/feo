@@ -18,10 +18,10 @@ mod tuple_expr;
 use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
 
 pub use self::{
-    attribute::{InnerAttr, OuterAttr, AttributeKind},
+    attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
-    struct_expr::{Struct, StructExpr, StructExprField},
+    struct_expr::{Struct, StructExpr, StructExprField, StructExprFields},
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects
@@ -57,6 +57,10 @@ pub use self::{
 // - struct / tuple struct / unit struct
 // - tuple
 
+pub enum Expression {
+    Struct,
+}
+
 pub trait Assignable
 where
     Self: Spanned,
@@ -67,7 +71,7 @@ impl Assignable for Identifier {}
 
 pub trait BooleanOperand
 where
-    Self: Expression + 'static,
+    Self: 'static,
 {
 }
 
@@ -87,27 +91,19 @@ where
 
 impl Constant for Punctuation {}
 
-pub trait Expression
-where
-    Self: Spanned,
-{
-}
+// pub trait Expression
+// where
+//     Self: Spanned,
+// {
+// }
 
-impl Expression for Keyword {}
+// impl Expression for Keyword {}
 
-impl Expression for Punctuation {}
+// impl Expression for Punctuation {}
 
-pub trait ExprWithBlock<E>
-where
-    Self: Expression,
-{
-}
+pub trait ExprWithBlock<E> {}
 
-pub trait ExprWithoutBlock<E>
-where
-    Self: Expression,
-{
-}
+pub trait ExprWithoutBlock<E> {}
 
 impl<E> ExprWithoutBlock<E> for Keyword {}
 
@@ -115,7 +111,7 @@ impl<E> ExprWithoutBlock<E> for Punctuation {}
 
 pub trait IterableExpr
 where
-    Self: Expression + 'static,
+    Self: 'static,
 {
 }
 

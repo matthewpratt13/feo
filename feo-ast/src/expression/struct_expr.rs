@@ -17,14 +17,13 @@ where
 pub struct Struct {
     item_path: PathInExpr,
     open_brace: Brace,
-    // struct_expr_fields_opt: Option<StructExprFields>,
-    struct_expr_fields_opt: Option<(StructExprField, Vec<(Comma, StructExprField)>)>,
+    struct_expr_fields_opt: Option<StructExprFields>,
     close_brace: Brace,
 }
 
 impl<E> StructExpr<E> for Struct {}
 
-impl Expression for Struct {}
+// impl Expression for Struct {}
 
 impl<E> ExprWithoutBlock<E> for Struct {}
 
@@ -46,12 +45,12 @@ impl Spanned for Struct {
     }
 }
 
-pub struct StructExprField(Vec<OuterAttr>, (Identifier, Colon, Box<dyn Expression>));
+pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Expression));
 
-// pub struct StructExprFields {
-//     first_field: StructExprField,
-//     subsequent_fields: Vec<(Comma, StructExprField)>,
-// }
+pub struct StructExprFields {
+    first_field: StructExprField,
+    subsequent_fields: Vec<(Comma, StructExprField)>,
+}
 
 // pub struct StructExprField {
 //     attributes: Vec<OuterAttr>,
@@ -62,8 +61,8 @@ pub struct TupleStruct {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
     params_opt: Option<(
-        Box<dyn Expression>,
-        Vec<(Comma, Box<dyn Expression>)>,
+        Expression,
+        Vec<(Comma, Expression)>,
         Option<Comma>,
     )>,
     close_parenthesis: Parenthesis,
@@ -71,7 +70,7 @@ pub struct TupleStruct {
 
 impl<E> StructExpr<E> for TupleStruct {}
 
-impl Expression for TupleStruct {}
+// impl Expression for TupleStruct {}
 
 impl<E> ExprWithoutBlock<E> for TupleStruct {}
 
@@ -97,7 +96,7 @@ pub struct UnitStruct(PathInExpr);
 
 impl<E> StructExpr<E> for UnitStruct {}
 
-impl Expression for UnitStruct {}
+// impl Expression for UnitStruct {}
 
 impl<E> ExprWithoutBlock<E> for UnitStruct {}
 

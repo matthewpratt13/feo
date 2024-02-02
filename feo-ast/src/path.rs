@@ -139,15 +139,15 @@ impl Spanned for SimplePath {
 }
 
 pub struct PathInExpr {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: PathExprSegment,
-    subsequent_segments: Vec<(DblColon, PathExprSegment)>,
+    pub dbl_colon_opt: Option<DblColon>,
+    pub first_segment: PathExprSegment,
+    pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
 pub struct PathType {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: PathTypeSegment,
-    subsequent_segments: Vec<(DblColon, PathExprSegment)>,
+    pub dbl_colon_opt: Option<DblColon>,
+    pub first_segment: PathTypeSegment,
+    pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
 impl Type for PathType {}
