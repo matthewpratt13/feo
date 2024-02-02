@@ -678,12 +678,12 @@ impl TryFrom<Token> for Delimiter {
     }
 }
 
-impl TryFrom<Token> for PuncKind {
+impl TryFrom<Token> for Punctuation {
     type Error = ParserError;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
-            Token::Punc(p) => Ok(p.punc_kind),
+            Token::Punc(p) => Ok(p),
             _ => Err(ParserError {
                 error_kind: ParserErrorKind::MismatchedTokens,
                 position: Position::new(&value.span().source(), value.span().start()),
