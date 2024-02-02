@@ -48,120 +48,63 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        if let Some(t) = parser.peek_next() {
-            let mut attribute_kind = AttributeKind::None;
-            match t {
-                Token::Punc(p) => {
-                    parser.next_token();
+        if let Some(_) = parser.peek_next() {
+            let first_token = parser.next_token()?;
 
-                    match p.punc_kind {
-                        PuncKind::HashBang => {
-                            if let Some(t) = parser.peek_next() {
-                                match Delimiter::try_from(t.clone()).ok() {
-                                    Some(d) => match d.delim {
-                                        (DelimKind::Brace, DelimOrientation::Open) => {
-                                            parser.next_token();
-
-                                            if let Some(t) = parser.peek_next() {
-                                                match Keyword::try_from(t).ok() {
-                                                    Some(k) => match k.keyword_kind {
-                                                        KeywordKind::KwAbstract => {
-                                                            attribute_kind =
-                                                                AttributeKind::KwAbstract(k)
-                                                        }
-                                                        KeywordKind::KwExport => {
-                                                            attribute_kind =
-                                                                AttributeKind::KwExport(k)
-                                                        }
-                                                        KeywordKind::KwExtern => {
-                                                            attribute_kind =
-                                                                AttributeKind::KwExtern(k)
-                                                        }
-                                                        KeywordKind::KwUnsafe => {
-                                                            attribute_kind =
-                                                                AttributeKind::KwUnsafe(k)
-                                                        }
-                                                        _ => todo!(),
-                                                    },
-                                                    None => todo!(),
-                                                };
-
-                                                parser.next_token();
-
-                                                if let Some(t) = parser.peek_next() {
-                                                    match Delimiter::try_from(t).ok() {
-                                                        Some(d) => match d.delim {
-                                                            (
-                                                                DelimKind::Brace,
-                                                                DelimOrientation::Close,
-                                                            ) => Some(OuterAttr {
-                                                                hash: Punctuation {
-                                                                    punc_kind: PuncKind::Hash,
-                                                                    span: parser
-                                                                        .current_token()?
-                                                                        .span(),
-                                                                },
-                                                                open_bracket: Delimiter {
-                                                                    delim: (
-                                                                        DelimKind::Brace,
-                                                                        DelimOrientation::Open,
-                                                                    ),
-                                                                    span: parser
-                                                                        .current_token()?
-                                                                        .span(),
-                                                                },
-                                                                attribute: attribute_kind,
-                                                                close_bracket: Delimiter {
-                                                                    delim: (
-                                                                        DelimKind::Brace,
-                                                                        DelimOrientation::Close,
-                                                                    ),
-                                                                    span: parser
-                                                                        .current_token()?
-                                                                        .span(),
-                                                                },
-                                                            }),
-                                                            _ => todo!(),
-                                                        },
-                                                        None => todo!(),
+            match first_token {
+                Token::Punc(p) => match p.punc_kind {
+                    PuncKind::HashBang => {
+                        if let Some(t) = parser.next_token() {
+                            match Delimiter::try_from(t.clone()).ok() {
+                                Some(d) => match d.delim {
+                                    (DelimKind::Bracket, DelimOrientation::Open) => {
+                                        let mut attribute_kind = AttributeKind::None;
+                                        if let Some(t) = parser.next_token() {
+                                            match Keyword::try_from(t).ok() {
+                                                Some(k) => match k.keyword_kind {
+                                                    KeywordKind::KwAbstract => {
+                                                        attribute_kind =
+                                                            AttributeKind::KwAbstract(k)
                                                     }
-                                                } else {
-                                                    todo!()
-                                                }
-                                            } else if let Some(p) = SimplePath::parse(parser) {
-                                                attribute_kind = AttributeKind::Path(p);
-                                                parser.next_token();
+                                                    KeywordKind::KwExport => {
+                                                        attribute_kind = AttributeKind::KwExport(k)
+                                                    }
+                                                    KeywordKind::KwExtern => {
+                                                        attribute_kind = AttributeKind::KwExtern(k)
+                                                    }
+                                                    KeywordKind::KwUnsafe => {
+                                                        attribute_kind = AttributeKind::KwUnsafe(k)
+                                                    }
+                                                    _ => todo!(),
+                                                },
+                                                None => todo!(),
+                                            };
 
+                                            if let Some(t) = parser.next_token() {
                                                 match Delimiter::try_from(t).ok() {
                                                     Some(d) => match d.delim {
                                                         (
-                                                            DelimKind::Brace,
+                                                            DelimKind::Bracket,
                                                             DelimOrientation::Close,
                                                         ) => Some(OuterAttr {
                                                             hash: Punctuation {
                                                                 punc_kind: PuncKind::Hash,
-                                                                span: parser
-                                                                    .current_token()?
-                                                                    .span(),
+                                                                span: d.span(),
                                                             },
                                                             open_bracket: Delimiter {
                                                                 delim: (
-                                                                    DelimKind::Brace,
+                                                                    DelimKind::Bracket,
                                                                     DelimOrientation::Open,
                                                                 ),
-                                                                span: parser
-                                                                    .current_token()?
-                                                                    .span(),
+                                                                span: d.span(),
                                                             },
                                                             attribute: attribute_kind,
                                                             close_bracket: Delimiter {
                                                                 delim: (
-                                                                    DelimKind::Brace,
+                                                                    DelimKind::Bracket,
                                                                     DelimOrientation::Close,
                                                                 ),
-                                                                span: parser
-                                                                    .current_token()?
-                                                                    .span(),
+                                                                span: d.span(),
                                                             },
                                                         }),
                                                         _ => todo!(),
@@ -171,19 +114,54 @@ impl Parse for OuterAttr {
                                             } else {
                                                 todo!()
                                             }
-                                        }
+                                        } else if let Some(p) = SimplePath::parse(parser) {
+                                            attribute_kind = AttributeKind::Path(p);
+                                            parser.next_token();
 
-                                        _ => todo!(),
-                                    },
-                                    None => todo!(),
-                                }
-                            } else {
-                                todo!()
+                                            match Delimiter::try_from(t).ok() {
+                                                Some(d) => match d.delim {
+                                                    (DelimKind::Bracket, DelimOrientation::Close) => {
+                                                        Some(OuterAttr {
+                                                            hash: Punctuation {
+                                                                punc_kind: PuncKind::Hash,
+                                                                span: d.span(),
+                                                            },
+                                                            open_bracket: Delimiter {
+                                                                delim: (
+                                                                    DelimKind::Bracket,
+                                                                    DelimOrientation::Open,
+                                                                ),
+                                                                span: d.span(),
+                                                            },
+                                                            attribute: attribute_kind,
+                                                            close_bracket: Delimiter {
+                                                                delim: (
+                                                                    DelimKind::Bracket,
+                                                                    DelimOrientation::Close,
+                                                                ),
+                                                                span: d.span(),
+                                                            },
+                                                        })
+                                                    }
+                                                    _ => todo!(),
+                                                },
+                                                None => todo!(),
+                                            }
+                                        } else {
+                                            todo!()
+                                        }
+                                    }
+
+                                    _ => todo!(),
+                                },
+                                None => todo!(),
                             }
+                        } else {
+                            todo!()
                         }
-                        _ => todo!(),
                     }
-                }
+                    _ => todo!(),
+                },
                 _ => todo!(),
             }
         } else {
