@@ -18,10 +18,10 @@ mod tuple_expr;
 use feo_types::{span::Spanned, Identifier, Keyword, Punctuation};
 
 pub use self::{
-    attribute::{InnerAttr, OuterAttr},
+    attribute::{InnerAttr, OuterAttr, AttributeKind},
     block_expr::BlockExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
-    struct_expr::{Struct, StructExpr, StructExprField, StructExprFields},
+    struct_expr::{Struct, StructExpr, StructExprField},
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects

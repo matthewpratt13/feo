@@ -1,4 +1,4 @@
-use crate::{Delimiter, Keyword, Punctuation};
+use crate::{keyword::KeywordKind, Delimiter, Keyword, Punctuation};
 
 pub type Brace = Delimiter;
 pub type Bracket = Delimiter;
@@ -37,7 +37,7 @@ pub type KwType = Keyword;
 pub type KwUnsafe = Keyword;
 pub type KwWhile = Keyword;
 
-pub type Ampersand = Keyword;
+pub type Ampersand = Punctuation;
 pub type Asterisk = Punctuation;
 pub type AsteriskEquals = Punctuation;
 pub type Bang = Punctuation;

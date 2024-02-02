@@ -163,7 +163,7 @@ impl FromStr for PuncKind {
 #[derive(Debug, Clone)]
 pub struct Punctuation {
     pub punc_kind: PuncKind,
-    span: Span,
+    pub span: Span,
 }
 
 impl Punctuation {

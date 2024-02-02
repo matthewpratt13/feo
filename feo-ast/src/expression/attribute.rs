@@ -14,6 +14,8 @@ pub enum AttributeKind {
     KwUnsafe(KwUnsafe),
 
     Path(SimplePath),
+
+    None,
 }
 
 pub struct InnerAttr {
@@ -45,10 +47,10 @@ impl Spanned for InnerAttr {
 }
 
 pub struct OuterAttr {
-    hash: HashSign,
-    open_bracket: Bracket,
-    attribute: AttributeKind,
-    close_bracket: Bracket,
+    pub hash: HashSign,
+    pub open_bracket: Bracket,
+    pub attribute: AttributeKind,
+    pub close_bracket: Bracket,
 }
 
 impl Expression for OuterAttr {}

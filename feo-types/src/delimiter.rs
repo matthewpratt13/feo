@@ -46,7 +46,7 @@ impl FromStr for DelimOrientation {
 #[derive(Debug, Clone)]
 pub struct Delimiter {
     pub delim: (DelimKind, DelimOrientation),
-    span: Span,
+    pub span: Span,
 }
 
 impl Delimiter {

@@ -621,6 +621,17 @@ impl TryFrom<Token> for Literal<bool> {
     }
 }
 
+impl TryFrom<Token> for Keyword {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        match value {
+            Token::Keyword(k) => Ok(k),
+            _ => Err(()),
+        }
+    }
+}
+
 impl TryFrom<Token> for Identifier {
     type Error = ();
 

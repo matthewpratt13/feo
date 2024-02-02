@@ -23,7 +23,7 @@ impl Parser {
         self.stream.next()
     }
 
-    fn peek_next(&self) -> Option<Token> {
+    pub fn peek_next(&self) -> Option<Token> {
         self.stream.tokens().get(self.pos + 1).cloned()?
     }
 }
