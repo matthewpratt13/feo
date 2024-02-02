@@ -63,7 +63,7 @@ pub type PathTypeSegment = PathIdenSegmentKind;
 
 pub type PathExpr = PathInExpr;
 
-impl Expression for PathExpr {}
+// impl Expression for PathExpr {}
 
 impl<E> ExprWithoutBlock<E> for PathExpr {}
 
