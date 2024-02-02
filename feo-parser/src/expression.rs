@@ -10,6 +10,7 @@ use feo_types::{
     keyword::KeywordKind,
     punctuation::PuncKind,
     span::Span,
+    utils::DblColon,
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
@@ -287,8 +288,8 @@ impl Parse for AttributeKind {
     where
         Self: Sized,
     {
-        let first_token = parser.next_token();
-        let attr_kind = if let Ok(k) = Keyword::try_from(first_token?) {
+        let token = parser.next_token();
+        let attr_kind = if let Ok(k) = Keyword::try_from(token?) {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),
@@ -311,7 +312,51 @@ impl Parse for SimplePath {
     where
         Self: Sized,
     {
-        todo!()
+        let first_token = parser.next_token();
+
+        if let Ok(Punctuation {
+            punc_kind: PuncKind::DblColon,
+            ..
+        }) = Punctuation::try_from(first_token?)
+        {
+            let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
+            let _ = parser.next_token();
+
+            if let Ok(first_segment) = SimplePathSegmentKind::parse(parser) {
+                while let Ok(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) = Punctuation::try_from(parser.next_token()?)
+                {
+                    if let Ok(next_segment) = SimplePathSegmentKind::parse(parser) {
+                        subsequent_segments.push((
+                            Punctuation {
+                                punc_kind: PuncKind::DblColon,
+                                span: Span::default(),
+                            },
+                            next_segment,
+                        ));
+                    } else {
+                        todo!()
+                    }
+                }
+
+                let path = SimplePath {
+                    dbl_colon_opt: Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        span: Span::default(),
+                    }),
+                    first_segment,
+                    subsequent_segments,
+                };
+
+                Ok(path)
+            } else {
+                todo!()
+            }
+        } else {
+            todo!()
+        }
     }
 }
 
@@ -320,10 +365,10 @@ impl Parse for SimplePathSegmentKind {
     where
         Self: Sized,
     {
-        let first_token = parser.next_token();
-        let segment_kind = if let Ok(i) = Identifier::try_from(first_token.clone()?) {
+        let token = parser.next_token();
+        let segment_kind = if let Ok(i) = Identifier::try_from(token.clone()?) {
             SimplePathSegmentKind::Iden(i)
-        } else if let Ok(k) = Keyword::try_from(first_token?) {
+        } else if let Ok(k) = Keyword::try_from(token?) {
             match k.keyword_kind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
@@ -337,3 +382,9 @@ impl Parse for SimplePathSegmentKind {
         Ok(segment_kind)
     }
 }
+
+// pub struct SimplePath {
+//     dbl_colon_opt: Option<DblColon>,
+//     first_segment: SimplePathSegmentKind,
+//     subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
+// }

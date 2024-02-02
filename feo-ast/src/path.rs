@@ -111,9 +111,9 @@ impl PatternWithoutRange for PathPatt {}
 
 // points to either a local variable or an item
 pub struct SimplePath {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: SimplePathSegmentKind,
-    subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
+    pub dbl_colon_opt: Option<DblColon>,
+    pub first_segment: SimplePathSegmentKind,
+    pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
 }
 
 impl Spanned for SimplePath {
