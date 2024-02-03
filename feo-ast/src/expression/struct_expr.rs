@@ -15,10 +15,10 @@ where
 }
 
 pub struct Struct {
-    item_path: PathInExpr,
-    open_brace: Brace,
-    struct_expr_fields_opt: Option<StructExprFields>,
-    close_brace: Brace,
+    pub item_path: PathInExpr,
+    pub open_brace: Brace,
+    pub struct_expr_fields_opt: Option<StructExprFields>,
+    pub close_brace: Brace,
 }
 
 impl<E> StructExpr<E> for Struct {}
