@@ -17,10 +17,10 @@ impl Parse for PathInExpr {
     {
         let first_token = parser.next_token();
 
-        if let Ok(Punctuation {
+        if let Ok(Some(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(first_token?)
+        })) = Some(Punctuation::try_from(first_token?))
         {
             let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
             let _ = parser.next_token();
@@ -70,10 +70,10 @@ impl Parse for PathType {
     {
         let first_token = parser.next_token();
 
-        if let Ok(Punctuation {
+        if let Ok(Some(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(first_token?)
+        })) = Some(Punctuation::try_from(first_token?))
         {
             let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
             let _ = parser.next_token();
@@ -123,10 +123,10 @@ impl Parse for SimplePath {
     {
         let first_token = parser.next_token();
 
-        if let Ok(Punctuation {
+        if let Ok(Some(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(first_token?)
+        })) = Some(Punctuation::try_from(first_token?))
         {
             let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
             let _ = parser.next_token();
@@ -175,6 +175,7 @@ impl Parse for PathIdenSegmentKind {
         Self: Sized,
     {
         let token = parser.next_token();
+
         let segment_kind = if let Ok(i) = Identifier::try_from(token.clone()?) {
             PathIdenSegmentKind::Iden(i)
         } else if let Ok(k) = Keyword::try_from(token?) {
@@ -199,6 +200,7 @@ impl Parse for SimplePathSegmentKind {
         Self: Sized,
     {
         let token = parser.next_token();
+
         let segment_kind = if let Ok(i) = Identifier::try_from(token.clone()?) {
             SimplePathSegmentKind::Iden(i)
         } else if let Ok(k) = Keyword::try_from(token?) {
