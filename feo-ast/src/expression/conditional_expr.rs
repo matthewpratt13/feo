@@ -26,7 +26,7 @@ pub struct IfExpr<T> {
 
 impl<T, E> ConditionalExpr<E> for IfExpr<T> where T: 'static {}
 
-impl<T> Expression for IfExpr<T> {}
+// impl<T> Expression for IfExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for IfExpr<T> {}
 
@@ -83,7 +83,7 @@ pub struct MatchExpr {
 
 impl<E> ConditionalExpr<E> for MatchExpr {}
 
-impl Expression for MatchExpr {}
+// impl Expression for MatchExpr {}
 
 impl<E> ExprWithBlock<E> for MatchExpr {}
 
@@ -113,8 +113,8 @@ impl Spanned for MatchExpr {
 }
 
 pub struct MatchArms {
-    arms: Vec<(MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>)>,
-    final_arm: (MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>),
+    arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
+    final_arm: (MatchArm, FatArrow, Expression, Option<Comma>),
 }
 
 pub struct MatchArm {

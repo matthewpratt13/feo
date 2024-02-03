@@ -57,7 +57,7 @@ impl<T, E> LiteralExpr<E> for Literal<T> where T: Clone + PrimitiveType + 'stati
 
 impl<T, E> ExprWithoutBlock<E> for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<T> Expression for Literal<T> where T: Clone + PrimitiveType {}
+// impl<T> Expression for Literal<T> where T: Clone + PrimitiveType {}
 
 impl<T> BooleanOperand for Literal<T> where T: Clone + PrimitiveType + 'static {}
 

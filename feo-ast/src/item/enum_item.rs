@@ -73,7 +73,7 @@ pub struct EnumVariantStruct {
 
 impl<E> StructExpr<E> for EnumVariantStruct {}
 
-impl Expression for EnumVariantStruct {}
+// impl Expression for EnumVariantStruct {}
 
 impl<E> ExprWithoutBlock<E> for EnumVariantStruct {}
 

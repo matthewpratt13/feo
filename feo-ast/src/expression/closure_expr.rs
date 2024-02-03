@@ -11,7 +11,7 @@ use super::{
 
 pub trait ClosureExpr
 where
-    Self: Sized + Expression + BooleanOperand + IterableExpr + Type,
+    Self: Sized + BooleanOperand + IterableExpr + Type,
 {
 }
 
@@ -45,7 +45,7 @@ pub struct ClosureWithBlock<T> {
 
 impl<T> ClosureExpr for ClosureWithBlock<T> where T: 'static {}
 
-impl<T> Expression for ClosureWithBlock<T> {}
+// impl<T> Expression for ClosureWithBlock<T> {}
 
 impl<T, E> ExprWithBlock<E> for ClosureWithBlock<T> {}
 
@@ -74,12 +74,12 @@ impl<T> Spanned for ClosureWithBlock<T> {
 
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
-    body_operand: Box<dyn Expression>,
+    body_operand: Expression,
 }
 
 impl ClosureExpr for ClosureWithoutBlock {}
 
-impl Expression for ClosureWithoutBlock {}
+// impl Expression for ClosureWithoutBlock {}
 
 impl<E> ExprWithoutBlock<E> for ClosureWithoutBlock {}
 

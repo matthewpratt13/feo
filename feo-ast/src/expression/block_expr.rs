@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::statement::Statement;
 
-use super::{BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr};
+use super::{BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, IterableExpr};
 
 pub struct BlockExpr<T> {
     open_brace: Brace,
@@ -14,7 +14,7 @@ pub struct BlockExpr<T> {
     close_brace: Brace,
 }
 
-impl<T> Expression for BlockExpr<T> {}
+// impl<T> Expression for BlockExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for BlockExpr<T> {}
 

@@ -25,7 +25,7 @@ where
 }
 
 pub struct ExprStatement {
-    expression: Box<dyn Expression>,
+    expression: Expression,
     semicolon_opt: Option<Semicolon>,
 }
 

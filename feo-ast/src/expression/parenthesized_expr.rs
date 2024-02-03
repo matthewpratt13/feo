@@ -7,11 +7,11 @@ use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr
 
 pub struct ParenthesizedExpr {
     open_parenthesis: Parenthesis,
-    enclosed_operand: Box<dyn Expression>,
+    enclosed_operand: Expression,
     close_parenthesis: Parenthesis,
 }
 
-impl Expression for ParenthesizedExpr {}
+// impl Expression for ParenthesizedExpr {}
 
 impl<E> ExprWithoutBlock<E> for ParenthesizedExpr {}
 

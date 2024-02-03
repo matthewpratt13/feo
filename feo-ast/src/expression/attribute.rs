@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::path::SimplePath;
 
-use super::{ExprWithBlock, ExprWithoutBlock, Expression};
+use super::{ExprWithBlock, ExprWithoutBlock};
 
 pub enum AttributeKind {
     KwAbstract(KwAbstract),
@@ -25,7 +25,7 @@ pub struct InnerAttr {
     close_bracket: Bracket,
 }
 
-impl Expression for InnerAttr {}
+// impl Expression for InnerAttr {}
 
 impl<E> ExprWithoutBlock<E> for InnerAttr {}
 
@@ -53,7 +53,7 @@ pub struct OuterAttr {
     pub close_bracket: Bracket,
 }
 
-impl Expression for OuterAttr {}
+// impl Expression for OuterAttr {}
 
 impl<E> ExprWithBlock<E> for OuterAttr {}
 

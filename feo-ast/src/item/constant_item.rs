@@ -20,7 +20,7 @@ pub struct ConstantItem {
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Box<dyn Expression>)>, // `None` is only allowed in a `TraitDef`
+    assignment_opt: Option<(Equals, Expression)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
 
@@ -59,7 +59,7 @@ pub struct StaticItem {
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
+    assignment_opt: Option<(Equals, Expression)>,
     semicolon: Semicolon,
 }
 

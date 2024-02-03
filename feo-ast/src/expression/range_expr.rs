@@ -20,14 +20,14 @@ impl BooleanOperand for RangeFullExpr {}
 impl IterableExpr for RangeFullExpr {}
 
 pub struct RangeFromToExpr {
-    from_operand: Box<dyn Expression>,
+    from_operand: Expression,
     dbl_dot: DblDot,
-    to_operand_excl: Box<dyn Expression>,
+    to_operand_excl: Expression,
 }
 
 impl<E> RangeExpr<E> for RangeFromToExpr {}
 
-impl Expression for RangeFromToExpr {}
+// impl Expression for RangeFromToExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromToExpr {}
 
@@ -50,13 +50,13 @@ impl Spanned for RangeFromToExpr {
 }
 
 pub struct RangeFromExpr {
-    from_operand: Box<dyn Expression>,
+    from_operand: Expression,
     dbl_dot: DblDot,
 }
 
 impl<E> RangeExpr<E> for RangeFromExpr {}
 
-impl Expression for RangeFromExpr {}
+// impl Expression for RangeFromExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
 
@@ -80,12 +80,12 @@ impl Spanned for RangeFromExpr {
 
 pub struct RangeToExpr {
     dbl_dot: DblDot,
-    to_operand: Box<dyn Expression>,
+    to_operand: Expression,
 }
 
 impl<E> RangeExpr<E> for RangeToExpr {}
 
-impl Expression for RangeToExpr {}
+// impl Expression for RangeToExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeToExpr {}
 
@@ -108,14 +108,14 @@ impl Spanned for RangeToExpr {
 }
 
 pub struct RangeInclusiveExpr {
-    from_operand: Box<dyn Expression>,
+    from_operand: Expression,
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<dyn Expression>,
+    to_operand_incl: Expression,
 }
 
 impl<E> RangeExpr<E> for RangeInclusiveExpr {}
 
-impl Expression for RangeInclusiveExpr {}
+// impl Expression for RangeInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
 
@@ -139,12 +139,12 @@ impl Spanned for RangeInclusiveExpr {
 
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<dyn Expression>,
+    to_operand_incl: Expression,
 }
 
 impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
 
-impl Expression for RangeToInclusiveExpr {}
+// impl Expression for RangeToInclusiveExpr {}
 
 impl<E> ExprWithoutBlock<E> for RangeToInclusiveExpr {}
 

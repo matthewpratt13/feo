@@ -4,7 +4,7 @@ use feo_types::{
     utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr};
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
@@ -12,7 +12,7 @@ pub struct ArrayExpr {
     close_bracket: Bracket,
 }
 
-impl Expression for ArrayExpr {}
+// impl Expression for ArrayExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArrayExpr {}
 
@@ -60,7 +60,7 @@ pub struct IndexExpr {
     close_bracket: Bracket,
 }
 
-impl Expression for IndexExpr {}
+// impl Expression for IndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for IndexExpr {}
 

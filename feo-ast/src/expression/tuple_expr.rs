@@ -28,7 +28,7 @@ pub struct TupleExpr {
     close_parenthesis: Parenthesis,
 }
 
-impl Expression for TupleExpr {}
+// impl Expression for TupleExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleExpr {}
 
@@ -53,8 +53,8 @@ impl Spanned for TupleExpr {
 }
 
 pub struct TupleElements {
-    initializer_operands: Vec<(Box<dyn Expression>, Comma)>,
-    trailing_operand_opt: Option<Box<dyn Expression>>,
+    initializer_operands: Vec<(Expression, Comma)>,
+    trailing_operand_opt: Option<Expression>,
 }
 
 pub struct TupleIndexExpr {
@@ -75,7 +75,7 @@ impl Spanned for TupleIndexExpr {
     }
 }
 
-impl Expression for TupleIndexExpr {}
+// impl Expression for TupleIndexExpr {}
 
 impl<E> ExprWithoutBlock<E> for TupleIndexExpr {}
 

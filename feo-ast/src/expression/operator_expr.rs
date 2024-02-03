@@ -106,14 +106,14 @@ pub type DerefOperator = Asterisk;
 pub type RefOperator = (Ampersand, Option<KwMut>);
 
 pub struct ArithmeticOrLogicalExpr {
-    lhs: Box<dyn Expression>,
+    lhs: Expression,
     operator: ArithmeticOrLogicalOperatorKind,
-    rhs: Box<dyn Expression>,
+    rhs: Expression,
 }
 
 impl<E> OperatorExpr<E> for ArithmeticOrLogicalExpr {}
 
-impl Expression for ArithmeticOrLogicalExpr {}
+// impl Expression for ArithmeticOrLogicalExpr {}
 
 impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
 
@@ -136,14 +136,14 @@ impl Spanned for ArithmeticOrLogicalExpr {
 }
 
 pub struct AssignmentExpr {
-    assignee: Box<dyn Expression>,
+    assignee: Expression,
     operator: AssignOperator,
-    new_value: Box<dyn Expression>,
+    new_value: Expression,
 }
 
 impl<E> OperatorExpr<E> for AssignmentExpr {}
 
-impl Expression for AssignmentExpr {}
+// impl Expression for AssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
 
@@ -168,12 +168,12 @@ impl Spanned for AssignmentExpr {
 pub struct CompoundAssignmentExpr {
     assignee: Box<dyn Assignable>,
     operator: CompoundAssignOperatorKind,
-    new_value: Box<dyn Expression>,
+    new_value: Expression,
 }
 
 impl<E> OperatorExpr<E> for CompoundAssignmentExpr {}
 
-impl Expression for CompoundAssignmentExpr {}
+// impl Expression for CompoundAssignmentExpr {}
 
 impl<E> ExprWithoutBlock<E> for CompoundAssignmentExpr {}
 
@@ -196,14 +196,14 @@ impl Spanned for CompoundAssignmentExpr {
 }
 
 pub struct ComparisonExpr {
-    lhs: Box<dyn Expression>,
+    lhs: Expression,
     operator: ComparisonOperatorKind,
-    rhs: Box<dyn Expression>,
+    rhs: Expression,
 }
 
 impl<E> OperatorExpr<E> for ComparisonExpr {}
 
-impl Expression for ComparisonExpr {}
+// impl Expression for ComparisonExpr {}
 
 impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
 
@@ -232,7 +232,7 @@ pub struct DerefExpr {
 
 impl<E> OperatorExpr<E> for DerefExpr {}
 
-impl Expression for DerefExpr {}
+// impl Expression for DerefExpr {}
 
 impl<E> ExprWithoutBlock<E> for DerefExpr {}
 
@@ -262,7 +262,7 @@ pub struct LazyBoolExpr {
 
 impl<E> OperatorExpr<E> for LazyBoolExpr {}
 
-impl Expression for LazyBoolExpr {}
+// impl Expression for LazyBoolExpr {}
 
 impl<E> ExprWithoutBlock<E> for LazyBoolExpr {}
 
@@ -286,12 +286,12 @@ impl Spanned for LazyBoolExpr {
 
 pub struct NegationExpr {
     operator: NegationOperatorKind,
-    operand: Box<dyn Expression>,
+    operand: Expression,
 }
 
 impl<E> OperatorExpr<E> for NegationExpr {}
 
-impl Expression for NegationExpr {}
+// impl Expression for NegationExpr {}
 
 impl<E> ExprWithoutBlock<E> for NegationExpr {}
 
@@ -320,7 +320,7 @@ pub struct RefExpr {
 
 impl<E> OperatorExpr<E> for RefExpr {}
 
-impl Expression for RefExpr {}
+// impl Expression for RefExpr {}
 
 impl<E> ExprWithoutBlock<E> for RefExpr {}
 
@@ -345,7 +345,7 @@ pub struct TypeCastExpr {
 
 impl<E> OperatorExpr<E> for TypeCastExpr {}
 
-impl Expression for TypeCastExpr {}
+// impl Expression for TypeCastExpr {}
 
 impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
 
@@ -374,7 +374,7 @@ pub struct UnwrapExpr<T: Spanned> {
 
 impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned + 'static {}
 
-impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
+// impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
 
 impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
 

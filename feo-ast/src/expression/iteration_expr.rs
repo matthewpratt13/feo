@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::pattern::Pattern;
 
-use super::{BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, IterableExpr};
+use super::{BlockExpr, BooleanOperand, Constant, ExprWithBlock, IterableExpr};
 
 pub trait IterationExpr<E>
 where
@@ -27,7 +27,7 @@ pub struct InfiniteLoopExpr<T> {
 
 impl<T, E> IterationExpr<E> for InfiniteLoopExpr<T> where T: 'static {}
 
-impl<T> Expression for InfiniteLoopExpr<T> {}
+// impl<T> Expression for InfiniteLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for InfiniteLoopExpr<T> {}
 
@@ -62,7 +62,7 @@ pub struct PredicateLoopExpr<T> {
 
 impl<T, E> IterationExpr<E> for PredicateLoopExpr<T> where T: 'static {}
 
-impl<T> Expression for PredicateLoopExpr<T> {}
+// impl<T> Expression for PredicateLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for PredicateLoopExpr<T> {}
 
@@ -99,7 +99,7 @@ pub struct IterLoopExpr<T> {
 
 impl<T, E> IterationExpr<E> for IterLoopExpr<T> where T: 'static {}
 
-impl<T> Expression for IterLoopExpr<T> {}
+// impl<T> Expression for IterLoopExpr<T> {}
 
 impl<T, E> ExprWithBlock<E> for IterLoopExpr<T> {}
 

@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::item::StructFieldName;
 
-use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr};
 
 pub struct FieldAccessExpr {
     container_operand: Box<dyn Assignable>,
@@ -13,7 +13,7 @@ pub struct FieldAccessExpr {
     field_name: StructFieldName,
 }
 
-impl Expression for FieldAccessExpr {}
+// impl Expression for FieldAccessExpr {}
 
 impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
 

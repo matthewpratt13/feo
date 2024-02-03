@@ -8,7 +8,7 @@ use feo_types::{
 
 use crate::{
     expression::{
-        Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr,
+        Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr,
     },
     item::Item,
     pattern::{Pattern, PatternWithoutRange, RangePattBound},

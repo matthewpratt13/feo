@@ -7,10 +7,10 @@ use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
 
 pub struct ReturnExpr {
     kw_return: KwReturn,
-    expression_opt: Option<Box<dyn Expression>>,
+    expression_opt: Option<Expression>,
 }
 
-impl Expression for ReturnExpr {}
+// impl Expression for ReturnExpr {}
 
 impl<E> ExprWithoutBlock<E> for ReturnExpr {}
 
