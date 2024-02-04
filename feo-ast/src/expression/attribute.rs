@@ -25,9 +25,7 @@ pub struct InnerAttr {
     close_bracket: Bracket,
 }
 
-// impl Expression for InnerAttr {}
-
-impl<E> ExprWithoutBlock<E> for InnerAttr {}
+impl ExprWithoutBlock for InnerAttr {}
 
 impl Spanned for InnerAttr {
     fn span(&self) -> Span {
@@ -53,11 +51,9 @@ pub struct OuterAttr {
     pub close_bracket: Bracket,
 }
 
-// impl Expression for OuterAttr {}
+impl ExprWithBlock for OuterAttr {}
 
-impl<E> ExprWithBlock<E> for OuterAttr {}
-
-impl<E> ExprWithoutBlock<E> for OuterAttr {}
+impl ExprWithoutBlock for OuterAttr {}
 
 impl Spanned for OuterAttr {
     fn span(&self) -> Span {

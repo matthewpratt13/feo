@@ -7,23 +7,24 @@ use crate::item::StructFieldName;
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr};
 
-pub struct FieldAccessExpr {
-    container_operand: Box<dyn Assignable>,
+pub struct FieldAccessExpr<A> {
+    container_operand: A,
     dot: Dot,
     field_name: StructFieldName,
 }
 
-// impl Expression for FieldAccessExpr {}
+impl<A> ExprWithoutBlock for FieldAccessExpr<A> where A: Assignable {}
 
-impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
+impl<A> BooleanOperand for FieldAccessExpr<A> where A: Assignable + 'static {}
 
-impl BooleanOperand for FieldAccessExpr {}
+impl<A> IterableExpr for FieldAccessExpr<A> where A: Assignable + 'static {}
 
-impl IterableExpr for FieldAccessExpr {}
+impl<A> Constant for FieldAccessExpr<A> where A: Assignable + 'static {}
 
-impl Constant for FieldAccessExpr {}
-
-impl Spanned for FieldAccessExpr {
+impl<A> Spanned for FieldAccessExpr<A>
+where
+    A: Assignable,
+{
     fn span(&self) -> Span {
         let s1 = self.container_operand.span();
         let s2 = self.field_name.span();

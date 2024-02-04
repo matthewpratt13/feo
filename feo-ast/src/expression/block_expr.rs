@@ -7,24 +7,46 @@ use crate::statement::Statement;
 
 use super::{BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, IterableExpr};
 
-pub struct BlockExpr<T> {
+pub struct BlockExpr<E: ExprWithoutBlock, S: Statement> {
     open_brace: Brace,
-    statements: Vec<Box<dyn Statement>>,
-    final_operand_opt: Option<Box<dyn ExprWithoutBlock<T>>>,
+    statements: Vec<S>,
+    final_operand_opt: Option<E>,
     close_brace: Brace,
 }
 
-// impl<T> Expression for BlockExpr<T> {}
+impl<E, S> ExprWithBlock for BlockExpr<E, S>
+where
+    E: ExprWithoutBlock,
+    S: Statement,
+{
+}
 
-impl<T, E> ExprWithBlock<E> for BlockExpr<T> {}
+impl<E, S> BooleanOperand for BlockExpr<E, S>
+where
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> BooleanOperand for BlockExpr<T> where T: 'static {}
+impl<E, S> IterableExpr for BlockExpr<E, S>
+where
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> IterableExpr for BlockExpr<T> where T: 'static {}
+impl<E, S> Constant for BlockExpr<E, S>
+where
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> Constant for BlockExpr<T> where T: 'static {}
-
-impl<T> Spanned for BlockExpr<T> {
+impl<E, S> Spanned for BlockExpr<E, S>
+where
+    E: ExprWithoutBlock,
+    S: Statement,
+{
     fn span(&self) -> Span {
         let s1 = self.open_brace.span();
         let s2 = self.close_brace.span();

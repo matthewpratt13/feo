@@ -3,25 +3,84 @@ use feo_types::{
     utils::Parenthesis,
 };
 
-use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use crate::statement::Statement;
 
-pub struct ParenthesizedExpr {
+use super::{
+    Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+};
+
+pub struct ParenthesizedExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     open_parenthesis: Parenthesis,
-    enclosed_operand: Expression,
+    enclosed_operand: Box<Expression<A, B, C, E, I, S, U>>,
     close_parenthesis: Parenthesis,
 }
 
-// impl Expression for ParenthesizedExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for ParenthesizedExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for ParenthesizedExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for ParenthesizedExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for ParenthesizedExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for ParenthesizedExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for ParenthesizedExpr {}
+impl<A, B, C, E, I, S, U> Constant for ParenthesizedExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for ParenthesizedExpr {}
-
-impl Spanned for ParenthesizedExpr {
+impl<A, B, C, E, I, S, U> Spanned for ParenthesizedExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.open_parenthesis.span().start();
         let end_pos = self.close_parenthesis.span().end();

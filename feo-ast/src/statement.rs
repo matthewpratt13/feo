@@ -6,7 +6,10 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Assignable, Constant, Expression, OuterAttr},
+    expression::{
+        Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+        OuterAttr,
+    },
     pattern::Pattern,
     ty::Type,
 };
@@ -24,16 +27,53 @@ where
 {
 }
 
-pub struct ExprStatement {
-    expression: Expression,
+pub struct ExprStatement<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    expression: Expression<A, B, C, E, I, S, U>,
     semicolon_opt: Option<Semicolon>,
 }
 
-impl Statement for ExprStatement {}
+impl<A, B, C, E, I, S, U> Statement for ExprStatement<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Constant for ExprStatement {}
+impl<A, B, C, E, I, S, U> Constant for ExprStatement<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Spanned for ExprStatement {
+impl<A, B, C, E, I, S, U> Spanned for ExprStatement<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.expression.span().start();
 
@@ -51,22 +91,25 @@ impl Spanned for ExprStatement {
     }
 }
 
-pub struct LetStatement {
+pub struct LetStatement<A: Assignable> {
     attributes: Vec<OuterAttr>,
     kw_let: KwLet,
     pattern: Box<dyn Pattern>,
     type_ann_opt: Option<(Colon, Box<dyn Type>)>,
-    assignment_opt: Option<(Equals, Box<dyn Assignable>)>,
+    assignment_opt: Option<(Equals, A)>,
     semicolon: Semicolon,
 }
 
-impl Statement for LetStatement {}
+impl<A> Statement for LetStatement<A> where A: Assignable {}
 
-impl Pattern for LetStatement {}
+impl<A> Pattern for LetStatement<A> where A: Assignable {}
 
-impl Constant for LetStatement {}
+impl<A> Constant for LetStatement<A> where A: Assignable + 'static {}
 
-impl Spanned for LetStatement {
+impl<A> Spanned for LetStatement<A>
+where
+    A: Assignable,
+{
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.attributes.first() {
             a.span().start()

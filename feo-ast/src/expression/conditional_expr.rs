@@ -3,40 +3,73 @@ use feo_types::{
     utils::{Brace, Comma, FatArrow, KwElse, KwIf, KwMatch},
 };
 
-use crate::pattern::Pattern;
+use crate::{pattern::Pattern, statement::Statement};
 
 use super::{
-    Assignable, BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, InnerAttr,
-    IterableExpr, OuterAttr,
+    Assignable, BlockExpr, BooleanOperand, Castable, Constant, ExprWithBlock, ExprWithoutBlock,
+    Expression, InnerAttr, IterableExpr, OuterAttr,
 };
 
-pub trait ConditionalExpr<E>
+pub trait ConditionalExpr
 where
-    Self: ExprWithBlock<E> + BooleanOperand + IterableExpr + Constant,
+    Self: ExprWithBlock + BooleanOperand + IterableExpr + Constant,
 {
 }
 
-pub struct IfExpr<T> {
+pub struct IfExpr<B: BooleanOperand + Spanned, E: ExprWithoutBlock, S: Statement> {
     kw_if: KwIf,
-    condition_operand: Box<dyn BooleanOperand>,
-    if_block: BlockExpr<T>,
-    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr<T>>)>>,
-    else_block_opt: Option<(KwElse, BlockExpr<T>)>,
+    condition_operand: B,
+    if_block: BlockExpr<E, S>,
+    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr<B, E, S>>)>>,
+    else_block_opt: Option<(KwElse, BlockExpr<E, S>)>,
 }
 
-impl<T, E> ConditionalExpr<E> for IfExpr<T> where T: 'static {}
+impl<B, E, S> ConditionalExpr for IfExpr<B, E, S>
+where
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-// impl<T> Expression for IfExpr<T> {}
+impl<B, E, S> ExprWithBlock for IfExpr<B, E, S>
+where
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock,
+    S: Statement,
+{
+}
 
-impl<T, E> ExprWithBlock<E> for IfExpr<T> {}
+impl<B, E, S> BooleanOperand for IfExpr<B, E, S>
+where
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> BooleanOperand for IfExpr<T> where T: 'static {}
+impl<B, E, S> IterableExpr for IfExpr<B, E, S>
+where
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> IterableExpr for IfExpr<T> where T: 'static {}
+impl<B, E, S> Constant for IfExpr<B, E, S>
+where
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> Constant for IfExpr<T> where T: 'static {}
-
-impl<T> Spanned for IfExpr<T> {
+impl<B, E, S> Spanned for IfExpr<B, E, S>
+where
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock,
+    S: Statement,
+{
     fn span(&self) -> Span {
         let s1 = self.kw_if.span();
         let s2 = match &self.else_block_opt {
@@ -72,30 +105,105 @@ impl<T> Spanned for IfExpr<T> {
     }
 }
 
-pub struct MatchExpr {
+pub struct MatchExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     kw_match: KwMatch,
-    scrutinee: Box<dyn Assignable>,
+    scrutinee: A,
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
-    match_arms_opt: Option<MatchArms>,
+    match_arms_opt: Option<MatchArms<A, B, C, E, I, S, U>>,
     close_brace: Brace,
 }
 
-impl<E> ConditionalExpr<E> for MatchExpr {}
+impl<A, B, C, E, I, S, U> ConditionalExpr for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for MatchExpr {}
+impl<A, B, C, E, I, S, U> ExprWithBlock for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl<E> ExprWithBlock<E> for MatchExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for MatchExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for MatchExpr {}
+impl<A, B, C, E, I, S, U> Constant for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for MatchExpr {}
+impl<A, B, C, E, I, S, U> Pattern for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Pattern for MatchExpr {}
-
-impl Spanned for MatchExpr {
+impl<A, B, C, E, I, S, U> Spanned for MatchExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let s1 = self.kw_match.span();
         let s2 = self.close_brace.span();
@@ -112,18 +220,36 @@ impl Spanned for MatchExpr {
     }
 }
 
-pub struct MatchArms {
-    arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
-    final_arm: (MatchArm, FatArrow, Expression, Option<Comma>),
+pub struct MatchArms<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    arms: Vec<(
+        MatchArm<B>,
+        FatArrow,
+        Box<Expression<A, B, C, E, I, S, U>>,
+        Option<Comma>,
+    )>,
+    final_arm: (
+        MatchArm<B>,
+        FatArrow,
+        Box<Expression<A, B, C, E, I, S, U>>,
+        Option<Comma>,
+    ),
 }
 
-pub struct MatchArm {
+pub struct MatchArm<B: BooleanOperand + Spanned> {
     attributes: Vec<OuterAttr>,
     pattern: Box<dyn Pattern>,
-    match_arm_guard_opt: Option<MatchArmGuard>,
+    match_arm_guard_opt: Option<MatchArmGuard<B>>,
 }
 
-pub struct MatchArmGuard {
+pub struct MatchArmGuard<B: BooleanOperand + Spanned> {
     kw_if: KwIf,
-    operand: Box<dyn BooleanOperand>,
+    operand: B,
 }

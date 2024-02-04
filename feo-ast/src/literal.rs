@@ -5,7 +5,7 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr},
+    expression::{BooleanOperand, Castable, Constant, ExprWithoutBlock, IterableExpr},
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
     ty::Type,
 };
@@ -41,9 +41,9 @@ where
     }
 }
 
-pub trait LiteralExpr<E>
+pub trait LiteralExpr
 where
-    Self: Constant + ExprWithoutBlock<E>,
+    Self: Constant + ExprWithoutBlock,
 {
 }
 
@@ -53,15 +53,49 @@ where
 {
 }
 
-impl<T, E> LiteralExpr<E> for Literal<T> where T: Clone + PrimitiveType + 'static {}
+impl<T> LiteralExpr for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<T, E> ExprWithoutBlock<E> for Literal<T> where T: Clone + PrimitiveType {}
-
-// impl<T> Expression for Literal<T> where T: Clone + PrimitiveType {}
+impl<T> ExprWithoutBlock for Literal<T> where T: Clone + PrimitiveType {}
 
 impl<T> BooleanOperand for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
+pub enum LiteralKind {
+    Char(Literal<char>),
+    String(Literal<String>),
+    Bool(Literal<bool>),
+    I32(Literal<i32>),
+    I64(Literal<i64>),
+    U8(Literal<u8>),
+    U16(Literal<u16>),
+    U32(Literal<u32>),
+    U64(Literal<u64>),
+    U256(Literal<U256>),
+    F32(Literal<f32>),
+    F64(Literal<f64>),
+}
+
+impl Spanned for LiteralKind {
+    fn span(&self) -> Span {
+        match self {
+            LiteralKind::Char(c) => c.span(),
+            LiteralKind::String(s) => s.span(),
+            LiteralKind::Bool(b) => b.span(),
+            LiteralKind::I32(ia) => ia.span(),
+            LiteralKind::I64(ib) => ib.span(),
+            LiteralKind::U8(ua) => ua.span(),
+            LiteralKind::U16(ub) => ub.span(),
+            LiteralKind::U32(uc) => uc.span(),
+            LiteralKind::U64(ud) => ud.span(),
+            LiteralKind::U256(ue) => ue.span(),
+            LiteralKind::F32(fa) => fa.span(),
+            LiteralKind::F64(fb) => fb.span(),
+        }
+    }
+}
+
 impl Castable for Literal<char> {}
+
+impl Castable for Literal<bool> {}
 
 impl Castable for Literal<u8> {}
 
@@ -80,8 +114,6 @@ impl Castable for Literal<i64> {}
 impl Castable for Literal<f32> {}
 
 impl Castable for Literal<f64> {}
-
-impl Castable for Literal<bool> {}
 
 impl<T> Constant for Literal<T> where T: Clone + PrimitiveType + 'static {}
 

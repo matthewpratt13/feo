@@ -4,7 +4,10 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{InnerAttr, OuterAttr},
+    expression::{
+        Assignable, BooleanOperand, Castable, ExprWithBlock, ExprWithoutBlock, InnerAttr,
+        IterableExpr, OuterAttr,
+    },
     path::PathType,
     statement::Statement,
     ty::Type,
@@ -18,35 +21,105 @@ where
 {
 }
 
-pub enum InherentImplItem<T> {
-    Constant(ConstantItem),
-    FuncDef(FunctionDef<T>),
+pub enum InherentImplItem<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    Constant(ConstantItem<A, B, C, E, I, S, U>),
+    FuncDef(FunctionDef<F>),
 }
 
-pub enum TraitImplItem<T> {
-    Constant(ConstantItem),
-    FuncDef(FunctionDef<T>),
+pub enum TraitImplItem<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    Constant(ConstantItem<A, B, C, E, I, S, U>),
+    FuncDef(FunctionDef<F>),
     TypeAlias(TypeAliasDef),
 }
 
-pub struct InherentImpl<T> {
+pub struct InherentImpl<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     nominal_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<InherentImplItem<T>>,
+    associated_items: Vec<InherentImplItem<A, B, C, E, F, I, S, U>>,
     close_brace: Brace,
 }
 
-impl<T> ImplItem for InherentImpl<T> {}
+impl<A, B, C, E, F, I, S, U> ImplItem for InherentImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<T> Item for InherentImpl<T> {}
+impl<A, B, C, E, F, I, S, U> Item for InherentImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<T> Statement for InherentImpl<T> {}
+impl<A, B, C, E, F, I, S, U> Statement for InherentImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<T> Spanned for InherentImpl<T> {
+impl<A, B, C, E, F, I, S, U> Spanned for InherentImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()
@@ -63,7 +136,16 @@ impl<T> Spanned for InherentImpl<T> {
     }
 }
 
-pub struct TraitImpl<T> {
+pub struct TraitImpl<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     implemented_trait_path: PathType,
@@ -72,17 +154,60 @@ pub struct TraitImpl<T> {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<TraitImplItem<T>>,
+    associated_items: Vec<TraitImplItem<A, B, C, E, F, I, S, U>>,
     close_brace: Brace,
 }
 
-impl<T> ImplItem for TraitImpl<T> {}
+impl<A, B, C, E, F, I, S, U> ImplItem for TraitImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<T> Item for TraitImpl<T> {}
+impl<A, B, C, E, F, I, S, U> Item for TraitImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<T> Statement for TraitImpl<T> {}
+impl<A, B, C, E, F, I, S, U> Statement for TraitImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<T> Spanned for TraitImpl<T> {
+impl<A, B, C, E, F, I, S, U> Spanned for TraitImpl<A, B, C, E, F, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    F: ExprWithBlock + Spanned,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()

@@ -12,14 +12,61 @@ use feo_types::{
 
 // TODO: start using `Span::join()` from here
 
+use crate::statement::Statement;
+
 use super::{
     Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
 };
 
-pub trait OperatorExpr<E>
+pub trait OperatorExpr
 where
-    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
+    Self: ExprWithoutBlock + BooleanOperand + IterableExpr + ExprWithoutBlock,
 {
+}
+
+pub enum OperationExprKind<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    ArithmeticOrLogical(ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>),
+    Comparison(ComparisonExpr<A, B, C, E, I, S, U>),
+    CompoundAssign(CompoundAssignmentExpr<A, B, C, E, I, S, U>),
+    Dereference(DerefExpr<A>),
+    LazyBool(LazyBoolExpr<B>),
+    Negation(NegationExpr<A, B, C, E, I, S, U>),
+    Reference(RefExpr<A>),
+    TypeCast(TypeCastExpr<C>),
+    UnwrapExpr(UnwrapExpr<U>),
+}
+
+impl<A, B, C, E, I, S, U> Spanned for OperationExprKind<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+    fn span(&self) -> Span {
+        match self {
+            OperationExprKind::ArithmeticOrLogical(al) => al.span(),
+            OperationExprKind::Comparison(c) => c.span(),
+            OperationExprKind::CompoundAssign(ca) => ca.span(),
+            OperationExprKind::Dereference(d) => d.span(),
+            OperationExprKind::LazyBool(lb) => lb.span(),
+            OperationExprKind::Negation(n) => n.span(),
+            OperationExprKind::Reference(r) => r.span(),
+            OperationExprKind::TypeCast(tc) => tc.span(),
+            OperationExprKind::UnwrapExpr(u) => u.span(),
+        }
+    }
 }
 
 pub enum ArithmeticOrLogicalOperatorKind {
@@ -71,9 +118,9 @@ impl Spanned for NegationOperatorKind {
     }
 }
 
-pub enum UnwrapOperandKind<T: Spanned> {
-    Option(Option<T>),
-    Result(Result<T, CompilerError>),
+pub enum UnwrapOperandKind<U: Spanned> {
+    Option(Option<U>),
+    Result(Result<U, CompilerError>),
 }
 
 impl<T> Spanned for UnwrapOperandKind<T>
@@ -105,25 +152,90 @@ pub type CastOperator = KwAs;
 pub type DerefOperator = Asterisk;
 pub type RefOperator = (Ampersand, Option<KwMut>);
 
-pub struct ArithmeticOrLogicalExpr {
-    lhs: Expression,
+pub struct ArithmeticOrLogicalExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    lhs: Box<Expression<A, B, C, E, I, S, U>>,
     operator: ArithmeticOrLogicalOperatorKind,
-    rhs: Expression,
+    rhs: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> OperatorExpr<E> for ArithmeticOrLogicalExpr {}
+impl<A, B, C, E, I, S, U> OperatorExpr for ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for ArithmeticOrLogicalExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for ArithmeticOrLogicalExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for ArithmeticOrLogicalExpr {}
+impl<A, B, C, E, I, S, U> Constant for ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for ArithmeticOrLogicalExpr {}
-
-impl Spanned for ArithmeticOrLogicalExpr {
+impl<A, B, C, E, I, S, U> Spanned for ArithmeticOrLogicalExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.lhs.span().start();
         let end_pos = self.rhs.span().end();
@@ -135,25 +247,90 @@ impl Spanned for ArithmeticOrLogicalExpr {
     }
 }
 
-pub struct AssignmentExpr {
-    assignee: Expression,
+pub struct AssignmentExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    assignee: Box<Expression<A, B, C, E, I, S, U>>,
     operator: AssignOperator,
-    new_value: Expression,
+    new_value: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> OperatorExpr<E> for AssignmentExpr {}
+impl<A, B, C, E, I, S, U> OperatorExpr for AssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for AssignmentExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for AssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for AssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for AssignmentExpr {}
+impl<A, B, C, E, I, S, U> Constant for AssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for AssignmentExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for AssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for AssignmentExpr {}
-
-impl Spanned for AssignmentExpr {
+impl<A, B, C, E, I, S, U> Spanned for AssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.assignee.span().start();
         let end_pos = self.new_value.span().end();
@@ -165,25 +342,90 @@ impl Spanned for AssignmentExpr {
     }
 }
 
-pub struct CompoundAssignmentExpr {
-    assignee: Box<dyn Assignable>,
+pub struct CompoundAssignmentExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    assignee: A,
     operator: CompoundAssignOperatorKind,
-    new_value: Expression,
+    new_value: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> OperatorExpr<E> for CompoundAssignmentExpr {}
+impl<A, B, C, E, I, S, U> OperatorExpr for CompoundAssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for CompoundAssignmentExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for CompoundAssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for CompoundAssignmentExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for CompoundAssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for CompoundAssignmentExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for CompoundAssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for CompoundAssignmentExpr {}
+impl<A, B, C, E, I, S, U> Constant for CompoundAssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for CompoundAssignmentExpr {}
-
-impl Spanned for CompoundAssignmentExpr {
+impl<A, B, C, E, I, S, U> Spanned for CompoundAssignmentExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.assignee.span().start();
         let end_pos = self.new_value.span().end();
@@ -195,25 +437,90 @@ impl Spanned for CompoundAssignmentExpr {
     }
 }
 
-pub struct ComparisonExpr {
-    lhs: Expression,
+pub struct ComparisonExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    lhs: Box<Expression<A, B, C, E, I, S, U>>,
     operator: ComparisonOperatorKind,
-    rhs: Expression,
+    rhs: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> OperatorExpr<E> for ComparisonExpr {}
+impl<A, B, C, E, I, S, U> OperatorExpr for ComparisonExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for ComparisonExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for ComparisonExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for ComparisonExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for ComparisonExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for ComparisonExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for ComparisonExpr {}
+impl<A, B, C, E, I, S, U> Constant for ComparisonExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for ComparisonExpr {}
-
-impl Spanned for ComparisonExpr {
+impl<A, B, C, E, I, S, U> Spanned for ComparisonExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.lhs.span().start();
         let end_pos = self.rhs.span().end();
@@ -225,24 +532,25 @@ impl Spanned for ComparisonExpr {
     }
 }
 
-pub struct DerefExpr {
+pub struct DerefExpr<A: Assignable> {
     operator: DerefOperator,
-    operand: Box<dyn Assignable>,
+    operand: A,
 }
 
-impl<E> OperatorExpr<E> for DerefExpr {}
+impl<A> OperatorExpr for DerefExpr<A> where A: Assignable + 'static {}
 
-// impl Expression for DerefExpr {}
+impl<A> ExprWithoutBlock for DerefExpr<A> where A: Assignable + 'static {}
 
-impl<E> ExprWithoutBlock<E> for DerefExpr {}
+impl<A> BooleanOperand for DerefExpr<A> where A: Assignable + 'static {}
 
-impl BooleanOperand for DerefExpr {}
+impl<A> IterableExpr for DerefExpr<A> where A: Assignable + 'static {}
 
-impl IterableExpr for DerefExpr {}
+impl<A> Constant for DerefExpr<A> where A: Assignable + 'static {}
 
-impl Constant for DerefExpr {}
-
-impl Spanned for DerefExpr {
+impl<A> Spanned for DerefExpr<A>
+where
+    A: Assignable,
+{
     fn span(&self) -> Span {
         let start_pos = self.operator.span().start();
         let end_pos = self.operand.span().end();
@@ -254,25 +562,26 @@ impl Spanned for DerefExpr {
     }
 }
 
-pub struct LazyBoolExpr {
-    lhs: Box<dyn BooleanOperand>,
+pub struct LazyBoolExpr<B: BooleanOperand + Spanned> {
+    lhs: B,
     operator: LazyBoolOperatorKind,
-    rhs: Box<dyn BooleanOperand>,
+    rhs: B,
 }
 
-impl<E> OperatorExpr<E> for LazyBoolExpr {}
+impl<B> OperatorExpr for LazyBoolExpr<B> where B: BooleanOperand + Spanned {}
 
-// impl Expression for LazyBoolExpr {}
+impl<B> ExprWithoutBlock for LazyBoolExpr<B> where B: BooleanOperand + Spanned {}
 
-impl<E> ExprWithoutBlock<E> for LazyBoolExpr {}
+impl<B> BooleanOperand for LazyBoolExpr<B> where B: BooleanOperand + Spanned {}
 
-impl BooleanOperand for LazyBoolExpr {}
+impl<B> IterableExpr for LazyBoolExpr<B> where B: BooleanOperand + Spanned {}
 
-impl IterableExpr for LazyBoolExpr {}
+impl<B> Constant for LazyBoolExpr<B> where B: BooleanOperand + Spanned {}
 
-impl Constant for LazyBoolExpr {}
-
-impl Spanned for LazyBoolExpr {
+impl<B> Spanned for LazyBoolExpr<B>
+where
+    B: BooleanOperand + Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.lhs.span().start();
         let end_pos = self.rhs.span().end();
@@ -284,24 +593,89 @@ impl Spanned for LazyBoolExpr {
     }
 }
 
-pub struct NegationExpr {
+pub struct NegationExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     operator: NegationOperatorKind,
-    operand: Expression,
+    operand: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> OperatorExpr<E> for NegationExpr {}
+impl<A, B, C, E, I, S, U> OperatorExpr for NegationExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for NegationExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for NegationExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for NegationExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for NegationExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for NegationExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for NegationExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for NegationExpr {}
+impl<A, B, C, E, I, S, U> Constant for NegationExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for NegationExpr {}
-
-impl Spanned for NegationExpr {
+impl<A, B, C, E, I, S, U> Spanned for NegationExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.operator.span().start();
         let end_pos = self.operand.span().end();
@@ -313,22 +687,23 @@ impl Spanned for NegationExpr {
     }
 }
 
-pub struct RefExpr {
+pub struct RefExpr<A: Assignable> {
     operator: RefOperator,
-    operand: Box<dyn Assignable>,
+    operand: A,
 }
 
-impl<E> OperatorExpr<E> for RefExpr {}
+impl<A> OperatorExpr for RefExpr<A> where A: Assignable + 'static {}
 
-// impl Expression for RefExpr {}
+impl<A> ExprWithoutBlock for RefExpr<A> where A: Assignable {}
 
-impl<E> ExprWithoutBlock<E> for RefExpr {}
+impl<A> BooleanOperand for RefExpr<A> where A: Assignable + 'static {}
 
-impl BooleanOperand for RefExpr {}
+impl<A> IterableExpr for RefExpr<A> where A: Assignable + 'static {}
 
-impl IterableExpr for RefExpr {}
-
-impl Spanned for RefExpr {
+impl<A> Spanned for RefExpr<A>
+where
+    A: Assignable,
+{
     fn span(&self) -> Span {
         let s1 = self.operator.0.span();
         let s2 = self.operand.span();
@@ -337,25 +712,26 @@ impl Spanned for RefExpr {
     }
 }
 
-pub struct TypeCastExpr {
-    lhs: Box<dyn Castable>,
+pub struct TypeCastExpr<C: Castable> {
+    lhs: C,
     operator: CastOperator,
-    rhs: Box<dyn Castable>,
+    rhs: C,
 }
 
-impl<E> OperatorExpr<E> for TypeCastExpr {}
+impl<C> OperatorExpr for TypeCastExpr<C> where C: Castable {}
 
-// impl Expression for TypeCastExpr {}
+impl<C> ExprWithoutBlock for TypeCastExpr<C> where C: Castable {}
 
-impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
+impl<C> BooleanOperand for TypeCastExpr<C> where C: Castable {}
 
-impl BooleanOperand for TypeCastExpr {}
+impl<C> IterableExpr for TypeCastExpr<C> where C: Castable {}
 
-impl IterableExpr for TypeCastExpr {}
+impl<C> Constant for TypeCastExpr<C> where C: Castable {}
 
-impl Constant for TypeCastExpr {}
-
-impl Spanned for TypeCastExpr {
+impl<C> Spanned for TypeCastExpr<C>
+where
+    C: Castable,
+{
     fn span(&self) -> Span {
         let start_pos = self.lhs.span().start();
         let end_pos = self.rhs.span().end();
@@ -367,24 +743,22 @@ impl Spanned for TypeCastExpr {
     }
 }
 
-pub struct UnwrapExpr<T: Spanned> {
-    operand: UnwrapOperandKind<T>,
+pub struct UnwrapExpr<U: Spanned> {
+    operand: UnwrapOperandKind<U>,
     operator: QuestionMark,
 }
 
-impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned + 'static {}
+impl<U> OperatorExpr for UnwrapExpr<U> where U: Spanned + 'static {}
 
-// impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
+impl<U> ExprWithoutBlock for UnwrapExpr<U> where U: Spanned {}
 
-impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
+impl<U> BooleanOperand for UnwrapExpr<U> where U: Spanned + 'static {}
 
-impl<T> BooleanOperand for UnwrapExpr<T> where T: Spanned + 'static {}
+impl<U> IterableExpr for UnwrapExpr<U> where U: Spanned + 'static {}
 
-impl<T> IterableExpr for UnwrapExpr<T> where T: Spanned + 'static {}
-
-impl<T> Spanned for UnwrapExpr<T>
+impl<U> Spanned for UnwrapExpr<U>
 where
-    T: Spanned,
+    U: Spanned,
 {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();

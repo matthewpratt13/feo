@@ -5,7 +5,7 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Constant, ExprWithoutBlock, Expression, OuterAttr, StructExpr},
+    expression::{Constant, ExprWithoutBlock, OuterAttr, StructExpr},
     pattern::Pattern,
     statement::Statement,
     ty::Type,
@@ -71,11 +71,11 @@ pub struct EnumVariantStruct {
     close_brace: Brace,
 }
 
-impl<E> StructExpr<E> for EnumVariantStruct {}
+impl StructExpr for EnumVariantStruct {}
 
 // impl Expression for EnumVariantStruct {}
 
-impl<E> ExprWithoutBlock<E> for EnumVariantStruct {}
+impl ExprWithoutBlock for EnumVariantStruct {}
 
 impl Statement for EnumVariantStruct {}
 

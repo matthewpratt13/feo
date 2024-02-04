@@ -6,25 +6,26 @@ use feo_types::{
 
 use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr};
 
-pub struct ArrayExpr {
+pub struct ArrayExpr<I: IterableExpr> {
     open_bracket: Bracket,
-    elements_opt: Option<ArrayElements>,
+    elements_opt: Option<ArrayElements<I>>,
     close_bracket: Bracket,
 }
 
-// impl Expression for ArrayExpr {}
+impl<I> ExprWithoutBlock for ArrayExpr<I> where I: IterableExpr {}
 
-impl<E> ExprWithoutBlock<E> for ArrayExpr {}
+impl<I> BooleanOperand for ArrayExpr<I> where I: IterableExpr {}
 
-impl BooleanOperand for ArrayExpr {}
+impl<I> IterableExpr for ArrayExpr<I> where I: IterableExpr {}
 
-impl IterableExpr for ArrayExpr {}
+impl<I> Assignable for ArrayExpr<I> where I: IterableExpr {}
 
-impl Assignable for ArrayExpr {}
+impl<I> Constant for ArrayExpr<I> where I: IterableExpr {}
 
-impl Constant for ArrayExpr {}
-
-impl Spanned for ArrayExpr {
+impl<I> Spanned for ArrayExpr<I>
+where
+    I: IterableExpr,
+{
     fn span(&self) -> Span {
         let s1 = self.open_bracket.span();
         let s2 = self.close_bracket.span();
@@ -41,36 +42,37 @@ impl Spanned for ArrayExpr {
     }
 }
 
-pub struct ArrayElements {
-    first_element: Box<dyn IterableExpr>,
-    subsequent_elements: Vec<(Comma, Box<dyn IterableExpr>)>,
+pub struct ArrayElements<I: IterableExpr> {
+    first_element: I,
+    subsequent_elements: Vec<(Comma, I)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayWithSingleRepeatedValue {
-    repeat_operand: Box<dyn IterableExpr>,
+pub struct ArrayWithSingleRepeatedValue<I: IterableExpr> {
+    repeat_operand: I,
     semicolon: Semicolon,
     num_repeats: Primitive<u64>,
 }
 
-pub struct IndexExpr {
-    indexed_operand: ArrayExpr,
+pub struct IndexExpr<I: IterableExpr> {
+    indexed_operand: ArrayExpr<I>,
     open_bracket: Bracket,
     index: Primitive<u64>,
     close_bracket: Bracket,
 }
 
-// impl Expression for IndexExpr {}
+impl<I> ExprWithoutBlock for IndexExpr<I> where I: IterableExpr {}
 
-impl<E> ExprWithoutBlock<E> for IndexExpr {}
+impl<I> BooleanOperand for IndexExpr<I> where I: IterableExpr {}
 
-impl BooleanOperand for IndexExpr {}
+impl<I> IterableExpr for IndexExpr<I> where I: IterableExpr {}
 
-impl IterableExpr for IndexExpr {}
+impl<I> Constant for IndexExpr<I> where I: IterableExpr {}
 
-impl Constant for IndexExpr {}
-
-impl Spanned for IndexExpr {
+impl<I> Spanned for IndexExpr<I>
+where
+    I: IterableExpr,
+{
     fn span(&self) -> Span {
         let s1 = self.indexed_operand.span();
         let s2 = self.close_bracket.span();

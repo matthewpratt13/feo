@@ -5,7 +5,10 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Constant, Expression, OuterAttr},
+    expression::{
+        Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+        OuterAttr,
+    },
     pattern::Pattern,
     statement::Statement,
     ty::Type,
@@ -13,26 +16,83 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
-pub struct ConstantItem {
+pub struct ConstantItem<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: KwConst,
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Expression)>, // `None` is only allowed in a `TraitDef`
+    assignment_opt: Option<(Equals, Expression<A, B, C, E, I, S, U>)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
 
-impl Item for ConstantItem {}
+impl<A, B, C, E, I, S, U> Item for ConstantItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Statement for ConstantItem {}
+impl<A, B, C, E, I, S, U> Statement for ConstantItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Constant for ConstantItem {}
+impl<A, B, C, E, I, S, U> Constant for ConstantItem<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    C: Castable + 'static,
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Pattern for ConstantItem {}
+impl<A, B, C, E, I, S, U> Pattern for ConstantItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Spanned for ConstantItem {
+impl<A, B, C, E, I, S, U> Spanned for ConstantItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -51,7 +111,15 @@ impl Spanned for ConstantItem {
     }
 }
 
-pub struct StaticItem {
+pub struct StaticItem<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_static: KwStatic,
@@ -59,17 +127,56 @@ pub struct StaticItem {
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Expression)>,
+    assignment_opt: Option<(Equals, Expression<A, B, C, E, I, S, U>)>,
     semicolon: Semicolon,
 }
 
-impl Item for StaticItem {}
+impl<A, B, C, E, I, S, U> Item for StaticItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Statement for StaticItem {}
+impl<A, B, C, E, I, S, U> Statement for StaticItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Constant for StaticItem {}
+impl<A, B, C, E, I, S, U> Constant for StaticItem<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    C: Castable + 'static,
+    B: BooleanOperand + Spanned,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Spanned for StaticItem {
+impl<A, B, C, E, I, S, U> Spanned for StaticItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -88,4 +195,14 @@ impl Spanned for StaticItem {
     }
 }
 
-unsafe impl Sync for StaticItem {}
+unsafe impl<A, B, C, E, I, S, U> Sync for StaticItem<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}

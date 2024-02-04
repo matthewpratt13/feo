@@ -3,41 +3,149 @@ use feo_types::{
     utils::{DblDot, DotDotEquals},
 };
 
-use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use crate::statement::Statement;
 
-pub trait RangeExpr<E>
+use super::{
+    Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
+};
+
+pub trait RangeExpr
 where
-    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr + Constant,
+    Self: ExprWithoutBlock + BooleanOperand + IterableExpr + Constant,
 {
+}
+
+pub enum RangeExprKind<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    RangeFullExpr(RangeFullExpr),
+    RangeFromToExpr(RangeFromToExpr<A, B, C, E, I, S, U>),
+    RangeFromExpr(RangeFromExpr<A, B, C, E, I, S, U>),
+    RangeToExpr(RangeToExpr<A, B, C, E, I, S, U>),
+    RangeInclusiveExpr(RangeInclusiveExpr<A, B, C, E, I, S, U>),
+    RangeToInclusiveExpr(RangeToInclusiveExpr<A, B, C, E, I, S, U>),
+}
+
+impl<A, B, C, E, I, S, U> Spanned for RangeExprKind<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+    fn span(&self) -> Span {
+        match self {
+            RangeExprKind::RangeFullExpr(rfe) => rfe.span(),
+            RangeExprKind::RangeFromToExpr(rft) => rft.span(),
+            RangeExprKind::RangeFromExpr(rf) => rf.span(),
+            RangeExprKind::RangeToExpr(rt) => rt.span(),
+            RangeExprKind::RangeInclusiveExpr(ri) => ri.span(),
+            RangeExprKind::RangeToInclusiveExpr(rti) => rti.span(),
+        }
+    }
 }
 
 pub type RangeFullExpr = DblDot;
 
-impl<E> RangeExpr<E> for RangeFullExpr {}
+impl RangeExpr for RangeFullExpr {}
 
 impl BooleanOperand for RangeFullExpr {}
 
 impl IterableExpr for RangeFullExpr {}
 
-pub struct RangeFromToExpr {
-    from_operand: Expression,
+pub struct RangeFromToExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    from_operand: Box<Expression<A, B, C, E, I, S, U>>,
     dbl_dot: DblDot,
-    to_operand_excl: Expression,
+    to_operand_excl: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> RangeExpr<E> for RangeFromToExpr {}
+impl<A, B, C, E, I, S, U> RangeExpr for RangeFromToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for RangeFromToExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for RangeFromToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for RangeFromToExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for RangeFromToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for RangeFromToExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for RangeFromToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for RangeFromToExpr {}
+impl<A, B, C, E, I, S, U> Constant for RangeFromToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for RangeFromToExpr {}
-
-impl Spanned for RangeFromToExpr {
+impl<A, B, C, E, I, S, U> Spanned for RangeFromToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.from_operand.span().start();
         let end_pos = self.to_operand_excl.span().end();
@@ -49,24 +157,89 @@ impl Spanned for RangeFromToExpr {
     }
 }
 
-pub struct RangeFromExpr {
-    from_operand: Expression,
+pub struct RangeFromExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    from_operand: Box<Expression<A, B, C, E, I, S, U>>,
     dbl_dot: DblDot,
 }
 
-impl<E> RangeExpr<E> for RangeFromExpr {}
+impl<A, B, C, E, I, S, U> RangeExpr for RangeFromExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for RangeFromExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for RangeFromExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for RangeFromExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for RangeFromExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for RangeFromExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for RangeFromExpr {}
+impl<A, B, C, E, I, S, U> Constant for RangeFromExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for RangeFromExpr {}
-
-impl Spanned for RangeFromExpr {
+impl<A, B, C, E, I, S, U> Spanned for RangeFromExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.from_operand.span().start();
         let end_pos = self.dbl_dot.span().end();
@@ -78,24 +251,89 @@ impl Spanned for RangeFromExpr {
     }
 }
 
-pub struct RangeToExpr {
+pub struct RangeToExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     dbl_dot: DblDot,
-    to_operand: Expression,
+    to_operand: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> RangeExpr<E> for RangeToExpr {}
+impl<A, B, C, E, I, S, U> RangeExpr for RangeToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for RangeToExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for RangeToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for RangeToExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for RangeToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for RangeToExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for RangeToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for RangeToExpr {}
+impl<A, B, C, E, I, S, U> Constant for RangeToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for RangeToExpr {}
-
-impl Spanned for RangeToExpr {
+impl<A, B, C, E, I, S, U> Spanned for RangeToExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.dbl_dot.span().start();
         let end_pos = self.to_operand.span().end();
@@ -107,25 +345,90 @@ impl Spanned for RangeToExpr {
     }
 }
 
-pub struct RangeInclusiveExpr {
-    from_operand: Expression,
+pub struct RangeInclusiveExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
+    from_operand: Box<Expression<A, B, C, E, I, S, U>>,
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Expression,
+    to_operand_incl: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> RangeExpr<E> for RangeInclusiveExpr {}
+impl<A, B, C, E, I, S, U> RangeExpr for RangeInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for RangeInclusiveExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for RangeInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for RangeInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for RangeInclusiveExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for RangeInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for RangeInclusiveExpr {}
+impl<A, B, C, E, I, S, U> Constant for RangeInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for RangeInclusiveExpr {}
-
-impl Spanned for RangeInclusiveExpr {
+impl<A, B, C, E, I, S, U> Spanned for RangeInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.from_operand.span().start();
         let end_pos = self.to_operand_incl.span().end();
@@ -137,24 +440,89 @@ impl Spanned for RangeInclusiveExpr {
     }
 }
 
-pub struct RangeToInclusiveExpr {
+pub struct RangeToInclusiveExpr<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Expression,
+    to_operand_incl: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
+impl<A, B, C, E, I, S, U> RangeExpr for RangeToInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for RangeToInclusiveExpr {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for RangeToInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for RangeToInclusiveExpr {}
+impl<A, B, C, E, I, S, U> BooleanOperand for RangeToInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for RangeToInclusiveExpr {}
+impl<A, B, C, E, I, S, U> IterableExpr for RangeToInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for RangeToInclusiveExpr {}
+impl<A, B, C, E, I, S, U> Constant for RangeToInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl Constant for RangeToInclusiveExpr {}
-
-impl Spanned for RangeToInclusiveExpr {
+impl<A, B, C, E, I, S, U> Spanned for RangeToInclusiveExpr<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let start_pos = self.dot_dot_equals.span().start();
         let end_pos = self.to_operand_incl.span().end();

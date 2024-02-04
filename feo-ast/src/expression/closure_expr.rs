@@ -3,10 +3,11 @@ use feo_types::{
     utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
-use crate::{pattern::Pattern, ty::Type};
+use crate::{pattern::Pattern, statement::Statement, ty::Type};
 
 use super::{
-    BlockExpr, BooleanOperand, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr, OuterAttr,
+    Assignable, BlockExpr, BooleanOperand, Castable, ExprWithBlock, ExprWithoutBlock, Expression,
+    IterableExpr, OuterAttr,
 };
 
 pub trait ClosureExpr
@@ -37,25 +38,52 @@ impl Spanned for ClosureParamsOpt {
     }
 }
 
-pub struct ClosureWithBlock<T> {
+pub struct ClosureWithBlock<E: ExprWithoutBlock, S: Statement> {
     params: ClosureParamsOpt,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    block: BlockExpr<T>,
+    block: BlockExpr<E, S>,
 }
 
-impl<T> ClosureExpr for ClosureWithBlock<T> where T: 'static {}
+impl<E, S> ClosureExpr for ClosureWithBlock<E, S>
+where
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-// impl<T> Expression for ClosureWithBlock<T> {}
+impl<E, S> ExprWithBlock for ClosureWithBlock<E, S>
+where
+    E: ExprWithoutBlock,
+    S: Statement,
+{
+}
 
-impl<T, E> ExprWithBlock<E> for ClosureWithBlock<T> {}
+impl<E, S> BooleanOperand for ClosureWithBlock<E, S>
+where
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> BooleanOperand for ClosureWithBlock<T> where T: 'static {}
+impl<E, S> IterableExpr for ClosureWithBlock<E, S>
+where
+    E: ExprWithoutBlock + 'static,
+    S: Statement + 'static,
+{
+}
 
-impl<T> IterableExpr for ClosureWithBlock<T> where T: 'static {}
+impl<E, S> Type for ClosureWithBlock<E, S>
+where
+    E: ExprWithoutBlock,
+    S: Statement,
+{
+}
 
-impl<T> Type for ClosureWithBlock<T> {}
-
-impl<T> Spanned for ClosureWithBlock<T> {
+impl<E, S> Spanned for ClosureWithBlock<E, S>
+where
+    E: ExprWithoutBlock,
+    S: Statement,
+{
     fn span(&self) -> Span {
         let s1 = self.params.span();
         let s2 = self.block.span();
@@ -72,24 +100,89 @@ impl<T> Spanned for ClosureWithBlock<T> {
     }
 }
 
-pub struct ClosureWithoutBlock {
+pub struct ClosureWithoutBlock<
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+> {
     params: ClosureParamsOpt,
-    body_operand: Expression,
+    body_operand: Box<Expression<A, B, C, E, I, S, U>>,
 }
 
-impl ClosureExpr for ClosureWithoutBlock {}
+impl<A, B, C, E, I, S, U> ClosureExpr for ClosureWithoutBlock<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-// impl Expression for ClosureWithoutBlock {}
+impl<A, B, C, E, I, S, U> ExprWithoutBlock for ClosureWithoutBlock<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl<E> ExprWithoutBlock<E> for ClosureWithoutBlock {}
+impl<A, B, C, E, I, S, U> BooleanOperand for ClosureWithoutBlock<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl BooleanOperand for ClosureWithoutBlock {}
+impl<A, B, C, E, I, S, U> IterableExpr for ClosureWithoutBlock<A, B, C, E, I, S, U>
+where
+    A: Assignable + 'static,
+    B: BooleanOperand + Spanned,
+    C: Castable + 'static,
+    E: ExprWithoutBlock + 'static,
+    I: IterableExpr,
+    S: Statement + 'static,
+    U: Spanned + 'static,
+{
+}
 
-impl IterableExpr for ClosureWithoutBlock {}
+impl<A, B, C, E, I, S, U> Type for ClosureWithoutBlock<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
+}
 
-impl Type for ClosureWithoutBlock {}
-
-impl Spanned for ClosureWithoutBlock {
+impl<A, B, C, E, I, S, U> Spanned for ClosureWithoutBlock<A, B, C, E, I, S, U>
+where
+    A: Assignable,
+    B: BooleanOperand + Spanned,
+    C: Castable,
+    E: ExprWithoutBlock,
+    I: IterableExpr,
+    S: Statement,
+    U: Spanned,
+{
     fn span(&self) -> Span {
         let s1 = self.params.span();
         let s2 = self.body_operand.span();

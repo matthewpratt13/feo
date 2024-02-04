@@ -7,9 +7,7 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{
-        Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr,
-    },
+    expression::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr},
     item::Item,
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
     statement::Statement,
@@ -65,7 +63,7 @@ pub type PathExpr = PathInExpr;
 
 // impl Expression for PathExpr {}
 
-impl<E> ExprWithoutBlock<E> for PathExpr {}
+impl ExprWithoutBlock for PathExpr {}
 
 impl Statement for PathExpr {}
 
