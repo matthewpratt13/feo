@@ -4,45 +4,21 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    expression::{
-        Assignable, BooleanOperand, Castable, ExprWithBlock, ExprWithoutBlock, InnerAttr,
-        IterableExpr, OuterAttr,
-    },
-    statement::Statement,
-};
+use crate::expression::{InnerAttr, OuterAttr};
 
 use super::{
     ConstantItem, FunctionDef, FunctionSig, Item, TypeAliasDef, TypeParamBounds, VisibilityKind,
     WhereClause,
 };
 
-pub enum TraitDefItem<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    F: ExprWithBlock + Spanned,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    Constant(ConstantItem<A, B, C, E, I, S, U>),
-    FuncDef(FunctionDef<F>),
+pub enum TraitDefItem<T, U> {
+    Constant(ConstantItem),
+    FuncDef(FunctionDef<T, U>),
     FuncSig(FunctionSig),
     TypeAlias(TypeAliasDef),
 }
 
-pub struct TraitDef<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    F: ExprWithBlock + Spanned,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
+pub struct TraitDef<T, U> {
     outer_attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_trait: KwTrait,
@@ -51,47 +27,13 @@ pub struct TraitDef<
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<TraitDefItem<A, B, C, E, F, I, S, U>>,
+    associated_items: Vec<TraitDefItem<T, U>>,
     close_brace: Brace,
 }
 
-impl<A, B, C, E, F, I, S, U> Item for TraitDef<A, B, C, E, F, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    F: ExprWithBlock + Spanned,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
+impl<T, U> Item for TraitDef<T, U> {}
 
-impl<A, B, C, E, F, I, S, U> Statement for TraitDef<A, B, C, E, F, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    F: ExprWithBlock + Spanned,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, F, I, S, U> Spanned for TraitDef<A, B, C, E, F, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    F: ExprWithBlock + Spanned,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl<T, U> Spanned for TraitDef<T, U> {
     fn span(&self) -> Span {
         let start_pos = match self.outer_attributes.first() {
             Some(a) => a.span().start(),

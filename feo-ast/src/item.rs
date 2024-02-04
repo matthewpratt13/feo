@@ -14,13 +14,16 @@ mod visibility;
 
 use feo_types::span::Spanned;
 
-use crate::statement::Statement;
-
 pub use self::{
-    constant_item::ConstantItem,
-    extern_crate_decl::AsClause,
-    function_item::{FunctionDef, FunctionSig},
-    struct_item::{StructFieldName, StructFields, TupleElements, TupleStruct},
+    constant_item::{ConstantItem, StaticItem},
+    enum_item::{EnumItem, EnumVariantStruct, EnumVariantTuple},
+    extern_crate_decl::{AsClause, ExternCrateDecl},
+    function_item::{FunctionDef, FunctionItem, FunctionSig},
+    impl_item::{InherentImplItem, TraitImplItem},
+    import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
+    mod_item::{ModWithBody, ModWithoutBody},
+    struct_item::{Struct, StructFieldName, StructFields, TupleElements, TupleStruct, UnitStruct},
+    trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
     visibility::VisibilityKind,
     where_clause::{TypeParamBounds, WhereClause},
@@ -42,7 +45,7 @@ pub use self::{
 
 pub trait Item
 where
-    Self: Statement + Spanned,
+    Self: Spanned,
 {
 }
 

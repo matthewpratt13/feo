@@ -6,10 +6,14 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{
-        Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
-        OuterAttr,
+    expression::{Assignable, Expression, OuterAttr},
+    item::{
+        ConstantItem, EnumItem, EnumVariantStruct, ExternCrateDecl, FunctionItem, ImportDecl,
+        InherentImplItem, ModWithBody, ModWithoutBody, PathSubsetRecursive, PathWildcard,
+        PathWithAsClause, StaticItem, Struct, TraitDef, TraitImplItem, TupleStruct, TypeAliasDef,
+        UnitStruct,
     },
+    path::{PathExpr, SimplePathSegmentKind},
     pattern::Pattern,
     ty::Type,
 };
@@ -21,59 +25,44 @@ use crate::{
 //  - item declaration
 //  - expression statement
 
-pub trait Statement
-where
-    Self: Spanned,
-{
+// pub trait Statement
+// where
+//     Self: Spanned,
+// {
+// }
+
+pub enum Statement<T, U> {
+    ConstantItem(ConstantItem),
+    StaticItem(StaticItem),
+    EnumItem(EnumItem),
+    EnumVariantStruct(EnumVariantStruct),
+    ExternCrateDecl(ExternCrateDecl),
+    FunctionItem(FunctionItem<T, U>),
+    InherentImplItem(InherentImplItem<T, U>),
+    TraitImplItem(TraitImplItem<T, U>),
+    ImportDecl(ImportDecl),
+    PathWildcard(PathWildcard),
+    PathSubsetRecursive(PathSubsetRecursive),
+    PathWithAsClause(PathWithAsClause),
+    ModWithBody(ModWithBody),
+    ModWithoutBody(ModWithoutBody),
+    StructItem(Struct),
+    TupleStructItem(TupleStruct),
+    UnitStructItem(UnitStruct),
+    TraitDef(TraitDef<T, U>),
+    TypeAliasDef(TypeAliasDef),
+    SimplePathSegmentKind(SimplePathSegmentKind),
+    PathExpr(PathExpr),
+    ExprStatement(ExprStatement),
+    LetStatement(LetStatement<T, U>),
 }
 
-pub struct ExprStatement<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    expression: Expression<A, B, C, E, I, S, U>,
+pub struct ExprStatement {
+    expression: Expression,
     semicolon_opt: Option<Semicolon>,
 }
 
-impl<A, B, C, E, I, S, U> Statement for ExprStatement<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Constant for ExprStatement<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for ExprStatement<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for ExprStatement {
     fn span(&self) -> Span {
         let start_pos = self.expression.span().start();
 
@@ -91,25 +80,18 @@ where
     }
 }
 
-pub struct LetStatement<A: Assignable> {
+pub struct LetStatement<T, U> {
     attributes: Vec<OuterAttr>,
     kw_let: KwLet,
     pattern: Box<dyn Pattern>,
     type_ann_opt: Option<(Colon, Box<dyn Type>)>,
-    assignment_opt: Option<(Equals, A)>,
+    assignment_opt: Option<(Equals, Assignable<T, U>)>,
     semicolon: Semicolon,
 }
 
-impl<A> Statement for LetStatement<A> where A: Assignable {}
+impl<T, U> Pattern for LetStatement<T, U> {}
 
-impl<A> Pattern for LetStatement<A> where A: Assignable {}
-
-impl<A> Constant for LetStatement<A> where A: Assignable + 'static {}
-
-impl<A> Spanned for LetStatement<A>
-where
-    A: Assignable,
-{
+impl<T, U> Spanned for LetStatement<T, U> {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.attributes.first() {
             a.span().start()

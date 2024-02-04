@@ -4,11 +4,9 @@ use feo_types::{
     utils::{Comma, Dot, Parenthesis},
 };
 
-use crate::{item::TupleStruct, statement::Statement, ty::TupleType};
+use crate::{item::TupleStruct, ty::TupleType};
 
-use super::{
-    Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
-};
+use super::Expression;
 
 pub enum TupleKind {
     Tuple(TupleType),
@@ -24,90 +22,13 @@ impl Spanned for TupleKind {
     }
 }
 
-pub struct TupleExpr<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
+pub struct TupleExpr {
     open_parenthesis: Parenthesis,
-    elements_opt: Option<Box<TupleElements<A, B, C, E, I, S, U>>>,
+    elements_opt: Option<TupleElements>,
     close_parenthesis: Parenthesis,
 }
 
-impl<A, B, C, E, I, S, U> ExprWithoutBlock for TupleExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Assignable for TupleExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> BooleanOperand for TupleExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> IterableExpr for TupleExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Constant for TupleExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for TupleExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for TupleExpr {
     fn span(&self) -> Span {
         let start_pos = self.open_parenthesis.span().start();
         let end_pos = self.close_parenthesis.span().end();
@@ -119,17 +40,9 @@ where
     }
 }
 
-pub struct TupleElements<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    initializer_operands: Vec<(Expression<A, B, C, E, I, S, U>, Comma)>,
-    trailing_operand_opt: Option<Expression<A, B, C, E, I, S, U>>,
+pub struct TupleElements {
+    initializer_operands: Vec<(Expression, Comma)>,
+    trailing_operand_opt: Option<Expression>,
 }
 
 pub struct TupleIndexExpr {
@@ -149,7 +62,3 @@ impl Spanned for TupleIndexExpr {
         span
     }
 }
-
-impl ExprWithoutBlock for TupleIndexExpr {}
-
-impl BooleanOperand for TupleIndexExpr {}

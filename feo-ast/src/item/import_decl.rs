@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Asterisk, Brace, Comma, DblColon, KwImport, Semicolon},
 };
 
-use crate::{path::SimplePath, statement::Statement};
+use crate::path::SimplePath;
 
 use super::{AsClause, Item, VisibilityKind};
 
@@ -21,8 +21,6 @@ pub struct ImportDecl {
 }
 
 impl Item for ImportDecl {}
-
-impl Statement for ImportDecl {}
 
 impl Spanned for ImportDecl {
     fn span(&self) -> Span {
@@ -47,8 +45,6 @@ pub struct PathWildcard {
 }
 
 impl Item for PathWildcard {}
-
-impl Statement for PathWildcard {}
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
@@ -81,8 +77,6 @@ pub struct PathSubsetRecursive {
 
 impl Item for PathSubsetRecursive {}
 
-impl Statement for PathSubsetRecursive {}
-
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
         let start_pos = match &self.path_prefix_opt {
@@ -108,8 +102,6 @@ pub struct PathWithAsClause {
 }
 
 impl Item for PathWithAsClause {}
-
-impl Statement for PathWithAsClause {}
 
 impl Spanned for PathWithAsClause {
     fn span(&self) -> Span {

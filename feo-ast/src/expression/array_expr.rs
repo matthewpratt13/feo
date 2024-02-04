@@ -4,28 +4,15 @@ use feo_types::{
     utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr};
+use super::IterableExpr;
 
-pub struct ArrayExpr<I: IterableExpr> {
+pub struct ArrayExpr<T, U> {
     open_bracket: Bracket,
-    elements_opt: Option<ArrayElements<I>>,
+    elements_opt: Option<ArrayElements<T, U>>,
     close_bracket: Bracket,
 }
 
-impl<I> ExprWithoutBlock for ArrayExpr<I> where I: IterableExpr {}
-
-impl<I> BooleanOperand for ArrayExpr<I> where I: IterableExpr {}
-
-impl<I> IterableExpr for ArrayExpr<I> where I: IterableExpr {}
-
-impl<I> Assignable for ArrayExpr<I> where I: IterableExpr {}
-
-impl<I> Constant for ArrayExpr<I> where I: IterableExpr {}
-
-impl<I> Spanned for ArrayExpr<I>
-where
-    I: IterableExpr,
-{
+impl<T, U> Spanned for ArrayExpr<T, U> {
     fn span(&self) -> Span {
         let s1 = self.open_bracket.span();
         let s2 = self.close_bracket.span();
@@ -42,37 +29,26 @@ where
     }
 }
 
-pub struct ArrayElements<I: IterableExpr> {
-    first_element: I,
-    subsequent_elements: Vec<(Comma, I)>,
+pub struct ArrayElements<T, U> {
+    first_element: IterableExpr<T, U>,
+    subsequent_elements: Vec<(Comma, IterableExpr<T, U>)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayWithSingleRepeatedValue<I: IterableExpr> {
-    repeat_operand: I,
+pub struct ArrayWithSingleRepeatedValue<T, U> {
+    repeat_operand: IterableExpr<T, U>,
     semicolon: Semicolon,
     num_repeats: Primitive<u64>,
 }
 
-pub struct IndexExpr<I: IterableExpr> {
-    indexed_operand: ArrayExpr<I>,
+pub struct IndexExpr<T, U> {
+    indexed_operand: ArrayExpr<T, U>,
     open_bracket: Bracket,
     index: Primitive<u64>,
     close_bracket: Bracket,
 }
 
-impl<I> ExprWithoutBlock for IndexExpr<I> where I: IterableExpr {}
-
-impl<I> BooleanOperand for IndexExpr<I> where I: IterableExpr {}
-
-impl<I> IterableExpr for IndexExpr<I> where I: IterableExpr {}
-
-impl<I> Constant for IndexExpr<I> where I: IterableExpr {}
-
-impl<I> Spanned for IndexExpr<I>
-where
-    I: IterableExpr,
-{
+impl<T, U> Spanned for IndexExpr<T, U> {
     fn span(&self) -> Span {
         let s1 = self.indexed_operand.span();
         let s2 = self.close_bracket.span();

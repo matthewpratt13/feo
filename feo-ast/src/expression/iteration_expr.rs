@@ -4,34 +4,17 @@ use feo_types::{
     Keyword,
 };
 
-use crate::{pattern::Pattern, statement::Statement};
+use crate::pattern::Pattern;
 
-use super::{BlockExpr, BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, IterableExpr};
+use super::{BlockExpr, BooleanOperand, IterableExpr};
 
-pub trait IterationExpr
-where
-    Self: ExprWithBlock + BooleanOperand + IterableExpr,
-{
+pub enum IterationExprKind<T, U> {
+    InfiniteLoop(InfiniteLoopExpr<T, U>),
+    PredicateLoop(PredicateLoopExpr<T, U>),
+    IterLoop(IterLoopExpr<T, U>),
 }
 
-pub enum IterationExprKind<
-    B: BooleanOperand,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-> {
-    InfiniteLoop(InfiniteLoopExpr<E, S>),
-    PredicateLoop(PredicateLoopExpr<B, E, S>),
-    IterLoop(IterLoopExpr<E, I, S>),
-}
-
-impl<B, E, I, S> Spanned for IterationExprKind<B, E, I, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-{
+impl<T, U> Spanned for IterationExprKind<T, U> {
     fn span(&self) -> Span {
         match self {
             IterationExprKind::InfiniteLoop(inf) => inf.span(),
@@ -47,51 +30,12 @@ pub type BreakExpr = Keyword;
 #[allow(dead_code)]
 pub type ContinueExpr = Keyword;
 
-pub struct InfiniteLoopExpr<E: ExprWithoutBlock, S: Statement> {
+pub struct InfiniteLoopExpr<T, U> {
     kw_loop: KwLoop,
-    block: BlockExpr<E, S>,
+    block: BlockExpr<T, U>,
 }
 
-impl<E, S> IterationExpr for InfiniteLoopExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> ExprWithBlock for InfiniteLoopExpr<E, S>
-where
-    E: ExprWithoutBlock,
-    S: Statement,
-{
-}
-
-impl<E, S> BooleanOperand for InfiniteLoopExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> IterableExpr for InfiniteLoopExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> Constant for InfiniteLoopExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> Spanned for InfiniteLoopExpr<E, S>
-where
-    E: ExprWithoutBlock,
-    S: Statement,
-{
+impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
     fn span(&self) -> Span {
         let s1 = self.kw_loop.span();
         let s2 = self.block.span();
@@ -108,58 +52,13 @@ where
     }
 }
 
-pub struct PredicateLoopExpr<B: BooleanOperand, E: ExprWithoutBlock, S: Statement> {
+pub struct PredicateLoopExpr<T, U> {
     kw_while: KwWhile,
-    conditional_operand: B,
-    block: BlockExpr<E, S>,
+    conditional_operand: BooleanOperand<T, U>,
+    block: BlockExpr<T, U>,
 }
 
-impl<B, E, S> IterationExpr for PredicateLoopExpr<B, E, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<B, E, S> ExprWithBlock for PredicateLoopExpr<B, E, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock,
-    S: Statement,
-{
-}
-
-impl<B, E, S> BooleanOperand for PredicateLoopExpr<B, E, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<B, E, S> IterableExpr for PredicateLoopExpr<B, E, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<B, E, S> Constant for PredicateLoopExpr<B, E, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<B, E, S> Spanned for PredicateLoopExpr<B, E, S>
-where
-    B: BooleanOperand,
-    E: ExprWithoutBlock,
-    S: Statement,
-{
+impl<T, U> Spanned for PredicateLoopExpr<T, U> {
     fn span(&self) -> Span {
         let s1 = self.kw_while.span();
         let s2 = self.block.span();
@@ -176,60 +75,17 @@ where
     }
 }
 
-pub struct IterLoopExpr<E: ExprWithoutBlock, I: IterableExpr, S: Statement> {
+pub struct IterLoopExpr<T, U> {
     kw_for: KwFor,
     pattern: Box<dyn Pattern>,
     kw_in: KwIn,
-    iterator: I,
-    block: BlockExpr<E, S>,
+    iterator: IterableExpr<T, U>,
+    block: BlockExpr<T, U>,
 }
 
-impl<E, I, S> IterationExpr for IterLoopExpr<E, I, S>
-where
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-{
-}
+impl<T, U> Pattern for IterLoopExpr<T, U> {}
 
-impl<E, I, S> ExprWithBlock for IterLoopExpr<E, I, S>
-where
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-{
-}
-
-impl<E, I, S> BooleanOperand for IterLoopExpr<E, I, S>
-where
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-{
-}
-
-impl<E, I, S> IterableExpr for IterLoopExpr<E, I, S>
-where
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-{
-}
-
-impl<E, I, S> Pattern for IterLoopExpr<E, I, S>
-where
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-{
-}
-
-impl<E, I, S> Spanned for IterLoopExpr<E, I, S>
-where
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-{
+impl<T, U> Spanned for IterLoopExpr<T, U> {
     fn span(&self) -> Span {
         let s1 = self.kw_for.span();
         let s2 = self.block.span();

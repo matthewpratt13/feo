@@ -7,10 +7,8 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, IterableExpr},
     item::Item,
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
-    statement::Statement,
     ty::Type,
 };
 
@@ -22,8 +20,6 @@ pub enum SimplePathSegmentKind {
 }
 
 impl Item for SimplePathSegmentKind {}
-
-impl Statement for SimplePathSegmentKind {}
 
 impl Spanned for SimplePathSegmentKind {
     fn span(&self) -> Span {
@@ -62,18 +58,6 @@ pub type PathTypeSegment = PathIdenSegmentKind;
 pub type PathExpr = PathInExpr;
 
 // impl Expression for PathExpr {}
-
-impl ExprWithoutBlock for PathExpr {}
-
-impl Statement for PathExpr {}
-
-impl Assignable for PathExpr {}
-
-impl BooleanOperand for PathExpr {}
-
-impl IterableExpr for PathExpr {}
-
-impl Constant for PathExpr {}
 
 impl Item for PathExpr {}
 

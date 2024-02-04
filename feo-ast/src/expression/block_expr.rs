@@ -5,48 +5,16 @@ use feo_types::{
 
 use crate::statement::Statement;
 
-use super::{BooleanOperand, Constant, ExprWithBlock, ExprWithoutBlock, IterableExpr};
+use super::ExprWithoutBlock;
 
-pub struct BlockExpr<E: ExprWithoutBlock, S: Statement> {
+pub struct BlockExpr<T, U> {
     open_brace: Brace,
-    statements: Vec<S>,
-    final_operand_opt: Option<E>,
+    statements: Vec<Statement<T, U>>,
+    final_operand_opt: Option<ExprWithoutBlock<T, U>>,
     close_brace: Brace,
 }
 
-impl<E, S> ExprWithBlock for BlockExpr<E, S>
-where
-    E: ExprWithoutBlock,
-    S: Statement,
-{
-}
-
-impl<E, S> BooleanOperand for BlockExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> IterableExpr for BlockExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> Constant for BlockExpr<E, S>
-where
-    E: ExprWithoutBlock + 'static,
-    S: Statement + 'static,
-{
-}
-
-impl<E, S> Spanned for BlockExpr<E, S>
-where
-    E: ExprWithoutBlock,
-    S: Statement,
-{
+impl<T, U> Spanned for BlockExpr<T, U> {
     fn span(&self) -> Span {
         let s1 = self.open_brace.span();
         let s2 = self.close_brace.span();

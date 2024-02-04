@@ -3,69 +3,14 @@ use feo_types::{
     utils::KwReturn,
 };
 
-use crate::statement::Statement;
+use super::Expression;
 
-use super::{Assignable, BooleanOperand, Castable, ExprWithoutBlock, Expression, IterableExpr};
-
-pub struct ReturnExpr<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
+pub struct ReturnExpr {
     kw_return: KwReturn,
-    expression_opt: Option<Box<Expression<A, B, C, E, I, S, U>>>,
+    expression_opt: Option<Expression>,
 }
 
-impl<A, B, C, E, I, S, U> ExprWithoutBlock for ReturnExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> BooleanOperand for ReturnExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> IterableExpr for ReturnExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for ReturnExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for ReturnExpr {
     fn span(&self) -> Span {
         let start_pos = self.kw_return.span().start();
         let end_pos = if let Some(e) = &self.expression_opt {

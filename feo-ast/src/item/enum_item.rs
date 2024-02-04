@@ -4,12 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    expression::{Constant, ExprWithoutBlock, OuterAttr, StructExpr},
-    pattern::Pattern,
-    statement::Statement,
-    ty::Type,
-};
+use crate::{expression::OuterAttr, pattern::Pattern, ty::Type};
 
 use super::{Item, StructFields, TupleElements, VisibilityKind};
 
@@ -29,8 +24,6 @@ pub struct EnumItem {
 }
 
 impl Item for EnumItem {}
-
-impl Statement for EnumItem {}
 
 impl Type for EnumItem {}
 
@@ -71,15 +64,7 @@ pub struct EnumVariantStruct {
     close_brace: Brace,
 }
 
-impl StructExpr for EnumVariantStruct {}
-
 // impl Expression for EnumVariantStruct {}
-
-impl ExprWithoutBlock for EnumVariantStruct {}
-
-impl Statement for EnumVariantStruct {}
-
-impl Constant for EnumVariantStruct {}
 
 impl Pattern for EnumVariantStruct {}
 
@@ -100,8 +85,6 @@ pub struct EnumVariantTuple {
     fields_opt: Option<TupleElements>,
     close_parenthesis: Parenthesis,
 }
-
-impl Constant for EnumVariantTuple {}
 
 impl Pattern for EnumVariantTuple {}
 

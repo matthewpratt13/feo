@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{expression::OuterAttr, statement::Statement, ty::Type};
+use crate::{expression::OuterAttr, ty::Type};
 
 use super::{Item, TypeParamBounds, VisibilityKind};
 
@@ -19,8 +19,6 @@ pub struct TypeAliasDef {
 }
 
 impl Item for TypeAliasDef {}
-
-impl Statement for TypeAliasDef {}
 
 impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {

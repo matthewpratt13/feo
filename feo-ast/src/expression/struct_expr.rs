@@ -4,43 +4,17 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{path::PathInExpr, statement::Statement, ty::Type};
+use crate::{path::PathInExpr, ty::Type};
 
-use super::{
-    Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
-    OuterAttr,
-};
+use super::{Expression, OuterAttr};
 
-pub trait StructExpr
-where
-    Self: ExprWithoutBlock + Constant,
-{
-}
-
-pub enum StructKind<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    Struct(Struct<A, B, C, E, I, S, U>),
-    TupleStruct(TupleStruct<A, B, C, E, I, S, U>),
+pub enum StructKind {
+    Struct(Struct),
+    TupleStruct(TupleStruct),
     UnitStruct(UnitStruct),
 }
 
-impl<A, B, C, E, I, S, U> Spanned for StructKind<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for StructKind {
     fn span(&self) -> Span {
         match self {
             StructKind::Struct(s) => s.span(),
@@ -50,80 +24,16 @@ where
     }
 }
 
-pub struct Struct<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
+pub struct Struct {
     pub item_path: PathInExpr,
     pub open_brace: Brace,
-    pub struct_expr_fields_opt: Option<StructExprFields<A, B, C, E, I, S, U>>,
+    pub struct_expr_fields_opt: Option<StructExprFields>,
     pub close_brace: Brace,
 }
 
-impl<A, B, C, E, I, S, U> StructExpr for Struct<A, B, C, E, I, S, U>
-where
-    Self: Constant,
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
+impl Type for Struct {}
 
-impl<A, B, C, E, I, S, U> ExprWithoutBlock for Struct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Assignable for Struct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Type for Struct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for Struct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for Struct {
     fn span(&self) -> Span {
         let start_pos = self.item_path.span().start();
         let end_pos = self.close_brace.span().end();
@@ -135,30 +45,11 @@ where
     }
 }
 
-pub struct StructExprField<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
->(
-    pub Vec<OuterAttr>,
-    pub (Identifier, Colon, Box<Expression<A, B, C, E, I, S, U>>),
-);
+pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Expression));
 
-pub struct StructExprFields<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    first_field: StructExprField<A, B, C, E, I, S, U>,
-    subsequent_fields: Vec<(Comma, StructExprField<A, B, C, E, I, S, U>)>,
+pub struct StructExprFields {
+    first_field: StructExprField,
+    subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
 // pub struct StructExprField {
@@ -166,95 +57,16 @@ pub struct StructExprFields<
 //     data: (Identifier, Colon, Box<dyn Expression>),
 // }
 
-pub struct TupleStruct<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
+pub struct TupleStruct {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
-    params_opt: Option<(
-        Box<Expression<A, B, C, E, I, S, U>>,
-        Vec<(Comma, Box<Expression<A, B, C, E, I, S, U>>)>,
-        Option<Comma>,
-    )>,
+    params_opt: Option<(Expression, Vec<(Comma, Expression)>, Option<Comma>)>,
     close_parenthesis: Parenthesis,
 }
 
-impl<A, B, C, E, I, S, U> StructExpr for TupleStruct<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
+impl Type for TupleStruct {}
 
-impl<A, B, C, E, I, S, U> ExprWithoutBlock for TupleStruct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Assignable for TupleStruct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Constant for TupleStruct<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Type for TupleStruct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for TupleStruct<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = self.item_path.span().start();
         let end_pos = self.close_parenthesis.span().end();
@@ -267,14 +79,6 @@ where
 }
 
 pub struct UnitStruct(PathInExpr);
-
-impl StructExpr for UnitStruct {}
-
-impl ExprWithoutBlock for UnitStruct {}
-
-impl Assignable for UnitStruct {}
-
-impl Constant for UnitStruct {}
 
 impl Type for UnitStruct {}
 

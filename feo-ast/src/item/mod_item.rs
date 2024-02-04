@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{expression::OuterAttr, statement::Statement};
+use crate::expression::OuterAttr;
 
 use super::{Item, VisibilityKind};
 
@@ -27,8 +27,6 @@ pub struct ModWithBody {
 impl ModItem for ModWithBody {}
 
 impl Item for ModWithBody {}
-
-impl Statement for ModWithBody {}
 
 impl Spanned for ModWithBody {
     fn span(&self) -> Span {
@@ -60,8 +58,6 @@ pub struct ModWithoutBody {
 impl ModItem for ModWithoutBody {}
 
 impl Item for ModWithoutBody {}
-
-impl Statement for ModWithoutBody {}
 
 impl Spanned for ModWithoutBody {
     fn span(&self) -> Span {

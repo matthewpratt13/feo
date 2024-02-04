@@ -3,71 +3,18 @@ use feo_types::{
     utils::{Comma, Dot, Parenthesis},
 };
 
-use crate::{path::PathExprSegment, pattern::Pattern, statement::Statement};
+use crate::{path::PathExprSegment, pattern::Pattern};
 
-use super::{Assignable, BooleanOperand, Castable, ExprWithoutBlock, Expression, IterableExpr};
+use super::Expression;
 
-pub struct FunctionCallExpr<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    function_operand: Box<Expression<A, B, C, E, I, S, U>>,
+pub struct FunctionCallExpr {
+    function_operand: Expression,
     open_parenthesis: Parenthesis,
-    call_params_opt: Option<CallParams<A, B, C, E, I, S, U>>,
+    call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
 }
 
-impl<A, B, C, E, I, S, U> ExprWithoutBlock for FunctionCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> BooleanOperand for FunctionCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> IterableExpr for FunctionCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for FunctionCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
         let s1 = self.function_operand.span();
         let s2 = self.close_parenthesis.span();
@@ -84,69 +31,16 @@ where
     }
 }
 
-pub struct MethodCallExpr<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    receiver: Box<Expression<A, B, C, E, I, S, U>>,
+pub struct MethodCallExpr {
+    receiver: Expression,
     dot: Dot,
     method_path: PathExprSegment,
     open_parenthesis: Parenthesis,
-    call_params_opt: Option<CallParams<A, B, C, E, I, S, U>>,
+    call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
 }
 
-impl<A, B, C, E, I, S, U> ExprWithoutBlock for MethodCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
-
-impl<A, B, C, E, I, S, U> BooleanOperand for MethodCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> IterableExpr for MethodCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable + 'static,
-    B: BooleanOperand + Spanned,
-    C: Castable + 'static,
-    E: ExprWithoutBlock + 'static,
-    I: IterableExpr,
-    S: Statement + 'static,
-    U: Spanned + 'static,
-{
-}
-
-impl<A, B, C, E, I, S, U> Spanned for MethodCallExpr<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
         let s1 = self.receiver.span();
         let s2 = self.close_parenthesis.span();
@@ -163,42 +57,15 @@ where
     }
 }
 
-pub struct CallParams<
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-> {
-    first_param: Box<Expression<A, B, C, E, I, S, U>>,
-    subsequent_params: Vec<(Comma, Expression<A, B, C, E, I, S, U>)>,
+pub struct CallParams {
+    first_param: Expression,
+    subsequent_params: Vec<(Comma, Expression)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-impl<A, B, C, E, I, S, U> Pattern for CallParams<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
-}
+impl Pattern for CallParams {}
 
-impl<A, B, C, E, I, S, U> Spanned for CallParams<A, B, C, E, I, S, U>
-where
-    A: Assignable,
-    B: BooleanOperand + Spanned,
-    C: Castable,
-    E: ExprWithoutBlock,
-    I: IterableExpr,
-    S: Statement,
-    U: Spanned,
-{
+impl Spanned for CallParams {
     fn span(&self) -> Span {
         let s1 = self.first_param.span();
 
