@@ -19,12 +19,12 @@ impl Parse for Struct {
         Self: Sized,
     {
         if let Ok(item_path) = PathInExpr::parse(parser) {
-            if let Ok(Delimiter {
+            if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = Delimiter::try_from(parser.next_token()?)
+            }) = Some(Delimiter::try_from(parser.next_token()?)?)
             {
-                if let Ok(fields_opt) = Option::<StructExprFields>::parse(parser) {
+                if let Some(fields_opt) = Some(StructExprFields::parse(parser)?) {
                     if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
@@ -36,7 +36,7 @@ impl Parse for Struct {
                                 delim: (DelimKind::Brace, DelimOrientation::Open),
                                 span: Span::default(),
                             },
-                            struct_expr_fields_opt: fields_opt,
+                            struct_expr_fields_opt: Some(fields_opt),
                             close_brace: Delimiter {
                                 delim: (DelimKind::Brace, DelimOrientation::Close),
                                 span: Span::default(),
@@ -59,7 +59,7 @@ impl Parse for Struct {
     }
 }
 
-impl Parse for Option<StructExprFields> {
+impl Parse for StructExprFields {
     fn parse(parser: &mut Parser) -> Result<Self, ParserError>
     where
         Self: Sized,
@@ -78,7 +78,7 @@ impl Parse for StructExprField {
 
         if let Ok(attr) = OuterAttr::parse(parser) {
             attributes.push(attr);
-            
+
             while let Ok(attr) = OuterAttr::parse(parser) {
                 attributes.push(attr);
                 let _ = parser.next_token();
