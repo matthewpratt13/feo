@@ -11,7 +11,7 @@ use feo_types::{
 use crate::{parse::Parse, parser::Parser};
 
 impl Parse for PathInExpr {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -25,13 +25,13 @@ impl Parse for PathInExpr {
             let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
             let _ = parser.next_token();
 
-            if let Ok(first_segment) = PathExprSegment::parse(parser) {
+            if let Some(first_segment) = PathExprSegment::parse(parser)? {
                 while let Ok(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
                 }) = Punctuation::try_from(parser.next_token()?)
                 {
-                    if let Ok(next_segment) = PathExprSegment::parse(parser) {
+                    if let Some(next_segment) = PathExprSegment::parse(parser)? {
                         subsequent_segments.push((
                             Punctuation {
                                 punc_kind: PuncKind::DblColon,
@@ -53,7 +53,7 @@ impl Parse for PathInExpr {
                     subsequent_segments,
                 };
 
-                Ok(path)
+                Ok(Some(path))
             } else {
                 todo!()
             }
@@ -64,7 +64,7 @@ impl Parse for PathInExpr {
 }
 
 impl Parse for PathType {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -78,13 +78,13 @@ impl Parse for PathType {
             let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
             let _ = parser.next_token();
 
-            if let Ok(first_segment) = PathTypeSegment::parse(parser) {
+            if let Some(first_segment) = PathTypeSegment::parse(parser)? {
                 while let Ok(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
                 }) = Punctuation::try_from(parser.next_token()?)
                 {
-                    if let Ok(next_segment) = PathTypeSegment::parse(parser) {
+                    if let Some(next_segment) = PathTypeSegment::parse(parser)? {
                         subsequent_segments.push((
                             Punctuation {
                                 punc_kind: PuncKind::DblColon,
@@ -106,7 +106,7 @@ impl Parse for PathType {
                     subsequent_segments,
                 };
 
-                Ok(path)
+                Ok(Some(path))
             } else {
                 todo!()
             }
@@ -117,7 +117,7 @@ impl Parse for PathType {
 }
 
 impl Parse for SimplePath {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -131,13 +131,13 @@ impl Parse for SimplePath {
             let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
             let _ = parser.next_token();
 
-            if let Ok(first_segment) = SimplePathSegmentKind::parse(parser) {
+            if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
                 while let Ok(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
                 }) = Punctuation::try_from(parser.next_token()?)
                 {
-                    if let Ok(next_segment) = SimplePathSegmentKind::parse(parser) {
+                    if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
                         subsequent_segments.push((
                             Punctuation {
                                 punc_kind: PuncKind::DblColon,
@@ -159,7 +159,7 @@ impl Parse for SimplePath {
                     subsequent_segments,
                 };
 
-                Ok(path)
+                Ok(Some(path))
             } else {
                 todo!()
             }
@@ -170,7 +170,7 @@ impl Parse for SimplePath {
 }
 
 impl Parse for PathIdenSegmentKind {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -190,12 +190,12 @@ impl Parse for PathIdenSegmentKind {
             todo!()
         };
 
-        Ok(segment_kind)
+        Ok(Some(segment_kind))
     }
 }
 
 impl Parse for SimplePathSegmentKind {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -214,6 +214,6 @@ impl Parse for SimplePathSegmentKind {
             todo!()
         };
 
-        Ok(segment_kind)
+        Ok(Some(segment_kind))
     }
 }

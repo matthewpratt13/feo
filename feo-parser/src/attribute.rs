@@ -14,7 +14,7 @@ use feo_types::{
 use crate::{parse::Parse, parser::Parser};
 
 impl Parse for AttributeKind {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -27,18 +27,18 @@ impl Parse for AttributeKind {
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
                 _ => todo!(),
             }
-        } else if let Ok(p) = SimplePath::parse(parser) {
+        } else if let Some(p) = SimplePath::parse(parser)? {
             AttributeKind::Path(p)
         } else {
             todo!()
         };
 
-        Ok(attr_kind)
+        Ok(Some(attr_kind))
     }
 }
 
 impl Parse for OuterAttr {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -52,13 +52,13 @@ impl Parse for OuterAttr {
                 ..
             }) = Delimiter::try_from(parser.next_token()?)
             {
-                if let Ok(attr_kind) = AttributeKind::parse(parser) {
+                if let Some(attr_kind) = AttributeKind::parse(parser)? {
                     if let Ok(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
                     }) = Delimiter::try_from(parser.next_token()?)
                     {
-                        Ok(OuterAttr {
+                        let attr = OuterAttr {
                             hash: Punctuation {
                                 punc_kind: PuncKind::Hash,
                                 span: Span::default(),
@@ -72,7 +72,9 @@ impl Parse for OuterAttr {
                                 delim: (DelimKind::Bracket, DelimOrientation::Close),
                                 span: Span::default(),
                             },
-                        })
+                        };
+
+                        Ok(Some(attr))
                     } else {
                         todo!()
                     }

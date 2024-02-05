@@ -14,17 +14,17 @@ use feo_types::{
 use crate::{parse::Parse, parser::Parser};
 
 impl Parse for Struct {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
-        if let Ok(item_path) = PathInExpr::parse(parser) {
-            if let Some(Delimiter {
+        if let Some(item_path) = PathInExpr::parse(parser)? {
+            if let Ok(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = Some(Delimiter::try_from(parser.next_token()?)?)
+            }) = Delimiter::try_from(parser.next_token()?)
             {
-                if let Some(fields_opt) = Some(StructExprFields::parse(parser)?) {
+                if let Some(fields_opt) = StructExprFields::parse(parser)? {
                     if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
@@ -43,7 +43,7 @@ impl Parse for Struct {
                             },
                         };
 
-                        Ok(expr)
+                        Ok(Some(expr))
                     } else {
                         todo!()
                     }
@@ -60,7 +60,7 @@ impl Parse for Struct {
 }
 
 impl Parse for StructExprFields {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
@@ -69,27 +69,27 @@ impl Parse for StructExprFields {
 }
 
 impl Parse for StructExprField {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
         let _ = parser.next_token();
 
-        if let Ok(attr) = OuterAttr::parse(parser) {
+        if let Some(attr) = OuterAttr::parse(parser)? {
             attributes.push(attr);
 
-            while let Ok(attr) = OuterAttr::parse(parser) {
+            while let Some(attr) = OuterAttr::parse(parser)? {
                 attributes.push(attr);
                 let _ = parser.next_token();
             }
 
             if let Ok(iden) = Identifier::try_from(parser.next_token()?) {
                 if let Ok(colon) = Punctuation::try_from(parser.next_token()?) {
-                    if let Ok(expr) = Expression::parse(parser) {
+                    if let Some(expr) = Expression::parse(parser)? {
                         let field = StructExprField(attributes, (iden, colon, Box::new(expr)));
 
-                        Ok(field)
+                        Ok(Some(field))
                     } else {
                         todo!()
                     }
@@ -106,7 +106,7 @@ impl Parse for StructExprField {
 }
 
 impl Parse for Expression {
-    fn parse(parser: &mut Parser) -> Result<Self, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
     where
         Self: Sized,
     {
