@@ -15,12 +15,10 @@ impl Parse for PathInExpr {
     where
         Self: Sized,
     {
-        let first_token = parser.next_token();
-
         if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(first_token?)
+        }) = Punctuation::try_from(parser.next_token()?)
         {
             let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
             let _ = parser.next_token();
@@ -68,12 +66,10 @@ impl Parse for PathType {
     where
         Self: Sized,
     {
-        let first_token = parser.next_token();
-
         if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(first_token?)
+        }) = Punctuation::try_from(parser.next_token()?)
         {
             let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
             let _ = parser.next_token();
@@ -121,15 +117,12 @@ impl Parse for SimplePath {
     where
         Self: Sized,
     {
-        let first_token = parser.next_token();
-
         if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(first_token?)
+        }) = Punctuation::try_from(parser.next_token()?)
         {
             let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
-            let _ = parser.next_token();
 
             if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
                 while let Ok(Punctuation {
@@ -174,11 +167,9 @@ impl Parse for PathIdenSegmentKind {
     where
         Self: Sized,
     {
-        let token = parser.next_token();
-
-        let segment_kind = if let Ok(i) = Identifier::try_from(token.clone()?) {
+        let segment_kind = if let Ok(i) = Identifier::try_from(parser.next_token().clone()?) {
             PathIdenSegmentKind::Iden(i)
-        } else if let Ok(k) = Keyword::try_from(token?) {
+        } else if let Ok(k) = Keyword::try_from(parser.next_token()?) {
             match k.keyword_kind {
                 KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),

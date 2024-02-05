@@ -74,10 +74,10 @@ impl Parse for StructExprField {
         Self: Sized,
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
-        let _ = parser.next_token();
 
         if let Some(attr) = OuterAttr::parse(parser)? {
             attributes.push(attr);
+            let _ = parser.next_token();
 
             while let Some(attr) = OuterAttr::parse(parser)? {
                 attributes.push(attr);

@@ -26,8 +26,15 @@ impl Parser {
         self.stream.clone()
     }
 
-    pub fn current_token(&self) -> Option<Token> {
-        self.stream.tokens().get(self.pos).cloned()?
+    pub fn current_token(&self) -> Result<Token, ParserError> {
+        self.stream
+            .tokens()?
+            .get(self.pos)
+            .cloned()
+            .ok_or(ParserError {
+                error_kind: ParserErrorKind::TokenNotFound,
+                position: Position::new(&self.stream.span().source(), self.stream.span().start()),
+            })
     }
 
     pub fn next_token(&mut self) -> Result<Token, ParserError> {
@@ -38,7 +45,14 @@ impl Parser {
         })
     }
 
-    pub fn peek_next(&self) -> Option<Token> {
-        self.stream.tokens().get(self.pos + 1).cloned()?
+    pub fn peek_next(&self) -> Result<Token, ParserError> {
+        self.stream
+            .tokens()?
+            .get(self.pos + 1)
+            .cloned()
+            .ok_or(ParserError {
+                error_kind: ParserErrorKind::TokenNotFound,
+                position: Position::new(&self.stream.span().source(), self.stream.span().start()),
+            })
     }
 }
