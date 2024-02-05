@@ -22,26 +22,32 @@ impl Parse for Struct {
             if let Ok(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = Delimiter::try_from(parser.next_token()?)
+            }) = Delimiter::try_from(parser.current_token())
             {
+                parser.advance();
+
                 if let Some(fields_opt) = StructExprFields::parse(parser)? {
+                    parser.advance();
+
                     if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
-                    }) = Delimiter::try_from(parser.next_token()?)
+                    }) = Delimiter::try_from(parser.current_token())
                     {
                         let expr = Struct {
                             item_path,
                             open_brace: Delimiter {
                                 delim: (DelimKind::Brace, DelimOrientation::Open),
-                                span: Span::default(),
+                                span: Span::default(), // TODO
                             },
                             struct_expr_fields_opt: Some(fields_opt),
                             close_brace: Delimiter {
                                 delim: (DelimKind::Brace, DelimOrientation::Close),
-                                span: Span::default(),
+                                span: Span::default(), // TODO
                             },
                         };
+
+                        parser.advance();
 
                         Ok(Some(expr))
                     } else {
@@ -77,16 +83,21 @@ impl Parse for StructExprField {
 
         if let Some(attr) = OuterAttr::parse(parser)? {
             attributes.push(attr);
-            let _ = parser.next_token();
 
             while let Some(attr) = OuterAttr::parse(parser)? {
                 attributes.push(attr);
-                let _ = parser.next_token();
+                parser.advance();
             }
 
-            if let Ok(iden) = Identifier::try_from(parser.next_token()?) {
-                if let Ok(colon) = Punctuation::try_from(parser.next_token()?) {
+            if let Ok(iden) = Identifier::try_from(parser.current_token()) {
+                parser.advance();
+
+                if let Ok(colon) = Punctuation::try_from(parser.current_token()) {
+                    parser.advance();
+
                     if let Some(expr) = Expression::parse(parser)? {
+                        parser.advance();
+
                         let field = StructExprField(attributes, (iden, colon, Box::new(expr)));
 
                         Ok(Some(field))

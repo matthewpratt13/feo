@@ -1,11 +1,7 @@
 #![allow(dead_code)]
 
 use feo_ast::token::{Token, TokenStream};
-use feo_error::{
-    handler::Handler,
-    parser_error::{ParserError, ParserErrorKind},
-};
-use feo_types::span::{Position, Spanned};
+use feo_error::handler::Handler;
 
 pub struct Parser {
     stream: TokenStream,
@@ -26,33 +22,16 @@ impl Parser {
         self.stream.clone()
     }
 
-    pub fn current_token(&self) -> Result<Token, ParserError> {
-        self.stream
-            .tokens()?
-            .get(self.pos)
-            .cloned()
-            .ok_or(ParserError {
-                error_kind: ParserErrorKind::TokenNotFound,
-                position: Position::new(&self.stream.span().source(), self.stream.span().start()),
-            })
-    }
-
-    pub fn next_token(&mut self) -> Result<Token, ParserError> {
+    pub fn advance(&mut self) -> Option<Token> {
         self.pos += 1;
-        self.stream.next().ok_or(ParserError {
-            error_kind: ParserErrorKind::TokenNotFound,
-            position: Position::new(&self.stream.span().source(), self.stream.span().start()),
-        })
+        self.stream.next()
     }
 
-    pub fn peek_next(&self) -> Result<Token, ParserError> {
-        self.stream
-            .tokens()?
-            .get(self.pos + 1)
-            .cloned()
-            .ok_or(ParserError {
-                error_kind: ParserErrorKind::TokenNotFound,
-                position: Position::new(&self.stream.span().source(), self.stream.span().start()),
-            })
+    pub fn current_token(&self) -> Option<Token> {
+        self.stream.tokens().get(self.pos).cloned()?
+    }
+
+    pub fn peek_next(&self) -> Option<Token> {
+        self.stream.tokens().get(self.pos + 1).cloned()?
     }
 }
