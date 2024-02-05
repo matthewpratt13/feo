@@ -11,31 +11,31 @@ use crate::{
 
 use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};
 
-pub enum InherentImplItem<T, U> {
+pub enum InherentImplItem {
     Constant(ConstantItem),
-    FuncDef(FunctionDef<T, U>),
+    FuncDef(FunctionDef),
 }
 
-pub enum TraitImplItem<T, U> {
+pub enum TraitImplItem {
     Constant(ConstantItem),
-    FuncDef(FunctionDef<T, U>),
+    FuncDef(FunctionDef),
     TypeAlias(TypeAliasDef),
 }
 
-pub struct InherentImpl<T, U> {
+pub struct InherentImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     nominal_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<InherentImplItem<T, U>>,
+    associated_items: Vec<InherentImplItem>,
     close_brace: Brace,
 }
 
-impl<T, U> Item for InherentImpl<T, U> {}
+impl Item for InherentImpl {}
 
-impl<T, U> Spanned for InherentImpl<T, U> {
+impl Spanned for InherentImpl {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()
@@ -52,7 +52,7 @@ impl<T, U> Spanned for InherentImpl<T, U> {
     }
 }
 
-pub struct TraitImpl<T, U> {
+pub struct TraitImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     implemented_trait_path: PathType,
@@ -61,13 +61,13 @@ pub struct TraitImpl<T, U> {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<TraitImplItem<T, U>>,
+    associated_items: Vec<TraitImplItem>,
     close_brace: Brace,
 }
 
-impl<T, U> Item for TraitImpl<T, U> {}
+impl Item for TraitImpl {}
 
-impl<T, U> Spanned for TraitImpl<T, U> {
+impl Spanned for TraitImpl {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()

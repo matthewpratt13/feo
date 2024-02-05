@@ -8,13 +8,13 @@ use crate::pattern::Pattern;
 
 use super::{BlockExpr, BooleanOperand, IterableExpr};
 
-pub enum IterationExprKind<T, U> {
-    InfiniteLoop(InfiniteLoopExpr<T, U>),
-    PredicateLoop(PredicateLoopExpr<T, U>),
-    IterLoop(IterLoopExpr<T, U>),
+pub enum IterationExprKind {
+    InfiniteLoop(InfiniteLoopExpr),
+    PredicateLoop(PredicateLoopExpr),
+    IterLoop(IterLoopExpr),
 }
 
-impl<T, U> Spanned for IterationExprKind<T, U> {
+impl Spanned for IterationExprKind {
     fn span(&self) -> Span {
         match self {
             IterationExprKind::InfiniteLoop(inf) => inf.span(),
@@ -30,12 +30,12 @@ pub type BreakExpr = Keyword;
 #[allow(dead_code)]
 pub type ContinueExpr = Keyword;
 
-pub struct InfiniteLoopExpr<T, U> {
+pub struct InfiniteLoopExpr {
     kw_loop: KwLoop,
-    block: BlockExpr<T, U>,
+    block: BlockExpr,
 }
 
-impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
+impl Spanned for InfiniteLoopExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_loop.span();
         let s2 = self.block.span();
@@ -52,13 +52,13 @@ impl<T, U> Spanned for InfiniteLoopExpr<T, U> {
     }
 }
 
-pub struct PredicateLoopExpr<T, U> {
+pub struct PredicateLoopExpr {
     kw_while: KwWhile,
-    conditional_operand: BooleanOperand<T, U>,
-    block: BlockExpr<T, U>,
+    conditional_operand: Box<BooleanOperand>,
+    block: Box<BlockExpr>,
 }
 
-impl<T, U> Spanned for PredicateLoopExpr<T, U> {
+impl Spanned for PredicateLoopExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_while.span();
         let s2 = self.block.span();
@@ -75,17 +75,17 @@ impl<T, U> Spanned for PredicateLoopExpr<T, U> {
     }
 }
 
-pub struct IterLoopExpr<T, U> {
+pub struct IterLoopExpr {
     kw_for: KwFor,
     pattern: Box<dyn Pattern>,
     kw_in: KwIn,
-    iterator: IterableExpr<T, U>,
-    block: BlockExpr<T, U>,
+    iterator: Box<IterableExpr>,
+    block: BlockExpr,
 }
 
-impl<T, U> Pattern for IterLoopExpr<T, U> {}
+impl Pattern for IterLoopExpr {}
 
-impl<T, U> Spanned for IterLoopExpr<T, U> {
+impl Spanned for IterLoopExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_for.span();
         let s2 = self.block.span();

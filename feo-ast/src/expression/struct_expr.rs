@@ -45,7 +45,7 @@ impl Spanned for Struct {
     }
 }
 
-pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Expression));
+pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Expression>));
 
 pub struct StructExprFields {
     first_field: StructExprField,
@@ -60,7 +60,7 @@ pub struct StructExprFields {
 pub struct TupleStruct {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
-    params_opt: Option<(Expression, Vec<(Comma, Expression)>, Option<Comma>)>,
+    params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Option<Comma>)>,
     close_parenthesis: Parenthesis,
 }
 

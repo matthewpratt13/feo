@@ -7,15 +7,15 @@ use crate::pattern::Pattern;
 
 use super::{Assignable, BlockExpr, BooleanOperand, Expression, InnerAttr, OuterAttr};
 
-pub struct IfExpr<T, U> {
+pub struct IfExpr {
     kw_if: KwIf,
-    condition_operand: BooleanOperand<T, U>,
-    if_block: BlockExpr<T, U>,
-    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr<T, U>>)>>,
-    else_block_opt: Option<(KwElse, BlockExpr<T, U>)>,
+    condition_operand: Box<BooleanOperand>,
+    if_block: Box<BlockExpr>,
+    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
+    else_block_opt: Option<(KwElse, BlockExpr)>,
 }
 
-impl<T, U> Spanned for IfExpr<T, U> {
+impl Spanned for IfExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_if.span();
         let s2 = match &self.else_block_opt {
@@ -51,18 +51,18 @@ impl<T, U> Spanned for IfExpr<T, U> {
     }
 }
 
-pub struct MatchExpr<T, U> {
+pub struct MatchExpr {
     kw_match: KwMatch,
-    scrutinee: Assignable<T, U>,
+    scrutinee: Box<Assignable>, // except struct expression
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
-    match_arms_opt: Option<MatchArms<T, U>>,
+    match_arms_opt: Option<MatchArms>,
     close_brace: Brace,
 }
 
-impl<T, U> Pattern for MatchExpr<T, U> {}
+impl Pattern for MatchExpr {}
 
-impl<T, U> Spanned for MatchExpr<T, U> {
+impl Spanned for MatchExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_match.span();
         let s2 = self.close_brace.span();
@@ -79,18 +79,18 @@ impl<T, U> Spanned for MatchExpr<T, U> {
     }
 }
 
-pub struct MatchArms<T, U> {
-    arms: Vec<(MatchArm<T, U>, FatArrow, Expression, Option<Comma>)>,
-    final_arm: (MatchArm<T, U>, FatArrow, Expression, Option<Comma>),
+pub struct MatchArms {
+    arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
+    final_arm: (MatchArm, FatArrow, Box<Expression>, Option<Comma>),
 }
 
-pub struct MatchArm<T, U> {
+pub struct MatchArm {
     attributes: Vec<OuterAttr>,
     pattern: Box<dyn Pattern>,
-    match_arm_guard_opt: Option<MatchArmGuard<T, U>>,
+    match_arm_guard_opt: Option<MatchArmGuard>,
 }
 
-pub struct MatchArmGuard<T, U> {
+pub struct MatchArmGuard {
     kw_if: KwIf,
-    operand: BooleanOperand<T, U>,
+    operand: Box<BooleanOperand>,
 }

@@ -42,7 +42,7 @@ impl Spanned for TupleExpr {
 
 pub struct TupleElements {
     initializer_operands: Vec<(Expression, Comma)>,
-    trailing_operand_opt: Option<Expression>,
+    trailing_operand_opt: Option<Box<Expression>>,
 }
 
 pub struct TupleIndexExpr {

@@ -14,19 +14,19 @@ use feo_types::{
 
 use super::{Assignable, BooleanOperand, Castable, Expression};
 
-pub enum OperatorExprKind<T, U> {
+pub enum OperatorExprKind {
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
     Comparison(ComparisonExpr),
-    CompoundAssign(CompoundAssignmentExpr<T, U>),
-    Dereference(DerefExpr<T, U>),
-    LazyBool(LazyBoolExpr<T, U>),
+    CompoundAssign(CompoundAssignmentExpr),
+    Dereference(DereferenceExpr),
+    LazyBool(LazyBoolExpr),
     Negation(NegationExpr),
-    Reference(RefExpr<T, U>),
+    Reference(ReferenceExpr),
     TypeCast(TypeCastExpr),
-    UnwrapExpr(UnwrapExpr<U>),
+    UnwrapExpr(UnwrapExpr),
 }
 
-impl<T, U> Spanned for OperatorExprKind<T, U> {
+impl Spanned for OperatorExprKind {
     fn span(&self) -> Span {
         match self {
             OperatorExprKind::ArithmeticOrLogical(al) => al.span(),
@@ -91,15 +91,12 @@ impl Spanned for NegationOperatorKind {
     }
 }
 
-pub enum UnwrapOperandKind<T> {
-    Option(Option<T>),
-    Result(Result<T, CompilerError>),
+pub enum UnwrapOperandKind {
+    Option(Option<Box<Expression>>),
+    Result(Result<Box<Expression>, CompilerError>),
 }
 
-impl<T> Spanned for UnwrapOperandKind<T>
-where
-    T: Spanned,
-{
+impl Spanned for UnwrapOperandKind {
     fn span(&self) -> Span {
         match self {
             UnwrapOperandKind::Option(o) => {
@@ -126,9 +123,9 @@ pub type DerefOperator = Asterisk;
 pub type RefOperator = (Ampersand, Option<KwMut>);
 
 pub struct ArithmeticOrLogicalExpr {
-    lhs: Expression,
+    lhs: Box<Expression>,
     operator: ArithmeticOrLogicalOperatorKind,
-    rhs: Expression,
+    rhs: Box<Expression>,
 }
 
 impl Spanned for ArithmeticOrLogicalExpr {
@@ -144,9 +141,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 }
 
 pub struct AssignmentExpr {
-    assignee: Expression,
+    assignee: Box<Expression>,
     operator: AssignOperator,
-    new_value: Expression,
+    new_value: Box<Expression>,
 }
 
 impl Spanned for AssignmentExpr {
@@ -161,13 +158,13 @@ impl Spanned for AssignmentExpr {
     }
 }
 
-pub struct CompoundAssignmentExpr<T, U> {
-    assignee: Assignable<T, U>,
+pub struct CompoundAssignmentExpr {
+    assignee: Box<Assignable>,
     operator: CompoundAssignOperatorKind,
-    new_value: Expression,
+    new_value: Box<Expression>,
 }
 
-impl<T, U> Spanned for CompoundAssignmentExpr<T, U> {
+impl Spanned for CompoundAssignmentExpr {
     fn span(&self) -> Span {
         let start_pos = self.assignee.span().start();
         let end_pos = self.new_value.span().end();
@@ -180,9 +177,9 @@ impl<T, U> Spanned for CompoundAssignmentExpr<T, U> {
 }
 
 pub struct ComparisonExpr {
-    lhs: Expression,
+    lhs: Box<Expression>,
     operator: ComparisonOperatorKind,
-    rhs: Expression,
+    rhs: Box<Expression>,
 }
 
 impl Spanned for ComparisonExpr {
@@ -197,12 +194,12 @@ impl Spanned for ComparisonExpr {
     }
 }
 
-pub struct DerefExpr<T, U> {
+pub struct DereferenceExpr {
     operator: DerefOperator,
-    operand: Assignable<T, U>,
+    operand: Box<Assignable>,
 }
 
-impl<T, U> Spanned for DerefExpr<T, U> {
+impl Spanned for DereferenceExpr {
     fn span(&self) -> Span {
         let start_pos = self.operator.span().start();
         let end_pos = self.operand.span().end();
@@ -214,13 +211,13 @@ impl<T, U> Spanned for DerefExpr<T, U> {
     }
 }
 
-pub struct LazyBoolExpr<T, U> {
-    lhs: BooleanOperand<T, U>,
+pub struct LazyBoolExpr {
+    lhs: Box<BooleanOperand>,
     operator: LazyBoolOperatorKind,
-    rhs: BooleanOperand<T, U>,
+    rhs: Box<BooleanOperand>,
 }
 
-impl<T, U> Spanned for LazyBoolExpr<T, U> {
+impl Spanned for LazyBoolExpr {
     fn span(&self) -> Span {
         let start_pos = self.lhs.span().start();
         let end_pos = self.rhs.span().end();
@@ -234,7 +231,7 @@ impl<T, U> Spanned for LazyBoolExpr<T, U> {
 
 pub struct NegationExpr {
     operator: NegationOperatorKind,
-    operand: Expression,
+    operand: Box<Expression>,
 }
 
 impl Spanned for NegationExpr {
@@ -249,12 +246,12 @@ impl Spanned for NegationExpr {
     }
 }
 
-pub struct RefExpr<T, U> {
+pub struct ReferenceExpr {
     operator: RefOperator,
-    operand: Assignable<T, U>,
+    operand: Box<Assignable>,
 }
 
-impl<T, U> Spanned for RefExpr<T, U> {
+impl Spanned for ReferenceExpr {
     fn span(&self) -> Span {
         let s1 = self.operator.0.span();
         let s2 = self.operand.span();
@@ -264,9 +261,9 @@ impl<T, U> Spanned for RefExpr<T, U> {
 }
 
 pub struct TypeCastExpr {
-    lhs: Castable,
+    lhs: Box<Castable>,
     operator: CastOperator,
-    rhs: Castable,
+    rhs: Box<Castable>,
 }
 
 impl Spanned for TypeCastExpr {
@@ -281,12 +278,12 @@ impl Spanned for TypeCastExpr {
     }
 }
 
-pub struct UnwrapExpr<U> {
-    operand: UnwrapOperandKind<U>,
+pub struct UnwrapExpr {
+    operand: UnwrapOperandKind,
     operator: QuestionMark,
 }
 
-impl<U> Spanned for UnwrapExpr<U> {
+impl Spanned for UnwrapExpr {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
         let end_pos = self.operator.span().end();

@@ -17,7 +17,8 @@ mod tuple_expr;
 
 use feo_types::{
     span::{Span, Spanned},
-    Identifier, Keyword, Punctuation, U256,
+    utils::Underscore,
+    Identifier, U256,
 };
 
 use crate::{
@@ -33,10 +34,12 @@ use self::{
     closure_expr::{ClosureWithBlock, ClosureWithoutBlock},
     conditional_expr::{IfExpr, MatchExpr},
     field_access_expr::FieldAccessExpr,
-    iteration_expr::{InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr},
+    iteration_expr::{
+        BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,
+    },
     operator_expr::{
-        ArithmeticOrLogicalExpr, AssignmentExpr, ComparisonExpr, CompoundAssignmentExpr, DerefExpr,
-        LazyBoolExpr, NegationExpr, OperatorExprKind, TypeCastExpr,
+        ArithmeticOrLogicalExpr, AssignmentExpr, ComparisonExpr, CompoundAssignmentExpr,
+        DereferenceExpr, LazyBoolExpr, NegationExpr, OperatorExprKind, TypeCastExpr,
     },
     parenthesized_expr::ParenthesizedExpr,
     range_expr::RangeExprKind,
@@ -90,14 +93,21 @@ pub use self::{
 // {
 // }
 
-pub enum Assignable<T, U> {
+pub enum Assignable {
     Identifier(Identifier),
-    ArrayExpr(ArrayExpr<T, U>),
+    ArrayExpr(ArrayExpr),
     StructExpr(Struct),
     TupleStructExpr(TupleStruct),
     UnitStructExpr(UnitStruct),
     TupleExpr(TupleExpr),
     PathExpr(PathExpr),
+    UnderscoreExpr(Underscore),
+}
+
+impl Spanned for Assignable {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
 
 // impl Assignable for Identifier {}
@@ -108,20 +118,21 @@ pub enum Assignable<T, U> {
 // {
 // }
 
-pub enum BooleanOperand<T, U> {
-    // Keyword(Keyword),
-    ArrayExpr(ArrayExpr<T, U>),
-    IndexExpr(IndexExpr<T, U>),
-    BlockExpr(BlockExpr<T, U>),
+pub enum BooleanOperand {
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    BlockExpr(BlockExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
-    ClosureWithBlock(ClosureWithBlock<T, U>),
-    ClosureWithoutBlock(ClosureWithoutBlock<T, U>),
-    IfExpr(IfExpr<T, U>),
-    MatchExpr(MatchExpr<T, U>),
-    FieldAccessExpr(FieldAccessExpr<T, U>),
-    IterationExpr(IterationExprKind<T, U>),
-    OperatorExpr(OperatorExprKind<T, U>),
+    ClosureWithBlock(ClosureWithBlock),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    IterationExpr(IterationExprKind),
+    OperatorExpr(OperatorExprKind),
     ParenthesizedExpr(ParenthesizedExpr),
     RangeExpr(RangeExprKind),
     ReturnExpr(ReturnExpr),
@@ -129,6 +140,13 @@ pub enum BooleanOperand<T, U> {
     TupleIndexExpr(TupleIndexExpr),
     LiteralExpr(LiteralKind),
     PathExpr(PathExpr),
+    UnderscoreExpr(Underscore),
+}
+
+impl Spanned for BooleanOperand {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
 
 // impl BooleanOperand for Keyword {}
@@ -142,15 +160,21 @@ pub enum BooleanOperand<T, U> {
 pub enum Castable {
     Char(Literal<char>),
     Bool(Literal<bool>),
+    I32(Literal<i32>),
+    I64(Literal<i64>),
     U8(Literal<u8>),
     U16(Literal<u16>),
     U32(Literal<u32>),
     U64(Literal<u64>),
     U256(Literal<U256>),
-    I32(Literal<i32>),
-    I64(Literal<i64>),
     F32(Literal<f32>),
     F64(Literal<f64>),
+}
+
+impl Spanned for Castable {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
 
 // pub trait Constant
@@ -159,24 +183,23 @@ pub enum Castable {
 // {
 // }
 
-// impl Constant for Punctuation {}
-
-pub enum Constant<T, U> {
-    // Punctuation(Punctuation),
-    ArrayExpr(ArrayExpr<T, U>),
-    IndexExpr(IndexExpr<T, U>),
-    BlockExpr(BlockExpr<T, U>),
-    IfExpr(IfExpr<T, U>),
-    MatchExpr(MatchExpr<T, U>),
-    FieldAccessExpr(FieldAccessExpr<T, U>),
-    InfiniteLoopExpr(InfiniteLoopExpr<T, U>),
-    PredicateLoopExpr(PredicateLoopExpr<T, U>),
+pub enum Constant {
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    BlockExpr(BlockExpr),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    InfiniteLoopExpr(InfiniteLoopExpr),
+    PredicateLoopExpr(PredicateLoopExpr),
     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
     AssignmentExpr(AssignmentExpr),
-    CompoundAssignmentExpr(CompoundAssignmentExpr<T, U>),
+    CompoundAssignmentExpr(CompoundAssignmentExpr),
     ComparisonAssignmentExpr(ComparisonExpr),
-    DerefExpr(DerefExpr<T, U>),
-    LazyBoolExpr(LazyBoolExpr<T, U>),
+    DerefExpr(DereferenceExpr),
+    LazyBoolExpr(LazyBoolExpr),
     NegationExpr(NegationExpr),
     TypeCastExpr(TypeCastExpr),
     ParenthesizedExpr(ParenthesizedExpr),
@@ -192,7 +215,8 @@ pub enum Constant<T, U> {
     Literal(LiteralKind),
     PathExpr(PathExpr),
     ExprStatement(ExprStatement),
-    LetStatement(LetStatement<T, U>),
+    LetStatement(LetStatement),
+    UnderscoreExpr(Underscore),
 }
 
 // pub trait Expression
@@ -201,35 +225,37 @@ pub enum Constant<T, U> {
 // {
 // }
 
-// impl Expression for Keyword {}
-
-// impl Expression for Punctuation {}
-
 // pub trait ExprWithBlock {}
 
-pub enum ExprWithBlock<T, U> {
+pub enum ExprWithBlock {
     OuterAttr(OuterAttr),
-    BlockExpr(BlockExpr<T, U>),
-    ClosureWithBlock(ClosureWithBlock<T, U>),
-    IfExpr(IfExpr<T, U>),
-    MatchExpr(MatchExpr<T, U>),
-    IterationExpr(IterationExprKind<T, U>),
+    BlockExpr(BlockExpr),
+    ClosureWithBlock(ClosureWithBlock),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    IterationExpr(IterationExprKind),
+}
+
+impl Spanned for ExprWithBlock {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
 
 // pub trait ExprWithoutBlock {}
 
-pub enum ExprWithoutBlock<T, U> {
-    // Keyword(Keyword),
-    // Punctuation(Punctuation),
-    ArrayExpr(ArrayExpr<T, U>),
-    IndexExpr(IndexExpr<T, U>),
+pub enum ExprWithoutBlock {
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
     InnerAttr(InnerAttr),
     OuterAttr(OuterAttr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
-    ClosureWithoutBlock(ClosureWithoutBlock<T, U>),
-    FieldAccessExpr(FieldAccessExpr<T, U>),
-    OperatorExpr(OperatorExprKind<T, U>),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    FieldAccessExpr(FieldAccessExpr),
+    OperatorExpr(OperatorExprKind),
     ParenthesizedExpr(ParenthesizedExpr),
     RangeExpr(RangeExprKind),
     ReturnExpr(ReturnExpr),
@@ -240,11 +266,8 @@ pub enum ExprWithoutBlock<T, U> {
     EnumVariantStruct(EnumVariantStruct),
     Literal(LiteralKind),
     PathExpr(PathExpr),
+    UnderscoreExpr(Underscore),
 }
-
-// impl ExprWithoutBlock for Keyword {}
-
-// impl ExprWithoutBlock for Punctuation {}
 
 // pub trait IterableExpr
 // where
@@ -254,20 +277,19 @@ pub enum ExprWithoutBlock<T, U> {
 
 // impl IterableExpr for Keyword {}
 
-pub enum IterableExpr<T, U> {
-    // Keyword(Keyword),
-    ArrayExpr(ArrayExpr<T, U>),
-    IndexExpr(IndexExpr<T, U>),
-    BlockExpr(BlockExpr<T, U>),
+pub enum IterableExpr {
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    BlockExpr(BlockExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
-    ClosureWithBlock(ClosureWithBlock<T, U>),
-    ClosureWithoutBlock(ClosureWithoutBlock<T, U>),
-    IfExpr(IfExpr<T, U>),
-    MatchExpr(MatchExpr<T, U>),
-    FieldAccessExpr(FieldAccessExpr<T, U>),
-    IterationExpr(IterationExprKind<T, U>),
-    OperatorExpr(OperatorExprKind<T, U>),
+    ClosureWithBlock(ClosureWithBlock),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    IterationExpr(IterationExprKind),
+    OperatorExpr(OperatorExprKind),
     ParenthesizedExpr(ParenthesizedExpr),
     RangeExpr(RangeExprKind),
     ReturnExpr(ReturnExpr),
@@ -287,6 +309,8 @@ pub enum Expression {
     FieldAccessExpr(FieldAccessExpr),
     IfExpr(IfExpr),
     IterationExpr(IterationExprKind),
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
     LiteralExpr(LiteralKind),
     MatchExpr(MatchExpr),
     OperatorExpr(OperatorExprKind),
@@ -296,6 +320,7 @@ pub enum Expression {
     ReturnExpr(ReturnExpr),
     StructExpr(StructKind),
     TupleExpr(TupleExpr),
+    UnderscoreExpr(Underscore),
 }
 
 impl Spanned for Expression {
@@ -313,13 +338,16 @@ impl Spanned for Expression {
             Expression::IterationExpr(ite) => ite.span(),
             Expression::LiteralExpr(lit) => lit.span(),
             Expression::MatchExpr(mat) => mat.span(),
-            Expression::OperationExpr(op) => op.span(),
+            Expression::OperatorExpr(op) => op.span(),
             Expression::ParenthesizedExpr(par) => par.span(),
             Expression::PathExpr(pat) => pat.span(),
             Expression::RangeExpr(rng) => rng.span(),
             Expression::ReturnExpr(ret) => ret.span(),
             Expression::StructExpr(st) => st.span(),
             Expression::TupleExpr(tup) => tup.span(),
+            Expression::BreakExpr(_) => todo!(),
+            Expression::ContinueExpr(_) => todo!(),
+            Expression::UnderscoreExpr(_) => todo!(),
         }
     }
 }

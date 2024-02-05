@@ -7,14 +7,14 @@ use crate::statement::Statement;
 
 use super::ExprWithoutBlock;
 
-pub struct BlockExpr<T, U> {
+pub struct BlockExpr {
     open_brace: Brace,
-    statements: Vec<Statement<T, U>>,
-    final_operand_opt: Option<ExprWithoutBlock<T, U>>,
+    statements_opt: Option<Vec<Statement>>,
+    final_operand_opt: Box<ExprWithoutBlock>,
     close_brace: Brace,
 }
 
-impl<T, U> Spanned for BlockExpr<T, U> {
+impl Spanned for BlockExpr {
     fn span(&self) -> Span {
         let s1 = self.open_brace.span();
         let s2 = self.close_brace.span();

@@ -7,7 +7,7 @@ use super::Expression;
 
 pub struct ReturnExpr {
     kw_return: KwReturn,
-    expression_opt: Option<Expression>,
+    expression_opt: Option<Box<Expression>>,
 }
 
 impl Spanned for ReturnExpr {

@@ -6,13 +6,13 @@ use feo_types::{
 
 use super::IterableExpr;
 
-pub struct ArrayExpr<T, U> {
+pub struct ArrayExpr {
     open_bracket: Bracket,
-    elements_opt: Option<ArrayElements<T, U>>,
+    elements_opt: Option<ArrayElements>,
     close_bracket: Bracket,
 }
 
-impl<T, U> Spanned for ArrayExpr<T, U> {
+impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
         let s1 = self.open_bracket.span();
         let s2 = self.close_bracket.span();
@@ -29,26 +29,26 @@ impl<T, U> Spanned for ArrayExpr<T, U> {
     }
 }
 
-pub struct ArrayElements<T, U> {
-    first_element: IterableExpr<T, U>,
-    subsequent_elements: Vec<(Comma, IterableExpr<T, U>)>,
+pub struct ArrayElements {
+    first_element: Box<IterableExpr>,
+    subsequent_elements: Vec<(Comma, IterableExpr)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayWithSingleRepeatedValue<T, U> {
-    repeat_operand: IterableExpr<T, U>,
+pub struct ArrayWithSingleRepeatedValue {
+    repeat_operand: IterableExpr,
     semicolon: Semicolon,
     num_repeats: Primitive<u64>,
 }
 
-pub struct IndexExpr<T, U> {
-    indexed_operand: ArrayExpr<T, U>,
+pub struct IndexExpr {
+    indexed_operand: ArrayExpr,
     open_bracket: Bracket,
     index: Primitive<u64>,
     close_bracket: Bracket,
 }
 
-impl<T, U> Spanned for IndexExpr<T, U> {
+impl Spanned for IndexExpr {
     fn span(&self) -> Span {
         let s1 = self.indexed_operand.span();
         let s2 = self.close_bracket.span();

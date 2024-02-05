@@ -31,15 +31,15 @@ use crate::{
 // {
 // }
 
-pub enum Statement<T, U> {
+pub enum Statement {
     ConstantItem(ConstantItem),
     StaticItem(StaticItem),
     EnumItem(EnumItem),
     EnumVariantStruct(EnumVariantStruct),
     ExternCrateDecl(ExternCrateDecl),
-    FunctionItem(FunctionItem<T, U>),
-    InherentImplItem(InherentImplItem<T, U>),
-    TraitImplItem(TraitImplItem<T, U>),
+    FunctionItem(FunctionItem),
+    InherentImplItem(InherentImplItem),
+    TraitImplItem(TraitImplItem),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
@@ -49,12 +49,12 @@ pub enum Statement<T, U> {
     StructItem(Struct),
     TupleStructItem(TupleStruct),
     UnitStructItem(UnitStruct),
-    TraitDef(TraitDef<T, U>),
+    TraitDef(TraitDef),
     TypeAliasDef(TypeAliasDef),
     SimplePathSegmentKind(SimplePathSegmentKind),
     PathExpr(PathExpr),
     ExprStatement(ExprStatement),
-    LetStatement(LetStatement<T, U>),
+    LetStatement(LetStatement),
 }
 
 pub struct ExprStatement {
@@ -80,18 +80,18 @@ impl Spanned for ExprStatement {
     }
 }
 
-pub struct LetStatement<T, U> {
+pub struct LetStatement {
     attributes: Vec<OuterAttr>,
     kw_let: KwLet,
     pattern: Box<dyn Pattern>,
     type_ann_opt: Option<(Colon, Box<dyn Type>)>,
-    assignment_opt: Option<(Equals, Assignable<T, U>)>,
+    assignment_opt: Option<(Equals, Assignable)>,
     semicolon: Semicolon,
 }
 
-impl<T, U> Pattern for LetStatement<T, U> {}
+impl Pattern for LetStatement {}
 
-impl<T, U> Spanned for LetStatement<T, U> {
+impl Spanned for LetStatement {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.attributes.first() {
             a.span().start()

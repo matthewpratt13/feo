@@ -29,22 +29,39 @@ impl Spanned for ClosureParamsOpt {
     }
 }
 
-pub struct ClosureWithBlock<T, U> {
+pub struct ClosureWithBlock {
     params: ClosureParamsOpt,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    block: BlockExpr<T, U>,
+    block: BlockExpr,
 }
 
-impl<T, U> Type for ClosureWithBlock<T, U> {}
+impl Spanned for ClosureWithBlock {
+    fn span(&self) -> Span {
+        let s1 = self.params.span();
+        let s2 = self.block.span();
 
-pub struct ClosureWithoutBlock<T, U> {
+        Span::join(s1, s2)
+
+        // let start_pos = self.params.span().start();
+        // let end_pos = self.block.span().end();
+        // let source = self.params.span().source();
+
+        // let span = Span::new(source.as_str(), start_pos, end_pos);
+
+        // span
+    }
+}
+
+impl Type for ClosureWithBlock {}
+
+pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
-    body_operand: Expression,
+    body_operand: Box<Expression>,
 }
 
-impl<T, U> Type for ClosureWithoutBlock<T, U> {}
+impl Type for ClosureWithoutBlock {}
 
-impl<T, U> Spanned for ClosureWithoutBlock<T, U> {
+impl Spanned for ClosureWithoutBlock {
     fn span(&self) -> Span {
         let s1 = self.params.span();
         let s2 = self.body_operand.span();

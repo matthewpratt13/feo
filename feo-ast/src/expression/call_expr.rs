@@ -8,7 +8,7 @@ use crate::{path::PathExprSegment, pattern::Pattern};
 use super::Expression;
 
 pub struct FunctionCallExpr {
-    function_operand: Expression,
+    function_operand: Box<Expression>,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
@@ -32,7 +32,7 @@ impl Spanned for FunctionCallExpr {
 }
 
 pub struct MethodCallExpr {
-    receiver: Expression,
+    receiver: Box<Expression>,
     dot: Dot,
     method_path: PathExprSegment,
     open_parenthesis: Parenthesis,
@@ -58,7 +58,7 @@ impl Spanned for MethodCallExpr {
 }
 
 pub struct CallParams {
-    first_param: Expression,
+    first_param: Box<Expression>,
     subsequent_params: Vec<(Comma, Expression)>,
     trailing_comma_opt: Option<Comma>,
 }

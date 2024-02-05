@@ -12,16 +12,16 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
-pub enum FunctionItem<T, U> {
+pub enum FunctionItem {
     FuncSig((FunctionSig, Semicolon)),
-    FuncDef(FunctionDef<T, U>),
+    FuncDef(FunctionDef),
 }
 
-impl<T, U> Item for FunctionItem<T, U> {}
+impl Item for FunctionItem {}
 
-impl<T, U> Type for FunctionItem<T, U> {}
+impl Type for FunctionItem {}
 
-impl<T, U> Spanned for FunctionItem<T, U> {
+impl Spanned for FunctionItem {
     fn span(&self) -> Span {
         match self {
             FunctionItem::FuncSig(fs) => {
@@ -47,12 +47,12 @@ pub enum FuncOrMethodParam {
     MethodParam(MethodParam),
 }
 
-pub struct FunctionDef<T, U> {
+pub struct FunctionDef {
     function_sig: FunctionSig,
-    function_body: ExprWithBlock<T, U>,
+    function_body: ExprWithBlock,
 }
 
-impl<T, U> Spanned for FunctionDef<T, U> {
+impl Spanned for FunctionDef {
     fn span(&self) -> Span {
         let s1 = match self.function_sig.attributes.first() {
             Some(a) => a.span(),

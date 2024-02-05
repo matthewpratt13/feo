@@ -93,7 +93,7 @@ impl PatternWithoutRange for PathPatt {}
 
 // points to either a local variable or an item
 pub struct SimplePath {
-    pub dbl_colon_opt: Option<DblColon>,
+    pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: SimplePathSegmentKind,
     pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
 }
@@ -121,15 +121,15 @@ impl Spanned for SimplePath {
 }
 
 pub struct PathInExpr {
-    pub dbl_colon_opt: Option<DblColon>,
+    pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: PathExprSegment,
     pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
 pub struct PathType {
-    pub dbl_colon_opt: Option<DblColon>,
+    pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: PathTypeSegment,
-    pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
+    pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,
 }
 
 impl Type for PathType {}
