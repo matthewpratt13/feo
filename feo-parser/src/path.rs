@@ -17,10 +17,10 @@ impl Parse for PathInExpr {
     {
         let first_token = parser.next_token();
 
-        if let Ok(Some(Punctuation {
+        if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        })) = Some(Punctuation::try_from(first_token?))
+        }) = Punctuation::try_from(first_token?)
         {
             let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
             let _ = parser.next_token();
@@ -70,10 +70,10 @@ impl Parse for PathType {
     {
         let first_token = parser.next_token();
 
-        if let Ok(Some(Punctuation {
+        if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        })) = Some(Punctuation::try_from(first_token?))
+        }) = Punctuation::try_from(first_token?)
         {
             let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
             let _ = parser.next_token();
@@ -123,10 +123,10 @@ impl Parse for SimplePath {
     {
         let first_token = parser.next_token();
 
-        if let Ok(Some(Punctuation {
+        if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        })) = Some(Punctuation::try_from(first_token?))
+        }) = Punctuation::try_from(first_token?)
         {
             let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
             let _ = parser.next_token();

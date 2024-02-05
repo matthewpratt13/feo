@@ -1,11 +1,14 @@
 #![allow(dead_code)]
 
 use feo_ast::{
-    expression::{Expression, OuterAttr, Struct, StructExprField, StructExprFields}, path::PathInExpr
+    expression::{Expression, OuterAttr, Struct, StructExprField, StructExprFields},
+    path::PathInExpr,
 };
 use feo_error::parser_error::ParserError;
 use feo_types::{
-    delimiter::{DelimKind, DelimOrientation}, span::Span, Delimiter, Identifier, Punctuation
+    delimiter::{DelimKind, DelimOrientation},
+    span::Span,
+    Delimiter, Identifier, Punctuation,
 };
 
 use crate::{parse::Parse, parser::Parser};
@@ -21,11 +24,11 @@ impl Parse for Struct {
                 ..
             }) = Delimiter::try_from(parser.next_token()?)
             {
-                if let Ok(fields_opt) = Option<StructExprFields>::parse(parser) {
+                if let Ok(fields_opt) = Option::<StructExprFields>::parse(parser) {
                     if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
-                    }) = Delimiter::try_from(parser.next_token())
+                    }) = Delimiter::try_from(parser.next_token()?)
                     {
                         let expr = Struct {
                             item_path,
@@ -74,18 +77,24 @@ impl Parse for StructExprField {
         let _ = parser.next_token();
 
         if let Ok(attr) = OuterAttr::parse(parser) {
+            attributes.push(attr);
+            
             while let Ok(attr) = OuterAttr::parse(parser) {
                 attributes.push(attr);
-                parser.next_token();
+                let _ = parser.next_token();
             }
 
             if let Ok(iden) = Identifier::try_from(parser.next_token()?) {
                 if let Ok(colon) = Punctuation::try_from(parser.next_token()?) {
                     if let Ok(expr) = Expression::parse(parser) {
-                        let field = StructExprField(attributes, (iden, colon, expr));
+                        let field = StructExprField(attributes, (iden, colon, Box::new(expr)));
 
                         Ok(field)
+                    } else {
+                        todo!()
                     }
+                } else {
+                    todo!()
                 }
             } else {
                 todo!()
