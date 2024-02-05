@@ -34,6 +34,8 @@ impl Parse for Struct {
                         ..
                     }) = Delimiter::try_from(parser.current_token())
                     {
+                        parser.advance();
+                        
                         let expr = Struct {
                             item_path,
                             open_brace: Delimiter {
@@ -47,7 +49,6 @@ impl Parse for Struct {
                             },
                         };
 
-                        parser.advance();
 
                         Ok(Some(expr))
                     } else {
