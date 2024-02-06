@@ -20,7 +20,7 @@ impl Parse for PathInExpr {
         if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(parser.current_token())
+        }) = Punctuation::try_from(parser.current_token()?)
         {
             parser.advance();
 
@@ -28,7 +28,7 @@ impl Parse for PathInExpr {
                 while let Ok(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
-                }) = Punctuation::try_from(parser.current_token())
+                }) = Punctuation::try_from(parser.current_token()?)
                 {
                     parser.advance();
 
@@ -76,7 +76,7 @@ impl Parse for PathType {
         if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(parser.current_token())
+        }) = Punctuation::try_from(parser.current_token()?)
         {
             parser.advance();
 
@@ -84,7 +84,7 @@ impl Parse for PathType {
                 while let Ok(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
-                }) = Punctuation::try_from(parser.current_token())
+                }) = Punctuation::try_from(parser.current_token()?)
                 {
                     parser.advance();
 
@@ -132,7 +132,7 @@ impl Parse for SimplePath {
         if let Ok(Punctuation {
             punc_kind: PuncKind::DblColon,
             ..
-        }) = Punctuation::try_from(parser.current_token())
+        }) = Punctuation::try_from(parser.current_token()?)
         {
             parser.advance();
 
@@ -140,7 +140,7 @@ impl Parse for SimplePath {
                 while let Ok(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
-                }) = Punctuation::try_from(parser.current_token())
+                }) = Punctuation::try_from(parser.current_token()?)
                 {
                     parser.advance();
 
@@ -183,9 +183,9 @@ impl Parse for PathIdenSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()) {
+        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()?) {
             PathIdenSegmentKind::Iden(i)
-        } else if let Ok(k) = Keyword::try_from(parser.current_token()) {
+        } else if let Ok(k) = Keyword::try_from(parser.current_token()?) {
             match k.keyword_kind {
                 KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
@@ -208,9 +208,9 @@ impl Parse for SimplePathSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()) {
+        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()?) {
             SimplePathSegmentKind::Iden(i)
-        } else if let Ok(k) = Keyword::try_from(parser.current_token()) {
+        } else if let Ok(k) = Keyword::try_from(parser.current_token()?) {
             match k.keyword_kind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),

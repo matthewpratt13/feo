@@ -129,8 +129,12 @@ impl TokenStream {
         }
     }
 
-    pub fn tokens(&self) -> &[Option<Token>] {
-        &self.tokens
+    pub fn tokens(&self) -> Vec<Token> {
+        self.tokens
+            .clone()
+            .into_iter()
+            .map(|t| t.expect("invalid token"))
+            .collect::<Vec<Token>>()
     }
 
     pub fn len(&self) -> usize {
@@ -148,8 +152,8 @@ impl Iterator for TokenStream {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(s) = self.tokens().into_iter().next().cloned() {
-            s
+        if let Some(t) = self.tokens().into_iter().next() {
+            Some(t)
         } else {
             None
         }

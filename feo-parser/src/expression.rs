@@ -22,7 +22,7 @@ impl Parse for Struct {
             if let Ok(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = Delimiter::try_from(parser.current_token())
+            }) = Delimiter::try_from(parser.current_token()?)
             {
                 parser.advance();
 
@@ -32,10 +32,10 @@ impl Parse for Struct {
                     if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
-                    }) = Delimiter::try_from(parser.current_token())
+                    }) = Delimiter::try_from(parser.current_token()?)
                     {
                         parser.advance();
-                        
+
                         let expr = Struct {
                             item_path,
                             open_brace: Delimiter {
@@ -48,7 +48,6 @@ impl Parse for Struct {
                                 span: Span::default(), // TODO
                             },
                         };
-
 
                         Ok(Some(expr))
                     } else {
@@ -90,10 +89,10 @@ impl Parse for StructExprField {
                 parser.advance();
             }
 
-            if let Ok(iden) = Identifier::try_from(parser.current_token()) {
+            if let Ok(iden) = Identifier::try_from(parser.current_token()?) {
                 parser.advance();
 
-                if let Ok(colon) = Punctuation::try_from(parser.current_token()) {
+                if let Ok(colon) = Punctuation::try_from(parser.current_token()?) {
                     parser.advance();
 
                     if let Some(expr) = Expression::parse(parser)? {

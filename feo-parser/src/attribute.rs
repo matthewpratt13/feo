@@ -18,7 +18,7 @@ impl Parse for AttributeKind {
     where
         Self: Sized,
     {
-        let attr_kind = if let Ok(k) = Keyword::try_from(parser.current_token()) {
+        let attr_kind = if let Ok(k) = Keyword::try_from(parser.current_token()?) {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),
@@ -46,14 +46,14 @@ impl Parse for OuterAttr {
         if let Ok(Punctuation {
             punc_kind: PuncKind::Hash,
             ..
-        }) = Punctuation::try_from(parser.current_token())
+        }) = Punctuation::try_from(parser.current_token()?)
         {
             parser.advance();
 
             if let Ok(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
-            }) = Delimiter::try_from(parser.current_token())
+            }) = Delimiter::try_from(parser.current_token()?)
             {
                 parser.advance();
 
@@ -61,7 +61,7 @@ impl Parse for OuterAttr {
                     if let Ok(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
-                    }) = Delimiter::try_from(parser.current_token())
+                    }) = Delimiter::try_from(parser.current_token()?)
                     {
                         parser.advance();
 
