@@ -44,14 +44,14 @@ use self::{
     parenthesized_expr::ParenthesizedExpr,
     range_expr::RangeExprKind,
     return_expr::ReturnExpr,
-    struct_expr::{StructKind, TupleStruct, UnitStruct},
+    struct_expr::{TupleStruct, UnitStruct},
     tuple_expr::{TupleExpr, TupleIndexExpr},
 };
 pub use self::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
-    struct_expr::{Struct, StructExprField, StructExprFields},
+    struct_expr::{Struct, StructExprField, StructExprFields, StructKind},
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects

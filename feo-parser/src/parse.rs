@@ -7,3 +7,9 @@ pub trait Parse {
     where
         Self: Sized;
 }
+
+pub trait ParseExpr {
+    fn parse_expr(&mut self, parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized;
+}
