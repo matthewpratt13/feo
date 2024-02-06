@@ -7,7 +7,6 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    span::Span,
     Delimiter, Keyword, Punctuation,
 };
 
@@ -19,6 +18,8 @@ impl Parse for AttributeKind {
         Self: Sized,
     {
         let attr_kind = if let Ok(k) = Keyword::try_from(parser.current_token()?) {
+            parser.advance();
+
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),
@@ -32,8 +33,6 @@ impl Parse for AttributeKind {
             todo!()
         };
 
-        parser.advance();
-
         Ok(Some(attr_kind))
     }
 }
@@ -43,42 +42,40 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
+        let hash_sign_res = Punctuation::try_from(parser.current_token()?);
+
         if let Ok(Punctuation {
             punc_kind: PuncKind::Hash,
             ..
-        }) = Punctuation::try_from(parser.current_token()?)
+        }) = hash_sign_res
         {
             parser.advance();
+
+            let open_bracket_res = Delimiter::try_from(parser.current_token()?);
 
             if let Ok(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
-            }) = Delimiter::try_from(parser.current_token()?)
+            }) = open_bracket_res
             {
                 parser.advance();
 
                 if let Some(attr_kind) = AttributeKind::parse(parser)? {
+                    let close_bracket_res = Delimiter::try_from(parser.current_token()?);
+
                     if let Ok(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
-                    }) = Delimiter::try_from(parser.current_token()?)
+                    }) = close_bracket_res
                     {
+                        // consume last token and move to next token in prep for next parser
                         parser.advance();
 
                         let attr = OuterAttr {
-                            hash: Punctuation {
-                                punc_kind: PuncKind::Hash,
-                                span: Span::default(), // TODO
-                            },
-                            open_bracket: Delimiter {
-                                delim: (DelimKind::Bracket, DelimOrientation::Open),
-                                span: Span::default(), // TODO
-                            },
+                            hash: hash_sign_res?,
+                            open_bracket: open_bracket_res?,
                             attribute: attr_kind,
-                            close_bracket: Delimiter {
-                                delim: (DelimKind::Bracket, DelimOrientation::Close),
-                                span: Span::default(), // TODO
-                            },
+                            close_bracket: close_bracket_res?,
                         };
 
                         Ok(Some(attr))
