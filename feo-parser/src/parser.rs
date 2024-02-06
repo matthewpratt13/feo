@@ -1,7 +1,12 @@
 #![allow(dead_code)]
 
 use feo_ast::token::{Token, TokenStream};
-use feo_error::handler::Handler;
+use feo_error::{
+    error::CompilerError,
+    handler::{ErrorEmitted, Handler},
+    parser_error::{ParserError, ParserErrorKind},
+};
+use feo_types::span::{Position, Spanned};
 
 pub struct Parser {
     stream: TokenStream,
@@ -41,5 +46,14 @@ impl Parser {
             .get(self.pos + 1)
             .cloned()
             .unwrap_or(Token::EOF)
+    }
+
+    fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
+        let err = ParserError {
+            error_kind,
+            position: Position::new(&self.stream.span().source(), self.pos),
+        };
+
+        self.handler.emit_err(CompilerError::Parser(err))
     }
 }

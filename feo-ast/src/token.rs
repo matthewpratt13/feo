@@ -1,4 +1,4 @@
-use feo_error::parser_error::{ParserError, ParserErrorKind};
+use feo_error::parser_error::ParserErrorKind;
 
 use feo_types::{
     comment::Comment,
@@ -6,7 +6,7 @@ use feo_types::{
     doc_comment::DocComment,
     keyword::Keyword,
     punctuation::Punctuation,
-    span::{Position, Span, Spanned},
+    span::{Span, Spanned},
     Identifier, U256,
 };
 
@@ -101,127 +101,100 @@ impl Iterator for TokenStream {
 }
 
 impl TryFrom<Token> for Literal<i64> {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::IntLit(i) => Ok(i),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Literal<u64> {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::UIntLit(u) => Ok(u),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Literal<U256> {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::U256Lit(u) => Ok(u),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Literal<f64> {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::FloatLit(f) => Ok(f),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Literal<bool> {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::BoolLit(b) => Ok(b),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Keyword {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::Keyword(k) => Ok(k),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Identifier {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::Iden(i) => Ok(i),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Delimiter {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::Delim(d) => Ok(d),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }
 
 impl TryFrom<Token> for Punctuation {
-    type Error = ParserError;
+    type Error = ParserErrorKind;
 
     fn try_from(value: Token) -> Result<Self, Self::Error> {
         match value {
             Token::Punc(p) => Ok(p),
-            _ => Err(ParserError {
-                error_kind: ParserErrorKind::MismatchedTokens,
-                position: Position::new(&value.span().source(), value.span().start()),
-            }),
+            _ => Err(ParserErrorKind::MismatchedTokens),
         }
     }
 }

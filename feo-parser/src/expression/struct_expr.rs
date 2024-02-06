@@ -2,7 +2,7 @@ use feo_ast::{
     expression::{Expression, OuterAttr, Struct, StructExprField, StructExprFields},
     path::PathInExpr,
 };
-use feo_error::parser_error::ParserError;
+use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
@@ -12,7 +12,7 @@ use feo_types::{
 use crate::{parse::Parse, parser::Parser};
 
 impl Parse for StructExprFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -21,7 +21,7 @@ impl Parse for StructExprFields {
 }
 
 impl Parse for StructExprField {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -48,7 +48,8 @@ impl Parse for StructExprField {
                     parser.advance();
 
                     if let Some(expr) = Expression::parse(parser)? {
-                        let field = StructExprField(attributes, (iden, colon_res?, Box::new(expr)));
+                        let field =
+                            StructExprField(attributes, (iden, colon_res.unwrap(), Box::new(expr)));
 
                         Ok(Some(field))
                     } else {
@@ -67,7 +68,7 @@ impl Parse for StructExprField {
 }
 
 impl Parse for Struct {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -96,9 +97,9 @@ impl Parse for Struct {
 
                         let expr = Struct {
                             item_path,
-                            open_brace: open_brace_res?,
+                            open_brace: open_brace_res.unwrap(),
                             struct_expr_fields_opt: Some(fields_opt),
-                            close_brace: close_brace_res?,
+                            close_brace: close_brace_res.unwrap(),
                         };
 
                         Ok(Some(expr))

@@ -2,7 +2,7 @@ use feo_ast::{
     expression::{AttributeKind, OuterAttr},
     path::SimplePath,
 };
-use feo_error::parser_error::ParserError;
+use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -13,7 +13,7 @@ use feo_types::{
 use crate::{parse::Parse, parser::Parser};
 
 impl Parse for AttributeKind {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -38,7 +38,7 @@ impl Parse for AttributeKind {
 }
 
 impl Parse for OuterAttr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -72,10 +72,10 @@ impl Parse for OuterAttr {
                         parser.advance();
 
                         let attr = OuterAttr {
-                            hash: hash_sign_res?,
-                            open_bracket: open_bracket_res?,
+                            hash: hash_sign_res.unwrap(),
+                            open_bracket: open_bracket_res.unwrap(),
                             attribute: attr_kind,
-                            close_bracket: close_bracket_res?,
+                            close_bracket: close_bracket_res.unwrap(),
                         };
 
                         Ok(Some(attr))

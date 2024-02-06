@@ -2,7 +2,7 @@ use feo_ast::path::{
     PathExprSegment, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment, SimplePath,
     SimplePathSegmentKind,
 };
-use feo_error::parser_error::ParserError;
+use feo_error::handler::ErrorEmitted;
 use feo_types::{
     keyword::KeywordKind, punctuation::PuncKind, utils::DblColon, Identifier, Keyword, Punctuation,
 };
@@ -10,7 +10,7 @@ use feo_types::{
 use crate::{parse::Parse, parser::Parser};
 
 impl Parse for PathIdenSegmentKind {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -35,7 +35,7 @@ impl Parse for PathIdenSegmentKind {
 }
 
 impl Parse for PathInExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -52,7 +52,7 @@ impl Parse for PathInExpr {
                 parser.advance();
 
                 if let Some(next_segment) = PathExprSegment::parse(parser)? {
-                    subsequent_segments.push((next_dbl_colon_res?, next_segment));
+                    subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
                     next_dbl_colon_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
@@ -75,7 +75,7 @@ impl Parse for PathInExpr {
 }
 
 impl Parse for PathType {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -92,7 +92,7 @@ impl Parse for PathType {
                 parser.advance();
 
                 if let Some(next_segment) = PathTypeSegment::parse(parser)? {
-                    subsequent_segments.push((next_dbl_colon_res?, next_segment));
+                    subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
                     next_dbl_colon_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
@@ -115,7 +115,7 @@ impl Parse for PathType {
 }
 
 impl Parse for SimplePathSegmentKind {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -139,7 +139,7 @@ impl Parse for SimplePathSegmentKind {
 }
 
 impl Parse for SimplePath {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ParserError>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
@@ -156,7 +156,7 @@ impl Parse for SimplePath {
                 parser.advance();
 
                 if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
-                    subsequent_segments.push((next_dbl_colon_res?, next_segment));
+                    subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
                     next_dbl_colon_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
