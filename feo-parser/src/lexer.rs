@@ -868,9 +868,9 @@ mod tests {
         let mut lexer = Lexer::new(&source_code, handler);
 
         if let Ok(ts) = lexer.lex() {
-            for tokens in ts.tokens().into_iter() {
-                for token in tokens {
-                    match token {
+            for t in ts.tokens().into_iter() {
+                // for token in tokens {
+                    match t {
                         Token::CharLit(c) => println!("CharLit: {:?}", c.into_inner()),
                         Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
                         Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
@@ -886,7 +886,7 @@ mod tests {
                         Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
                         Token::EOF => println!("end of file"),
                     };
-                }
+                // }
             }
         } else {
             println!(
