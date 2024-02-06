@@ -48,8 +48,8 @@ impl Spanned for Struct {
 pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Expression>));
 
 pub struct StructExprFields {
-    first_field: StructExprField,
-    subsequent_fields: Vec<(Comma, StructExprField)>,
+    pub first_field: StructExprField,
+    pub subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
 // pub struct StructExprField {

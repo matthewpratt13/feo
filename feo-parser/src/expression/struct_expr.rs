@@ -6,19 +6,11 @@ use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
+    utils::Comma,
     Delimiter, Identifier, Punctuation,
 };
 
 use crate::{parse::Parse, parser::Parser};
-
-impl Parse for StructExprFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-}
 
 impl Parse for StructExprField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
@@ -61,6 +53,45 @@ impl Parse for StructExprField {
             } else {
                 todo!()
             }
+        } else {
+            todo!()
+        }
+    }
+}
+
+impl Parse for StructExprFields {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
+
+        if let Some(first_field) = StructExprField::parse(parser)? {
+            let mut comma_res = Punctuation::try_from(parser.current_token());
+
+            while let Ok(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = comma_res
+            {
+                parser.advance();
+
+                if let Some(next_field) = StructExprField::parse(parser)? {
+                    subsequent_fields.push((comma_res.unwrap(), next_field));
+                    comma_res = Punctuation::try_from(parser.current_token());
+                } else {
+                    todo!()
+                }
+            }
+
+            parser.advance();
+
+            let fields = StructExprFields {
+                first_field,
+                subsequent_fields,
+            };
+
+            Ok(Some(fields))
         } else {
             todo!()
         }
