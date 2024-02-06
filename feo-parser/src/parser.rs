@@ -42,14 +42,11 @@ impl Parser {
             })
     }
 
-    pub fn peek_next(&self) -> Result<Token, ParserError> {
+    pub fn peek_next(&self) -> Token {
         self.stream
             .tokens()
             .get(self.pos + 1)
             .cloned()
-            .ok_or(ParserError {
-                error_kind: ParserErrorKind::TokenNotFound,
-                position: Position::new(&self.stream.span().source(), self.pos),
-            })
+            .unwrap_or(Token::EOF)
     }
 }
