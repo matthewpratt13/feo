@@ -31,26 +31,6 @@ pub trait Tokenize {
     ) -> Result<Option<Token>, ErrorEmitted>;
 }
 
-#[derive(Default, Debug, Clone, PartialEq)]
-pub enum TokenType {
-    Int,
-    UInt,
-    U256,
-    Float,
-    String,
-    Char,
-    Bool,
-    Identifier,
-    Keyword,
-    Punctuation,
-    Delimiter,
-    DocComment,
-    EOF,
-
-    #[default]
-    UnsupportedToken,
-}
-
 #[derive(Debug, Clone)]
 pub enum Token {
     CharLit(Literal<char>),
@@ -71,27 +51,6 @@ pub enum Token {
     Punc(Punctuation),
 
     EOF,
-}
-
-impl Token {
-    pub fn token_type(&self) -> TokenType {
-        match self {
-            Token::CharLit(_) => TokenType::Char,
-            Token::StringLit(_) => TokenType::String,
-            Token::BoolLit(_) => TokenType::Bool,
-            Token::IntLit(_) => TokenType::Int,
-            Token::UIntLit(_) => TokenType::UInt,
-            Token::U256Lit(_) => TokenType::U256,
-            Token::FloatLit(_) => TokenType::Float,
-            Token::Iden(_) => TokenType::Identifier,
-            Token::Keyword(_) => TokenType::Keyword,
-            Token::Comment(_) => TokenType::UnsupportedToken,
-            Token::DocComment(_) => TokenType::DocComment,
-            Token::Delim(_) => TokenType::Delimiter,
-            Token::Punc(_) => TokenType::Punctuation,
-            Token::EOF => TokenType::EOF,
-        }
-    }
 }
 
 impl Spanned for Token {
