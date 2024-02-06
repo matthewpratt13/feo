@@ -1,34 +1,12 @@
 #![allow(dead_code)]
 
-use feo_ast::{
-    literal::Literal,
-    token::{Token, TokenStream},
-};
+use feo_ast::token::{Token, TokenStream};
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
     parser_error::{ParserError, ParserErrorKind},
 };
-use feo_types::{
-    primitive::PrimitiveType,
-    span::{Position, Spanned},
-    Delimiter, Identifier, Keyword, Punctuation,
-};
-
-pub enum TokType<T>
-where
-    T: PrimitiveType + Clone,
-{
-    Literal(Literal<T>),
-    Identifier(Identifier),
-    Keyword(Keyword),
-    Punctuation(Punctuation),
-    Delimiter(Delimiter),
-}
-
-pub struct Tok<T: PrimitiveType + Clone> {
-    token_type: TokType<T>,
-}
+use feo_types::span::{Position, Spanned};
 
 pub struct Parser {
     stream: TokenStream,
