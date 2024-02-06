@@ -4,7 +4,8 @@ use std::{iter::Peekable, str::Chars, sync::Arc};
 
 use feo_ast::{
     literal::Literal,
-    token::{Token, TokenStream, Tokenize},
+    token::{Token, TokenStream},
+    tokenize::Tokenize,
 };
 
 use feo_error::{
@@ -870,22 +871,22 @@ mod tests {
         if let Ok(ts) = lexer.lex() {
             for t in ts.tokens().into_iter() {
                 // for token in tokens {
-                    match t {
-                        Token::CharLit(c) => println!("CharLit: {:?}", c.into_inner()),
-                        Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
-                        Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
-                        Token::IntLit(i) => println!("IntLit: {:?}", i.into_inner()),
-                        Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
-                        Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
-                        Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
-                        Token::Iden(id) => println!("Iden: {:?}", id.name),
-                        Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
-                        Token::Comment(c) => println!("Comment: {:?}", c.data),
-                        Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
-                        Token::Delim(d) => println!("Delim: {:?}", d.delim),
-                        Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
-                        Token::EOF => println!("end of file"),
-                    };
+                match t {
+                    Token::CharLit(c) => println!("CharLit: {:?}", c.into_inner()),
+                    Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
+                    Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
+                    Token::IntLit(i) => println!("IntLit: {:?}", i.into_inner()),
+                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
+                    Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
+                    Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
+                    Token::Iden(id) => println!("Iden: {:?}", id.name),
+                    Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
+                    Token::Comment(c) => println!("Comment: {:?}", c.data),
+                    Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
+                    Token::Delim(d) => println!("Delim: {:?}", d.delim),
+                    Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
+                    Token::EOF => println!("end of file"),
+                };
                 // }
             }
         } else {
