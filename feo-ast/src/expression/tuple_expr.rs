@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::{item::TupleStruct, ty::TupleType};
 
-use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::Expression;
 
 pub enum TupleKind {
     Tuple(TupleType),
@@ -28,18 +28,6 @@ pub struct TupleExpr {
     close_parenthesis: Parenthesis,
 }
 
-impl Expression for TupleExpr {}
-
-impl<E> ExprWithoutBlock<E> for TupleExpr {}
-
-impl Assignable for TupleExpr {}
-
-impl BooleanOperand for TupleExpr {}
-
-impl IterableExpr for TupleExpr {}
-
-impl Constant for TupleExpr {}
-
 impl Spanned for TupleExpr {
     fn span(&self) -> Span {
         let start_pos = self.open_parenthesis.span().start();
@@ -53,8 +41,8 @@ impl Spanned for TupleExpr {
 }
 
 pub struct TupleElements {
-    initializer_operands: Vec<(Box<dyn Expression>, Comma)>,
-    trailing_operand_opt: Option<Box<dyn Expression>>,
+    initializer_operands: Vec<(Expression, Comma)>,
+    trailing_operand_opt: Option<Box<Expression>>,
 }
 
 pub struct TupleIndexExpr {
@@ -74,9 +62,3 @@ impl Spanned for TupleIndexExpr {
         span
     }
 }
-
-impl Expression for TupleIndexExpr {}
-
-impl<E> ExprWithoutBlock<E> for TupleIndexExpr {}
-
-impl BooleanOperand for TupleIndexExpr {}

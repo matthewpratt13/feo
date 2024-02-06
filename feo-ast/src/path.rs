@@ -7,12 +7,8 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{
-        Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr,
-    },
     item::Item,
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
-    statement::Statement,
     ty::Type,
 };
 
@@ -25,8 +21,6 @@ pub enum SimplePathSegmentKind {
 
 impl Item for SimplePathSegmentKind {}
 
-impl Statement for SimplePathSegmentKind {}
-
 impl Spanned for SimplePathSegmentKind {
     fn span(&self) -> Span {
         match &self {
@@ -38,6 +32,7 @@ impl Spanned for SimplePathSegmentKind {
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum PathIdenSegmentKind {
     Iden(Identifier),
     KwCrate(KwCrate),
@@ -63,31 +58,13 @@ pub type PathTypeSegment = PathIdenSegmentKind;
 
 pub type PathExpr = PathInExpr;
 
-impl Expression for PathExpr {}
-
-impl<E> ExprWithoutBlock<E> for PathExpr {}
-
-impl Statement for PathExpr {}
-
-impl Assignable for PathExpr {}
-
-impl BooleanOperand for PathExpr {}
-
-impl IterableExpr for PathExpr {}
-
-impl Constant for PathExpr {}
-
 impl Item for PathExpr {}
 
 impl RangePattBound for PathExpr {}
 
 impl Spanned for PathExpr {
     fn span(&self) -> Span {
-        let start_pos = if let Some(d) = &self.dbl_colon_opt {
-            d.span().start()
-        } else {
-            self.first_segment.span().start()
-        };
+        let start_pos = self.first_segment.span().start();
 
         let end_pos = if let Some(s) = self.subsequent_segments.last() {
             s.1.span().end()
@@ -111,18 +88,13 @@ impl PatternWithoutRange for PathPatt {}
 
 // points to either a local variable or an item
 pub struct SimplePath {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: SimplePathSegmentKind,
-    subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
+    pub first_segment: SimplePathSegmentKind,
+    pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
 }
 
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
-        let start_pos = if let Some(d) = &self.dbl_colon_opt {
-            d.span().start()
-        } else {
-            self.first_segment.span().start()
-        };
+        let start_pos = self.first_segment.span().start();
 
         let end_pos = if let Some(s) = self.subsequent_segments.last() {
             s.1.span().end()
@@ -138,27 +110,22 @@ impl Spanned for SimplePath {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct PathInExpr {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: PathExprSegment,
-    subsequent_segments: Vec<(DblColon, PathExprSegment)>,
+    pub first_segment: PathExprSegment,
+    pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
 pub struct PathType {
-    dbl_colon_opt: Option<DblColon>,
-    first_segment: PathTypeSegment,
-    subsequent_segments: Vec<(DblColon, PathExprSegment)>,
+    pub first_segment: PathTypeSegment,
+    pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,
 }
 
 impl Type for PathType {}
 
 impl Spanned for PathType {
     fn span(&self) -> Span {
-        let start_pos = if let Some(d) = &self.dbl_colon_opt {
-            d.span().start()
-        } else {
-            self.first_segment.span().start()
-        };
+        let start_pos = self.first_segment.span().start();
 
         let end_pos = if let Some(s) = self.subsequent_segments.last() {
             s.1.span().end()

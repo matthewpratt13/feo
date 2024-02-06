@@ -5,15 +5,7 @@ use feo_types::{
 
 use crate::{pattern::Pattern, ty::Type};
 
-use super::{
-    BlockExpr, BooleanOperand, ExprWithBlock, ExprWithoutBlock, Expression, IterableExpr, OuterAttr,
-};
-
-pub trait ClosureExpr
-where
-    Self: Sized + Expression + BooleanOperand + IterableExpr + Type,
-{
-}
+use super::{BlockExpr, Expression, OuterAttr};
 
 pub enum ClosureParamsOpt {
     None(DblPipe),
@@ -37,25 +29,13 @@ impl Spanned for ClosureParamsOpt {
     }
 }
 
-pub struct ClosureWithBlock<T> {
+pub struct ClosureWithBlock {
     params: ClosureParamsOpt,
     return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
-    block: BlockExpr<T>,
+    block: BlockExpr,
 }
 
-impl<T> ClosureExpr for ClosureWithBlock<T> where T: 'static {}
-
-impl<T> Expression for ClosureWithBlock<T> {}
-
-impl<T, E> ExprWithBlock<E> for ClosureWithBlock<T> {}
-
-impl<T> BooleanOperand for ClosureWithBlock<T> where T: 'static {}
-
-impl<T> IterableExpr for ClosureWithBlock<T> where T: 'static {}
-
-impl<T> Type for ClosureWithBlock<T> {}
-
-impl<T> Spanned for ClosureWithBlock<T> {
+impl Spanned for ClosureWithBlock {
     fn span(&self) -> Span {
         let s1 = self.params.span();
         let s2 = self.block.span();
@@ -72,20 +52,12 @@ impl<T> Spanned for ClosureWithBlock<T> {
     }
 }
 
+impl Type for ClosureWithBlock {}
+
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
-    body_operand: Box<dyn Expression>,
+    body_operand: Box<Expression>,
 }
-
-impl ClosureExpr for ClosureWithoutBlock {}
-
-impl Expression for ClosureWithoutBlock {}
-
-impl<E> ExprWithoutBlock<E> for ClosureWithoutBlock {}
-
-impl BooleanOperand for ClosureWithoutBlock {}
-
-impl IterableExpr for ClosureWithoutBlock {}
 
 impl Type for ClosureWithoutBlock {}
 

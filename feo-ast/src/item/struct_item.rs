@@ -4,11 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    expression::{Constant, OuterAttr},
-    statement::Statement,
-    ty::Type,
-};
+use crate::{expression::OuterAttr, ty::Type};
 
 use super::{Item, VisibilityKind, WhereClause};
 
@@ -34,8 +30,6 @@ pub struct Struct {
 impl StructItem for Struct {}
 
 impl Item for Struct {}
-
-impl Statement for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -86,8 +80,6 @@ impl StructItem for TupleStruct {}
 
 impl Item for TupleStruct {}
 
-impl Statement for TupleStruct {}
-
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
@@ -131,10 +123,6 @@ pub struct UnitStruct {
 impl StructItem for UnitStruct {}
 
 impl Item for UnitStruct {}
-
-impl Statement for UnitStruct {}
-
-impl Constant for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {

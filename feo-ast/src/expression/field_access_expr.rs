@@ -5,23 +5,13 @@ use feo_types::{
 
 use crate::item::StructFieldName;
 
-use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::Assignable;
 
 pub struct FieldAccessExpr {
-    container_operand: Box<dyn Assignable>,
+    container_operand: Box<Assignable>,
     dot: Dot,
     field_name: StructFieldName,
 }
-
-impl Expression for FieldAccessExpr {}
-
-impl<E> ExprWithoutBlock<E> for FieldAccessExpr {}
-
-impl BooleanOperand for FieldAccessExpr {}
-
-impl IterableExpr for FieldAccessExpr {}
-
-impl Constant for FieldAccessExpr {}
 
 impl Spanned for FieldAccessExpr {
     fn span(&self) -> Span {

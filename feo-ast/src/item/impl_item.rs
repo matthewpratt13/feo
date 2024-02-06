@@ -6,47 +6,36 @@ use feo_types::{
 use crate::{
     expression::{InnerAttr, OuterAttr},
     path::PathType,
-    statement::Statement,
     ty::Type,
 };
 
 use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};
 
-pub trait ImplItem
-where
-    Self: Sized + Item,
-{
+pub enum InherentImplItem {
+    Constant(ConstantItem),
+    FuncDef(FunctionDef),
 }
 
-pub enum InherentImplItem<T> {
+pub enum TraitImplItem {
     Constant(ConstantItem),
-    FuncDef(FunctionDef<T>),
-}
-
-pub enum TraitImplItem<T> {
-    Constant(ConstantItem),
-    FuncDef(FunctionDef<T>),
+    FuncDef(FunctionDef),
     TypeAlias(TypeAliasDef),
 }
 
-pub struct InherentImpl<T> {
+pub struct InherentImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     nominal_type: Box<dyn Type>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<InherentImplItem<T>>,
+    associated_items: Vec<InherentImplItem>,
     close_brace: Brace,
 }
 
-impl<T> ImplItem for InherentImpl<T> {}
+impl Item for InherentImpl {}
 
-impl<T> Item for InherentImpl<T> {}
-
-impl<T> Statement for InherentImpl<T> {}
-
-impl<T> Spanned for InherentImpl<T> {
+impl Spanned for InherentImpl {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()
@@ -63,7 +52,7 @@ impl<T> Spanned for InherentImpl<T> {
     }
 }
 
-pub struct TraitImpl<T> {
+pub struct TraitImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     implemented_trait_path: PathType,
@@ -72,17 +61,13 @@ pub struct TraitImpl<T> {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<TraitImplItem<T>>,
+    associated_items: Vec<TraitImplItem>,
     close_brace: Brace,
 }
 
-impl<T> ImplItem for TraitImpl<T> {}
+impl Item for TraitImpl {}
 
-impl<T> Item for TraitImpl<T> {}
-
-impl<T> Statement for TraitImpl<T> {}
-
-impl<T> Spanned for TraitImpl<T> {
+impl Spanned for TraitImpl {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()

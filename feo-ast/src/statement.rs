@@ -6,7 +6,14 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Assignable, Constant, Expression, OuterAttr},
+    expression::{Assignable, Expression, OuterAttr},
+    item::{
+        ConstantItem, EnumItem, EnumVariantStruct, ExternCrateDecl, FunctionItem, ImportDecl,
+        InherentImplItem, ModWithBody, ModWithoutBody, PathSubsetRecursive, PathWildcard,
+        PathWithAsClause, StaticItem, Struct, TraitDef, TraitImplItem, TupleStruct, TypeAliasDef,
+        UnitStruct,
+    },
+    path::{PathExpr, SimplePathSegmentKind},
     pattern::Pattern,
     ty::Type,
 };
@@ -18,20 +25,42 @@ use crate::{
 //  - item declaration
 //  - expression statement
 
-pub trait Statement
-where
-    Self: Spanned,
-{
+// pub trait Statement
+// where
+//     Self: Spanned,
+// {
+// }
+
+pub enum Statement {
+    ConstantItem(ConstantItem),
+    StaticItem(StaticItem),
+    EnumItem(EnumItem),
+    EnumVariantStruct(EnumVariantStruct),
+    ExternCrateDecl(ExternCrateDecl),
+    FunctionItem(FunctionItem),
+    InherentImplItem(InherentImplItem),
+    TraitImplItem(TraitImplItem),
+    ImportDecl(ImportDecl),
+    PathWildcard(PathWildcard),
+    PathSubsetRecursive(PathSubsetRecursive),
+    PathWithAsClause(PathWithAsClause),
+    ModWithBody(ModWithBody),
+    ModWithoutBody(ModWithoutBody),
+    StructItem(Struct),
+    TupleStructItem(TupleStruct),
+    UnitStructItem(UnitStruct),
+    TraitDef(TraitDef),
+    TypeAliasDef(TypeAliasDef),
+    SimplePathSegmentKind(SimplePathSegmentKind),
+    PathExpr(PathExpr),
+    ExprStatement(ExprStatement),
+    LetStatement(LetStatement),
 }
 
 pub struct ExprStatement {
-    expression: Box<dyn Expression>,
+    expression: Expression,
     semicolon_opt: Option<Semicolon>,
 }
-
-impl Statement for ExprStatement {}
-
-impl Constant for ExprStatement {}
 
 impl Spanned for ExprStatement {
     fn span(&self) -> Span {
@@ -56,15 +85,11 @@ pub struct LetStatement {
     kw_let: KwLet,
     pattern: Box<dyn Pattern>,
     type_ann_opt: Option<(Colon, Box<dyn Type>)>,
-    assignment_opt: Option<(Equals, Box<dyn Assignable>)>,
+    assignment_opt: Option<(Equals, Assignable)>,
     semicolon: Semicolon,
 }
 
-impl Statement for LetStatement {}
-
 impl Pattern for LetStatement {}
-
-impl Constant for LetStatement {}
 
 impl Spanned for LetStatement {
     fn span(&self) -> Span {

@@ -5,38 +5,17 @@ use feo_types::{
 
 use crate::pattern::Pattern;
 
-use super::{
-    Assignable, BlockExpr, BooleanOperand, Constant, ExprWithBlock, Expression, InnerAttr,
-    IterableExpr, OuterAttr,
-};
+use super::{Assignable, BlockExpr, BooleanOperand, Expression, InnerAttr, OuterAttr};
 
-pub trait ConditionalExpr<E>
-where
-    Self: ExprWithBlock<E> + BooleanOperand + IterableExpr + Constant,
-{
-}
-
-pub struct IfExpr<T> {
+pub struct IfExpr {
     kw_if: KwIf,
-    condition_operand: Box<dyn BooleanOperand>,
-    if_block: BlockExpr<T>,
-    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr<T>>)>>,
-    else_block_opt: Option<(KwElse, BlockExpr<T>)>,
+    condition_operand: Box<BooleanOperand>,
+    if_block: Box<BlockExpr>,
+    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
+    else_block_opt: Option<(KwElse, BlockExpr)>,
 }
 
-impl<T, E> ConditionalExpr<E> for IfExpr<T> where T: 'static {}
-
-impl<T> Expression for IfExpr<T> {}
-
-impl<T, E> ExprWithBlock<E> for IfExpr<T> {}
-
-impl<T> BooleanOperand for IfExpr<T> where T: 'static {}
-
-impl<T> IterableExpr for IfExpr<T> where T: 'static {}
-
-impl<T> Constant for IfExpr<T> where T: 'static {}
-
-impl<T> Spanned for IfExpr<T> {
+impl Spanned for IfExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_if.span();
         let s2 = match &self.else_block_opt {
@@ -74,24 +53,12 @@ impl<T> Spanned for IfExpr<T> {
 
 pub struct MatchExpr {
     kw_match: KwMatch,
-    scrutinee: Box<dyn Assignable>,
+    scrutinee: Box<Assignable>, // except struct expression
     open_brace: Brace,
     attributes: Vec<InnerAttr>,
     match_arms_opt: Option<MatchArms>,
     close_brace: Brace,
 }
-
-impl<E> ConditionalExpr<E> for MatchExpr {}
-
-impl Expression for MatchExpr {}
-
-impl<E> ExprWithBlock<E> for MatchExpr {}
-
-impl BooleanOperand for MatchExpr {}
-
-impl IterableExpr for MatchExpr {}
-
-impl Constant for MatchExpr {}
 
 impl Pattern for MatchExpr {}
 
@@ -113,8 +80,8 @@ impl Spanned for MatchExpr {
 }
 
 pub struct MatchArms {
-    arms: Vec<(MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>)>,
-    final_arm: (MatchArm, FatArrow, Box<dyn Expression>, Option<Comma>),
+    arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
+    final_arm: (MatchArm, FatArrow, Box<Expression>, Option<Comma>),
 }
 
 pub struct MatchArm {
@@ -125,5 +92,5 @@ pub struct MatchArm {
 
 pub struct MatchArmGuard {
     kw_if: KwIf,
-    operand: Box<dyn BooleanOperand>,
+    operand: Box<BooleanOperand>,
 }

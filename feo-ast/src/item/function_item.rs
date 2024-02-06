@@ -7,24 +7,21 @@ use feo_types::{
 use crate::{
     expression::{ExprWithBlock, OuterAttr},
     pattern::Pattern,
-    statement::Statement,
     ty::Type,
 };
 
 use super::{Item, VisibilityKind};
 
-pub enum FunctionItem<T> {
+pub enum FunctionItem {
     FuncSig((FunctionSig, Semicolon)),
-    FuncDef(FunctionDef<T>),
+    FuncDef(FunctionDef),
 }
 
-impl<T> Item for FunctionItem<T> {}
+impl Item for FunctionItem {}
 
-impl<T> Statement for FunctionItem<T> {}
+impl Type for FunctionItem {}
 
-impl<T> Type for FunctionItem<T> {}
-
-impl<T> Spanned for FunctionItem<T> {
+impl Spanned for FunctionItem {
     fn span(&self) -> Span {
         match self {
             FunctionItem::FuncSig(fs) => {
@@ -50,12 +47,12 @@ pub enum FuncOrMethodParam {
     MethodParam(MethodParam),
 }
 
-pub struct FunctionDef<T> {
+pub struct FunctionDef {
     function_sig: FunctionSig,
-    function_body: Box<dyn ExprWithBlock<T>>,
+    function_body: ExprWithBlock,
 }
 
-impl<T> Spanned for FunctionDef<T> {
+impl Spanned for FunctionDef {
     fn span(&self) -> Span {
         let s1 = match self.function_sig.attributes.first() {
             Some(a) => a.span(),

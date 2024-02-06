@@ -5,22 +5,14 @@ use feo_types::{
 
 use crate::{path::PathExprSegment, pattern::Pattern};
 
-use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
+use super::Expression;
 
 pub struct FunctionCallExpr {
-    function_operand: Box<dyn Expression>,
+    function_operand: Box<Expression>,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
 }
-
-impl Expression for FunctionCallExpr {}
-
-impl<E> ExprWithoutBlock<E> for FunctionCallExpr {}
-
-impl BooleanOperand for FunctionCallExpr {}
-
-impl IterableExpr for FunctionCallExpr {}
 
 impl Spanned for FunctionCallExpr {
     fn span(&self) -> Span {
@@ -40,21 +32,13 @@ impl Spanned for FunctionCallExpr {
 }
 
 pub struct MethodCallExpr {
-    receiver: Box<dyn Expression>,
+    receiver: Box<Expression>,
     dot: Dot,
     method_path: PathExprSegment,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
 }
-
-impl Expression for MethodCallExpr {}
-
-impl<E> ExprWithoutBlock<E> for MethodCallExpr {}
-
-impl BooleanOperand for MethodCallExpr {}
-
-impl IterableExpr for MethodCallExpr {}
 
 impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
@@ -74,8 +58,8 @@ impl Spanned for MethodCallExpr {
 }
 
 pub struct CallParams {
-    first_param: Box<dyn Expression>,
-    subsequent_params: Vec<(Comma, Box<dyn Expression>)>,
+    first_param: Box<Expression>,
+    subsequent_params: Vec<(Comma, Expression)>,
     trailing_comma_opt: Option<Comma>,
 }
 

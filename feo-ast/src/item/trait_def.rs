@@ -4,24 +4,21 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    expression::{InnerAttr, OuterAttr},
-    statement::Statement,
-};
+use crate::expression::{InnerAttr, OuterAttr};
 
 use super::{
     ConstantItem, FunctionDef, FunctionSig, Item, TypeAliasDef, TypeParamBounds, VisibilityKind,
     WhereClause,
 };
 
-pub enum TraitDefItem<T> {
+pub enum TraitDefItem {
     Constant(ConstantItem),
-    FuncDef(FunctionDef<T>),
+    FuncDef(FunctionDef),
     FuncSig(FunctionSig),
     TypeAlias(TypeAliasDef),
 }
 
-pub struct TraitDef<T> {
+pub struct TraitDef {
     outer_attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_trait: KwTrait,
@@ -30,15 +27,13 @@ pub struct TraitDef<T> {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
-    associated_items: Vec<TraitDefItem<T>>,
+    associated_items: Vec<TraitDefItem>,
     close_brace: Brace,
 }
 
-impl<T> Item for TraitDef<T> {}
+impl Item for TraitDef {}
 
-impl<T> Statement for TraitDef<T> {}
-
-impl<T> Spanned for TraitDef<T> {
+impl Spanned for TraitDef {
     fn span(&self) -> Span {
         let start_pos = match self.outer_attributes.first() {
             Some(a) => a.span().start(),

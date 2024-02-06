@@ -4,8 +4,6 @@ use feo_types::{
     Identifier,
 };
 
-use crate::statement::Statement;
-
 use super::Item;
 
 pub enum CrateRefKind {
@@ -21,8 +19,6 @@ pub struct ExternCrateDecl {
 }
 
 impl Item for ExternCrateDecl {}
-
-impl Statement for ExternCrateDecl {}
 
 impl Spanned for ExternCrateDecl {
     fn span(&self) -> Span {

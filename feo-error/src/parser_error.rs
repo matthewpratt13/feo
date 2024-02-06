@@ -12,6 +12,10 @@ pub enum ParserErrorKind {
     ParseU256Error,
     ParseFloatError,
     CharPositionNotFound,
+    MismatchedTokens,
+    TokenNotFound,
+    InvalidToken,
+    UnexpectedToken,
 
     #[default]
     UnknownError,
@@ -27,6 +31,10 @@ impl fmt::Display for ParserErrorKind {
             ParserErrorKind::ParseU256Error => write!(f, "unable to parse u256"),
             ParserErrorKind::ParseFloatError => write!(f, "unable to parse float"),
             ParserErrorKind::CharPositionNotFound => write!(f, "cannot detect char position"),
+            ParserErrorKind::MismatchedTokens => write!(f, "mismatched tokens"),
+            ParserErrorKind::TokenNotFound => write!(f, "token not found"),
+            ParserErrorKind::InvalidToken => write!(f, "invalid token"),
+            ParserErrorKind::UnexpectedToken => write!(f, "unexpected token"),
             ParserErrorKind::UnknownError => write!(f, "unknown error"),
         }
     }

@@ -5,8 +5,6 @@ use feo_types::{
 
 use crate::path::SimplePath;
 
-use super::{ExprWithBlock, ExprWithoutBlock, Expression};
-
 pub enum AttributeKind {
     KwAbstract(KwAbstract),
     KwExport(KwExport),
@@ -14,6 +12,8 @@ pub enum AttributeKind {
     KwUnsafe(KwUnsafe),
 
     Path(SimplePath),
+
+    None,
 }
 
 pub struct InnerAttr {
@@ -22,10 +22,6 @@ pub struct InnerAttr {
     attribute: AttributeKind,
     close_bracket: Bracket,
 }
-
-impl Expression for InnerAttr {}
-
-impl<E> ExprWithoutBlock<E> for InnerAttr {}
 
 impl Spanned for InnerAttr {
     fn span(&self) -> Span {
@@ -45,17 +41,11 @@ impl Spanned for InnerAttr {
 }
 
 pub struct OuterAttr {
-    hash: HashSign,
-    open_bracket: Bracket,
-    attribute: AttributeKind,
-    close_bracket: Bracket,
+    pub hash: HashSign,
+    pub open_bracket: Bracket,
+    pub attribute: AttributeKind,
+    pub close_bracket: Bracket,
 }
-
-impl Expression for OuterAttr {}
-
-impl<E> ExprWithBlock<E> for OuterAttr {}
-
-impl<E> ExprWithoutBlock<E> for OuterAttr {}
 
 impl Spanned for OuterAttr {
     fn span(&self) -> Span {

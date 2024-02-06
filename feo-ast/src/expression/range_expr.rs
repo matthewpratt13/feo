@@ -3,39 +3,37 @@ use feo_types::{
     utils::{DblDot, DotDotEquals},
 };
 
-use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::Expression;
 
-pub trait RangeExpr<E>
-where
-    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr + Constant,
-{
+pub enum RangeExprKind {
+    RangeFullExpr(RangeFullExpr),
+    RangeFromToExpr(RangeFromToExpr),
+    RangeFromExpr(RangeFromExpr),
+    RangeToExpr(RangeToExpr),
+    RangeInclusiveExpr(RangeInclusiveExpr),
+    RangeToInclusiveExpr(RangeToInclusiveExpr),
+}
+
+impl Spanned for RangeExprKind {
+    fn span(&self) -> Span {
+        match self {
+            RangeExprKind::RangeFullExpr(rfe) => rfe.span(),
+            RangeExprKind::RangeFromToExpr(rft) => rft.span(),
+            RangeExprKind::RangeFromExpr(rf) => rf.span(),
+            RangeExprKind::RangeToExpr(rt) => rt.span(),
+            RangeExprKind::RangeInclusiveExpr(ri) => ri.span(),
+            RangeExprKind::RangeToInclusiveExpr(rti) => rti.span(),
+        }
+    }
 }
 
 pub type RangeFullExpr = DblDot;
 
-impl<E> RangeExpr<E> for RangeFullExpr {}
-
-impl BooleanOperand for RangeFullExpr {}
-
-impl IterableExpr for RangeFullExpr {}
-
 pub struct RangeFromToExpr {
-    from_operand: Box<dyn Expression>,
+    from_operand: Box<Expression>,
     dbl_dot: DblDot,
-    to_operand_excl: Box<dyn Expression>,
+    to_operand_excl: Box<Expression>,
 }
-
-impl<E> RangeExpr<E> for RangeFromToExpr {}
-
-impl Expression for RangeFromToExpr {}
-
-impl<E> ExprWithoutBlock<E> for RangeFromToExpr {}
-
-impl BooleanOperand for RangeFromToExpr {}
-
-impl IterableExpr for RangeFromToExpr {}
-
-impl Constant for RangeFromToExpr {}
 
 impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
@@ -50,21 +48,9 @@ impl Spanned for RangeFromToExpr {
 }
 
 pub struct RangeFromExpr {
-    from_operand: Box<dyn Expression>,
+    from_operand: Box<Expression>,
     dbl_dot: DblDot,
 }
-
-impl<E> RangeExpr<E> for RangeFromExpr {}
-
-impl Expression for RangeFromExpr {}
-
-impl<E> ExprWithoutBlock<E> for RangeFromExpr {}
-
-impl BooleanOperand for RangeFromExpr {}
-
-impl IterableExpr for RangeFromExpr {}
-
-impl Constant for RangeFromExpr {}
 
 impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
@@ -80,20 +66,8 @@ impl Spanned for RangeFromExpr {
 
 pub struct RangeToExpr {
     dbl_dot: DblDot,
-    to_operand: Box<dyn Expression>,
+    to_operand: Box<Expression>,
 }
-
-impl<E> RangeExpr<E> for RangeToExpr {}
-
-impl Expression for RangeToExpr {}
-
-impl<E> ExprWithoutBlock<E> for RangeToExpr {}
-
-impl BooleanOperand for RangeToExpr {}
-
-impl IterableExpr for RangeToExpr {}
-
-impl Constant for RangeToExpr {}
 
 impl Spanned for RangeToExpr {
     fn span(&self) -> Span {
@@ -108,22 +82,10 @@ impl Spanned for RangeToExpr {
 }
 
 pub struct RangeInclusiveExpr {
-    from_operand: Box<dyn Expression>,
+    from_operand: Box<Expression>,
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<dyn Expression>,
+    to_operand_incl: Box<Expression>,
 }
-
-impl<E> RangeExpr<E> for RangeInclusiveExpr {}
-
-impl Expression for RangeInclusiveExpr {}
-
-impl<E> ExprWithoutBlock<E> for RangeInclusiveExpr {}
-
-impl BooleanOperand for RangeInclusiveExpr {}
-
-impl IterableExpr for RangeInclusiveExpr {}
-
-impl Constant for RangeInclusiveExpr {}
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
@@ -139,20 +101,8 @@ impl Spanned for RangeInclusiveExpr {
 
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<dyn Expression>,
+    to_operand_incl: Box<Expression>,
 }
-
-impl<E> RangeExpr<E> for RangeToInclusiveExpr {}
-
-impl Expression for RangeToInclusiveExpr {}
-
-impl<E> ExprWithoutBlock<E> for RangeToInclusiveExpr {}
-
-impl BooleanOperand for RangeToInclusiveExpr {}
-
-impl IterableExpr for RangeToInclusiveExpr {}
-
-impl Constant for RangeToInclusiveExpr {}
 
 impl Spanned for RangeToInclusiveExpr {
     fn span(&self) -> Span {

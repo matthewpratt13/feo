@@ -1,8 +1,11 @@
-mod expression;
-mod item;
+pub mod expression;
+pub mod item;
 pub mod literal;
-mod path;
-mod pattern;
-mod statement;
+
+pub mod path;
+
+pub mod pattern;
+pub mod statement;
 pub mod token;
-mod ty;
+pub mod tokenize;
+pub mod ty;

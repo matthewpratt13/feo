@@ -4,25 +4,13 @@ use feo_types::{
     utils::{Bracket, Comma, Semicolon},
 };
 
-use super::{Assignable, BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::IterableExpr;
 
 pub struct ArrayExpr {
     open_bracket: Bracket,
     elements_opt: Option<ArrayElements>,
     close_bracket: Bracket,
 }
-
-impl Expression for ArrayExpr {}
-
-impl<E> ExprWithoutBlock<E> for ArrayExpr {}
-
-impl BooleanOperand for ArrayExpr {}
-
-impl IterableExpr for ArrayExpr {}
-
-impl Assignable for ArrayExpr {}
-
-impl Constant for ArrayExpr {}
 
 impl Spanned for ArrayExpr {
     fn span(&self) -> Span {
@@ -42,13 +30,13 @@ impl Spanned for ArrayExpr {
 }
 
 pub struct ArrayElements {
-    first_element: Box<dyn IterableExpr>,
-    subsequent_elements: Vec<(Comma, Box<dyn IterableExpr>)>,
+    first_element: Box<IterableExpr>,
+    subsequent_elements: Vec<(Comma, IterableExpr)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 pub struct ArrayWithSingleRepeatedValue {
-    repeat_operand: Box<dyn IterableExpr>,
+    repeat_operand: IterableExpr,
     semicolon: Semicolon,
     num_repeats: Primitive<u64>,
 }
@@ -59,16 +47,6 @@ pub struct IndexExpr {
     index: Primitive<u64>,
     close_bracket: Bracket,
 }
-
-impl Expression for IndexExpr {}
-
-impl<E> ExprWithoutBlock<E> for IndexExpr {}
-
-impl BooleanOperand for IndexExpr {}
-
-impl IterableExpr for IndexExpr {}
-
-impl Constant for IndexExpr {}
 
 impl Spanned for IndexExpr {
     fn span(&self) -> Span {

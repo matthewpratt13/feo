@@ -3,23 +3,13 @@ use feo_types::{
     utils::Parenthesis,
 };
 
-use super::{BooleanOperand, Constant, ExprWithoutBlock, Expression, IterableExpr};
+use super::Expression;
 
 pub struct ParenthesizedExpr {
     open_parenthesis: Parenthesis,
-    enclosed_operand: Box<dyn Expression>,
+    enclosed_operand: Box<Expression>,
     close_parenthesis: Parenthesis,
 }
-
-impl Expression for ParenthesizedExpr {}
-
-impl<E> ExprWithoutBlock<E> for ParenthesizedExpr {}
-
-impl BooleanOperand for ParenthesizedExpr {}
-
-impl IterableExpr for ParenthesizedExpr {}
-
-impl Constant for ParenthesizedExpr {}
 
 impl Spanned for ParenthesizedExpr {
     fn span(&self) -> Span {

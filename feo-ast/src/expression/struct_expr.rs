@@ -6,30 +6,30 @@ use feo_types::{
 
 use crate::{path::PathInExpr, ty::Type};
 
-use super::{Assignable, Constant, ExprWithoutBlock, Expression, OuterAttr};
+use super::{Expression, OuterAttr};
 
-pub trait StructExpr<E>
-where
-    Self: ExprWithoutBlock<E> + Constant,
-{
+pub enum StructKind {
+    Struct(Struct),
+    TupleStruct(TupleStruct),
+    UnitStruct(UnitStruct),
+}
+
+impl Spanned for StructKind {
+    fn span(&self) -> Span {
+        match self {
+            StructKind::Struct(s) => s.span(),
+            StructKind::TupleStruct(ts) => ts.span(),
+            StructKind::UnitStruct(us) => us.span(),
+        }
+    }
 }
 
 pub struct Struct {
-    item_path: PathInExpr,
-    open_brace: Brace,
-    struct_expr_fields_opt: Option<StructExprFields>,
-    close_brace: Brace,
+    pub item_path: PathInExpr,
+    pub open_brace: Brace,
+    pub struct_expr_fields_opt: Option<StructExprFields>,
+    pub close_brace: Brace,
 }
-
-impl<E> StructExpr<E> for Struct {}
-
-impl Expression for Struct {}
-
-impl<E> ExprWithoutBlock<E> for Struct {}
-
-impl Assignable for Struct {}
-
-impl Constant for Struct {}
 
 impl Type for Struct {}
 
@@ -45,36 +45,24 @@ impl Spanned for Struct {
     }
 }
 
+pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Expression>));
+
 pub struct StructExprFields {
     first_field: StructExprField,
     subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
-pub struct StructExprField {
-    attributes: Vec<OuterAttr>,
-    data: (Identifier, Colon, Box<dyn Expression>),
-}
+// pub struct StructExprField {
+//     attributes: Vec<OuterAttr>,
+//     data: (Identifier, Colon, Box<dyn Expression>),
+// }
 
 pub struct TupleStruct {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
-    params_opt: Option<(
-        Box<dyn Expression>,
-        Vec<(Comma, Box<dyn Expression>)>,
-        Option<Comma>,
-    )>,
+    params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Option<Comma>)>,
     close_parenthesis: Parenthesis,
 }
-
-impl<E> StructExpr<E> for TupleStruct {}
-
-impl Expression for TupleStruct {}
-
-impl<E> ExprWithoutBlock<E> for TupleStruct {}
-
-impl Assignable for TupleStruct {}
-
-impl Constant for TupleStruct {}
 
 impl Type for TupleStruct {}
 
@@ -91,16 +79,6 @@ impl Spanned for TupleStruct {
 }
 
 pub struct UnitStruct(PathInExpr);
-
-impl<E> StructExpr<E> for UnitStruct {}
-
-impl Expression for UnitStruct {}
-
-impl<E> ExprWithoutBlock<E> for UnitStruct {}
-
-impl Assignable for UnitStruct {}
-
-impl Constant for UnitStruct {}
 
 impl Type for UnitStruct {}
 

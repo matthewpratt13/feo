@@ -12,14 +12,34 @@ use feo_types::{
 
 // TODO: start using `Span::join()` from here
 
-use super::{
-    Assignable, BooleanOperand, Castable, Constant, ExprWithoutBlock, Expression, IterableExpr,
-};
+use super::{Assignable, BooleanOperand, Castable, Expression};
 
-pub trait OperatorExpr<E>
-where
-    Self: ExprWithoutBlock<E> + BooleanOperand + IterableExpr,
-{
+pub enum OperatorExprKind {
+    ArithmeticOrLogical(ArithmeticOrLogicalExpr),
+    Comparison(ComparisonExpr),
+    CompoundAssign(CompoundAssignmentExpr),
+    Dereference(DereferenceExpr),
+    LazyBool(LazyBoolExpr),
+    Negation(NegationExpr),
+    Reference(ReferenceExpr),
+    TypeCast(TypeCastExpr),
+    UnwrapExpr(UnwrapExpr),
+}
+
+impl Spanned for OperatorExprKind {
+    fn span(&self) -> Span {
+        match self {
+            OperatorExprKind::ArithmeticOrLogical(al) => al.span(),
+            OperatorExprKind::Comparison(c) => c.span(),
+            OperatorExprKind::CompoundAssign(ca) => ca.span(),
+            OperatorExprKind::Dereference(d) => d.span(),
+            OperatorExprKind::LazyBool(lb) => lb.span(),
+            OperatorExprKind::Negation(n) => n.span(),
+            OperatorExprKind::Reference(r) => r.span(),
+            OperatorExprKind::TypeCast(tc) => tc.span(),
+            OperatorExprKind::UnwrapExpr(u) => u.span(),
+        }
+    }
 }
 
 pub enum ArithmeticOrLogicalOperatorKind {
@@ -71,15 +91,12 @@ impl Spanned for NegationOperatorKind {
     }
 }
 
-pub enum UnwrapOperandKind<T: Spanned> {
-    Option(Option<T>),
-    Result(Result<T, CompilerError>),
+pub enum UnwrapOperandKind {
+    Option(Option<Box<Expression>>),
+    Result(Result<Box<Expression>, CompilerError>),
 }
 
-impl<T> Spanned for UnwrapOperandKind<T>
-where
-    T: Spanned,
-{
+impl Spanned for UnwrapOperandKind {
     fn span(&self) -> Span {
         match self {
             UnwrapOperandKind::Option(o) => {
@@ -106,22 +123,10 @@ pub type DerefOperator = Asterisk;
 pub type RefOperator = (Ampersand, Option<KwMut>);
 
 pub struct ArithmeticOrLogicalExpr {
-    lhs: Box<dyn Expression>,
+    lhs: Box<Expression>,
     operator: ArithmeticOrLogicalOperatorKind,
-    rhs: Box<dyn Expression>,
+    rhs: Box<Expression>,
 }
-
-impl<E> OperatorExpr<E> for ArithmeticOrLogicalExpr {}
-
-impl Expression for ArithmeticOrLogicalExpr {}
-
-impl<E> ExprWithoutBlock<E> for ArithmeticOrLogicalExpr {}
-
-impl BooleanOperand for ArithmeticOrLogicalExpr {}
-
-impl IterableExpr for ArithmeticOrLogicalExpr {}
-
-impl Constant for ArithmeticOrLogicalExpr {}
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
@@ -136,22 +141,10 @@ impl Spanned for ArithmeticOrLogicalExpr {
 }
 
 pub struct AssignmentExpr {
-    assignee: Box<dyn Expression>,
+    assignee: Box<Expression>,
     operator: AssignOperator,
-    new_value: Box<dyn Expression>,
+    new_value: Box<Expression>,
 }
-
-impl<E> OperatorExpr<E> for AssignmentExpr {}
-
-impl Expression for AssignmentExpr {}
-
-impl<E> ExprWithoutBlock<E> for AssignmentExpr {}
-
-impl BooleanOperand for AssignmentExpr {}
-
-impl Constant for AssignmentExpr {}
-
-impl IterableExpr for AssignmentExpr {}
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
@@ -166,22 +159,10 @@ impl Spanned for AssignmentExpr {
 }
 
 pub struct CompoundAssignmentExpr {
-    assignee: Box<dyn Assignable>,
+    assignee: Box<Assignable>,
     operator: CompoundAssignOperatorKind,
-    new_value: Box<dyn Expression>,
+    new_value: Box<Expression>,
 }
-
-impl<E> OperatorExpr<E> for CompoundAssignmentExpr {}
-
-impl Expression for CompoundAssignmentExpr {}
-
-impl<E> ExprWithoutBlock<E> for CompoundAssignmentExpr {}
-
-impl BooleanOperand for CompoundAssignmentExpr {}
-
-impl IterableExpr for CompoundAssignmentExpr {}
-
-impl Constant for CompoundAssignmentExpr {}
 
 impl Spanned for CompoundAssignmentExpr {
     fn span(&self) -> Span {
@@ -196,22 +177,10 @@ impl Spanned for CompoundAssignmentExpr {
 }
 
 pub struct ComparisonExpr {
-    lhs: Box<dyn Expression>,
+    lhs: Box<Expression>,
     operator: ComparisonOperatorKind,
-    rhs: Box<dyn Expression>,
+    rhs: Box<Expression>,
 }
-
-impl<E> OperatorExpr<E> for ComparisonExpr {}
-
-impl Expression for ComparisonExpr {}
-
-impl<E> ExprWithoutBlock<E> for ComparisonExpr {}
-
-impl BooleanOperand for ComparisonExpr {}
-
-impl IterableExpr for ComparisonExpr {}
-
-impl Constant for ComparisonExpr {}
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
@@ -225,24 +194,12 @@ impl Spanned for ComparisonExpr {
     }
 }
 
-pub struct DerefExpr {
+pub struct DereferenceExpr {
     operator: DerefOperator,
-    operand: Box<dyn Assignable>,
+    operand: Box<Assignable>,
 }
 
-impl<E> OperatorExpr<E> for DerefExpr {}
-
-impl Expression for DerefExpr {}
-
-impl<E> ExprWithoutBlock<E> for DerefExpr {}
-
-impl BooleanOperand for DerefExpr {}
-
-impl IterableExpr for DerefExpr {}
-
-impl Constant for DerefExpr {}
-
-impl Spanned for DerefExpr {
+impl Spanned for DereferenceExpr {
     fn span(&self) -> Span {
         let start_pos = self.operator.span().start();
         let end_pos = self.operand.span().end();
@@ -255,22 +212,10 @@ impl Spanned for DerefExpr {
 }
 
 pub struct LazyBoolExpr {
-    lhs: Box<dyn BooleanOperand>,
+    lhs: Box<BooleanOperand>,
     operator: LazyBoolOperatorKind,
-    rhs: Box<dyn BooleanOperand>,
+    rhs: Box<BooleanOperand>,
 }
-
-impl<E> OperatorExpr<E> for LazyBoolExpr {}
-
-impl Expression for LazyBoolExpr {}
-
-impl<E> ExprWithoutBlock<E> for LazyBoolExpr {}
-
-impl BooleanOperand for LazyBoolExpr {}
-
-impl IterableExpr for LazyBoolExpr {}
-
-impl Constant for LazyBoolExpr {}
 
 impl Spanned for LazyBoolExpr {
     fn span(&self) -> Span {
@@ -286,20 +231,8 @@ impl Spanned for LazyBoolExpr {
 
 pub struct NegationExpr {
     operator: NegationOperatorKind,
-    operand: Box<dyn Expression>,
+    operand: Box<Expression>,
 }
-
-impl<E> OperatorExpr<E> for NegationExpr {}
-
-impl Expression for NegationExpr {}
-
-impl<E> ExprWithoutBlock<E> for NegationExpr {}
-
-impl BooleanOperand for NegationExpr {}
-
-impl IterableExpr for NegationExpr {}
-
-impl Constant for NegationExpr {}
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
@@ -313,22 +246,12 @@ impl Spanned for NegationExpr {
     }
 }
 
-pub struct RefExpr {
+pub struct ReferenceExpr {
     operator: RefOperator,
-    operand: Box<dyn Assignable>,
+    operand: Box<Assignable>,
 }
 
-impl<E> OperatorExpr<E> for RefExpr {}
-
-impl Expression for RefExpr {}
-
-impl<E> ExprWithoutBlock<E> for RefExpr {}
-
-impl BooleanOperand for RefExpr {}
-
-impl IterableExpr for RefExpr {}
-
-impl Spanned for RefExpr {
+impl Spanned for ReferenceExpr {
     fn span(&self) -> Span {
         let s1 = self.operator.0.span();
         let s2 = self.operand.span();
@@ -338,22 +261,10 @@ impl Spanned for RefExpr {
 }
 
 pub struct TypeCastExpr {
-    lhs: Box<dyn Castable>,
+    lhs: Box<Castable>,
     operator: CastOperator,
-    rhs: Box<dyn Castable>,
+    rhs: Box<Castable>,
 }
-
-impl<E> OperatorExpr<E> for TypeCastExpr {}
-
-impl Expression for TypeCastExpr {}
-
-impl<E> ExprWithoutBlock<E> for TypeCastExpr {}
-
-impl BooleanOperand for TypeCastExpr {}
-
-impl IterableExpr for TypeCastExpr {}
-
-impl Constant for TypeCastExpr {}
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
@@ -367,25 +278,12 @@ impl Spanned for TypeCastExpr {
     }
 }
 
-pub struct UnwrapExpr<T: Spanned> {
-    operand: UnwrapOperandKind<T>,
+pub struct UnwrapExpr {
+    operand: UnwrapOperandKind,
     operator: QuestionMark,
 }
 
-impl<T, E> OperatorExpr<E> for UnwrapExpr<T> where T: Spanned + 'static {}
-
-impl<T> Expression for UnwrapExpr<T> where T: Spanned {}
-
-impl<T, E> ExprWithoutBlock<E> for UnwrapExpr<T> where T: Spanned {}
-
-impl<T> BooleanOperand for UnwrapExpr<T> where T: Spanned + 'static {}
-
-impl<T> IterableExpr for UnwrapExpr<T> where T: Spanned + 'static {}
-
-impl<T> Spanned for UnwrapExpr<T>
-where
-    T: Spanned,
-{
+impl Spanned for UnwrapExpr {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
         let end_pos = self.operator.span().end();

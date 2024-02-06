@@ -4,7 +4,8 @@ use std::{iter::Peekable, str::Chars, sync::Arc};
 
 use feo_ast::{
     literal::Literal,
-    token::{Token, TokenStream, Tokenize},
+    token::{Token, TokenStream},
+    tokenize::Tokenize,
 };
 
 use feo_error::{
@@ -83,7 +84,7 @@ impl<'a> Lexer<'a> {
 
     // main lexer function
     // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
-    pub fn lex(&mut self) -> Result<TokenStream<Token>, ErrorEmitted> {
+    pub fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut num_open_delimiters: usize = 0; // to check for unclosed delimiters
@@ -689,7 +690,7 @@ impl<'a> Lexer<'a> {
 
         if num_closed_delimiters != num_open_delimiters {
             return Err(self.log_error(LexErrorKind::UnclosedDelimiters));
-         }
+        }
 
         let stream = TokenStream::new(&self.input, tokens, 0, self.pos);
 
@@ -867,9 +868,10 @@ mod tests {
 
         let mut lexer = Lexer::new(&source_code, handler);
 
-        if let Ok(t) = lexer.lex() {
-            for token in t.tokens() {
-                match token.as_ref().expect("Token not found") {
+        if let Ok(ts) = lexer.lex() {
+            for t in ts.tokens().into_iter() {
+                // for token in tokens {
+                match t {
                     Token::CharLit(c) => println!("CharLit: {:?}", c.into_inner()),
                     Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
                     Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
@@ -883,7 +885,9 @@ mod tests {
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
                     Token::Delim(d) => println!("Delim: {:?}", d.delim),
                     Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
+                    Token::EOF => println!("end of file"),
                 };
+                // }
             }
         } else {
             println!(

@@ -3,20 +3,12 @@ use feo_types::{
     utils::KwReturn,
 };
 
-use super::{BooleanOperand, ExprWithoutBlock, Expression, IterableExpr};
+use super::Expression;
 
 pub struct ReturnExpr {
     kw_return: KwReturn,
-    expression_opt: Option<Box<dyn Expression>>,
+    expression_opt: Option<Box<Expression>>,
 }
-
-impl Expression for ReturnExpr {}
-
-impl<E> ExprWithoutBlock<E> for ReturnExpr {}
-
-impl BooleanOperand for ReturnExpr {}
-
-impl IterableExpr for ReturnExpr {}
 
 impl Spanned for ReturnExpr {
     fn span(&self) -> Span {

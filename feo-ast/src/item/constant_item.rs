@@ -5,9 +5,8 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Constant, Expression, OuterAttr},
+    expression::{Expression, OuterAttr},
     pattern::Pattern,
-    statement::Statement,
     ty::Type,
 };
 
@@ -20,15 +19,11 @@ pub struct ConstantItem {
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Box<dyn Expression>)>, // `None` is only allowed in a `TraitDef`
+    assignment_opt: Option<(Equals, Expression)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
 
 impl Item for ConstantItem {}
-
-impl Statement for ConstantItem {}
-
-impl Constant for ConstantItem {}
 
 impl Pattern for ConstantItem {}
 
@@ -59,15 +54,11 @@ pub struct StaticItem {
     item_name: Identifier,
     colon: Colon,
     item_type: Box<dyn Type>,
-    assignment_opt: Option<(Equals, Box<dyn Expression>)>,
+    assignment_opt: Option<(Equals, Expression)>,
     semicolon: Semicolon,
 }
 
 impl Item for StaticItem {}
-
-impl Statement for StaticItem {}
-
-impl Constant for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {
