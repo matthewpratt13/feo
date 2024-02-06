@@ -37,11 +37,11 @@ impl Parse for Struct {
                         parser.advance();
 
                         let expr = Struct {
-                            item_path,
+                            item_path: item_path.clone(),
                             open_brace: Delimiter {
                                 delim: (DelimKind::Brace, DelimOrientation::Open),
                                 span: Span::new(
-                                    &parse.stream().span().source(),
+                                    &parser.stream().span().source(),
                                     item_path.span().start(),
                                     item_path.span().end(),
                                 ),
@@ -51,7 +51,7 @@ impl Parse for Struct {
                                 delim: (DelimKind::Brace, DelimOrientation::Close),
                                 span: Span::new(
                                     &parser.stream().span().source(),
-                                    parser.current_token().span().start(),
+                                    parser.current_token()?.span().start(),
                                     parser.current_token()?.span().end(),
                                 ),
                             },

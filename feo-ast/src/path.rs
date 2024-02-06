@@ -32,6 +32,7 @@ impl Spanned for SimplePathSegmentKind {
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum PathIdenSegmentKind {
     Iden(Identifier),
     KwCrate(KwCrate),
