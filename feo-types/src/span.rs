@@ -7,8 +7,8 @@ pub trait Spanned {
 
 #[derive(Default, Debug, Clone)]
 pub struct Position {
-    pub input: Arc<String>,
-    pub pos: usize,
+    input: Arc<String>,
+    pos: usize,
 }
 
 impl Position {

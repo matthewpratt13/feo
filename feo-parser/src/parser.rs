@@ -9,7 +9,7 @@ use feo_types::span::{Position, Spanned};
 
 pub struct Parser {
     stream: TokenStream,
-    pub pos: usize,
+    pos: usize,
     handler: Handler,
 }
 
@@ -38,10 +38,7 @@ impl Parser {
             .cloned()
             .ok_or(ParserError {
                 error_kind: ParserErrorKind::TokenNotFound,
-                position: Position {
-                    input: self.stream.span().source(),
-                    pos: self.pos,
-                },
+                position: Position::new(&self.stream.span().source(), self.pos),
             })
     }
 
@@ -52,10 +49,7 @@ impl Parser {
             .cloned()
             .ok_or(ParserError {
                 error_kind: ParserErrorKind::TokenNotFound,
-                position: Position {
-                    input: self.stream.span().source(),
-                    pos: self.pos,
-                },
+                position: Position::new(&self.stream.span().source(), self.pos),
             })
     }
 }
