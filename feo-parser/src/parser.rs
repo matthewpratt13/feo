@@ -1,11 +1,7 @@
 #![allow(dead_code)]
 
 use feo_ast::token::{Token, TokenStream};
-use feo_error::{
-    handler::Handler,
-    parser_error::{ParserError, ParserErrorKind},
-};
-use feo_types::span::{Position, Spanned};
+use feo_error::handler::Handler;
 
 pub struct Parser {
     stream: TokenStream,
@@ -31,15 +27,12 @@ impl Parser {
         self.stream.next()
     }
 
-    pub fn current_token(&self) -> Result<Token, ParserError> {
+    pub fn current_token(&self) -> Token {
         self.stream
             .tokens()
             .get(self.pos)
             .cloned()
-            .ok_or(ParserError {
-                error_kind: ParserErrorKind::TokenNotFound,
-                position: Position::new(&self.stream.span().source(), self.pos),
-            })
+            .expect("token not found")
     }
 
     pub fn peek_next(&self) -> Token {

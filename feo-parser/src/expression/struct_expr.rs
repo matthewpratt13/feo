@@ -35,10 +35,10 @@ impl Parse for StructExprField {
                 parser.advance();
             }
 
-            if let Ok(iden) = Identifier::try_from(parser.current_token()?) {
+            if let Ok(iden) = Identifier::try_from(parser.current_token()) {
                 parser.advance();
 
-                let colon_res = Punctuation::try_from(parser.current_token()?);
+                let colon_res = Punctuation::try_from(parser.current_token());
 
                 if let Ok(Punctuation {
                     punc_kind: PuncKind::Colon,
@@ -72,7 +72,7 @@ impl Parse for Struct {
         Self: Sized,
     {
         if let Some(item_path) = PathInExpr::parse(parser)? {
-            let open_brace_res = Delimiter::try_from(parser.current_token()?);
+            let open_brace_res = Delimiter::try_from(parser.current_token());
 
             if let Ok(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -84,7 +84,7 @@ impl Parse for Struct {
                 if let Some(fields_opt) = StructExprFields::parse(parser)? {
                     parser.advance();
 
-                    let close_brace_res = Delimiter::try_from(parser.current_token()?);
+                    let close_brace_res = Delimiter::try_from(parser.current_token());
 
                     if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),

@@ -14,9 +14,9 @@ impl Parse for PathIdenSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()?) {
+        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()) {
             PathIdenSegmentKind::Iden(i)
-        } else if let Ok(k) = Keyword::try_from(parser.current_token()?) {
+        } else if let Ok(k) = Keyword::try_from(parser.current_token()) {
             parser.advance();
 
             match k.keyword_kind {
@@ -42,7 +42,7 @@ impl Parse for PathInExpr {
         let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
 
         if let Some(first_segment) = PathExprSegment::parse(parser)? {
-            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token());
 
             while let Ok(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -53,7 +53,7 @@ impl Parse for PathInExpr {
 
                 if let Some(next_segment) = PathExprSegment::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res?, next_segment));
-                    next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+                    next_dbl_colon_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
                 }
@@ -82,7 +82,7 @@ impl Parse for PathType {
         let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
 
         if let Some(first_segment) = PathTypeSegment::parse(parser)? {
-            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token());
 
             while let Ok(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -93,7 +93,7 @@ impl Parse for PathType {
 
                 if let Some(next_segment) = PathTypeSegment::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res?, next_segment));
-                    next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+                    next_dbl_colon_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
                 }
@@ -119,9 +119,9 @@ impl Parse for SimplePathSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()?) {
+        let segment_kind = if let Ok(i) = Identifier::try_from(parser.current_token()) {
             SimplePathSegmentKind::Iden(i)
-        } else if let Ok(k) = Keyword::try_from(parser.current_token()?) {
+        } else if let Ok(k) = Keyword::try_from(parser.current_token()) {
             parser.advance();
 
             match k.keyword_kind {
@@ -146,7 +146,7 @@ impl Parse for SimplePath {
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
         if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
-            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token());
 
             while let Ok(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -157,7 +157,7 @@ impl Parse for SimplePath {
 
                 if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res?, next_segment));
-                    next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+                    next_dbl_colon_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
                 }
