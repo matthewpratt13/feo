@@ -58,19 +58,13 @@ pub type PathTypeSegment = PathIdenSegmentKind;
 
 pub type PathExpr = PathInExpr;
 
-// impl Expression for PathExpr {}
-
 impl Item for PathExpr {}
 
 impl RangePattBound for PathExpr {}
 
 impl Spanned for PathExpr {
     fn span(&self) -> Span {
-        let start_pos = /* if let Some(d) = &self.dbl_colon_opt {
-            d.span().start()
-        } else { */
-            self.first_segment.span().start();
-        // };
+        let start_pos = self.first_segment.span().start();
 
         let end_pos = if let Some(s) = self.subsequent_segments.last() {
             s.1.span().end()
@@ -94,18 +88,13 @@ impl PatternWithoutRange for PathPatt {}
 
 // points to either a local variable or an item
 pub struct SimplePath {
-    // pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: SimplePathSegmentKind,
     pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
 }
 
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
-        let start_pos = /* if let Some(d) = &self.dbl_colon_opt {
-            d.span().start()
-        } else { */
-            self.first_segment.span().start();
-        // };
+        let start_pos = self.first_segment.span().start();
 
         let end_pos = if let Some(s) = self.subsequent_segments.last() {
             s.1.span().end()
@@ -123,13 +112,11 @@ impl Spanned for SimplePath {
 
 #[derive(Debug, Clone)]
 pub struct PathInExpr {
-    // pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: PathExprSegment,
     pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
 pub struct PathType {
-    // pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: PathTypeSegment,
     pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,
 }
@@ -138,11 +125,7 @@ impl Type for PathType {}
 
 impl Spanned for PathType {
     fn span(&self) -> Span {
-        let start_pos = /* if let Some(d) = &self.dbl_colon_opt {
-            d.span().start()
-        } else { */
-            self.first_segment.span().start();
-        // };
+        let start_pos = self.first_segment.span().start();
 
         let end_pos = if let Some(s) = self.subsequent_segments.last() {
             s.1.span().end()
