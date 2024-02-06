@@ -7,7 +7,7 @@ use feo_ast::{
 use feo_error::parser_error::ParserError;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
-    span::Span,
+    span::{Span, Spanned},
     Delimiter, Identifier, Punctuation,
 };
 
@@ -40,12 +40,20 @@ impl Parse for Struct {
                             item_path,
                             open_brace: Delimiter {
                                 delim: (DelimKind::Brace, DelimOrientation::Open),
-                                span: Span::default(), // TODO
+                                span: Span::new(
+                                    &parse.stream().span().source(),
+                                    item_path.span().start(),
+                                    item_path.span().end(),
+                                ),
                             },
                             struct_expr_fields_opt: Some(fields_opt),
                             close_brace: Delimiter {
                                 delim: (DelimKind::Brace, DelimOrientation::Close),
-                                span: Span::default(), // TODO
+                                span: Span::new(
+                                    &parser.stream().span().source(),
+                                    parser.current_token().span().start(),
+                                    parser.current_token()?.span().end(),
+                                ),
                             },
                         };
 

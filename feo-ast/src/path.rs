@@ -120,6 +120,7 @@ impl Spanned for SimplePath {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct PathInExpr {
     pub dbl_colon_opt: Option<DblColon>, // TODO: remove this
     pub first_segment: PathExprSegment,
