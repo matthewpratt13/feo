@@ -41,49 +41,49 @@ impl Parse for PathInExpr {
     {
         let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
 
-        let first_dbl_colon_opt = Punctuation::try_from(parser.current_token()?).ok();
+        // let first_dbl_colon_opt = Punctuation::try_from(parser.current_token()?).ok();
 
-        if let Some(Punctuation {
-            punc_kind: PuncKind::DblColon,
-            ..
-        }) = first_dbl_colon_opt
-        {
-            parser.advance();
+        // if let Some(Punctuation {
+        //     punc_kind: PuncKind::DblColon,
+        //     ..
+        // }) = first_dbl_colon_opt
+        // {
+        //     parser.advance();
 
-            if let Some(first_segment) = PathExprSegment::parse(parser)? {
-                let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+        if let Some(first_segment) = PathExprSegment::parse(parser)? {
+            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
 
-                while let Ok(Punctuation {
-                    punc_kind: PuncKind::DblColon,
-                    ..
-                }) = next_dbl_colon_res
-                {
-                    parser.advance();
-
-                    if let Some(next_segment) = PathExprSegment::parse(parser)? {
-                        subsequent_segments.push((next_dbl_colon_res?, next_segment));
-                        next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
-                    } else {
-                        todo!()
-                    }
-                }
-
-                // consume last token and move to next token in prep for next parser
+            while let Ok(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = next_dbl_colon_res
+            {
                 parser.advance();
 
-                let path = PathInExpr {
-                    dbl_colon_opt: first_dbl_colon_opt,
-                    first_segment,
-                    subsequent_segments,
-                };
-
-                Ok(Some(path))
-            } else {
-                todo!()
+                if let Some(next_segment) = PathExprSegment::parse(parser)? {
+                    subsequent_segments.push((next_dbl_colon_res?, next_segment));
+                    next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+                } else {
+                    todo!()
+                }
             }
+
+            // consume last token and move to next token in prep for next parser
+            parser.advance();
+
+            let path = PathInExpr {
+                // dbl_colon_opt: first_dbl_colon_opt,
+                first_segment,
+                subsequent_segments,
+            };
+
+            Ok(Some(path))
         } else {
             todo!()
         }
+        // } else {
+        //     todo!()
+        // }
     }
 }
 
@@ -94,49 +94,49 @@ impl Parse for PathType {
     {
         let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
 
-        let first_dbl_colon_opt = Punctuation::try_from(parser.current_token()?).ok();
+        // let first_dbl_colon_opt = Punctuation::try_from(parser.current_token()?).ok();
 
-        if let Some(Punctuation {
-            punc_kind: PuncKind::DblColon,
-            ..
-        }) = first_dbl_colon_opt
-        {
-            parser.advance();
+        // if let Some(Punctuation {
+        //     punc_kind: PuncKind::DblColon,
+        //     ..
+        // }) = first_dbl_colon_opt
+        // {
+        // parser.advance();
 
-            if let Some(first_segment) = PathTypeSegment::parse(parser)? {
-                let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+        if let Some(first_segment) = PathTypeSegment::parse(parser)? {
+            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
 
-                while let Ok(Punctuation {
-                    punc_kind: PuncKind::DblColon,
-                    ..
-                }) = next_dbl_colon_res
-                {
-                    parser.advance();
-
-                    if let Some(next_segment) = PathTypeSegment::parse(parser)? {
-                        subsequent_segments.push((next_dbl_colon_res?, next_segment));
-                        next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
-                    } else {
-                        todo!()
-                    }
-                }
-
-                // consume last token and move to next token in prep for next parser
+            while let Ok(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = next_dbl_colon_res
+            {
                 parser.advance();
 
-                let path = PathType {
-                    dbl_colon_opt: first_dbl_colon_opt,
-                    first_segment,
-                    subsequent_segments,
-                };
-
-                Ok(Some(path))
-            } else {
-                todo!()
+                if let Some(next_segment) = PathTypeSegment::parse(parser)? {
+                    subsequent_segments.push((next_dbl_colon_res?, next_segment));
+                    next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+                } else {
+                    todo!()
+                }
             }
+
+            // consume last token and move to next token in prep for next parser
+            parser.advance();
+
+            let path = PathType {
+                // dbl_colon_opt: first_dbl_colon_opt,
+                first_segment,
+                subsequent_segments,
+            };
+
+            Ok(Some(path))
         } else {
             todo!()
         }
+        // } else {
+        //     todo!()
+        // }
     }
 }
 
@@ -171,48 +171,48 @@ impl Parse for SimplePath {
     {
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
-        let first_dbl_colon_opt = Punctuation::try_from(parser.current_token()?).ok();
+        // let first_dbl_colon_opt = Punctuation::try_from(parser.current_token()?).ok();
 
-        if let Some(Punctuation {
-            punc_kind: PuncKind::DblColon,
-            ..
-        }) = first_dbl_colon_opt
-        {
-            parser.advance();
+        // if let Some(Punctuation {
+        //     punc_kind: PuncKind::DblColon,
+        //     ..
+        // }) = first_dbl_colon_opt
+        // {
+        //     parser.advance();
 
-            if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
-                let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+        if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
+            let mut next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
 
-                while let Ok(Punctuation {
-                    punc_kind: PuncKind::DblColon,
-                    ..
-                }) = next_dbl_colon_res
-                {
-                    parser.advance();
-
-                    if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
-                        subsequent_segments.push((next_dbl_colon_res?, next_segment));
-                        next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
-                    } else {
-                        todo!()
-                    }
-                }
-
-                // consume last token and move to next token in prep for next parser
+            while let Ok(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = next_dbl_colon_res
+            {
                 parser.advance();
 
-                let path = SimplePath {
-                    dbl_colon_opt: first_dbl_colon_opt,
-                    first_segment,
-                    subsequent_segments,
-                };
-
-                Ok(Some(path))
-            } else {
-                todo!()
+                if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
+                    subsequent_segments.push((next_dbl_colon_res?, next_segment));
+                    next_dbl_colon_res = Punctuation::try_from(parser.current_token()?);
+                } else {
+                    todo!()
+                }
             }
+
+            // consume last token and move to next token in prep for next parser
+            parser.advance();
+
+            let path = SimplePath {
+                // dbl_colon_opt: first_dbl_colon_opt,
+                first_segment,
+                subsequent_segments,
+            };
+
+            Ok(Some(path))
         } else {
             todo!()
         }
+        // } else {
+        //     todo!()
+        // }
     }
 }
