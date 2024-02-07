@@ -32,13 +32,12 @@ impl Parse for Expression {
             ))),
             TokenType::Identifier(_) => {
                 // ArrayElements
-                // ArrayElementsSingleRepeatedValue
                 // ArithmeticOrLogicalExpr
                 // AssignmentExpr
                 // CompoundAssignmentExpr
                 // ComparisonExpr
                 // LazyBoolExpr
-                // TypeCaseExpr
+                // TypeCastExpr
                 // UnwrapOperandKind
                 // FunctionCallExpr
                 // MethodCallExpr
@@ -54,6 +53,10 @@ impl Parse for Expression {
                 Token::Keyword(k) => match k.keyword_kind {
                     KeywordKind::KwBreak => todo!(),    // BreakExpr
                     KeywordKind::KwContinue => todo!(), // ContinueExpr
+                    KeywordKind::KwCrate
+                    | KeywordKind::KwSelf
+                    | KeywordKind::KwSelfType
+                    | KeywordKind::KwSuper => todo!(), // PathIdenSegmentKind
                     KeywordKind::KwIf => todo!(),       // IfExpr
                     // IterationExprKind
                     KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => todo!(),
@@ -80,14 +83,14 @@ impl Parse for Expression {
             },
             TokenType::Punctuation(t) => match t {
                 Token::Punc(p) => match p.punc_kind {
-                    PuncKind::DblDot => todo!(),                   // RangeFullExpr + RangeToExpr
-                    PuncKind::DotDotEquals => todo!(),             // RangeToInclusive
-                    PuncKind::Bang | PuncKind::Minus => todo!(),   // NegationOperatorKind
-                    PuncKind::Hash => todo!(),                     // OuterAttr
-                    PuncKind::Ampersand => todo!(),                // ReferenceExpr
-                    PuncKind::Asterisk => todo!(),                 // DereferenceExpr
+                    PuncKind::DblDot => todo!(),       // RangeFullExpr + RangeToExpr
+                    PuncKind::DotDotEquals => todo!(), // RangeToInclusive
+                    PuncKind::Bang | PuncKind::Minus => todo!(), // NegationOperatorKind
+                    PuncKind::Hash => todo!(),         // OuterAttr
+                    PuncKind::Ampersand => todo!(),    // ReferenceExpr
+                    PuncKind::Asterisk => todo!(),     // DereferenceExpr
                     PuncKind::Pipe | PuncKind::DblPipe => todo!(), // ClosureParamsOpt
-                    PuncKind::HashBang => todo!(),                 // InnerAttr
+                    PuncKind::HashBang => todo!(),     // InnerAttr
                     _ => todo!(),
                 },
                 _ => todo!(),
