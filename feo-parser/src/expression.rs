@@ -1,13 +1,24 @@
 #![allow(dead_code)]
 
+mod array_expr;
+mod literal_expr;
 mod struct_expr;
 
-use feo_ast::expression::{Expression, Struct, StructKind};
+use feo_ast::{
+    expression::{Expression, Struct, StructKind},
+    literal::LiteralKind,
+    token::Token,
+};
 use feo_error::handler::ErrorEmitted;
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
+    punctuation::PuncKind,
+};
 
 use crate::{
     parse::{Parse, ParseExpr},
-    parser::Parser,
+    parser::{Parser, TokenType},
 };
 
 impl Parse for Expression {
@@ -15,7 +26,75 @@ impl Parse for Expression {
     where
         Self: Sized,
     {
-        todo!()
+        match TokenType::from(parser.current_token()) {
+            TokenType::Literal(_) => Ok(Some(Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing literal"),
+            ))),
+            TokenType::Identifier(_) => {
+                // ArrayElements
+                // ArrayElementsSingleRepeatedValue
+                // ArithmeticOrLogicalExpr
+                // AssignmentExpr
+                // CompoundAssignmentExpr
+                // ComparisonExpr
+                // LazyBoolExpr
+                // TypeCaseExpr
+                // UnwrapOperandKind
+                // FunctionCallExpr
+                // MethodCallExpr
+                // CallParams
+                // FieldAccessExpr
+                // RangeFromToExpr
+                // RangeFromExpr
+                // RangeInclusiveExpr
+                // PathIdenSegmentKind
+                todo!()
+            }
+            TokenType::Keyword(t) => match t {
+                Token::Keyword(k) => match k.keyword_kind {
+                    KeywordKind::KwBreak => todo!(),    // BreakExpr
+                    KeywordKind::KwContinue => todo!(), // ContinueExpr
+                    KeywordKind::KwIf => todo!(),       // IfExpr
+                    // IterationExprKind
+                    KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => todo!(),
+                    KeywordKind::KwMatch => todo!(),  // MatchExpr
+                    KeywordKind::KwReturn => todo!(), // ReturnExpr
+                    _ => todo!(),
+                },
+                _ => todo!(),
+            },
+            TokenType::Delimiter(t) => match t {
+                Token::Delim(d) => match d.delim {
+                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                        // ParenthesizedExpr
+                        // TupleExpr
+                        todo!()
+                    }
+                    (DelimKind::Bracket, DelimOrientation::Open) => todo!(), // ArrayExpr
+
+                    (DelimKind::Brace, DelimOrientation::Open) => todo!(), // BlockExpr
+
+                    _ => todo!(),
+                },
+                _ => todo!(),
+            },
+            TokenType::Punctuation(t) => match t {
+                Token::Punc(p) => match p.punc_kind {
+                    PuncKind::DblDot => todo!(),                   // RangeFullExpr + RangeToExpr
+                    PuncKind::DotDotEquals => todo!(),             // RangeToInclusive
+                    PuncKind::Bang | PuncKind::Minus => todo!(),   // NegationOperatorKind
+                    PuncKind::Hash => todo!(),                     // OuterAttr
+                    PuncKind::Ampersand => todo!(),                // ReferenceExpr
+                    PuncKind::Asterisk => todo!(),                 // DereferenceExpr
+                    PuncKind::Pipe | PuncKind::DblPipe => todo!(), // ClosureParamsOpt
+                    PuncKind::HashBang => todo!(),                 // InnerAttr
+                    _ => todo!(),
+                },
+                _ => todo!(),
+            },
+            TokenType::EOF(_) => todo!(),
+            TokenType::InvalidToken => todo!(),
+        }
     }
 }
 

@@ -35,7 +35,7 @@ pub struct ArrayElements {
     trailing_comma_opt: Option<Comma>,
 }
 
-pub struct ArrayWithSingleRepeatedValue {
+pub struct ArrayElementsSingleRepeatedValue {
     repeat_operand: IterableExpr,
     semicolon: Semicolon,
     num_repeats: Primitive<u64>,

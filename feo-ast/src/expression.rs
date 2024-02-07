@@ -28,8 +28,14 @@ use crate::{
     statement::{ExprStatement, LetStatement},
 };
 
-use self::{
+pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
+    attribute::{AttributeKind, InnerAttr, OuterAttr},
+    block_expr::BlockExpr,
+    operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
+    struct_expr::{Struct, StructExprField, StructExprFields, StructKind},
+};
+use self::{
     call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{ClosureWithBlock, ClosureWithoutBlock},
     conditional_expr::{IfExpr, MatchExpr},
@@ -46,12 +52,6 @@ use self::{
     return_expr::ReturnExpr,
     struct_expr::{TupleStruct, UnitStruct},
     tuple_expr::{TupleExpr, TupleIndexExpr},
-};
-pub use self::{
-    attribute::{AttributeKind, InnerAttr, OuterAttr},
-    block_expr::BlockExpr,
-    operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
-    struct_expr::{Struct, StructExprField, StructExprFields, StructKind},
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects
