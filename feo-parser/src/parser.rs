@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use std::iter::Peekable;
+
 use feo_ast::token::{Token, TokenStream};
 use feo_error::{
     error::CompilerError,
@@ -7,6 +9,8 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::span::{Position, Spanned};
+
+use crate::parse::Peek;
 
 #[derive(Default)]
 pub enum TokenType {
@@ -92,14 +96,6 @@ impl Parser {
             .expect("token not found")
     }
 
-    pub fn peek_next(&self) -> Token {
-        self.stream
-            .tokens()
-            .get(self.pos + 1)
-            .cloned()
-            .unwrap_or(Token::EOF)
-    }
-
     fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
         let err = ParserError {
             error_kind,
@@ -107,5 +103,16 @@ impl Parser {
         };
 
         self.handler.emit_err(CompilerError::Parser(err))
+    }
+}
+
+pub struct Peeker<'a>(pub &'a mut [Token]);
+
+impl<'a> Peeker<'a> {
+    pub fn with<T: Peek>(tokens: &'a mut [Token]) -> Option<(T, &'a [Token])> {
+        let peeker = Peeker(tokens);
+        let value = T::peek(peeker)?;
+
+        Some((value, tokens))
     }
 }
