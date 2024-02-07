@@ -31,34 +31,35 @@ impl Parse for Expression {
                 LiteralKind::parse(parser)?.expect("error parsing literal"),
             ))),
             TokenType::Identifier(_) => {
-                // ArrayElements
+                // [ArrayElements]
                 // ArithmeticOrLogicalExpr
                 // AssignmentExpr
                 // CompoundAssignmentExpr
                 // ComparisonExpr
                 // LazyBoolExpr
                 // TypeCastExpr
-                // UnwrapOperandKind
+                // [UnwrapOperandKind] UnwrapExpr
                 // FunctionCallExpr
                 // MethodCallExpr
-                // CallParams
+                // [CallParams]
                 // FieldAccessExpr
                 // RangeFromToExpr
                 // RangeFromExpr
                 // RangeInclusiveExpr
-                // PathIdenSegmentKind
+                // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
                 todo!()
             }
             TokenType::Keyword(t) => match t {
                 Token::Keyword(k) => match k.keyword_kind {
                     KeywordKind::KwBreak => todo!(),    // BreakExpr
                     KeywordKind::KwContinue => todo!(), // ContinueExpr
+                    // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
                     KeywordKind::KwCrate
                     | KeywordKind::KwSelf
                     | KeywordKind::KwSelfType
-                    | KeywordKind::KwSuper => todo!(), // PathIdenSegmentKind
-                    KeywordKind::KwIf => todo!(),       // IfExpr
-                    // IterationExprKind
+                    | KeywordKind::KwSuper => todo!(),
+                    KeywordKind::KwIf => todo!(), // IfExpr
+                    // [IterationExprKind] InfiniteLoopExpr | PredicateLoopExpr | IterLoopExpr
                     KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => todo!(),
                     KeywordKind::KwMatch => todo!(),  // MatchExpr
                     KeywordKind::KwReturn => todo!(), // ReturnExpr
@@ -83,14 +84,16 @@ impl Parse for Expression {
             },
             TokenType::Punctuation(t) => match t {
                 Token::Punc(p) => match p.punc_kind {
-                    PuncKind::DblDot => todo!(),       // RangeFullExpr + RangeToExpr
-                    PuncKind::DotDotEquals => todo!(), // RangeToInclusive
-                    PuncKind::Bang | PuncKind::Minus => todo!(), // NegationOperatorKind
-                    PuncKind::Hash => todo!(),         // OuterAttr
-                    PuncKind::Ampersand => todo!(),    // ReferenceExpr
-                    PuncKind::Asterisk => todo!(),     // DereferenceExpr
-                    PuncKind::Pipe | PuncKind::DblPipe => todo!(), // ClosureParamsOpt
-                    PuncKind::HashBang => todo!(),     // InnerAttr
+                    PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
+                    PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr
+                    // [NegationOperatorKind] NegationExpr
+                    PuncKind::Bang | PuncKind::Minus => todo!(),
+                    PuncKind::Hash => todo!(),      // OuterAttr
+                    PuncKind::Ampersand => todo!(), // ReferenceExpr
+                    PuncKind::Asterisk => todo!(),  // DereferenceExpr
+                    // [ClosureParamsOpt] ClosureWithBlock | ClosureWithoutBlock
+                    PuncKind::Pipe | PuncKind::DblPipe => todo!(),
+                    PuncKind::HashBang => todo!(), // InnerAttr
                     _ => todo!(),
                 },
                 _ => todo!(),
