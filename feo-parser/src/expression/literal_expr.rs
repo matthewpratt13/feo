@@ -3,6 +3,7 @@ use feo_error::handler::ErrorEmitted;
 
 use crate::{parse::Parse, parser::Parser};
 
+// TODO: unnecessary – already done in `Literal<T>::peek()` methods
 impl Parse for LiteralKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where

@@ -17,6 +17,7 @@ impl Parse for AttributeKind {
     where
         Self: Sized,
     {
+        // TODO: replace with parser.peek()
         let attr_kind = if let Ok(k) = Keyword::try_from(parser.current_token()) {
             parser.advance();
 
@@ -42,6 +43,7 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
+        // TODO: replace with parser.peek()
         let hash_sign_res = Punctuation::try_from(parser.current_token());
 
         if let Ok(Punctuation {
@@ -51,6 +53,7 @@ impl Parse for OuterAttr {
         {
             parser.advance();
 
+            // TODO: replace with parser.peek()
             let open_bracket_res = Delimiter::try_from(parser.current_token());
 
             if let Ok(Delimiter {
@@ -61,6 +64,7 @@ impl Parse for OuterAttr {
                 parser.advance();
 
                 if let Some(attr_kind) = AttributeKind::parse(parser)? {
+                    // TODO: replace with parser.peek()
                     let close_bracket_res = Delimiter::try_from(parser.current_token());
 
                     if let Ok(Delimiter {

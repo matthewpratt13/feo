@@ -4,11 +4,7 @@ mod array_expr;
 mod literal_expr;
 mod struct_expr;
 
-use feo_ast::{
-    expression::{Expression, Struct, StructKind},
-    literal::LiteralKind,
-    token::Token,
-};
+use feo_ast::{expression::Expression, literal::LiteralKind, token::Token};
 use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
@@ -26,6 +22,7 @@ impl Parse for Expression {
     where
         Self: Sized,
     {
+        // TODO: change this pattern to not use `TokenType`
         match TokenType::from(parser.current_token()) {
             TokenType::Literal(_) => Ok(Some(Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing literal"),
@@ -100,6 +97,7 @@ impl Parse for Expression {
             },
             TokenType::EOF(_) => todo!(),
             TokenType::InvalidToken => todo!(),
+            TokenType::DocComment(_) => todo!(),
         }
     }
 }

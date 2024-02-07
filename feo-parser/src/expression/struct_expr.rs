@@ -27,9 +27,11 @@ impl Parse for StructExprField {
                 parser.advance();
             }
 
+            // TODO: replace with parser.peek()
             if let Ok(iden) = Identifier::try_from(parser.current_token()) {
                 parser.advance();
 
+                // TODO: replace with parser.peek()
                 let colon_res = Punctuation::try_from(parser.current_token());
 
                 if let Ok(Punctuation {
@@ -67,6 +69,7 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
+            // TODO: replace with parser.take()
             let mut comma_res = Punctuation::try_from(parser.current_token());
 
             while let Ok(Punctuation {
@@ -74,10 +77,11 @@ impl Parse for StructExprFields {
                 ..
             }) = comma_res
             {
-                parser.advance();
+                parser.advance(); // TODO: comment out
 
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((comma_res.unwrap(), next_field));
+                    // TODO: replace with parser.take()
                     comma_res = Punctuation::try_from(parser.current_token());
                 } else {
                     todo!()
@@ -104,6 +108,7 @@ impl Parse for Struct {
         Self: Sized,
     {
         if let Some(item_path) = PathInExpr::parse(parser)? {
+            // TODO: replace with parser.peek()
             let open_brace_res = Delimiter::try_from(parser.current_token());
 
             if let Ok(Delimiter {
@@ -116,6 +121,7 @@ impl Parse for Struct {
                 if let Some(fields_opt) = StructExprFields::parse(parser)? {
                     parser.advance();
 
+                    // TODO: replace with parser.peek()
                     let close_brace_res = Delimiter::try_from(parser.current_token());
 
                     if let Ok(Delimiter {
