@@ -4,12 +4,18 @@ mod array_expr;
 mod literal_expr;
 mod struct_expr;
 
-use feo_ast::{expression::Expression, literal::LiteralKind, token::Token};
+use feo_ast::{
+    expression::Expression,
+    literal::{Literal, LiteralKind},
+    token::Token,
+};
 use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
+    primitive::PrimitiveType,
     punctuation::PuncKind,
+    Identifier,
 };
 
 use crate::{
@@ -17,11 +23,20 @@ use crate::{
     parser::{Parser, TokenType},
 };
 
-impl Parse for Expression {
+impl<T: Clone + PrimitiveType> Parse for Expression {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
+        let expr = if let Some(id) = parser.peek::<Identifier>()? {
+            todo!()
+        } else if let Some(l) = parser.peek::<Literal<T>>()? {
+            todo!()
+        } else if let Some(l) = parser.peek::<Literal<String>>()? {
+            todo!()
+        } else {
+        };
+
         // TODO: change this pattern to not use `TokenType`
         match TokenType::from(parser.current_token()) {
             TokenType::Literal(_) => Ok(Some(Expression::LiteralExpr(
