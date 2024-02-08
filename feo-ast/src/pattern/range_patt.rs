@@ -1,7 +1,10 @@
 use feo_types::{
     span::{Span, Spanned},
     utils::DotDotEquals,
+    U256,
 };
+
+use crate::{literal::Literal, path::PathExpr};
 
 // pub trait RangePatt
 // where
@@ -16,15 +19,36 @@ pub enum RangePatt {
     RangeToInclusivePatt(RangeToInclusivePatt),
 }
 
-pub trait RangePattBound
-where
-    Self: Spanned,
-{
+// pub trait RangePattBound
+// where
+//     Self: Spanned,
+// {
+// }
+
+#[derive(Clone)]
+pub enum RangePattBound {
+    CharLit(Literal<char>),
+    I32Lit(Literal<i32>),
+    I64Lit(Literal<i64>),
+    U8Lit(Literal<u8>),
+    U16Lit(Literal<u16>),
+    U32Lit(Literal<u32>),
+    U64Lit(Literal<u64>),
+    U256Lit(Literal<U256>),
+    F32Lit(Literal<f32>),
+    F64Lit(Literal<f64>),
+    PathExpr(PathExpr),
+}
+
+impl Spanned for RangePattBound {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
 
 #[derive(Clone)]
 pub struct RangeFromPatt {
-    from: Box<dyn RangePattBound>,
+    from: RangePattBound,
     dot_dot_equals: DotDotEquals,
 }
 
@@ -42,9 +66,9 @@ impl Spanned for RangeFromPatt {
 
 #[derive(Clone)]
 pub struct RangeInclusivePatt {
-    from: Box<dyn RangePattBound>,
+    from: RangePattBound,
     dot_dot_equals: DotDotEquals,
-    to: Box<dyn RangePattBound>,
+    to: RangePattBound,
 }
 
 impl Spanned for RangeInclusivePatt {
@@ -61,9 +85,9 @@ impl Spanned for RangeInclusivePatt {
 
 #[derive(Clone)]
 pub struct RangeToInclusivePatt {
-    from: Box<dyn RangePattBound>,
+    from: RangePattBound,
     dot_dot_equals: DotDotEquals,
-    to: Box<dyn RangePattBound>,
+    to: RangePattBound,
 }
 
 impl Spanned for RangeToInclusivePatt {

@@ -4,8 +4,6 @@ use feo_types::{
     U256,
 };
 
-use crate::pattern::RangePattBound;
-
 #[derive(Debug, Clone)]
 pub struct Literal<T: Clone + PrimitiveType> {
     pub inner_value: Primitive<T>,
@@ -83,23 +81,3 @@ impl Spanned for LiteralKind {
 // impl<T> Pattern for Literal<T> where T: Clone + PrimitiveType {}
 
 // impl<T> PatternWithoutRange for Literal<T> where T: Clone + PrimitiveType {}
-
-impl RangePattBound for Literal<char> {}
-
-impl RangePattBound for Literal<i32> {}
-
-impl RangePattBound for Literal<i64> {}
-
-impl RangePattBound for Literal<u8> {}
-
-impl RangePattBound for Literal<u16> {}
-
-impl RangePattBound for Literal<u32> {}
-
-impl RangePattBound for Literal<u64> {}
-
-impl RangePattBound for Literal<U256> {}
-
-impl RangePattBound for Literal<f32> {}
-
-impl RangePattBound for Literal<f64> {}
