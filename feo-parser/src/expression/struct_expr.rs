@@ -24,7 +24,7 @@ impl Parse for StructExprField {
 
             while let Some(attr) = OuterAttr::parse(parser)? {
                 attributes.push(attr);
-                // parser.advance(); // TODO: might be doubling up on advancing `parser` ?
+                parser.advance();
             }
 
             if let Some(iden) = parser.peek::<Identifier>()? {
@@ -77,7 +77,7 @@ impl Parse for StructExprFields {
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((comma_res.unwrap(), next_field));
                     comma_res = parser.peek::<Punctuation>()?;
-                    // parser.advance(); // TODO: might be doubling up on advancing `parser` ?
+                    parser.advance();
                 } else {
                     parser.advance();
                     todo!() // log error (ignore output, i.e., do NOT return)
@@ -123,6 +123,7 @@ impl Parse for Struct {
                         ..
                     }) = close_brace_res
                     {
+                        // consume last token and move to next token in prep for next parser
                         parser.advance();
 
                         let expr = Struct {
