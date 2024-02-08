@@ -17,8 +17,7 @@ impl Parse for AttributeKind {
     where
         Self: Sized,
     {
-        // TODO: replace with parser.peek()
-        let attr_kind = if let Ok(k) = Keyword::try_from(parser.current_token()) {
+        let attr_kind = if let Some(k) = parser.peek::<Keyword>()? {
             parser.advance();
 
             match k.keyword_kind {
@@ -43,20 +42,18 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        // TODO: replace with parser.peek()
-        let hash_sign_res = Punctuation::try_from(parser.current_token());
+        let hash_sign_res = parser.peek::<Punctuation>()?;
 
-        if let Ok(Punctuation {
+        if let Some(Punctuation {
             punc_kind: PuncKind::Hash,
             ..
         }) = hash_sign_res
         {
             parser.advance();
 
-            // TODO: replace with parser.peek()
-            let open_bracket_res = Delimiter::try_from(parser.current_token());
+            let open_bracket_res = parser.peek::<Delimiter>()?;
 
-            if let Ok(Delimiter {
+            if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
             }) = open_bracket_res
@@ -64,10 +61,9 @@ impl Parse for OuterAttr {
                 parser.advance();
 
                 if let Some(attr_kind) = AttributeKind::parse(parser)? {
-                    // TODO: replace with parser.peek()
-                    let close_bracket_res = Delimiter::try_from(parser.current_token());
+                    let close_bracket_res = parser.peek::<Delimiter>()?;
 
-                    if let Ok(Delimiter {
+                    if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
                     }) = close_bracket_res

@@ -320,7 +320,7 @@ impl Peek for Literal<u64> {
 
 impl Peek for Literal<U256> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
-    where
+    where 
         Self: Sized,
     {
         match peeker.peek_literal() {
