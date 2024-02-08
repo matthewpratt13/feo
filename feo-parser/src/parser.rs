@@ -11,7 +11,7 @@ use feo_error::{
 };
 use feo_types::{
     span::{Position, Spanned},
-    Delimiter, DocComment, Identifier, Keyword, Punctuation,
+    Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 use crate::parse::Peek;
@@ -317,6 +317,22 @@ impl Peek for Literal<u64> {
         }
     }
 }
+
+impl Peek for Literal<U256> {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_literal() {
+            Ok(l) => match l {
+                LiteralKind::U256(u) => Some(u),
+                _ => todo!(),
+            },
+            Err(_) => todo!(),
+        }
+    }
+}
+
 
 impl Peek for Literal<f32> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
