@@ -15,7 +15,7 @@ use crate::literal::Literal;
 #[derive(Debug, Clone)]
 pub enum Token {
     CharLit(Literal<char>),
-    StringLit(Literal<&'static str>),
+    StringLit(Literal<String>),
     BoolLit(Literal<bool>),
     IntLit(Literal<i64>),
     UIntLit(Literal<u64>),

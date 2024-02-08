@@ -7,112 +7,133 @@ mod struct_expr;
 use feo_ast::{
     expression::Expression,
     literal::{Literal, LiteralKind},
-    token::Token,
 };
 use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    primitive::PrimitiveType,
     punctuation::PuncKind,
-    Identifier,
+    Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
-use crate::{
-    parse::Parse,
-    parser::{Parser, TokenType},
-};
+use crate::{parse::Parse, parser::Parser};
 
-impl<T: Clone + PrimitiveType> Parse for Expression {
+impl Parse for Expression {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
-        let expr = if let Some(id) = parser.peek::<Identifier>()? {
+        let expr = if let Some(_) = parser.peek::<Literal<char>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `char` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<String>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `string` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<i32>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `i32` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<i64>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `i64` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<u8>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `u8` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<u16>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `u16` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<u32>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `u32` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<u64>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `u64` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<U256>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `U256` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<f32>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `f32` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Literal<f64>>()? {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?.expect("error parsing `f64` literal"),
+            )
+        } else if let Some(_) = parser.peek::<Identifier>()? {
+            // [ArrayElements]
+            // ArithmeticOrLogicalExpr
+            // AssignmentExpr
+            // CompoundAssignmentExpr
+            // ComparisonExpr
+            // LazyBoolExpr
+            // TypeCastExpr
+            // [UnwrapOperandKind] UnwrapExpr
+            // FunctionCallExpr
+            // MethodCallExpr
+            // [CallParams]
+            // FieldAccessExpr
+            // RangeFromToExpr
+            // RangeFromExpr
+            // RangeInclusiveExpr
+            // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
             todo!()
-        } else if let Some(l) = parser.peek::<Literal<T>>()? {
+        } else if let Some(k) = parser.peek::<Keyword>()? {
+            match k.keyword_kind {
+                KeywordKind::KwBreak => todo!(),    // BreakExpr
+                KeywordKind::KwContinue => todo!(), // ContinueExpr
+                // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => todo!(),
+                KeywordKind::KwIf => todo!(), // IfExpr
+                // [IterationExprKind] InfiniteLoopExpr | PredicateLoopExpr | IterLoopExpr
+                KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => todo!(),
+                KeywordKind::KwMatch => todo!(),  // MatchExpr
+                KeywordKind::KwReturn => todo!(), // ReturnExpr
+                _ => todo!(),
+            }
+        } else if let Some(_) = parser.peek::<DocComment>()? {
             todo!()
-        } else if let Some(l) = parser.peek::<Literal<String>>()? {
-            todo!()
+        } else if let Some(d) = parser.peek::<Delimiter>()? {
+            match d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    // ParenthesizedExpr
+                    // TupleExpr
+                    todo!()
+                }
+                (DelimKind::Bracket, DelimOrientation::Open) => todo!(), // ArrayExpr
+
+                (DelimKind::Brace, DelimOrientation::Open) => todo!(), // BlockExpr
+
+                _ => todo!(),
+            }
+        } else if let Some(p) = parser.peek::<Punctuation>()? {
+            match p.punc_kind {
+                PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
+                PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr
+                // [NegationOperatorKind] NegationExpr
+                PuncKind::Bang | PuncKind::Minus => todo!(),
+                PuncKind::Hash => todo!(),      // OuterAttr
+                PuncKind::Ampersand => todo!(), // ReferenceExpr
+                PuncKind::Asterisk => todo!(),  // DereferenceExpr
+                // [ClosureParamsOpt] ClosureWithBlock | ClosureWithoutBlock
+                PuncKind::Pipe | PuncKind::DblPipe => todo!(),
+                PuncKind::HashBang => todo!(), // InnerAttr
+                _ => todo!(),
+            }
         } else {
+            todo!()
         };
 
-        // TODO: change this pattern to not use `TokenType`
-        match TokenType::from(parser.current_token()) {
-            TokenType::Literal(_) => Ok(Some(Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("error parsing literal"),
-            ))),
-            TokenType::Identifier(_) => {
-                // [ArrayElements]
-                // ArithmeticOrLogicalExpr
-                // AssignmentExpr
-                // CompoundAssignmentExpr
-                // ComparisonExpr
-                // LazyBoolExpr
-                // TypeCastExpr
-                // [UnwrapOperandKind] UnwrapExpr
-                // FunctionCallExpr
-                // MethodCallExpr
-                // [CallParams]
-                // FieldAccessExpr
-                // RangeFromToExpr
-                // RangeFromExpr
-                // RangeInclusiveExpr
-                // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
-                todo!()
-            }
-            TokenType::Keyword(t) => match t {
-                Token::Keyword(k) => match k.keyword_kind {
-                    KeywordKind::KwBreak => todo!(),    // BreakExpr
-                    KeywordKind::KwContinue => todo!(), // ContinueExpr
-                    // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
-                    KeywordKind::KwCrate
-                    | KeywordKind::KwSelf
-                    | KeywordKind::KwSelfType
-                    | KeywordKind::KwSuper => todo!(),
-                    KeywordKind::KwIf => todo!(), // IfExpr
-                    // [IterationExprKind] InfiniteLoopExpr | PredicateLoopExpr | IterLoopExpr
-                    KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => todo!(),
-                    KeywordKind::KwMatch => todo!(),  // MatchExpr
-                    KeywordKind::KwReturn => todo!(), // ReturnExpr
-                    _ => todo!(),
-                },
-                _ => todo!(),
-            },
-            TokenType::Delimiter(t) => match t {
-                Token::Delim(d) => match d.delim {
-                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
-                        // ParenthesizedExpr
-                        // TupleExpr
-                        todo!()
-                    }
-                    (DelimKind::Bracket, DelimOrientation::Open) => todo!(), // ArrayExpr
-
-                    (DelimKind::Brace, DelimOrientation::Open) => todo!(), // BlockExpr
-
-                    _ => todo!(),
-                },
-                _ => todo!(),
-            },
-            TokenType::Punctuation(t) => match t {
-                Token::Punc(p) => match p.punc_kind {
-                    PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
-                    PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr
-                    // [NegationOperatorKind] NegationExpr
-                    PuncKind::Bang | PuncKind::Minus => todo!(),
-                    PuncKind::Hash => todo!(),      // OuterAttr
-                    PuncKind::Ampersand => todo!(), // ReferenceExpr
-                    PuncKind::Asterisk => todo!(),  // DereferenceExpr
-                    // [ClosureParamsOpt] ClosureWithBlock | ClosureWithoutBlock
-                    PuncKind::Pipe | PuncKind::DblPipe => todo!(),
-                    PuncKind::HashBang => todo!(), // InnerAttr
-                    _ => todo!(),
-                },
-                _ => todo!(),
-            },
-            TokenType::EOF(_) => todo!(),
-            TokenType::InvalidToken => todo!(),
-            TokenType::DocComment(_) => todo!(),
-        }
+        Ok(Some(expr))
     }
 }

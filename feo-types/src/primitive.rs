@@ -7,13 +7,15 @@ use crate::{
 
 pub trait PrimitiveType
 where
-    Self: Debug + Copy + Clone + PartialEq,
+    Self: Sized + Debug + Clone + PartialEq + 'static,
 {
 }
 
 impl PrimitiveType for char {}
 
 impl PrimitiveType for &'static str {}
+
+impl PrimitiveType for String {}
 
 impl PrimitiveType for bool {}
 

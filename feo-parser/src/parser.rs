@@ -198,6 +198,32 @@ impl Peek for Literal<char> {
     }
 }
 
+// impl<T: PrimitiveType> Peek for Literal<T> {
+//     fn peek(peeker: Peeker<'_>) -> Option<Self>
+//     where
+//         Self: Sized,
+//     {
+//         match peeker.peek_literal() {
+//             Ok(l) => match l {
+//                 LiteralKind::Char(c) => Some(c),
+//                 LiteralKind::String(s) => Some(s),
+//                 LiteralKind::Bool(b) => Some(b),
+//                 LiteralKind::I32(i) => Some(i),
+//                 LiteralKind::I64(i) => Some(i),
+//                 LiteralKind::U8(ui) => Some(ui),
+//                 LiteralKind::U16(ui) => Some(ui),
+//                 LiteralKind::U32(ui) => Some(ui),
+//                 LiteralKind::U64(ui) => Some(ui),
+//                 LiteralKind::U256(u) => Some(u),
+//                 LiteralKind::F32(f) => Some(f),
+//                 LiteralKind::F64(f) => Some(f),
+//                 _ => todo!(),
+//             },
+//             Err(_) => todo!(),
+//         }
+//     }
+// }
+
 impl Peek for Literal<String> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
@@ -320,7 +346,7 @@ impl Peek for Literal<u64> {
 
 impl Peek for Literal<U256> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
-    where 
+    where
         Self: Sized,
     {
         match peeker.peek_literal() {
@@ -332,7 +358,6 @@ impl Peek for Literal<U256> {
         }
     }
 }
-
 
 impl Peek for Literal<f32> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
@@ -383,6 +408,18 @@ impl Peek for Keyword {
     {
         match peeker.peek_keyword() {
             Ok(k) => Some(k),
+            Err(_) => todo!(),
+        }
+    }
+}
+
+impl Peek for DocComment {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_doc_comment() {
+            Ok(d) => Some(d),
             Err(_) => todo!(),
         }
     }

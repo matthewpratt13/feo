@@ -5,14 +5,14 @@ use feo_types::{
 };
 
 #[derive(Debug, Clone)]
-pub struct Literal<T: Clone + PrimitiveType> {
+pub struct Literal<T: PrimitiveType> {
     pub inner_value: Primitive<T>,
     span: Span,
 }
 
 impl<T> Literal<T>
 where
-    T: Clone + PrimitiveType,
+    T: PrimitiveType,
 {
     pub fn new(raw_value: Primitive<T>, span: Span) -> Literal<T> {
         Literal {
@@ -28,7 +28,7 @@ where
 
 impl<T> Spanned for Literal<T>
 where
-    T: Clone + PrimitiveType,
+    T: PrimitiveType,
 {
     fn span(&self) -> Span {
         self.span.clone()
@@ -44,7 +44,7 @@ where
 #[derive(Clone)]
 pub enum LiteralKind {
     Char(Literal<char>),
-    String(Literal<&'static str>),
+    String(Literal<String>),
     Bool(Literal<bool>),
     I32(Literal<i32>),
     I64(Literal<i64>),
