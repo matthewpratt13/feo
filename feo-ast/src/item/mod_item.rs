@@ -8,10 +8,16 @@ use crate::expression::OuterAttr;
 
 use super::{Item, VisibilityKind};
 
-pub trait ModItem
-where
-    Self: Sized + Item,
-{
+// pub trait ModItem
+// where
+//     Self: Sized + Item,
+// {
+// }
+
+#[derive(Clone)]
+pub enum ModItem {
+    ModWithBody(ModWithBody),
+    ModWithoutBody(ModWithoutBody),
 }
 
 #[derive(Clone)]
@@ -21,13 +27,9 @@ pub struct ModWithBody {
     kw_mod: KwMod,
     mod_name: Identifier,
     open_brace: Brace,
-    items: Vec<Box<dyn Item>>,
+    items: Box<Item>,
     close_brace: Brace,
 }
-
-impl ModItem for ModWithBody {}
-
-impl Item for ModWithBody {}
 
 impl Spanned for ModWithBody {
     fn span(&self) -> Span {
@@ -56,10 +58,6 @@ pub struct ModWithoutBody {
     mod_name: Identifier,
     semicolon: Semicolon,
 }
-
-impl ModItem for ModWithoutBody {}
-
-impl Item for ModWithoutBody {}
 
 impl Spanned for ModWithoutBody {
     fn span(&self) -> Span {

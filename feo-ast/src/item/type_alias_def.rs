@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::{expression::OuterAttr, ty::Type};
 
-use super::{Item, TypeParamBounds, VisibilityKind};
+use super::{TypeParamBounds, VisibilityKind};
 
 #[derive(Clone)]
 pub struct TypeAliasDef {
@@ -18,8 +18,6 @@ pub struct TypeAliasDef {
     assignment_opt: Option<(Equals, Type)>,
     semicolon: Semicolon,
 }
-
-impl Item for TypeAliasDef {}
 
 impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {

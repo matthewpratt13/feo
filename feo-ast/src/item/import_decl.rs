@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::path::SimplePath;
 
-use super::{AsClause, Item, VisibilityKind};
+use super::{AsClause, VisibilityKind};
 
 #[derive(Clone)]
 pub enum ImportTree {
@@ -21,8 +21,6 @@ pub struct ImportDecl {
     import_tree: ImportTree,
     semicolon: Semicolon,
 }
-
-impl Item for ImportDecl {}
 
 impl Spanned for ImportDecl {
     fn span(&self) -> Span {
@@ -46,8 +44,6 @@ pub struct PathWildcard {
     full_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
 }
-
-impl Item for PathWildcard {}
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
@@ -79,8 +75,6 @@ pub struct PathSubsetRecursive {
     close_brace: Brace,
 }
 
-impl Item for PathSubsetRecursive {}
-
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
         let start_pos = match &self.path_prefix_opt {
@@ -105,8 +99,6 @@ pub struct PathWithAsClause {
     path_prefix: SimplePath,
     as_clause_opt: Option<AsClause>,
 }
-
-impl Item for PathWithAsClause {}
 
 impl Spanned for PathWithAsClause {
     fn span(&self) -> Span {

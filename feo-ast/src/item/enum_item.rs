@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::expression::OuterAttr;
 
-use super::{Item, StructFields, TupleElements, VisibilityKind};
+use super::{StructFields, TupleElements, VisibilityKind};
 
 #[derive(Clone)]
 pub enum EnumVariantType {
@@ -24,8 +24,6 @@ pub struct EnumItem {
     enum_variants_opt: Option<EnumVariants>,
     close_brace: Brace,
 }
-
-impl Item for EnumItem {}
 
 impl Spanned for EnumItem {
     fn span(&self) -> Span {

@@ -7,7 +7,7 @@ use feo_types::{
 use crate::expression::{InnerAttr, OuterAttr};
 
 use super::{
-    ConstantItem, FunctionDef, FunctionSig, Item, TypeAliasDef, TypeParamBounds, VisibilityKind,
+    ConstantItem, FunctionDef, FunctionSig, TypeAliasDef, TypeParamBounds, VisibilityKind,
     WhereClause,
 };
 
@@ -32,8 +32,6 @@ pub struct TraitDef {
     associated_items: Vec<TraitDefItem>,
     close_brace: Brace,
 }
-
-impl Item for TraitDef {}
 
 impl Spanned for TraitDef {
     fn span(&self) -> Span {

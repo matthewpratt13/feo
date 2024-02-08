@@ -6,12 +6,19 @@ use feo_types::{
 
 use crate::{expression::OuterAttr, ty::Type};
 
-use super::{Item, VisibilityKind, WhereClause};
+use super::{VisibilityKind, WhereClause};
 
-pub trait StructItem
-where
-    Self: Sized + Item + 'static,
-{
+// pub trait StructItem
+// where
+//     Self: Sized + Item + 'static,
+// {
+// }
+
+#[derive(Clone)]
+pub enum StructItem {
+    Struct(Struct),
+    TupleStruct(TupleStruct),
+    UnitStruct(UnitStruct),
 }
 
 pub type StructFieldName = Identifier;
@@ -27,10 +34,6 @@ pub struct Struct {
     struct_fields_opt: Option<StructFields>,
     close_brace: Brace,
 }
-
-impl StructItem for Struct {}
-
-impl Item for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -80,10 +83,6 @@ pub struct TupleStruct {
     semicolon: Semicolon,
 }
 
-impl StructItem for TupleStruct {}
-
-impl Item for TupleStruct {}
-
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
@@ -126,10 +125,6 @@ pub struct UnitStruct {
     open_brace: Brace,
     close_brace: Brace,
 }
-
-impl StructItem for UnitStruct {}
-
-impl Item for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {

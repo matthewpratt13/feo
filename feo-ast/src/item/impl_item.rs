@@ -9,7 +9,7 @@ use crate::{
     ty::Type,
 };
 
-use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};
+use super::{ConstantItem, FunctionDef, TypeAliasDef, WhereClause};
 
 #[derive(Clone)]
 pub enum InherentImplItem {
@@ -24,6 +24,7 @@ pub enum TraitImplItem {
     TypeAlias(TypeAliasDef),
 }
 
+#[derive(Clone)]
 pub struct InherentImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
@@ -34,8 +35,6 @@ pub struct InherentImpl {
     associated_items: Vec<InherentImplItem>,
     close_brace: Brace,
 }
-
-impl Item for InherentImpl {}
 
 impl Spanned for InherentImpl {
     fn span(&self) -> Span {
@@ -54,6 +53,7 @@ impl Spanned for InherentImpl {
     }
 }
 
+#[derive(Clone)]
 pub struct TraitImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
@@ -66,8 +66,6 @@ pub struct TraitImpl {
     associated_items: Vec<TraitImplItem>,
     close_brace: Brace,
 }
-
-impl Item for TraitImpl {}
 
 impl Spanned for TraitImpl {
     fn span(&self) -> Span {

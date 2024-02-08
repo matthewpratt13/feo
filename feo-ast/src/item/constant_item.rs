@@ -9,7 +9,7 @@ use crate::{
     ty::Type,
 };
 
-use super::{Item, VisibilityKind};
+use super::VisibilityKind;
 
 #[derive(Clone)]
 pub struct ConstantItem {
@@ -22,8 +22,6 @@ pub struct ConstantItem {
     assignment_opt: Option<(Equals, Box<Expression>)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
-
-impl Item for ConstantItem {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {
@@ -56,8 +54,6 @@ pub struct StaticItem {
     assignment_opt: Option<(Equals, Expression)>,
     semicolon: Semicolon,
 }
-
-impl Item for StaticItem {}
 
 impl Spanned for StaticItem {
     fn span(&self) -> Span {

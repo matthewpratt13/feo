@@ -4,8 +4,6 @@ use feo_types::{
     Identifier,
 };
 
-use super::Item;
-
 #[derive(Clone)]
 pub enum CrateRefKind {
     Iden(Identifier),
@@ -19,8 +17,6 @@ pub struct ExternCrateDecl {
     as_clause_opt: Option<AsClause>,
     semicolon: Semicolon,
 }
-
-impl Item for ExternCrateDecl {}
 
 impl Spanned for ExternCrateDecl {
     fn span(&self) -> Span {

@@ -10,15 +10,13 @@ use crate::{
     ty::Type,
 };
 
-use super::{Item, VisibilityKind};
+use super::VisibilityKind;
 
 #[derive(Clone)]
 pub enum FunctionItem {
     FuncSig((FunctionSig, Semicolon)),
     FuncDef(FunctionDef),
 }
-
-impl Item for FunctionItem {}
 
 impl Spanned for FunctionItem {
     fn span(&self) -> Span {

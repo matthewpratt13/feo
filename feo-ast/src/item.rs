@@ -12,7 +12,12 @@ mod trait_def;
 mod type_alias_def;
 mod visibility;
 
-use feo_types::span::Spanned;
+use feo_types::{
+    span::{Span, Spanned},
+    Identifier,
+};
+
+use crate::path::PathExpr;
 
 pub use self::{
     constant_item::{ConstantItem, StaticItem},
@@ -27,6 +32,11 @@ pub use self::{
     type_alias_def::TypeAliasDef,
     visibility::VisibilityKind,
     where_clause::{TypeParamBounds, WhereClause},
+};
+use self::{
+    impl_item::{InherentImpl, TraitImpl},
+    mod_item::ModItem,
+    struct_item::StructItem,
 };
 
 // items are components of a crate, organized by a set of modules
@@ -43,10 +53,37 @@ pub use self::{
 // - trait definition
 // - type alias definition
 
-pub trait Item
-where
-    Self: Spanned,
-{
+// pub trait Item
+// where
+//     Self: Spanned,
+// {
+// }
+
+#[derive(Clone)]
+pub enum Item {
+    ConstantVarDef(ConstantItem),
+    StaticVarDef(StaticItem),
+    EnumDef(EnumItem),
+    ExternCrateDecl(ExternCrateDecl),
+    Function(FunctionItem),
+    InherentImplDecl(InherentImpl),
+    TraitImplDecl(TraitImpl),
+    ImportDecl(ImportDecl),
+    PathWildcard(PathWildcard),
+    PathSubsetRecursive(PathSubsetRecursive),
+    PathWithAsClause(PathWithAsClause),
+    ModDef(ModItem),
+    StructDef(StructItem),
+    TraitDef(TraitDef),
+    TypeAliasDef(TypeAliasDef),
+    PathExpr(PathExpr),
+    Identifier(Identifier),
+}
+
+impl Spanned for Item {
+    fn span(&self) -> Span {
+        todo!()
+    }
 }
 
 mod where_clause {
