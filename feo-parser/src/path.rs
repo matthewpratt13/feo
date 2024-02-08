@@ -25,6 +25,7 @@ impl Parse for PathIdenSegmentKind {
                 _ => todo!(),
             }
         } else {
+            parser.advance();
             todo!() // return error
         };
 
@@ -52,7 +53,7 @@ impl Parse for PathInExpr {
                 if let Some(next_segment) = PathExprSegment::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
                     next_dbl_colon_res = parser.peek::<Punctuation>()?;
-                    parser.advance();
+                    // parser.advance(); // TODO: might be doubling up on advancing `parser` ?
                 } else {
                     parser.advance();
                     todo!() // log error (ignore output, i.e., do NOT return)
@@ -94,7 +95,7 @@ impl Parse for PathType {
                 if let Some(next_segment) = PathTypeSegment::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
                     next_dbl_colon_res = parser.peek::<Punctuation>()?;
-                    parser.advance();
+                    // parser.advance(); // TODO: might be doubling up on advancing `parser` ?
                 } else {
                     parser.advance();
                     todo!() // log error (ignore output, i.e., do NOT return)
@@ -160,7 +161,7 @@ impl Parse for SimplePath {
                 if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
                     next_dbl_colon_res = parser.peek::<Punctuation>()?;
-                    parser.advance();
+                    // parser.advance(); // TODO: might be doubling up on advancing `parser` ?
                 } else {
                     parser.advance();
                     todo!() // log error (ignore output, i.e., do NOT return)

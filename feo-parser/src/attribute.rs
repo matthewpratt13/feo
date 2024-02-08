@@ -18,8 +18,6 @@ impl Parse for AttributeKind {
         Self: Sized,
     {
         let attr_kind = if let Some(k) = parser.peek::<Keyword>()? {
-            parser.advance();
-
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),
@@ -30,8 +28,11 @@ impl Parse for AttributeKind {
         } else if let Some(p) = SimplePath::parse(parser)? {
             AttributeKind::Path(p)
         } else {
-            todo!()
+            parser.advance();
+            todo!() // return error
         };
+
+        parser.advance();
 
         Ok(Some(attr_kind))
     }
@@ -42,13 +43,15 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_res = parser.take::<Punctuation>()?;
+        let hash_sign_res = parser.peek::<Punctuation>()?;
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Hash,
             ..
         }) = hash_sign_res
         {
+            parser.advance();
+
             let open_bracket_res = parser.peek::<Delimiter>()?;
 
             if let Some(Delimiter {
