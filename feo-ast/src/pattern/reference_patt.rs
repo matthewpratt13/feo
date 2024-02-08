@@ -3,17 +3,14 @@ use feo_types::utils::KwMut;
 
 use crate::expression::DerefOperator;
 
-use super::{Pattern, PatternWithoutRange};
+use super::PatternWithoutRange;
 
+#[derive(Clone)]
 pub struct ReferencePatt {
     kw_ref: DerefOperator,
     kw_mut_opt: Option<KwMut>,
-    pattern: Box<dyn PatternWithoutRange>,
+    pattern: Box<PatternWithoutRange>,
 }
-
-impl PatternWithoutRange for ReferencePatt {}
-
-impl Pattern for ReferencePatt {}
 
 impl Spanned for ReferencePatt {
     fn span(&self) -> Span {

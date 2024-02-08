@@ -86,13 +86,11 @@ impl Spanned for ExprStatement {
 pub struct LetStatement {
     attributes: Vec<OuterAttr>,
     kw_let: KwLet,
-    pattern: Box<dyn Pattern>,
+    pattern: Box<Pattern>,
     type_ann_opt: Option<(Colon, Type)>,
     assignment_opt: Option<(Equals, Assignable)>,
     semicolon: Semicolon,
 }
-
-impl Pattern for LetStatement {}
 
 impl Spanned for LetStatement {
     fn span(&self) -> Span {

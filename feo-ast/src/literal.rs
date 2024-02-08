@@ -4,7 +4,7 @@ use feo_types::{
     U256,
 };
 
-use crate::pattern::{Pattern, PatternWithoutRange, RangePattBound};
+use crate::pattern::RangePattBound;
 
 #[derive(Debug, Clone)]
 pub struct Literal<T: Clone + PrimitiveType> {
@@ -37,11 +37,11 @@ where
     }
 }
 
-pub trait LiteralPatt
-where
-    Self: Sized + Pattern + 'static,
-{
-}
+// pub trait LiteralPatt
+// where
+//     Self: Sized + Pattern + 'static,
+// {
+// }
 
 #[derive(Clone)]
 pub enum LiteralKind {
@@ -78,11 +78,11 @@ impl Spanned for LiteralKind {
     }
 }
 
-impl<T> LiteralPatt for Literal<T> where T: Clone + PrimitiveType + 'static {}
+// impl<T> LiteralPatt for Literal<T> where T: Clone + PrimitiveType + 'static {}
 
-impl<T> Pattern for Literal<T> where T: Clone + PrimitiveType {}
+// impl<T> Pattern for Literal<T> where T: Clone + PrimitiveType {}
 
-impl<T> PatternWithoutRange for Literal<T> where T: Clone + PrimitiveType {}
+// impl<T> PatternWithoutRange for Literal<T> where T: Clone + PrimitiveType {}
 
 impl RangePattBound for Literal<char> {}
 

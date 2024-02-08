@@ -90,8 +90,6 @@ pub struct ClosureParams {
     trailing_comma_opt: Option<Comma>,
 }
 
-impl Pattern for ClosureParams {}
-
 impl Spanned for ClosureParams {
     fn span(&self) -> Span {
         let s1 = self.first_param.span();
@@ -125,11 +123,9 @@ impl Spanned for ClosureParams {
 #[derive(Clone)]
 pub struct ClosureParam {
     attributes: Vec<OuterAttr>,
-    pattern: Box<dyn Pattern>,
+    pattern: Box<Pattern>,
     type_annotation_opt: Option<(Colon, Box<Type>)>,
 }
-
-impl Pattern for ClosureParam {}
 
 impl Spanned for ClosureParam {
     fn span(&self) -> Span {

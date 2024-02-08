@@ -3,12 +3,17 @@ use feo_types::{
     utils::DotDotEquals,
 };
 
-use super::Pattern;
+// pub trait RangePatt
+// where
+//     Self: Sized + Pattern + 'static,
+// {
+// }
 
-pub trait RangePatt
-where
-    Self: Sized + Pattern + 'static,
-{
+#[derive(Clone)]
+pub enum RangePatt {
+    RangeFromPatt(RangeFromPatt),
+    RangeInclusivePatt(RangeInclusivePatt),
+    RangeToInclusivePatt(RangeToInclusivePatt),
 }
 
 pub trait RangePattBound
@@ -17,14 +22,11 @@ where
 {
 }
 
+#[derive(Clone)]
 pub struct RangeFromPatt {
     from: Box<dyn RangePattBound>,
     dot_dot_equals: DotDotEquals,
 }
-
-impl Pattern for RangeFromPatt {}
-
-impl RangePatt for RangeFromPatt {}
 
 impl Spanned for RangeFromPatt {
     fn span(&self) -> Span {
@@ -38,15 +40,12 @@ impl Spanned for RangeFromPatt {
     }
 }
 
+#[derive(Clone)]
 pub struct RangeInclusivePatt {
     from: Box<dyn RangePattBound>,
     dot_dot_equals: DotDotEquals,
     to: Box<dyn RangePattBound>,
 }
-
-impl Pattern for RangeInclusivePatt {}
-
-impl RangePatt for RangeInclusivePatt {}
 
 impl Spanned for RangeInclusivePatt {
     fn span(&self) -> Span {
@@ -60,15 +59,12 @@ impl Spanned for RangeInclusivePatt {
     }
 }
 
+#[derive(Clone)]
 pub struct RangeToInclusivePatt {
     from: Box<dyn RangePattBound>,
     dot_dot_equals: DotDotEquals,
     to: Box<dyn RangePattBound>,
 }
-
-impl Pattern for RangeToInclusivePatt {}
-
-impl RangePatt for RangeToInclusivePatt {}
 
 impl Spanned for RangeToInclusivePatt {
     fn span(&self) -> Span {

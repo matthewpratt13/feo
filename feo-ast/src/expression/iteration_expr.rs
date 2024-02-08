@@ -81,13 +81,11 @@ impl Spanned for PredicateLoopExpr {
 #[derive(Clone)]
 pub struct IterLoopExpr {
     kw_for: KwFor,
-    pattern: Box<dyn Pattern>,
+    pattern: Box<Pattern>,
     kw_in: KwIn,
     iterator: Box<IterableExpr>,
     block: BlockExpr,
 }
-
-impl Pattern for IterLoopExpr {}
 
 impl Spanned for IterLoopExpr {
     fn span(&self) -> Span {

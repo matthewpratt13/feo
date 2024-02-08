@@ -4,17 +4,12 @@ use feo_types::{
     Identifier,
 };
 
-use super::{Pattern, PatternWithoutRange};
-
+#[derive(Clone)]
 pub struct IdentifierPatt {
     kw_ref_opt: Option<KwRef>,
     kw_mut_opt: Option<KwMut>,
     name: Identifier,
 }
-
-impl Pattern for IdentifierPatt {}
-
-impl PatternWithoutRange for IdentifierPatt {}
 
 impl Spanned for IdentifierPatt {
     fn span(&self) -> Span {

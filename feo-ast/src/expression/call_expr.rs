@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Comma, Dot, Parenthesis},
 };
 
-use crate::{path::PathExprSegment, pattern::Pattern};
+use crate::path::PathExprSegment;
 
 use super::Expression;
 
@@ -65,8 +65,6 @@ pub struct CallParams {
     subsequent_params: Vec<(Comma, Expression)>,
     trailing_comma_opt: Option<Comma>,
 }
-
-impl Pattern for CallParams {}
 
 impl Spanned for CallParams {
     fn span(&self) -> Span {

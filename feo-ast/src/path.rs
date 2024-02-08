@@ -6,10 +6,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    item::Item,
-    pattern::{Pattern, PatternWithoutRange, RangePattBound},
-};
+use crate::{item::Item, pattern::RangePattBound};
 
 #[derive(Clone)]
 pub enum SimplePathSegmentKind {
@@ -81,10 +78,6 @@ impl Spanned for PathExpr {
 }
 
 pub type PathPatt = PathExpr;
-
-impl Pattern for PathPatt {}
-
-impl PatternWithoutRange for PathPatt {}
 
 // points to either a local variable or an item
 #[derive(Clone)]

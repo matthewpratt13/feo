@@ -32,14 +32,17 @@ pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
-    closure_expr::ClosureType,
+    call_expr::CallParams,
+    closure_expr::{ClosureParam, ClosureParams, ClosureType},
+    conditional_expr::MatchExpr,
+    iteration_expr::IterLoopExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
     struct_expr::{Struct, StructExprField, StructExprFields, StructKind},
 };
 use self::{
     call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{ClosureWithBlock, ClosureWithoutBlock},
-    conditional_expr::{IfExpr, MatchExpr},
+    conditional_expr::IfExpr,
     field_access_expr::FieldAccessExpr,
     iteration_expr::{
         BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,

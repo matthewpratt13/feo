@@ -3,17 +3,14 @@ use feo_types::{
     utils::{Comma, Parenthesis},
 };
 
-use super::{Pattern, PatternWithoutRange};
+use super::Pattern;
 
+#[derive(Clone)]
 pub struct TuplePatt {
     open_parenthesis: Parenthesis,
     tuple_patt_elements_opt: Option<TuplePattElements>,
     close_parenthesis: Parenthesis,
 }
-
-impl Pattern for TuplePatt {}
-
-impl PatternWithoutRange for TuplePatt {}
 
 impl Spanned for TuplePatt {
     fn span(&self) -> Span {
@@ -27,8 +24,9 @@ impl Spanned for TuplePatt {
     }
 }
 
+#[derive(Clone)]
 pub struct TuplePattElements {
-    first_element: Box<dyn Pattern>,
-    subsequent_elements: Vec<(Comma, Box<dyn Pattern>)>,
+    first_element: Box<Pattern>,
+    subsequent_elements: Vec<(Comma, Pattern)>,
     trailing_comma_opt: Option<Comma>,
 }

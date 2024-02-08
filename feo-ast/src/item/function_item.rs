@@ -109,7 +109,7 @@ pub struct FunctionParams {
 
 #[derive(Clone)]
 pub struct FunctionParam {
-    param_pattern: Box<dyn Pattern>,
+    param_pattern: Box<Pattern>,
     colon: Colon,
     param_type: Box<Type>,
 }

@@ -6,7 +6,6 @@ use feo_types::{
 
 use crate::{
     expression::{Expression, OuterAttr},
-    pattern::Pattern,
     ty::Type,
 };
 
@@ -19,14 +18,12 @@ pub struct ConstantItem {
     kw_const: KwConst,
     item_name: Identifier,
     colon: Colon,
-    item_type: Type,
-    assignment_opt: Option<(Equals, Expression)>, // `None` is only allowed in a `TraitDef`
+    item_type: Box<Type>,
+    assignment_opt: Option<(Equals, Box<Expression>)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
 
 impl Item for ConstantItem {}
-
-impl Pattern for ConstantItem {}
 
 impl Spanned for ConstantItem {
     fn span(&self) -> Span {

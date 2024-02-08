@@ -62,8 +62,6 @@ pub struct MatchExpr {
     close_brace: Brace,
 }
 
-impl Pattern for MatchExpr {}
-
 impl Spanned for MatchExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_match.span();
@@ -90,7 +88,7 @@ pub struct MatchArms {
 #[derive(Clone)]
 pub struct MatchArm {
     attributes: Vec<OuterAttr>,
-    pattern: Box<dyn Pattern>,
+    pattern: Box<Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
 

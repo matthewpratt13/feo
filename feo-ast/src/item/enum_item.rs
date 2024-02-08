@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{expression::OuterAttr, pattern::Pattern};
+use crate::expression::OuterAttr;
 
 use super::{Item, StructFields, TupleElements, VisibilityKind};
 
@@ -70,8 +70,6 @@ pub struct EnumVariantStruct {
 
 // impl Expression for EnumVariantStruct {}
 
-impl Pattern for EnumVariantStruct {}
-
 impl Spanned for EnumVariantStruct {
     fn span(&self) -> Span {
         let start_pos = self.open_brace.span().start();
@@ -90,8 +88,6 @@ pub struct EnumVariantTuple {
     fields_opt: Option<TupleElements>,
     close_parenthesis: Parenthesis,
 }
-
-impl Pattern for EnumVariantTuple {}
 
 impl Spanned for EnumVariantTuple {
     fn span(&self) -> Span {

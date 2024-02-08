@@ -3,17 +3,14 @@ use feo_types::{
     utils::Parenthesis,
 };
 
-use super::{Pattern, PatternWithoutRange};
+use super::Pattern;
 
+#[derive(Clone)]
 pub struct ParenthesizedPatt {
     open_parenthesis: Parenthesis,
-    pattern: Box<dyn Pattern>,
+    pattern: Box<Pattern>,
     close_parenthesis: Parenthesis,
 }
-
-impl Pattern for ParenthesizedPatt {}
-
-impl PatternWithoutRange for ParenthesizedPatt {}
 
 impl Spanned for ParenthesizedPatt {
     fn span(&self) -> Span {
