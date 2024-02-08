@@ -5,6 +5,7 @@ use feo_types::{
 
 use super::Type;
 
+#[derive(Clone)]
 pub struct TupleType {
     open_parenthesis: Parenthesis,
     elements: Vec<(Box<dyn Type>, Comma)>,

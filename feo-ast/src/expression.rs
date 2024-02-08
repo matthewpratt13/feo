@@ -93,6 +93,7 @@ use self::{
 // {
 // }
 
+#[derive(Clone)]
 pub enum Assignable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),
@@ -118,6 +119,7 @@ impl Spanned for Assignable {
 // {
 // }
 
+#[derive(Clone)]
 pub enum BooleanOperand {
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
@@ -157,6 +159,7 @@ impl Spanned for BooleanOperand {
 // {
 // }
 
+#[derive(Clone)]
 pub enum Castable {
     Char(Literal<char>),
     Bool(Literal<bool>),
@@ -227,6 +230,7 @@ pub enum Constant {
 
 // pub trait ExprWithBlock {}
 
+#[derive(Clone)]
 pub enum ExprWithBlock {
     OuterAttr(OuterAttr),
     BlockExpr(BlockExpr),
@@ -244,6 +248,7 @@ impl Spanned for ExprWithBlock {
 
 // pub trait ExprWithoutBlock {}
 
+#[derive(Clone)]
 pub enum ExprWithoutBlock {
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
@@ -277,6 +282,7 @@ pub enum ExprWithoutBlock {
 
 // impl IterableExpr for Keyword {}
 
+#[derive(Clone)]
 pub enum IterableExpr {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
@@ -298,6 +304,7 @@ pub enum IterableExpr {
     PathExpr(PathExpr),
 }
 
+#[derive(Clone)]
 pub enum Expression {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),

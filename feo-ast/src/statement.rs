@@ -31,6 +31,7 @@ use crate::{
 // {
 // }
 
+#[derive(Clone)]
 pub enum Statement {
     ConstantItem(ConstantItem),
     StaticItem(StaticItem),
@@ -57,6 +58,7 @@ pub enum Statement {
     LetStatement(LetStatement),
 }
 
+#[derive(Clone)]
 pub struct ExprStatement {
     expression: Expression,
     semicolon_opt: Option<Semicolon>,
@@ -80,6 +82,7 @@ impl Spanned for ExprStatement {
     }
 }
 
+#[derive(Clone)]
 pub struct LetStatement {
     attributes: Vec<OuterAttr>,
     kw_let: KwLet,

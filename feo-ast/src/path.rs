@@ -12,6 +12,7 @@ use crate::{
     ty::Type,
 };
 
+#[derive(Clone)]
 pub enum SimplePathSegmentKind {
     Iden(Identifier),
     KwCrate(KwCrate),
@@ -87,6 +88,7 @@ impl Pattern for PathPatt {}
 impl PatternWithoutRange for PathPatt {}
 
 // points to either a local variable or an item
+#[derive(Clone)]
 pub struct SimplePath {
     pub first_segment: SimplePathSegmentKind,
     pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
@@ -116,6 +118,7 @@ pub struct PathInExpr {
     pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
+#[derive(Clone)]
 pub struct PathType {
     pub first_segment: PathTypeSegment,
     pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,

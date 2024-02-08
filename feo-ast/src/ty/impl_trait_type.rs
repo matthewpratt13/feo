@@ -13,6 +13,7 @@ pub struct ImplTraitType {
     trait_bound: TraitBound,
 }
 
+
 pub type TraitBound = PathType;
 
 impl Type for ImplTraitType {}

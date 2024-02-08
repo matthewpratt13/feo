@@ -11,11 +11,13 @@ use crate::{
 
 use super::{ConstantItem, FunctionDef, Item, TypeAliasDef, WhereClause};
 
+#[derive(Clone)]
 pub enum InherentImplItem {
     Constant(ConstantItem),
     FuncDef(FunctionDef),
 }
 
+#[derive(Clone)]
 pub enum TraitImplItem {
     Constant(ConstantItem),
     FuncDef(FunctionDef),

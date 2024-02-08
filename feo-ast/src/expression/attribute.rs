@@ -5,6 +5,7 @@ use feo_types::{
 
 use crate::path::SimplePath;
 
+#[derive(Clone)]
 pub enum AttributeKind {
     KwAbstract(KwAbstract),
     KwExport(KwExport),
@@ -16,6 +17,7 @@ pub enum AttributeKind {
     None,
 }
 
+#[derive(Clone)]
 pub struct InnerAttr {
     hash_bang: HashBang,
     open_bracket: Bracket,
@@ -40,6 +42,7 @@ impl Spanned for InnerAttr {
     }
 }
 
+#[derive(Clone)]
 pub struct OuterAttr {
     pub hash: HashSign,
     pub open_bracket: Bracket,

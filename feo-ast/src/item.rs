@@ -55,18 +55,21 @@ mod where_clause {
 
     use crate::ty::{TraitBound, Type};
 
+    #[derive(Clone)]
     pub struct WhereClause {
         kw_where: Keyword,
         type_bounds: Vec<(TypeBound, Comma)>,
         trailing_type_bound_opt: Option<TypeBound>,
     }
 
+    #[derive(Clone)]
     pub struct TypeBound {
         ty: Box<dyn Type>,
         colon: Colon,
         type_param_bounds_opt: Option<TypeParamBounds>,
     }
 
+    #[derive(Clone)]
     pub struct TypeParamBounds {
         first_bound: TraitBound,
         subsequent_bounds: Vec<(Plus, TraitBound)>,

@@ -8,6 +8,7 @@ use crate::{item::TupleStruct, ty::TupleType};
 
 use super::Expression;
 
+#[derive(Clone)]
 pub enum TupleKind {
     Tuple(TupleType),
     TupleStruct(TupleStruct),
@@ -22,6 +23,7 @@ impl Spanned for TupleKind {
     }
 }
 
+#[derive(Clone)]
 pub struct TupleExpr {
     open_parenthesis: Parenthesis,
     elements_opt: Option<TupleElements>,
@@ -40,11 +42,13 @@ impl Spanned for TupleExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct TupleElements {
     initializer_operands: Vec<(Expression, Comma)>,
     trailing_operand_opt: Option<Box<Expression>>,
 }
 
+#[derive(Clone)]
 pub struct TupleIndexExpr {
     operand: TupleKind,
     dot: Dot,

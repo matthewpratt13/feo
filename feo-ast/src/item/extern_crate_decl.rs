@@ -6,11 +6,13 @@ use feo_types::{
 
 use super::Item;
 
+#[derive(Clone)]
 pub enum CrateRefKind {
     Iden(Identifier),
     KwSelfType(KwSelfType),
 }
 
+#[derive(Clone)]
 pub struct ExternCrateDecl {
     kw_extern_crate: (KwExtern, KwCrate),
     crate_name: CrateRefKind,
@@ -32,6 +34,7 @@ impl Spanned for ExternCrateDecl {
     }
 }
 
+#[derive(Clone)]
 pub struct AsClause {
     kw_as: KwAs,
     new_name: Identifier,

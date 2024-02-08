@@ -12,6 +12,7 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
+#[derive(Clone)]
 pub struct ConstantItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -46,6 +47,7 @@ impl Spanned for ConstantItem {
     }
 }
 
+#[derive(Clone)]
 pub struct StaticItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

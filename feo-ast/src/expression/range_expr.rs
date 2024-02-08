@@ -5,6 +5,7 @@ use feo_types::{
 
 use super::Expression;
 
+#[derive(Clone)]
 pub enum RangeExprKind {
     RangeFullExpr(RangeFullExpr),
     RangeFromToExpr(RangeFromToExpr),
@@ -29,6 +30,7 @@ impl Spanned for RangeExprKind {
 
 pub type RangeFullExpr = DblDot;
 
+#[derive(Clone)]
 pub struct RangeFromToExpr {
     from_operand: Box<Expression>,
     dbl_dot: DblDot,
@@ -47,6 +49,7 @@ impl Spanned for RangeFromToExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct RangeFromExpr {
     from_operand: Box<Expression>,
     dbl_dot: DblDot,
@@ -64,6 +67,7 @@ impl Spanned for RangeFromExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct RangeToExpr {
     dbl_dot: DblDot,
     to_operand: Box<Expression>,
@@ -81,6 +85,7 @@ impl Spanned for RangeToExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct RangeInclusiveExpr {
     from_operand: Box<Expression>,
     dot_dot_equals: DotDotEquals,
@@ -99,6 +104,7 @@ impl Spanned for RangeInclusiveExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
     to_operand_incl: Box<Expression>,

@@ -6,11 +6,13 @@ use feo_types::{
 
 use super::IterableExpr;
 
+#[derive(Clone)]
 pub enum ArrayElements {
     CommaSeparated(ArrayElementsCommaSeparated),
     RepeatedValue(ArrayElementsRepeatedValue),
 }
 
+#[derive(Clone)]
 pub struct ArrayExpr {
     open_bracket: Bracket,
     elements_opt: Option<ArrayElements>,
@@ -34,18 +36,21 @@ impl Spanned for ArrayExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct ArrayElementsCommaSeparated {
     first_element: Box<IterableExpr>,
     subsequent_elements: Vec<(Comma, IterableExpr)>,
     trailing_comma_opt: Option<Comma>,
 }
 
+#[derive(Clone)]
 pub struct ArrayElementsRepeatedValue {
     repeat_operand: Box<IterableExpr>,
     semicolon: Semicolon,
     num_repeats: Primitive<u64>,
 }
 
+#[derive(Clone)]
 pub struct IndexExpr {
     indexed_operand: ArrayExpr,
     open_bracket: Bracket,

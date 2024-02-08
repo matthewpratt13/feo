@@ -14,6 +14,7 @@ where
 {
 }
 
+#[derive(Clone)]
 pub struct ModWithBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -47,6 +48,7 @@ impl Spanned for ModWithBody {
     }
 }
 
+#[derive(Clone)]
 pub struct ModWithoutBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

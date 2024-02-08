@@ -25,6 +25,7 @@ pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 // - trait object (not used)
 // - impl trait (one bound only)
 
+
 pub trait Type
 where
     Self: Spanned,

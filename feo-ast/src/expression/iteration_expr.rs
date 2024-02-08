@@ -8,6 +8,7 @@ use crate::pattern::Pattern;
 
 use super::{BlockExpr, BooleanOperand, IterableExpr};
 
+#[derive(Clone)]
 pub enum IterationExprKind {
     InfiniteLoop(InfiniteLoopExpr),
     PredicateLoop(PredicateLoopExpr),
@@ -30,6 +31,7 @@ pub type BreakExpr = Keyword;
 #[allow(dead_code)]
 pub type ContinueExpr = Keyword;
 
+#[derive(Clone)]
 pub struct InfiniteLoopExpr {
     kw_loop: KwLoop,
     block: BlockExpr,
@@ -52,6 +54,7 @@ impl Spanned for InfiniteLoopExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct PredicateLoopExpr {
     kw_while: KwWhile,
     conditional_operand: Box<BooleanOperand>,
@@ -75,6 +78,7 @@ impl Spanned for PredicateLoopExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct IterLoopExpr {
     kw_for: KwFor,
     pattern: Box<dyn Pattern>,

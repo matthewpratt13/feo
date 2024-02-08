@@ -46,6 +46,7 @@ where
 {
 }
 
+#[derive(Clone)]
 pub enum LiteralKind {
     Char(Literal<char>),
     String(Literal<String>),

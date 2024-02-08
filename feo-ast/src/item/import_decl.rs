@@ -7,12 +7,14 @@ use crate::path::SimplePath;
 
 use super::{AsClause, Item, VisibilityKind};
 
+#[derive(Clone)]
 pub enum ImportTree {
     Wildcard(PathWildcard),
     SubsetRecursive(PathSubsetRecursive),
     WithAsClause(PathWithAsClause),
 }
 
+#[derive(Clone)]
 pub struct ImportDecl {
     visibility_opt: Option<VisibilityKind>,
     kw_import: KwImport,
@@ -39,6 +41,7 @@ impl Spanned for ImportDecl {
     }
 }
 
+#[derive(Clone)]
 pub struct PathWildcard {
     full_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
     asterisk: Asterisk,
@@ -68,6 +71,7 @@ impl Spanned for PathWildcard {
     }
 }
 
+#[derive(Clone)]
 pub struct PathSubsetRecursive {
     path_prefix_opt: Option<(Option<SimplePath>, DblColon)>,
     open_brace: Brace,
@@ -96,6 +100,7 @@ impl Spanned for PathSubsetRecursive {
     }
 }
 
+#[derive(Clone)]
 pub struct PathWithAsClause {
     path_prefix: SimplePath,
     as_clause_opt: Option<AsClause>,

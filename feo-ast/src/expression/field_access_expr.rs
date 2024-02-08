@@ -7,6 +7,7 @@ use crate::item::StructFieldName;
 
 use super::Assignable;
 
+#[derive(Clone)]
 pub struct FieldAccessExpr {
     container_operand: Box<Assignable>,
     dot: Dot,

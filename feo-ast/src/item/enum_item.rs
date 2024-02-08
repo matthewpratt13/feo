@@ -8,11 +8,13 @@ use crate::{expression::OuterAttr, pattern::Pattern, ty::Type};
 
 use super::{Item, StructFields, TupleElements, VisibilityKind};
 
+#[derive(Clone)]
 pub enum EnumVariantType {
     Struct(EnumVariantStruct),
     Tuple(EnumVariantTuple),
 }
 
+#[derive(Clone)]
 pub struct EnumItem {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -45,12 +47,15 @@ impl Spanned for EnumItem {
     }
 }
 
+#[derive(Clone)]
+
 pub struct EnumVariants {
     first_variant: EnumVariant,
     subsequent_variants: Vec<(Comma, EnumVariant)>,
     trailing_comma_opt: Option<Comma>,
 }
 
+#[derive(Clone)]
 pub struct EnumVariant {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -58,6 +63,7 @@ pub struct EnumVariant {
     variant_type_opt: Option<EnumVariantType>,
 }
 
+#[derive(Clone)]
 pub struct EnumVariantStruct {
     open_brace: Brace,
     fields_opt: Option<StructFields>,
@@ -80,6 +86,7 @@ impl Spanned for EnumVariantStruct {
     }
 }
 
+#[derive(Clone)]
 pub struct EnumVariantTuple {
     open_parenthesis: Parenthesis,
     fields_opt: Option<TupleElements>,

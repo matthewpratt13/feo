@@ -7,6 +7,7 @@ use crate::pattern::Pattern;
 
 use super::{Assignable, BlockExpr, BooleanOperand, Expression, InnerAttr, OuterAttr};
 
+#[derive(Clone)]
 pub struct IfExpr {
     kw_if: KwIf,
     condition_operand: Box<BooleanOperand>,
@@ -51,6 +52,7 @@ impl Spanned for IfExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct MatchExpr {
     kw_match: KwMatch,
     scrutinee: Box<Assignable>, // except struct expression
@@ -79,17 +81,20 @@ impl Spanned for MatchExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct MatchArms {
     arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
     final_arm: (MatchArm, FatArrow, Box<Expression>, Option<Comma>),
 }
 
+#[derive(Clone)]
 pub struct MatchArm {
     attributes: Vec<OuterAttr>,
     pattern: Box<dyn Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }
 
+#[derive(Clone)]
 pub struct MatchArmGuard {
     kw_if: KwIf,
     operand: Box<BooleanOperand>,

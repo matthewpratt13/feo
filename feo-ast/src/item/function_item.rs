@@ -12,6 +12,7 @@ use crate::{
 
 use super::{Item, VisibilityKind};
 
+#[derive(Clone)]
 pub enum FunctionItem {
     FuncSig((FunctionSig, Semicolon)),
     FuncDef(FunctionDef),
@@ -42,11 +43,13 @@ impl Spanned for FunctionItem {
     }
 }
 
+#[derive(Clone)]
 pub enum FuncOrMethodParam {
     FuncParam(FunctionParam),
     MethodParam(MethodParam),
 }
 
+#[derive(Clone)]
 pub struct FunctionDef {
     function_sig: FunctionSig,
     function_body: ExprWithBlock,
@@ -68,6 +71,7 @@ impl Spanned for FunctionDef {
     }
 }
 
+#[derive(Clone)]
 pub struct FunctionSig {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -98,23 +102,27 @@ impl Spanned for FunctionSig {
     }
 }
 
+#[derive(Clone)]
 pub struct FunctionParams {
     first_param: FuncOrMethodParam,
     subsequent_params: Vec<(Comma, FunctionParam)>,
     trailing_comma_opt: Option<Comma>,
 }
 
+#[derive(Clone)]
 pub struct FunctionParam {
     param_pattern: Box<dyn Pattern>,
     colon: Colon,
     param_type: Box<dyn Type>,
 }
 
+#[derive(Clone)]
 pub struct MethodParam {
     self_param: SelfParam,
     trailing_comma_opt: Option<Comma>,
 }
 
+#[derive(Clone)]
 pub struct SelfParam {
     kw_ref_opt: Option<KwRef>,
     kw_mut_opt: Option<KwMut>,

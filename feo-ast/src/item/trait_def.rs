@@ -11,6 +11,7 @@ use super::{
     WhereClause,
 };
 
+#[derive(Clone)]
 pub enum TraitDefItem {
     Constant(ConstantItem),
     FuncDef(FunctionDef),
@@ -18,6 +19,7 @@ pub enum TraitDefItem {
     TypeAlias(TypeAliasDef),
 }
 
+#[derive(Clone)]
 pub struct TraitDef {
     outer_attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

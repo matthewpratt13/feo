@@ -16,6 +16,7 @@ where
 
 pub type StructFieldName = Identifier;
 
+#[derive(Clone)]
 pub struct Struct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -50,12 +51,14 @@ impl Spanned for Struct {
     }
 }
 
+#[derive(Clone)]
 pub struct StructFields {
     first_field: StructField,
     subsequent_fields: Vec<(Comma, StructField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
+#[derive(Clone)]
 pub struct StructField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -64,6 +67,7 @@ pub struct StructField {
     field_type: Box<dyn Type>,
 }
 
+#[derive(Clone)]
 pub struct TupleStruct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -99,18 +103,21 @@ impl Spanned for TupleStruct {
     }
 }
 
+#[derive(Clone)]
 pub struct TupleElements {
     first_field: TupleField,
     subsequent_fields: Vec<(Comma, TupleField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
+#[derive(Clone)]
 pub struct TupleField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_type: Box<dyn Type>,
 }
 
+#[derive(Clone)]
 pub struct UnitStruct {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

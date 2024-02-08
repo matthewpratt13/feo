@@ -8,6 +8,7 @@ use crate::{path::PathInExpr, ty::Type};
 
 use super::{Expression, OuterAttr};
 
+#[derive(Clone)]
 pub enum StructKind {
     Struct(Struct),
     TupleStruct(TupleStruct),
@@ -24,6 +25,7 @@ impl Spanned for StructKind {
     }
 }
 
+#[derive(Clone)]
 pub struct Struct {
     pub item_path: PathInExpr,
     pub open_brace: Brace,
@@ -45,8 +47,10 @@ impl Spanned for Struct {
     }
 }
 
+#[derive(Clone)]
 pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Expression>));
 
+#[derive(Clone)]
 pub struct StructExprFields {
     pub first_field: StructExprField,
     pub subsequent_fields: Vec<(Comma, StructExprField)>,
@@ -57,6 +61,7 @@ pub struct StructExprFields {
 //     data: (Identifier, Colon, Box<dyn Expression>),
 // }
 
+#[derive(Clone)]
 pub struct TupleStruct {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
@@ -78,6 +83,7 @@ impl Spanned for TupleStruct {
     }
 }
 
+#[derive(Clone)]
 pub struct UnitStruct(PathInExpr);
 
 impl Type for UnitStruct {}
