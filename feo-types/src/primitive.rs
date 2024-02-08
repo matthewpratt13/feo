@@ -1,13 +1,19 @@
+use std::fmt::Debug;
+
 use crate::{
     span::{Span, Spanned},
     U256,
 };
 
-pub trait PrimitiveType {}
+pub trait PrimitiveType
+where
+    Self: Debug + Copy + Clone + PartialEq,
+{
+}
 
 impl PrimitiveType for char {}
 
-impl PrimitiveType for String {}
+impl PrimitiveType for &'static str {}
 
 impl PrimitiveType for bool {}
 
@@ -29,25 +35,25 @@ impl PrimitiveType for f32 {}
 
 impl PrimitiveType for f64 {}
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Primitive<P: Clone + PrimitiveType>(P);
+#[derive(Debug, Clone)]
+pub struct Primitive<P: PrimitiveType>(P);
 
 impl<P> Primitive<P>
 where
-    P: Clone + PrimitiveType,
+    P: PrimitiveType,
 {
     pub fn new(raw_value: P) -> Primitive<P> {
         Primitive(raw_value)
     }
 
-    pub fn raw_value(&self) -> P {
-        self.0.clone()
+    pub fn raw_value(self) -> P {
+        self.0
     }
 }
 
 impl<P> Spanned for Primitive<P>
 where
-    P: Clone + PrimitiveType,
+    P: PrimitiveType,
 {
     fn span(&self) -> Span {
         Span::default()

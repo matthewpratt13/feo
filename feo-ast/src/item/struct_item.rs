@@ -64,7 +64,7 @@ pub struct StructField {
     visibility_opt: Option<VisibilityKind>,
     field_name: StructFieldName,
     colon: Colon,
-    field_type: Box<dyn Type>,
+    field_type: Box<Type>,
 }
 
 #[derive(Clone)]
@@ -114,7 +114,7 @@ pub struct TupleElements {
 pub struct TupleField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
-    field_type: Box<dyn Type>,
+    field_type: Box<Type>,
 }
 
 #[derive(Clone)]

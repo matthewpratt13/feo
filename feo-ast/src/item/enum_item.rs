@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{expression::OuterAttr, pattern::Pattern, ty::Type};
+use crate::{expression::OuterAttr, pattern::Pattern};
 
 use super::{Item, StructFields, TupleElements, VisibilityKind};
 
@@ -26,8 +26,6 @@ pub struct EnumItem {
 }
 
 impl Item for EnumItem {}
-
-impl Type for EnumItem {}
 
 impl Spanned for EnumItem {
     fn span(&self) -> Span {

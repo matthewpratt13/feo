@@ -20,8 +20,6 @@ pub enum FunctionItem {
 
 impl Item for FunctionItem {}
 
-impl Type for FunctionItem {}
-
 impl Spanned for FunctionItem {
     fn span(&self) -> Span {
         match self {
@@ -80,7 +78,7 @@ pub struct FunctionSig {
     open_parenthesis: Parenthesis,
     function_params_opt: Option<FunctionParams>,
     close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    return_type_opt: Option<(ThinArrow, Box<Type>)>,
 }
 
 impl Spanned for FunctionSig {
@@ -113,7 +111,7 @@ pub struct FunctionParams {
 pub struct FunctionParam {
     param_pattern: Box<dyn Pattern>,
     colon: Colon,
-    param_type: Box<dyn Type>,
+    param_type: Box<Type>,
 }
 
 #[derive(Clone)]
@@ -127,5 +125,5 @@ pub struct SelfParam {
     kw_ref_opt: Option<KwRef>,
     kw_mut_opt: Option<KwMut>,
     kw_self: KwSelf,
-    type_annotation_opt: Option<(Colon, Box<dyn Type>)>,
+    type_annotation_opt: Option<(Colon, Box<Type>)>,
 }

@@ -64,7 +64,7 @@ mod where_clause {
 
     #[derive(Clone)]
     pub struct TypeBound {
-        ty: Box<dyn Type>,
+        ty: Type,
         colon: Colon,
         type_param_bounds_opt: Option<TypeParamBounds>,
     }

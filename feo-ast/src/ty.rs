@@ -4,8 +4,20 @@ mod array_type;
 mod impl_trait_type;
 mod tuple_type;
 
-use feo_types::{primitive::Primitive, span::Spanned, U256};
+use feo_types::{
+    primitive::Primitive,
+    span::{Span, Spanned},
+    U256,
+};
 
+use crate::{
+    expression::{ClosureType, StructKind},
+    item::{EnumItem, FunctionItem},
+};
+
+use self::{
+    array_type::ArrayType, impl_trait_type::ImplTraitType, parenthesized_type::ParenthesizedType,
+};
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
 // built-in types:
@@ -25,36 +37,37 @@ pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 // - trait object (not used)
 // - impl trait (one bound only)
 
-
-pub trait Type
-where
-    Self: Spanned,
-{
+#[derive(Clone)]
+pub enum Type {
+    Char(Primitive<char>),
+    Str(Primitive<&'static str>),
+    Bool(Primitive<bool>),
+    I32(Primitive<i32>),
+    I64(Primitive<i64>),
+    U8(Primitive<u8>),
+    U16(Primitive<u16>),
+    U32(Primitive<u32>),
+    U64(Primitive<u64>),
+    U256(Primitive<U256>),
+    F32(Primitive<f32>),
+    F64(Primitive<f64>),
+    Unit(()),
+    Array(ArrayType),
+    Tuple(TupleType),
+    Struct(StructKind),
+    Enum(EnumItem),
+    Function(FunctionItem),
+    Closure(ClosureType),
+    ImplTrait(ImplTraitType),
+    InferredType,
+    ParenthesizedType(ParenthesizedType),
 }
 
-impl Type for Primitive<char> {}
-
-impl Type for Primitive<String> {}
-
-impl Type for Primitive<i32> {}
-
-impl Type for Primitive<i64> {}
-
-impl Type for Primitive<u8> {}
-
-impl Type for Primitive<u16> {}
-
-impl Type for Primitive<u32> {}
-
-impl Type for Primitive<u64> {}
-
-impl Type for Primitive<U256> {}
-
-impl Type for Primitive<f32> {}
-
-impl Type for Primitive<f64> {}
-
-impl Type for Primitive<bool> {}
+impl Spanned for Type {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
 
 mod parenthesized_type {
     use feo_types::{
@@ -64,13 +77,12 @@ mod parenthesized_type {
 
     use super::Type;
 
+    #[derive(Clone)]
     pub struct ParenthesizedType {
         open_parenthesis: Parenthesis,
-        ty: Box<dyn Type>,
+        ty: Box<Type>,
         close_parenthesis: Parenthesis,
     }
-
-    impl Type for ParenthesizedType {}
 
     impl Spanned for ParenthesizedType {
         fn span(&self) -> Span {

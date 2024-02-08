@@ -27,7 +27,7 @@ pub enum TraitImplItem {
 pub struct InherentImpl {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
-    nominal_type: Box<dyn Type>,
+    nominal_type: Type,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
@@ -59,7 +59,7 @@ pub struct TraitImpl {
     kw_impl: KwImpl,
     implemented_trait_path: PathType,
     kw_for: KwFor,
-    implementing_type: Box<dyn Type>,
+    implementing_type: Type,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,

@@ -19,7 +19,7 @@ pub struct ConstantItem {
     kw_const: KwConst,
     item_name: Identifier,
     colon: Colon,
-    item_type: Box<dyn Type>,
+    item_type: Type,
     assignment_opt: Option<(Equals, Expression)>, // `None` is only allowed in a `TraitDef`
     semicolon: Semicolon,
 }
@@ -55,7 +55,7 @@ pub struct StaticItem {
     kw_mut_opt: Option<KwMut>,
     item_name: Identifier,
     colon: Colon,
-    item_type: Box<dyn Type>,
+    item_type: Type,
     assignment_opt: Option<(Equals, Expression)>,
     semicolon: Semicolon,
 }

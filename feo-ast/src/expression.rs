@@ -32,6 +32,7 @@ pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
+    closure_expr::ClosureType,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
     struct_expr::{Struct, StructExprField, StructExprFields, StructKind},
 };

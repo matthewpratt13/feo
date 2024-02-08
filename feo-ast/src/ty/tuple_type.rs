@@ -8,12 +8,10 @@ use super::Type;
 #[derive(Clone)]
 pub struct TupleType {
     open_parenthesis: Parenthesis,
-    elements: Vec<(Box<dyn Type>, Comma)>,
-    trailing_element: Box<dyn Type>,
+    elements: Vec<(Type, Comma)>,
+    trailing_element: Box<Type>,
     close_parenthesis: Parenthesis,
 }
-
-impl Type for TupleType {}
 
 impl Spanned for TupleType {
     fn span(&self) -> Span {
@@ -31,8 +29,6 @@ pub struct UnitType {
     open_parenthesis: Parenthesis,
     close_parenthesis: Parenthesis,
 }
-
-impl Type for UnitType {}
 
 impl Spanned for UnitType {
     fn span(&self) -> Span {

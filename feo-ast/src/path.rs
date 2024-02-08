@@ -9,7 +9,6 @@ use feo_types::{
 use crate::{
     item::Item,
     pattern::{Pattern, PatternWithoutRange, RangePattBound},
-    ty::Type,
 };
 
 #[derive(Clone)]
@@ -123,8 +122,6 @@ pub struct PathType {
     pub first_segment: PathTypeSegment,
     pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,
 }
-
-impl Type for PathType {}
 
 impl Spanned for PathType {
     fn span(&self) -> Span {

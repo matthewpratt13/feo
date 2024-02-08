@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{path::PathInExpr, ty::Type};
+use crate::path::PathInExpr;
 
 use super::{Expression, OuterAttr};
 
@@ -32,8 +32,6 @@ pub struct Struct {
     pub struct_expr_fields_opt: Option<StructExprFields>,
     pub close_brace: Brace,
 }
-
-impl Type for Struct {}
 
 impl Spanned for Struct {
     fn span(&self) -> Span {
@@ -69,8 +67,6 @@ pub struct TupleStruct {
     close_parenthesis: Parenthesis,
 }
 
-impl Type for TupleStruct {}
-
 impl Spanned for TupleStruct {
     fn span(&self) -> Span {
         let start_pos = self.item_path.span().start();
@@ -85,8 +81,6 @@ impl Spanned for TupleStruct {
 
 #[derive(Clone)]
 pub struct UnitStruct(PathInExpr);
-
-impl Type for UnitStruct {}
 
 impl Spanned for UnitStruct {
     fn span(&self) -> Span {

@@ -219,7 +219,7 @@ impl Tokenize for Literal<char> {
     }
 }
 
-impl Tokenize for Literal<String> {
+impl Tokenize for Literal<&'static str> {
     fn tokenize(
         src: &str,
         content: &str,
@@ -229,7 +229,7 @@ impl Tokenize for Literal<String> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let literal = Literal::new(Primitive::new(content.to_string()), span);
+        let literal = Literal::new(Primitive::new(content), span);
 
         let token = Token::StringLit(literal);
 

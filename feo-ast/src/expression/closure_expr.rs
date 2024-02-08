@@ -31,9 +31,15 @@ impl Spanned for ClosureParamsOpt {
 }
 
 #[derive(Clone)]
+pub enum ClosureType {
+    ClosureWithBlock(ClosureWithBlock),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+}
+
+#[derive(Clone)]
 pub struct ClosureWithBlock {
     params: ClosureParamsOpt,
-    return_type_opt: Option<(ThinArrow, Box<dyn Type>)>,
+    return_type_opt: Option<(ThinArrow, Box<Type>)>,
     block: BlockExpr,
 }
 
@@ -54,15 +60,11 @@ impl Spanned for ClosureWithBlock {
     }
 }
 
-impl Type for ClosureWithBlock {}
-
 #[derive(Clone)]
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
     body_operand: Box<Expression>,
 }
-
-impl Type for ClosureWithoutBlock {}
 
 impl Spanned for ClosureWithoutBlock {
     fn span(&self) -> Span {
@@ -124,7 +126,7 @@ impl Spanned for ClosureParams {
 pub struct ClosureParam {
     attributes: Vec<OuterAttr>,
     pattern: Box<dyn Pattern>,
-    type_annotation_opt: Option<(Colon, Box<dyn Type>)>,
+    type_annotation_opt: Option<(Colon, Box<Type>)>,
 }
 
 impl Pattern for ClosureParam {}

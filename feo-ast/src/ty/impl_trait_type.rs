@@ -5,18 +5,14 @@ use feo_types::{
 
 use crate::path::PathType;
 
-use super::Type;
-
 // (one bound)
+#[derive(Clone)]
 pub struct ImplTraitType {
     kw_impl: KwImpl,
     trait_bound: TraitBound,
 }
 
-
 pub type TraitBound = PathType;
-
-impl Type for ImplTraitType {}
 
 impl Spanned for ImplTraitType {
     fn span(&self) -> Span {

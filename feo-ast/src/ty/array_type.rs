@@ -6,15 +6,14 @@ use feo_types::{
 
 use super::Type;
 
+#[derive(Clone)]
 pub struct ArrayType {
     open_bracket: Bracket,
-    element_type: Box<dyn Type>,
+    element_type: Box<Type>,
     semicolon: Semicolon,
     num_elements: Primitive<u64>,
     close_bracket: Bracket,
 }
-
-impl Type for ArrayType {}
 
 impl Spanned for ArrayType {
     fn span(&self) -> Span {
