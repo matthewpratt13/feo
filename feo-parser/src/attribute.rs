@@ -42,15 +42,13 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_res = parser.peek::<Punctuation>()?;
+        let hash_sign_res = parser.take::<Punctuation>()?;
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Hash,
             ..
         }) = hash_sign_res
         {
-            parser.advance();
-
             let open_bracket_res = parser.peek::<Delimiter>()?;
 
             if let Some(Delimiter {
@@ -68,7 +66,6 @@ impl Parse for OuterAttr {
                         ..
                     }) = close_bracket_res
                     {
-                        // consume last token and move to next token in prep for next parser
                         parser.advance();
 
                         let attr = OuterAttr {
