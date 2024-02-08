@@ -47,14 +47,14 @@ pub struct ArrayElementsCommaSeparated {
 pub struct ArrayElementsRepeatedValue {
     repeat_operand: Box<IterableExpr>,
     semicolon: Semicolon,
-    num_repeats: Primitive<u64>,
+    num_repeats: Primitive,
 }
 
 #[derive(Clone)]
 pub struct IndexExpr {
     indexed_operand: ArrayExpr,
     open_bracket: Bracket,
-    index: Primitive<u64>,
+    index: Primitive,
     close_bracket: Bracket,
 }
 

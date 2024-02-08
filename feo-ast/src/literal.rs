@@ -1,35 +1,33 @@
+use std::marker::PhantomData;
+
 use feo_types::{
-    primitive::{Primitive, PrimitiveType},
+    primitive::Primitive,
     span::{Span, Spanned},
     U256,
 };
 
 #[derive(Debug, Clone)]
-pub struct Literal<T: PrimitiveType> {
-    pub inner_value: Primitive<T>,
+pub struct Literal<T> {
+    pub inner_value: Primitive,
     span: Span,
+    _phantom: PhantomData<T>,
 }
 
-impl<T> Literal<T>
-where
-    T: PrimitiveType,
-{
-    pub fn new(raw_value: Primitive<T>, span: Span) -> Literal<T> {
-        Literal {
+impl<T> Literal<T> {
+    pub fn new(raw_value: Primitive, span: Span) -> Literal<T> {
+        Literal::<T> {
             inner_value: raw_value,
             span,
+            _phantom: PhantomData,
         }
     }
 
-    pub fn into_inner(self) -> T {
-        self.inner_value.raw_value()
+    pub fn into_inner(self) -> Primitive {
+        self.inner_value
     }
 }
 
-impl<T> Spanned for Literal<T>
-where
-    T: PrimitiveType,
-{
+impl<T> Spanned for Literal<T> {
     fn span(&self) -> Span {
         self.span.clone()
     }

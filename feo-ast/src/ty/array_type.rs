@@ -11,7 +11,7 @@ pub struct ArrayType {
     open_bracket: Bracket,
     element_type: Box<Type>,
     semicolon: Semicolon,
-    num_elements: Primitive<u64>,
+    num_elements: Primitive,
     close_bracket: Bracket,
 }
 

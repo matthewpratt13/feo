@@ -52,7 +52,7 @@ pub struct TupleElements {
 pub struct TupleIndexExpr {
     operand: TupleKind,
     dot: Dot,
-    index: Primitive<u64>,
+    index: Primitive,
 }
 
 impl Spanned for TupleIndexExpr {
