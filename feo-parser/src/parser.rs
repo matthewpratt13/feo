@@ -16,57 +16,6 @@ use feo_types::{
 
 use crate::parse::Peek;
 
-// TODO: remove this code and implementations after adjusting `Expression::parse()`
-#[derive(Default)]
-pub enum TokenType {
-    Literal(Token),
-    Identifier(Token),
-    Keyword(Token),
-    DocComment(Token),
-    Delimiter(Token),
-    Punctuation(Token),
-    EOF(Token),
-
-    #[default]
-    InvalidToken,
-}
-
-// impl TokenType {
-//     fn into_inner(self) -> Option<Token> {
-//         match self {
-//             TokenType::Literal(l) => Some(l),
-//             TokenType::Identifier(i) => Some(i),
-//             TokenType::Keyword(k) => Some(k),
-//             TokenType::Delimiter(d) => Some(d),
-//             TokenType::DocComment(dc) => Some(dc),
-//             TokenType::Punctuation(p) => Some(p),
-//             TokenType::InvalidToken => None,
-//             TokenType::EOF(eof) => Some(eof),
-//         }
-//     }
-// }
-
-impl From<Token> for TokenType {
-    fn from(value: Token) -> Self {
-        match value {
-            Token::CharLit(c) => TokenType::Literal(Token::CharLit(c)),
-            Token::StringLit(s) => TokenType::Literal(Token::StringLit(s)),
-            Token::BoolLit(b) => TokenType::Literal(Token::BoolLit(b)),
-            Token::IntLit(i) => TokenType::Literal(Token::IntLit(i)),
-            Token::UIntLit(ui) => TokenType::Literal(Token::UIntLit(ui)),
-            Token::U256Lit(u) => TokenType::Literal(Token::U256Lit(u)),
-            Token::FloatLit(f) => TokenType::Literal(Token::FloatLit(f)),
-            Token::Iden(i) => TokenType::Identifier(Token::Iden(i)),
-            Token::Keyword(k) => TokenType::Identifier(Token::Keyword(k)),
-            Token::Comment(_) => TokenType::InvalidToken,
-            Token::DocComment(_) => TokenType::InvalidToken,
-            Token::Delim(d) => TokenType::Delimiter(Token::Delim(d)),
-            Token::Punc(p) => TokenType::Punctuation(Token::Punc(p)),
-            Token::EOF => TokenType::EOF(Token::EOF),
-        }
-    }
-}
-
 pub struct Parser {
     stream: TokenStream,
     pos: usize,
@@ -197,32 +146,6 @@ impl Peek for Literal<char> {
         }
     }
 }
-
-// impl<T: PrimitiveType> Peek for Literal<T> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_literal() {
-//             Ok(l) => match l {
-//                 LiteralKind::Char(c) => Some(c),
-//                 LiteralKind::String(s) => Some(s),
-//                 LiteralKind::Bool(b) => Some(b),
-//                 LiteralKind::I32(i) => Some(i),
-//                 LiteralKind::I64(i) => Some(i),
-//                 LiteralKind::U8(ui) => Some(ui),
-//                 LiteralKind::U16(ui) => Some(ui),
-//                 LiteralKind::U32(ui) => Some(ui),
-//                 LiteralKind::U64(ui) => Some(ui),
-//                 LiteralKind::U256(u) => Some(u),
-//                 LiteralKind::F32(f) => Some(f),
-//                 LiteralKind::F64(f) => Some(f),
-//                 _ => todo!(),
-//             },
-//             Err(_) => todo!(),
-//         }
-//     }
-// }
 
 impl Peek for Literal<String> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
