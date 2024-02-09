@@ -7,7 +7,7 @@ use feo_types::{
 
 pub trait LiteralType
 where
-    Self: Sized + Debug + Clone + PartialEq + 'static,
+    Self: 'static,
 {
 }
 
@@ -66,7 +66,7 @@ where
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum LiteralKind {
     Char(Literal<char>),
     String(Literal<String>),

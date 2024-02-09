@@ -7,6 +7,7 @@ mod tuple_type;
 use feo_types::{
     primitive::Primitive,
     span::{Span, Spanned},
+    U256,
 };
 
 use crate::{
@@ -38,18 +39,18 @@ pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
 #[derive(Clone)]
 pub enum Type {
-    Char(Primitive),
-    Str(Primitive),
-    Bool(Primitive),
-    I32(Primitive),
-    I64(Primitive),
-    U8(Primitive),
-    U16(Primitive),
-    U32(Primitive),
-    U64(Primitive),
-    U256(Primitive),
-    F32(Primitive),
-    F64(Primitive),
+    Char(Primitive<char>),
+    Str(Primitive<&'static str>),
+    Bool(Primitive<bool>),
+    I32(Primitive<i32>),
+    I64(Primitive<i64>),
+    U8(Primitive<u8>),
+    U16(Primitive<u16>),
+    U32(Primitive<u32>),
+    U64(Primitive<u64>),
+    U256(Primitive<U256>),
+    F32(Primitive<f32>),
+    F64(Primitive<f64>),
     Unit(()),
     Array(ArrayType),
     Tuple(TupleType),
