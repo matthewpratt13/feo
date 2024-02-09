@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use feo_types::{
     span::{Span, Spanned},
     U256,
@@ -5,7 +7,7 @@ use feo_types::{
 
 pub trait LiteralType
 where
-    Self: Sized + 'static,
+    Self: Sized + Debug + Clone + PartialEq,
 {
 }
 
@@ -35,7 +37,7 @@ impl LiteralType for f64 {}
 
 #[derive(Debug, Clone)]
 pub struct Literal<T: LiteralType> {
-    pub inner_value: T,
+    inner_value: T,
     span: Span,
 }
 
