@@ -7,7 +7,7 @@ use feo_types::{
 
 pub trait LiteralType
 where
-    Self: Sized + Debug + Clone + PartialEq,
+    Self: Sized + Debug + Clone + PartialEq + 'static,
 {
 }
 
@@ -100,9 +100,3 @@ impl Spanned for LiteralKind {
         }
     }
 }
-
-// impl<T> LiteralPatt for Literal<T> where T: Clone + PrimitiveType + 'static {}
-
-// impl<T> Pattern for Literal<T> where T: Clone + PrimitiveType {}
-
-// impl<T> PatternWithoutRange for Literal<T> where T: Clone + PrimitiveType {}
