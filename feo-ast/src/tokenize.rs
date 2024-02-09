@@ -13,7 +13,6 @@ use feo_types::{
     doc_comment::{DocComment, DocCommentKind},
     error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
-    primitive::Primitive,
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span},
     Identifier, U256,
@@ -211,7 +210,7 @@ impl Tokenize for Literal<char> {
             .parse::<char>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
-        let char_lit = Literal::<char>::new(Primitive::Char(parsed), span);
+        let char_lit = Literal::<char>::new(parsed, span);
 
         let token = Token::CharLit(char_lit);
 
@@ -229,7 +228,7 @@ impl Tokenize for Literal<String> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let literal = Literal::<String>::new(Primitive::String(content.to_string()), span);
+        let literal = Literal::<String>::new(content.to_string(), span);
 
         let token = Token::StringLit(literal);
 
@@ -256,7 +255,7 @@ impl Tokenize for Literal<bool> {
             .parse::<bool>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::<bool>::new(Primitive::Bool(parsed), span);
+        let literal = Literal::<bool>::new(parsed, span);
 
         let token = Token::BoolLit(literal);
 
@@ -282,7 +281,7 @@ impl Tokenize for Literal<i64> {
         let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::<i64>::new(Primitive::I64(parsed), span);
+        let literal = Literal::<i64>::new(parsed, span);
 
         let token = Token::IntLit(literal);
 
@@ -341,7 +340,7 @@ impl Tokenize for Literal<u64> {
             }
         };
 
-        let literal = Literal::<u64>::new(Primitive::U64(parsed), span);
+        let literal = Literal::<u64>::new(parsed, span);
 
         let token = Token::UIntLit(literal);
 
@@ -379,7 +378,7 @@ impl Tokenize for Literal<U256> {
                 .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
         };
 
-        let literal = Literal::<U256>::new(Primitive::U256(parsed), span);
+        let literal = Literal::<U256>::new(parsed, span);
 
         let token = Token::U256Lit(literal);
 
@@ -406,7 +405,7 @@ impl Tokenize for Literal<f64> {
             .parse::<f64>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::<f64>::new(Primitive::F64(parsed), span);
+        let literal = Literal::<f64>::new(parsed, span);
 
         let token = Token::FloatLit(literal);
 

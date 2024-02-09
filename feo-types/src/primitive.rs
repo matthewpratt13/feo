@@ -34,12 +34,11 @@ use crate::U256;
 
 // impl PrimitiveType for f64 {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Primitive {
     Char(char),
     Str(&'static str),
     Bool(bool),
-    String(String),
     I32(i32),
     I64(i64),
     U8(u8),

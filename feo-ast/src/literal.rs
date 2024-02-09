@@ -1,43 +1,68 @@
-use std::marker::PhantomData;
-
 use feo_types::{
-    primitive::Primitive,
     span::{Span, Spanned},
     U256,
 };
 
-#[derive(Debug, Clone)]
-pub struct Literal<T> {
-    pub inner_value: Primitive,
-    span: Span,
-    _phantom: PhantomData<T>,
+pub trait LiteralType
+where
+    Self: Sized + 'static,
+{
 }
 
-impl<T> Literal<T> {
-    pub fn new(raw_value: Primitive, span: Span) -> Literal<T> {
+impl LiteralType for char {}
+
+impl LiteralType for String {}
+
+impl LiteralType for bool {}
+
+impl LiteralType for i32 {}
+
+impl LiteralType for i64 {}
+
+impl LiteralType for u8 {}
+
+impl LiteralType for u16 {}
+
+impl LiteralType for u32 {}
+
+impl LiteralType for u64 {}
+
+impl LiteralType for U256 {}
+
+impl LiteralType for f32 {}
+
+impl LiteralType for f64 {}
+
+#[derive(Debug, Clone)]
+pub struct Literal<T: LiteralType> {
+    pub inner_value: T,
+    span: Span,
+}
+
+impl<T> Literal<T>
+where
+    T: LiteralType,
+{
+    pub fn new(raw_value: T, span: Span) -> Literal<T> {
         Literal::<T> {
             inner_value: raw_value,
             span,
-            _phantom: PhantomData,
         }
     }
 
-    pub fn into_inner(self) -> Primitive {
-        self.inner_value
+    pub fn into_inner(self) -> Option<T> {
+        Some(self.inner_value)
     }
 }
 
-impl<T> Spanned for Literal<T> {
+impl<T> Spanned for Literal<T>
+where
+    T: LiteralType,
+{
     fn span(&self) -> Span {
         self.span.clone()
     }
 }
-
-// pub trait LiteralPatt
-// where
-//     Self: Sized + Pattern + 'static,
-// {
-// }
 
 #[derive(Clone)]
 pub enum LiteralKind {
@@ -61,15 +86,15 @@ impl Spanned for LiteralKind {
             LiteralKind::Char(c) => c.span(),
             LiteralKind::String(s) => s.span(),
             LiteralKind::Bool(b) => b.span(),
-            LiteralKind::I32(ia) => ia.span(),
-            LiteralKind::I64(ib) => ib.span(),
-            LiteralKind::U8(ua) => ua.span(),
-            LiteralKind::U16(ub) => ub.span(),
-            LiteralKind::U32(uc) => uc.span(),
-            LiteralKind::U64(ud) => ud.span(),
-            LiteralKind::U256(ue) => ue.span(),
-            LiteralKind::F32(fa) => fa.span(),
-            LiteralKind::F64(fb) => fb.span(),
+            LiteralKind::I32(i) => i.span(),
+            LiteralKind::I64(i) => i.span(),
+            LiteralKind::U8(ui) => ui.span(),
+            LiteralKind::U16(ui) => ui.span(),
+            LiteralKind::U32(ui) => ui.span(),
+            LiteralKind::U64(ui) => ui.span(),
+            LiteralKind::U256(u) => u.span(),
+            LiteralKind::F32(f) => f.span(),
+            LiteralKind::F64(f) => f.span(),
         }
     }
 }
