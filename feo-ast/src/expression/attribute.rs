@@ -13,8 +13,6 @@ pub enum AttributeKind {
     KwUnsafe(KwUnsafe),
 
     Path(SimplePath),
-
-    None,
 }
 
 impl Spanned for AttributeKind {
