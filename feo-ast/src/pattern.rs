@@ -99,5 +99,3 @@ impl Spanned for PatternWithoutRange {
 //     Self: Pattern,
 // {
 // }
-
-// TODO: `OrPatt`
