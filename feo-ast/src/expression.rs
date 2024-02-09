@@ -296,6 +296,8 @@ pub enum IterableExpr {
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
     IfExpr(IfExpr),
+    InnerAttr(InnerAttr),
+    OuterAttr(OuterAttr),
     MatchExpr(MatchExpr),
     FieldAccessExpr(FieldAccessExpr),
     IterationExpr(IterationExprKind),
@@ -319,6 +321,8 @@ pub enum Expression {
     ClosureWithoutBlock(ClosureWithoutBlock),
     FieldAccessExpr(FieldAccessExpr),
     IfExpr(IfExpr),
+    InnerAttr(InnerAttr),
+    OuterAttr(OuterAttr),
     IterationExpr(IterationExprKind),
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
@@ -359,6 +363,8 @@ impl Spanned for Expression {
             Expression::BreakExpr(_) => todo!(),
             Expression::ContinueExpr(_) => todo!(),
             Expression::UnderscoreExpr(_) => todo!(),
+            Expression::InnerAttr(inn) => inn.span(),
+            Expression::OuterAttr(out) => out.span(),
         }
     }
 }
