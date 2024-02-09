@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{Expression, OuterAttr, Struct, StructExprField, StructExprFields},
+    expression::{Expression, OuterAttr, StructExpr, StructExprField, StructExprFields},
     path::PathInExpr,
 };
 use feo_error::handler::ErrorEmitted;
@@ -100,7 +100,7 @@ impl Parse for StructExprFields {
     }
 }
 
-impl Parse for Struct {
+impl Parse for StructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -126,7 +126,7 @@ impl Parse for Struct {
                         // consume last token and move to next token in prep for next parser
                         parser.advance();
 
-                        let expr = Struct {
+                        let expr = StructExpr {
                             item_path,
                             open_brace: open_brace_res.unwrap(),
                             struct_expr_fields_opt: Some(fields_opt),

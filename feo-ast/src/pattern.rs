@@ -13,7 +13,7 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{CallParams, ClosureParam, ClosureParams, IterLoopExpr, MatchExpr},
+    expression::{CallParams, ClosureParam, ClosureParams, IfExpr, IterLoopExpr, MatchExpr},
     item::{ConstantItem, EnumVariantStruct, EnumVariantTuple},
     literal::LiteralKind,
     path::PathPatt,
@@ -57,6 +57,7 @@ pub enum Pattern {
     LetStatement(LetStatement),
     Literal(LiteralKind),
     IdentifierPatt(IdentifierPatt),
+    IfExpr(IfExpr),
     IterLoopExpr(IterLoopExpr),
     MatchExpr(MatchExpr),
     ParenthesizedPatt(ParenthesizedPatt),

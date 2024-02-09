@@ -9,31 +9,31 @@ use crate::path::PathInExpr;
 use super::{Expression, OuterAttr};
 
 #[derive(Clone)]
-pub enum StructKind {
-    Struct(Struct),
-    TupleStruct(TupleStruct),
-    UnitStruct(UnitStruct),
+pub enum StructExprKind {
+    Struct(StructExpr),
+    TupleStruct(TupleStructExpr),
+    UnitStruct(UnitStructExpr),
 }
 
-impl Spanned for StructKind {
+impl Spanned for StructExprKind {
     fn span(&self) -> Span {
         match self {
-            StructKind::Struct(s) => s.span(),
-            StructKind::TupleStruct(ts) => ts.span(),
-            StructKind::UnitStruct(us) => us.span(),
+            StructExprKind::Struct(s) => s.span(),
+            StructExprKind::TupleStruct(ts) => ts.span(),
+            StructExprKind::UnitStruct(us) => us.span(),
         }
     }
 }
 
 #[derive(Clone)]
-pub struct Struct {
+pub struct StructExpr {
     pub item_path: PathInExpr,
     pub open_brace: Brace,
     pub struct_expr_fields_opt: Option<StructExprFields>,
     pub close_brace: Brace,
 }
 
-impl Spanned for Struct {
+impl Spanned for StructExpr {
     fn span(&self) -> Span {
         let start_pos = self.item_path.span().start();
         let end_pos = self.close_brace.span().end();
@@ -60,14 +60,14 @@ pub struct StructExprFields {
 // }
 
 #[derive(Clone)]
-pub struct TupleStruct {
+pub struct TupleStructExpr {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
     params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Option<Comma>)>,
     close_parenthesis: Parenthesis,
 }
 
-impl Spanned for TupleStruct {
+impl Spanned for TupleStructExpr {
     fn span(&self) -> Span {
         let start_pos = self.item_path.span().start();
         let end_pos = self.close_parenthesis.span().end();
@@ -80,9 +80,9 @@ impl Spanned for TupleStruct {
 }
 
 #[derive(Clone)]
-pub struct UnitStruct(PathInExpr);
+pub struct UnitStructExpr(PathInExpr);
 
-impl Spanned for UnitStruct {
+impl Spanned for UnitStructExpr {
     fn span(&self) -> Span {
         let start_pos = self.0.span().start();
         let end_pos = self.0.span().end();

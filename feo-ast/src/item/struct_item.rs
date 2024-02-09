@@ -15,27 +15,27 @@ use super::{VisibilityKind, WhereClause};
 // }
 
 #[derive(Clone)]
-pub enum StructItem {
-    Struct(Struct),
-    TupleStruct(TupleStruct),
-    UnitStruct(UnitStruct),
+pub enum StructDefKind {
+    Struct(StructDef),
+    TupleStruct(TupleStructDef),
+    UnitStruct(UnitStructDef),
 }
 
 pub type StructFieldName = Identifier;
 
 #[derive(Clone)]
-pub struct Struct {
+pub struct StructDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KwStruct,
     struct_name: Identifier,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    struct_fields_opt: Option<StructFields>,
+    struct_fields_opt: Option<StructDefFields>,
     close_brace: Brace,
 }
 
-impl Spanned for Struct {
+impl Spanned for StructDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -55,14 +55,14 @@ impl Spanned for Struct {
 }
 
 #[derive(Clone)]
-pub struct StructFields {
-    first_field: StructField,
-    subsequent_fields: Vec<(Comma, StructField)>,
+pub struct StructDefFields {
+    first_field: StructDefField,
+    subsequent_fields: Vec<(Comma, StructDefField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Clone)]
-pub struct StructField {
+pub struct StructDefField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_name: StructFieldName,
@@ -71,19 +71,19 @@ pub struct StructField {
 }
 
 #[derive(Clone)]
-pub struct TupleStruct {
+pub struct TupleStructDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KwStruct,
     struct_name: Identifier,
     open_parenthesis: Parenthesis,
-    tuple_elements_opt: Option<TupleElements>,
+    tuple_elements_opt: Option<TupleStructDefElements>,
     close_parenthesis: Parenthesis,
     where_clause_opt: Option<WhereClause>,
     semicolon: Semicolon,
 }
 
-impl Spanned for TupleStruct {
+impl Spanned for TupleStructDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -103,21 +103,21 @@ impl Spanned for TupleStruct {
 }
 
 #[derive(Clone)]
-pub struct TupleElements {
-    first_field: TupleField,
-    subsequent_fields: Vec<(Comma, TupleField)>,
+pub struct TupleStructDefElements {
+    first_field: TupleStructDefField,
+    subsequent_fields: Vec<(Comma, TupleStructDefField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Clone)]
-pub struct TupleField {
+pub struct TupleStructDefField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_type: Box<Type>,
 }
 
 #[derive(Clone)]
-pub struct UnitStruct {
+pub struct UnitStructDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KwStruct,
@@ -126,7 +126,7 @@ pub struct UnitStruct {
     close_brace: Brace,
 }
 
-impl Spanned for UnitStruct {
+impl Spanned for UnitStructDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),

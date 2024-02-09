@@ -4,14 +4,14 @@ use feo_types::{
     utils::{Comma, Dot, Parenthesis},
 };
 
-use crate::{item::TupleStruct, ty::TupleType};
+use crate::{item::TupleStructDef, ty::TupleType};
 
 use super::Expression;
 
 #[derive(Clone)]
 pub enum TupleKind {
     Tuple(TupleType),
-    TupleStruct(TupleStruct),
+    TupleStruct(TupleStructDef),
 }
 
 impl Spanned for TupleKind {

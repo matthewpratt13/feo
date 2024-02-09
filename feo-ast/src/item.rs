@@ -27,7 +27,7 @@ pub use self::{
     impl_item::{InherentImplItem, TraitImplItem},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_item::{ModWithBody, ModWithoutBody},
-    struct_item::{Struct, StructFieldName, StructFields, TupleElements, TupleStruct, UnitStruct},
+    struct_item::{StructDef, StructFieldName, StructDefFields, TupleStructDefElements, TupleStructDef, UnitStructDef},
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
     visibility::VisibilityKind,
@@ -36,7 +36,7 @@ pub use self::{
 use self::{
     impl_item::{InherentImpl, TraitImpl},
     mod_item::ModItem,
-    struct_item::StructItem,
+    struct_item::StructDefKind,
 };
 
 // items are components of a crate, organized by a set of modules
@@ -73,7 +73,7 @@ pub enum Item {
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
     ModDef(ModItem),
-    StructDef(StructItem),
+    StructDef(StructDefKind),
     TraitDef(TraitDef),
     TypeAliasDef(TypeAliasDef),
     PathExpr(PathExpr),
