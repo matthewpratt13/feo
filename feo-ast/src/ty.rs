@@ -22,23 +22,6 @@ use self::{
 };
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
-// built-in types:
-// - primitives (char, str, int, uint, float, bytes32, bool)
-// - sequence types (array, tuple)
-// - unit type
-//
-// user-defined types:
-// - struct
-// - enum
-//
-// function types:
-// - function
-// - closure
-//
-// trait types:
-// - trait object (not used)
-// - impl trait (one bound only)
-
 #[derive(Clone)]
 pub enum Type {
     // primitives (built-in)
@@ -60,7 +43,7 @@ pub enum Type {
     Tuple(TupleType),
 
     Unit(()),
-    
+
     // user-defined types
     Struct(StructExprKind),
     Enum(EnumItem),
@@ -81,5 +64,3 @@ impl Spanned for Type {
         todo!()
     }
 }
-
-// TODO: `ReferenceType` ?
