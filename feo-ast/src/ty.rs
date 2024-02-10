@@ -41,6 +41,7 @@ pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
 #[derive(Clone)]
 pub enum Type {
+    // primitives (built-in)
     Char(Primitive<char>),
     Str(Primitive<&'static str>),
     Bool(Primitive<bool>),
@@ -53,16 +54,26 @@ pub enum Type {
     U256(Primitive<U256>),
     F32(Primitive<f32>),
     F64(Primitive<f64>),
-    Unit(()),
+
+    // built-in sequence types
     Array(ArrayType),
     Tuple(TupleType),
+
+    Unit(()),
+    
+    // user-defined types
     Struct(StructExprKind),
     Enum(EnumItem),
+
+    // function types
     Function(FunctionItem),
     Closure(ClosureType),
+
+    // trait type
     ImplTrait(ImplTraitType),
-    InferredType,
+
     ParenthesizedType(ParenthesizedType),
+    InferredType,
 }
 
 impl Spanned for Type {
