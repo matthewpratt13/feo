@@ -27,7 +27,10 @@ pub use self::{
     impl_item::{InherentImplItem, TraitImplItem},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_item::{ModWithBody, ModWithoutBody},
-    struct_item::{StructDef, StructFieldName, StructDefFields, TupleStructDefElements, TupleStructDef, UnitStructDef},
+    struct_item::{
+        StructDef, StructDefFields, StructFieldName, TupleStructDef, TupleStructDefElements,
+        UnitStructDef,
+    },
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
     visibility::VisibilityKind,
@@ -41,24 +44,6 @@ use self::{
 
 // items are components of a crate, organized by a set of modules
 
-// items:
-// - constant, static vars
-// - enum definition
-// - external crate declaration
-// - function, method definitions
-// - implementation
-// - import declaration
-// - module
-// - struct, tuple struct definitions
-// - trait definition
-// - type alias definition
-
-// pub trait Item
-// where
-//     Self: Spanned,
-// {
-// }
-
 #[derive(Clone)]
 pub enum Item {
     ConstantVarDef(ConstantItem),
@@ -66,13 +51,13 @@ pub enum Item {
     EnumDef(EnumItem),
     ExternCrateDecl(ExternCrateDecl),
     Function(FunctionItem),
-    InherentImplDecl(InherentImpl),
-    TraitImplDecl(TraitImpl),
+    InherentImplBlock(InherentImpl),
+    TraitImplBlock(TraitImpl),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
-    ModDef(ModItem),
+    ModBlock(ModItem),
     StructDef(StructDefKind),
     TraitDef(TraitDef),
     TypeAliasDef(TypeAliasDef),

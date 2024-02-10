@@ -66,8 +66,6 @@ pub struct EnumVariantStruct {
     close_brace: Brace,
 }
 
-// impl Expression for EnumVariantStruct {}
-
 impl Spanned for EnumVariantStruct {
     fn span(&self) -> Span {
         let start_pos = self.open_brace.span().start();

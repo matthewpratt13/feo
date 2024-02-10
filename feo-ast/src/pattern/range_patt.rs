@@ -6,24 +6,12 @@ use feo_types::{
 
 use crate::{literal::Literal, path::PathExpr};
 
-// pub trait RangePatt
-// where
-//     Self: Sized + Pattern + 'static,
-// {
-// }
-
 #[derive(Clone)]
 pub enum RangePatt {
     RangeFromPatt(RangeFromPatt),
     RangeInclusivePatt(RangeInclusivePatt),
     RangeToInclusivePatt(RangeToInclusivePatt),
 }
-
-// pub trait RangePattBound
-// where
-//     Self: Spanned,
-// {
-// }
 
 #[derive(Clone)]
 pub enum RangePattBound {

@@ -8,12 +8,6 @@ use crate::expression::OuterAttr;
 
 use super::{Item, VisibilityKind};
 
-// pub trait ModItem
-// where
-//     Self: Sized + Item,
-// {
-// }
-
 #[derive(Clone)]
 pub enum ModItem {
     ModWithBody(ModWithBody),

@@ -8,12 +8,6 @@ use crate::{expression::OuterAttr, ty::Type};
 
 use super::{VisibilityKind, WhereClause};
 
-// pub trait StructItem
-// where
-//     Self: Sized + Item + 'static,
-// {
-// }
-
 #[derive(Clone)]
 pub enum StructDefKind {
     Struct(StructDef),
