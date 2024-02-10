@@ -25,14 +25,6 @@ impl Spanned for ArrayExpr {
         let s2 = self.close_bracket.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.open_bracket.span().start();
-        // let end_pos = self.close_bracket.span().end();
-        // let source = self.open_bracket.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -64,13 +56,5 @@ impl Spanned for IndexExpr {
         let s2 = self.close_bracket.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.indexed_operand.span().start();
-        // let end_pos = self.close_bracket.span().end();
-        // let source = self.indexed_operand.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }

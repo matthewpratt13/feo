@@ -35,14 +35,6 @@ impl Spanned for InnerAttr {
         let s2 = self.close_bracket.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.hash_bang.span().start();
-        // let end_pos = self.close_bracket.span().end();
-        // let source = self.hash_bang.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -60,13 +52,5 @@ impl Spanned for OuterAttr {
         let s2 = self.close_bracket.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.hash.span().start();
-        // let end_pos = self.close_bracket.span().end();
-        // let source = self.hash.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }

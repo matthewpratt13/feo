@@ -43,14 +43,6 @@ impl Spanned for InfiniteLoopExpr {
         let s2 = self.block.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.kw_loop.span().start();
-        // let end_pos = self.block.span().end();
-        // let source = self.kw_loop.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -67,14 +59,6 @@ impl Spanned for PredicateLoopExpr {
         let s2 = self.block.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.kw_while.span().start();
-        // let end_pos = self.block.span().end();
-        // let source = self.kw_while.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -93,13 +77,5 @@ impl Spanned for IterLoopExpr {
         let s2 = self.block.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.kw_for.span().start();
-        // let end_pos = self.block.span().end();
-        // let source = self.kw_for.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }

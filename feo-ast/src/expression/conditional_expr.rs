@@ -31,24 +31,6 @@ impl Spanned for IfExpr {
         };
 
         Span::join(s1, s2)
-
-        // let start_pos = self.kw_if.span().start();
-        // let temp_end = self.block.span().end();
-
-        // let end_pos = match &self.else_if_block_opt {
-        //     Some(s) => match &self.else_block_opt {
-        //         Some(t) => t.1.span().end(),
-        //         None => s.1.span().end(),
-        //     },
-
-        //     None => temp_end,
-        // };
-
-        // let source = self.kw_if.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -68,14 +50,6 @@ impl Spanned for MatchExpr {
         let s2 = self.close_brace.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.kw_match.span().start();
-        // let end_pos = self.close_brace.span().end();
-        // let source = self.kw_match.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 

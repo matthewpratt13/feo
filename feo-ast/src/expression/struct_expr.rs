@@ -54,11 +54,6 @@ pub struct StructExprFields {
     pub subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
-// pub struct StructExprField {
-//     attributes: Vec<OuterAttr>,
-//     data: (Identifier, Colon, Box<dyn Expression>),
-// }
-
 #[derive(Clone)]
 pub struct TupleStructExpr {
     item_path: PathInExpr,

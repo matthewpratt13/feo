@@ -21,14 +21,6 @@ impl Spanned for FunctionCallExpr {
         let s2 = self.close_parenthesis.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.function_operand.span().start();
-        // let end_pos = self.close_parenthesis.span().end();
-        // let source = self.function_operand.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -48,14 +40,6 @@ impl Spanned for MethodCallExpr {
         let s2 = self.close_parenthesis.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.receiver.span().start();
-        // let end_pos = self.close_parenthesis.span().end();
-        // let source = self.receiver.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
 
@@ -79,20 +63,5 @@ impl Spanned for CallParams {
         };
 
         Span::join(s1, s2)
-
-        // let start_pos = self.first_param.span().start();
-        // let end_pos = match self.subsequent_params.last() {
-        //     Some(sp) => match &self.trailing_comma_opt {
-        //         Some(tc) => tc.span().end(),
-        //         None => sp.1.span().end(),
-        //     },
-        //     None => self.first_param.span().end(),
-        // };
-
-        // let source = self.first_param.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }

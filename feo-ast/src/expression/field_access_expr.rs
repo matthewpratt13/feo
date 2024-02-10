@@ -20,13 +20,5 @@ impl Spanned for FieldAccessExpr {
         let s2 = self.field_name.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.container_operand.span().start();
-        // let end_pos = self.field_name.span().end();
-        // let source = self.container_operand.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }

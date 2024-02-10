@@ -21,13 +21,5 @@ impl Spanned for BlockExpr {
         let s2 = self.close_brace.span();
 
         Span::join(s1, s2)
-
-        // let start_pos = self.open_brace.span().start();
-        // let end_pos = self.close_brace.span().end();
-        // let source = self.open_brace.span().source();
-
-        // let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        // span
     }
 }
