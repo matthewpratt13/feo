@@ -8,10 +8,10 @@ use feo_types::{
 use crate::{
     expression::{Assignable, Expression, OuterAttr},
     item::{
-        ConstantItem, EnumItem, EnumVariantStruct, ExternCrateDecl, FunctionItem, ImportDecl,
-        InherentImplItem, ModWithBody, ModWithoutBody, PathSubsetRecursive, PathWildcard,
-        PathWithAsClause, StaticItem, StructDef, TraitDef, TraitImplItem, TupleStructDef,
-        TypeAliasDef, UnitStructDef,
+        ConstantVarDef, EnumDef, EnumVariantStruct, ExternCrateDecl, FunctionDef, ImportDecl,
+        InherentImplBlock, ModBlock, PathSubsetRecursive, PathWildcard, PathWithAsClause,
+        StaticVarDef, StructDef, TraitDef, TraitImplBlock, TupleStructDef, TypeAliasDef,
+        UnitStructDef,
     },
     path::{PathExpr, SimplePathSegmentKind},
     pattern::Pattern,
@@ -22,20 +22,19 @@ use crate::{
 
 #[derive(Clone)]
 pub enum Statement {
-    ConstantVarDef(ConstantItem),
-    StaticVarDef(StaticItem),
-    EnumDef(EnumItem),
+    ConstantVarDef(ConstantVarDef),
+    StaticVarDef(StaticVarDef),
+    EnumDef(EnumDef),
     EnumVariantStruct(EnumVariantStruct),
     ExternCrateDecl(ExternCrateDecl),
-    Function(FunctionItem),
-    InherentImpl(InherentImplItem),
-    TraitImpl(TraitImplItem),
+    FunctionDef(FunctionDef),
+    InherentImplBlock(InherentImplBlock),
+    TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
-    ModWithBody(ModWithBody),
-    ModWithoutBody(ModWithoutBody),
+    ModBlock(ModBlock),
     StructDef(StructDef),
     TupleStructDef(TupleStructDef),
     UnitStructDef(UnitStructDef),
@@ -44,7 +43,7 @@ pub enum Statement {
     SimplePathSegmentKind(SimplePathSegmentKind),
     PathExpr(PathExpr),
     ExprStatement(ExprStatement),
-    LetDecl(LetStatement),
+    LetStatement(LetStatement),
 }
 
 #[derive(Clone)]

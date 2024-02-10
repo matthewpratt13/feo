@@ -1,13 +1,13 @@
 #![allow(dead_code)]
 
-mod constant_item;
-mod enum_item;
+mod constant_var_def;
+mod enum_def;
 mod extern_crate_decl;
-mod function_item;
-mod impl_item;
+mod function_def;
+mod impl_block;
 mod import_decl;
-mod mod_item;
-mod struct_item;
+mod mod_block;
+mod struct_def;
 mod trait_def;
 mod type_alias_def;
 mod visibility;
@@ -19,15 +19,16 @@ use feo_types::{
 
 use crate::path::PathExpr;
 
+use self::struct_def::StructDefKind;
 pub use self::{
-    constant_item::{ConstantItem, StaticItem},
-    enum_item::{EnumItem, EnumVariantStruct, EnumVariantTuple},
+    constant_var_def::{ConstantVarDef, StaticVarDef},
+    enum_def::{EnumDef, EnumVariantStruct, EnumVariantTuple},
     extern_crate_decl::{AsClause, ExternCrateDecl},
-    function_item::{FunctionDef, FunctionItem, FunctionSig},
-    impl_item::{InherentImplItem, TraitImplItem},
+    function_def::{FunctionDef, FunctionSig, FunctionWithBlock},
+    impl_block::{InherentImplBlock, TraitImplBlock},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
-    mod_item::{ModWithBody, ModWithoutBody},
-    struct_item::{
+    mod_block::ModBlock,
+    struct_def::{
         StructDef, StructDefFields, StructFieldName, TupleStructDef, TupleStructDefElements,
         UnitStructDef,
     },
@@ -36,28 +37,23 @@ pub use self::{
     visibility::VisibilityKind,
     where_clause::{TypeParamBounds, WhereClause},
 };
-use self::{
-    impl_item::{InherentImpl, TraitImpl},
-    mod_item::ModItem,
-    struct_item::StructDefKind,
-};
 
 // items are components of a crate, organized by a set of modules
 
 #[derive(Clone)]
 pub enum Item {
-    ConstantVarDef(ConstantItem),
-    StaticVarDef(StaticItem),
-    EnumDef(EnumItem),
+    ConstantVarDef(ConstantVarDef),
+    StaticVarDef(StaticVarDef),
+    EnumDef(EnumDef),
     ExternCrateDecl(ExternCrateDecl),
-    Function(FunctionItem),
-    InherentImplBlock(InherentImpl),
-    TraitImplBlock(TraitImpl),
+    FunctionDef(FunctionDef),
+    InherentImplBlock(InherentImplBlock),
+    TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
-    ModBlock(ModItem),
+    ModBlock(ModBlock),
     StructDef(StructDefKind),
     TraitDef(TraitDef),
     TypeAliasDef(TypeAliasDef),

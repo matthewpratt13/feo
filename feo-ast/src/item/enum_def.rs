@@ -15,7 +15,7 @@ pub enum EnumVariantType {
 }
 
 #[derive(Clone)]
-pub struct EnumItem {
+pub struct EnumDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_enum: KwEnum,
@@ -25,7 +25,7 @@ pub struct EnumItem {
     close_brace: Brace,
 }
 
-impl Spanned for EnumItem {
+impl Spanned for EnumDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),

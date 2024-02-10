@@ -14,7 +14,7 @@ use feo_types::{
 
 use crate::{
     expression::{CallParams, ClosureParam, ClosureParams, IfExpr, IterLoopExpr, MatchExpr},
-    item::{ConstantItem, EnumVariantStruct, EnumVariantTuple},
+    item::{ConstantVarDef, EnumVariantStruct, EnumVariantTuple},
     literal::LiteralKind,
     path::PathPatt,
     statement::LetStatement,
@@ -37,7 +37,7 @@ pub enum Pattern {
     CallParams(CallParams),
     ClosureParam(ClosureParam),
     ClosureParams(ClosureParams),
-    Constant(ConstantItem),
+    ConstantVarDef(ConstantVarDef),
     EnumVariantStruct(EnumVariantStruct),
     EnumVariantTuple(EnumVariantTuple),
     LetStatement(LetStatement),

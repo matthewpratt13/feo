@@ -9,23 +9,23 @@ use crate::{
     ty::Type,
 };
 
-use super::{ConstantItem, FunctionDef, TypeAliasDef, WhereClause};
+use super::{ConstantVarDef, FunctionWithBlock, TypeAliasDef, WhereClause};
 
 #[derive(Clone)]
 pub enum InherentImplItem {
-    Constant(ConstantItem),
-    FuncDef(FunctionDef),
+    ConstantVarDef(ConstantVarDef),
+    FuncWithBlock(FunctionWithBlock),
 }
 
 #[derive(Clone)]
 pub enum TraitImplItem {
-    Constant(ConstantItem),
-    FuncDef(FunctionDef),
-    TypeAlias(TypeAliasDef),
+    ConstantVarDef(ConstantVarDef),
+    FuncWithBlock(FunctionWithBlock),
+    TypeAliasDef(TypeAliasDef),
 }
 
 #[derive(Clone)]
-pub struct InherentImpl {
+pub struct InherentImplBlock {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     nominal_type: Type,
@@ -36,7 +36,7 @@ pub struct InherentImpl {
     close_brace: Brace,
 }
 
-impl Spanned for InherentImpl {
+impl Spanned for InherentImplBlock {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()
@@ -54,7 +54,7 @@ impl Spanned for InherentImpl {
 }
 
 #[derive(Clone)]
-pub struct TraitImpl {
+pub struct TraitImplBlock {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
     implemented_trait_path: PathType,
@@ -67,7 +67,7 @@ pub struct TraitImpl {
     close_brace: Brace,
 }
 
-impl Spanned for TraitImpl {
+impl Spanned for TraitImplBlock {
     fn span(&self) -> Span {
         let start_pos = if let Some(a) = self.outer_attributes.first() {
             a.span().start()

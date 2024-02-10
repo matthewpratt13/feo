@@ -9,7 +9,7 @@ use crate::expression::OuterAttr;
 use super::{Item, VisibilityKind};
 
 #[derive(Clone)]
-pub enum ModItem {
+pub enum ModBlock {
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
 }

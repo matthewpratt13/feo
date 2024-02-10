@@ -12,7 +12,7 @@ use crate::{
 use super::VisibilityKind;
 
 #[derive(Clone)]
-pub struct ConstantItem {
+pub struct ConstantVarDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: KwConst,
@@ -23,7 +23,7 @@ pub struct ConstantItem {
     semicolon: Semicolon,
 }
 
-impl Spanned for ConstantItem {
+impl Spanned for ConstantVarDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -43,7 +43,7 @@ impl Spanned for ConstantItem {
 }
 
 #[derive(Clone)]
-pub struct StaticItem {
+pub struct StaticVarDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     kw_static: KwStatic,
@@ -55,7 +55,7 @@ pub struct StaticItem {
     semicolon: Semicolon,
 }
 
-impl Spanned for StaticItem {
+impl Spanned for StaticVarDef {
     fn span(&self) -> Span {
         let start_pos = match self.attributes.first() {
             Some(a) => a.span().start(),
@@ -74,4 +74,4 @@ impl Spanned for StaticItem {
     }
 }
 
-unsafe impl Sync for StaticItem {}
+unsafe impl Sync for StaticVarDef {}

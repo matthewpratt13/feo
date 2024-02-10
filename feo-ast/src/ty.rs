@@ -14,7 +14,7 @@ use feo_types::{
 
 use crate::{
     expression::{ClosureType, StructExprKind},
-    item::{EnumItem, FunctionItem},
+    item::{EnumDef, FunctionDef},
 };
 
 use self::{
@@ -46,10 +46,10 @@ pub enum Type {
 
     // user-defined types
     Struct(StructExprKind),
-    Enum(EnumItem),
+    Enum(EnumDef),
 
     // function types
-    Function(FunctionItem),
+    Function(FunctionDef),
     Closure(ClosureType),
 
     // trait type

@@ -7,14 +7,14 @@ use feo_types::{
 use crate::expression::{InnerAttr, OuterAttr};
 
 use super::{
-    ConstantItem, FunctionDef, FunctionSig, TypeAliasDef, TypeParamBounds, VisibilityKind,
+    ConstantVarDef, FunctionWithBlock, FunctionSig, TypeAliasDef, TypeParamBounds, VisibilityKind,
     WhereClause,
 };
 
 #[derive(Clone)]
 pub enum TraitDefItem {
-    Constant(ConstantItem),
-    FuncDef(FunctionDef),
+    Constant(ConstantVarDef),
+    FuncDef(FunctionWithBlock),
     FuncSig(FunctionSig),
     TypeAlias(TypeAliasDef),
 }

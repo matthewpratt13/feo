@@ -13,15 +13,15 @@ use crate::{
 use super::VisibilityKind;
 
 #[derive(Clone)]
-pub enum FunctionItem {
+pub enum FunctionDef {
     FuncSig((FunctionSig, Semicolon)),
-    FuncDef(FunctionDef),
+    FuncDef(FunctionWithBlock),
 }
 
-impl Spanned for FunctionItem {
+impl Spanned for FunctionDef {
     fn span(&self) -> Span {
         match self {
-            FunctionItem::FuncSig(fs) => {
+            FunctionDef::FuncSig(fs) => {
                 let s1 = match fs.0.attributes.first() {
                     Some(a) => a.span(),
                     None => match &fs.0.visibility_opt {
@@ -34,7 +34,7 @@ impl Spanned for FunctionItem {
 
                 Span::join(s1, s2)
             }
-            FunctionItem::FuncDef(fd) => fd.span(),
+            FunctionDef::FuncDef(fd) => fd.span(),
         }
     }
 }
@@ -46,12 +46,12 @@ pub enum FuncOrMethodParam {
 }
 
 #[derive(Clone)]
-pub struct FunctionDef {
+pub struct FunctionWithBlock {
     function_sig: FunctionSig,
     function_body: ExprWithBlock,
 }
 
-impl Spanned for FunctionDef {
+impl Spanned for FunctionWithBlock {
     fn span(&self) -> Span {
         let s1 = match self.function_sig.attributes.first() {
             Some(a) => a.span(),
