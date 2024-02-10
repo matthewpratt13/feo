@@ -59,256 +59,6 @@ use self::{
 
 // expressions always produce / evaluate to a value, and may have (side) effects
 
-// expressions:
-// - array, index
-// - block
-// - function / method call
-// - closure
-// - if, match
-// - field access
-// - grouped
-// - literal (char, string, int, uint, float, bytes32, bool)
-// - loop / while / for..in
-// - operators:
-//      - arithmetic / logical
-//      - assignment / compound assignment
-//      - bool
-//      - borrow
-//      - comparison
-//      - deref
-//      - negation
-//      - result / option unwrap
-//      - type cast
-// - path
-// - range:
-//      - from..to
-//      - from..
-//      - ..to
-//      - from..=to
-//      - ..=to
-// - return
-// - struct / tuple struct / unit struct
-// - tuple
-
-// pub trait Assignable
-// where
-//     Self: Spanned,
-// {
-// }
-
-#[derive(Clone)]
-pub enum Assignable {
-    Identifier(Identifier),
-    ArrayExpr(ArrayExpr),
-    StructExpr(StructExpr),
-    TupleStructExpr(TupleStructExpr),
-    UnitStructExpr(UnitStructExpr),
-    TupleExpr(TupleExpr),
-    PathExpr(PathExpr),
-    UnderscoreExpr(Underscore),
-}
-
-impl Spanned for Assignable {
-    fn span(&self) -> Span {
-        todo!()
-    }
-}
-
-// impl Assignable for Identifier {}
-
-// pub trait BooleanOperand
-// where
-//     Self: 'static,
-// {
-// }
-
-#[derive(Clone)]
-pub enum BooleanOperand {
-    BreakExpr(BreakExpr),
-    ContinueExpr(ContinueExpr),
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    BlockExpr(BlockExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    ClosureWithBlock(ClosureWithBlock),
-    ClosureWithoutBlock(ClosureWithoutBlock),
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    IterationExpr(IterationExprKind),
-    OperatorExpr(OperatorExprKind),
-    ParenthesizedExpr(ParenthesizedExpr),
-    RangeExpr(RangeExprKind),
-    ReturnExpr(ReturnExpr),
-    TupleExpr(TupleExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    LiteralExpr(LiteralKind),
-    PathExpr(PathExpr),
-    UnderscoreExpr(Underscore),
-}
-
-impl Spanned for BooleanOperand {
-    fn span(&self) -> Span {
-        todo!()
-    }
-}
-
-// impl BooleanOperand for Keyword {}
-
-// pub trait Castable
-// where
-//     Self: Spanned + 'static,
-// {
-// }
-
-#[derive(Clone)]
-pub enum Castable {
-    Char(Literal<char>),
-    Bool(Literal<bool>),
-    I32(Literal<i32>),
-    I64(Literal<i64>),
-    U8(Literal<u8>),
-    U16(Literal<u16>),
-    U32(Literal<u32>),
-    U64(Literal<u64>),
-    U256(Literal<U256>),
-    F32(Literal<f32>),
-    F64(Literal<f64>),
-}
-
-impl Spanned for Castable {
-    fn span(&self) -> Span {
-        todo!()
-    }
-}
-
-// pub trait Constant
-// where
-//     Self: Sized + Spanned + 'static,
-// {
-// }
-
-pub enum Constant {
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    BlockExpr(BlockExpr),
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
-    BreakExpr(BreakExpr),
-    ContinueExpr(ContinueExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    InfiniteLoopExpr(InfiniteLoopExpr),
-    PredicateLoopExpr(PredicateLoopExpr),
-    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
-    AssignmentExpr(AssignmentExpr),
-    CompoundAssignmentExpr(CompoundAssignmentExpr),
-    ComparisonAssignmentExpr(ComparisonExpr),
-    DerefExpr(DereferenceExpr),
-    LazyBoolExpr(LazyBoolExpr),
-    NegationExpr(NegationExpr),
-    TypeCastExpr(TypeCastExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
-    RangeExpr(RangeExprKind),
-    StructExpr(StructExprKind),
-    TupleExpr(TupleExpr),
-    ConstantItem(ConstantItem),
-    StaticItem(StaticItem),
-    EnumItem(EnumItem),
-    EnumVariantStruct(EnumVariantStruct),
-    EnumVariantTuple(EnumVariantTuple),
-    UnitStructItem(UnitStructExpr),
-    Literal(LiteralKind),
-    PathExpr(PathExpr),
-    ExprStatement(ExprStatement),
-    LetStatement(LetStatement),
-    UnderscoreExpr(Underscore),
-}
-
-// pub trait Expression
-// where
-//     Self: Spanned,
-// {
-// }
-
-// pub trait ExprWithBlock {}
-
-#[derive(Clone)]
-pub enum ExprWithBlock {
-    OuterAttr(OuterAttr),
-    BlockExpr(BlockExpr),
-    ClosureWithBlock(ClosureWithBlock),
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
-    IterationExpr(IterationExprKind),
-}
-
-impl Spanned for ExprWithBlock {
-    fn span(&self) -> Span {
-        todo!()
-    }
-}
-
-// pub trait ExprWithoutBlock {}
-
-#[derive(Clone)]
-pub enum ExprWithoutBlock {
-    BreakExpr(BreakExpr),
-    ContinueExpr(ContinueExpr),
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    InnerAttr(InnerAttr),
-    OuterAttr(OuterAttr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    ClosureWithoutBlock(ClosureWithoutBlock),
-    FieldAccessExpr(FieldAccessExpr),
-    OperatorExpr(OperatorExprKind),
-    ParenthesizedExpr(ParenthesizedExpr),
-    RangeExpr(RangeExprKind),
-    ReturnExpr(ReturnExpr),
-    StructExpr(StructExprKind),
-    TupleExpr(TupleExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    EnumItem(EnumItem),
-    EnumVariantStruct(EnumVariantStruct),
-    Literal(LiteralKind),
-    PathExpr(PathExpr),
-    UnderscoreExpr(Underscore),
-}
-
-// pub trait IterableExpr
-// where
-//     Self: 'static,
-// {
-// }
-
-// impl IterableExpr for Keyword {}
-
-#[derive(Clone)]
-pub enum IterableExpr {
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    BlockExpr(BlockExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    ClosureWithBlock(ClosureWithBlock),
-    ClosureWithoutBlock(ClosureWithoutBlock),
-    IfExpr(IfExpr),
-    InnerAttr(InnerAttr),
-    OuterAttr(OuterAttr),
-    MatchExpr(MatchExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    IterationExpr(IterationExprKind),
-    OperatorExpr(OperatorExprKind),
-    ParenthesizedExpr(ParenthesizedExpr),
-    RangeExpr(RangeExprKind),
-    ReturnExpr(ReturnExpr),
-    TupleExpr(TupleExpr),
-    LiteralExpr(LiteralKind),
-    PathExpr(PathExpr),
-}
-
 #[derive(Clone)]
 pub enum Expression {
     ArrayExpr(ArrayExpr),
@@ -366,4 +116,177 @@ impl Spanned for Expression {
             Expression::OuterAttr(out) => out.span(),
         }
     }
+}
+
+#[derive(Clone)]
+pub enum Assignable {
+    Identifier(Identifier),
+    ArrayExpr(ArrayExpr),
+    StructExpr(StructExpr),
+    TupleStructExpr(TupleStructExpr),
+    UnitStructExpr(UnitStructExpr),
+    TupleExpr(TupleExpr),
+    PathExpr(PathExpr),
+    UnderscoreExpr(Underscore),
+}
+
+impl Spanned for Assignable {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
+
+#[derive(Clone)]
+pub enum BooleanOperand {
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    BlockExpr(BlockExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
+    ClosureWithBlock(ClosureWithBlock),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    IterationExpr(IterationExprKind),
+    OperatorExpr(OperatorExprKind),
+    ParenthesizedExpr(ParenthesizedExpr),
+    RangeExpr(RangeExprKind),
+    ReturnExpr(ReturnExpr),
+    TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
+    LiteralExpr(LiteralKind),
+    PathExpr(PathExpr),
+    UnderscoreExpr(Underscore),
+}
+
+impl Spanned for BooleanOperand {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
+
+#[derive(Clone)]
+pub enum Castable {
+    Char(Literal<char>),
+    Bool(Literal<bool>),
+    I32(Literal<i32>),
+    I64(Literal<i64>),
+    U8(Literal<u8>),
+    U16(Literal<u16>),
+    U32(Literal<u32>),
+    U64(Literal<u64>),
+    U256(Literal<U256>),
+    F32(Literal<f32>),
+    F64(Literal<f64>),
+}
+
+impl Spanned for Castable {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
+
+pub enum Constant {
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    BlockExpr(BlockExpr),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    InfiniteLoopExpr(InfiniteLoopExpr),
+    PredicateLoopExpr(PredicateLoopExpr),
+    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+    AssignmentExpr(AssignmentExpr),
+    CompoundAssignmentExpr(CompoundAssignmentExpr),
+    ComparisonAssignmentExpr(ComparisonExpr),
+    DerefExpr(DereferenceExpr),
+    LazyBoolExpr(LazyBoolExpr),
+    NegationExpr(NegationExpr),
+    TypeCastExpr(TypeCastExpr),
+    ParenthesizedExpr(ParenthesizedExpr),
+    RangeExpr(RangeExprKind),
+    StructExpr(StructExprKind),
+    TupleExpr(TupleExpr),
+    ConstantItem(ConstantItem),
+    StaticItem(StaticItem),
+    EnumItem(EnumItem),
+    EnumVariantStruct(EnumVariantStruct),
+    EnumVariantTuple(EnumVariantTuple),
+    UnitStructItem(UnitStructExpr),
+    Literal(LiteralKind),
+    PathExpr(PathExpr),
+    ExprStatement(ExprStatement),
+    LetStatement(LetStatement),
+    UnderscoreExpr(Underscore),
+}
+
+#[derive(Clone)]
+pub enum ExprWithBlock {
+    OuterAttr(OuterAttr),
+    BlockExpr(BlockExpr),
+    ClosureWithBlock(ClosureWithBlock),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    IterationExpr(IterationExprKind),
+}
+
+impl Spanned for ExprWithBlock {
+    fn span(&self) -> Span {
+        todo!()
+    }
+}
+
+#[derive(Clone)]
+pub enum ExprWithoutBlock {
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    InnerAttr(InnerAttr),
+    OuterAttr(OuterAttr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    FieldAccessExpr(FieldAccessExpr),
+    OperatorExpr(OperatorExprKind),
+    ParenthesizedExpr(ParenthesizedExpr),
+    RangeExpr(RangeExprKind),
+    ReturnExpr(ReturnExpr),
+    StructExpr(StructExprKind),
+    TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
+    EnumItem(EnumItem),
+    EnumVariantStruct(EnumVariantStruct),
+    Literal(LiteralKind),
+    PathExpr(PathExpr),
+    UnderscoreExpr(Underscore),
+}
+
+#[derive(Clone)]
+pub enum IterableExpr {
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    BlockExpr(BlockExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
+    ClosureWithBlock(ClosureWithBlock),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    IfExpr(IfExpr),
+    InnerAttr(InnerAttr),
+    OuterAttr(OuterAttr),
+    MatchExpr(MatchExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    IterationExpr(IterationExprKind),
+    OperatorExpr(OperatorExprKind),
+    ParenthesizedExpr(ParenthesizedExpr),
+    RangeExpr(RangeExprKind),
+    ReturnExpr(ReturnExpr),
+    TupleExpr(TupleExpr),
+    LiteralExpr(LiteralKind),
+    PathExpr(PathExpr),
 }
