@@ -33,7 +33,7 @@ pub use self::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     call_expr::CallParams,
-    closure_expr::{ClosureParam, ClosureParams, ClosureType},
+    closure_expr::{ClosureParam, ClosureParams, ClosureExprKind},
     conditional_expr::{IfExpr, MatchExpr},
     iteration_expr::IterLoopExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},

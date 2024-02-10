@@ -31,7 +31,7 @@ impl Spanned for ClosureParamsOpt {
 }
 
 #[derive(Clone)]
-pub enum ClosureType {
+pub enum ClosureExprKind {
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
 }

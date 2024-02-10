@@ -8,7 +8,7 @@ use feo_types::{
 use crate::{
     expression::{Assignable, Expression, OuterAttr},
     item::{
-        ConstantVarDef, EnumDef, EnumVariantStruct, ExternCrateDecl, FunctionDef, ImportDecl,
+        ConstantVarDef, EnumDef, EnumVariantStruct, ExternCrateDecl, FunctionDefKind, ImportDecl,
         InherentImplBlock, ModBlock, PathSubsetRecursive, PathWildcard, PathWithAsClause,
         StaticVarDef, StructDef, TraitDef, TraitImplBlock, TupleStructDef, TypeAliasDef,
         UnitStructDef,
@@ -27,7 +27,7 @@ pub enum Statement {
     EnumDef(EnumDef),
     EnumVariantStruct(EnumVariantStruct),
     ExternCrateDecl(ExternCrateDecl),
-    FunctionDef(FunctionDef),
+    FunctionDef(FunctionDefKind),
     InherentImplBlock(InherentImplBlock),
     TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),

@@ -13,8 +13,8 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{ClosureType, StructExprKind},
-    item::{EnumDef, FunctionDef},
+    expression::{ClosureExprKind, StructExprKind},
+    item::{EnumDef, FunctionDefKind},
 };
 
 use self::{
@@ -49,8 +49,8 @@ pub enum Type {
     Enum(EnumDef),
 
     // function types
-    Function(FunctionDef),
-    Closure(ClosureType),
+    Function(FunctionDefKind),
+    Closure(ClosureExprKind),
 
     // trait type
     ImplTrait(ImplTraitType),
