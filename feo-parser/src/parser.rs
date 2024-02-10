@@ -72,11 +72,11 @@ impl Parser {
     }
 }
 
-pub struct Peeker<'a>(pub &'a mut [Token]);
+pub struct Peeker<'a>(pub &'a [Token]);
 
 impl<'a> Peeker<'a> {
     pub fn with<T: Peek>(
-        tokens: &'a mut [Token],
+        tokens: &'a [Token],
     ) -> Result<(Option<T>, &'a [Token]), ErrorEmitted> {
         let peeker = Peeker(tokens);
         let value = T::peek(peeker);
