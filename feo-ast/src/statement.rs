@@ -10,8 +10,8 @@ use crate::{
     item::{
         ConstantItem, EnumItem, EnumVariantStruct, ExternCrateDecl, FunctionItem, ImportDecl,
         InherentImplItem, ModWithBody, ModWithoutBody, PathSubsetRecursive, PathWildcard,
-        PathWithAsClause, StaticItem, StructDef, TraitDef, TraitImplItem, TupleStructDef, TypeAliasDef,
-        UnitStructDef,
+        PathWithAsClause, StaticItem, StructDef, TraitDef, TraitImplItem, TupleStructDef,
+        TypeAliasDef, UnitStructDef,
     },
     path::{PathExpr, SimplePathSegmentKind},
     pattern::Pattern,
@@ -20,42 +20,31 @@ use crate::{
 
 // statement: component of a block, which is a component of an outer expression / function
 
-// statements:
-//  - let declaration
-//  - item declaration
-//  - expression statement
-
-// pub trait Statement
-// where
-//     Self: Spanned,
-// {
-// }
-
 #[derive(Clone)]
 pub enum Statement {
-    ConstantItem(ConstantItem),
-    StaticItem(StaticItem),
-    EnumItem(EnumItem),
+    ConstantVarDef(ConstantItem),
+    StaticVarDef(StaticItem),
+    EnumDef(EnumItem),
     EnumVariantStruct(EnumVariantStruct),
     ExternCrateDecl(ExternCrateDecl),
-    FunctionItem(FunctionItem),
-    InherentImplItem(InherentImplItem),
-    TraitImplItem(TraitImplItem),
+    Function(FunctionItem),
+    InherentImpl(InherentImplItem),
+    TraitImpl(TraitImplItem),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
-    StructItem(StructDef),
-    TupleStructItem(TupleStructDef),
-    UnitStructItem(UnitStructDef),
+    StructDef(StructDef),
+    TupleStructDef(TupleStructDef),
+    UnitStructDef(UnitStructDef),
     TraitDef(TraitDef),
     TypeAliasDef(TypeAliasDef),
     SimplePathSegmentKind(SimplePathSegmentKind),
     PathExpr(PathExpr),
     ExprStatement(ExprStatement),
-    LetStatement(LetStatement),
+    LetDecl(LetStatement),
 }
 
 #[derive(Clone)]

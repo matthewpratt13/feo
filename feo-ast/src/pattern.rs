@@ -32,20 +32,6 @@ use self::{
 
 // patterns are used: to match values against structures; in variable declarations; as func params
 
-// patterns:
-// - literals (char, string, int, uint, float, bytes32, bool)
-// - identifier
-// - struct, tuple struct
-// - tuple
-// - grouped
-// - path
-
-// pub trait Pattern
-// where
-//     Self: Spanned,
-// {
-// }
-
 #[derive(Clone)]
 pub enum Pattern {
     CallParams(CallParams),
@@ -93,9 +79,3 @@ impl Spanned for PatternWithoutRange {
         todo!()
     }
 }
-
-// pub trait PatternWithoutRange
-// where
-//     Self: Pattern,
-// {
-// }
