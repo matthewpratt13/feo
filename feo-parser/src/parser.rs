@@ -59,10 +59,12 @@ impl Parser {
         self.handler.emit_err(CompilerError::Parser(err))
     }
 
+    // peek at the next `Token` and return it if it exists (without advancing)
     pub fn peek<T: Peek>(&mut self) -> Option<T> {
         Peeker::with(&self.stream().tokens()).map(|(v, _)| v)
     }
 
+    // peek at the next `Token`, advance the `Parser` and return the peeked `Token` if it exists
     pub fn take<T: Peek>(&mut self) -> Option<T> {
         let (value, _) = Peeker::with(&self.stream().tokens())?;
         self.advance();
@@ -70,9 +72,11 @@ impl Parser {
     }
 }
 
+// type that allows for peeking at the next `Token` in a `&[Token]` without advancing
 pub struct Peeker<'a>(pub &'a [Token]);
 
 impl<'a> Peeker<'a> {
+    // peek for a `T` in `&[Token]'; return `T` if it exists and the remaining `&[Token]`
     pub fn with<T: Peek>(tokens: &'a [Token]) -> Option<(T, &'a [Token])> {
         let peeker = Peeker(tokens);
         let value = T::peek(peeker)?;
@@ -80,6 +84,7 @@ impl<'a> Peeker<'a> {
         Some((value, tokens))
     }
 
+    // peek for a `Literal`; return `Self` so that the `Peeker` can try again without advancing
     pub fn peek_literal(self) -> Result<LiteralKind, Self> {
         match self.0 {
             [Token::CharLit(c), ..] => Ok(LiteralKind::Char(c.clone())),
@@ -136,9 +141,9 @@ impl Peek for Literal<char> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::Char(c) => Some(c),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -151,9 +156,9 @@ impl Peek for Literal<String> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::String(s) => Some(s),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -166,9 +171,9 @@ impl Peek for Literal<bool> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::Bool(b) => Some(b),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -181,9 +186,9 @@ impl Peek for Literal<i32> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::I32(i) => Some(i),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -196,9 +201,9 @@ impl Peek for Literal<i64> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::I64(i) => Some(i),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -211,9 +216,9 @@ impl Peek for Literal<u8> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::U8(ui) => Some(ui),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -226,9 +231,9 @@ impl Peek for Literal<u16> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::U16(ui) => Some(ui),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -241,9 +246,9 @@ impl Peek for Literal<u32> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::U32(ui) => Some(ui),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -256,9 +261,9 @@ impl Peek for Literal<u64> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::U64(ui) => Some(ui),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -271,9 +276,9 @@ impl Peek for Literal<U256> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::U256(u) => Some(u),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -286,9 +291,9 @@ impl Peek for Literal<f32> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::F32(f) => Some(f),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -301,9 +306,9 @@ impl Peek for Literal<f64> {
         match peeker.peek_literal() {
             Ok(l) => match l {
                 LiteralKind::F64(f) => Some(f),
-                _ => todo!(),
+                _ => None,
             },
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -315,7 +320,7 @@ impl Peek for Identifier {
     {
         match peeker.peek_identifier() {
             Ok(id) => Some(id),
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -327,7 +332,7 @@ impl Peek for Keyword {
     {
         match peeker.peek_keyword() {
             Ok(k) => Some(k),
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -339,7 +344,7 @@ impl Peek for DocComment {
     {
         match peeker.peek_doc_comment() {
             Ok(d) => Some(d),
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -351,7 +356,7 @@ impl Peek for Delimiter {
     {
         match peeker.peek_delimiter() {
             Ok(d) => Some(d),
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
@@ -363,7 +368,7 @@ impl Peek for Punctuation {
     {
         match peeker.peek_punctuation() {
             Ok(p) => Some(p),
-            Err(_) => todo!(),
+            Err(_) => None,
         }
     }
 }
