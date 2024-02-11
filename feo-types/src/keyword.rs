@@ -5,7 +5,7 @@ use crate::{
     span::{Span, Spanned},
 };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum KeywordKind {
     KwAbi,
     KwAbstract,

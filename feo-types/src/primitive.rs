@@ -28,7 +28,7 @@ impl PrimitiveType for f32 {}
 
 impl PrimitiveType for f64 {}
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Primitive<P: PrimitiveType>(P);
 
 impl<P> Primitive<P>

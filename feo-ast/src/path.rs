@@ -25,7 +25,7 @@ impl Spanned for SimplePathSegmentKind {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub enum PathIdenSegmentKind {
     Iden(Identifier),
     KwCrate(KwCrate),
@@ -96,7 +96,7 @@ impl Spanned for SimplePath {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct PathInExpr {
     pub first_segment: PathExprSegment,
     pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,

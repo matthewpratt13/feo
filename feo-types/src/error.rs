@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-#[derive(Default, Debug, Copy, Clone, PartialEq)]
+#[derive(Default, Debug, PartialEq, Copy, Clone)]
 pub enum TypeErrorKind {
     UnrecognizedCommentOpener,
     UnrecognizedDelimiter,
