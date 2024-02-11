@@ -6,10 +6,8 @@ use feo_types::{
     literal::Literal,
     punctuation::Punctuation,
     span::{Span, Spanned},
-    Identifier, U256,
+    Identifier, TypeAnnotation, U256,
 };
-
-// TODO: how to handle numbers other than `i64`, `u64`, `U256` and `f64` ? (e.g., `i32`, `u8`, f32)
 
 #[derive(Debug, Clone)]
 pub enum Token {
@@ -29,6 +27,8 @@ pub enum Token {
 
     Delim(Delimiter),
     Punc(Punctuation),
+
+    TypeAnn(TypeAnnotation),
 
     EOF,
 }
@@ -50,6 +50,7 @@ impl Spanned for Token {
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
             Token::EOF => Span::default(),
+            Token::TypeAnn(ta) => ta.span(),
         }
     }
 }
@@ -98,3 +99,4 @@ impl Iterator for TokenStream {
         }
     }
 }
+

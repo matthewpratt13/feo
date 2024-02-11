@@ -15,8 +15,9 @@ use feo_types::{
     keyword::{Keyword, KeywordKind},
     literal::Literal,
     punctuation::{PuncKind, Punctuation},
-    span::{Position, Span},
-    Identifier, U256,
+    span::{Position, Span, Spanned},
+    type_annotation::TypeAnnKind,
+    Identifier, TypeAnnotation, U256,
 };
 
 use crate::token::Token;
@@ -27,6 +28,7 @@ pub trait Tokenize {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted>;
 }
@@ -37,6 +39,7 @@ impl Tokenize for Comment {
         content: &str,
         start: usize,
         end: usize,
+        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -72,6 +75,7 @@ impl Tokenize for Delimiter {
         content: &str,
         start: usize,
         end: usize,
+        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -103,6 +107,7 @@ impl Tokenize for DocComment {
         content: &str,
         start: usize,
         end: usize,
+        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -153,11 +158,12 @@ impl Tokenize for Identifier {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let identifier = Identifier::new(content.to_string(), span);
+        let identifier = Identifier::new(content.to_string(), span, type_ann_opt);
 
         let token = Token::Iden(identifier);
 
@@ -171,6 +177,7 @@ impl Tokenize for Keyword {
         content: &str,
         start: usize,
         end: usize,
+        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -198,6 +205,7 @@ impl Tokenize for Literal<char> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -211,7 +219,7 @@ impl Tokenize for Literal<char> {
             .parse::<char>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
 
-        let char_lit = Literal::<char>::new(parsed, span);
+        let char_lit = Literal::<char>::new(parsed, span, type_ann_opt);
 
         let token = Token::CharLit(char_lit);
 
@@ -225,11 +233,12 @@ impl Tokenize for Literal<String> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let literal = Literal::<String>::new(content.to_string(), span);
+        let literal = Literal::<String>::new(content.to_string(), span, type_ann_opt);
 
         let token = Token::StringLit(literal);
 
@@ -243,6 +252,7 @@ impl Tokenize for Literal<bool> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -256,7 +266,7 @@ impl Tokenize for Literal<bool> {
             .parse::<bool>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::<bool>::new(parsed, span);
+        let literal = Literal::<bool>::new(parsed, span, type_ann_opt);
 
         let token = Token::BoolLit(literal);
 
@@ -270,6 +280,7 @@ impl Tokenize for Literal<i64> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -282,7 +293,7 @@ impl Tokenize for Literal<i64> {
         let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::<i64>::new(parsed, span);
+        let literal = Literal::<i64>::new(parsed, span, type_ann_opt);
 
         let token = Token::IntLit(literal);
 
@@ -296,6 +307,7 @@ impl Tokenize for Literal<u64> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -341,7 +353,7 @@ impl Tokenize for Literal<u64> {
             }
         };
 
-        let literal = Literal::<u64>::new(parsed, span);
+        let literal = Literal::<u64>::new(parsed, span, type_ann_opt);
 
         let token = Token::UIntLit(literal);
 
@@ -355,6 +367,7 @@ impl Tokenize for Literal<U256> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -379,7 +392,7 @@ impl Tokenize for Literal<U256> {
                 .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
         };
 
-        let literal = Literal::<U256>::new(parsed, span);
+        let literal = Literal::<U256>::new(parsed, span, type_ann_opt);
 
         let token = Token::U256Lit(literal);
 
@@ -393,6 +406,7 @@ impl Tokenize for Literal<f64> {
         content: &str,
         start: usize,
         end: usize,
+        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -406,7 +420,7 @@ impl Tokenize for Literal<f64> {
             .parse::<f64>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
-        let literal = Literal::<f64>::new(parsed, span);
+        let literal = Literal::<f64>::new(parsed, span, type_ann_opt);
 
         let token = Token::FloatLit(literal);
 
@@ -420,6 +434,7 @@ impl Tokenize for Punctuation {
         content: &str,
         start: usize,
         end: usize,
+        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -438,5 +453,39 @@ impl Tokenize for Punctuation {
         let token = Token::Punc(punctuation);
 
         Ok(Some(token))
+    }
+}
+
+impl Tokenize for TypeAnnotation {
+    fn tokenize(
+        src: &str,
+        content: &str,
+        start: usize,
+        end: usize,
+        _type_ann_opt: Option<TypeAnnotation>,
+        _handler: &mut Handler,
+    ) -> Result<Option<Token>, ErrorEmitted> {
+        let span = Span::new(src, start, end);
+
+        let type_ann_kind = TypeAnnKind::from_str(content)
+            .unwrap_or(TypeAnnKind::CustomTypeAnn(content.to_string()));
+
+        let type_annotation = TypeAnnotation::new(type_ann_kind, span);
+
+        let token = Token::TypeAnn(type_annotation);
+
+        Ok(Some(token))
+    }
+}
+
+impl TryFrom<Token> for TypeAnnotation {
+    type Error = ();
+
+    fn try_from(value: Token) -> Result<Self, Self::Error> {
+        if let Token::TypeAnn(t) = value {
+            Ok(TypeAnnotation::new(t.clone().type_ann_kind, t.span()))
+        } else {
+            Err(())
+        }
     }
 }

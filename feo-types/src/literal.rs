@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use crate::{
     span::{Span, Spanned},
-    U256,
+    TypeAnnotation, U256,
 };
 
 pub trait LiteralType
@@ -39,17 +39,23 @@ impl LiteralType for f64 {}
 pub struct Literal<T: LiteralType> {
     inner_value: T,
     span: Span,
+    type_ann_opt: Option<TypeAnnotation>,
 }
 
 impl<T> Literal<T>
 where
     T: LiteralType,
 {
-    pub fn new(raw_value: T, span: Span) -> Literal<T> {
+    pub fn new(raw_value: T, span: Span, type_ann_opt: Option<TypeAnnotation>) -> Literal<T> {
         Literal::<T> {
             inner_value: raw_value,
             span,
+            type_ann_opt,
         }
+    }
+
+    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
+        self.type_ann_opt.clone()
     }
 
     pub fn into_inner(self) -> Option<T> {
