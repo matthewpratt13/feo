@@ -27,10 +27,10 @@ impl Parse for StructExprField {
                 parser.advance();
             }
 
-            if let Some(iden) = parser.peek::<Identifier>()? {
+            if let Some(iden) = parser.peek::<Identifier>() {
                 parser.advance();
 
-                let colon_res = parser.take::<Punctuation>()?;
+                let colon_res = parser.take::<Punctuation>();
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
@@ -67,7 +67,7 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
-            let mut comma_res = parser.take::<Punctuation>()?;
+            let mut comma_res = parser.take::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
@@ -76,7 +76,7 @@ impl Parse for StructExprFields {
             {
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((comma_res.unwrap(), next_field));
-                    comma_res = parser.peek::<Punctuation>()?;
+                    comma_res = parser.peek::<Punctuation>();
                     parser.advance();
                 } else {
                     parser.advance();
@@ -106,7 +106,7 @@ impl Parse for StructExpr {
         Self: Sized,
     {
         if let Some(item_path) = PathInExpr::parse(parser)? {
-            let open_brace_res = parser.peek::<Delimiter>()?;
+            let open_brace_res = parser.peek::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -116,7 +116,7 @@ impl Parse for StructExpr {
                 parser.advance();
 
                 if let Some(fields_opt) = StructExprFields::parse(parser)? {
-                    let close_brace_res = parser.peek::<Delimiter>()?;
+                    let close_brace_res = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),

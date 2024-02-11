@@ -14,9 +14,9 @@ impl Parse for PathIdenSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Some(i) = parser.peek::<Identifier>()? {
+        let segment_kind = if let Some(i) = parser.peek::<Identifier>() {
             PathIdenSegmentKind::Iden(i)
-        } else if let Some(k) = parser.peek::<Keyword>()? {
+        } else if let Some(k) = parser.peek::<Keyword>() {
             match k.keyword_kind {
                 KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
@@ -43,7 +43,7 @@ impl Parse for PathInExpr {
         let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
 
         if let Some(first_segment) = PathExprSegment::parse(parser)? {
-            let mut next_dbl_colon_res = parser.peek::<Punctuation>()?;
+            let mut next_dbl_colon_res = parser.peek::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -52,7 +52,7 @@ impl Parse for PathInExpr {
             {
                 if let Some(next_segment) = PathExprSegment::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
-                    next_dbl_colon_res = parser.peek::<Punctuation>()?;
+                    next_dbl_colon_res = parser.peek::<Punctuation>();
                     parser.advance();
                 } else {
                     parser.advance();
@@ -85,7 +85,7 @@ impl Parse for PathType {
         let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
 
         if let Some(first_segment) = PathTypeSegment::parse(parser)? {
-            let mut next_dbl_colon_res = parser.peek::<Punctuation>()?;
+            let mut next_dbl_colon_res = parser.peek::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -94,7 +94,7 @@ impl Parse for PathType {
             {
                 if let Some(next_segment) = PathTypeSegment::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
-                    next_dbl_colon_res = parser.peek::<Punctuation>()?;
+                    next_dbl_colon_res = parser.peek::<Punctuation>();
                     parser.advance();
                 } else {
                     parser.advance();
@@ -124,9 +124,9 @@ impl Parse for SimplePathSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Some(i) = parser.peek::<Identifier>()? {
+        let segment_kind = if let Some(i) = parser.peek::<Identifier>() {
             SimplePathSegmentKind::Iden(i)
-        } else if let Some(k) = parser.peek::<Keyword>()? {
+        } else if let Some(k) = parser.peek::<Keyword>() {
             match k.keyword_kind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
@@ -151,7 +151,7 @@ impl Parse for SimplePath {
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
         if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
-            let mut next_dbl_colon_res = parser.peek::<Punctuation>()?;
+            let mut next_dbl_colon_res = parser.peek::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -160,7 +160,7 @@ impl Parse for SimplePath {
             {
                 if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
                     subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
-                    next_dbl_colon_res = parser.peek::<Punctuation>()?;
+                    next_dbl_colon_res = parser.peek::<Punctuation>();
                     parser.advance();
                 } else {
                     parser.advance();

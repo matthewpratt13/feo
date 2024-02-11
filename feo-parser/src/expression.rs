@@ -21,51 +21,51 @@ impl Parse for Expression {
     where
         Self: Sized,
     {
-        let expr = if let Some(_) = parser.peek::<Literal<char>>()? {
+        let expr = if let Some(_) = parser.peek::<Literal<char>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `char` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<String>>()? {
+        } else if let Some(_) = parser.peek::<Literal<String>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `string` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<i32>>()? {
+        } else if let Some(_) = parser.peek::<Literal<i32>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `i32` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<i64>>()? {
+        } else if let Some(_) = parser.peek::<Literal<i64>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `i64` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<u8>>()? {
+        } else if let Some(_) = parser.peek::<Literal<u8>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `u8` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<u16>>()? {
+        } else if let Some(_) = parser.peek::<Literal<u16>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `u16` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<u32>>()? {
+        } else if let Some(_) = parser.peek::<Literal<u32>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `u32` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<u64>>()? {
+        } else if let Some(_) = parser.peek::<Literal<u64>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `u64` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<U256>>()? {
+        } else if let Some(_) = parser.peek::<Literal<U256>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `U256` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<f32>>()? {
+        } else if let Some(_) = parser.peek::<Literal<f32>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `f32` literal"),
             )
-        } else if let Some(_) = parser.peek::<Literal<f64>>()? {
+        } else if let Some(_) = parser.peek::<Literal<f64>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("error parsing `f64` literal"),
             )
-        } else if let Some(_) = parser.peek::<Identifier>()? {
+        } else if let Some(_) = parser.peek::<Identifier>() {
             // [ArrayElements]
             // ArithmeticOrLogicalExpr
             // AssignmentExpr
@@ -83,7 +83,7 @@ impl Parse for Expression {
             // RangeInclusiveExpr
             // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
             todo!()
-        } else if let Some(k) = parser.peek::<Keyword>()? {
+        } else if let Some(k) = parser.peek::<Keyword>() {
             match k.keyword_kind {
                 KeywordKind::KwBreak => todo!(),    // BreakExpr
                 KeywordKind::KwContinue => todo!(), // ContinueExpr
@@ -99,9 +99,9 @@ impl Parse for Expression {
                 KeywordKind::KwReturn => todo!(), // ReturnExpr
                 _ => todo!(),
             }
-        } else if let Some(_) = parser.peek::<DocComment>()? {
+        } else if let Some(_) = parser.peek::<DocComment>() {
             todo!()
-        } else if let Some(d) = parser.peek::<Delimiter>()? {
+        } else if let Some(d) = parser.peek::<Delimiter>() {
             match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     // ParenthesizedExpr
@@ -114,7 +114,7 @@ impl Parse for Expression {
 
                 _ => todo!(),
             }
-        } else if let Some(p) = parser.peek::<Punctuation>()? {
+        } else if let Some(p) = parser.peek::<Punctuation>() {
             match p.punc_kind {
                 PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
                 PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr

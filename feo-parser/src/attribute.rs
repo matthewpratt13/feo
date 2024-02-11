@@ -17,7 +17,7 @@ impl Parse for AttributeKind {
     where
         Self: Sized,
     {
-        let attr_kind = if let Some(k) = parser.peek::<Keyword>()? {
+        let attr_kind = if let Some(k) = parser.peek::<Keyword>() {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),
@@ -43,7 +43,7 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_res = parser.peek::<Punctuation>()?;
+        let hash_sign_res = parser.peek::<Punctuation>();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Hash,
@@ -52,7 +52,7 @@ impl Parse for OuterAttr {
         {
             parser.advance();
 
-            let open_bracket_res = parser.peek::<Delimiter>()?;
+            let open_bracket_res = parser.peek::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -62,7 +62,7 @@ impl Parse for OuterAttr {
                 parser.advance();
 
                 if let Some(attr_kind) = AttributeKind::parse(parser)? {
-                    let close_bracket_res = parser.peek::<Delimiter>()?;
+                    let close_bracket_res = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),

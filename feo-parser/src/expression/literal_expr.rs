@@ -1,10 +1,9 @@
 use feo_ast::token::Token;
-use feo_error::handler::ErrorEmitted;
+use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::literal::LiteralKind;
 
 use crate::{parse::Parse, parser::Parser};
 
-// TODO: unnecessary – already done in `Literal<T>::peek()` methods
 impl Parse for LiteralKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
@@ -18,7 +17,7 @@ impl Parse for LiteralKind {
             Token::UIntLit(ui) => Ok(Some(LiteralKind::U64(ui))),
             Token::U256Lit(u) => Ok(Some(LiteralKind::U256(u))),
             Token::FloatLit(f) => Ok(Some(LiteralKind::F64(f))),
-            _ => todo!(),
+            _ => Err(parser.log_error(ParserErrorKind::ParseLiteralTokenError)),
         }
     }
 }

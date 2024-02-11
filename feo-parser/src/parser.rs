@@ -50,7 +50,7 @@ impl Parser {
             .expect("token not found")
     }
 
-    fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
+    pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
         let err = ParserError {
             error_kind,
             position: Position::new(&self.stream.span().source(), self.pos),
@@ -59,25 +59,25 @@ impl Parser {
         self.handler.emit_err(CompilerError::Parser(err))
     }
 
-    pub fn peek<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
-        Peeker::with(self.stream().tokens().as_mut_slice()).map(|(v, _)| v)
+    pub fn peek<T: Peek>(&mut self) -> Option<T> {
+        Peeker::with(&self.stream().tokens()).map(|(v, _)| v)
     }
 
-    pub fn take<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
-        let (value, _) = Peeker::with(self.stream().tokens().as_mut_slice())?;
+    pub fn take<T: Peek>(&mut self) -> Option<T> {
+        let (value, tokens) = Peeker::with(&self.stream().tokens())?;
         self.advance();
-        Ok(value)
+        value
     }
 }
 
 pub struct Peeker<'a>(pub &'a [Token]);
 
 impl<'a> Peeker<'a> {
-    pub fn with<T: Peek>(tokens: &'a [Token]) -> Result<(Option<T>, &'a [Token]), ErrorEmitted> {
+    pub fn with<T: Peek>(tokens: &'a [Token]) -> Option<(T, &'a [Token])> {
         let peeker = Peeker(tokens);
-        let value = T::peek(peeker);
+        let value = T::peek(peeker)?;
 
-        Ok((value, tokens))
+        Some((value, tokens))
     }
 
     pub fn peek_literal(self) -> Result<LiteralKind, Self> {
