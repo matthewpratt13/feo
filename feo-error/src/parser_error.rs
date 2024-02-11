@@ -18,8 +18,6 @@ pub enum ParserErrorKind {
     UnexpectedToken,
 
     ParseLiteralTokenError,
-    PeekLiteralTokenError,
-
 
     #[default]
     UnknownError,
@@ -41,7 +39,6 @@ impl fmt::Display for ParserErrorKind {
             ParserErrorKind::UnexpectedToken => write!(f, "unexpected token"),
             ParserErrorKind::UnknownError => write!(f, "unknown error"),
             ParserErrorKind::ParseLiteralTokenError => write!(f, "unable to parse literal token"),
-            ParserErrorKind::PeekLiteralTokenError => write!(f, "unable to peek literal token"),
         }
     }
 }
