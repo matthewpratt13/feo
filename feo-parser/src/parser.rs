@@ -64,9 +64,9 @@ impl Parser {
     }
 
     pub fn take<T: Peek>(&mut self) -> Option<T> {
-        let (value, tokens) = Peeker::with(&self.stream().tokens())?;
+        let (value, _) = Peeker::with(&self.stream().tokens())?;
         self.advance();
-        value
+        Some(value)
     }
 }
 
