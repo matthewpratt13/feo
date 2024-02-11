@@ -9,6 +9,8 @@ use feo_types::{
     Identifier, U256,
 };
 
+// TODO: how to handle numbers other than `i64`, `u64`, `U256` and `f64` ? (e.g., `i32`, `u8`, f32)
+
 #[derive(Debug, Clone)]
 pub enum Token {
     CharLit(Literal<char>),

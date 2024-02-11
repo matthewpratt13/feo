@@ -23,47 +23,27 @@ impl Parse for Expression {
     {
         let expr = if let Some(_) = parser.peek::<Literal<char>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`char` literal does not exist"),
+                LiteralKind::parse(parser)?.expect("expected some `char` literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<String>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`string` literal does not exist"),
-            )
-        } else if let Some(_) = parser.peek::<Literal<i32>>() {
-            Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`i32` literal does not exist"),
+                LiteralKind::parse(parser)?.expect("expected some `string` literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<i64>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`i64` literal does not exist"),
-            )
-        } else if let Some(_) = parser.peek::<Literal<u8>>() {
-            Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`u8` literal does not exist"),
-            )
-        } else if let Some(_) = parser.peek::<Literal<u16>>() {
-            Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`u16` literal does not exist"),
-            )
-        } else if let Some(_) = parser.peek::<Literal<u32>>() {
-            Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`u32` literal does not exist"),
+                LiteralKind::parse(parser)?.expect("expected some `i64` literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<u64>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`u64` literal does not exist"),
+                LiteralKind::parse(parser)?.expect("expected some `u64` literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<U256>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`U256` literal does not exist"),
-            )
-        } else if let Some(_) = parser.peek::<Literal<f32>>() {
-            Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`f32` literal does not exist"),
+                LiteralKind::parse(parser)?.expect("expected some `U256` literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<f64>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("`f64` literal does not exist"),
+                LiteralKind::parse(parser)?.expect("expected some `f64` token, found none"),
             )
         } else if let Some(_) = parser.peek::<Identifier>() {
             // [ArrayElements]
