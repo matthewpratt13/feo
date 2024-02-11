@@ -13,12 +13,13 @@ use feo_types::{
     doc_comment::{DocComment, DocCommentKind},
     error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
+    literal::Literal,
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span},
     Identifier, U256,
 };
 
-use crate::{literal::Literal, token::Token};
+use crate::token::Token;
 
 pub trait Tokenize {
     fn tokenize(

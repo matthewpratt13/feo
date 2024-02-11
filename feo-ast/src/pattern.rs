@@ -8,6 +8,7 @@ mod struct_patt;
 mod tuple_patt;
 
 use feo_types::{
+    literal::LiteralKind,
     span::{Span, Spanned},
     utils::Underscore,
 };
@@ -15,7 +16,6 @@ use feo_types::{
 use crate::{
     expression::{CallParams, ClosureParam, ClosureParams, IfExpr, IterLoopExpr, MatchExpr},
     item::{ConstantVarDef, EnumVariantStruct, EnumVariantTuple},
-    literal::LiteralKind,
     path::PathPatt,
     statement::LetStatement,
 };

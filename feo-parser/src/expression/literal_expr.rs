@@ -1,5 +1,6 @@
-use feo_ast::{literal::LiteralKind, token::Token};
+use feo_ast::token::Token;
 use feo_error::handler::ErrorEmitted;
+use feo_types::literal::LiteralKind;
 
 use crate::{parse::Parse, parser::Parser};
 

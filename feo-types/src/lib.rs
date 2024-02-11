@@ -21,6 +21,9 @@ pub use crate::identifier::Identifier;
 pub mod keyword;
 pub use crate::keyword::Keyword;
 
+pub mod literal;
+pub use crate::literal::Literal;
+
 pub mod primitive;
 
 pub mod punctuation;

@@ -4,14 +4,12 @@ mod array_expr;
 mod literal_expr;
 mod struct_expr;
 
-use feo_ast::{
-    expression::Expression,
-    literal::{Literal, LiteralKind},
-};
+use feo_ast::expression::Expression;
 use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
+    literal::{Literal, LiteralKind},
     punctuation::PuncKind,
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };

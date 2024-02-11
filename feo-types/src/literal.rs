@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use feo_types::{
+use crate::{
     span::{Span, Spanned},
     U256,
 };

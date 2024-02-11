@@ -3,7 +3,6 @@
 use std::{iter::Peekable, str::Chars, sync::Arc};
 
 use feo_ast::{
-    literal::Literal,
     token::{Token, TokenStream},
     tokenize::Tokenize,
 };
@@ -16,7 +15,8 @@ use feo_error::{
 
 use feo_types::{delimiter, identifier, punctuation};
 use feo_types::{
-    span::Position, Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
+    literal::Literal, span::Position, Comment, Delimiter, DocComment, Identifier, Keyword,
+    Punctuation, U256,
 };
 
 struct Lexer<'a> {

@@ -3,12 +3,11 @@ use feo_types::{
     delimiter::Delimiter,
     doc_comment::DocComment,
     keyword::Keyword,
+    literal::Literal,
     punctuation::Punctuation,
     span::{Span, Spanned},
     Identifier, U256,
 };
-
-use crate::literal::Literal;
 
 #[derive(Debug, Clone)]
 pub enum Token {

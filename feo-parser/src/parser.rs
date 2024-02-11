@@ -1,15 +1,13 @@
 #![allow(dead_code)]
 
-use feo_ast::{
-    literal::{Literal, LiteralKind},
-    token::{Token, TokenStream},
-};
+use feo_ast::token::{Token, TokenStream};
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
+    literal::{Literal, LiteralKind},
     span::{Position, Spanned},
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -75,9 +73,7 @@ impl Parser {
 pub struct Peeker<'a>(pub &'a [Token]);
 
 impl<'a> Peeker<'a> {
-    pub fn with<T: Peek>(
-        tokens: &'a [Token],
-    ) -> Result<(Option<T>, &'a [Token]), ErrorEmitted> {
+    pub fn with<T: Peek>(tokens: &'a [Token]) -> Result<(Option<T>, &'a [Token]), ErrorEmitted> {
         let peeker = Peeker(tokens);
         let value = T::peek(peeker);
 

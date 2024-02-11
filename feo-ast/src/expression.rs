@@ -16,6 +16,7 @@ mod struct_expr;
 mod tuple_expr;
 
 use feo_types::{
+    literal::{Literal, LiteralKind},
     span::{Span, Spanned},
     utils::Underscore,
     Identifier, U256,
@@ -23,7 +24,6 @@ use feo_types::{
 
 use crate::{
     item::{ConstantVarDef, EnumDef, EnumVariantStruct, EnumVariantTuple, StaticVarDef},
-    literal::{Literal, LiteralKind},
     path::PathExpr,
     statement::{ExprStatement, LetStatement},
 };
@@ -33,7 +33,7 @@ pub use self::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     call_expr::CallParams,
-    closure_expr::{ClosureParam, ClosureParams, ClosureExprKind},
+    closure_expr::{ClosureExprKind, ClosureParam, ClosureParams},
     conditional_expr::{IfExpr, MatchExpr},
     iteration_expr::IterLoopExpr,
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},

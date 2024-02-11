@@ -1,10 +1,11 @@
 use feo_types::{
+    literal::Literal,
     span::{Span, Spanned},
     utils::DotDotEquals,
     U256,
 };
 
-use crate::{literal::Literal, path::PathExpr};
+use crate::path::PathExpr;
 
 #[derive(Clone)]
 pub enum RangePatt {
