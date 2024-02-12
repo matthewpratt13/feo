@@ -14,8 +14,7 @@ use feo_error::{
 };
 
 use feo_types::{
-    delimiter, identifier, punctuation,
-    type_annotation::{self, TypeAnnotation},
+    delimiter, identifier, literal::IntType, punctuation, type_annotation::{self, TypeAnnotation}
 };
 use feo_types::{
     literal::Literal, span::Position, Comment, Delimiter, DocComment, Identifier, Keyword,
@@ -698,7 +697,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if is_negative {
-                        let int_literal = Literal::<i64>::tokenize(
+                        let int_literal = Literal::<IntType>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,

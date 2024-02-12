@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use crate::{
+    error::TypeErrorKind,
     span::{Span, Spanned},
     TypeAnnotation, U256,
 };
@@ -21,6 +22,8 @@ impl LiteralType for i32 {}
 
 impl LiteralType for i64 {}
 
+impl LiteralType for IntType {}
+
 impl LiteralType for u8 {}
 
 impl LiteralType for u16 {}
@@ -34,6 +37,34 @@ impl LiteralType for U256 {}
 impl LiteralType for f32 {}
 
 impl LiteralType for f64 {}
+
+#[derive(Debug, Clone)]
+pub enum IntType {
+    I32(i32),
+    I64(i64),
+}
+
+impl TryFrom<IntType> for i32 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: IntType) -> Result<Self, Self::Error> {
+        match value {
+            IntType::I32(i) => Ok(i),
+            IntType::I64(_) => Err(TypeErrorKind::MismatchedTypeAnnotation),
+        }
+    }
+}
+
+impl TryFrom<IntType> for i64 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: IntType) -> Result<Self, Self::Error> {
+        match value {
+            IntType::I64(i) => Ok(i),
+            IntType::I32(_) => Err(TypeErrorKind::MismatchedTypeAnnotation),
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct Literal<T: LiteralType> {
@@ -77,8 +108,8 @@ pub enum LiteralKind {
     Char(Literal<char>),
     String(Literal<String>),
     Bool(Literal<bool>),
-    I32(Literal<i32>),
-    I64(Literal<i64>),
+    I32(Literal<IntType>),
+    I64(Literal<IntType>),
     U8(Literal<u8>),
     U16(Literal<u16>),
     U32(Literal<u32>),

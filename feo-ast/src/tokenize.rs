@@ -13,7 +13,7 @@ use feo_types::{
     doc_comment::{DocComment, DocCommentKind},
     error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
-    literal::Literal,
+    literal::{IntType, Literal},
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
     type_annotation::TypeAnnKind,
@@ -211,7 +211,7 @@ impl Tokenize for Literal<char> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        if let Some(t) = type_ann_opt.clone() {
+        if let Some(t) = &type_ann_opt {
             if t.type_ann_kind != TypeAnnKind::TypeAnnChar {
                 let type_ann_error = TypeError {
                     error_kind: TypeErrorKind::MismatchedTypeAnnotation,
@@ -250,7 +250,7 @@ impl Tokenize for Literal<String> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        if let Some(t) = type_ann_opt.clone() {
+        if let Some(t) = &type_ann_opt {
             if t.type_ann_kind != TypeAnnKind::TypeAnnString {
                 let error = TypeError {
                     error_kind: TypeErrorKind::MismatchedTypeAnnotation,
@@ -280,7 +280,7 @@ impl Tokenize for Literal<bool> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        if let Some(t) = type_ann_opt.clone() {
+        if let Some(t) = &type_ann_opt {
             if t.type_ann_kind != TypeAnnKind::TypeAnnBool {
                 let type_ann_error = TypeError {
                     error_kind: TypeErrorKind::MismatchedTypeAnnotation,
@@ -308,7 +308,34 @@ impl Tokenize for Literal<bool> {
     }
 }
 
-impl Tokenize for Literal<i64> {
+// impl Tokenize for Literal<i64> {
+//     fn tokenize<'a>(
+//         src: &str,
+//         content: &str,
+//         start: usize,
+//         end: usize,
+//         type_ann_opt: Option<TypeAnnotation>,
+//         handler: &mut Handler,
+//     ) -> Result<Option<Token>, ErrorEmitted> {
+//         let span = Span::new(src, start, end);
+
+//         let error = ParserError {
+//             error_kind: ParserErrorKind::ParseIntError,
+//             position: Position::new(src, start),
+//         };
+
+//         let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+//             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+
+//         let literal = Literal::<i64>::new(parsed, span, type_ann_opt);
+
+//         let token = Token::IntLit(literal);
+
+//         Ok(Some(token))
+//     }
+// }
+
+impl Tokenize for Literal<IntType> {
     fn tokenize<'a>(
         src: &str,
         content: &str,
@@ -324,10 +351,28 @@ impl Tokenize for Literal<i64> {
             position: Position::new(src, start),
         };
 
-        let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+        // TODO: check for overflow on ints larger than 32-bits
 
-        let literal = Literal::<i64>::new(parsed, span, type_ann_opt);
+        let parsed = if let Some(t) = &type_ann_opt {
+            match t.type_ann_kind {
+                TypeAnnKind::TypeAnnI32 => IntType::I32(
+                    i32::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                        .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
+                ),
+                TypeAnnKind::TypeAnnI64 => IntType::I64(
+                    i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                        .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
+                ),
+                _ => todo!(),
+            }
+        } else {
+            IntType::I64(
+                i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
+            )
+        };
+
+        let literal = Literal::<IntType>::new(parsed, span, type_ann_opt);
 
         let token = Token::IntLit(literal);
 

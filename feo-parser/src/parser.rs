@@ -7,7 +7,7 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
-    literal::{Literal, LiteralKind},
+    literal::{IntType, Literal, LiteralKind},
     span::{Position, Spanned},
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -193,7 +193,7 @@ impl Peek for Literal<bool> {
 //     }
 // }
 
-impl Peek for Literal<i64> {
+impl Peek for Literal<IntType> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,

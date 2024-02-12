@@ -9,7 +9,7 @@ use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    literal::{Literal, LiteralKind},
+    literal::{IntType, Literal, LiteralKind},
     punctuation::PuncKind,
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -31,9 +31,9 @@ impl Parse for Expression {
                 LiteralKind::parse(parser)?
                     .expect("expected some `string` literal token, found none"),
             )
-        } else if let Some(_) = parser.peek::<Literal<i64>>() {
+        } else if let Some(_) = parser.peek::<Literal<IntType>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some `i64` literal token, found none"),
+                LiteralKind::parse(parser)?.expect("expected some int literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<u64>>() {
             Expression::LiteralExpr(
