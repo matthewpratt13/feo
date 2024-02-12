@@ -8,6 +8,8 @@ pub enum TypeErrorKind {
     UnrecognizedKeyword,
     UnexpectedPunctuation,
     MismatchedTypeAnnotation,
+    MismatchedIntTypeAnnotation,
+    MismatchedUintTypeAnnotation,
 
     #[default]
     UnknownError,
@@ -23,7 +25,15 @@ impl fmt::Display for TypeErrorKind {
             TypeErrorKind::UnrecognizedKeyword => write!(f, "unrecognized keyword"),
             TypeErrorKind::UnexpectedPunctuation => write!(f, "unexpected punctuation"),
             TypeErrorKind::UnknownError => write!(f, "unknown error"),
-            TypeErrorKind::MismatchedTypeAnnotation => write!(f, "type annotation does not match value's type"),
+            TypeErrorKind::MismatchedTypeAnnotation => {
+                write!(f, "type annotation does not match value's type")
+            }
+            TypeErrorKind::MismatchedIntTypeAnnotation => {
+                write!(f, "int type annotation does not match value's type")
+            }
+            TypeErrorKind::MismatchedUintTypeAnnotation => {
+                write!(f, "uint type annotation does not match value's type")
+            }
         }
     }
 }

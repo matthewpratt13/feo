@@ -32,6 +32,8 @@ impl LiteralType for u32 {}
 
 impl LiteralType for u64 {}
 
+impl LiteralType for UintType {}
+
 impl LiteralType for U256 {}
 
 impl LiteralType for f32 {}
@@ -50,7 +52,7 @@ impl TryFrom<IntType> for i32 {
     fn try_from(value: IntType) -> Result<Self, Self::Error> {
         match value {
             IntType::I32(i) => Ok(i),
-            IntType::I64(_) => Err(TypeErrorKind::MismatchedTypeAnnotation),
+            IntType::I64(_) => Err(TypeErrorKind::MismatchedIntTypeAnnotation),
         }
     }
 }
@@ -60,8 +62,87 @@ impl TryFrom<IntType> for i64 {
 
     fn try_from(value: IntType) -> Result<Self, Self::Error> {
         match value {
+            IntType::I32(_) => Err(TypeErrorKind::MismatchedIntTypeAnnotation),
             IntType::I64(i) => Ok(i),
-            IntType::I32(_) => Err(TypeErrorKind::MismatchedTypeAnnotation),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub enum UintType {
+    U8(u8),
+    U16(u16),
+    U32(u32),
+    U64(u64),
+    U256(U256),
+}
+
+impl TryFrom<UintType> for u8 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+        match value {
+            UintType::U8(ui) => Ok(ui),
+            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+        }
+    }
+}
+
+impl TryFrom<UintType> for u16 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+        match value {
+            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U16(ui) => Ok(ui),
+            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+        }
+    }
+}
+
+impl TryFrom<UintType> for u32 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+        match value {
+            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U32(ui) => Ok(ui),
+            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+        }
+    }
+}
+
+impl TryFrom<UintType> for u64 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+        match value {
+            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U64(ui) => Ok(ui),
+            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+        }
+    }
+}
+
+impl TryFrom<UintType> for U256 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+        match value {
+            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UintType::U256(u) => Ok(u),
         }
     }
 }
@@ -110,10 +191,10 @@ pub enum LiteralKind {
     Bool(Literal<bool>),
     I32(Literal<IntType>),
     I64(Literal<IntType>),
-    U8(Literal<u8>),
-    U16(Literal<u16>),
-    U32(Literal<u32>),
-    U64(Literal<u64>),
+    U8(Literal<UintType>),
+    U16(Literal<UintType>),
+    U32(Literal<UintType>),
+    U64(Literal<UintType>),
     U256(Literal<U256>),
     F32(Literal<f32>),
     F64(Literal<f64>),

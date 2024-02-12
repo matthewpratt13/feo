@@ -13,7 +13,7 @@ use feo_types::{
     doc_comment::{DocComment, DocCommentKind},
     error::TypeErrorKind,
     keyword::{Keyword, KeywordKind},
-    literal::{IntType, Literal},
+    literal::{IntType, Literal, UintType},
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span, Spanned},
     type_annotation::TypeAnnKind,
@@ -308,33 +308,6 @@ impl Tokenize for Literal<bool> {
     }
 }
 
-// impl Tokenize for Literal<i64> {
-//     fn tokenize<'a>(
-//         src: &str,
-//         content: &str,
-//         start: usize,
-//         end: usize,
-//         type_ann_opt: Option<TypeAnnotation>,
-//         handler: &mut Handler,
-//     ) -> Result<Option<Token>, ErrorEmitted> {
-//         let span = Span::new(src, start, end);
-
-//         let error = ParserError {
-//             error_kind: ParserErrorKind::ParseIntError,
-//             position: Position::new(src, start),
-//         };
-
-//         let parsed = i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-//             .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
-
-//         let literal = Literal::<i64>::new(parsed, span, type_ann_opt);
-
-//         let token = Token::IntLit(literal);
-
-//         Ok(Some(token))
-//     }
-// }
-
 impl Tokenize for Literal<IntType> {
     fn tokenize<'a>(
         src: &str,
@@ -350,8 +323,6 @@ impl Tokenize for Literal<IntType> {
             error_kind: ParserErrorKind::ParseIntError,
             position: Position::new(src, start),
         };
-
-        // TODO: check for overflow on ints larger than 32-bits
 
         let parsed = if let Some(t) = &type_ann_opt {
             match t.type_ann_kind {
@@ -413,28 +384,67 @@ impl Tokenize for Literal<u64> {
             if content_as_hex_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
-                u64::from_str_radix(
-                    &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                    16,
-                )
-                .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?
+                if let Some(t) = &type_ann_opt {
+                    match t.type_ann_kind {
+                        TypeAnnKind::TypeAnnU8 => UintType::U8(
+                            u8::from_str_radix(
+                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                                16,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                        ),
+                        TypeAnnKind::TypeAnnU16 => UintType::U16(
+                            u16::from_str_radix(
+                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                                16,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                        ),
+                        TypeAnnKind::TypeAnnU32 => UintType::U32(
+                            u32::from_str_radix(
+                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                                16,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                        ),
+                        TypeAnnKind::TypeAnnU64 => UintType::U64(
+                            u64::from_str_radix(
+                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                                16,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                        ),
+                        _ => todo!(),
+                    }
+                } else {
+                    UintType::U64(
+                        u64::from_str_radix(
+                            &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                            16,
+                        )
+                        .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                    )
+                }
             }
         } else {
-            let content_as_dec_u256 =
+            let content_as_dec_u256 = UintType::U256(
                 U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?;
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?,
+            );
 
-            if content_as_dec_u256 > u64::MAX.into() {
+            if content_as_dec_u256 > UintType::U64(u64::MAX.into()) {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
-                u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?
+                UintType::U64(
+                    u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                        .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                )
             }
         };
 
-        let literal = Literal::<u64>::new(parsed, span, type_ann_opt);
+        let literal = Literal::new(parsed, span, type_ann_opt);
 
-        let token = Token::UIntLit(literal);
+        let token = Token::UintLit(literal);
 
         Ok(Some(token))
     }
