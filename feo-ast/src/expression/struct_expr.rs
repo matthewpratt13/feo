@@ -35,13 +35,10 @@ pub struct StructExpr {
 
 impl Spanned for StructExpr {
     fn span(&self) -> Span {
-        let start_pos = self.item_path.span().start();
-        let end_pos = self.close_brace.span().end();
-        let source = self.item_path.span().source();
+        let s1 = self.item_path.span();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -64,13 +61,10 @@ pub struct TupleStructExpr {
 
 impl Spanned for TupleStructExpr {
     fn span(&self) -> Span {
-        let start_pos = self.item_path.span().start();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.item_path.span().source();
+        let s1 = self.item_path.span();
+        let s2 = self.close_parenthesis.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -79,12 +73,9 @@ pub struct UnitStructExpr(PathInExpr);
 
 impl Spanned for UnitStructExpr {
     fn span(&self) -> Span {
-        let start_pos = self.0.span().start();
-        let end_pos = self.0.span().end();
-        let source = self.0.span().source();
+        let s1 = self.0.span();
+        let s2 = self.0.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

@@ -13,17 +13,13 @@ pub struct ReturnExpr {
 
 impl Spanned for ReturnExpr {
     fn span(&self) -> Span {
-        let start_pos = self.kw_return.span().start();
-        let end_pos = if let Some(e) = &self.expression_opt {
-            e.span().end()
+        let s1 = self.kw_return.span();
+        let s2 = if let Some(e) = &self.expression_opt {
+            e.span()
         } else {
-            self.kw_return.span().end()
+            self.kw_return.span()
         };
 
-        let source = self.kw_return.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

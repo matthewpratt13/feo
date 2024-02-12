@@ -39,13 +39,10 @@ pub struct RangeFromToExpr {
 
 impl Spanned for RangeFromToExpr {
     fn span(&self) -> Span {
-        let start_pos = self.from_operand.span().start();
-        let end_pos = self.to_operand_excl.span().end();
-        let source = self.from_operand.span().source();
+        let s1 = self.from_operand.span();
+        let s2 = self.to_operand_excl.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -57,13 +54,10 @@ pub struct RangeFromExpr {
 
 impl Spanned for RangeFromExpr {
     fn span(&self) -> Span {
-        let start_pos = self.from_operand.span().start();
-        let end_pos = self.dbl_dot.span().end();
-        let source = self.from_operand.span().source();
+        let s1 = self.from_operand.span();
+        let s2 = self.dbl_dot.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -75,13 +69,10 @@ pub struct RangeToExpr {
 
 impl Spanned for RangeToExpr {
     fn span(&self) -> Span {
-        let start_pos = self.dbl_dot.span().start();
-        let end_pos = self.to_operand.span().end();
-        let source = self.dbl_dot.span().source();
+        let s1 = self.dbl_dot.span();
+        let s2 = self.to_operand.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -94,13 +85,10 @@ pub struct RangeInclusiveExpr {
 
 impl Spanned for RangeInclusiveExpr {
     fn span(&self) -> Span {
-        let start_pos = self.from_operand.span().start();
-        let end_pos = self.to_operand_incl.span().end();
-        let source = self.from_operand.span().source();
+        let s1 = self.from_operand.span();
+        let s2 = self.to_operand_incl.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -112,12 +100,9 @@ pub struct RangeToInclusiveExpr {
 
 impl Spanned for RangeToInclusiveExpr {
     fn span(&self) -> Span {
-        let start_pos = self.dot_dot_equals.span().start();
-        let end_pos = self.to_operand_incl.span().end();
-        let source = self.dot_dot_equals.span().source();
+        let s1 = self.dot_dot_equals.span();
+        let s2 = self.to_operand_incl.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
