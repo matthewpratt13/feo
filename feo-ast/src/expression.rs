@@ -110,9 +110,9 @@ impl Spanned for Expression {
             Expression::ReturnExpr(ret) => ret.span(),
             Expression::StructExpr(st) => st.span(),
             Expression::TupleExpr(tup) => tup.span(),
-            Expression::BreakExpr(_) => todo!(),
-            Expression::ContinueExpr(_) => todo!(),
-            Expression::UnderscoreExpr(_) => todo!(),
+            Expression::BreakExpr(be) => be.span(),
+            Expression::ContinueExpr(ce) => ce.span(),
+            Expression::UnderscoreExpr(ue) => ue.span(),
             Expression::InnerAttr(inn) => inn.span(),
             Expression::OuterAttr(out) => out.span(),
         }
