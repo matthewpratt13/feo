@@ -24,7 +24,7 @@ use feo_types::{
     Punctuation, U256,
 };
 
-struct Lexer<'a> {
+pub struct Lexer<'a> {
     input: &'a str,
     pos: usize,
     peekable_chars: Peekable<Chars<'a>>,
@@ -41,55 +41,13 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    // progress through the source code so that the lexer can continue to process chars
-    fn advance(&mut self) -> Option<char> {
-        // update the lexer's position or other internal state if needed
-        self.pos += 1;
-        // move to the next char in the iterator
-        self.peekable_chars.next()
-    }
-
-    // return the current char at the lexer's current position without advancing the pos
-    fn current_char(&mut self) -> Option<char> {
-        self.peekable_chars.peek().cloned()
-    }
-
-    // return the next char in the input stream (i.e., peek ahead by one char)
-    fn peek_next(&self) -> Option<char> {
-        // create a clone of the iterator and advance this cloned iterator
-        let mut cloned_iter = self.peekable_chars.clone();
-        cloned_iter.next();
-
-        // peek at the next char from the original iterator
-        cloned_iter.peek().cloned()
-    }
-
-    // advance the lexer's pos past any whitespace chars in the input stream
-    fn skip_whitespace(&mut self) {
-        while let Some(c) = self.current_char() {
-            if c.is_whitespace() {
-                // if the current char is whitespace, advance to the next char
-                self.advance();
-            } else {
-                // if the current char is not whitespace, break out of the loop
-                break;
-            }
-        }
-    }
-
-    // log and store information about an error encountered during the lexing process
-    fn log_error(&self, error_kind: LexErrorKind) -> ErrorEmitted {
-        let err = LexError {
-            error_kind,
-            position: Position::new(self.input.trim_start_matches('\n'), self.pos),
-        };
-
-        self.handler.emit_err(CompilerError::Lex(err))
+    pub fn errors(&self) -> Vec<CompilerError> {
+        self.handler.clone().get_inner().0
     }
 
     // main lexer function
     // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
-    pub fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
+    fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut num_open_delimiters: usize = 0; // to check for unclosed delimiters
@@ -797,8 +755,50 @@ impl<'a> Lexer<'a> {
         Ok(stream)
     }
 
-    pub fn errors(&self) -> Vec<CompilerError> {
-        self.handler.clone().get_inner().0
+    // progress through the source code so that the lexer can continue to process chars
+    fn advance(&mut self) -> Option<char> {
+        // update the lexer's position or other internal state if needed
+        self.pos += 1;
+        // move to the next char in the iterator
+        self.peekable_chars.next()
+    }
+
+    // return the current char at the lexer's current position without advancing the pos
+    fn current_char(&mut self) -> Option<char> {
+        self.peekable_chars.peek().cloned()
+    }
+
+    // advance the lexer's pos past any whitespace chars in the input stream
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.current_char() {
+            if c.is_whitespace() {
+                // if the current char is whitespace, advance to the next char
+                self.advance();
+            } else {
+                // if the current char is not whitespace, break out of the loop
+                break;
+            }
+        }
+    }
+
+    // log and store information about an error encountered during the lexing process
+    fn log_error(&self, error_kind: LexErrorKind) -> ErrorEmitted {
+        let err = LexError {
+            error_kind,
+            position: Position::new(self.input.trim_start_matches('\n'), self.pos),
+        };
+
+        self.handler.emit_err(CompilerError::Lex(err))
+    }
+
+    // return the next char in the input stream (i.e., peek ahead by one char)
+    fn peek_next(&self) -> Option<char> {
+        // create a clone of the iterator and advance this cloned iterator
+        let mut cloned_iter = self.peekable_chars.clone();
+        cloned_iter.next();
+
+        // peek at the next char from the original iterator
+        cloned_iter.peek().cloned()
     }
 }
 

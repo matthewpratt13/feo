@@ -33,15 +33,6 @@ impl Parser {
         &self.stream
     }
 
-    pub fn pos(&self) -> usize {
-        self.pos
-    }
-
-    pub fn advance(&mut self) -> Option<Token> {
-        self.pos += 1;
-        self.stream.next()
-    }
-
     pub fn current_token(&self) -> Token {
         self.stream
             .tokens()
@@ -50,13 +41,13 @@ impl Parser {
             .expect("token not found")
     }
 
-    pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
-        let err = ParserError {
-            error_kind,
-            position: Position::new(&self.stream.span().source(), self.pos),
-        };
+    pub fn pos(&self) -> usize {
+        self.pos
+    }
 
-        self.handler.emit_err(CompilerError::Parser(err))
+    pub fn advance(&mut self) -> Option<Token> {
+        self.pos += 1;
+        self.stream.next()
     }
 
     // peek at the next `Token` and return it if it exists (without advancing)
@@ -70,14 +61,23 @@ impl Parser {
         self.advance();
         Some(value)
     }
+
+    pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
+        let err = ParserError {
+            error_kind,
+            position: Position::new(&self.stream.span().source(), self.pos),
+        };
+
+        self.handler.emit_err(CompilerError::Parser(err))
+    }
 }
 
 // type that allows for peeking at the next `Token` in a `&[Token]` without advancing
-pub struct Peeker<'a>(pub &'a [Token]);
+pub struct Peeker<'a>(&'a [Token]);
 
 impl<'a> Peeker<'a> {
     // peek for a `T` in `&[Token]'; return `T` if it exists and the remaining `&[Token]`
-    pub fn with<T: Peek>(tokens: &'a [Token]) -> Option<(T, &'a [Token])> {
+    fn with<T: Peek>(tokens: &'a [Token]) -> Option<(T, &'a [Token])> {
         let peeker = Peeker(tokens);
         let value = T::peek(peeker)?;
 
@@ -85,84 +85,84 @@ impl<'a> Peeker<'a> {
     }
 
     // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
-    pub fn peek_char_lit(self) -> Result<&'a Literal<char>, Self> {
+    fn peek_char_lit(self) -> Result<&'a Literal<char>, Self> {
         match self.0 {
             [Token::CharLit(c), ..] => Ok(c),
             _ => Err(self),
         }
     }
 
-    pub fn peek_string_lit(self) -> Result<&'a Literal<String>, Self> {
+    fn peek_string_lit(self) -> Result<&'a Literal<String>, Self> {
         match self.0 {
             [Token::StringLit(s), ..] => Ok(s),
             _ => Err(self),
         }
     }
 
-    pub fn peek_bool_lit(self) -> Result<&'a Literal<bool>, Self> {
+    fn peek_bool_lit(self) -> Result<&'a Literal<bool>, Self> {
         match self.0 {
             [Token::BoolLit(b), ..] => Ok(b),
             _ => Err(self),
         }
     }
 
-    pub fn peek_int_lit(self) -> Result<&'a Literal<IntType>, Self> {
+    fn peek_int_lit(self) -> Result<&'a Literal<IntType>, Self> {
         match self.0 {
             [Token::IntLit(i), ..] => Ok(i),
             _ => Err(self),
         }
     }
 
-    pub fn peek_uint_lit(self) -> Result<&'a Literal<UIntType>, Self> {
+    fn peek_uint_lit(self) -> Result<&'a Literal<UIntType>, Self> {
         match self.0 {
             [Token::UIntLit(ui), ..] => Ok(ui),
             _ => Err(self),
         }
     }
 
-    pub fn peek_u256_lit(self) -> Result<&'a Literal<U256>, Self> {
+    fn peek_u256_lit(self) -> Result<&'a Literal<U256>, Self> {
         match self.0 {
             [Token::U256Lit(u), ..] => Ok(u),
             _ => Err(self),
         }
     }
 
-    pub fn peek_float_lit(self) -> Result<&'a Literal<FloatType>, Self> {
+    fn peek_float_lit(self) -> Result<&'a Literal<FloatType>, Self> {
         match self.0 {
             [Token::FloatLit(f), ..] => Ok(f),
             _ => Err(self),
         }
     }
 
-    pub fn peek_identifier(self) -> Result<&'a Identifier, Self> {
+    fn peek_identifier(self) -> Result<&'a Identifier, Self> {
         match self.0 {
             [Token::Iden(id)] => Ok(id),
             _ => Err(self),
         }
     }
 
-    pub fn peek_keyword(self) -> Result<&'a Keyword, Self> {
+    fn peek_keyword(self) -> Result<&'a Keyword, Self> {
         match self.0 {
             [Token::Keyword(k), ..] => Ok(k),
             _ => Err(self),
         }
     }
 
-    pub fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
+    fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
         match self.0 {
             [Token::DocComment(dc), ..] => Ok(dc),
             _ => Err(self),
         }
     }
 
-    pub fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
+    fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
         match self.0 {
             [Token::Delim(d), ..] => Ok(d),
             _ => Err(self),
         }
     }
 
-    pub fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
+    fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
         match self.0 {
             [Token::Punc(p), ..] => Ok(p),
             _ => Err(self),
