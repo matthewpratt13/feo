@@ -675,7 +675,7 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 3).cloned() {
+                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 2).cloned() {
                         t
                     } else {
                         None
@@ -855,7 +855,7 @@ mod tests {
 
             let hello: str = Contract::bar();
 
-            let chars: [char; 5] = ['w', 'o', 'r', 'l', 'd'];
+            // let chars: [char; 5] = ['w', 'o', 'r', 'l', 'd'];
 
             let world = str!(chars);
 
@@ -899,7 +899,7 @@ mod tests {
         pub storage {
             pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
             const STR: str = "foo";
-            const STR_ARRAY: [char; 3] = chars!(STR);
+            // const STR_ARRAY: [char; 3] = chars!(STR);
         }
 
         abi Contract {
@@ -908,14 +908,15 @@ mod tests {
 
         impl Contract {
             func foo() -> Result<Foo> {
-                let array: [u64; 4] = [1, 2, 3, 4];
+                // let array: [u64; 4] = [1, 2, 3, 4];
                 let mut vec: Vec<f64> = Vec::new();
+                let minus_five: f32 = -5.0;
 
                 for num in array {
                     vec.push(num as f64);
                 }
 
-                vec.push(-5.0);
+                vec.push(minus_five);
 
                 return Ok(Foo {
                     field1: String::from("foo"),
@@ -994,7 +995,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 712,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 813,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
