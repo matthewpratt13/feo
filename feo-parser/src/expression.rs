@@ -9,7 +9,7 @@ use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    literal::{IntType, Literal, LiteralKind, UintType},
+    literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
     punctuation::PuncKind,
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -30,12 +30,18 @@ impl Parse for Expression {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?
                     .expect("expected some string literal token, found none"),
+            )  
+        
+        } else if let Some(_) = parser.peek::<Literal<bool>>() {
+            Expression::LiteralExpr(
+                LiteralKind::parse(parser)?
+                    .expect("expected some bool literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<IntType>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("expected some int literal token, found none"),
             )
-        } else if let Some(_) = parser.peek::<Literal<UintType>>() {
+        } else if let Some(_) = parser.peek::<Literal<UIntType>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?.expect("expected some uint literal token, found none"),
             )
@@ -44,9 +50,9 @@ impl Parse for Expression {
                 LiteralKind::parse(parser)?
                     .expect("expected some U256 literal token, found none"),
             )
-        } else if let Some(_) = parser.peek::<Literal<f64>>() {
+        } else if let Some(_) = parser.peek::<Literal<FloatType>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some `f64` token, found none"),
+                LiteralKind::parse(parser)?.expect("expected some float literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Identifier>() {
             // [ArrayElements]

@@ -15,7 +15,7 @@ use feo_error::{
 
 use feo_types::{
     delimiter, identifier,
-    literal::{IntType, UintType},
+    literal::{FloatType, IntType, UIntType},
     punctuation,
     type_annotation::{self, TypeAnnotation},
 };
@@ -686,7 +686,7 @@ impl<'a> Lexer<'a> {
                     let num_content = Arc::new(&data);
 
                     if is_float {
-                        let float_literal = Literal::<f64>::tokenize(
+                        let float_literal = Literal::<FloatType>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,
@@ -711,7 +711,7 @@ impl<'a> Lexer<'a> {
 
                         tokens.push(int_literal);
                     } else {
-                        let uint_literal = Literal::<UintType>::tokenize(
+                        let uint_literal = Literal::<UIntType>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,

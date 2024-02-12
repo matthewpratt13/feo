@@ -16,7 +16,7 @@ mod struct_expr;
 mod tuple_expr;
 
 use feo_types::{
-    literal::{IntType, Literal, LiteralKind, UintType},
+    literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
     span::{Span, Spanned},
     utils::Underscore,
     Identifier, U256,
@@ -172,11 +172,15 @@ impl Spanned for BooleanOperand {
 pub enum Castable {
     Char(Literal<char>),
     Bool(Literal<bool>),
-    Int(Literal<IntType>),
-    UInt(Literal<UintType>),
+    I32(Literal<IntType>),
+    I64(Literal<IntType>),
+    U8(Literal<UIntType>),
+    U16(Literal<UIntType>),
+    U32(Literal<UIntType>),
+    U64(Literal<UIntType>),
     U256(Literal<U256>),
-    F32(Literal<f32>),
-    F64(Literal<f64>),
+    F32(Literal<FloatType>),
+    F64(Literal<FloatType>),
 }
 
 impl Spanned for Castable {

@@ -7,7 +7,7 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
-    literal::{IntType, Literal, LiteralKind, UintType},
+    literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
     span::{Position, Spanned},
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -253,7 +253,7 @@ impl Peek for Literal<IntType> {
 //     }
 // }
 
-impl Peek for Literal<UintType> {
+impl Peek for Literal<UIntType> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
@@ -298,7 +298,7 @@ impl Peek for Literal<U256> {
 //     }
 // }
 
-impl Peek for Literal<f64> {
+impl Peek for Literal<FloatType> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,

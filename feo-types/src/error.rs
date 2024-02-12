@@ -9,8 +9,7 @@ pub enum TypeErrorKind {
     UnexpectedPunctuation,
     MismatchedTypeAnnotation,
     MismatchedIntTypeAnnotation,
-    MismatchedUintTypeAnnotation,
-    MismatchedU256TypeAnnotation,
+    MismatchedUIntTypeAnnotation,
     MismatchedFloatTypeAnnotation,
 
     #[default]
@@ -33,13 +32,9 @@ impl fmt::Display for TypeErrorKind {
             TypeErrorKind::MismatchedIntTypeAnnotation => {
                 write!(f, "int type annotation does not match value's type")
             }
-            TypeErrorKind::MismatchedUintTypeAnnotation => {
+            TypeErrorKind::MismatchedUIntTypeAnnotation => {
                 write!(f, "uint type annotation does not match value's type")
             }
-            TypeErrorKind::MismatchedU256TypeAnnotation => {
-                write!(f, "U256 type annotation does not match value's type")
-            }
-
             TypeErrorKind::MismatchedFloatTypeAnnotation => {
                 write!(f, "float type annotation does not match value's type")
             }

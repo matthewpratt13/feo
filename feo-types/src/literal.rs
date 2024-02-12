@@ -20,15 +20,14 @@ impl LiteralType for bool {}
 
 impl LiteralType for IntType {}
 
-impl LiteralType for UintType {}
+impl LiteralType for UIntType {}
 
 impl LiteralType for U256 {}
 
-impl LiteralType for f32 {}
+impl LiteralType for FloatType {}
 
-impl LiteralType for f64 {}
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 
-#[derive(Debug, Clone)]
 pub enum IntType {
     I32(i32),
     I64(i64),
@@ -57,61 +56,89 @@ impl TryFrom<IntType> for i64 {
 }
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
-pub enum UintType {
+pub enum UIntType {
     U8(u8),
     U16(u16),
     U32(u32),
     U64(u64),
 }
 
-impl TryFrom<UintType> for u8 {
+impl TryFrom<UIntType> for u8 {
     type Error = TypeErrorKind;
 
-    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+    fn try_from(value: UIntType) -> Result<Self, Self::Error> {
         match value {
-            UintType::U8(ui) => Ok(ui),
-            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UIntType::U8(ui) => Ok(ui),
+            UIntType::U16(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U32(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U64(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
         }
     }
 }
 
-impl TryFrom<UintType> for u16 {
+impl TryFrom<UIntType> for u16 {
     type Error = TypeErrorKind;
 
-    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+    fn try_from(value: UIntType) -> Result<Self, Self::Error> {
         match value {
-            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U16(ui) => Ok(ui),
-            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UIntType::U8(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U16(ui) => Ok(ui),
+            UIntType::U32(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U64(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
         }
     }
 }
 
-impl TryFrom<UintType> for u32 {
+impl TryFrom<UIntType> for u32 {
     type Error = TypeErrorKind;
 
-    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+    fn try_from(value: UIntType) -> Result<Self, Self::Error> {
         match value {
-            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U32(ui) => Ok(ui),
-            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
+            UIntType::U8(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U16(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U32(ui) => Ok(ui),
+            UIntType::U64(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
         }
     }
 }
 
-impl TryFrom<UintType> for u64 {
+impl TryFrom<UIntType> for u64 {
     type Error = TypeErrorKind;
 
-    fn try_from(value: UintType) -> Result<Self, Self::Error> {
+    fn try_from(value: UIntType) -> Result<Self, Self::Error> {
         match value {
-            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U64(ui) => Ok(ui),
+            UIntType::U8(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U16(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U32(_) => Err(TypeErrorKind::MismatchedUIntTypeAnnotation),
+            UIntType::U64(ui) => Ok(ui),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub enum FloatType {
+    F32(f32),
+    F64(f64),
+}
+
+impl TryFrom<FloatType> for f32 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: FloatType) -> Result<Self, Self::Error> {
+        match value {
+            FloatType::F32(f) => Ok(f),
+            FloatType::F64(_) => Err(TypeErrorKind::MismatchedFloatTypeAnnotation),
+        }
+    }
+}
+
+impl TryFrom<FloatType> for f64 {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: FloatType) -> Result<Self, Self::Error> {
+        match value {
+            FloatType::F32(_) => Err(TypeErrorKind::MismatchedFloatTypeAnnotation),
+            FloatType::F64(f) => Ok(f),
         }
     }
 }
@@ -160,13 +187,13 @@ pub enum LiteralKind {
     Bool(Literal<bool>),
     I32(Literal<IntType>),
     I64(Literal<IntType>),
-    U8(Literal<UintType>),
-    U16(Literal<UintType>),
-    U32(Literal<UintType>),
-    U64(Literal<UintType>),
+    U8(Literal<UIntType>),
+    U16(Literal<UIntType>),
+    U32(Literal<UIntType>),
+    U64(Literal<UIntType>),
     U256(Literal<U256>),
-    F32(Literal<f32>),
-    F64(Literal<f64>),
+    F32(Literal<FloatType>),
+    F64(Literal<FloatType>),
 }
 
 impl Spanned for LiteralKind {
