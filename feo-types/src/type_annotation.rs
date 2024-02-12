@@ -11,6 +11,7 @@ use crate::{
 pub enum TypeAnnKind {
     TypeAnnChar,
     TypeAnnBool,
+    TypeAnnString,
     TypeAnnI32,
     TypeAnnI64,
     TypeAnnU8,
@@ -29,6 +30,7 @@ impl TypeAnnKind {
         match self {
             TypeAnnKind::TypeAnnChar => "char",
             TypeAnnKind::TypeAnnBool => "bool",
+            TypeAnnKind::TypeAnnString => "String",
             TypeAnnKind::TypeAnnI32 => "i32",
             TypeAnnKind::TypeAnnI64 => "i64",
             TypeAnnKind::TypeAnnU8 => "u8",
@@ -50,6 +52,7 @@ impl FromStr for TypeAnnKind {
         let type_ann = match s {
             "char" => Ok(TypeAnnKind::TypeAnnChar),
             "bool" => Ok(TypeAnnKind::TypeAnnBool),
+            "String" => Ok(TypeAnnKind::TypeAnnString),
             "i32" => Ok(TypeAnnKind::TypeAnnI32),
             "i64" => Ok(TypeAnnKind::TypeAnnI64),
             "u8" => Ok(TypeAnnKind::TypeAnnU8),

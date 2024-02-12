@@ -152,6 +152,7 @@ impl Tokenize for DocComment {
     }
 }
 
+// TODO: check for `TypeErrorKind::MismatchedTypeAnn` during parsing
 impl Tokenize for Identifier {
     fn tokenize<'a>(
         src: &str,
@@ -210,14 +211,25 @@ impl Tokenize for Literal<char> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let err = ParserError {
+        if let Some(t) = type_ann_opt.clone() {
+            if t.type_ann_kind != TypeAnnKind::TypeAnnChar {
+                let type_ann_error = TypeError {
+                    error_kind: TypeErrorKind::MismatchedTypeAnnotation,
+                    position: Position::new(src, start),
+                };
+
+                return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
+            }
+        }
+
+        let parser_error = ParserError {
             error_kind: ParserErrorKind::ParseCharError,
             position: Position::new(src, start),
         };
 
         let parsed = content
             .parse::<char>()
-            .map_err(|_| handler.emit_err(CompilerError::Parser(err)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
 
         let char_lit = Literal::<char>::new(parsed, span, type_ann_opt);
 
@@ -234,9 +246,20 @@ impl Tokenize for Literal<String> {
         start: usize,
         end: usize,
         type_ann_opt: Option<TypeAnnotation>,
-        _handler: &mut Handler,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
+
+        if let Some(t) = type_ann_opt.clone() {
+            if t.type_ann_kind != TypeAnnKind::TypeAnnString {
+                let error = TypeError {
+                    error_kind: TypeErrorKind::MismatchedTypeAnnotation,
+                    position: Position::new(src, start),
+                };
+
+                return Err(handler.emit_err(CompilerError::Type(error)));
+            }
+        }
 
         let literal = Literal::<String>::new(content.to_string(), span, type_ann_opt);
 
@@ -257,14 +280,25 @@ impl Tokenize for Literal<bool> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let error = ParserError {
+        if let Some(t) = type_ann_opt.clone() {
+            if t.type_ann_kind != TypeAnnKind::TypeAnnBool {
+                let type_ann_error = TypeError {
+                    error_kind: TypeErrorKind::MismatchedTypeAnnotation,
+                    position: Position::new(src, start),
+                };
+
+                return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
+            }
+        }
+
+        let parser_error = ParserError {
             error_kind: ParserErrorKind::ParseBoolError,
             position: Position::new(src, start),
         };
 
         let parsed = content
             .parse::<bool>()
-            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
 
         let literal = Literal::<bool>::new(parsed, span, type_ann_opt);
 

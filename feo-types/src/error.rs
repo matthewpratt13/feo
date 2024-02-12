@@ -7,6 +7,7 @@ pub enum TypeErrorKind {
     UnrecognizedDelimiter,
     UnrecognizedKeyword,
     UnexpectedPunctuation,
+    MismatchedTypeAnnotation,
 
     #[default]
     UnknownError,
@@ -22,6 +23,7 @@ impl fmt::Display for TypeErrorKind {
             TypeErrorKind::UnrecognizedKeyword => write!(f, "unrecognized keyword"),
             TypeErrorKind::UnexpectedPunctuation => write!(f, "unexpected punctuation"),
             TypeErrorKind::UnknownError => write!(f, "unknown error"),
+            TypeErrorKind::MismatchedTypeAnnotation => write!(f, "type annotation does not match value's type"),
         }
     }
 }

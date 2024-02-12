@@ -49,8 +49,8 @@ impl Spanned for Token {
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
-            Token::EOF => Span::default(),
             Token::TypeAnn(ta) => ta.span(),
+            Token::EOF => Span::default(),
         }
     }
 }
