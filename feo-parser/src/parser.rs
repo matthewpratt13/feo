@@ -91,8 +91,9 @@ impl<'a> Peeker<'a> {
             [Token::StringLit(s), ..] => Ok(LiteralKind::String(s.clone())),
             [Token::BoolLit(b), ..] => Ok(LiteralKind::Bool(b.clone())),
             [Token::IntLit(i), ..] => Ok(LiteralKind::I64(i.clone())),
-            [Token::UintLit(ui), ..] => Ok(LiteralKind::U64(ui.clone())),
+            [Token::UIntLit(ui), ..] => Ok(LiteralKind::U64(ui.clone())),
             [Token::U256Lit(u), ..] => Ok(LiteralKind::U256(u.clone())),
+            [Token::FloatLit(f), ..] => Ok(LiteralKind::F64(f.clone())),
             _ => Err(self),
         }
     }

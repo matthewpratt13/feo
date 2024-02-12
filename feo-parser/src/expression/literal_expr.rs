@@ -14,7 +14,7 @@ impl Parse for LiteralKind {
             Token::StringLit(s) => Ok(Some(LiteralKind::String(s))),
             Token::BoolLit(b) => Ok(Some(LiteralKind::Bool(b))),
             Token::IntLit(i) => Ok(Some(LiteralKind::I64(i))),
-            Token::UintLit(ui) => Ok(Some(LiteralKind::U64(ui))),
+            Token::UIntLit(ui) => Ok(Some(LiteralKind::U64(ui))),
             Token::U256Lit(u) => Ok(Some(LiteralKind::U256(u))),
             Token::FloatLit(f) => Ok(Some(LiteralKind::F64(f))),
             _ => Err(parser.log_error(ParserErrorKind::ParseLiteralTokenError)),

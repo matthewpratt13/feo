@@ -977,7 +977,7 @@ mod tests {
                     Token::StringLit(s) => println!("StringLit: {:?}", s.into_inner()),
                     Token::BoolLit(b) => println!("BoolLit: {:?}", b.into_inner()),
                     Token::IntLit(i) => println!("IntLit: {:?}", i.into_inner()),
-                    Token::UintLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
+                    Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
                     Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
                     Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
                     Token::Iden(id) => println!("Iden: {:?}", id.name),
