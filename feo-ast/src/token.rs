@@ -15,7 +15,7 @@ pub enum Token {
     StringLit(Literal<String>),
     BoolLit(Literal<bool>),
     IntLit(Literal<IntType>),
-    UintLit(Literal<UIntType>),
+    UIntLit(Literal<UIntType>),
     U256Lit(Literal<U256>),
     FloatLit(Literal<FloatType>),
 
@@ -40,7 +40,7 @@ impl Spanned for Token {
             Token::StringLit(s) => s.span(),
             Token::BoolLit(b) => b.span(),
             Token::IntLit(i) => i.span(),
-            Token::UintLit(ui) => ui.span(),
+            Token::UIntLit(ui) => ui.span(),
             Token::U256Lit(u) => u.span(),
             Token::FloatLit(f) => f.span(),
             Token::Iden(id) => id.span(),

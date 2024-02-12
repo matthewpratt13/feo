@@ -564,7 +564,7 @@ impl Tokenize for Literal<UIntType> {
 
         let literal = Literal::new(parsed, span, type_ann_opt);
 
-        let token = Token::UintLit(literal);
+        let token = Token::UIntLit(literal);
 
         Ok(Some(token))
     }
