@@ -34,7 +34,7 @@ pub trait Tokenize {
 }
 
 impl Tokenize for Comment {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -70,7 +70,7 @@ impl Tokenize for Comment {
 }
 
 impl Tokenize for Delimiter {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -102,7 +102,7 @@ impl Tokenize for Delimiter {
 }
 
 impl Tokenize for DocComment {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -154,7 +154,7 @@ impl Tokenize for DocComment {
 
 // TODO: check for `TypeErrorKind::MismatchedTypeAnn` during parsing
 impl Tokenize for Identifier {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -173,7 +173,7 @@ impl Tokenize for Identifier {
 }
 
 impl Tokenize for Keyword {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -201,7 +201,7 @@ impl Tokenize for Keyword {
 }
 
 impl Tokenize for Literal<char> {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -270,7 +270,7 @@ impl Tokenize for Literal<String> {
 }
 
 impl Tokenize for Literal<bool> {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -309,7 +309,7 @@ impl Tokenize for Literal<bool> {
 }
 
 impl Tokenize for Literal<IntType> {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -371,7 +371,7 @@ impl Tokenize for Literal<IntType> {
 }
 
 impl Tokenize for Literal<UIntType> {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -571,7 +571,7 @@ impl Tokenize for Literal<UIntType> {
 }
 
 impl Tokenize for Literal<U256> {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -627,7 +627,7 @@ impl Tokenize for Literal<U256> {
 }
 
 impl Tokenize for Literal<FloatType> {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
@@ -690,7 +690,7 @@ impl Tokenize for Literal<FloatType> {
 }
 
 impl Tokenize for Punctuation {
-    fn tokenize<'a>(
+    fn tokenize(
         src: &str,
         content: &str,
         start: usize,
