@@ -326,10 +326,22 @@ impl Tokenize for Literal<IntType> {
 
         let parsed = if let Some(t) = &type_ann_opt {
             match t.type_ann_kind {
-                TypeAnnKind::TypeAnnI32 => IntType::I32(
-                    i32::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                        .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
-                ),
+                TypeAnnKind::TypeAnnI32 => {
+                    let content_as_i32 = i32::from_str_radix(
+                        &content.split('_').collect::<Vec<&str>>().concat(),
+                        10,
+                    )
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+
+                    let content_as_i64 = content_as_i32 as i64;
+
+                    if content_as_i64 > i32::MAX.into() || content_as_i64 < i32::MIN.into() {
+                        panic!("Integer over- / underflow: Input out of bounds for `i32` value");
+                    } else {
+                        IntType::I32(content_as_i32)
+                    }
+                }
+
                 TypeAnnKind::TypeAnnI64 => IntType::I64(
                     i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
                         .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
@@ -379,6 +391,11 @@ impl Tokenize for Literal<UIntType> {
             position: Position::new(src, start),
         };
 
+        let type_ann_error = TypeError {
+            error_kind: TypeErrorKind::MismatchedTypeAnnotation,
+            position: Position::new(src, start),
+        };
+
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
@@ -393,27 +410,54 @@ impl Tokenize for Literal<UIntType> {
             } else {
                 if let Some(t) = &type_ann_opt {
                     match t.type_ann_kind {
-                        TypeAnnKind::TypeAnnU8 => UIntType::U8(
-                            u8::from_str_radix(
+                        TypeAnnKind::TypeAnnU8 => {
+                            let content_as_u8 = u8::from_str_radix(
                                 &without_prefix.split('_').collect::<Vec<&str>>().concat(),
                                 16,
                             )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                        ),
-                        TypeAnnKind::TypeAnnU16 => UIntType::U16(
-                            u16::from_str_radix(
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
+
+                            let content_as_u64 = content_as_u8 as u64;
+
+                            if content_as_u64 > u8::MAX.into() {
+                                panic!("Integer overflow: Input exceeds maximum `u8` value");
+                            } else {
+                                UIntType::U8(content_as_u8)
+                            }
+                        }
+
+                        TypeAnnKind::TypeAnnU16 => {
+                            let content_as_u16 = u16::from_str_radix(
                                 &without_prefix.split('_').collect::<Vec<&str>>().concat(),
                                 16,
                             )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                        ),
-                        TypeAnnKind::TypeAnnU32 => UIntType::U32(
-                            u32::from_str_radix(
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
+
+                            let content_as_u64 = content_as_u16 as u64;
+
+                            if content_as_u64 > u16::MAX.into() {
+                                panic!("Integer overflow: Input exceeds maximum `u16` value");
+                            } else {
+                                UIntType::U16(content_as_u16)
+                            }
+                        }
+
+                        TypeAnnKind::TypeAnnU32 => {
+                            let content_as_u32 = u32::from_str_radix(
                                 &without_prefix.split('_').collect::<Vec<&str>>().concat(),
                                 16,
                             )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                        ),
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
+
+                            let content_as_u64 = content_as_u32 as u64;
+
+                            if content_as_u64 > u32::MAX.into() {
+                                panic!("Integer overflow: Input exceeds maximum `u32` value");
+                            } else {
+                                UIntType::U32(content_as_u32)
+                            }
+                        }
+
                         TypeAnnKind::TypeAnnU64 => UIntType::U64(
                             u64::from_str_radix(
                                 &without_prefix.split('_').collect::<Vec<&str>>().concat(),
@@ -421,12 +465,8 @@ impl Tokenize for Literal<UIntType> {
                             )
                             .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
                         ),
-                        _ => {
-                            let type_ann_error = TypeError {
-                                error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                                position: Position::new(src, start),
-                            };
 
+                        _ => {
                             return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
                         }
                     }
@@ -448,10 +488,77 @@ impl Tokenize for Literal<UIntType> {
             if content_as_dec_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
-                UIntType::U64(
-                    u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                if let Some(t) = &type_ann_opt {
+                    match t.type_ann_kind {
+                        TypeAnnKind::TypeAnnU8 => {
+                            let content_as_u8 = u8::from_str_radix(
+                                &content.split('_').collect::<Vec<&str>>().concat(),
+                                10,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
+
+                            let content_as_u64 = content_as_u8 as u64;
+
+                            if content_as_u64 > u8::MAX.into() {
+                                panic!("Integer overflow: Input exceeds maximum `u8` value");
+                            } else {
+                                UIntType::U8(content_as_u8)
+                            }
+                        }
+
+                        TypeAnnKind::TypeAnnU16 => {
+                            let content_as_u16 = u16::from_str_radix(
+                                &content.split('_').collect::<Vec<&str>>().concat(),
+                                10,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
+
+                            let content_as_u64 = content_as_u16 as u64;
+
+                            if content_as_u64 > u16::MAX.into() {
+                                panic!("Integer overflow: Input exceeds maximum `u16` value");
+                            } else {
+                                UIntType::U16(content_as_u16)
+                            }
+                        }
+
+                        TypeAnnKind::TypeAnnU32 => {
+                            let content_as_u32 = u32::from_str_radix(
+                                &content.split('_').collect::<Vec<&str>>().concat(),
+                                10,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
+
+                            let content_as_u64 = content_as_u32 as u64;
+
+                            if content_as_u64 > u32::MAX.into() {
+                                panic!("Integer overflow: Input exceeds maximum `u32` value");
+                            } else {
+                                UIntType::U32(content_as_u32)
+                            }
+                        }
+
+                        TypeAnnKind::TypeAnnU64 => UIntType::U64(
+                            u64::from_str_radix(
+                                &content.split('_').collect::<Vec<&str>>().concat(),
+                                10,
+                            )
+                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                        ),
+
+                        _ => {
+                            return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
+                        }
+                    }
+                } else {
+                    UIntType::U64(
+                        u64::from_str_radix(
+                            &content.split('_').collect::<Vec<&str>>().concat(),
+                            10,
+                        )
                         .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                )
+                    )
+                }
             }
         };
 
@@ -537,16 +644,26 @@ impl Tokenize for Literal<FloatType> {
 
         let parsed = if let Some(t) = &type_ann_opt {
             match t.type_ann_kind {
-                TypeAnnKind::TypeAnnF32 => FloatType::F32(
-                    content
+                TypeAnnKind::TypeAnnF32 => {
+                    let content_as_f32 = content
                         .parse::<f32>()
-                        .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?,
-                ),
+                        .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
+
+                    let content_as_f64 = content_as_f32 as f64;
+
+                    if content_as_f64 > f32::MAX.into() || content_as_f64 < f32::MIN.into() {
+                        panic!("Float over- / underflow: Input out of bounds for `f32` value");
+                    } else {
+                        FloatType::F32(content_as_f32)
+                    }
+                }
+
                 TypeAnnKind::TypeAnnF64 => FloatType::F64(
                     content
                         .parse::<f64>()
                         .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?,
                 ),
+                
                 _ => {
                     let type_ann_error = TypeError {
                         error_kind: TypeErrorKind::MismatchedTypeAnnotation,
