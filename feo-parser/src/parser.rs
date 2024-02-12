@@ -179,21 +179,6 @@ impl Peek for Literal<bool> {
     }
 }
 
-// impl Peek for Literal<i32> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_literal() {
-//             Ok(l) => match l {
-//                 LiteralKind::I32(i) => Some(i),
-//                 _ => None,
-//             },
-//             Err(_) => None,
-//         }
-//     }
-// }
-
 impl Peek for Literal<IntType> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
@@ -208,51 +193,6 @@ impl Peek for Literal<IntType> {
         }
     }
 }
-
-// impl Peek for Literal<u8> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_literal() {
-//             Ok(l) => match l {
-//                 LiteralKind::U8(ui) => Some(ui),
-//                 _ => None,
-//             },
-//             Err(_) => None,
-//         }
-//     }
-// }
-
-// impl Peek for Literal<u16> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_literal() {
-//             Ok(l) => match l {
-//                 LiteralKind::U16(ui) => Some(ui),
-//                 _ => None,
-//             },
-//             Err(_) => None,
-//         }
-//     }
-// }
-
-// impl Peek for Literal<u32> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_literal() {
-//             Ok(l) => match l {
-//                 LiteralKind::U32(ui) => Some(ui),
-//                 _ => None,
-//             },
-//             Err(_) => None,
-//         }
-//     }
-// }
 
 impl Peek for Literal<UIntType> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
@@ -283,21 +223,6 @@ impl Peek for Literal<U256> {
         }
     }
 }
-
-// impl Peek for Literal<f32> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_literal() {
-//             Ok(l) => match l {
-//                 LiteralKind::F32(f) => Some(f),
-//                 _ => None,
-//             },
-//             Err(_) => None,
-//         }
-//     }
-// }
 
 impl Peek for Literal<FloatType> {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
