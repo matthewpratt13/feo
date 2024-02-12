@@ -39,6 +39,7 @@ pub use self::{
     operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
     struct_expr::{StructExpr, StructExprField, StructExprFields, StructExprKind},
 };
+
 use self::{
     call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{ClosureWithBlock, ClosureWithoutBlock},
@@ -132,7 +133,16 @@ pub enum Assignable {
 
 impl Spanned for Assignable {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            Assignable::Identifier(id) => id.span(),
+            Assignable::ArrayExpr(ae) => ae.span(),
+            Assignable::StructExpr(se) => se.span(),
+            Assignable::TupleStructExpr(ts) => ts.span(),
+            Assignable::UnitStructExpr(us) => us.span(),
+            Assignable::TupleExpr(te) => te.span(),
+            Assignable::PathExpr(pe) => pe.span(),
+            Assignable::UnderscoreExpr(ue) => ue.span(),
+        }
     }
 }
 
@@ -164,7 +174,30 @@ pub enum BooleanOperand {
 
 impl Spanned for BooleanOperand {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            BooleanOperand::BreakExpr(be) => be.span(),
+            BooleanOperand::ContinueExpr(ce) => ce.span(),
+            BooleanOperand::ArrayExpr(ae) => ae.span(),
+            BooleanOperand::IndexExpr(ie) => ie.span(),
+            BooleanOperand::BlockExpr(be) => be.span(),
+            BooleanOperand::FunctionCallExpr(fc) => fc.span(),
+            BooleanOperand::MethodCallExpr(mc) => mc.span(),
+            BooleanOperand::ClosureWithBlock(cwb) => cwb.span(),
+            BooleanOperand::ClosureWithoutBlock(cb) => cb.span(),
+            BooleanOperand::IfExpr(ife) => ife.span(),
+            BooleanOperand::MatchExpr(me) => me.span(),
+            BooleanOperand::FieldAccessExpr(fa) => fa.span(),
+            BooleanOperand::IterationExpr(ite) => ite.span(),
+            BooleanOperand::OperatorExpr(oe) => oe.span(),
+            BooleanOperand::ParenthesizedExpr(par) => par.span(),
+            BooleanOperand::RangeExpr(rae) => rae.span(),
+            BooleanOperand::ReturnExpr(re) => re.span(),
+            BooleanOperand::TupleExpr(te) => te.span(),
+            BooleanOperand::TupleIndexExpr(tie) => tie.span(),
+            BooleanOperand::LiteralExpr(le) => le.span(),
+            BooleanOperand::PathExpr(pat) => pat.span(),
+            BooleanOperand::UnderscoreExpr(ue) => ue.span(),
+        }
     }
 }
 
@@ -185,7 +218,19 @@ pub enum Castable {
 
 impl Spanned for Castable {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            Castable::Char(c) => c.span(),
+            Castable::Bool(b) => b.span(),
+            Castable::I32(i) => i.span(),
+            Castable::I64(i) => i.span(),
+            Castable::U8(ui) => ui.span(),
+            Castable::U16(ui) => ui.span(),
+            Castable::U32(ui) => ui.span(),
+            Castable::U64(ui) => ui.span(),
+            Castable::U256(u) => u.span(),
+            Castable::F32(f) => f.span(),
+            Castable::F64(f) => f.span(),
+        }
     }
 }
 
@@ -237,7 +282,14 @@ pub enum ExprWithBlock {
 
 impl Spanned for ExprWithBlock {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            ExprWithBlock::OuterAttr(oa) => oa.span(),
+            ExprWithBlock::BlockExpr(be) => be.span(),
+            ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
+            ExprWithBlock::IfExpr(ife) => ife.span(),
+            ExprWithBlock::MatchExpr(me) => me.span(),
+            ExprWithBlock::IterationExpr(ite) => ite.span(),
+        }
     }
 }
 
