@@ -7,7 +7,7 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
-    literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
+    literal::{FloatType, IntType, Literal, UIntType},
     span::{Position, Spanned},
     Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
@@ -84,16 +84,52 @@ impl<'a> Peeker<'a> {
         Some((value, tokens))
     }
 
-    // peek for a `Literal`; return `Self` so that the `Peeker` can try again without advancing
-    pub fn peek_literal(self) -> Result<LiteralKind, Self> {
+    // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
+    pub fn peek_char_lit(self) -> Result<&'a Literal<char>, Self> {
         match self.0 {
-            [Token::CharLit(c), ..] => Ok(LiteralKind::Char(c.clone())),
-            [Token::StringLit(s), ..] => Ok(LiteralKind::String(s.clone())),
-            [Token::BoolLit(b), ..] => Ok(LiteralKind::Bool(b.clone())),
-            [Token::IntLit(i), ..] => Ok(LiteralKind::I64(i.clone())),
-            [Token::UIntLit(ui), ..] => Ok(LiteralKind::U64(ui.clone())),
-            [Token::U256Lit(u), ..] => Ok(LiteralKind::U256(u.clone())),
-            [Token::FloatLit(f), ..] => Ok(LiteralKind::F64(f.clone())),
+            [Token::CharLit(c), ..] => Ok(c),
+            _ => Err(self),
+        }
+    }
+
+    pub fn peek_string_lit(self) -> Result<&'a Literal<String>, Self> {
+        match self.0 {
+            [Token::StringLit(s), ..] => Ok(s),
+            _ => Err(self),
+        }
+    }
+
+    pub fn peek_bool_lit(self) -> Result<&'a Literal<bool>, Self> {
+        match self.0 {
+            [Token::BoolLit(b), ..] => Ok(b),
+            _ => Err(self),
+        }
+    }
+
+    pub fn peek_int_lit(self) -> Result<&'a Literal<IntType>, Self> {
+        match self.0 {
+            [Token::IntLit(i), ..] => Ok(i),
+            _ => Err(self),
+        }
+    }
+
+    pub fn peek_uint_lit(self) -> Result<&'a Literal<UIntType>, Self> {
+        match self.0 {
+            [Token::UIntLit(ui), ..] => Ok(ui),
+            _ => Err(self),
+        }
+    }
+
+    pub fn peek_u256_lit(self) -> Result<&'a Literal<U256>, Self> {
+        match self.0 {
+            [Token::U256Lit(u), ..] => Ok(u),
+            _ => Err(self),
+        }
+    }
+
+    pub fn peek_float_lit(self) -> Result<&'a Literal<FloatType>, Self> {
+        match self.0 {
+            [Token::FloatLit(f), ..] => Ok(f),
             _ => Err(self),
         }
     }
@@ -139,11 +175,8 @@ impl Peek for Literal<char> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::Char(c) => Some(c.clone()),
-                _ => None,
-            },
+        match peeker.peek_char_lit() {
+            Ok(c) => Some(c.clone()),
             Err(_) => None,
         }
     }
@@ -154,11 +187,8 @@ impl Peek for Literal<String> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::String(s) => Some(s.clone()),
-                _ => None,
-            },
+        match peeker.peek_string_lit() {
+            Ok(s) => Some(s.clone()),
             Err(_) => None,
         }
     }
@@ -169,11 +199,8 @@ impl Peek for Literal<bool> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::Bool(b) => Some(b.clone()),
-                _ => None,
-            },
+        match peeker.peek_bool_lit() {
+            Ok(b) => Some(b.clone()),
             Err(_) => None,
         }
     }
@@ -184,11 +211,8 @@ impl Peek for Literal<IntType> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::I64(i) => Some(i.clone()),
-                _ => None,
-            },
+        match peeker.peek_int_lit() {
+            Ok(i) => Some(i.clone()),
             Err(_) => None,
         }
     }
@@ -199,11 +223,8 @@ impl Peek for Literal<UIntType> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::U64(ui) => Some(ui.clone()),
-                _ => None,
-            },
+        match peeker.peek_uint_lit() {
+            Ok(ui) => Some(ui.clone()),
             Err(_) => None,
         }
     }
@@ -214,11 +235,8 @@ impl Peek for Literal<U256> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::U256(u) => Some(u.clone()),
-                _ => None,
-            },
+        match peeker.peek_u256_lit() {
+            Ok(u) => Some(u.clone()),
             Err(_) => None,
         }
     }
@@ -229,11 +247,8 @@ impl Peek for Literal<FloatType> {
     where
         Self: Sized,
     {
-        match peeker.peek_literal() {
-            Ok(l) => match l {
-                LiteralKind::F64(f) => Some(f.clone()),
-                _ => None,
-            },
+        match peeker.peek_float_lit() {
+            Ok(f) => Some(f.clone()),
             Err(_) => None,
         }
     }
