@@ -63,7 +63,32 @@ pub enum Item {
 
 impl Spanned for Item {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            Item::ConstantVarDef(cv) => cv.span(),
+            Item::StaticVarDef(sv) => sv.span(),
+            Item::EnumDef(ed) => ed.span(),
+            Item::ExternCrateDecl(ecd) => ecd.span(),
+            Item::FunctionDef(fd) => fd.span(),
+            Item::InherentImplBlock(ii) => ii.span(),
+            Item::TraitImplBlock(ti) => ti.span(),
+            Item::ImportDecl(imp) => imp.span(),
+            Item::PathWildcard(pwc) => pwc.span(),
+            Item::PathSubsetRecursive(psr) => psr.span(),
+            Item::PathWithAsClause(pwa) => pwa.span(),
+            Item::ModBlock(mb) => match mb {
+                ModBlock::ModWithBody(mwb) => mwb.span(),
+                ModBlock::ModWithoutBody(mb) => mb.span(),
+            },
+            Item::StructDef(sd) => match sd {
+                StructDefKind::Struct(s) => s.span(),
+                StructDefKind::TupleStruct(ts) => ts.span(),
+                StructDefKind::UnitStruct(us) => us.span(),
+            },
+            Item::TraitDef(td) => td.span(),
+            Item::TypeAliasDef(tad) => tad.span(),
+            Item::PathExpr(pe) => pe.span(),
+            Item::Identifier(id) => id.span(),
+        }
     }
 }
 

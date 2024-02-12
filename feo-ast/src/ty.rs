@@ -61,6 +61,32 @@ pub enum Type {
 
 impl Spanned for Type {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            Type::Char(c) => c.span(),
+            Type::Str(s) => s.span(),
+            Type::Bool(b) => b.span(),
+            Type::I32(i) => i.span(),
+            Type::I64(i) => i.span(),
+            Type::U8(ui) => ui.span(),
+            Type::U16(ui) => ui.span(),
+            Type::U32(ui) => ui.span(),
+            Type::U64(ui) => ui.span(),
+            Type::U256(u) => u.span(),
+            Type::F32(f) => f.span(),
+            Type::F64(f) => f.span(),
+            Type::Array(arr) => arr.span(),
+            Type::Tuple(tup) => tup.span(),
+            Type::Unit(_) => Span::default(),
+            Type::Struct(stc) => stc.span(),
+            Type::Enum(e) => e.span(),
+            Type::Function(fun) => fun.span(),
+            Type::Closure(clo) => match clo {
+                ClosureExprKind::ClosureWithBlock(cwb) => cwb.span(),
+                ClosureExprKind::ClosureWithoutBlock(cb) => cb.span(),
+            },
+            Type::ImplTrait(imp) => imp.span(),
+            Type::ParenthesizedType(par) => par.span(),
+            Type::InferredType => Span::default(),
+        }
     }
 }
