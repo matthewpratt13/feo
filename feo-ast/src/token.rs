@@ -99,4 +99,3 @@ impl Iterator for TokenStream {
         }
     }
 }
-

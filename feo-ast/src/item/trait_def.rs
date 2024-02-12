@@ -7,7 +7,7 @@ use feo_types::{
 use crate::expression::{InnerAttr, OuterAttr};
 
 use super::{
-    ConstantVarDef, FunctionWithBlock, FunctionSig, TypeAliasDef, TypeParamBounds, VisibilityKind,
+    ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, TypeParamBounds, VisibilityKind,
     WhereClause,
 };
 
