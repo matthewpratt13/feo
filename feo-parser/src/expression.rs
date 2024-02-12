@@ -24,12 +24,12 @@ impl Parse for Expression {
         let expr = if let Some(_) = parser.peek::<Literal<char>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?
-                    .expect("expected some `char` literal token, found none"),
+                    .expect("expected some char literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<String>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?
-                    .expect("expected some `string` literal token, found none"),
+                    .expect("expected some string literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<IntType>>() {
             Expression::LiteralExpr(
@@ -37,12 +37,12 @@ impl Parse for Expression {
             )
         } else if let Some(_) = parser.peek::<Literal<UintType>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some `u64` literal token, found none"),
+                LiteralKind::parse(parser)?.expect("expected some uint literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<U256>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?
-                    .expect("expected some `U256` literal token, found none"),
+                    .expect("expected some U256 literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<f64>>() {
             Expression::LiteralExpr(

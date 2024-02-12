@@ -460,7 +460,7 @@ impl Tokenize for Literal<U256> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let error = ParserError {
+        let parser_error = ParserError {
             error_kind: ParserErrorKind::ParseU256Error,
             position: Position::new(src, start),
         };
@@ -470,14 +470,31 @@ impl Tokenize for Literal<U256> {
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
-            U256::from_str_radix(
-                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                16,
-            )
-            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
+            if let Some(t) = &type_ann_opt {
+                if t.type_ann_kind != TypeAnnKind::TypeAnnU256 {
+                    let type_ann_error = TypeError {
+                        error_kind: TypeErrorKind::MismatchedU256TypeAnnotation,
+                        position: Position::new(src, start),
+                    };
+
+                    return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
+                } else {
+                    U256::from_str_radix(
+                        &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                        16,
+                    )
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?
+                }
+            } else {
+                U256::from_str_radix(
+                    &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                    16,
+                )
+                .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?
+            }
         } else {
             U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
+                .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?
         };
 
         let literal = Literal::<U256>::new(parsed, span, type_ann_opt);
