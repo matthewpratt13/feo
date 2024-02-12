@@ -10,8 +10,6 @@ use feo_types::{
     },
 };
 
-// TODO: start using `Span::join()` from here
-
 use super::{Assignable, BooleanOperand, Castable, Expression};
 
 #[derive(Clone)]
@@ -106,16 +104,16 @@ pub enum UnwrapOperandKind {
 impl Spanned for UnwrapOperandKind {
     fn span(&self) -> Span {
         match self {
-            UnwrapOperandKind::Option(o) => {
-                if let Some(t) = o {
-                    t.span()
+            UnwrapOperandKind::Option(opt) => {
+                if let Some(e) = opt {
+                    e.span()
                 } else {
                     Span::default()
                 }
             }
-            UnwrapOperandKind::Result(r) => {
-                if let Ok(t) = r {
-                    t.span()
+            UnwrapOperandKind::Result(res) => {
+                if let Ok(e) = res {
+                    e.span()
                 } else {
                     Span::default()
                 }
@@ -138,13 +136,10 @@ pub struct ArithmeticOrLogicalExpr {
 
 impl Spanned for ArithmeticOrLogicalExpr {
     fn span(&self) -> Span {
-        let start_pos = self.lhs.span().start();
-        let end_pos = self.rhs.span().end();
-        let source = self.lhs.span().source();
+        let s1 = self.lhs.span();
+        let s2 = self.rhs.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -156,13 +151,10 @@ pub struct AssignmentExpr {
 
 impl Spanned for AssignmentExpr {
     fn span(&self) -> Span {
-        let start_pos = self.assignee.span().start();
-        let end_pos = self.new_value.span().end();
-        let source = self.assignee.span().source();
+        let s1 = self.assignee.span();
+        let s2 = self.new_value.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -175,13 +167,10 @@ pub struct CompoundAssignmentExpr {
 
 impl Spanned for CompoundAssignmentExpr {
     fn span(&self) -> Span {
-        let start_pos = self.assignee.span().start();
-        let end_pos = self.new_value.span().end();
-        let source = self.assignee.span().source();
+        let s1 = self.assignee.span();
+        let s2 = self.new_value.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -194,13 +183,10 @@ pub struct ComparisonExpr {
 
 impl Spanned for ComparisonExpr {
     fn span(&self) -> Span {
-        let start_pos = self.lhs.span().start();
-        let end_pos = self.rhs.span().end();
-        let source = self.lhs.span().source();
+        let s1 = self.lhs.span();
+        let s2 = self.rhs.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -212,13 +198,10 @@ pub struct DereferenceExpr {
 
 impl Spanned for DereferenceExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operator.span().start();
-        let end_pos = self.operand.span().end();
-        let source = self.operator.span().source();
+        let s1 = self.operator.span();
+        let s2 = self.operand.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -231,13 +214,10 @@ pub struct LazyBoolExpr {
 
 impl Spanned for LazyBoolExpr {
     fn span(&self) -> Span {
-        let start_pos = self.lhs.span().start();
-        let end_pos = self.rhs.span().end();
-        let source = self.lhs.span().source();
+        let s1 = self.lhs.span();
+        let s2 = self.rhs.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -249,13 +229,10 @@ pub struct NegationExpr {
 
 impl Spanned for NegationExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operator.span().start();
-        let end_pos = self.operand.span().end();
-        let source = self.operator.span().source();
+        let s1 = self.operator.span();
+        let s2 = self.operand.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -283,13 +260,10 @@ pub struct TypeCastExpr {
 
 impl Spanned for TypeCastExpr {
     fn span(&self) -> Span {
-        let start_pos = self.lhs.span().start();
-        let end_pos = self.rhs.span().end();
-        let source = self.lhs.span().source();
+        let s1 = self.lhs.span();
+        let s2 = self.rhs.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -301,12 +275,9 @@ pub struct UnwrapExpr {
 
 impl Spanned for UnwrapExpr {
     fn span(&self) -> Span {
-        let start_pos = self.operand.span().start();
-        let end_pos = self.operator.span().end();
-        let source = self.operand.span().source();
+        let s1 = self.operand.span();
+        let s2 = self.operator.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
