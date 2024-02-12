@@ -26,7 +26,14 @@ pub enum RangePattBound {
 
 impl Spanned for RangePattBound {
     fn span(&self) -> Span {
-        todo!()
+        match self {
+            RangePattBound::CharLit(c) => c.span(),
+            RangePattBound::IntLit(i) => i.span(),
+            RangePattBound::UIntLit(ui) => ui.span(),
+            RangePattBound::U256Lit(u) => u.span(),
+            RangePattBound::FloatLit(f) => f.span(),
+            RangePattBound::PathExpr(p) => p.span(),
+        }
     }
 }
 
