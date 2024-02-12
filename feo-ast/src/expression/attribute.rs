@@ -15,12 +15,6 @@ pub enum AttributeKind {
     Path(SimplePath),
 }
 
-// impl Spanned for AttributeKind {
-//     fn span(&self) -> Span {
-//         todo!()
-//     }
-// }
-
 #[derive(Clone)]
 pub struct InnerAttr {
     hash_bang: HashBang,
