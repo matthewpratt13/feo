@@ -18,19 +18,7 @@ impl LiteralType for String {}
 
 impl LiteralType for bool {}
 
-impl LiteralType for i32 {}
-
-impl LiteralType for i64 {}
-
 impl LiteralType for IntType {}
-
-impl LiteralType for u8 {}
-
-impl LiteralType for u16 {}
-
-impl LiteralType for u32 {}
-
-impl LiteralType for u64 {}
 
 impl LiteralType for UintType {}
 
@@ -74,7 +62,6 @@ pub enum UintType {
     U16(u16),
     U32(u32),
     U64(u64),
-    U256(U256),
 }
 
 impl TryFrom<UintType> for u8 {
@@ -86,7 +73,6 @@ impl TryFrom<UintType> for u8 {
             UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
             UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
             UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
         }
     }
 }
@@ -100,7 +86,6 @@ impl TryFrom<UintType> for u16 {
             UintType::U16(ui) => Ok(ui),
             UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
             UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
         }
     }
 }
@@ -114,7 +99,6 @@ impl TryFrom<UintType> for u32 {
             UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
             UintType::U32(ui) => Ok(ui),
             UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
         }
     }
 }
@@ -128,21 +112,6 @@ impl TryFrom<UintType> for u64 {
             UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
             UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
             UintType::U64(ui) => Ok(ui),
-            UintType::U256(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-        }
-    }
-}
-
-impl TryFrom<UintType> for U256 {
-    type Error = TypeErrorKind;
-
-    fn try_from(value: UintType) -> Result<Self, Self::Error> {
-        match value {
-            UintType::U8(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U16(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U32(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U64(_) => Err(TypeErrorKind::MismatchedUintTypeAnnotation),
-            UintType::U256(u) => Ok(u),
         }
     }
 }

@@ -14,7 +14,10 @@ use feo_error::{
 };
 
 use feo_types::{
-    delimiter, identifier, literal::IntType, punctuation, type_annotation::{self, TypeAnnotation}
+    delimiter, identifier,
+    literal::{IntType, UintType},
+    punctuation,
+    type_annotation::{self, TypeAnnotation},
 };
 use feo_types::{
     literal::Literal, span::Position, Comment, Delimiter, DocComment, Identifier, Keyword,
@@ -708,7 +711,7 @@ impl<'a> Lexer<'a> {
 
                         tokens.push(int_literal);
                     } else {
-                        let uint_literal = Literal::<u64>::tokenize(
+                        let uint_literal = Literal::<UintType>::tokenize(
                             &self.input,
                             &num_content,
                             start_pos,

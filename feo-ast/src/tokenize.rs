@@ -351,7 +351,7 @@ impl Tokenize for Literal<IntType> {
     }
 }
 
-impl Tokenize for Literal<u64> {
+impl Tokenize for Literal<UintType> {
     fn tokenize<'a>(
         src: &str,
         content: &str,
@@ -427,12 +427,11 @@ impl Tokenize for Literal<u64> {
                 }
             }
         } else {
-            let content_as_dec_u256 = UintType::U256(
+            let content_as_dec_u256 =
                 U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?,
-            );
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(u256_error)))?;
 
-            if content_as_dec_u256 > UintType::U64(u64::MAX.into()) {
+            if content_as_dec_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
                 UintType::U64(

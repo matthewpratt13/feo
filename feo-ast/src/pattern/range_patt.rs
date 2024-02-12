@@ -1,5 +1,5 @@
 use feo_types::{
-    literal::Literal,
+    literal::{IntType, Literal, UintType},
     span::{Span, Spanned},
     utils::DotDotEquals,
     U256,
@@ -17,12 +17,8 @@ pub enum RangePatt {
 #[derive(Clone)]
 pub enum RangePattBound {
     CharLit(Literal<char>),
-    I32Lit(Literal<i32>),
-    I64Lit(Literal<i64>),
-    U8Lit(Literal<u8>),
-    U16Lit(Literal<u16>),
-    U32Lit(Literal<u32>),
-    U64Lit(Literal<u64>),
+    IntLit(Literal<IntType>),
+    UintLit(Literal<UintType>),
     U256Lit(Literal<U256>),
     F32Lit(Literal<f32>),
     F64Lit(Literal<f64>),
