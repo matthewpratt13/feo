@@ -29,8 +29,8 @@ impl Parser {
         }
     }
 
-    pub fn stream(&self) -> TokenStream {
-        self.stream.clone()
+    pub fn stream(&self) -> &TokenStream {
+        &self.stream
     }
 
     pub fn pos(&self) -> usize {
@@ -98,37 +98,37 @@ impl<'a> Peeker<'a> {
         }
     }
 
-    pub fn peek_identifier(self) -> Result<Identifier, Self> {
+    pub fn peek_identifier(self) -> Result<&'a Identifier, Self> {
         match self.0 {
-            [Token::Iden(id)] => Ok(id.clone()),
+            [Token::Iden(id)] => Ok(id),
             _ => Err(self),
         }
     }
 
-    pub fn peek_keyword(self) -> Result<Keyword, Self> {
+    pub fn peek_keyword(self) -> Result<&'a Keyword, Self> {
         match self.0 {
-            [Token::Keyword(k), ..] => Ok(k.clone()),
+            [Token::Keyword(k), ..] => Ok(k),
             _ => Err(self),
         }
     }
 
-    pub fn peek_doc_comment(self) -> Result<DocComment, Self> {
+    pub fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
         match self.0 {
-            [Token::DocComment(dc), ..] => Ok(dc.clone()),
+            [Token::DocComment(dc), ..] => Ok(dc),
             _ => Err(self),
         }
     }
 
-    pub fn peek_delimiter(self) -> Result<Delimiter, Self> {
+    pub fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
         match self.0 {
-            [Token::Delim(d), ..] => Ok(d.clone()),
+            [Token::Delim(d), ..] => Ok(d),
             _ => Err(self),
         }
     }
 
-    pub fn peek_punctuation(self) -> Result<Punctuation, Self> {
+    pub fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
         match self.0 {
-            [Token::Punc(p), ..] => Ok(p.clone()),
+            [Token::Punc(p), ..] => Ok(p),
             _ => Err(self),
         }
     }
@@ -141,7 +141,7 @@ impl Peek for Literal<char> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::Char(c) => Some(c),
+                LiteralKind::Char(c) => Some(c.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -156,7 +156,7 @@ impl Peek for Literal<String> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::String(s) => Some(s),
+                LiteralKind::String(s) => Some(s.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -171,7 +171,7 @@ impl Peek for Literal<bool> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::Bool(b) => Some(b),
+                LiteralKind::Bool(b) => Some(b.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -186,7 +186,7 @@ impl Peek for Literal<IntType> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::I64(i) => Some(i),
+                LiteralKind::I64(i) => Some(i.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -201,7 +201,7 @@ impl Peek for Literal<UIntType> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::U64(ui) => Some(ui),
+                LiteralKind::U64(ui) => Some(ui.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -216,7 +216,7 @@ impl Peek for Literal<U256> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::U256(u) => Some(u),
+                LiteralKind::U256(u) => Some(u.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -231,7 +231,7 @@ impl Peek for Literal<FloatType> {
     {
         match peeker.peek_literal() {
             Ok(l) => match l {
-                LiteralKind::F64(f) => Some(f),
+                LiteralKind::F64(f) => Some(f.clone()),
                 _ => None,
             },
             Err(_) => None,
@@ -245,7 +245,7 @@ impl Peek for Identifier {
         Self: Sized,
     {
         match peeker.peek_identifier() {
-            Ok(id) => Some(id),
+            Ok(id) => Some(id.clone()),
             Err(_) => None,
         }
     }
@@ -257,7 +257,7 @@ impl Peek for Keyword {
         Self: Sized,
     {
         match peeker.peek_keyword() {
-            Ok(k) => Some(k),
+            Ok(k) => Some(k.clone()),
             Err(_) => None,
         }
     }
@@ -269,7 +269,7 @@ impl Peek for DocComment {
         Self: Sized,
     {
         match peeker.peek_doc_comment() {
-            Ok(d) => Some(d),
+            Ok(d) => Some(d.clone()),
             Err(_) => None,
         }
     }
@@ -281,7 +281,7 @@ impl Peek for Delimiter {
         Self: Sized,
     {
         match peeker.peek_delimiter() {
-            Ok(d) => Some(d),
+            Ok(d) => Some(d.clone()),
             Err(_) => None,
         }
     }
@@ -293,7 +293,7 @@ impl Peek for Punctuation {
         Self: Sized,
     {
         match peeker.peek_punctuation() {
-            Ok(p) => Some(p),
+            Ok(p) => Some(p.clone()),
             Err(_) => None,
         }
     }
