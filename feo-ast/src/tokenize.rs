@@ -82,11 +82,10 @@ impl Tokenize for Delimiter {
             position: Position::new(src, start),
         };
 
-        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
+        // convert `TypeErrorKind` to a `CompilerError::Type(TypeError)` and return `ErrorEmitted`
         let delim_kind = DelimKind::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(error.clone())))?;
 
-        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let delim_orientation = DelimOrientation::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
@@ -183,7 +182,6 @@ impl Tokenize for Keyword {
             position: Position::new(src, start),
         };
 
-        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let keyword_kind = KeywordKind::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
@@ -205,14 +203,14 @@ impl Tokenize for Literal<char> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parser_error = ParserError {
+        let error = ParserError {
             error_kind: ParserErrorKind::ParseCharError,
             position: Position::new(src, start),
         };
 
         let parsed = content
             .parse::<char>()
-            .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
         let char_lit = Literal::<char>::new(parsed, span);
 
@@ -250,14 +248,14 @@ impl Tokenize for Literal<bool> {
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parser_error = ParserError {
+        let error = ParserError {
             error_kind: ParserErrorKind::ParseBoolError,
             position: Position::new(src, start),
         };
 
         let parsed = content
             .parse::<bool>()
-            .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
+            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
 
         let literal = Literal::<bool>::new(parsed, span);
 
@@ -440,7 +438,6 @@ impl Tokenize for Punctuation {
             position: Position::new(src, start),
         };
 
-        // convert `TypeErrorKind` to `CompilerError::Type(TypeError)`
         let punc_kind = PuncKind::from_str(content)
             .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
@@ -458,12 +455,17 @@ impl Tokenize for TypeAnnotation {
         content: &str,
         start: usize,
         end: usize,
-        _handler: &mut Handler,
+        handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
+        let error = TypeError {
+            error_kind: TypeErrorKind::UnrecognizedBuiltInTypeAnnotation,
+            position: Position::new(src, start),
+        };
+
         let type_ann_kind = TypeAnnKind::from_str(content)
-            .unwrap_or(TypeAnnKind::CustomTypeAnn(content.to_string()));
+            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
 
         let type_annotation = TypeAnnotation::new(type_ann_kind, span);
 

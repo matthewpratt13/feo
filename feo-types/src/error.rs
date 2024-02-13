@@ -7,10 +7,8 @@ pub enum TypeErrorKind {
     UnrecognizedDelimiter,
     UnrecognizedKeyword,
     UnexpectedPunctuation,
+    UnrecognizedBuiltInTypeAnnotation,
     MismatchedTypeAnnotation,
-    MismatchedIntTypeAnnotation,
-    MismatchedUIntTypeAnnotation,
-    MismatchedFloatTypeAnnotation,
 
     #[default]
     UnknownError,
@@ -26,17 +24,11 @@ impl fmt::Display for TypeErrorKind {
             TypeErrorKind::UnrecognizedKeyword => write!(f, "unrecognized keyword"),
             TypeErrorKind::UnexpectedPunctuation => write!(f, "unexpected punctuation"),
             TypeErrorKind::UnknownError => write!(f, "unknown error"),
+            TypeErrorKind::UnrecognizedBuiltInTypeAnnotation => {
+                write!(f, "unrecognized built-in type annotation")
+            }
             TypeErrorKind::MismatchedTypeAnnotation => {
                 write!(f, "type annotation does not match value's type")
-            }
-            TypeErrorKind::MismatchedIntTypeAnnotation => {
-                write!(f, "int type annotation does not match value's type")
-            }
-            TypeErrorKind::MismatchedUIntTypeAnnotation => {
-                write!(f, "uint type annotation does not match value's type")
-            }
-            TypeErrorKind::MismatchedFloatTypeAnnotation => {
-                write!(f, "float type annotation does not match value's type")
             }
         }
     }

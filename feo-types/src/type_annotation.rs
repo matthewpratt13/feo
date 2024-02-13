@@ -21,8 +21,6 @@ pub enum TypeAnnKind {
     TypeAnnU256,
     TypeAnnF32,
     TypeAnnF64,
-
-    CustomTypeAnn(String),
 }
 
 impl TypeAnnKind {
@@ -40,7 +38,6 @@ impl TypeAnnKind {
             TypeAnnKind::TypeAnnU256 => "u256",
             TypeAnnKind::TypeAnnF32 => "f32",
             TypeAnnKind::TypeAnnF64 => "f64",
-            TypeAnnKind::CustomTypeAnn(t) => t,
         }
     }
 }
@@ -62,7 +59,7 @@ impl FromStr for TypeAnnKind {
             "u256" => Ok(TypeAnnKind::TypeAnnU256),
             "f32" => Ok(TypeAnnKind::TypeAnnF32),
             "f64" => Ok(TypeAnnKind::TypeAnnF64),
-            _ => Ok(TypeAnnKind::CustomTypeAnn(s.to_string())),
+            _ => Err(TypeErrorKind::UnrecognizedBuiltInTypeAnnotation),
         }?;
 
         Ok(type_ann)
