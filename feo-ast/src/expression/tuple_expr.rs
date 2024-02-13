@@ -1,7 +1,8 @@
 use feo_types::{
-    primitive::Primitive,
+    literal::UIntType,
     span::{Span, Spanned},
     utils::{Comma, Dot, Parenthesis},
+    Literal,
 };
 
 use crate::{item::TupleStructDef, ty::TupleType};
@@ -49,7 +50,7 @@ pub struct TupleElements {
 pub struct TupleIndexExpr {
     operand: TupleKind,
     dot: Dot,
-    index: Primitive<u64>,
+    index: Literal<UIntType>,
 }
 
 impl Spanned for TupleIndexExpr {

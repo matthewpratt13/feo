@@ -1,10 +1,11 @@
 #![allow(dead_code)]
+#![allow(unused_variables)] // temporary – used to remove compiler warnings
 
 mod array_expr;
 mod literal_expr;
 mod struct_expr;
 
-use feo_ast::expression::Expression;
+use feo_ast::expression::{Expression, IterableExpr};
 use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
@@ -119,5 +120,14 @@ impl Parse for Expression {
         };
 
         Ok(Some(expr))
+    }
+}
+
+impl Parse for IterableExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }
