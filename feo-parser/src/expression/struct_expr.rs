@@ -30,18 +30,18 @@ impl Parse for StructExprField {
             if let Some(iden) = parser.peek::<Identifier>() {
                 parser.advance();
 
-                let colon_res = parser.take::<Punctuation>();
+                let colon_opt = parser.take::<Punctuation>();
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
-                }) = colon_res
+                }) = colon_opt
                 {
                     parser.advance();
 
                     if let Some(expr) = Expression::parse(parser)? {
                         let field =
-                            StructExprField(attributes, (iden, colon_res.unwrap(), Box::new(expr)));
+                            StructExprField(attributes, (iden, colon_opt.unwrap(), Box::new(expr)));
 
                         Ok(Some(field))
                     } else {
@@ -67,16 +67,16 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
-            let mut comma_res = parser.take::<Punctuation>();
+            let mut comma_opt = parser.take::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = comma_res
+            }) = comma_opt
             {
                 if let Some(next_field) = StructExprField::parse(parser)? {
-                    subsequent_fields.push((comma_res.unwrap(), next_field));
-                    comma_res = parser.peek::<Punctuation>();
+                    subsequent_fields.push((comma_opt.unwrap(), next_field));
+                    comma_opt = parser.peek::<Punctuation>();
                     parser.advance();
                 } else {
                     parser.advance();
@@ -106,31 +106,31 @@ impl Parse for StructExpr {
         Self: Sized,
     {
         if let Some(item_path) = PathInExpr::parse(parser)? {
-            let open_brace_res = parser.peek::<Delimiter>();
+            let open_brace_opt = parser.peek::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = open_brace_res
+            }) = open_brace_opt
             {
                 parser.advance();
 
                 if let Some(fields_opt) = StructExprFields::parse(parser)? {
-                    let close_brace_res = parser.peek::<Delimiter>();
+                    let close_brace_opt = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
-                    }) = close_brace_res
+                    }) = close_brace_opt
                     {
                         // consume last token and move to next token in prep for next parser
                         parser.advance();
 
                         let expr = StructExpr {
                             item_path,
-                            open_brace: open_brace_res.unwrap(),
+                            open_brace: open_brace_opt.unwrap(),
                             struct_expr_fields_opt: Some(fields_opt),
-                            close_brace: close_brace_res.unwrap(),
+                            close_brace: close_brace_opt.unwrap(),
                         };
 
                         Ok(Some(expr))

@@ -19,12 +19,13 @@ impl Parse for PathIdenSegmentKind {
             PathIdenSegmentKind::Iden(i)
             // or perhaps the next token is a `Keyword` ?
         } else if let Some(k) = parser.peek::<Keyword>() {
-            // if it is a valid `KeywordKind`, set it to `segment_kind`, else throw an error
+            // if it is an expected `KeywordKind`, bind it to `segment_kind`
             match k.keyword_kind {
                 KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
                 KeywordKind::KwSelfType => PathIdenSegmentKind::KwSelfType(k),
                 KeywordKind::KwSuper => PathIdenSegmentKind::KwSuper(k),
+                // if it is a valid keyword, but not the one we want, throw an error
                 _ => return Err(parser.log_error(ParserErrorKind::UnexpectedToken)),
             }
         } else {
@@ -45,31 +46,35 @@ impl Parse for PathInExpr {
         Self: Sized,
     {
         // `Vec` that will hold the path segments (i.e., `DblColon` + `PathExprSegment`)
+        // (note that `DblColon` is a type alias for `Punctuation` 
+        // and does not necessarily have `PuncKind::DblColon`)
         let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
 
+        // check to see if the next token (a `PathExprSegment`) exists
+        // if so, the `PathExprSegment::parse()` should advance the `Parser` (before returning)
         if let Some(first_segment) = PathExprSegment::parse(parser)? {
-            // peek for the first `DblColon`
+            // peek for the first token (a `Punctuation`, MAYBE with `PuncKind::DblColon`)
             // this will be mutated in the `while` loop below
-            let mut next_dbl_colon_res = parser.peek::<Punctuation>();
+            let mut next_dbl_colon_opt = parser.peek::<Punctuation>();
 
-            // check that the next token (a `Punctuation`) is a `DblColon`
+            // check to see if the first element of each tuple in `subsequent_segments` 
+            // is a `Punctuation` with `PuncKind::DblColon`
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
-            }) = next_dbl_colon_res
+            }) = next_dbl_colon_opt
             {
                 // if the next token is a parsed `PathExprSegment` (see above),
                 // add it and the current `DblColon` to `subsequent_segments`
                 if let Some(next_segment) = PathExprSegment::parse(parser)? {
-                    subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
-                    // check if the next token is a `Punctuation`;
-                    // if so, return it and advance the `Parser`
-                    next_dbl_colon_res = parser.take::<Punctuation>();
+                    subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_segment));
+                    // check to see if the next token is a `Punctuation`;
+                    // if so, return it and advance the `Parser` with `take()`
+                    next_dbl_colon_opt = parser.take::<Punctuation>();
                 } else {
-                    // if the token after the current `DblColon` is not a `PathExprSegment`,
+                    // if the token after the current `DblColon` is not `Some(PathExprSegment)`,
                     // the `DblColon` is out of place and should throw an error
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
-                }
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken))               }
             }
 
             // consume the final `PathExprSegment` and advance the `Parser`
@@ -83,6 +88,7 @@ impl Parse for PathInExpr {
             // return the parsed `PathInExpr`
             Ok(Some(path))
         } else {
+            // if the first `PathExprSegment` does not exist, throw an error
             Err(parser.log_error(ParserErrorKind::TokenNotFound))
         }
     }
@@ -96,16 +102,16 @@ impl Parse for PathType {
         let mut subsequent_segments: Vec<(DblColon, PathTypeSegment)> = Vec::new();
 
         if let Some(first_segment) = PathTypeSegment::parse(parser)? {
-            let mut next_dbl_colon_res = parser.peek::<Punctuation>();
+            let mut next_dbl_colon_opt = parser.peek::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
-            }) = next_dbl_colon_res
+            }) = next_dbl_colon_opt
             {
                 if let Some(next_segment) = PathTypeSegment::parse(parser)? {
-                    subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
-                    next_dbl_colon_res = parser.take::<Punctuation>();
+                    subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_segment));
+                    next_dbl_colon_opt = parser.take::<Punctuation>();
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
@@ -157,16 +163,16 @@ impl Parse for SimplePath {
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
         if let Some(first_segment) = SimplePathSegmentKind::parse(parser)? {
-            let mut next_dbl_colon_res = parser.peek::<Punctuation>();
+            let mut next_dbl_colon_opt = parser.peek::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
-            }) = next_dbl_colon_res
+            }) = next_dbl_colon_opt
             {
                 if let Some(next_segment) = SimplePathSegmentKind::parse(parser)? {
-                    subsequent_segments.push((next_dbl_colon_res.unwrap(), next_segment));
-                    next_dbl_colon_res = parser.take::<Punctuation>();
+                    subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_segment));
+                    next_dbl_colon_opt = parser.take::<Punctuation>();
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
