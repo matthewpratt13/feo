@@ -15,7 +15,7 @@ use feo_types::{
     keyword::{Keyword, KeywordKind},
     literal::{FloatType, IntType, Literal, UIntType},
     punctuation::{PuncKind, Punctuation},
-    span::{Position, Span, Spanned},
+    span::{Position, Span},
     type_annotation::TypeAnnKind,
     Identifier, TypeAnnotation, U256,
 };
@@ -28,18 +28,16 @@ pub trait Tokenize {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted>;
 }
 
 impl Tokenize for Comment {
-    fn tokenize(
+    fn tokenize<'a>(
         src: &str,
         content: &str,
         start: usize,
         end: usize,
-        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -75,7 +73,6 @@ impl Tokenize for Delimiter {
         content: &str,
         start: usize,
         end: usize,
-        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -107,7 +104,6 @@ impl Tokenize for DocComment {
         content: &str,
         start: usize,
         end: usize,
-        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -152,19 +148,19 @@ impl Tokenize for DocComment {
     }
 }
 
-// TODO: check for `TypeErrorKind::MismatchedTypeAnn` during parsing
+// TODO: check for `TypeErrorKind::MismatchedTypeAnn` during parsing (ditto for literals)
+
 impl Tokenize for Identifier {
     fn tokenize(
         src: &str,
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let identifier = Identifier::new(content.to_string(), span, type_ann_opt);
+        let identifier = Identifier::new(content.to_string(), span);
 
         let token = Token::Iden(identifier);
 
@@ -178,7 +174,6 @@ impl Tokenize for Keyword {
         content: &str,
         start: usize,
         end: usize,
-        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -206,21 +201,9 @@ impl Tokenize for Literal<char> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
-
-        if let Some(t) = &type_ann_opt {
-            if t.type_ann_kind != TypeAnnKind::TypeAnnChar {
-                let type_ann_error = TypeError {
-                    error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                    position: Position::new(src, start),
-                };
-
-                return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-            }
-        }
 
         let parser_error = ParserError {
             error_kind: ParserErrorKind::ParseCharError,
@@ -231,7 +214,7 @@ impl Tokenize for Literal<char> {
             .parse::<char>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
 
-        let char_lit = Literal::<char>::new(parsed, span, type_ann_opt);
+        let char_lit = Literal::<char>::new(parsed, span);
 
         let token = Token::CharLit(char_lit);
 
@@ -245,23 +228,11 @@ impl Tokenize for Literal<String> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
-        handler: &mut Handler,
+        _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        if let Some(t) = &type_ann_opt {
-            if t.type_ann_kind != TypeAnnKind::TypeAnnString {
-                let error = TypeError {
-                    error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                    position: Position::new(src, start),
-                };
-
-                return Err(handler.emit_err(CompilerError::Type(error)));
-            }
-        }
-
-        let literal = Literal::<String>::new(content.to_string(), span, type_ann_opt);
+        let literal = Literal::<String>::new(content.to_string(), span);
 
         let token = Token::StringLit(literal);
 
@@ -275,21 +246,9 @@ impl Tokenize for Literal<bool> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
-
-        if let Some(t) = &type_ann_opt {
-            if t.type_ann_kind != TypeAnnKind::TypeAnnBool {
-                let type_ann_error = TypeError {
-                    error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                    position: Position::new(src, start),
-                };
-
-                return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-            }
-        }
 
         let parser_error = ParserError {
             error_kind: ParserErrorKind::ParseBoolError,
@@ -300,7 +259,7 @@ impl Tokenize for Literal<bool> {
             .parse::<bool>()
             .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
 
-        let literal = Literal::<bool>::new(parsed, span, type_ann_opt);
+        let literal = Literal::<bool>::new(parsed, span);
 
         let token = Token::BoolLit(literal);
 
@@ -314,7 +273,6 @@ impl Tokenize for Literal<IntType> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -324,45 +282,12 @@ impl Tokenize for Literal<IntType> {
             position: Position::new(src, start),
         };
 
-        let parsed = if let Some(t) = &type_ann_opt {
-            match t.type_ann_kind {
-                TypeAnnKind::TypeAnnI32 => {
-                    let content_as_i32 = i32::from_str_radix(
-                        &content.split('_').collect::<Vec<&str>>().concat(),
-                        10,
-                    )
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?;
+        let parsed = IntType::I64(
+            i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
+                .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
+        );
 
-                    let content_as_i64 = content_as_i32 as i64;
-
-                    if content_as_i64 > i32::MAX.into() || content_as_i64 < i32::MIN.into() {
-                        panic!("Integer over- / underflow: Input out of bounds for `i32` value");
-                    } else {
-                        IntType::I32(content_as_i32)
-                    }
-                }
-
-                TypeAnnKind::TypeAnnI64 => IntType::I64(
-                    i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                        .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
-                ),
-                _ => {
-                    let type_ann_error = TypeError {
-                        error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                        position: Position::new(src, start),
-                    };
-
-                    return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-                }
-            }
-        } else {
-            IntType::I64(
-                i64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
-            )
-        };
-
-        let literal = Literal::<IntType>::new(parsed, span, type_ann_opt);
+        let literal = Literal::<IntType>::new(parsed, span);
 
         let token = Token::IntLit(literal);
 
@@ -376,7 +301,6 @@ impl Tokenize for Literal<UIntType> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -388,11 +312,6 @@ impl Tokenize for Literal<UIntType> {
 
         let u256_error = ParserError {
             error_kind: ParserErrorKind::ParseU256Error,
-            position: Position::new(src, start),
-        };
-
-        let type_ann_error = TypeError {
-            error_kind: TypeErrorKind::MismatchedTypeAnnotation,
             position: Position::new(src, start),
         };
 
@@ -408,77 +327,13 @@ impl Tokenize for Literal<UIntType> {
             if content_as_hex_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
-                if let Some(t) = &type_ann_opt {
-                    match t.type_ann_kind {
-                        TypeAnnKind::TypeAnnU8 => {
-                            let content_as_u8 = u8::from_str_radix(
-                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                                16,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
-
-                            let content_as_u64 = content_as_u8 as u64;
-
-                            if content_as_u64 > u8::MAX.into() {
-                                panic!("Integer overflow: Input exceeds maximum `u8` value");
-                            } else {
-                                UIntType::U8(content_as_u8)
-                            }
-                        }
-
-                        TypeAnnKind::TypeAnnU16 => {
-                            let content_as_u16 = u16::from_str_radix(
-                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                                16,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
-
-                            let content_as_u64 = content_as_u16 as u64;
-
-                            if content_as_u64 > u16::MAX.into() {
-                                panic!("Integer overflow: Input exceeds maximum `u16` value");
-                            } else {
-                                UIntType::U16(content_as_u16)
-                            }
-                        }
-
-                        TypeAnnKind::TypeAnnU32 => {
-                            let content_as_u32 = u32::from_str_radix(
-                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                                16,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
-
-                            let content_as_u64 = content_as_u32 as u64;
-
-                            if content_as_u64 > u32::MAX.into() {
-                                panic!("Integer overflow: Input exceeds maximum `u32` value");
-                            } else {
-                                UIntType::U32(content_as_u32)
-                            }
-                        }
-
-                        TypeAnnKind::TypeAnnU64 => UIntType::U64(
-                            u64::from_str_radix(
-                                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                                16,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                        ),
-
-                        _ => {
-                            return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-                        }
-                    }
-                } else {
-                    UIntType::U64(
-                        u64::from_str_radix(
-                            &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                            16,
-                        )
-                        .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                UIntType::U64(
+                    u64::from_str_radix(
+                        &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                        16,
                     )
-                }
+                    .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
+                )
             }
         } else {
             let content_as_dec_u256 =
@@ -488,81 +343,14 @@ impl Tokenize for Literal<UIntType> {
             if content_as_dec_u256 > u64::MAX.into() {
                 panic!("Integer overflow: Input exceeds maximum `u64` value");
             } else {
-                if let Some(t) = &type_ann_opt {
-                    match t.type_ann_kind {
-                        TypeAnnKind::TypeAnnU8 => {
-                            let content_as_u8 = u8::from_str_radix(
-                                &content.split('_').collect::<Vec<&str>>().concat(),
-                                10,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
-
-                            let content_as_u64 = content_as_u8 as u64;
-
-                            if content_as_u64 > u8::MAX.into() {
-                                panic!("Integer overflow: Input exceeds maximum `u8` value");
-                            } else {
-                                UIntType::U8(content_as_u8)
-                            }
-                        }
-
-                        TypeAnnKind::TypeAnnU16 => {
-                            let content_as_u16 = u16::from_str_radix(
-                                &content.split('_').collect::<Vec<&str>>().concat(),
-                                10,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
-
-                            let content_as_u64 = content_as_u16 as u64;
-
-                            if content_as_u64 > u16::MAX.into() {
-                                panic!("Integer overflow: Input exceeds maximum `u16` value");
-                            } else {
-                                UIntType::U16(content_as_u16)
-                            }
-                        }
-
-                        TypeAnnKind::TypeAnnU32 => {
-                            let content_as_u32 = u32::from_str_radix(
-                                &content.split('_').collect::<Vec<&str>>().concat(),
-                                10,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?;
-
-                            let content_as_u64 = content_as_u32 as u64;
-
-                            if content_as_u64 > u32::MAX.into() {
-                                panic!("Integer overflow: Input exceeds maximum `u32` value");
-                            } else {
-                                UIntType::U32(content_as_u32)
-                            }
-                        }
-
-                        TypeAnnKind::TypeAnnU64 => UIntType::U64(
-                            u64::from_str_radix(
-                                &content.split('_').collect::<Vec<&str>>().concat(),
-                                10,
-                            )
-                            .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                        ),
-
-                        _ => {
-                            return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-                        }
-                    }
-                } else {
-                    UIntType::U64(
-                        u64::from_str_radix(
-                            &content.split('_').collect::<Vec<&str>>().concat(),
-                            10,
-                        )
+                UIntType::U64(
+                    u64::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
                         .map_err(|_| handler.emit_err(CompilerError::Parser(uint_error)))?,
-                    )
-                }
+                )
             }
         };
 
-        let literal = Literal::new(parsed, span, type_ann_opt);
+        let literal = Literal::<UIntType>::new(parsed, span);
 
         let token = Token::UIntLit(literal);
 
@@ -576,12 +364,11 @@ impl Tokenize for Literal<U256> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parser_error = ParserError {
+        let error = ParserError {
             error_kind: ParserErrorKind::ParseU256Error,
             position: Position::new(src, start),
         };
@@ -591,34 +378,17 @@ impl Tokenize for Literal<U256> {
         let parsed = if content.starts_with("0x") {
             let without_prefix = content.trim_start_matches("0x");
 
-            if let Some(t) = &type_ann_opt {
-                if t.type_ann_kind != TypeAnnKind::TypeAnnU256 {
-                    let type_ann_error = TypeError {
-                        error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                        position: Position::new(src, start),
-                    };
-
-                    return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-                } else {
-                    U256::from_str_radix(
-                        &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                        16,
-                    )
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?
-                }
-            } else {
-                U256::from_str_radix(
-                    &without_prefix.split('_').collect::<Vec<&str>>().concat(),
-                    16,
-                )
-                .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?
-            }
+            U256::from_str_radix(
+                &without_prefix.split('_').collect::<Vec<&str>>().concat(),
+                16,
+            )
+            .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
         } else {
             U256::from_str_radix(&content.split('_').collect::<Vec<&str>>().concat(), 10)
-                .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?
+                .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?
         };
 
-        let literal = Literal::<U256>::new(parsed, span, type_ann_opt);
+        let literal = Literal::<U256>::new(parsed, span);
 
         let token = Token::U256Lit(literal);
 
@@ -632,56 +402,22 @@ impl Tokenize for Literal<FloatType> {
         content: &str,
         start: usize,
         end: usize,
-        type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
 
-        let parser_error = ParserError {
+        let error = ParserError {
             error_kind: ParserErrorKind::ParseFloatError,
             position: Position::new(src, start),
         };
 
-        let parsed = if let Some(t) = &type_ann_opt {
-            match t.type_ann_kind {
-                TypeAnnKind::TypeAnnF32 => {
-                    let content_as_f32 = content
-                        .parse::<f32>()
-                        .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?;
+        let parsed = FloatType::F64(
+            content
+                .parse::<f64>()
+                .map_err(|_| handler.emit_err(CompilerError::Parser(error)))?,
+        );
 
-                    let content_as_f64 = content_as_f32 as f64;
-
-                    if content_as_f64 > f32::MAX.into() || content_as_f64 < f32::MIN.into() {
-                        panic!("Float over- / underflow: Input out of bounds for `f32` value");
-                    } else {
-                        FloatType::F32(content_as_f32)
-                    }
-                }
-
-                TypeAnnKind::TypeAnnF64 => FloatType::F64(
-                    content
-                        .parse::<f64>()
-                        .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?,
-                ),
-                
-                _ => {
-                    let type_ann_error = TypeError {
-                        error_kind: TypeErrorKind::MismatchedTypeAnnotation,
-                        position: Position::new(src, start),
-                    };
-
-                    return Err(handler.emit_err(CompilerError::Type(type_ann_error)));
-                }
-            }
-        } else {
-            FloatType::F64(
-                content
-                    .parse::<f64>()
-                    .map_err(|_| handler.emit_err(CompilerError::Parser(parser_error)))?,
-            )
-        };
-
-        let literal = Literal::<FloatType>::new(parsed, span, type_ann_opt);
+        let literal = Literal::<FloatType>::new(parsed, span);
 
         let token = Token::FloatLit(literal);
 
@@ -695,7 +431,6 @@ impl Tokenize for Punctuation {
         content: &str,
         start: usize,
         end: usize,
-        _type_ann_opt: Option<TypeAnnotation>,
         handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -723,7 +458,6 @@ impl Tokenize for TypeAnnotation {
         content: &str,
         start: usize,
         end: usize,
-        _type_ann_opt: Option<TypeAnnotation>,
         _handler: &mut Handler,
     ) -> Result<Option<Token>, ErrorEmitted> {
         let span = Span::new(src, start, end);
@@ -736,17 +470,5 @@ impl Tokenize for TypeAnnotation {
         let token = Token::TypeAnn(type_annotation);
 
         Ok(Some(token))
-    }
-}
-
-impl TryFrom<Token> for TypeAnnotation {
-    type Error = ();
-
-    fn try_from(value: Token) -> Result<Self, Self::Error> {
-        if let Token::TypeAnn(t) = value {
-            Ok(TypeAnnotation::new(t.clone().type_ann_kind, t.span()))
-        } else {
-            Err(())
-        }
     }
 }

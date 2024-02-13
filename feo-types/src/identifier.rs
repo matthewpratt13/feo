@@ -1,26 +1,14 @@
-use crate::{
-    span::{Span, Spanned},
-    TypeAnnotation,
-};
+use crate::span::{Span, Spanned};
 
 #[derive(Debug, Clone)]
 pub struct Identifier {
     pub name: String,
     span: Span,
-    type_ann_opt: Option<TypeAnnotation>,
 }
 
 impl Identifier {
-    pub fn new(name: String, span: Span, type_ann_opt: Option<TypeAnnotation>) -> Self {
-        Self {
-            name,
-            span,
-            type_ann_opt,
-        }
-    }
-
-    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
-        self.type_ann_opt.clone()
+    pub fn new(name: String, span: Span) -> Self {
+        Self { name, span }
     }
 }
 

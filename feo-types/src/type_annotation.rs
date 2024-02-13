@@ -10,8 +10,8 @@ use crate::{
 #[derive(Debug, Clone, PartialEq)]
 pub enum TypeAnnKind {
     TypeAnnChar,
+    TypeAnnStr,
     TypeAnnBool,
-    TypeAnnString,
     TypeAnnI32,
     TypeAnnI64,
     TypeAnnU8,
@@ -29,8 +29,8 @@ impl TypeAnnKind {
     pub fn as_str(&self) -> &str {
         match self {
             TypeAnnKind::TypeAnnChar => "char",
+            TypeAnnKind::TypeAnnStr => "str",
             TypeAnnKind::TypeAnnBool => "bool",
-            TypeAnnKind::TypeAnnString => "String",
             TypeAnnKind::TypeAnnI32 => "i32",
             TypeAnnKind::TypeAnnI64 => "i64",
             TypeAnnKind::TypeAnnU8 => "u8",
@@ -51,8 +51,8 @@ impl FromStr for TypeAnnKind {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let type_ann = match s {
             "char" => Ok(TypeAnnKind::TypeAnnChar),
+            "str" => Ok(TypeAnnKind::TypeAnnStr),
             "bool" => Ok(TypeAnnKind::TypeAnnBool),
-            "String" => Ok(TypeAnnKind::TypeAnnString),
             "i32" => Ok(TypeAnnKind::TypeAnnI32),
             "i64" => Ok(TypeAnnKind::TypeAnnI64),
             "u8" => Ok(TypeAnnKind::TypeAnnU8),
@@ -92,7 +92,7 @@ impl Spanned for TypeAnnotation {
 
 pub fn is_built_in_type_annotation(iden: &str) -> bool {
     [
-        "char", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64",
+        "char", "str", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64",
     ]
     .contains(&iden)
 }

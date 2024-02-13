@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use crate::{
     error::TypeErrorKind,
     span::{Span, Spanned},
-    TypeAnnotation, U256,
+    U256,
 };
 
 pub trait LiteralType
@@ -147,23 +147,17 @@ impl TryFrom<FloatType> for f64 {
 pub struct Literal<T: LiteralType> {
     inner_value: T,
     span: Span,
-    type_ann_opt: Option<TypeAnnotation>,
 }
 
 impl<T> Literal<T>
 where
     T: LiteralType,
 {
-    pub fn new(raw_value: T, span: Span, type_ann_opt: Option<TypeAnnotation>) -> Literal<T> {
+    pub fn new(raw_value: T, span: Span) -> Literal<T> {
         Literal::<T> {
             inner_value: raw_value,
             span,
-            type_ann_opt,
         }
-    }
-
-    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
-        self.type_ann_opt.clone()
     }
 
     pub fn into_inner(self) -> Option<T> {
