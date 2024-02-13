@@ -4,6 +4,8 @@ use feo_types::literal::LiteralKind;
 
 use crate::{parse::Parse, parser::Parser};
 
+// TODO: match `IntType` etc. variants
+
 impl Parse for LiteralKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
