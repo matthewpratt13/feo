@@ -29,7 +29,7 @@ use crate::{
 };
 
 pub use self::{
-    array_expr::{ArrayElements, ArrayExpr, IndexExpr, ArrayElementsCommaSeparated, ArrayElementsRepeatedValue},
+    array_expr::{ArrayElementsKind, ArrayExpr, IndexExpr, ArrayElementsCommaSeparated, ArrayElementsRepeatedValue},
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     call_expr::CallParams,

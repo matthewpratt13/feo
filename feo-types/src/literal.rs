@@ -25,14 +25,14 @@ impl LiteralType for U256 {}
 
 impl LiteralType for FloatType {}
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 
 pub enum IntType {
     I32(i32),
     I64(i64),
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub enum UIntType {
     U8(u8),
     U16(u16),
@@ -40,7 +40,7 @@ pub enum UIntType {
     U64(u64),
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub enum FloatType {
     F32(f32),
     F64(f64),

@@ -7,7 +7,9 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
-    literal::{FloatType, IntType, Literal, UIntType}, span::{Position, Spanned}, Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256
+    literal::{FloatType, IntType, Literal, UIntType},
+    span::{Position, Spanned},
+    Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
 };
 
 use crate::parse::Peek;
@@ -71,6 +73,7 @@ impl Parser {
 }
 
 // type that allows for peeking at the next `Token` in a `&[Token]` without advancing
+#[derive(Copy, Clone)]
 pub struct Peeker<'a>(&'a [Token]);
 
 impl<'a> Peeker<'a> {
@@ -83,91 +86,91 @@ impl<'a> Peeker<'a> {
     }
 
     // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
-    fn peek_char_lit(self) -> Result<&'a Literal<char>, Self> {
+    pub fn peek_char_lit(self) -> Result<Literal<char>, Self> {
         match self.0 {
-            [Token::CharLit(c), ..] => Ok(c),
+            [Token::CharLit(c), ..] => Ok(c.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_string_lit(self) -> Result<&'a Literal<String>, Self> {
+    pub fn peek_string_lit(self) -> Result<Literal<String>, Self> {
         match self.0 {
-            [Token::StringLit(s), ..] => Ok(s),
+            [Token::StringLit(s), ..] => Ok(s.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_bool_lit(self) -> Result<&'a Literal<bool>, Self> {
+    pub fn peek_bool_lit(self) -> Result<Literal<bool>, Self> {
         match self.0 {
-            [Token::BoolLit(b), ..] => Ok(b),
+            [Token::BoolLit(b), ..] => Ok(b.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_int_lit(self) -> Result<&'a Literal<IntType>, Self> {
+    pub fn peek_int_lit(self) -> Result<Literal<IntType>, Self> {
         match self.0 {
-            [Token::IntLit(i), ..] => Ok(i),
+            [Token::IntLit(i), ..] => Ok(i.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_uint_lit(self) -> Result<&'a Literal<UIntType>, Self> {
+    pub fn peek_uint_lit(self) -> Result<Literal<UIntType>, Self> {
         match self.0 {
-            [Token::UIntLit(ui), ..] => Ok(ui),
+            [Token::UIntLit(ui), ..] => Ok(ui.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_u256_lit(self) -> Result<&'a Literal<U256>, Self> {
+    pub fn peek_u256_lit(self) -> Result<Literal<U256>, Self> {
         match self.0 {
-            [Token::U256Lit(u), ..] => Ok(u),
+            [Token::U256Lit(u), ..] => Ok(u.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_float_lit(self) -> Result<&'a Literal<FloatType>, Self> {
+    pub fn peek_float_lit(self) -> Result<Literal<FloatType>, Self> {
         match self.0 {
-            [Token::FloatLit(f), ..] => Ok(f),
+            [Token::FloatLit(f), ..] => Ok(f.clone()),
             _ => Err(self),
         }
     }
 
-    fn peek_identifier(self) -> Result<&'a Identifier, Self> {
+    pub fn peek_identifier(self) -> Result<&'a Identifier, Self> {
         match self.0 {
             [Token::Iden(id)] => Ok(id),
             _ => Err(self),
         }
     }
 
-    fn peek_keyword(self) -> Result<&'a Keyword, Self> {
+    pub fn peek_keyword(self) -> Result<&'a Keyword, Self> {
         match self.0 {
             [Token::Keyword(k), ..] => Ok(k),
             _ => Err(self),
         }
     }
 
-    fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
+    pub fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
         match self.0 {
             [Token::DocComment(dc), ..] => Ok(dc),
             _ => Err(self),
         }
     }
 
-    fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
+    pub fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
         match self.0 {
             [Token::Delim(d), ..] => Ok(d),
             _ => Err(self),
         }
     }
 
-    fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
+    pub fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
         match self.0 {
             [Token::Punc(p), ..] => Ok(p),
             _ => Err(self),
         }
     }
 
-    fn peek_type_ann(self) -> Result<&'a TypeAnnotation, Self> {
+    pub fn peek_type_ann(self) -> Result<&'a TypeAnnotation, Self> {
         match self.0 {
             [Token::TypeAnn(ta), ..] => Ok(ta),
             _ => Err(self),

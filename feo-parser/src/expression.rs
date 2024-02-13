@@ -15,7 +15,55 @@ use feo_types::{
     Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
 };
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
+
+impl Peek for Expression {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        let expr = if let Ok(c) = peeker.peek_char_lit() {
+            Expression::LiteralExpr(LiteralKind::Char(c.clone()))
+        } else if let Ok(s) = peeker.peek_string_lit() {
+            Expression::LiteralExpr(LiteralKind::String(s.clone()))
+        } else if let Ok(b) = peeker.peek_bool_lit() {
+            Expression::LiteralExpr(LiteralKind::Bool(b.clone()))
+        } else if let Ok(i) = peeker.peek_int_lit() {
+            match i.clone().into_inner() {
+                Some(t) => match t {
+                    IntType::I32(_) => Expression::LiteralExpr(LiteralKind::I32(i)),
+                    IntType::I64(_) => Expression::LiteralExpr(LiteralKind::I64(i)),
+                },
+                None => todo!(),
+            }
+        } else if let Ok(ui) = peeker.peek_uint_lit() {
+            match ui.clone().into_inner() {
+                Some(t) => match t {
+                    UIntType::U8(_) => Expression::LiteralExpr(LiteralKind::U8(ui)),
+                    UIntType::U16(_) => Expression::LiteralExpr(LiteralKind::U16(ui)),
+                    UIntType::U32(_) => Expression::LiteralExpr(LiteralKind::U32(ui)),
+                    UIntType::U64(_) => Expression::LiteralExpr(LiteralKind::U64(ui)),
+                },
+                None => todo!(),
+            }
+        } else if let Ok(f) = peeker.peek_float_lit() {
+            match f.clone().into_inner() {
+                Some(t) => match t {
+                    FloatType::F32(_) => Expression::LiteralExpr(LiteralKind::F32(f)),
+                    FloatType::F64(_) => Expression::LiteralExpr(LiteralKind::F64(f)),
+                },
+                None => todo!(),
+            }
+        } else {
+            todo!()
+        };
+
+        Some(expr)
+    }
+}
 
 impl Parse for Expression {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
