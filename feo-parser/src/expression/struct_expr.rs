@@ -2,7 +2,7 @@ use feo_ast::{
     expression::{Expression, OuterAttr, StructExpr, StructExprField, StructExprFields},
     path::PathInExpr,
 };
-use feo_error::handler::ErrorEmitted;
+use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
@@ -45,16 +45,16 @@ impl Parse for StructExprField {
 
                         Ok(Some(field))
                     } else {
-                        todo!()
+                        Err(parser.log_error(ParserErrorKind::TokenNotFound))
                     }
                 } else {
-                    todo!()
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
             } else {
-                todo!()
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            todo!()
+            Err(parser.log_error(ParserErrorKind::TokenNotFound))
         }
     }
 }
@@ -67,7 +67,7 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
-            let mut comma_opt = parser.take::<Punctuation>();
+            let mut comma_opt = parser.peek::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
@@ -76,13 +76,9 @@ impl Parse for StructExprFields {
             {
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((comma_opt.unwrap(), next_field));
-                    comma_opt = parser.peek::<Punctuation>();
-                    parser.advance();
+                    comma_opt = parser.take::<Punctuation>();
                 } else {
-                    parser.advance();
-                    todo!() // log error (ignore output, i.e., do NOT return)
-
-                    // break
+                    break;
                 }
             }
 
@@ -95,7 +91,7 @@ impl Parse for StructExprFields {
 
             Ok(Some(fields))
         } else {
-            todo!()
+            Err(parser.log_error(ParserErrorKind::TokenNotFound))
         }
     }
 }
@@ -135,16 +131,16 @@ impl Parse for StructExpr {
 
                         Ok(Some(expr))
                     } else {
-                        todo!()
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                     }
                 } else {
-                    todo!()
+                    return Err(parser.log_error(ParserErrorKind::TokenNotFound));
                 }
             } else {
-                todo!()
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            todo!()
+            Err(parser.log_error(ParserErrorKind::TokenNotFound))
         }
     }
 }
