@@ -86,93 +86,93 @@ impl<'a> Peeker<'a> {
     }
 
     // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
-    pub fn peek_char_lit(self) -> Result<Literal<char>, Self> {
+    pub fn peek_char_lit(self) -> Result<&'a Literal<char>, Self> {
         match self.0 {
-            [Token::CharLit(c), ..] => Ok(c.clone()),
+            [Token::CharLit(c), ..] => Ok(c),
             _ => Err(self),
         }
     }
 
-    pub fn peek_string_lit(self) -> Result<Literal<String>, Self> {
+    pub fn peek_string_lit(self) -> Result<&'a Literal<String>, Self> {
         match self.0 {
-            [Token::StringLit(s), ..] => Ok(s.clone()),
+            [Token::StringLit(s), ..] => Ok(s),
             _ => Err(self),
         }
     }
 
-    pub fn peek_bool_lit(self) -> Result<Literal<bool>, Self> {
+    pub fn peek_bool_lit(self) -> Result<&'a Literal<bool>, Self> {
         match self.0 {
-            [Token::BoolLit(b), ..] => Ok(b.clone()),
+            [Token::BoolLit(b), ..] => Ok(b),
             _ => Err(self),
         }
     }
 
-    pub fn peek_int_lit(self) -> Result<Literal<IntType>, Self> {
+    pub fn peek_int_lit(self) -> Result<&'a Literal<IntType>, Self> {
         match self.0 {
-            [Token::IntLit(i), ..] => Ok(i.clone()),
+            [Token::IntLit(i), ..] => Ok(i),
             _ => Err(self),
         }
     }
 
-    pub fn peek_uint_lit(self) -> Result<Literal<UIntType>, Self> {
+    pub fn peek_uint_lit(self) -> Result<&'a Literal<UIntType>, Self> {
         match self.0 {
-            [Token::UIntLit(ui), ..] => Ok(ui.clone()),
+            [Token::UIntLit(ui), ..] => Ok(ui),
             _ => Err(self),
         }
     }
 
-    pub fn peek_u256_lit(self) -> Result<Literal<U256>, Self> {
+    pub fn peek_u256_lit(self) -> Result<&'a Literal<U256>, Self> {
         match self.0 {
-            [Token::U256Lit(u), ..] => Ok(u.clone()),
+            [Token::U256Lit(u), ..] => Ok(u),
             _ => Err(self),
         }
     }
 
-    pub fn peek_float_lit(self) -> Result<Literal<FloatType>, Self> {
+    pub fn peek_float_lit(self) -> Result<&'a Literal<FloatType>, Self> {
         match self.0 {
-            [Token::FloatLit(f), ..] => Ok(f.clone()),
+            [Token::FloatLit(f), ..] => Ok(f),
             _ => Err(self),
         }
     }
 
-    pub fn peek_identifier(self) -> Result<Identifier, Self> {
+    pub fn peek_identifier(self) -> Result<&'a Identifier, Self> {
         match self.0 {
-            [Token::Iden(id)] => Ok(id.clone()),
+            [Token::Iden(id)] => Ok(id),
             _ => Err(self),
         }
     }
 
-    pub fn peek_keyword(self) -> Result<Keyword, Self> {
+    pub fn peek_keyword(self) -> Result<&'a Keyword, Self> {
         match self.0 {
-            [Token::Keyword(k), ..] => Ok(k.clone()),
+            [Token::Keyword(k), ..] => Ok(k),
             _ => Err(self),
         }
     }
 
-    pub fn peek_doc_comment(self) -> Result<DocComment, Self> {
+    pub fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
         match self.0 {
-            [Token::DocComment(dc), ..] => Ok(dc.clone()),
+            [Token::DocComment(dc), ..] => Ok(dc),
             _ => Err(self),
         }
     }
 
-    pub fn peek_delimiter(self) -> Result<Delimiter, Self> {
+    pub fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
         match self.0 {
-            [Token::Delim(d), ..] => Ok(d.clone()),
+            [Token::Delim(d), ..] => Ok(d),
             _ => Err(self),
         }
     }
 
-    pub fn peek_punctuation(self) -> Result<Punctuation, Self> {
+    pub fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
         match self.0 {
-            [Token::Punc(p), ..] => Ok(p.clone()),
+            [Token::Punc(p), ..] => Ok(p),
             _ => Err(self),
         }
     }
 
-    pub fn peek_type_ann(self) -> Result<TypeAnnotation, Self> {
+    pub fn peek_type_ann(self) -> Result<&'a TypeAnnotation, Self> {
         match self.0 {
-            [Token::TypeAnn(ta), ..] => Ok(ta.clone()),
+            [Token::TypeAnn(ta), ..] => Ok(ta),
             _ => Err(self),
         }
     }
