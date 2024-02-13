@@ -93,6 +93,39 @@ pub enum LiteralKind {
     F64(Literal<FloatType>),
 }
 
+impl LiteralKind {
+    pub fn default_char() -> LiteralKind {
+        LiteralKind::Char(Literal::new(char::default(), Span::default()))
+    }
+
+    pub fn default_string() -> LiteralKind {
+        LiteralKind::String(Literal::new(String::default(), Span::default()))
+    }
+
+    pub fn default_bool() -> LiteralKind {
+        LiteralKind::Bool(Literal::new(bool::default(), Span::default()))
+    }
+
+    pub fn default_int() -> LiteralKind {
+        LiteralKind::I64(Literal::new(IntType::I64(i64::default()), Span::default()))
+    }
+
+    pub fn default_uint() -> LiteralKind {
+        LiteralKind::U64(Literal::new(UIntType::U64(u64::default()), Span::default()))
+    }
+
+    pub fn default_u256() -> LiteralKind {
+        LiteralKind::U256(Literal::new(U256::default(), Span::default()))
+    }
+
+    pub fn default_float() -> LiteralKind {
+        LiteralKind::F64(Literal::new(
+            FloatType::F64(f64::default()),
+            Span::default(),
+        ))
+    }
+}
+
 impl Spanned for LiteralKind {
     fn span(&self) -> Span {
         match self {

@@ -23,32 +23,31 @@ impl Parse for Expression {
     {
         let expr = if let Some(_) = parser.peek::<Literal<char>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some char literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_char()),
             )
         } else if let Some(_) = parser.peek::<Literal<String>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?
-                    .expect("expected some string literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_string()),
             )
         } else if let Some(_) = parser.peek::<Literal<bool>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some bool literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_bool()),
             )
         } else if let Some(_) = parser.peek::<Literal<IntType>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some int literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_int()),
             )
         } else if let Some(_) = parser.peek::<Literal<UIntType>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some uint literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_uint()),
             )
         } else if let Some(_) = parser.peek::<Literal<U256>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some U256 literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_u256()),
             )
         } else if let Some(_) = parser.peek::<Literal<FloatType>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?.expect("expected some float literal token, found none"),
+                LiteralKind::parse(parser)?.unwrap_or(LiteralKind::default_float()),
             )
         } else if let Some(_) = parser.peek::<Identifier>() {
             // [ArrayElements]
