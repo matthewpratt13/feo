@@ -11,7 +11,7 @@ use feo_types::{
     keyword::KeywordKind,
     literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
     punctuation::PuncKind,
-    Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
+    Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
 };
 
 use crate::{parse::Parse, parser::Parser};
@@ -23,19 +23,16 @@ impl Parse for Expression {
     {
         let expr = if let Some(_) = parser.peek::<Literal<char>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?
-                    .expect("expected some char literal token, found none"),
+                LiteralKind::parse(parser)?.expect("expected some char literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<String>>() {
             Expression::LiteralExpr(
                 LiteralKind::parse(parser)?
                     .expect("expected some string literal token, found none"),
-            )  
-        
+            )
         } else if let Some(_) = parser.peek::<Literal<bool>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?
-                    .expect("expected some bool literal token, found none"),
+                LiteralKind::parse(parser)?.expect("expected some bool literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<IntType>>() {
             Expression::LiteralExpr(
@@ -47,8 +44,7 @@ impl Parse for Expression {
             )
         } else if let Some(_) = parser.peek::<Literal<U256>>() {
             Expression::LiteralExpr(
-                LiteralKind::parse(parser)?
-                    .expect("expected some U256 literal token, found none"),
+                LiteralKind::parse(parser)?.expect("expected some U256 literal token, found none"),
             )
         } else if let Some(_) = parser.peek::<Literal<FloatType>>() {
             Expression::LiteralExpr(
@@ -117,6 +113,8 @@ impl Parse for Expression {
                 PuncKind::HashBang => todo!(), // InnerAttr
                 _ => todo!(),
             }
+        } else if let Some(_) = parser.peek::<TypeAnnotation>() {
+            todo!()
         } else {
             todo!()
         };

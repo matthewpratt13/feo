@@ -93,7 +93,6 @@ impl<'a> Lexer<'a> {
                                     &doc_comment_content,
                                     start_pos,
                                     self.pos,
-                                    None,
                                     &mut self.handler,
                                 )?;
 
@@ -116,7 +115,6 @@ impl<'a> Lexer<'a> {
                                     &comment_data,
                                     start_pos,
                                     self.pos,
-                                    None,
                                     &mut self.handler,
                                 )?;
 
@@ -148,7 +146,6 @@ impl<'a> Lexer<'a> {
                                 &comment_data,
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
@@ -177,19 +174,12 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 3).cloned() {
-                        t
-                    } else {
-                        None
-                    };
-
                     if buf == "true" || buf == "false" {
                         let bool_literal = Literal::<bool>::tokenize(
                             &self.input,
                             &buf,
                             start_pos, // global `start_pos`
                             start_pos + buf.len(),
-                            TypeAnnotation::try_from(type_ann_opt.expect("token not found")).ok(),
                             &mut self.handler,
                         )?;
 
@@ -203,7 +193,6 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos, // global `start_pos`
                             start_pos + buf.len(),
-                            None,
                             &mut self.handler,
                         )?;
 
@@ -214,7 +203,6 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos,
                             start_pos + buf.len(),
-                            None,
                             &mut self.handler,
                         )?;
 
@@ -225,7 +213,6 @@ impl<'a> Lexer<'a> {
                             &buf,
                             start_pos, // global `start_pos`
                             start_pos + buf.len(),
-                            TypeAnnotation::try_from(type_ann_opt.expect("token not found")).ok(),
                             &mut self.handler,
                         )?;
 
@@ -243,7 +230,6 @@ impl<'a> Lexer<'a> {
                                 "(",
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
@@ -256,7 +242,6 @@ impl<'a> Lexer<'a> {
                                 "[",
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
@@ -269,7 +254,6 @@ impl<'a> Lexer<'a> {
                                 "{",
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
@@ -291,7 +275,6 @@ impl<'a> Lexer<'a> {
                                 ")",
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
@@ -304,7 +287,6 @@ impl<'a> Lexer<'a> {
                                 "]",
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
@@ -317,13 +299,13 @@ impl<'a> Lexer<'a> {
                                 "}",
                                 start_pos,
                                 self.pos,
-                                None,
                                 &mut self.handler,
                             )?;
 
                             tokens.push(delimiter);
                         }
-                        _ => unreachable!(),
+
+                        _ => unreachable!(), // TODO: replace with something more meaningful
                     };
 
                     num_closed_delimiters += 1;
@@ -340,12 +322,6 @@ impl<'a> Lexer<'a> {
                     let mut string_literal_open = true; // to check for unclosed quotes
 
                     let mut buf = String::new();
-
-                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 3).cloned() {
-                        t
-                    } else {
-                        None
-                    };
 
                     while let Some(c) = self.current_char() {
                         match c {
@@ -387,10 +363,6 @@ impl<'a> Lexer<'a> {
                                     &buf,
                                     start_pos,
                                     self.pos,
-                                    TypeAnnotation::try_from(
-                                        type_ann_opt.expect("token not found"),
-                                    )
-                                    .ok(),
                                     &mut self.handler,
                                 )?;
 
@@ -415,12 +387,6 @@ impl<'a> Lexer<'a> {
 
                     let start_pos = self.pos; // start reading input after opening quote
 
-                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 3).cloned() {
-                        t
-                    } else {
-                        None
-                    };
-
                     if let Some(c) = self.current_char() {
                         match c {
                             '\\' => {
@@ -432,10 +398,6 @@ impl<'a> Lexer<'a> {
                                         "\n",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -444,10 +406,6 @@ impl<'a> Lexer<'a> {
                                         "\r",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -456,10 +414,6 @@ impl<'a> Lexer<'a> {
                                         "\t",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -468,10 +422,6 @@ impl<'a> Lexer<'a> {
                                         "\\",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -480,10 +430,6 @@ impl<'a> Lexer<'a> {
                                         "\0",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -492,10 +438,6 @@ impl<'a> Lexer<'a> {
                                         "\'",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -504,10 +446,6 @@ impl<'a> Lexer<'a> {
                                         "\"",
                                         start_pos,
                                         self.pos + 1,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?,
 
@@ -547,10 +485,6 @@ impl<'a> Lexer<'a> {
                                         &c.to_string(),
                                         start_pos,
                                         self.pos,
-                                        TypeAnnotation::try_from(
-                                            type_ann_opt.expect("token not found"),
-                                        )
-                                        .ok(),
                                         &mut self.handler,
                                     )?;
 
@@ -585,12 +519,6 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 3).cloned() {
-                        t
-                    } else {
-                        None
-                    };
-
                     let data = self.input[start_pos..self.pos].to_string();
 
                     let num_content = Arc::new(&data);
@@ -600,7 +528,6 @@ impl<'a> Lexer<'a> {
                         &num_content,
                         start_pos,
                         self.pos,
-                        TypeAnnotation::try_from(type_ann_opt.expect("token not found")).ok(),
                         &mut self.handler,
                     )?;
 
@@ -633,12 +560,6 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    let type_ann_opt = if let Some(t) = tokens.get(tokens.len() - 2).cloned() {
-                        t
-                    } else {
-                        None
-                    };
-
                     let data = self.input[start_pos..self.pos].to_string();
 
                     let num_content = Arc::new(&data);
@@ -649,7 +570,6 @@ impl<'a> Lexer<'a> {
                             &num_content,
                             start_pos,
                             self.pos,
-                            TypeAnnotation::try_from(type_ann_opt.expect("token not found")).ok(),
                             &mut self.handler,
                         )?;
 
@@ -663,7 +583,6 @@ impl<'a> Lexer<'a> {
                             &num_content,
                             start_pos,
                             self.pos,
-                            TypeAnnotation::try_from(type_ann_opt.expect("token not found")).ok(),
                             &mut self.handler,
                         )?;
 
@@ -674,7 +593,6 @@ impl<'a> Lexer<'a> {
                             &num_content,
                             start_pos,
                             self.pos,
-                            TypeAnnotation::try_from(type_ann_opt.expect("token not found")).ok(),
                             &mut self.handler,
                         )?;
 
@@ -694,7 +612,6 @@ impl<'a> Lexer<'a> {
                         &punc_content,
                         start_pos,
                         self.pos,
-                        None,
                         &mut self.handler,
                     )?;
 
@@ -735,7 +652,6 @@ impl<'a> Lexer<'a> {
                         &punc_content,
                         start_pos,
                         self.pos,
-                        None,
                         &mut self.handler,
                     )?;
 
@@ -855,7 +771,7 @@ mod tests {
 
             let hello: str = Contract::bar();
 
-            // let chars: [char; 5] = ['w', 'o', 'r', 'l', 'd'];
+            let chars: [char; 5] = ['w', 'o', 'r', 'l', 'd'];
 
             let world = str!(chars);
 
@@ -899,7 +815,7 @@ mod tests {
         pub storage {
             pub const ADDRESS: Identity = Identity::Contract(ContractId::from(U256::ZERO));
             const STR: str = "foo";
-            // const STR_ARRAY: [char; 3] = chars!(STR);
+            const STR_ARRAY: [char; 3] = chars!(STR);
         }
 
         abi Contract {
@@ -908,15 +824,14 @@ mod tests {
 
         impl Contract {
             func foo() -> Result<Foo> {
-                // let array: [u64; 4] = [1, 2, 3, 4];
+                let array: [u64; 4] = [1, 2, 3, 4];
                 let mut vec: Vec<f64> = Vec::new();
-                let minus_five: f32 = -5.0;
 
                 for num in array {
                     vec.push(num as f64);
                 }
 
-                vec.push(minus_five);
+                vec.push(-5.0);
 
                 return Ok(Foo {
                     field1: String::from("foo"),

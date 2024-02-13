@@ -7,9 +7,7 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
-    literal::{FloatType, IntType, Literal, UIntType},
-    span::{Position, Spanned},
-    Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
+    literal::{FloatType, IntType, Literal, UIntType}, span::{Position, Spanned}, Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256
 };
 
 use crate::parse::Peek;
@@ -168,6 +166,13 @@ impl<'a> Peeker<'a> {
             _ => Err(self),
         }
     }
+
+    fn peek_type_ann(self) -> Result<&'a TypeAnnotation, Self> {
+        match self.0 {
+            [Token::TypeAnn(ta), ..] => Ok(ta),
+            _ => Err(self),
+        }
+    }
 }
 
 impl Peek for Literal<char> {
@@ -309,6 +314,18 @@ impl Peek for Punctuation {
     {
         match peeker.peek_punctuation() {
             Ok(p) => Some(p.clone()),
+            Err(_) => None,
+        }
+    }
+}
+
+impl Peek for TypeAnnotation {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_type_ann() {
+            Ok(ta) => Some(ta.clone()),
             Err(_) => None,
         }
     }
