@@ -135,44 +135,44 @@ impl<'a> Peeker<'a> {
         }
     }
 
-    pub fn peek_identifier(self) -> Result<&'a Identifier, Self> {
+    pub fn peek_identifier(self) -> Result<Identifier, Self> {
         match self.0 {
-            [Token::Iden(id)] => Ok(id),
+            [Token::Iden(id)] => Ok(id.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_keyword(self) -> Result<&'a Keyword, Self> {
+    pub fn peek_keyword(self) -> Result<Keyword, Self> {
         match self.0 {
-            [Token::Keyword(k), ..] => Ok(k),
+            [Token::Keyword(k), ..] => Ok(k.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_doc_comment(self) -> Result<&'a DocComment, Self> {
+    pub fn peek_doc_comment(self) -> Result<DocComment, Self> {
         match self.0 {
-            [Token::DocComment(dc), ..] => Ok(dc),
+            [Token::DocComment(dc), ..] => Ok(dc.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_delimiter(self) -> Result<&'a Delimiter, Self> {
+    pub fn peek_delimiter(self) -> Result<Delimiter, Self> {
         match self.0 {
-            [Token::Delim(d), ..] => Ok(d),
+            [Token::Delim(d), ..] => Ok(d.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_punctuation(self) -> Result<&'a Punctuation, Self> {
+    pub fn peek_punctuation(self) -> Result<Punctuation, Self> {
         match self.0 {
-            [Token::Punc(p), ..] => Ok(p),
+            [Token::Punc(p), ..] => Ok(p.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_type_ann(self) -> Result<&'a TypeAnnotation, Self> {
+    pub fn peek_type_ann(self) -> Result<TypeAnnotation, Self> {
         match self.0 {
-            [Token::TypeAnn(ta), ..] => Ok(ta),
+            [Token::TypeAnn(ta), ..] => Ok(ta.clone()),
             _ => Err(self),
         }
     }

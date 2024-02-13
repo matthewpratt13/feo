@@ -26,18 +26,18 @@ impl Peek for Expression {
         Self: Sized,
     {
         let expr = if let Ok(c) = peeker.peek_char_lit() {
-            Expression::LiteralExpr(LiteralKind::Char(c.clone()))
+            Expression::LiteralExpr(LiteralKind::Char(c))
         } else if let Ok(s) = peeker.peek_string_lit() {
-            Expression::LiteralExpr(LiteralKind::String(s.clone()))
+            Expression::LiteralExpr(LiteralKind::String(s))
         } else if let Ok(b) = peeker.peek_bool_lit() {
-            Expression::LiteralExpr(LiteralKind::Bool(b.clone()))
+            Expression::LiteralExpr(LiteralKind::Bool(b))
         } else if let Ok(i) = peeker.peek_int_lit() {
             match i.clone().into_inner() {
                 Some(t) => match t {
                     IntType::I32(_) => Expression::LiteralExpr(LiteralKind::I32(i)),
                     IntType::I64(_) => Expression::LiteralExpr(LiteralKind::I64(i)),
                 },
-                None => todo!(),
+                None => return None,
             }
         } else if let Ok(ui) = peeker.peek_uint_lit() {
             match ui.clone().into_inner() {
@@ -47,7 +47,7 @@ impl Peek for Expression {
                     UIntType::U32(_) => Expression::LiteralExpr(LiteralKind::U32(ui)),
                     UIntType::U64(_) => Expression::LiteralExpr(LiteralKind::U64(ui)),
                 },
-                None => todo!(),
+                None => return None,
             }
         } else if let Ok(f) = peeker.peek_float_lit() {
             match f.clone().into_inner() {
@@ -55,7 +55,7 @@ impl Peek for Expression {
                     FloatType::F32(_) => Expression::LiteralExpr(LiteralKind::F32(f)),
                     FloatType::F64(_) => Expression::LiteralExpr(LiteralKind::F64(f)),
                 },
-                None => todo!(),
+                None => return None,
             }
         } else {
             todo!()
