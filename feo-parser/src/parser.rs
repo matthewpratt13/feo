@@ -33,12 +33,8 @@ impl Parser {
         &self.stream
     }
 
-    pub fn current_token(&self) -> Token {
-        self.stream
-            .tokens()
-            .get(self.pos)
-            .cloned()
-            .expect("token not found")
+    pub fn current_token(&self) -> Option<Token> {
+        self.stream.tokens().get(self.pos).cloned()
     }
 
     pub fn pos(&self) -> usize {

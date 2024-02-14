@@ -10,7 +10,18 @@ use feo_types::{
     Delimiter, Punctuation,
 };
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
+
+// impl Peek for StructExprField {
+//     fn peek(peeker: Peeker<'_>) -> Option<Self>
+//     where
+//         Self: Sized {
+//         todo!()
+//     }
+// }
 
 impl Parse for StructExprField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
@@ -31,7 +42,7 @@ impl Parse for StructExprField {
             if let Some(iden) = parser.peek() {
                 parser.advance();
 
-                let colon_opt = parser.take::<Punctuation>();
+                let colon_opt = parser.peek();
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
@@ -51,10 +62,10 @@ impl Parse for StructExprField {
                         Err(parser.log_error(ParserErrorKind::TokenNotFound))
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    Err(parser.log_error(ParserErrorKind::TokenNotFound))
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                Err(parser.log_error(ParserErrorKind::TokenNotFound))
             }
         } else {
             Err(parser.log_error(ParserErrorKind::TokenNotFound))
