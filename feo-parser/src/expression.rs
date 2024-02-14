@@ -2,10 +2,7 @@
 
 use feo_ast::expression::Expression;
 use feo_types::{
-    delimiter::{DelimKind, DelimOrientation},
-    keyword::KeywordKind,
-    literal::{FloatType, IntType, LiteralKind, UIntType},
-    punctuation::PuncKind,
+    delimiter::{DelimKind, DelimOrientation}, keyword::KeywordKind, literal::{FloatType, IntType, LiteralKind, UIntType}, punctuation::PuncKind, Delimiter, Identifier, Keyword, Literal, Punctuation, U256
 };
 
 use crate::{parse::Peek, parser::Peeker};
@@ -19,13 +16,13 @@ impl Peek for Expression {
     where
         Self: Sized,
     {
-        let expr = if let Ok(c) = peeker.peek_char_lit() {
+        let expr = if let Some(c) = Literal::<char>::peek(peeker) {
             Expression::LiteralExpr(LiteralKind::Char(c))
-        } else if let Ok(s) = peeker.peek_string_lit() {
+        } else if let Some(s) = Literal::<String>::peek(peeker) {
             Expression::LiteralExpr(LiteralKind::String(s))
-        } else if let Ok(b) = peeker.peek_bool_lit() {
+        } else if let Some(b) = Literal::<bool>::peek(peeker) {
             Expression::LiteralExpr(LiteralKind::Bool(b))
-        } else if let Ok(i) = peeker.peek_int_lit() {
+        } else if let Some(i) = Literal::<IntType>::peek(peeker) {
             // TODO: peek the next token to verify what `Expression` should be returned
             // TODO: just because this is a literal, doesn't mean that it's a `LitExpr`
             // TODO: e.g., it could be the first token in an `ArithmeticOrLogicalExpr`
@@ -37,7 +34,7 @@ impl Peek for Expression {
                 },
                 None => return None,
             }
-        } else if let Ok(ui) = peeker.peek_uint_lit() {
+        } else if let Some(ui) = Literal::<UIntType>::peek(peeker) {
             match ui.clone().into_inner() {
                 Some(t) => match t {
                     UIntType::U8(_) => Expression::LiteralExpr(LiteralKind::U8(ui)),
@@ -47,9 +44,9 @@ impl Peek for Expression {
                 },
                 None => return None,
             }
-        } else if let Ok(u) = peeker.peek_u256_lit() {
+        } else if let Some(u) = Literal::<U256>::peek(peeker) {
             Expression::LiteralExpr(LiteralKind::U256(u))
-        } else if let Ok(f) = peeker.peek_float_lit() {
+        } else if let Some(f) = Literal::<FloatType>::peek(peeker) {
             match f.clone().into_inner() {
                 Some(t) => match t {
                     FloatType::F32(_) => Expression::LiteralExpr(LiteralKind::F32(f)),
@@ -58,8 +55,8 @@ impl Peek for Expression {
                 None => return None,
             }
         } else {
-            if let Ok(_) = peeker.peek_identifier() {}
-            if let Ok(k) = peeker.peek_keyword() {
+            if let Some(_) = Identifier::peek(peeker) {}
+            if let Some(k) = Keyword::peek(peeker) {
                 match k.keyword_kind {
                     KeywordKind::KwBreak => todo!(),    // BreakExpr
                     KeywordKind::KwContinue => todo!(), // ContinueExpr
@@ -75,7 +72,7 @@ impl Peek for Expression {
                     KeywordKind::KwReturn => todo!(), // ReturnExpr
                     _ => return None,
                 }
-            } else if let Ok(d) = peeker.peek_delimiter() {
+            } else if let Some(d) = Delimiter::peek(peeker) {
                 match d.delim {
                     (DelimKind::Parenthesis, DelimOrientation::Open) => {
                         // ParenthesizedExpr
@@ -88,7 +85,7 @@ impl Peek for Expression {
 
                     _ => return None,
                 }
-            } else if let Ok(p) = peeker.peek_punctuation() {
+            } else if let Some(p) = Punctuation::peek(peeker) {
                 match p.punc_kind {
                     PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
                     PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr

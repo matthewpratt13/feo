@@ -1,5 +1,5 @@
 use feo_ast::path::{PathIdenSegmentKind, SimplePathSegmentKind};
-use feo_types::keyword::KeywordKind;
+use feo_types::{keyword::KeywordKind, Identifier, Keyword};
 
 use crate::{parse::Peek, parser::Peeker};
 
@@ -8,9 +8,9 @@ impl Peek for SimplePathSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Ok(id) = peeker.peek_identifier() {
+        let segment_kind = if let Some(id) = Identifier::peek(peeker) {
             SimplePathSegmentKind::Iden(id)
-        } else if let Ok(k) = peeker.peek_keyword() {
+        } else if let Some(k) = Keyword::peek(peeker) {
             match k.keyword_kind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
@@ -30,9 +30,9 @@ impl Peek for PathIdenSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Ok(id) = peeker.peek_identifier() {
+        let segment_kind = if let Some(id) = Identifier::peek(peeker) {
             PathIdenSegmentKind::Iden(id)
-        } else if let Ok(k) = peeker.peek_keyword() {
+        } else if let Some(k) = Keyword::peek(peeker) {
             match k.keyword_kind {
                 KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
