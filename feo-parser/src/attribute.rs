@@ -1,5 +1,5 @@
 use feo_ast::{expression::AttributeKind, path::SimplePathSegmentKind};
-use feo_types::{keyword::KeywordKind, Keyword};
+use feo_types::keyword::KeywordKind;
 
 use crate::{parse::Peek, parser::Peeker};
 
@@ -8,7 +8,7 @@ impl Peek for AttributeKind {
     where
         Self: Sized,
     {
-        let attr_kind = if let Some(k) = Keyword::peek(peeker) {
+        let attr_kind = if let Ok(k) = peeker.peek_keyword() {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),

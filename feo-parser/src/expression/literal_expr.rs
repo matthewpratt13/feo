@@ -1,7 +1,4 @@
-use feo_types::{
-    literal::{FloatType, IntType, LiteralKind, UIntType},
-    Literal, U256,
-};
+use feo_types::literal::{FloatType, IntType, LiteralKind, UIntType};
 
 use crate::{parse::Peek, parser::Peeker};
 
@@ -10,13 +7,13 @@ impl Peek for LiteralKind {
     where
         Self: Sized,
     {
-        let literal_kind = if let Some(c) = Literal::<char>::peek(peeker) {
+        let literal_kind = if let Ok(c) = peeker.peek_char_lit() {
             LiteralKind::Char(c)
-        } else if let Some(s) = Literal::<String>::peek(peeker) {
+        } else if let Ok(s) = peeker.peek_string_lit() {
             LiteralKind::String(s)
-        } else if let Some(b) = Literal::<bool>::peek(peeker) {
+        } else if let Ok(b) = peeker.peek_bool_lit() {
             LiteralKind::Bool(b)
-        } else if let Some(i) = Literal::<IntType>::peek(peeker) {
+        } else if let Ok(i) = peeker.peek_int_lit() {
             match i.clone().into_inner() {
                 Some(t) => match t {
                     IntType::I32(_) => LiteralKind::I32(i),
@@ -24,7 +21,7 @@ impl Peek for LiteralKind {
                 },
                 None => return None,
             }
-        } else if let Some(ui) = Literal::<UIntType>::peek(peeker) {
+        } else if let Ok(ui) = peeker.peek_uint_lit() {
             match ui.clone().into_inner() {
                 Some(t) => match t {
                     UIntType::U8(_) => LiteralKind::U8(ui),
@@ -34,9 +31,9 @@ impl Peek for LiteralKind {
                 },
                 None => return None,
             }
-        } else if let Some(u) = Literal::<U256>::peek(peeker) {
+        } else if let Ok(u) = peeker.peek_u256_lit() {
             LiteralKind::U256(u)
-        } else if let Some(f) = Literal::<FloatType>::peek(peeker) {
+        } else if let Ok(f) = peeker.peek_float_lit() {
             match f.clone().into_inner() {
                 Some(t) => match t {
                     FloatType::F32(_) => LiteralKind::F32(f),

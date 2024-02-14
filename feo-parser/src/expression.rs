@@ -6,7 +6,6 @@ use feo_types::{
     keyword::KeywordKind,
     literal::LiteralKind,
     punctuation::PuncKind,
-    Delimiter, Identifier, Keyword, Punctuation, TypeAnnotation,
 };
 
 use crate::{parse::Peek, parser::Peeker};
@@ -25,7 +24,7 @@ impl Peek for Expression {
             // TODO: just because this is a `LiteralKind`, doesn't mean that it's a `LitExpr`
             // TODO: e.g., it could be the LHS / RHS in an `ArithmeticOrLogicalExpr`
             Expression::LiteralExpr(l)
-        } else if let Some(_) = Identifier::peek(peeker) {
+        } else if let Ok(_) = peeker.peek_identifier() {
             // [ArrayElements]
             // ArithmeticOrLogicalExpr
             // AssignmentExpr
@@ -43,7 +42,7 @@ impl Peek for Expression {
             // RangeInclusiveExpr
             // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
             todo!()
-        } else if let Some(k) = Keyword::peek(peeker) {
+        } else if let Ok(k) = peeker.peek_keyword() {
             match k.keyword_kind {
                 KeywordKind::KwBreak => todo!(),    // BreakExpr
                 KeywordKind::KwContinue => todo!(), // ContinueExpr
@@ -59,7 +58,7 @@ impl Peek for Expression {
                 KeywordKind::KwReturn => todo!(), // ReturnExpr
                 _ => return None,
             }
-        } else if let Some(d) = Delimiter::peek(peeker) {
+        } else if let Ok(d) = peeker.peek_delimiter() {
             match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     // ParenthesizedExpr
@@ -72,7 +71,7 @@ impl Peek for Expression {
 
                 _ => return None,
             }
-        } else if let Some(p) = Punctuation::peek(peeker) {
+        } else if let Ok(p) = peeker.peek_punctuation() {
             match p.punc_kind {
                 PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
                 PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr
@@ -86,7 +85,7 @@ impl Peek for Expression {
                 PuncKind::HashBang => todo!(), // InnerAttr
                 _ => return None,
             }
-        } else if let Some(_) = TypeAnnotation::peek(peeker) {
+        } else if let Ok(_) = peeker.peek_type_ann() {
             todo!()
         } else {
             return None;
