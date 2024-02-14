@@ -72,14 +72,13 @@ impl Parser {
 #[derive(Copy, Clone)]
 pub struct Peeker<'a> {
     tokens: &'a [Token],
+    pos: usize,
 }
 
 impl<'a> Peeker<'a> {
     // peek for a `T` in `&[Token]'; return `T` if it exists and the remaining `&[Token]`
-    fn with<T: Peek>(tokens: &'a mut [Token], pos: usize) -> Option<(T, &'a [Token])> {
-        let peeker = Peeker {
-            tokens: &tokens[pos..],
-        };
+    fn with<T: Peek>(tokens: &'a [Token], pos: usize) -> Option<(T, &'a [Token])> {
+        let peeker = Peeker { tokens, pos };
         let value = T::peek(peeker)?;
 
         Some((value, peeker.tokens))
