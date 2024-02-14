@@ -86,51 +86,51 @@ impl<'a> Peeker<'a> {
     }
 
     // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
-    pub fn peek_char_lit(self) -> Result<&'a Literal<char>, Self> {
+    pub fn peek_char_lit(self) -> Result<Literal<char>, Self> {
         match self.0 {
-            [Token::CharLit(c), ..] => Ok(c),
+            [Token::CharLit(c), ..] => Ok(c.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_string_lit(self) -> Result<&'a Literal<String>, Self> {
+    pub fn peek_string_lit(self) -> Result<Literal<String>, Self> {
         match self.0 {
-            [Token::StringLit(s), ..] => Ok(s),
+            [Token::StringLit(s), ..] => Ok(s.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_bool_lit(self) -> Result<&'a Literal<bool>, Self> {
+    pub fn peek_bool_lit(self) -> Result<Literal<bool>, Self> {
         match self.0 {
-            [Token::BoolLit(b), ..] => Ok(b),
+            [Token::BoolLit(b), ..] => Ok(b.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_int_lit(self) -> Result<&'a Literal<IntType>, Self> {
+    pub fn peek_int_lit(self) -> Result<Literal<IntType>, Self> {
         match self.0 {
-            [Token::IntLit(i), ..] => Ok(i),
+            [Token::IntLit(i), ..] => Ok(i.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_uint_lit(self) -> Result<&'a Literal<UIntType>, Self> {
+    pub fn peek_uint_lit(self) -> Result<Literal<UIntType>, Self> {
         match self.0 {
-            [Token::UIntLit(ui), ..] => Ok(ui),
+            [Token::UIntLit(ui), ..] => Ok(ui.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_u256_lit(self) -> Result<&'a Literal<U256>, Self> {
+    pub fn peek_u256_lit(self) -> Result<Literal<U256>, Self> {
         match self.0 {
-            [Token::U256Lit(u), ..] => Ok(u),
+            [Token::U256Lit(u), ..] => Ok(u.clone()),
             _ => Err(self),
         }
     }
 
-    pub fn peek_float_lit(self) -> Result<&'a Literal<FloatType>, Self> {
+    pub fn peek_float_lit(self) -> Result<Literal<FloatType>, Self> {
         match self.0 {
-            [Token::FloatLit(f), ..] => Ok(f),
+            [Token::FloatLit(f), ..] => Ok(f.clone()),
             _ => Err(self),
         }
     }

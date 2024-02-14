@@ -8,34 +8,36 @@ impl Peek for LiteralKind {
         Self: Sized,
     {
         let lit = if let Ok(c) = peeker.peek_char_lit() {
-            LiteralKind::Char(c.clone())
+            LiteralKind::Char(c)
         } else if let Ok(s) = peeker.peek_string_lit() {
-            LiteralKind::String(s.clone())
+            LiteralKind::String(s)
         } else if let Ok(b) = peeker.peek_bool_lit() {
-            LiteralKind::Bool(b.clone())
+            LiteralKind::Bool(b)
         } else if let Ok(i) = peeker.peek_int_lit() {
-            match i.into_inner() {
+            match i.clone().into_inner() {
                 Some(t) => match t {
-                    IntType::I32(_) => LiteralKind::I32(i.clone()),
-                    IntType::I64(_) => LiteralKind::I64(i.clone()),
+                    IntType::I32(_) => LiteralKind::I32(i),
+                    IntType::I64(_) => LiteralKind::I64(i),
                 },
                 None => return None,
             }
         } else if let Ok(ui) = peeker.peek_uint_lit() {
-            match ui.into_inner() {
+            match ui.clone().into_inner() {
                 Some(t) => match t {
-                    UIntType::U8(_) => LiteralKind::U8(ui.clone()),
-                    UIntType::U16(_) => LiteralKind::U16(ui.clone()),
-                    UIntType::U32(_) => LiteralKind::U32(ui.clone()),
-                    UIntType::U64(_) => LiteralKind::U64(ui.clone()),
+                    UIntType::U8(_) => LiteralKind::U8(ui),
+                    UIntType::U16(_) => LiteralKind::U16(ui),
+                    UIntType::U32(_) => LiteralKind::U32(ui),
+                    UIntType::U64(_) => LiteralKind::U64(ui),
                 },
                 None => return None,
             }
+        } else if let Ok(u) = peeker.peek_u256_lit() {
+            LiteralKind::U256(u)
         } else if let Ok(f) = peeker.peek_float_lit() {
-            match f.into_inner() {
+            match f.clone().into_inner() {
                 Some(t) => match t {
-                    FloatType::F32(_) => LiteralKind::F32(f.clone()),
-                    FloatType::F64(_) => LiteralKind::F64(f.clone()),
+                    FloatType::F32(_) => LiteralKind::F32(f),
+                    FloatType::F64(_) => LiteralKind::F64(f),
                 },
                 None => return None,
             }

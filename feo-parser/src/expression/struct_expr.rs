@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{Expression, OuterAttr, StructExpr, StructExprField, StructExprFields},
+    expression::{OuterAttr, StructExpr, StructExprField, StructExprFields},
     path::PathInExpr,
 };
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
@@ -7,7 +7,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
     utils::Comma,
-    Delimiter, Identifier, Punctuation,
+    Delimiter, Punctuation,
 };
 
 use crate::{parse::Parse, parser::Parser};
