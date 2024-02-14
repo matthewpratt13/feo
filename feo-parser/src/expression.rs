@@ -20,6 +20,14 @@ use crate::{
     parser::{Parser, Peeker},
 };
 
+impl Peek for Expression {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized {
+        todo!()
+    }
+}
+
 
 // impl Parse for Expression {
 //     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>

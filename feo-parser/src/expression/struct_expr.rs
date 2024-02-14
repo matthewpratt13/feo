@@ -19,15 +19,16 @@ impl Parse for StructExprField {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        if let Some(attr) = OuterAttr::parse(parser)? {
+        if let Some(attr) = parser.peek() {
             attributes.push(attr);
+            parser.advance();
 
-            while let Some(attr) = OuterAttr::parse(parser)? {
+            while let Some(attr) = parser.peek() {
                 attributes.push(attr);
                 parser.advance();
             }
 
-            if let Some(iden) = parser.peek::<Identifier>() {
+            if let Some(iden) = parser.peek() {
                 parser.advance();
 
                 let colon_opt = parser.take::<Punctuation>();
@@ -39,7 +40,9 @@ impl Parse for StructExprField {
                 {
                     parser.advance();
 
-                    if let Some(expr) = Expression::parse(parser)? {
+                    if let Some(expr) = parser.peek() {
+                        parser.advance();
+
                         let field =
                             StructExprField(attributes, (iden, colon_opt.unwrap(), Box::new(expr)));
 

@@ -10,7 +10,10 @@ use feo_types::{
     Delimiter, Keyword, Punctuation,
 };
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
 
 impl Parse for AttributeKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
@@ -43,13 +46,22 @@ impl Parse for AttributeKind {
     }
 }
 
+impl Peek for OuterAttr {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
 impl Parse for OuterAttr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         let hash_sign_res = parser.peek::<Punctuation>();
-        
+
         // peek to see if the next token is a `Some(Punctuation)`
         if let Some(Punctuation {
             punc_kind: PuncKind::Hash,
@@ -106,7 +118,7 @@ impl Parse for OuterAttr {
             }
         } else {
             // if the first token is not a `HashSign`, throw an error
-           Err(parser.log_error(ParserErrorKind::UnexpectedToken))
+            Err(parser.log_error(ParserErrorKind::UnexpectedToken))
         }
     }
 }
