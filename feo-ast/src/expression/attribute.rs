@@ -3,7 +3,7 @@ use feo_types::{
     utils::{Bracket, HashBang, HashSign, KwAbstract, KwExport, KwExtern, KwUnsafe},
 };
 
-use crate::path::SimplePath;
+use crate::path::SimplePathSegmentKind;
 
 #[derive(Clone)]
 pub enum AttributeKind {
@@ -12,7 +12,7 @@ pub enum AttributeKind {
     KwExtern(KwExtern),
     KwUnsafe(KwUnsafe),
 
-    Path(SimplePath),
+    Path(SimplePathSegmentKind),
 }
 
 #[derive(Clone)]

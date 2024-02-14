@@ -131,16 +131,16 @@ impl<'a> Peeker<'a> {
         }
     }
 
-    pub fn peek_identifier(self) -> Result<&'a Identifier, Self> {
+    pub fn peek_identifier(self) -> Result<Identifier, Self> {
         match self.0 {
             [Token::Iden(id)] => Ok(id),
             _ => Err(self),
         }
     }
 
-    pub fn peek_keyword(self) -> Result<&'a Keyword, Self> {
+    pub fn peek_keyword(self) -> Result<Keyword, Self> {
         match self.0 {
-            [Token::Keyword(k), ..] => Ok(k),
+            [Token::Keyword(k), ..] => Ok(k.clone()),
             _ => Err(self),
         }
     }

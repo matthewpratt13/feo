@@ -7,7 +7,32 @@ use feo_types::{
     keyword::KeywordKind, punctuation::PuncKind, utils::DblColon, Identifier, Keyword, Punctuation,
 };
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
+
+impl Peek for SimplePathSegmentKind {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        let segment_kind = if let Ok(k) = peeker.peek_keyword() {
+            match k.clone().keyword_kind {
+                KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
+                KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
+                KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
+                _ => return None,
+            }
+        } else if let Ok(i) = peeker.peek_identifier() {
+            SimplePathSegmentKind::Iden(i)
+        } else {
+            return None;
+        };
+
+        Some(segment_kind)
+    }
+}
 
 impl Parse for PathIdenSegmentKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
@@ -46,7 +71,7 @@ impl Parse for PathInExpr {
         Self: Sized,
     {
         // `Vec` that will hold the path segments (i.e., `DblColon` + `PathExprSegment`)
-        // (note that `DblColon` is a type alias for `Punctuation` 
+        // (note that `DblColon` is a type alias for `Punctuation`
         // and does not necessarily have `PuncKind::DblColon`)
         let mut subsequent_segments: Vec<(DblColon, PathExprSegment)> = Vec::new();
 
@@ -57,7 +82,7 @@ impl Parse for PathInExpr {
             // this will be mutated in the `while` loop below
             let mut next_dbl_colon_opt = parser.peek::<Punctuation>();
 
-            // check to see if the first element of each tuple in `subsequent_segments` 
+            // check to see if the first element of each tuple in `subsequent_segments`
             // is a `Punctuation` with `PuncKind::DblColon`
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -74,7 +99,8 @@ impl Parse for PathInExpr {
                 } else {
                     // if the token after the current `DblColon` is not `Some(PathExprSegment)`,
                     // the `DblColon` is out of place and should throw an error
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken))               }
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                }
             }
 
             // consume the final `PathExprSegment` and advance the `Parser`
