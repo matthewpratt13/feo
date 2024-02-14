@@ -48,12 +48,12 @@ impl Parser {
 
     // peek at the next `Token` and return it if it exists (without advancing)
     pub fn peek<T: Peek>(&mut self) -> Option<T> {
-        Peeker::with(&self.stream().tokens()).map(|(v, _)| v)
+        Peeker::with(self.stream().tokens().as_mut_slice(), self.pos).map(|(v, _)| v)
     }
 
     // peek at the next `Token`, advance the `Parser` and return the peeked `Token` if it exists
     pub fn take<T: Peek>(&mut self) -> Option<T> {
-        let (value, _) = Peeker::with(&self.stream().tokens())?;
+        let (value, _) = Peeker::with(self.stream().tokens().as_mut_slice(), self.pos)?;
         self.advance();
         Some(value)
     }
@@ -70,104 +70,108 @@ impl Parser {
 
 // type that allows for peeking at the next `Token` in a `&[Token]` without advancing
 #[derive(Copy, Clone)]
-pub struct Peeker<'a>(&'a [Token]);
+pub struct Peeker<'a> {
+    tokens: &'a [Token],
+}
 
 impl<'a> Peeker<'a> {
     // peek for a `T` in `&[Token]'; return `T` if it exists and the remaining `&[Token]`
-    fn with<T: Peek>(tokens: &'a [Token]) -> Option<(T, &'a [Token])> {
-        let peeker = Peeker(tokens);
+    fn with<T: Peek>(tokens: &'a mut [Token], pos: usize) -> Option<(T, &'a [Token])> {
+        let peeker = Peeker {
+            tokens: &tokens[pos..],
+        };
         let value = T::peek(peeker)?;
 
-        Some((value, tokens))
+        Some((value, peeker.tokens))
     }
 
     // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
     pub fn peek_char_lit(self) -> Result<Literal<char>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::CharLit(c), ..] => Ok(c.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_string_lit(self) -> Result<Literal<String>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::StringLit(s), ..] => Ok(s.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_bool_lit(self) -> Result<Literal<bool>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::BoolLit(b), ..] => Ok(b.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_int_lit(self) -> Result<Literal<IntType>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::IntLit(i), ..] => Ok(i.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_uint_lit(self) -> Result<Literal<UIntType>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::UIntLit(ui), ..] => Ok(ui.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_u256_lit(self) -> Result<Literal<U256>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::U256Lit(u), ..] => Ok(u.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_float_lit(self) -> Result<Literal<FloatType>, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::FloatLit(f), ..] => Ok(f.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_identifier(self) -> Result<Identifier, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::Iden(id)] => Ok(id.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_keyword(self) -> Result<Keyword, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::Keyword(k), ..] => Ok(k.clone()),
             _ => Err(self),
         }
     }
 
     // pub fn peek_doc_comment(self) -> Result<DocComment, Self> {
-    //     match self.0 {
+    //     match self.tokens {
     //         [Token::DocComment(dc), ..] => Ok(dc.clone()),
     //         _ => Err(self),
     //     }
     // }
 
     pub fn peek_delimiter(self) -> Result<Delimiter, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::Delim(d), ..] => Ok(d.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_punctuation(self) -> Result<Punctuation, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::Punc(p), ..] => Ok(p.clone()),
             _ => Err(self),
         }
     }
 
     pub fn peek_type_ann(self) -> Result<TypeAnnotation, Self> {
-        match self.0 {
+        match self.tokens {
             [Token::TypeAnn(ta), ..] => Ok(ta.clone()),
             _ => Err(self),
         }
