@@ -133,7 +133,7 @@ impl<'a> Peeker<'a> {
 
     pub fn peek_identifier(self) -> Result<Identifier, Self> {
         match self.0 {
-            [Token::Iden(id)] => Ok(id),
+            [Token::Iden(id)] => Ok(id.clone()),
             _ => Err(self),
         }
     }
