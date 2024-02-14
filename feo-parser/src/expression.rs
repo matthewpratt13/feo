@@ -1,7 +1,12 @@
 #![allow(dead_code)]
 
 use feo_ast::expression::Expression;
-use feo_types::literal::{FloatType, IntType, LiteralKind, UIntType};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
+    literal::{FloatType, IntType, LiteralKind, UIntType},
+    punctuation::PuncKind,
+};
 
 use crate::{parse::Peek, parser::Peeker};
 
@@ -21,7 +26,7 @@ impl Peek for Expression {
         } else if let Ok(b) = peeker.peek_bool_lit() {
             Expression::LiteralExpr(LiteralKind::Bool(b))
         } else if let Ok(i) = peeker.peek_int_lit() {
-            // TODO: peek the next token to verify what `Expression` should be returned 
+            // TODO: peek the next token to verify what `Expression` should be returned
             // TODO: just because this is a literal, doesn't mean that it's a `LitExpr`
             // TODO: e.g., it could be the first token in an `ArithmeticOrLogicalExpr`
             // TODO: ditto for the other numeric literals below
@@ -53,7 +58,55 @@ impl Peek for Expression {
                 None => return None,
             }
         } else {
-            todo!()
+            if let Ok(_) = peeker.peek_identifier() {}
+            if let Ok(k) = peeker.peek_keyword() {
+                match k.keyword_kind {
+                    KeywordKind::KwBreak => todo!(),    // BreakExpr
+                    KeywordKind::KwContinue => todo!(), // ContinueExpr
+                    // [PathIdenSegmentKind] (PathInExpr -> Struct | TupleStruct | UnitStruct)
+                    KeywordKind::KwCrate
+                    | KeywordKind::KwSelf
+                    | KeywordKind::KwSelfType
+                    | KeywordKind::KwSuper => todo!(),
+                    KeywordKind::KwIf => todo!(), // IfExpr
+                    // [IterationExprKind] InfiniteLoopExpr | PredicateLoopExpr | IterLoopExpr
+                    KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => todo!(),
+                    KeywordKind::KwMatch => todo!(),  // MatchExpr
+                    KeywordKind::KwReturn => todo!(), // ReturnExpr
+                    _ => return None,
+                }
+            } else if let Ok(d) = peeker.peek_delimiter() {
+                match d.delim {
+                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                        // ParenthesizedExpr
+                        // TupleExpr
+                        todo!()
+                    }
+                    (DelimKind::Bracket, DelimOrientation::Open) => todo!(), // ArrayExpr
+
+                    (DelimKind::Brace, DelimOrientation::Open) => todo!(), // BlockExpr
+
+                    _ => return None,
+                }
+            } else if let Ok(p) = peeker.peek_punctuation() {
+                match p.punc_kind {
+                    PuncKind::DblDot => todo!(),       // RangeFullExpr | RangeToExpr
+                    PuncKind::DotDotEquals => todo!(), // RangeToInclusiveExpr
+                    // [NegationOperatorKind] NegationExpr
+                    PuncKind::Bang | PuncKind::Minus => todo!(),
+                    PuncKind::Hash => todo!(),      // OuterAttr
+                    PuncKind::Ampersand => todo!(), // ReferenceExpr
+                    PuncKind::Asterisk => todo!(),  // DereferenceExpr
+                    // [ClosureParamsOpt] ClosureWithBlock | ClosureWithoutBlock
+                    PuncKind::Pipe | PuncKind::DblPipe => todo!(),
+                    PuncKind::HashBang => todo!(), // InnerAttr
+                    _ => return None,
+                }
+            } else if let Ok(_) = peeker.peek_type_ann() {
+                todo!()
+            } else {
+                return None;
+            }
         };
 
         Some(expr)

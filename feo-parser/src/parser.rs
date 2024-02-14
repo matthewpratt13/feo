@@ -9,7 +9,7 @@ use feo_error::{
 use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     span::{Position, Spanned},
-    Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
+    Delimiter, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
 };
 
 use crate::parse::Peek;
@@ -145,12 +145,12 @@ impl<'a> Peeker<'a> {
         }
     }
 
-    pub fn peek_doc_comment(self) -> Result<DocComment, Self> {
-        match self.0 {
-            [Token::DocComment(dc), ..] => Ok(dc.clone()),
-            _ => Err(self),
-        }
-    }
+    // pub fn peek_doc_comment(self) -> Result<DocComment, Self> {
+    //     match self.0 {
+    //         [Token::DocComment(dc), ..] => Ok(dc.clone()),
+    //         _ => Err(self),
+    //     }
+    // }
 
     pub fn peek_delimiter(self) -> Result<Delimiter, Self> {
         match self.0 {
@@ -282,17 +282,17 @@ impl Peek for Keyword {
     }
 }
 
-impl Peek for DocComment {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
-    where
-        Self: Sized,
-    {
-        match peeker.peek_doc_comment() {
-            Ok(d) => Some(d.clone()),
-            Err(_) => None,
-        }
-    }
-}
+// impl Peek for DocComment {
+//     fn peek(peeker: Peeker<'_>) -> Option<Self>
+//     where
+//         Self: Sized,
+//     {
+//         match peeker.peek_doc_comment() {
+//             Ok(d) => Some(d.clone()),
+//             Err(_) => None,
+//         }
+//     }
+// }
 
 impl Peek for Delimiter {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
