@@ -1,7 +1,29 @@
-use feo_ast::path::PathIdenSegmentKind;
+use feo_ast::path::{PathIdenSegmentKind, SimplePathSegmentKind};
 use feo_types::keyword::KeywordKind;
 
 use crate::{parse::Peek, parser::Peeker};
+
+impl Peek for SimplePathSegmentKind {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        let segment_kind = if let Ok(id) = peeker.peek_identifier() {
+            SimplePathSegmentKind::Iden(id)
+        } else if let Ok(k) = peeker.peek_keyword() {
+            match k.keyword_kind {
+                KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
+                KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
+                KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
+                _ => return None,
+            }
+        } else {
+            return None;
+        };
+
+        Some(segment_kind)
+    }
+}
 
 impl Peek for PathIdenSegmentKind {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
