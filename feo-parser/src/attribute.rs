@@ -11,8 +11,12 @@ impl Peek for AttributeKind {
         let attr_kind = if let Ok(k) = peeker.peek_keyword() {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
+                KeywordKind::KwContract => AttributeKind::KwContract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),
                 KeywordKind::KwExtern => AttributeKind::KwExtern(k),
+                KeywordKind::KwPayable => AttributeKind::KwPayable(k),
+                KeywordKind::KwStorage => AttributeKind::KwStorage(k),
+                KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
                 _ => return None,
             }

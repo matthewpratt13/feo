@@ -41,7 +41,7 @@ pub use self::{
     iteration_expr::IterLoopExpr,
     operator_expr::{
         ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
-        DerefOperator, LazyBoolOperatorKind, NegationOperatorKind, UnwrapOperandKind,
+        DerefOperator, LazyBoolOperatorKind, NegationOperatorKind, RefOperator, UnwrapOperandKind,
     },
     struct_expr::{StructExpr, StructExprField, StructExprFields, StructExprKind},
 };

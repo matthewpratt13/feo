@@ -1,6 +1,9 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Bracket, HashBang, HashSign, KwAbstract, KwExport, KwExtern, KwUnsafe},
+    utils::{
+        Bracket, HashBang, HashSign, KwAbstract, KwContract, KwExport, KwExtern, KwPayable,
+        KwStorage, KwTopic, KwUnsafe,
+    },
 };
 
 use crate::path::SimplePathSegmentKind;
@@ -8,8 +11,12 @@ use crate::path::SimplePathSegmentKind;
 #[derive(Clone)]
 pub enum AttributeKind {
     KwAbstract(KwAbstract),
+    KwContract(KwContract),
     KwExport(KwExport),
     KwExtern(KwExtern),
+    KwPayable(KwPayable),
+    KwStorage(KwStorage),
+    KwTopic(KwTopic),
     KwUnsafe(KwUnsafe),
 
     Path(SimplePathSegmentKind),

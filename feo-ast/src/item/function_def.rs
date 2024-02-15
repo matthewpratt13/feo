@@ -1,11 +1,11 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Comma, KwFunc, KwMut, KwRef, KwSelf, Parenthesis, Semicolon, ThinArrow},
+    utils::{Colon, Comma, KwFunc, KwSelf, Parenthesis, Semicolon, ThinArrow},
     Identifier,
 };
 
 use crate::{
-    expression::{ExprWithBlock, OuterAttr},
+    expression::{ExprWithBlock, OuterAttr, RefOperator},
     pattern::Pattern,
     ty::Type,
 };
@@ -120,8 +120,7 @@ pub struct MethodParam {
 
 #[derive(Clone)]
 pub struct SelfParam {
-    kw_ref_opt: Option<KwRef>,
-    kw_mut_opt: Option<KwMut>,
+    ref_operator: RefOperator,
     kw_self: KwSelf,
     type_annotation_opt: Option<(Colon, Box<Type>)>,
 }
