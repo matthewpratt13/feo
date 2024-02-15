@@ -147,9 +147,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 
 #[derive(Clone)]
 pub struct AssignmentExpr {
-    assignee: Box<Expression>,
+    assignee: Box<Operable>,
     operator: AssignOperator,
-    new_value: Box<Expression>,
+    new_value: Box<Operable>,
 }
 
 impl Spanned for AssignmentExpr {
@@ -163,9 +163,9 @@ impl Spanned for AssignmentExpr {
 
 #[derive(Clone)]
 pub struct CompoundAssignmentExpr {
-    assignee: Box<Assignable>,
+    assignee: Box<Operable>,
     operator: CompoundAssignOperatorKind,
-    new_value: Box<Expression>,
+    new_value: Box<Operable>,
 }
 
 impl Spanned for CompoundAssignmentExpr {
@@ -179,9 +179,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Clone)]
 pub struct ComparisonExpr {
-    lhs: Box<Expression>,
+    lhs: Box<Operable>,
     operator: ComparisonOperatorKind,
-    rhs: Box<Expression>,
+    rhs: Box<Operable>,
 }
 
 impl Spanned for ComparisonExpr {
@@ -227,7 +227,7 @@ impl Spanned for LazyBoolExpr {
 #[derive(Clone)]
 pub struct NegationExpr {
     operator: NegationOperatorKind,
-    operand: Box<Expression>,
+    operand: Box<Operable>,
 }
 
 impl Spanned for NegationExpr {
