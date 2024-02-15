@@ -1,6 +1,6 @@
 use feo_ast::expression::{
     ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
-    LazyBoolOperatorKind,
+    LazyBoolOperatorKind, UnwrapOperandKind,
 };
 use feo_types::punctuation::PuncKind;
 
@@ -94,5 +94,14 @@ impl Peek for LazyBoolOperatorKind {
         };
 
         Some(operator_kind)
+    }
+}
+
+impl Peek for UnwrapOperandKind {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }
