@@ -97,16 +97,16 @@ impl Parse for InnerAttr {
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::TokenNotFound));
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::TokenNotFound));
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::TokenNotFound));
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::TokenNotFound));
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
         };
 
         Ok(Some(inner_attr))
