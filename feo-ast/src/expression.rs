@@ -41,7 +41,7 @@ pub use self::{
     iteration_expr::IterLoopExpr,
     operator_expr::{
         ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
-        DerefOperator, LazyBoolOperatorKind, UnwrapOperandKind, NegationOperatorKind,
+        DerefOperator, LazyBoolOperatorKind, NegationOperatorKind, UnwrapOperandKind,
     },
     struct_expr::{StructExpr, StructExprField, StructExprFields, StructExprKind},
 };
@@ -346,5 +346,19 @@ pub enum IterableExpr {
     ReturnExpr(ReturnExpr),
     TupleExpr(TupleExpr),
     LiteralExpr(LiteralKind),
+    PathExpr(PathExpr),
+}
+
+pub enum Operable {
+    Identifier(Identifier),
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    LiteralExpr(LiteralKind),
+    OperatorExpr(OperatorExprKind),
+    StructExpr(StructExprKind),
+    TupleExpr(TupleExpr),
     PathExpr(PathExpr),
 }
