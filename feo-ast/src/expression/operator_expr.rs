@@ -43,14 +43,14 @@ impl Spanned for OperatorExprKind {
 
 #[derive(Clone)]
 pub enum ArithmeticOrLogicalOperatorKind {
-    Plus(Plus),
-    Minus(Minus),
+    Add(Plus),
+    Subtract(Minus),
     Multiply(Asterisk),
     Divide(ForwardSlash),
     Modulus(Percent),
     LogicalAnd(Ampersand),
     LogicalOr(Pipe),
-    LogicalXor(Caret),
+    LogicalXOr(Caret),
     ShiftLeft(DblLessThan),
     ShiftRight(DblGreaterThan),
 }
