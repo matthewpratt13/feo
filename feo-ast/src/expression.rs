@@ -36,7 +36,7 @@ pub use self::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     call_expr::CallParams,
-    closure_expr::{ClosureExprKind, ClosureParam, ClosureParams},
+    closure_expr::{ClosureExprKind, ClosureParam, ClosureParams, ClosureParamsOpt},
     conditional_expr::{IfExpr, MatchExpr},
     iteration_expr::IterLoopExpr,
     operator_expr::{
