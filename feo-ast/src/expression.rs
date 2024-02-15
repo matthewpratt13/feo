@@ -29,14 +29,17 @@ use crate::{
 };
 
 pub use self::{
-    array_expr::{ArrayElementsKind, ArrayExpr, IndexExpr, ArrayElementsCommaSeparated, ArrayElementsRepeatedValue},
+    array_expr::{
+        ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
+        IndexExpr,
+    },
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     call_expr::CallParams,
     closure_expr::{ClosureExprKind, ClosureParam, ClosureParams},
     conditional_expr::{IfExpr, MatchExpr},
     iteration_expr::IterLoopExpr,
-    operator_expr::{ArithmeticOrLogicalOperatorKind, DerefOperator},
+    operator_expr::{ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, DerefOperator},
     struct_expr::{StructExpr, StructExprField, StructExprFields, StructExprKind},
 };
 
