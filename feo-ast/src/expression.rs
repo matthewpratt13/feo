@@ -39,7 +39,10 @@ pub use self::{
     closure_expr::{ClosureExprKind, ClosureParam, ClosureParams},
     conditional_expr::{IfExpr, MatchExpr},
     iteration_expr::IterLoopExpr,
-    operator_expr::{ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, DerefOperator, CompoundAssignOperatorKind},
+    operator_expr::{
+        ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
+        DerefOperator, LazyBoolOperatorKind,
+    },
     struct_expr::{StructExpr, StructExprField, StructExprFields, StructExprKind},
 };
 

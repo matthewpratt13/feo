@@ -1,5 +1,6 @@
 use feo_ast::expression::{
     ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
+    LazyBoolOperatorKind,
 };
 use feo_types::punctuation::PuncKind;
 
@@ -67,6 +68,25 @@ impl Peek for CompoundAssignOperatorKind {
                 PuncKind::PlusEquals => CompoundAssignOperatorKind::AddAssign(p),
                 PuncKind::MinusEquals => CompoundAssignOperatorKind::SubtractAssign(p),
                 PuncKind::ForwardSlashEquals => CompoundAssignOperatorKind::DivideAssign(p),
+                _ => return None,
+            }
+        } else {
+            return None;
+        };
+
+        Some(operator_kind)
+    }
+}
+
+impl Peek for LazyBoolOperatorKind {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        let operator_kind = if let Ok(p) = peeker.peek_punctuation() {
+            match p.punc_kind {
+                PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
+                PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
                 _ => return None,
             }
         } else {
