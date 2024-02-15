@@ -1,7 +1,19 @@
-use feo_ast::{expression::AttributeKind, path::SimplePathSegmentKind};
-use feo_types::keyword::KeywordKind;
+use feo_ast::{
+    expression::{AttributeKind, InnerAttr},
+    path::SimplePathSegmentKind,
+};
+use feo_error::handler::ErrorEmitted;
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
+    punctuation::PuncKind,
+    Delimiter, Punctuation,
+};
 
-use crate::{parse::Peek, parser::Peeker};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
 
 impl Peek for AttributeKind {
     fn peek(peeker: Peeker<'_>) -> Option<Self>
@@ -27,5 +39,80 @@ impl Peek for AttributeKind {
         };
 
         Some(attr_kind)
+    }
+}
+
+impl Parse for InnerAttr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        // peek the first token to make sure it is the correct `Token` one for this `Expression`
+        // i.e., some `Punctuation`
+        let hash_bang = parser.peek::<Punctuation>();
+
+        // check if it has the correct `PuncKind`
+        let inner_attr = if let Some(Punctuation {
+            punc_kind: PuncKind::HashSignBang,
+            ..
+        }) = hash_bang
+        {
+            parser.advance(); // advance the parser
+
+            // peek the second token
+            let open_bracket = parser.peek::<Delimiter>();
+
+            // check if it is the correct `(DelimKind, DelimOrientation)`
+            if let Some(Delimiter {
+                delim: (DelimKind::Bracket, DelimOrientation::Open),
+                ..
+            }) = open_bracket
+            {
+                parser.advance(); // advance the parser
+
+                // peek the third token – it can be any `AttributeKind`
+                if let Some(attribute) = parser.peek::<AttributeKind>() {
+                    parser.advance();
+
+                    // peek the final token
+                    let close_bracket = parser.peek::<Delimiter>();
+
+                    // check if it is the correct `(DelimKind, DelimOrientation)`
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Bracket, DelimOrientation::Close),
+                        ..
+                    }) = close_bracket
+                    {
+                        // consume the final token
+                        parser.advance();
+
+                        // return the `Expression`
+                        InnerAttr {
+                            hash_bang: hash_bang.unwrap(), // TODO: better way to do this?
+                            open_bracket: open_bracket.unwrap(),
+                            attribute,
+                            close_bracket: close_bracket.unwrap(),
+                        }
+                    } else {
+                        // the peeked token is `None` – either not a `Delimiter`,
+                        // the wrong `(DelimKind, DelimOrientation)` or doesn't exist
+                        todo!()
+                    }
+                } else {
+                    // the peeked token is `None` – either not an `AttributeKind`, or doesn't exist
+                    todo!()
+                }
+            } else {
+                // the peeked token is `None` – either not a `Delimiter`,
+                // the wrong `(DelimKind, DelimOrientation)` or doesn't exist
+                todo!()
+            }
+        } else {
+            // the peeked token is `None` – either not a `Punctuation`, the wrong `PuncKind`
+            // or doesn't exist
+            todo!()
+        };
+
+        Ok(Some(inner_attr))
     }
 }

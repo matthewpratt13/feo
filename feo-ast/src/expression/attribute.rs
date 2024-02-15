@@ -24,10 +24,10 @@ pub enum AttributeKind {
 
 #[derive(Clone)]
 pub struct InnerAttr {
-    hash_bang: HashBang,
-    open_bracket: Bracket,
-    attribute: AttributeKind,
-    close_bracket: Bracket,
+    pub hash_bang: HashBang,
+    pub open_bracket: Bracket,
+    pub attribute: AttributeKind,
+    pub close_bracket: Bracket,
 }
 
 impl Spanned for InnerAttr {

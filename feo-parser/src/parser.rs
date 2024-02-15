@@ -301,29 +301,29 @@ impl<'a> Peeker<'a> {
 //     }
 // }
 
-// impl Peek for Delimiter {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_delimiter() {
-//             Ok(d) => Some(d),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Delimiter {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_delimiter() {
+            Ok(d) => Some(d),
+            Err(_) => None,
+        }
+    }
+}
 
-// impl Peek for Punctuation {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_punctuation() {
-//             Ok(p) => Some(p),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Punctuation {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_punctuation() {
+            Ok(p) => Some(p),
+            Err(_) => None,
+        }
+    }
+}
 
 // impl Peek for TypeAnnotation {
 //     fn peek(peeker: Peeker<'_>) -> Option<Self>
