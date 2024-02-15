@@ -67,8 +67,8 @@ pub enum ComparisonOperatorKind {
 
 #[derive(Clone)]
 pub enum CompoundAssignOperatorKind {
-    PlusAssign(PlusEquals),
-    MinusAssign(MinusEquals),
+    AddAssign(PlusEquals),
+    SubtractAssign(MinusEquals),
     MultiplyAssign(AsteriskEquals),
     DivideAssign(ForwardSlashEquals),
     ModulusAssign(PercentEquals),

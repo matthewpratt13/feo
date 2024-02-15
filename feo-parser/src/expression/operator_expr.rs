@@ -1,4 +1,6 @@
-use feo_ast::expression::{ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind};
+use feo_ast::expression::{
+    ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
+};
 use feo_types::punctuation::PuncKind;
 
 use crate::{parse::Peek, parser::Peeker};
@@ -43,6 +45,28 @@ impl Peek for ComparisonOperatorKind {
                 PuncKind::LessThanEquals => ComparisonOperatorKind::LessThanOrEqual(p),
                 PuncKind::DblEquals => ComparisonOperatorKind::Equality(p),
                 PuncKind::GreaterThanEquals => ComparisonOperatorKind::GreaterThanOrEqual(p),
+                _ => return None,
+            }
+        } else {
+            return None;
+        };
+
+        Some(operator_kind)
+    }
+}
+
+impl Peek for CompoundAssignOperatorKind {
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        let operator_kind = if let Ok(p) = peeker.peek_punctuation() {
+            match p.punc_kind {
+                PuncKind::PercentEquals => CompoundAssignOperatorKind::ModulusAssign(p),
+                PuncKind::AsteriskEquals => CompoundAssignOperatorKind::MultiplyAssign(p),
+                PuncKind::PlusEquals => CompoundAssignOperatorKind::AddAssign(p),
+                PuncKind::MinusEquals => CompoundAssignOperatorKind::SubtractAssign(p),
+                PuncKind::ForwardSlashEquals => CompoundAssignOperatorKind::DivideAssign(p),
                 _ => return None,
             }
         } else {
