@@ -60,7 +60,6 @@ use self::{
     parenthesized_expr::ParenthesizedExpr,
     range_expr::RangeExprKind,
     return_expr::ReturnExpr,
-    struct_expr::{TupleStructExpr, UnitStructExpr},
     tuple_expr::{TupleExpr, TupleIndexExpr},
 };
 
@@ -129,9 +128,7 @@ impl Spanned for Expression {
 pub enum Assignable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),
-    StructExpr(StructExpr),
-    TupleStructExpr(TupleStructExpr),
-    UnitStructExpr(UnitStructExpr),
+    StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     PathExpr(PathExpr),
     UnderscoreExpr(Underscore),
@@ -143,8 +140,6 @@ impl Spanned for Assignable {
             Assignable::Identifier(id) => id.span(),
             Assignable::ArrayExpr(ae) => ae.span(),
             Assignable::StructExpr(se) => se.span(),
-            Assignable::TupleStructExpr(ts) => ts.span(),
-            Assignable::UnitStructExpr(us) => us.span(),
             Assignable::TupleExpr(te) => te.span(),
             Assignable::PathExpr(pe) => pe.span(),
             Assignable::UnderscoreExpr(ue) => ue.span(),
@@ -268,7 +263,6 @@ pub enum Constant {
     EnumDef(EnumDef),
     EnumVariantStruct(EnumVariantStruct),
     EnumVariantTuple(EnumVariantTuple),
-    UnitStructExpr(UnitStructExpr),
     Literal(LiteralKind),
     PathExpr(PathExpr),
     ExprStatement(ExprStatement),
