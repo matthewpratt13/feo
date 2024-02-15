@@ -88,22 +88,25 @@ impl Parse for InnerAttr {
 
                         // return the `Expression`
                         InnerAttr {
-                            hash_bang: hash_bang.unwrap(), // TODO: better way to do this?
-                            open_bracket: open_bracket.unwrap(),
+                            hash_bang: hash_bang
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                            open_bracket: open_bracket
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                             attribute,
-                            close_bracket: close_bracket.unwrap(),
+                            close_bracket: close_bracket
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                        return Err(parser.log_error(ParserErrorKind::TokenNotFound));
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    return Err(parser.log_error(ParserErrorKind::TokenNotFound));
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Err(parser.log_error(ParserErrorKind::TokenNotFound));
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Err(parser.log_error(ParserErrorKind::TokenNotFound));
         };
 
         Ok(Some(inner_attr))
