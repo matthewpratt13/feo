@@ -14,6 +14,7 @@ use super::{Assignable, BooleanOperand, Castable, Expression};
 
 #[derive(Clone)]
 pub enum OperatorExprKind {
+    Assignment(AssignmentExpr),
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
     Comparison(ComparisonExpr),
     CompoundAssign(CompoundAssignmentExpr),
@@ -28,6 +29,7 @@ pub enum OperatorExprKind {
 impl Spanned for OperatorExprKind {
     fn span(&self) -> Span {
         match self {
+            OperatorExprKind::Assignment(a) => a.span(),
             OperatorExprKind::ArithmeticOrLogical(al) => al.span(),
             OperatorExprKind::Comparison(c) => c.span(),
             OperatorExprKind::CompoundAssign(ca) => ca.span(),
@@ -143,6 +145,7 @@ impl Spanned for ArithmeticOrLogicalExpr {
     }
 }
 
+#[derive(Clone)]
 pub struct AssignmentExpr {
     assignee: Box<Expression>,
     operator: AssignOperator,
