@@ -55,7 +55,7 @@ impl Spanned for ClosureWithBlock {
 #[derive(Clone)]
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
-    body_operand: Box<Expression>,
+    body_operand: Box<Expression>, // TODO: limit kind of `Expression`
 }
 
 impl Spanned for ClosureWithoutBlock {

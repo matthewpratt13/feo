@@ -99,7 +99,7 @@ impl Spanned for NegationOperatorKind {
 
 #[derive(Clone)]
 pub enum UnwrapOperandKind {
-    Option(Option<Box<Expression>>),
+    Option(Option<Box<Expression>>), // TODO: limit to a specific kind of `Expression`
     Result(Result<Box<Expression>, CompilerError>),
 }
 

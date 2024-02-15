@@ -42,6 +42,7 @@ impl Spanned for StructExpr {
     }
 }
 
+// TODO: limit to a specific kind of `Expression`
 #[derive(Clone)]
 pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Expression>));
 
@@ -51,6 +52,7 @@ pub struct StructExprFields {
     pub subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
+// TODO: limit to a specific kind of `Expression`
 #[derive(Clone)]
 pub struct TupleStructExpr {
     item_path: PathInExpr,

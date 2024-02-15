@@ -32,7 +32,7 @@ pub type RangeFullExpr = DblDot;
 
 #[derive(Clone)]
 pub struct RangeFromToExpr {
-    from_operand: Box<Expression>,
+    from_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
     dbl_dot: DblDot,
     to_operand_excl: Box<Expression>,
 }
@@ -48,7 +48,7 @@ impl Spanned for RangeFromToExpr {
 
 #[derive(Clone)]
 pub struct RangeFromExpr {
-    from_operand: Box<Expression>,
+    from_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
     dbl_dot: DblDot,
 }
 
@@ -64,7 +64,7 @@ impl Spanned for RangeFromExpr {
 #[derive(Clone)]
 pub struct RangeToExpr {
     dbl_dot: DblDot,
-    to_operand: Box<Expression>,
+    to_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
 }
 
 impl Spanned for RangeToExpr {
@@ -78,7 +78,7 @@ impl Spanned for RangeToExpr {
 
 #[derive(Clone)]
 pub struct RangeInclusiveExpr {
-    from_operand: Box<Expression>,
+    from_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
     dot_dot_equals: DotDotEquals,
     to_operand_incl: Box<Expression>,
 }
@@ -95,7 +95,7 @@ impl Spanned for RangeInclusiveExpr {
 #[derive(Clone)]
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<Expression>,
+    to_operand_incl: Box<Expression>, // TODO: limit to a specific kind of `Expression`
 }
 
 impl Spanned for RangeToInclusiveExpr {
