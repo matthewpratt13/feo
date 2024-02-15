@@ -10,7 +10,7 @@ use feo_types::{
     },
 };
 
-use super::{Assignable, BooleanOperand, Castable, Expression};
+use super::{Assignable, BooleanOperand, Castable, Expression, Operable};
 
 #[derive(Clone)]
 pub enum OperatorExprKind {
@@ -131,9 +131,9 @@ pub type RefOperator = (Ampersand, Option<KwMut>);
 
 #[derive(Clone)]
 pub struct ArithmeticOrLogicalExpr {
-    lhs: Box<Expression>,
+    lhs: Box<Operable>,
     operator: ArithmeticOrLogicalOperatorKind,
-    rhs: Box<Expression>,
+    rhs: Box<Operable>,
 }
 
 impl Spanned for ArithmeticOrLogicalExpr {

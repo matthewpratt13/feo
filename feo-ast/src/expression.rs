@@ -349,6 +349,7 @@ pub enum IterableExpr {
     PathExpr(PathExpr),
 }
 
+#[derive(Clone)]
 pub enum Operable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),
@@ -361,4 +362,22 @@ pub enum Operable {
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     PathExpr(PathExpr),
+}
+
+impl Spanned for Operable {
+    fn span(&self) -> Span {
+        match self {
+            Operable::Identifier(id) => id.span(),
+            Operable::ArrayExpr(ae) => ae.span(),
+            Operable::IndexExpr(ie) => ie.span(),
+            Operable::FunctionCallExpr(fc) => fc.span(),
+            Operable::MethodCallExpr(mc) => mc.span(),
+            Operable::FieldAccessExpr(fa) => fa.span(),
+            Operable::LiteralExpr(le) => le.span(),
+            Operable::OperatorExpr(oe) => oe.span(),
+            Operable::StructExpr(se) => se.span(),
+            Operable::TupleExpr(te) => te.span(),
+            Operable::PathExpr(pe) => pe.span(),
+        }
+    }
 }
