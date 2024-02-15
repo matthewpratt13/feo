@@ -12,6 +12,7 @@ use crate::{parse::Peek, parser::Peeker};
 
 mod array_expr;
 mod literal_expr;
+mod operator_expr;
 mod struct_expr;
 
 // impl Peek for Expression {
