@@ -41,7 +41,7 @@ impl Spanned for InnerAttr {
 
 #[derive(Clone)]
 pub struct OuterAttr {
-    pub hash: HashSign,
+    pub hash_sign: HashSign,
     pub open_bracket: Bracket,
     pub attribute: AttributeKind,
     pub close_bracket: Bracket,
@@ -49,7 +49,7 @@ pub struct OuterAttr {
 
 impl Spanned for OuterAttr {
     fn span(&self) -> Span {
-        let s1 = self.hash.span();
+        let s1 = self.hash_sign.span();
         let s2 = self.close_bracket.span();
 
         Span::join(s1, s2)

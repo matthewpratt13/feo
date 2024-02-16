@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{AttributeKind, InnerAttr},
+    expression::{AttributeKind, InnerAttr, OuterAttr},
     path::SimplePathSegmentKind,
 };
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
@@ -20,7 +20,7 @@ impl Peek for AttributeKind {
     where
         Self: Sized,
     {
-        // peek the next token in the peeker
+        // peek the next `Token` in the peeker
         // if it is `Ok`, return `Keyword`
         // if it is `Err`, return `ParserErrorKind::InvalidToken` or `ParserErrorKind::TokenNotFound`
         // which will we logged if called by `Parser`
@@ -39,12 +39,12 @@ impl Peek for AttributeKind {
                 _ => return Err(ParserErrorKind::UnexpectedToken),
             }
         } else if let Some(p) = SimplePathSegmentKind::peek(peeker)? {
-            // if the next token is some `SimplePathSegmentKind`, return `AttributeKind::Path`
+            // if the next `Token` is some `SimplePathSegmentKind`, return `AttributeKind::Path`
             AttributeKind::Path(p)
         } else {
-            // if the next token is `Some(_)`, `None` or `Err`, just return `Ok(None)`
+            // if the next `Token` is `Some(_)`, `None` or `Err`, just return `Ok(None)`
             // as all we really need to know at this point is whether there is an `AttributeKind`
-            // we don't want to return an error if there isn't one just yet
+            // we don't want to return an error if there isn't one, just yet
             return Ok(None);
         };
 
@@ -67,7 +67,7 @@ impl Parse for InnerAttr {
 
         // check if `hash_bang_opt` has the correct `PuncKind`
         let inner_attr = if let Some(Punctuation {
-            punc_kind: PuncKind::HashSignBang,
+            punc_kind: PuncKind::HashBang,
             ..
         }) = hash_bang_opt
         {
@@ -131,12 +131,74 @@ impl Parse for InnerAttr {
             }
         } else {
             // in this case `hash_bang_opt` is either `Some(_)` or `None`
-            // i.e., not some `Punctuation { PuncKind::HashSignBang, .. }`
+            // i.e., not some `Punctuation { PuncKind::HashBang, .. }`
             // or `None`; however, we checked that it is not `None` inside `Peeker::peek_punctuation()()`
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
         };
 
         // return the `InnerAttr`
         Ok(Some(inner_attr))
+    }
+}
+
+impl Parse for OuterAttr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        let hash_sign_opt = parser.peek::<Punctuation>()?;
+
+        let outer_attr = if let Some(Punctuation {
+            punc_kind: PuncKind::HashSign,
+            ..
+        }) = hash_sign_opt
+        {
+            parser.advance();
+
+            let open_bracket_opt = parser.peek::<Delimiter>()?;
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Bracket, DelimOrientation::Open),
+                ..
+            }) = open_bracket_opt
+            {
+                parser.advance();
+
+                if let Some(attribute) = parser.peek::<AttributeKind>()? {
+                    parser.advance();
+
+                    let close_bracket_opt = parser.peek::<Delimiter>()?;
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Bracket, DelimOrientation::Close),
+                        ..
+                    }) = close_bracket_opt
+                    {
+                        parser.advance();
+
+                        OuterAttr {
+                            hash_sign: hash_sign_opt
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                            open_bracket: open_bracket_opt
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                            attribute,
+                            close_bracket: close_bracket_opt
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                        }
+                    } else {
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    }
+                } else {
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                }
+            } else {
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            }
+        } else {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+        };
+
+        // return the `InnerAttr`
+        Ok(Some(outer_attr))
     }
 }
