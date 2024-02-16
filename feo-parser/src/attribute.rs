@@ -66,13 +66,13 @@ impl Parse for InnerAttr {
         // if the `Token` is `None`, log `ParserErrorKind::TokenNotFound`
         let hash_bang_opt = parser.peek::<Punctuation>()?;
 
-        // check if `hash_bang_opt` has the correct `PuncKind`
         let inner_attr = if let Some(Punctuation {
             punc_kind: PuncKind::HashBang,
             ..
         }) = hash_bang_opt
         {
-            parser.advance(); // advance the parser
+            // if `hash_bang_opt` has the correct `PuncKind`, advance the `Parser`
+            parser.advance();
 
             let open_bracket_opt = parser.peek::<Delimiter>()?;
 
@@ -96,7 +96,7 @@ impl Parse for InnerAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        // consume the final token
+                        // consume the final `Token`
                         parser.advance();
 
                         // assign `InnerAttr`
@@ -116,24 +116,28 @@ impl Parse for InnerAttr {
                         // in this case `close_bracket_opt` is either `Some(_)` or `None`
                         // i.e., not some `Delimiter { (DelimKind::Bracket, DelimOrientation::Close), .. }`
                         // or `None`; however, we checked that it is not `None` inside `Peeker::peek_delimiter()`
+                        // therefore it has to be some other `Token`
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                     }
                 } else {
                     // in this case `attribute` is either `Some(_)` or `None`
                     // i.e., it must be something other than an `AttributeKind`, or must be `None`
                     // however, we checked that it is not `None` inside `Peeker::peek_keyword()`
+                    // therefore it has to be some other `Token`
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
             } else {
                 // in this case `open_bracket_opt` is either `Some(_)` or `None`
                 // i.e., not some `Delimiter { (DelimKind::Bracket, DelimOrientation::Open), .. }`
                 // or `None`; however, we checked that it is not `None` inside `Peeker::peek_delimiter()`
+                // therefore it has to be some other `Token`
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
             // in this case `hash_bang_opt` is either `Some(_)` or `None`
             // i.e., not some `Punctuation { PuncKind::HashBang, .. }`
-            // or `None`; however, we checked that it is not `None` inside `Peeker::peek_punctuation()()`
+            // or `None`; however, we checked that it is not `None` inside `Peeker::peek_punctuation()`
+            // therefore it has to be some other `Token`
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
         };
 
@@ -199,7 +203,6 @@ impl Parse for OuterAttr {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
         };
 
-        // return the `InnerAttr`
         Ok(Some(outer_attr))
     }
 }

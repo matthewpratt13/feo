@@ -1,8 +1,11 @@
 use feo_ast::path::{PathIdenSegmentKind, SimplePath, SimplePathSegmentKind};
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
-use feo_types::keyword::KeywordKind;
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, utils::DblColon, Punctuation};
 
-use crate::{parse::{Parse, Peek}, parser::{Parser, Peeker}};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
 
 impl Peek for SimplePathSegmentKind {
     fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
@@ -40,8 +43,68 @@ impl Peek for SimplePathSegmentKind {
 impl Parse for SimplePath {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
-        Self: Sized {
-        todo!()
+        Self: Sized,
+    {
+        // prepare an empty vector to store path segments
+        let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
+
+        let simple_path = if let Some(first_segment) = parser.peek::<SimplePathSegmentKind>()? {
+            // if the first `Token` is some `SimplePathSegmentKind`, advance the `Parser`
+            parser.advance();
+
+            // create a var to store the current `Punctuation`
+            let mut next_dbl_colon_opt = parser.peek::<Punctuation>()?;
+
+            parser.advance();
+
+            // iterate while the current `Punctuation` has `PuncKind::DblColon`
+            while let Some(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = next_dbl_colon_opt
+            {
+                // peek for a `SimplePathSegmentKind` (which should be the next `Token`)
+                if let Some(next_path_segment) = parser.peek::<SimplePathSegmentKind>()? {
+                    // if it is a `SimplePathSegmentKind`, advance the `Parser`
+                    parser.advance();
+
+                    // push the current `Punctuation` and the next `SimplePathSegmentKind`
+                    subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
+                } else {
+                    // in this case, the next `Token` is either `Some(_)` or `None`
+                    // i.e., not some `SimplePathSegmentKind`
+                    // however, we checked that it is not `None` inside `Peeker::peek_keyword()`
+                    // therefore it has to be some other `Token`
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                }
+
+                // peek for a `Punctuation`
+                // if one exists, set it to `next_dbl_colon_opt` and advance the `Parser`,
+                // else break
+                if let Some(p) = parser.take::<Punctuation>()? {
+                    next_dbl_colon_opt = Some(p);
+                } else {
+                    break;
+                }
+            }
+
+            // consume the final token
+            parser.advance();
+
+            // assign `SimplePath`
+            SimplePath {
+                first_segment,
+                subsequent_segments,
+            }
+        } else {
+            // in this case, the next `Token` is either `Some(_)` or `None`
+            // i.e., not some `SimplePathSegmentKind`
+            // however, we checked that it is not `None` inside `Peeker::peek_keyword()`
+            // therefore it has to be some other `Token`
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+        };
+
+        Ok(Some(simple_path))
     }
 }
 
