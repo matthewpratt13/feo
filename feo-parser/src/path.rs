@@ -1,8 +1,8 @@
-use feo_ast::path::{PathIdenSegmentKind, SimplePathSegmentKind};
-use feo_error::parser_error::ParserErrorKind;
+use feo_ast::path::{PathIdenSegmentKind, SimplePath, SimplePathSegmentKind};
+use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::keyword::KeywordKind;
 
-use crate::{parse::Peek, parser::Peeker};
+use crate::{parse::{Parse, Peek}, parser::{Parser, Peeker}};
 
 impl Peek for SimplePathSegmentKind {
     fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
@@ -34,6 +34,14 @@ impl Peek for SimplePathSegmentKind {
 
         // return the `SimplePathSegmentKind`
         Ok(Some(segment_kind))
+    }
+}
+
+impl Parse for SimplePath {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized {
+        todo!()
     }
 }
 
