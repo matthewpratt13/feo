@@ -2,7 +2,6 @@
 #![allow(unused_variables)]
 
 mod array_expr;
-mod closure_expr;
 mod literal_expr;
 mod operator_expr;
 mod struct_expr;
