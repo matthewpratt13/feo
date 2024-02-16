@@ -47,11 +47,13 @@ impl Parser {
     }
 
     // peek at the next `Token` and return it if it exists (without advancing)
+    // or log the appropriate error
     pub fn peek<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
         Peeker::with(&self.stream().tokens(), self.pos).map_err(|e| self.log_error(e))
     }
 
     // peek at the next `Token`, advance the `Parser` and return the peeked `Token` if it exists
+    // or log the appropriate error
     pub fn take<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
         let value = Peeker::with(&self.stream().tokens(), self.pos).map_err(|e| self.log_error(e));
         self.advance();
@@ -68,7 +70,7 @@ impl Parser {
     }
 }
 
-// type that allows for peeking at the next `Token` in a `&[Token]` without advancing
+// type that allows for peeking at the next `Token` in a `&[Token]` without advancing the parser
 #[derive(Copy, Clone)]
 pub struct Peeker<'a> {
     tokens: &'a [Token],
@@ -76,7 +78,7 @@ pub struct Peeker<'a> {
 }
 
 impl<'a> Peeker<'a> {
-    // peek for a `T` in `&[Token]'; return `T` if it exists and the remaining `&[Token]`
+    // peek for a `T` in `&[Token]'; return `T` if it exists or the appropriate error
     fn with<T: Peek>(tokens: &'a [Token], pos: usize) -> Result<Option<T>, ParserErrorKind> {
         let peeker = Peeker { tokens, pos };
         let value = T::peek(peeker);
@@ -88,11 +90,11 @@ impl<'a> Peeker<'a> {
         self.tokens.get(self.pos + 1).cloned()
     }
 
-    // peek for a `Literal` or return `Self` so that the `Peeker` can try again without advancing
+    // peek for a `Literal` or return the appropriate error
     pub fn peek_char_lit(&self) -> Result<Literal<char>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::CharLit(c)) => Ok(c),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -100,7 +102,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_string_lit(&self) -> Result<Literal<String>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::StringLit(s)) => Ok(s),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -108,7 +110,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_bool_lit(&self) -> Result<Literal<bool>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::BoolLit(b)) => Ok(b),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -116,7 +118,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_int_lit(&self) -> Result<Literal<IntType>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::IntLit(i)) => Ok(i),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -124,7 +126,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_uint_lit(&self) -> Result<Literal<UIntType>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::UIntLit(ui)) => Ok(ui),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -132,7 +134,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_u256_lit(&self) -> Result<Literal<U256>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::U256Lit(u)) => Ok(u),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -140,7 +142,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_float_lit(&self) -> Result<Literal<FloatType>, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::FloatLit(f)) => Ok(f),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -148,7 +150,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_identifier(&self) -> Result<Identifier, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::Iden(id)) => Ok(id),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -156,7 +158,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_keyword(&self) -> Result<Keyword, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::Keyword(k)) => Ok(k),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -164,7 +166,7 @@ impl<'a> Peeker<'a> {
     // pub fn peek_doc_comment(&self) -> Result<DocComment, ParserErrorKind> {
     //     match self.peek_token() {
     //         Some(Token::DocComment(dc)) => Ok(dc),
-    //         Some(_) => Err(ParserErrorKind::UnexpectedToken),
+    //         Some(_) => Err(ParserErrorKind::InvalidToken),
     //         None => Err(ParserErrorKind::TokenNotFound),
     //     }
     // }
@@ -172,7 +174,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_delimiter(&self) -> Result<Delimiter, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::Delim(d)) => Ok(d),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -180,7 +182,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_punctuation(&self) -> Result<Punctuation, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::Punc(p)) => Ok(p),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
@@ -188,7 +190,7 @@ impl<'a> Peeker<'a> {
     pub fn peek_type_ann(&self) -> Result<TypeAnnotation, ParserErrorKind> {
         match self.peek_token() {
             Some(Token::TypeAnn(ta)) => Ok(ta),
-            Some(_) => Err(ParserErrorKind::UnexpectedToken),
+            Some(_) => Err(ParserErrorKind::InvalidToken),
             None => Err(ParserErrorKind::TokenNotFound),
         }
     }
