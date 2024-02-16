@@ -20,10 +20,10 @@ impl Peek for AttributeKind {
     where
         Self: Sized,
     {
-        // peek the next `Token` in the peeker
-        // if it is `Ok`, return `Keyword`
+        // peek the next `Token` in the Peeker`, expecting a `Keyword`
+        // if it is `Ok`, return the `Keyword`
         // if it is `Err`, return `ParserErrorKind::InvalidToken` or `ParserErrorKind::TokenNotFound`
-        // which will we logged if called by `Parser`
+        // which will be logged, if called by `Parser`
         let attr_kind = if let Ok(k) = peeker.peek_keyword() {
             // if it is a `Keyword`, match its `KeywordKind` and return the relevant `AttributeKind`
             match k.keyword_kind {
@@ -38,13 +38,14 @@ impl Peek for AttributeKind {
                 // unexpected `KeywordKind`
                 _ => return Err(ParserErrorKind::UnexpectedToken),
             }
+            // else peek the next `Token` in the `Peeker`, expecting a `SimplePathSegmentKind`
         } else if let Some(p) = SimplePathSegmentKind::peek(peeker)? {
             // if the next `Token` is some `SimplePathSegmentKind`, return `AttributeKind::Path`
             AttributeKind::Path(p)
+            // else if the next `Token` is `Some(_)`, `None` or `Err`, simply return `Ok(None)`
         } else {
-            // if the next `Token` is `Some(_)`, `None` or `Err`, just return `Ok(None)`
-            // as all we really need to know at this point is whether there is an `AttributeKind`
-            // we don't want to return an error if there isn't one, just yet
+            // all we really need to know at this point is whether there is an `AttributeKind`;
+            // if there isn't one, returning `None` is fine – we don't need to throw an error
             return Ok(None);
         };
 
