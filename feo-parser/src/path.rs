@@ -1,4 +1,4 @@
-use feo_ast::path::{PathIdenSegmentKind, SimplePath, SimplePathSegmentKind};
+use feo_ast::path::{PathIdenSegmentKind, PathInExpr, PathType, SimplePath, SimplePathSegmentKind};
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, utils::DblColon, Punctuation};
 
@@ -128,5 +128,106 @@ impl Peek for PathIdenSegmentKind {
         };
 
         Ok(Some(segment_kind))
+    }
+}
+
+// NOTE: `PathType` and `PathInExpr` (`PathExpr`) are identical in terms of their fields' types
+// they just use different type aliases for `PathIdenSegmentKind`
+// (i.e., `PathExprSegment` and `PathTypeSegment`)
+impl Parse for PathInExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        let mut subsequent_segments: Vec<(DblColon, PathIdenSegmentKind)> = Vec::new();
+
+        let path_expr = if let Some(first_segment) = parser.peek::<PathIdenSegmentKind>()? {
+            parser.advance();
+
+            let mut next_dbl_colon_opt = parser.peek::<Punctuation>()?;
+
+            parser.advance();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = next_dbl_colon_opt
+            {
+                if let Some(next_path_segment) = parser.peek::<PathIdenSegmentKind>()? {
+                    // if it is a `SimplePathSegmentKind`, advance the `Parser`
+                    parser.advance();
+
+                    subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
+                } else {
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                }
+
+                if let Some(p) = parser.take::<Punctuation>()? {
+                    next_dbl_colon_opt = Some(p);
+                } else {
+                    break;
+                }
+            }
+
+            parser.advance();
+
+            PathInExpr {
+                first_segment,
+                subsequent_segments,
+            }
+        } else {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+        };
+
+        Ok(Some(path_expr))
+    }
+}
+
+impl Parse for PathType {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        let mut subsequent_segments: Vec<(DblColon, PathIdenSegmentKind)> = Vec::new();
+
+        let path_type = if let Some(first_segment) = parser.peek::<PathIdenSegmentKind>()? {
+            parser.advance();
+
+            let mut next_dbl_colon_opt = parser.peek::<Punctuation>()?;
+
+            parser.advance();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = next_dbl_colon_opt
+            {
+                if let Some(next_path_segment) = parser.peek::<PathIdenSegmentKind>()? {
+                    // if it is a `SimplePathSegmentKind`, advance the `Parser`
+                    parser.advance();
+
+                    subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
+                } else {
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                }
+
+                if let Some(p) = parser.take::<Punctuation>()? {
+                    next_dbl_colon_opt = Some(p);
+                } else {
+                    break;
+                }
+            }
+
+            parser.advance();
+
+            PathType {
+                first_segment,
+                subsequent_segments,
+            }
+        } else {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+        };
+
+        Ok(Some(path_type))
     }
 }
