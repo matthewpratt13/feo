@@ -154,7 +154,6 @@ impl Parse for PathInExpr {
             }) = next_dbl_colon_opt
             {
                 if let Some(next_path_segment) = parser.peek::<PathIdenSegmentKind>()? {
-                    // if it is a `SimplePathSegmentKind`, advance the `Parser`
                     parser.advance();
 
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
