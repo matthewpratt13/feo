@@ -2,7 +2,12 @@
 #![allow(unused_variables)]
 
 use feo_ast::{
-    expression::{Returnable, StructExpr, StructExprKind, TupleStructExpr, UnitStructExpr},
+    expression::{
+        ArithmeticOrLogicalExpr, ArrayExpr, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr,
+        FieldAccessExpr, FunctionCallExpr, IndexExpr, MethodCallExpr, NegationExpr,
+        ParenthesizedExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr,
+        TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
+    },
     path::PathInExpr,
 };
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
@@ -13,6 +18,7 @@ use crate::{parse::Parse, parser::Parser};
 mod array_expr;
 mod call_expr;
 mod closure_expr;
+mod field_access_expr;
 mod literal_expr;
 mod operator_expr;
 mod parenthesized_expr;
@@ -112,7 +118,7 @@ impl Parse for Returnable {
                 Returnable::FunctionCallExpr(fc)
             } else if let Some(mc) = MethodCallExpr::parse(parser)? {
                 Returnable::MethodCallExpr(mc)
-            } else if let Some(fa) = FieldAccessExpr::parse(parser) {
+            } else if let Some(fa) = FieldAccessExpr::parse(parser)? {
                 Returnable::FieldAccessExpr(fa)
             } else if let Some(se) = StructExpr::parse(parser)? {
                 Returnable::StructExpr(StructExprKind::Struct(se))
@@ -124,8 +130,6 @@ impl Parse for Returnable {
                 Returnable::PathExpr(pat)
             } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
                 Returnable::ArithmeticOrLogicalExpr(al)
-            } else if let Some(ass) = AssignmentExpr::parse(parser)? {
-                Returnable::AssignmentExpr(ass)
             } else {
                 Returnable::Identifier(id)
             }
@@ -136,6 +140,8 @@ impl Parse for Returnable {
                 Returnable::IndexExpr(ie)
             } else if let Some(te) = TupleExpr::parse(parser)? {
                 Returnable::TupleExpr(te)
+            } else if let Some(ti) = TupleIndexExpr::parse(parser)? {
+                Returnable::TupleIndexExpr(ti)
             } else if let Some(par) = ParenthesizedExpr::parse(parser)? {
                 Returnable::ParenthesizedExpr(par)
             } else {

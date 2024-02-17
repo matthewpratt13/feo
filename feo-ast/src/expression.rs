@@ -13,11 +13,11 @@ mod range_expr;
 mod return_expr;
 mod struct_expr;
 mod tuple_expr;
+mod underscore_expr;
 
 use feo_types::{
     literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
     span::{Span, Spanned},
-    utils::Underscore,
     Identifier, U256,
 };
 
@@ -28,38 +28,38 @@ use crate::{
 };
 
 pub use self::{
+    array_expr::{ArrayExpr, IndexExpr},
     call_expr::CallParams,
-    closure_expr::{ClosureExprKind, ClosureParam, ClosureParams, ClosureParamsOpt},
+    call_expr::{FunctionCallExpr, MethodCallExpr},
+    closure_expr::{
+        ClosureExprKind, ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock,
+        ClosureWithoutBlock,
+    },
     conditional_expr::{IfExpr, MatchExpr},
+    field_access_expr::FieldAccessExpr,
     iteration_expr::IterLoopExpr,
     operator_expr::{
-        ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
-        DerefOperator, LazyBoolOperatorKind, NegationOperatorKind, RefOperator, UnwrapOperandKind,
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
+        ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DerefOperator,
+        DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
+        OperatorExprKind, RefOperator, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
+    parenthesized_expr::ParenthesizedExpr,
     struct_expr::{
         StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructExpr,
         UnitStructExpr,
     },
+    tuple_expr::{TupleExpr, TupleIndexExpr},
+    underscore_expr::UnderscoreExpr,
 };
 
 use self::{
-    array_expr::{ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
-    call_expr::{FunctionCallExpr, MethodCallExpr},
-    closure_expr::{ClosureWithBlock, ClosureWithoutBlock},
-    field_access_expr::FieldAccessExpr,
     iteration_expr::{
         BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,
     },
-    operator_expr::{
-        ArithmeticOrLogicalExpr, AssignmentExpr, ComparisonExpr, CompoundAssignmentExpr,
-        DereferenceExpr, LazyBoolExpr, NegationExpr, OperatorExprKind, ReferenceExpr, TypeCastExpr,
-        UnwrapExpr,
-    },
-    parenthesized_expr::ParenthesizedExpr,
     range_expr::RangeExprKind,
     return_expr::ReturnExpr,
-    tuple_expr::{TupleExpr, TupleIndexExpr},
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects
@@ -87,7 +87,7 @@ pub enum Expression {
     ReturnExpr(ReturnExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
-    UnderscoreExpr(Underscore),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
 impl Spanned for Expression {
@@ -126,7 +126,7 @@ pub enum Assignable {
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     PathExpr(PathExpr),
-    UnderscoreExpr(Underscore),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
 impl Spanned for Assignable {
@@ -165,7 +165,7 @@ pub enum BooleanOperand {
     TupleIndexExpr(TupleIndexExpr),
     LiteralExpr(LiteralKind),
     PathExpr(PathExpr),
-    UnderscoreExpr(Underscore),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
 impl Spanned for BooleanOperand {
@@ -276,6 +276,7 @@ pub enum Constant {
     RangeExpr(RangeExprKind),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
     ConstantVarDef(ConstantVarDef),
     StaticVarDef(StaticVarDef),
     EnumDef(EnumDef),
@@ -285,7 +286,7 @@ pub enum Constant {
     PathExpr(PathExpr),
     ExprStatement(ExprStatement),
     LetStatement(LetStatement),
-    UnderscoreExpr(Underscore),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
 #[derive(Clone)]
@@ -330,7 +331,7 @@ pub enum ExprWithoutBlock {
     EnumVariantStruct(EnumVariantStruct),
     Literal(LiteralKind),
     PathExpr(PathExpr),
-    UnderscoreExpr(Underscore),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
 #[derive(Clone)]
@@ -351,6 +352,7 @@ pub enum IterableExpr {
     RangeExpr(RangeExprKind),
     ReturnExpr(ReturnExpr),
     TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
     LiteralExpr(LiteralKind),
     PathExpr(PathExpr),
 }
@@ -359,6 +361,7 @@ pub enum IterableExpr {
 pub enum Operable {
     Identifier(Identifier),
     IndexExpr(IndexExpr),
+    TupleIndexExpr(TupleIndexExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
@@ -376,6 +379,7 @@ impl Spanned for Operable {
         match self {
             Operable::Identifier(id) => id.span(),
             Operable::IndexExpr(ie) => ie.span(),
+            Operable::TupleIndexExpr(ti) => ti.span(),
             Operable::FunctionCallExpr(fc) => fc.span(),
             Operable::MethodCallExpr(mc) => mc.span(),
             Operable::FieldAccessExpr(fa) => fa.span(),
@@ -395,6 +399,7 @@ pub enum Returnable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
+    TupleIndexExpr(TupleIndexExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     ClosureWithBlock(ClosureWithBlock),
@@ -411,7 +416,7 @@ pub enum Returnable {
     ReferenceExpr(ReferenceExpr),
     TypeCastExpr(TypeCastExpr),
     UnwrapExpr(UnwrapExpr),
-    UnderscoreExpr(Underscore),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
 impl Spanned for Returnable {
@@ -420,6 +425,7 @@ impl Spanned for Returnable {
             Returnable::Identifier(id) => id.span(),
             Returnable::ArrayExpr(ae) => ae.span(),
             Returnable::IndexExpr(ie) => ie.span(),
+            Returnable::TupleIndexExpr(ti) => ti.span(),
             Returnable::FunctionCallExpr(fc) => fc.span(),
             Returnable::MethodCallExpr(mc) => mc.span(),
             Returnable::ClosureWithBlock(cwb) => cwb.span(),

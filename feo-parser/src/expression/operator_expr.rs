@@ -1,11 +1,16 @@
 use feo_ast::expression::{
-    ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
-    LazyBoolOperatorKind, NegationOperatorKind, UnwrapOperandKind,
+    ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
+    ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DereferenceExpr,
+    LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
+    TypeCastExpr, UnderscoreExpr, UnwrapExpr, UnwrapOperandKind,
 };
-use feo_error::parser_error::ParserErrorKind;
+use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::punctuation::PuncKind;
 
-use crate::{parse::Peek, parser::Peeker};
+use crate::{
+    parse::{Parse, Peek},
+    parser::{Parser, Peeker},
+};
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
     fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
@@ -120,6 +125,105 @@ impl Peek for NegationOperatorKind {
 // TODO: how ??
 impl Peek for UnwrapOperandKind {
     fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for ArithmeticOrLogicalExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for AssignmentExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for ComparisonExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for CompoundAssignmentExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for DereferenceExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for LazyBoolExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for NegationExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for ReferenceExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for TypeCastExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for UnderscoreExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for UnwrapExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {

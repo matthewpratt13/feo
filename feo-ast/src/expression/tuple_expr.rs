@@ -5,14 +5,14 @@ use feo_types::{
     Literal,
 };
 
-use crate::{item::TupleStructDef, ty::TupleType};
+use crate::ty::TupleType;
 
-use super::Returnable;
+use super::{Returnable, TupleStructExpr};
 
 #[derive(Clone)]
 pub enum TupleKind {
     Tuple(TupleType),
-    TupleStruct(TupleStructDef),
+    TupleStruct(TupleStructExpr),
 }
 
 impl Spanned for TupleKind {
