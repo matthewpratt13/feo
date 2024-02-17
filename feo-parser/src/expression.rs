@@ -2,7 +2,7 @@
 #![allow(unused_variables)]
 
 use feo_ast::{
-    expression::{ArithmeticOrLogicalOperatorKind, Returnable, StructExprKind},
+    expression::{ArithmeticOrLogicalOperatorKind, Returnable, StructExpr, StructExprKind, TupleStructExpr, UnitStructExpr},
     path::PathInExpr,
 };
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
