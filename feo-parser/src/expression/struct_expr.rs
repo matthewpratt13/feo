@@ -25,9 +25,10 @@ impl Parse for StructExprField {
         // prepare an empty vector to store attributes
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
+        let struct_expr_field = if let Ok(first_attr) = OuterAttr::parse(parser) {
             // push the first attribute to the vector
-            attributes.push(first_attr);
+            attributes
+                .push(first_attr.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?);
 
             parser.advance(); // advance the parser
 
@@ -92,11 +93,7 @@ impl Parse for StructExprField {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            // in this case, the next `Token` is either `Some(_)` or `None`
-            // i.e., not some `OuterAttr`
-            // however, we checked that it is not `None` inside the `parse()` function
-            // therefore it has to be some other `Token`
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(struct_expr_field))
@@ -111,7 +108,7 @@ impl Parse for StructExprFields {
         // prepare an empty vector to store fields
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
-        let struct_expr_fields = if let Some(first_field) = StructExprField::parse(parser)? {
+        let struct_expr_fields = if let Ok(first_field) = StructExprField::parse(parser) {
             // if the first `Token` is some `StructExprField`, advance the `Parser`
             parser.advance();
 
@@ -129,7 +126,11 @@ impl Parse for StructExprFields {
                 // expect a `StructExprField` (which should be the next `Token`)
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     // push the current `Punctuation` and the next `StructExprField`
-                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+                    subsequent_fields.push((
+                        next_comma_opt
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                        next_field,
+                    ));
 
                     parser.advance();
                 } else {
@@ -143,8 +144,8 @@ impl Parse for StructExprFields {
                 // peek for a `Punctuation`
                 // if one exists, set it to `next_comma_opt` and advance the `Parser`,
                 // else break
-                if let Some(p) = parser.take::<Punctuation>()? {
-                    next_comma_opt = Some(p);
+                if let Ok(p) = parser.take::<Punctuation>() {
+                    next_comma_opt = p;
                 } else {
                     break;
                 }
@@ -155,15 +156,12 @@ impl Parse for StructExprFields {
 
             // assign `StructExprFields`
             StructExprFields {
-                first_field,
+                first_field: first_field
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                 subsequent_fields,
             }
         } else {
-            // in this case, the next `Token` is either `Some(_)` or `None`
-            // i.e., not some `StructExprField`
-            // however, we checked that it is not `None` inside `Peeker::peek_punctuation()`
-            // therefore it has to be some other `Token`
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(struct_expr_fields))
@@ -175,7 +173,7 @@ impl Parse for StructExpr {
     where
         Self: Sized,
     {
-        let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
+        let struct_expr = if let Ok(item_path) = PathInExpr::parse(parser) {
             parser.advance();
 
             let open_brace_opt = parser.peek::<Delimiter>()?;
@@ -200,7 +198,8 @@ impl Parse for StructExpr {
                         parser.advance();
 
                         StructExpr {
-                            item_path,
+                            item_path: item_path
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                             open_brace: open_brace_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                             struct_expr_fields_opt: Some(s),
@@ -217,7 +216,7 @@ impl Parse for StructExpr {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(struct_expr))
@@ -238,10 +237,10 @@ impl Parse for UnitStructExpr {
     where
         Self: Sized,
     {
-        let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
-            UnitStructExpr(path)
+        let unit_struct_expr = if let Ok(path) = PathInExpr::parse(parser) {
+            UnitStructExpr(path.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?)
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(unit_struct_expr))
