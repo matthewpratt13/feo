@@ -199,21 +199,23 @@ impl Parse for StructExpr {
 
                         StructExpr {
                             item_path,
-                            open_brace: open_brace_opt.unwrap(),
+                            open_brace: open_brace_opt
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                             struct_expr_fields_opt: Some(s),
-                            close_brace: close_brace_opt.unwrap(),
+                            close_brace: close_brace_opt
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                         }
                     } else {
-                        todo!()
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                     }
                 } else {
-                    todo!()
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
             } else {
-                todo!()
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            todo!()
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
         };
 
         Ok(Some(struct_expr))
