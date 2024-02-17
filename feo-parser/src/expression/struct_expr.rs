@@ -1,4 +1,7 @@
-use feo_ast::expression::{StructExpr, StructExprField, StructExprFields};
+use feo_ast::{
+    attribute::OuterAttr,
+    expression::{StructExpr, StructExprField, StructExprFields},
+};
 
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 
@@ -11,7 +14,25 @@ impl Parse for StructExprField {
     where
         Self: Sized,
     {
-        todo!()
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        let mut curr_attr_opt = OuterAttr::parse(parser)?;
+
+        parser.advance();
+
+        let struct_expr_field = if let Some(first_attr) = curr_attr_opt {
+            parser.advance();
+            attributes.push(first_attr);
+            curr_attr_opt = OuterAttr::parse(parser)?;
+
+            while let Some(next_attr) = curr_attr_opt {
+                attributes.push(next_attr);
+                parser.advance();
+                curr_attr_opt = OuterAttr::parse(parser)?;
+            }
+        };
+
+        Ok(Some(struct_expr_field))
     }
 }
 
