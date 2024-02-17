@@ -1,11 +1,17 @@
 use feo_ast::{
     attribute::OuterAttr,
     expression::{Returnable, StructExpr, StructExprField, StructExprFields},
+    path::PathInExpr,
 };
 
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 
-use feo_types::{punctuation::PuncKind, utils::Comma, Identifier, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+    utils::Comma,
+    Delimiter, Identifier, Punctuation,
+};
 
 use crate::{parse::Parse, parser::Parser};
 
@@ -167,6 +173,49 @@ impl Parse for StructExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
+            parser.advance();
+
+            let open_brace_opt = parser.peek::<Delimiter>()?;
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Brace, DelimOrientation::Open),
+                ..
+            }) = open_brace_opt
+            {
+                parser.advance();
+
+                if let Some(s) = StructExprFields::parse(parser)? {
+                    parser.advance();
+
+                    let close_brace_opt = parser.peek::<Delimiter>()?;
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Brace, DelimOrientation::Close),
+                        ..
+                    }) = close_brace_opt
+                    {
+                        parser.advance();
+
+                        StructExpr {
+                            item_path,
+                            open_brace: open_brace_opt.unwrap(),
+                            struct_expr_fields_opt: Some(s),
+                            close_brace: close_brace_opt.unwrap(),
+                        }
+                    } else {
+                        todo!()
+                    }
+                } else {
+                    todo!()
+                }
+            } else {
+                todo!()
+            }
+        } else {
+            todo!()
+        };
+
+        Ok(Some(struct_expr))
     }
 }
