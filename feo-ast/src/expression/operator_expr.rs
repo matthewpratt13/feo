@@ -10,7 +10,7 @@ use feo_types::{
     },
 };
 
-use super::{Assignable, BooleanOperand, Castable, Expression, Operable};
+use super::{Assignable, BooleanOperand, Castable, Operable};
 
 #[derive(Clone)]
 pub enum OperatorExprKind {
@@ -99,8 +99,8 @@ impl Spanned for NegationOperatorKind {
 
 #[derive(Clone)]
 pub enum UnwrapOperandKind {
-    Option(Option<Box<Expression>>), // TODO: limit to a specific kind of `Expression`
-    Result(Result<Box<Expression>, CompilerError>),
+    Option(Option<Box<Operable>>),
+    Result(Result<Box<Operable>, CompilerError>),
 }
 
 impl Spanned for UnwrapOperandKind {
