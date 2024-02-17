@@ -16,16 +16,11 @@ use crate::{
 };
 
 impl Peek for AttributeKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
-        // peek the next `Token` in the Peeker`, expecting a `Keyword`
-        // if it is `Ok`, return the `Keyword`
-        // if it is `Err`, return `ParserErrorKind::InvalidToken` or `ParserErrorKind::TokenNotFound`
-        // which will be logged, if called by `Parser`
         let attr_kind = if let Ok(k) = peeker.peek_keyword() {
-            // if it is a `Keyword`, match its `KeywordKind` and return the relevant `AttributeKind`
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwContract => AttributeKind::KwContract(k),
@@ -36,21 +31,20 @@ impl Peek for AttributeKind {
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
                 // unexpected `KeywordKind`
-                _ => return Err(ParserErrorKind::UnexpectedToken),
+                _ => return None,
             }
-            // else peek the next `Token` in the `Peeker`, expecting a `SimplePathSegmentKind`
-        } else if let Some(p) = SimplePathSegmentKind::peek(peeker)? {
+        } else if let Some(p) = SimplePathSegmentKind::peek(peeker) {
             // if the next `Token` is some `SimplePathSegmentKind`, return `AttributeKind::Path`
             AttributeKind::Path(p)
             // else if the next `Token` is `Some(_)`, `None` or `Err`, simply return `Ok(None)`
         } else {
             // all we really need to know at this point is whether there is an `AttributeKind`;
             // if there isn't one, returning `None` is fine – we don't need to throw an error
-            return Ok(None);
+            return None;
         };
 
         // return the `AttributeKind`
-        Ok(Some(attr_kind))
+        Some(attr_kind)
     }
 }
 
@@ -64,17 +58,17 @@ impl Parse for InnerAttr {
         // if the `Token` is `Some(Punctuation)`, return `Some(Punctuation)`
         // if the `Token` is `Some(_)`, log `ParserErrorKind::InvalidToken`
         // if the `Token` is `None`, log `ParserErrorKind::TokenNotFound`
-        let hash_bang_res = parser.peek::<Punctuation>();
+        let hash_bang_opt = parser.peek::<Punctuation>();
 
-        let inner_attr = if let Ok(Some(Punctuation {
+        let inner_attr = if let Some(Punctuation {
             punc_kind: PuncKind::HashBang,
             ..
-        })) = hash_bang_res
+        }) = hash_bang_opt
         {
             // if `hash_bang_res` has the correct `PuncKind`, advance the `Parser`
             parser.advance();
 
-            let open_bracket_opt = parser.peek::<Delimiter>()?;
+            let open_bracket_opt = parser.peek::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -86,10 +80,10 @@ impl Parse for InnerAttr {
                 // create a `Peeker` from a `TokenStream` at the current position
                 // and call `Attribute::peek()`; unwrap the `Result`
                 // the token can be any `AttributeKind`, as long as it is `Some`
-                if let Some(attribute) = parser.peek::<AttributeKind>()? {
+                if let Some(attribute) = parser.peek::<AttributeKind>() {
                     parser.advance();
 
-                    let close_bracket_opt = parser.peek::<Delimiter>()?;
+                    let close_bracket_opt = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
@@ -104,10 +98,12 @@ impl Parse for InnerAttr {
                             // `hash_bang_res`, `open_bracket_opt` and `close_bracket_opt` are `Option`,
                             // and have been converted to `Result` and unwrapped to get the correct type
                             // the error is `Infallible` as we have already checked that they are `Some`
-                            hash_bang: hash_bang_res?
+                            hash_bang: hash_bang_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+
                             open_bracket: open_bracket_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+
                             attribute,
                             close_bracket: close_bracket_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
@@ -149,14 +145,14 @@ impl Parse for OuterAttr {
     {
         let hash_sign_res = parser.peek::<Punctuation>();
 
-        let outer_attr = if let Ok(Some(Punctuation {
+        let outer_attr = if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
-        })) = hash_sign_res
+        }) = hash_sign_res
         {
             parser.advance();
 
-            let open_bracket_opt = parser.peek::<Delimiter>()?;
+            let open_bracket_opt = parser.peek::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -165,10 +161,10 @@ impl Parse for OuterAttr {
             {
                 parser.advance();
 
-                if let Some(attribute) = parser.peek::<AttributeKind>()? {
+                if let Some(attribute) = parser.peek::<AttributeKind>() {
                     parser.advance();
 
-                    let close_bracket_opt = parser.peek::<Delimiter>()?;
+                    let close_bracket_opt = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
@@ -178,7 +174,7 @@ impl Parse for OuterAttr {
                         parser.advance();
 
                         OuterAttr {
-                            hash_sign: hash_sign_res?
+                            hash_sign: hash_sign_res
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                             open_bracket: open_bracket_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,

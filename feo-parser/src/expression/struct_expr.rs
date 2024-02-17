@@ -47,11 +47,11 @@ impl Parse for StructExprField {
             parser.advance();
 
             // peek the next `Token`, expecting an `Identifier`
-            if let Some(id) = parser.peek::<Identifier>()? {
+            if let Some(id) = parser.peek::<Identifier>() {
                 parser.advance();
 
                 // peek the next `Token`, expecting a `Punctuation`
-                let colon_opt = parser.peek::<Punctuation>()?;
+                let colon_opt = parser.peek::<Punctuation>();
 
                 // check to see if `colon_opt` has `PuncKind::Colon`
                 if let Some(Punctuation {
@@ -118,16 +118,16 @@ impl Parse for StructExprFields {
             parser.advance();
 
             // iterate while the current `Punctuation` has `PuncKind::Comma`
-            while let Ok(Some(Punctuation {
+            while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            })) = next_comma_res
+            }) = next_comma_res
             {
                 // expect a `StructExprField` (which should be the next `Token`)
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     // push the current `Punctuation` and the next `StructExprField`
                     subsequent_fields.push((
-                        next_comma_res?
+                        next_comma_res
                             .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                         next_field,
                     ));
@@ -140,8 +140,8 @@ impl Parse for StructExprFields {
                 // peek for a `Punctuation`
                 // if one exists, set it to `next_comma_opt` and advance the `Parser`,
                 // else break
-                if let Ok(p) = parser.take::<Punctuation>() {
-                    next_comma_res = Ok(p);
+                if let Some(p) = parser.take::<Punctuation>() {
+                    next_comma_res = Some(p);
                 } else {
                     break;
                 }
@@ -172,7 +172,7 @@ impl Parse for StructExpr {
         let struct_expr = if let Ok(item_path) = PathInExpr::parse(parser) {
             parser.advance();
 
-            let open_brace_opt = parser.peek::<Delimiter>()?;
+            let open_brace_opt = parser.peek::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -184,7 +184,7 @@ impl Parse for StructExpr {
                 if let Some(s) = StructExprFields::parse(parser)? {
                     parser.advance();
 
-                    let close_brace_opt = parser.peek::<Delimiter>()?;
+                    let close_brace_opt = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),

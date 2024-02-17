@@ -4,7 +4,7 @@ use feo_ast::expression::{
     LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
     TypeCastExpr, UnderscoreExpr, UnwrapExpr, UnwrapOperandKind,
 };
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::handler::ErrorEmitted;
 use feo_types::punctuation::PuncKind;
 
 use crate::{
@@ -13,7 +13,7 @@ use crate::{
 };
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -29,18 +29,18 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
                 PuncKind::Pipe => ArithmeticOrLogicalOperatorKind::LogicalOr(p),
                 PuncKind::DblLessThan => ArithmeticOrLogicalOperatorKind::ShiftLeft(p),
                 PuncKind::DblGreaterThan => ArithmeticOrLogicalOperatorKind::ShiftRight(p),
-                _ => return Err(ParserErrorKind::UnexpectedToken),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for ComparisonOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -52,18 +52,18 @@ impl Peek for ComparisonOperatorKind {
                 PuncKind::LessThanEquals => ComparisonOperatorKind::LessThanOrEqual(p),
                 PuncKind::DblEquals => ComparisonOperatorKind::Equality(p),
                 PuncKind::GreaterThanEquals => ComparisonOperatorKind::GreaterThanOrEqual(p),
-                _ => return Err(ParserErrorKind::UnexpectedToken),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for CompoundAssignOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -74,18 +74,18 @@ impl Peek for CompoundAssignOperatorKind {
                 PuncKind::PlusEquals => CompoundAssignOperatorKind::AddAssign(p),
                 PuncKind::MinusEquals => CompoundAssignOperatorKind::SubtractAssign(p),
                 PuncKind::ForwardSlashEquals => CompoundAssignOperatorKind::DivideAssign(p),
-                _ => return Err(ParserErrorKind::UnexpectedToken),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for LazyBoolOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -93,18 +93,18 @@ impl Peek for LazyBoolOperatorKind {
             match p.punc_kind {
                 PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
                 PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
-                _ => return Err(ParserErrorKind::UnexpectedToken),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for NegationOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -112,19 +112,19 @@ impl Peek for NegationOperatorKind {
             match p.punc_kind {
                 PuncKind::Minus => NegationOperatorKind::InvertNumeric(p),
                 PuncKind::Bang => NegationOperatorKind::InvertBool(p),
-                _ => return Err(ParserErrorKind::UnexpectedToken),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 // TODO: how ??
 impl Peek for UnwrapOperandKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {

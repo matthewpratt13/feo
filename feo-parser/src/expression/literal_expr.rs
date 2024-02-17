@@ -1,10 +1,9 @@
-use feo_error::parser_error::ParserErrorKind;
 use feo_types::literal::{FloatType, IntType, LiteralKind, UIntType};
 
 use crate::{parse::Peek, parser::Peeker};
 
 impl Peek for LiteralKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -20,7 +19,7 @@ impl Peek for LiteralKind {
                     IntType::I32(_) => LiteralKind::I32(i),
                     IntType::I64(_) => LiteralKind::I64(i),
                 },
-                None => return Err(ParserErrorKind::TokenNotFound),
+                _ => return None,
             }
         } else if let Ok(ui) = peeker.peek_uint_lit() {
             match ui.clone().into_inner() {
@@ -30,7 +29,7 @@ impl Peek for LiteralKind {
                     UIntType::U32(_) => LiteralKind::U32(ui),
                     UIntType::U64(_) => LiteralKind::U64(ui),
                 },
-                None => return Err(ParserErrorKind::TokenNotFound),
+                _ => return None,
             }
         } else if let Ok(u) = peeker.peek_u256_lit() {
             LiteralKind::U256(u)
@@ -40,12 +39,12 @@ impl Peek for LiteralKind {
                     FloatType::F32(_) => LiteralKind::F32(f),
                     FloatType::F64(_) => LiteralKind::F64(f),
                 },
-                None => return Err(ParserErrorKind::TokenNotFound),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(literal_kind))
+        Some(literal_kind)
     }
 }

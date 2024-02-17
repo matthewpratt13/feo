@@ -31,7 +31,7 @@ impl Parse for Returnable {
     where
         Self: Sized,
     {
-        let expr = if let Ok(id) = parser.peek::<Identifier>() {
+        let expr = if let Some(id) = parser.peek::<Identifier>() {
             parser.advance();
 
             if let Some(fc) = FunctionCallExpr::parse(parser)? {
@@ -51,11 +51,9 @@ impl Parse for Returnable {
             } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
                 Returnable::ArithmeticOrLogicalExpr(al)
             } else {
-                Returnable::Identifier(
-                    id.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
-                )
+                Returnable::Identifier(id)
             }
-        } else if let Ok(_) = parser.peek::<Delimiter>() {
+        } else if let Some(_) = parser.peek::<Delimiter>() {
             parser.advance();
 
             if let Some(ae) = ArrayExpr::parse(parser)? {
@@ -71,7 +69,7 @@ impl Parse for Returnable {
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
-        } else if let Ok(l) = parser.peek::<LiteralKind>() {
+        } else if let Some(l) = parser.peek::<LiteralKind>() {
             parser.advance();
 
             if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
@@ -79,11 +77,9 @@ impl Parse for Returnable {
             } else if let Some(tc) = TypeCastExpr::parse(parser)? {
                 Returnable::TypeCastExpr(tc)
             } else {
-                Returnable::LiteralExpr(
-                    l.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
-                )
+                Returnable::LiteralExpr(l)
             }
-        } else if let Ok(_) = parser.peek::<Keyword>() {
+        } else if let Some(_) = parser.peek::<Keyword>() {
             parser.advance();
 
             if let Some(se) = StructExpr::parse(parser)? {
@@ -97,7 +93,7 @@ impl Parse for Returnable {
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
-        } else if let Ok(_) = parser.peek::<Punctuation>() {
+        } else if let Some(_) = parser.peek::<Punctuation>() {
             parser.advance();
 
             if let Some(cwb) = ClosureWithBlock::parse(parser)? {
