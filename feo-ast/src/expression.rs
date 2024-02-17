@@ -36,7 +36,10 @@ pub use self::{
         ArithmeticOrLogicalOperatorKind, ComparisonOperatorKind, CompoundAssignOperatorKind,
         DerefOperator, LazyBoolOperatorKind, NegationOperatorKind, RefOperator, UnwrapOperandKind,
     },
-    struct_expr::{StructExpr, StructExprField, StructExprFields, StructExprKind},
+    struct_expr::{
+        StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructExpr,
+        UnitStructExpr,
+    },
 };
 
 use self::{

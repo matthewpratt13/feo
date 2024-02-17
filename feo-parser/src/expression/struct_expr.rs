@@ -1,6 +1,8 @@
 use feo_ast::{
     attribute::OuterAttr,
-    expression::{Returnable, StructExpr, StructExprField, StructExprFields},
+    expression::{
+        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExpr, UnitStructExpr,
+    },
     path::PathInExpr,
 };
 
@@ -219,5 +221,23 @@ impl Parse for StructExpr {
         };
 
         Ok(Some(struct_expr))
+    }
+}
+
+impl Parse for TupleStructExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl Parse for UnitStructExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }

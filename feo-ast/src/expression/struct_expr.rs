@@ -53,10 +53,10 @@ pub struct StructExprFields {
 
 #[derive(Clone)]
 pub struct TupleStructExpr {
-    item_path: PathInExpr,
-    open_parenthesis: Parenthesis,
-    params_opt: Option<(Box<Returnable>, Vec<(Comma, Returnable)>, Option<Comma>)>,
-    close_parenthesis: Parenthesis,
+    pub item_path: PathInExpr,
+    pub open_parenthesis: Parenthesis,
+    pub params_opt: Option<(Box<Returnable>, Vec<(Comma, Returnable)>, Option<Comma>)>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for TupleStructExpr {
@@ -69,7 +69,7 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Clone)]
-pub struct UnitStructExpr(PathInExpr);
+pub struct UnitStructExpr(pub PathInExpr);
 
 impl Spanned for UnitStructExpr {
     fn span(&self) -> Span {
