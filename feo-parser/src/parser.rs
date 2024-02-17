@@ -196,89 +196,89 @@ impl<'a> Peeker<'a> {
     }
 }
 
-// impl Peek for Literal<char> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_char_lit() {
-//             Ok(c) => Some(c),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<char> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_char_lit() {
+            Ok(c) => Ok(Some(c)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
-// impl Peek for Literal<String> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_string_lit() {
-//             Ok(s) => Some(s),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<String> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_string_lit() {
+            Ok(s) => Ok(Some(s)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
-// impl Peek for Literal<bool> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_bool_lit() {
-//             Ok(b) => Some(b),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<bool> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_bool_lit() {
+            Ok(b) => Ok(Some(b)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
-// impl Peek for Literal<IntType> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_int_lit() {
-//             Ok(i) => Some(i),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<IntType> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_int_lit() {
+            Ok(i) => Ok(Some(i)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
-// impl Peek for Literal<UIntType> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_uint_lit() {
-//             Ok(ui) => Some(ui),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<UIntType> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_uint_lit() {
+            Ok(ui) => Ok(Some(ui)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
-// impl Peek for Literal<U256> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_u256_lit() {
-//             Ok(u) => Some(u),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<U256> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_u256_lit() {
+            Ok(u) => Ok(Some(u)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
-// impl Peek for Literal<FloatType> {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_float_lit() {
-//             Ok(f) => Some(f),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Literal<FloatType> {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_float_lit() {
+            Ok(f) => Ok(Some(f)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
 impl Peek for Identifier {
     fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
@@ -292,17 +292,17 @@ impl Peek for Identifier {
     }
 }
 
-// impl Peek for Keyword {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_keyword() {
-//             Ok(k) => Some(k),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Keyword {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_keyword() {
+            Ok(k) => Ok(Some(k)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
 // impl Peek for DocComment {
 //     fn peek(peeker: Peeker<'_>) -> Option<Self>
