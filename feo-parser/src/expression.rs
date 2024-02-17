@@ -134,6 +134,8 @@ impl Parse for Returnable {
                 Returnable::Identifier(id)
             }
         } else if let Some(d) = parser.peek::<Delimiter>()? {
+            parser.advance();
+
             if let Some(ae) = ArrayExpr::parse(parser)? {
                 Returnable::ArrayExpr(ae)
             } else if let Some(ie) = IndexExpr::parse(parser)? {
@@ -148,6 +150,8 @@ impl Parse for Returnable {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else if let Some(l) = parser.peek::<LiteralKind>()? {
+            parser.advance();
+
             if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
                 Returnable::ArithmeticOrLogicalExpr(al)
             } else if let Some(tc) = TypeCastExpr::parse(parser)? {
@@ -156,6 +160,8 @@ impl Parse for Returnable {
                 Returnable::LiteralExpr(l)
             }
         } else if let Some(k) = parser.peek::<Keyword>()? {
+            parser.advance();
+
             if let Some(se) = StructExpr::parse(parser)? {
                 Returnable::StructExpr(StructExprKind::Struct(se))
             } else if let Some(ts) = TupleStructExpr::parse(parser)? {
@@ -168,6 +174,8 @@ impl Parse for Returnable {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else if let Some(p) = parser.peek::<Punctuation>()? {
+            parser.advance();
+
             if let Some(cwb) = ClosureWithBlock::parse(parser)? {
                 Returnable::ClosureWithBlock(cwb)
             } else if let Some(c) = ClosureWithoutBlock::parse(parser)? {
