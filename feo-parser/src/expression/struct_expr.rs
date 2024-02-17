@@ -238,6 +238,12 @@ impl Parse for UnitStructExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
+            UnitStructExpr(path)
+        } else {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+        };
+
+        Ok(Some(unit_struct_expr))
     }
 }
