@@ -113,7 +113,7 @@ impl Parse for StructExprFields {
             parser.advance();
 
             // create a var to store the current `Punctuation`
-            let mut next_comma_res = parser.peek::<Punctuation>();
+            let mut next_comma_opt = parser.peek::<Punctuation>();
 
             parser.advance();
 
@@ -121,15 +121,16 @@ impl Parse for StructExprFields {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_res
+            }) = next_comma_opt
             {
                 // expect a `StructExprField` (which should be the next `Token`)
-                if let Some(next_field) = StructExprField::parse(parser)? {
+                if let Ok(next_field) = StructExprField::parse(parser) {
                     // push the current `Punctuation` and the next `StructExprField`
                     subsequent_fields.push((
-                        next_comma_res
+                        next_comma_opt
                             .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
-                        next_field,
+                        next_field
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                     ));
 
                     parser.advance();
@@ -141,7 +142,7 @@ impl Parse for StructExprFields {
                 // if one exists, set it to `next_comma_opt` and advance the `Parser`,
                 // else break
                 if let Some(p) = parser.take::<Punctuation>() {
-                    next_comma_res = Some(p);
+                    next_comma_opt = Some(p);
                 } else {
                     break;
                 }
@@ -181,7 +182,7 @@ impl Parse for StructExpr {
             {
                 parser.advance();
 
-                if let Some(s) = StructExprFields::parse(parser)? {
+                if let Ok(struct_expr_fields_opt) = StructExprFields::parse(parser) {
                     parser.advance();
 
                     let close_brace_opt = parser.peek::<Delimiter>();
@@ -198,7 +199,7 @@ impl Parse for StructExpr {
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                             open_brace: open_brace_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
-                            struct_expr_fields_opt: Some(s),
+                            struct_expr_fields_opt,
                             close_brace: close_brace_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                         }
