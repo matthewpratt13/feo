@@ -1,6 +1,11 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+use feo_ast::expression::Returnable;
+use feo_error::handler::ErrorEmitted;
+
+use crate::{parse::Parse, parser::Parser};
+
 mod literal_expr;
 mod operator_expr;
 mod struct_expr;
@@ -85,3 +90,12 @@ mod struct_expr;
 //         Some(expr)
 //     }
 // }
+
+impl Parse for Returnable {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}

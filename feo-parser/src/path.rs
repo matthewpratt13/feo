@@ -65,11 +65,10 @@ impl Parse for SimplePath {
             {
                 // peek for a `SimplePathSegmentKind` (which should be the next `Token`)
                 if let Some(next_path_segment) = parser.peek::<SimplePathSegmentKind>()? {
-                    // if it is a `SimplePathSegmentKind`, advance the `Parser`
-                    parser.advance();
-
                     // push the current `Punctuation` and the next `SimplePathSegmentKind`
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
+
+                    parser.advance();
                 } else {
                     // in this case, the next `Token` is either `Some(_)` or `None`
                     // i.e., not some `SimplePathSegmentKind`
@@ -202,9 +201,9 @@ impl Parse for PathType {
             }) = next_dbl_colon_opt
             {
                 if let Some(next_path_segment) = parser.peek::<PathIdenSegmentKind>()? {
-                    parser.advance();
-
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
+
+                    parser.advance();
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }

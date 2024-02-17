@@ -280,17 +280,17 @@ impl<'a> Peeker<'a> {
 //     }
 // }
 
-// impl Peek for Identifier {
-//     fn peek(peeker: Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_identifier() {
-//             Ok(id) => Some(id),
-//             Err(_) => None,
-//         }
-//     }
-// }
+impl Peek for Identifier {
+    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    where
+        Self: Sized,
+    {
+        match peeker.peek_identifier() {
+            Ok(id) => Ok(Some(id)),
+            Err(e) => Err(e),
+        }
+    }
+}
 
 // impl Peek for Keyword {
 //     fn peek(peeker: Peeker<'_>) -> Option<Self>

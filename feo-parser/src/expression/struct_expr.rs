@@ -1,11 +1,11 @@
 use feo_ast::{
     attribute::OuterAttr,
-    expression::{StructExpr, StructExprField, StructExprFields},
+    expression::{Returnable, StructExpr, StructExprField, StructExprFields},
 };
 
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 
-use feo_types::{punctuation::PuncKind, utils::Comma, Punctuation};
+use feo_types::{punctuation::PuncKind, utils::Comma, Identifier, Punctuation};
 
 use crate::{parse::Parse, parser::Parser};
 
@@ -14,24 +14,81 @@ impl Parse for StructExprField {
     where
         Self: Sized,
     {
+        // prepare an empty vector to store attributes
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        let mut curr_attr_opt = OuterAttr::parse(parser)?;
-
-        let struct_expr_field = if let Some(first_attr) = curr_attr_opt {
-            parser.advance();
+        let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
+            // push the first attribute to the vector
             attributes.push(first_attr);
 
+            parser.advance(); // advance the parser
+
+            // push `OuterAttr` to `attributes` as long as there are some,
+            // else break
             while let Ok(next_attr) = OuterAttr::parse(parser) {
                 if let Some(a) = next_attr {
                     attributes.push(a);
                     parser.advance();
-
-                    curr_attr_opt = Some(a);
                 } else {
                     break;
                 }
             }
+
+            // advance the `Parser` once there are no more `OuterAttr`
+            parser.advance();
+
+            // peek the next `Token`, expecting an `Identifier`
+            if let Some(id) = parser.peek::<Identifier>()? {
+                parser.advance();
+
+                // peek the next `Token`, expecting a `Punctuation`
+                let colon_opt = parser.peek::<Punctuation>()?;
+
+                // check to see if `colon_opt` has `PuncKind::Colon`
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::Colon,
+                    ..
+                }) = colon_opt
+                {
+                    // if so, advance the `Parser`
+                    parser.advance();
+
+                    // parse the next `Token`, continue if it is `Some`
+                    if let Some(r) = Returnable::parse(parser)? {
+                        parser.advance();
+
+                        // collect the elements for the `StructExprField` into a tuple
+                        let field_content = (id, colon_opt.unwrap(), Box::new(r));
+
+                        // assign the `StructExprField`
+                        StructExprField(attributes, field_content)
+                    } else {
+                        // in this case, the next `Expression` is either `Some(_)` or `None`
+                        // i.e., not some `Returnable`
+                        // however, we checked that it is not `None` inside the `parse()` function
+                        // therefore it has to be some other `Expression` (or `Token`)
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    }
+                } else {
+                    // in this case, the next `Token` is either `Some(_)` or `None`
+                    // i.e., not some `Punctuation`
+                    // however, we checked that it is not `None` inside `Peeker::peek_punctuation()`
+                    // therefore it has to be some other `Token`
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                }
+            } else {
+                // in this case, the next `Token` is either `Some(_)` or `None`
+                // i.e., not some `Identifier`
+                // however, we checked that it is not `None` inside `Peeker::peek_identifier()`
+                // therefore it has to be some other `Token`
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            }
+        } else {
+            // in this case, the next `Token` is either `Some(_)` or `None`
+            // i.e., not some `OuterAttr`
+            // however, we checked that it is not `None` inside the `parse()` function
+            // therefore it has to be some other `Token`
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
         };
 
         Ok(Some(struct_expr_field))
@@ -63,11 +120,10 @@ impl Parse for StructExprFields {
             {
                 // expect a `StructExprField` (which should be the next `Token`)
                 if let Some(next_field) = StructExprField::parse(parser)? {
-                    // if it is a `StructExprField`, advance the `Parser`
-                    parser.advance();
-
                     // push the current `Punctuation` and the next `StructExprField`
                     subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+
+                    parser.advance();
                 } else {
                     // in this case, the next `Token` is either `Some(_)` or `None`
                     // i.e., not some `StructExprField`
