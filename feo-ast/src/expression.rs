@@ -28,11 +28,6 @@ use crate::{
 };
 
 pub use self::{
-    array_expr::{
-        ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
-        IndexExpr,
-    },
-    block_expr::BlockExpr,
     call_expr::CallParams,
     closure_expr::{ClosureExprKind, ClosureParam, ClosureParams, ClosureParamsOpt},
     conditional_expr::{IfExpr, MatchExpr},
@@ -45,6 +40,8 @@ pub use self::{
 };
 
 use self::{
+    array_expr::{ArrayExpr, IndexExpr},
+    block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{ClosureWithBlock, ClosureWithoutBlock},
     field_access_expr::FieldAccessExpr,

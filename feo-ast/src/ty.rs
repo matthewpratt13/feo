@@ -20,6 +20,7 @@ use crate::{
 use self::{
     array_type::ArrayType, impl_trait_type::ImplTraitType, parenthesized_type::ParenthesizedType,
 };
+
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
 #[derive(Clone)]

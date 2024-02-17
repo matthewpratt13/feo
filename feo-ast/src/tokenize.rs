@@ -16,8 +16,8 @@ use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span},
-    type_annotation::TypeAnnKind,
-    Identifier, TypeAnnotation, U256,
+    type_annotation::{TypeAnnKind, TypeAnnotation},
+    Identifier, U256,
 };
 
 use crate::token::Token;

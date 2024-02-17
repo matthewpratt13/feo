@@ -1,5 +1,7 @@
-use feo_types::span::{Span, Spanned};
-use feo_types::utils::KwMut;
+use feo_types::{
+    span::{Span, Spanned},
+    utils::KwMut,
+};
 
 use crate::expression::DerefOperator;
 

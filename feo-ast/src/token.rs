@@ -1,12 +1,7 @@
 use feo_types::{
-    comment::Comment,
-    delimiter::Delimiter,
-    doc_comment::DocComment,
-    keyword::Keyword,
     literal::{FloatType, IntType, Literal, UIntType},
-    punctuation::Punctuation,
     span::{Span, Spanned},
-    Identifier, TypeAnnotation, U256,
+    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
 };
 
 #[derive(Debug, Clone)]
