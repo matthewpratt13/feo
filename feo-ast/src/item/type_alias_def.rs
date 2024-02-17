@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{expression::OuterAttr, ty::Type};
+use crate::{attribute::OuterAttr, ty::Type};
 
 use super::{TypeParamBounds, VisibilityKind};
 

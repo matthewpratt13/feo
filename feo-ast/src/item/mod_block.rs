@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::expression::OuterAttr;
+use crate::attribute::OuterAttr;
 
 use super::{Item, VisibilityKind};
 

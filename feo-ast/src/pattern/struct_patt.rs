@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{expression::OuterAttr, path::PathInExpr};
+use crate::{attribute::OuterAttr, path::PathInExpr};
 
 use super::Pattern;
 

@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::expression::{InnerAttr, OuterAttr};
+use crate::attribute::{InnerAttr, OuterAttr};
 
 use super::{
     ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, TypeParamBounds, VisibilityKind,

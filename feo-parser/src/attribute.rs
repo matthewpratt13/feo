@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{AttributeKind, InnerAttr, OuterAttr},
+    attribute::{AttributeKind, InnerAttr, OuterAttr},
     path::SimplePathSegmentKind,
 };
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};

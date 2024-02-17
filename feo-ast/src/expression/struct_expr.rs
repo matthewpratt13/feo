@@ -4,9 +4,9 @@ use feo_types::{
     Identifier,
 };
 
-use crate::path::PathInExpr;
+use crate::{attribute::OuterAttr, path::PathInExpr};
 
-use super::{Expression, OuterAttr};
+use super::Returnable;
 
 #[derive(Clone)]
 pub enum StructExprKind {
@@ -42,9 +42,8 @@ impl Spanned for StructExpr {
     }
 }
 
-// TODO: limit to a specific kind of `Expression`
 #[derive(Clone)]
-pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Expression>));
+pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Returnable>));
 
 #[derive(Clone)]
 pub struct StructExprFields {
@@ -52,12 +51,11 @@ pub struct StructExprFields {
     pub subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
-// TODO: limit to a specific kind of `Expression`
 #[derive(Clone)]
 pub struct TupleStructExpr {
     item_path: PathInExpr,
     open_parenthesis: Parenthesis,
-    params_opt: Option<(Box<Expression>, Vec<(Comma, Expression)>, Option<Comma>)>,
+    params_opt: Option<(Box<Returnable>, Vec<(Comma, Returnable)>, Option<Comma>)>,
     close_parenthesis: Parenthesis,
 }
 

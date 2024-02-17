@@ -3,7 +3,7 @@ use feo_types::{
     utils::{DblDot, DotDotEquals},
 };
 
-use super::Expression;
+use super::Operable;
 
 #[derive(Clone)]
 pub enum RangeExprKind {
@@ -32,9 +32,9 @@ pub type RangeFullExpr = DblDot;
 
 #[derive(Clone)]
 pub struct RangeFromToExpr {
-    from_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
+    from_operand: Box<Operable>,
     dbl_dot: DblDot,
-    to_operand_excl: Box<Expression>,
+    to_operand_excl: Box<Operable>,
 }
 
 impl Spanned for RangeFromToExpr {
@@ -48,7 +48,7 @@ impl Spanned for RangeFromToExpr {
 
 #[derive(Clone)]
 pub struct RangeFromExpr {
-    from_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
+    from_operand: Box<Operable>,
     dbl_dot: DblDot,
 }
 
@@ -64,7 +64,7 @@ impl Spanned for RangeFromExpr {
 #[derive(Clone)]
 pub struct RangeToExpr {
     dbl_dot: DblDot,
-    to_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
+    to_operand: Box<Operable>,
 }
 
 impl Spanned for RangeToExpr {
@@ -78,9 +78,9 @@ impl Spanned for RangeToExpr {
 
 #[derive(Clone)]
 pub struct RangeInclusiveExpr {
-    from_operand: Box<Expression>, // TODO: limit to a specific kind of `Expression`
+    from_operand: Box<Operable>,
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<Expression>,
+    to_operand_incl: Box<Operable>,
 }
 
 impl Spanned for RangeInclusiveExpr {
@@ -95,7 +95,7 @@ impl Spanned for RangeInclusiveExpr {
 #[derive(Clone)]
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<Expression>, // TODO: limit to a specific kind of `Expression`
+    to_operand_incl: Box<Operable>,
 }
 
 impl Spanned for RangeToInclusiveExpr {

@@ -6,7 +6,8 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{Assignable, Expression, OuterAttr},
+    attribute::OuterAttr,
+    expression::{Assignable, Expression},
     item::{
         ConstantVarDef, EnumDef, EnumVariantStruct, ExternCrateDecl, FunctionDefKind, ImportDecl,
         InherentImplBlock, ModBlock, PathSubsetRecursive, PathWildcard, PathWithAsClause,

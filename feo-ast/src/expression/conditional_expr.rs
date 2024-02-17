@@ -3,9 +3,12 @@ use feo_types::{
     utils::{Brace, Comma, FatArrow, KwElse, KwIf, KwMatch},
 };
 
-use crate::pattern::Pattern;
+use crate::{
+    attribute::{InnerAttr, OuterAttr},
+    pattern::Pattern,
+};
 
-use super::{Assignable, BlockExpr, BooleanOperand, Expression, InnerAttr, OuterAttr};
+use super::{Assignable, BlockExpr, BooleanOperand, Expression};
 
 #[derive(Clone)]
 pub struct IfExpr {

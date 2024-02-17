@@ -3,9 +3,9 @@ use feo_types::{
     utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
 };
 
-use crate::{pattern::Pattern, ty::Type};
+use crate::{attribute::OuterAttr, pattern::Pattern, ty::Type};
 
-use super::{BlockExpr, Expression, OuterAttr};
+use super::{BlockExpr, Returnable};
 
 #[derive(Clone)]
 pub enum ClosureParamsOpt {
@@ -55,7 +55,7 @@ impl Spanned for ClosureWithBlock {
 #[derive(Clone)]
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
-    body_operand: Box<Expression>, // TODO: limit kind of `Expression`
+    body_operand: Box<Returnable>,
 }
 
 impl Spanned for ClosureWithoutBlock {

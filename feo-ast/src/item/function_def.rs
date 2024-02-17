@@ -5,7 +5,8 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{ExprWithBlock, OuterAttr, RefOperator},
+    attribute::OuterAttr,
+    expression::{ExprWithBlock, RefOperator},
     pattern::Pattern,
     ty::Type,
 };

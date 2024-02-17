@@ -4,10 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    expression::{Expression, OuterAttr},
-    ty::Type,
-};
+use crate::{attribute::OuterAttr, expression::Expression, ty::Type};
 
 use super::VisibilityKind;
 

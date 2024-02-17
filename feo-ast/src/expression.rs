@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
 mod array_expr;
-mod attribute;
 mod block_expr;
 mod call_expr;
 mod closure_expr;
@@ -33,7 +32,6 @@ pub use self::{
         ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
         IndexExpr,
     },
-    attribute::{AttributeKind, InnerAttr, OuterAttr},
     block_expr::BlockExpr,
     call_expr::CallParams,
     closure_expr::{ClosureExprKind, ClosureParam, ClosureParams, ClosureParamsOpt},
@@ -77,8 +75,6 @@ pub enum Expression {
     ClosureWithoutBlock(ClosureWithoutBlock),
     FieldAccessExpr(FieldAccessExpr),
     IfExpr(IfExpr),
-    InnerAttr(InnerAttr),
-    OuterAttr(OuterAttr),
     IterationExpr(IterationExprKind),
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
@@ -97,30 +93,28 @@ pub enum Expression {
 impl Spanned for Expression {
     fn span(&self) -> Span {
         match self {
-            Expression::ArrayExpr(arr) => arr.span(),
-            Expression::IndexExpr(ind) => ind.span(),
-            Expression::BlockExpr(bl) => bl.span(),
-            Expression::FunctionCallExpr(fun) => fun.span(),
-            Expression::MethodCallExpr(met) => met.span(),
+            Expression::ArrayExpr(ae) => ae.span(),
+            Expression::IndexExpr(ie) => ie.span(),
+            Expression::BlockExpr(be) => be.span(),
+            Expression::FunctionCallExpr(fc) => fc.span(),
+            Expression::MethodCallExpr(mc) => mc.span(),
             Expression::ClosureWithBlock(cwb) => cwb.span(),
             Expression::ClosureWithoutBlock(c) => c.span(),
             Expression::FieldAccessExpr(fa) => fa.span(),
             Expression::IfExpr(ife) => ife.span(),
             Expression::IterationExpr(ite) => ite.span(),
-            Expression::LiteralExpr(lit) => lit.span(),
-            Expression::MatchExpr(mat) => mat.span(),
-            Expression::OperatorExpr(op) => op.span(),
+            Expression::LiteralExpr(le) => le.span(),
+            Expression::MatchExpr(me) => me.span(),
+            Expression::OperatorExpr(oe) => oe.span(),
             Expression::ParenthesizedExpr(par) => par.span(),
-            Expression::PathExpr(pat) => pat.span(),
+            Expression::PathExpr(pie) => pie.span(),
             Expression::RangeExpr(rng) => rng.span(),
-            Expression::ReturnExpr(ret) => ret.span(),
-            Expression::StructExpr(st) => st.span(),
-            Expression::TupleExpr(tup) => tup.span(),
+            Expression::ReturnExpr(rtn) => rtn.span(),
+            Expression::StructExpr(se) => se.span(),
+            Expression::TupleExpr(te) => te.span(),
             Expression::BreakExpr(be) => be.span(),
             Expression::ContinueExpr(ce) => ce.span(),
             Expression::UnderscoreExpr(ue) => ue.span(),
-            Expression::InnerAttr(inn) => inn.span(),
-            Expression::OuterAttr(out) => out.span(),
         }
     }
 }
@@ -150,10 +144,10 @@ impl Spanned for Assignable {
 
 #[derive(Clone)]
 pub enum BooleanOperand {
-    BreakExpr(BreakExpr),
-    ContinueExpr(ContinueExpr),
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
     BlockExpr(BlockExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
@@ -177,28 +171,51 @@ pub enum BooleanOperand {
 impl Spanned for BooleanOperand {
     fn span(&self) -> Span {
         match self {
-            BooleanOperand::BreakExpr(be) => be.span(),
-            BooleanOperand::ContinueExpr(ce) => ce.span(),
             BooleanOperand::ArrayExpr(ae) => ae.span(),
             BooleanOperand::IndexExpr(ie) => ie.span(),
+            BooleanOperand::BreakExpr(be) => be.span(),
+            BooleanOperand::ContinueExpr(ce) => ce.span(),
             BooleanOperand::BlockExpr(be) => be.span(),
             BooleanOperand::FunctionCallExpr(fc) => fc.span(),
             BooleanOperand::MethodCallExpr(mc) => mc.span(),
             BooleanOperand::ClosureWithBlock(cwb) => cwb.span(),
-            BooleanOperand::ClosureWithoutBlock(cb) => cb.span(),
+            BooleanOperand::ClosureWithoutBlock(c) => c.span(),
             BooleanOperand::IfExpr(ife) => ife.span(),
             BooleanOperand::MatchExpr(me) => me.span(),
             BooleanOperand::FieldAccessExpr(fa) => fa.span(),
             BooleanOperand::IterationExpr(ite) => ite.span(),
             BooleanOperand::OperatorExpr(oe) => oe.span(),
             BooleanOperand::ParenthesizedExpr(par) => par.span(),
-            BooleanOperand::RangeExpr(rae) => rae.span(),
-            BooleanOperand::ReturnExpr(re) => re.span(),
+            BooleanOperand::RangeExpr(rng) => rng.span(),
+            BooleanOperand::ReturnExpr(rtn) => rtn.span(),
             BooleanOperand::TupleExpr(te) => te.span(),
             BooleanOperand::TupleIndexExpr(tie) => tie.span(),
             BooleanOperand::LiteralExpr(le) => le.span(),
             BooleanOperand::PathExpr(pat) => pat.span(),
             BooleanOperand::UnderscoreExpr(ue) => ue.span(),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub enum Callable {
+    Identifier(Identifier),
+    ArrayExpr(ArrayExpr),
+    StructExpr(StructExprKind),
+    TupleExpr(TupleExpr),
+    PathExpr(PathExpr),
+    ParenthesizedExpr(ParenthesizedExpr),
+}
+
+impl Spanned for Callable {
+    fn span(&self) -> Span {
+        match self {
+            Callable::Identifier(id) => id.span(),
+            Callable::ArrayExpr(ae) => ae.span(),
+            Callable::StructExpr(se) => se.span(),
+            Callable::TupleExpr(te) => te.span(),
+            Callable::PathExpr(pat) => pat.span(),
+            Callable::ParenthesizedExpr(par) => par.span(),
         }
     }
 }
@@ -273,7 +290,6 @@ pub enum Constant {
 
 #[derive(Clone)]
 pub enum ExprWithBlock {
-    OuterAttr(OuterAttr),
     BlockExpr(BlockExpr),
     ClosureWithBlock(ClosureWithBlock),
     IfExpr(IfExpr),
@@ -284,7 +300,6 @@ pub enum ExprWithBlock {
 impl Spanned for ExprWithBlock {
     fn span(&self) -> Span {
         match self {
-            ExprWithBlock::OuterAttr(oa) => oa.span(),
             ExprWithBlock::BlockExpr(be) => be.span(),
             ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
             ExprWithBlock::IfExpr(ife) => ife.span(),
@@ -300,8 +315,6 @@ pub enum ExprWithoutBlock {
     ContinueExpr(ContinueExpr),
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
-    InnerAttr(InnerAttr),
-    OuterAttr(OuterAttr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     ClosureWithoutBlock(ClosureWithoutBlock),
@@ -330,8 +343,6 @@ pub enum IterableExpr {
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
     IfExpr(IfExpr),
-    InnerAttr(InnerAttr),
-    OuterAttr(OuterAttr),
     MatchExpr(MatchExpr),
     FieldAccessExpr(FieldAccessExpr),
     IterationExpr(IterationExprKind),
@@ -369,12 +380,63 @@ impl Spanned for Operable {
             Operable::MethodCallExpr(mc) => mc.span(),
             Operable::FieldAccessExpr(fa) => fa.span(),
             Operable::LiteralExpr(le) => le.span(),
-            Operable::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            Operable::ArithmeticOrLogicalExpr(al) => al.span(),
             Operable::DereferenceExpr(de) => de.span(),
             Operable::NegationExpr(ne) => ne.span(),
             Operable::ReferenceExpr(re) => re.span(),
-            Operable::TypeCastExpr(tce) => tce.span(),
+            Operable::TypeCastExpr(tc) => tc.span(),
             Operable::UnwrapExpr(ue) => ue.span(),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub enum Returnable {
+    Identifier(Identifier),
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
+    ClosureWithBlock(ClosureWithBlock),
+    ClosureWithoutBlock(ClosureWithoutBlock),
+    FieldAccessExpr(FieldAccessExpr),
+    LiteralExpr(LiteralKind),
+    PathExpr(PathExpr),
+    StructExpr(StructExprKind),
+    TupleExpr(TupleExpr),
+    ParenthesizedExpr(ParenthesizedExpr),
+    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+    DereferenceExpr(DereferenceExpr),
+    NegationExpr(NegationExpr),
+    ReferenceExpr(ReferenceExpr),
+    TypeCastExpr(TypeCastExpr),
+    UnwrapExpr(UnwrapExpr),
+    UnderscoreExpr(Underscore),
+}
+
+impl Spanned for Returnable {
+    fn span(&self) -> Span {
+        match self {
+            Returnable::Identifier(id) => id.span(),
+            Returnable::ArrayExpr(ae) => ae.span(),
+            Returnable::IndexExpr(ie) => ie.span(),
+            Returnable::FunctionCallExpr(fc) => fc.span(),
+            Returnable::MethodCallExpr(mc) => mc.span(),
+            Returnable::ClosureWithBlock(cwb) => cwb.span(),
+            Returnable::ClosureWithoutBlock(c) => c.span(),
+            Returnable::FieldAccessExpr(fa) => fa.span(),
+            Returnable::LiteralExpr(le) => le.span(),
+            Returnable::PathExpr(pat) => pat.span(),
+            Returnable::StructExpr(se) => se.span(),
+            Returnable::TupleExpr(te) => te.span(),
+            Returnable::ParenthesizedExpr(par) => par.span(),
+            Returnable::ArithmeticOrLogicalExpr(al) => al.span(),
+            Returnable::DereferenceExpr(de) => de.span(),
+            Returnable::NegationExpr(ne) => ne.span(),
+            Returnable::ReferenceExpr(re) => re.span(),
+            Returnable::TypeCastExpr(tc) => tc.span(),
+            Returnable::UnwrapExpr(ue) => ue.span(),
+            Returnable::UnderscoreExpr(und) => und.span(),
         }
     }
 }

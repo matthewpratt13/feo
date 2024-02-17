@@ -4,7 +4,7 @@ use feo_types::{
 };
 
 use crate::{
-    expression::{InnerAttr, OuterAttr},
+    attribute::{InnerAttr, OuterAttr},
     path::PathType,
     ty::Type,
 };
