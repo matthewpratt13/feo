@@ -55,7 +55,8 @@ use self::{
     },
     operator_expr::{
         ArithmeticOrLogicalExpr, AssignmentExpr, ComparisonExpr, CompoundAssignmentExpr,
-        DereferenceExpr, LazyBoolExpr, NegationExpr, OperatorExprKind, TypeCastExpr,
+        DereferenceExpr, LazyBoolExpr, NegationExpr, OperatorExprKind, ReferenceExpr, TypeCastExpr,
+        UnwrapExpr,
     },
     parenthesized_expr::ParenthesizedExpr,
     range_expr::RangeExprKind,
@@ -351,7 +352,12 @@ pub enum Operable {
     MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
     LiteralExpr(LiteralKind),
-    OperatorExpr(OperatorExprKind),
+    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+    DereferenceExpr(DereferenceExpr),
+    NegationExpr(NegationExpr),
+    ReferenceExpr(ReferenceExpr),
+    TypeCastExpr(TypeCastExpr),
+    UnwrapExpr(UnwrapExpr),
 }
 
 impl Spanned for Operable {
@@ -363,7 +369,12 @@ impl Spanned for Operable {
             Operable::MethodCallExpr(mc) => mc.span(),
             Operable::FieldAccessExpr(fa) => fa.span(),
             Operable::LiteralExpr(le) => le.span(),
-            Operable::OperatorExpr(oe) => oe.span(),
+            Operable::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            Operable::DereferenceExpr(de) => de.span(),
+            Operable::NegationExpr(ne) => ne.span(),
+            Operable::ReferenceExpr(re) => re.span(),
+            Operable::TypeCastExpr(tce) => tce.span(),
+            Operable::UnwrapExpr(ue) => ue.span(),
         }
     }
 }
