@@ -2,23 +2,22 @@
 #![allow(unused_variables)]
 
 use feo_ast::{
-    expression::{ArithmeticOrLogicalOperatorKind, Returnable, StructExpr, StructExprKind, TupleStructExpr, UnitStructExpr},
+    expression::{Returnable, StructExpr, StructExprKind, TupleStructExpr, UnitStructExpr},
     path::PathInExpr,
 };
 use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
-use feo_types::{
-    literal::{FloatType, IntType, LiteralKind, UIntType},
-    Delimiter, Identifier, Keyword, Literal, Punctuation,
-};
+use feo_types::{literal::LiteralKind, Delimiter, Identifier, Keyword, Punctuation};
 
-use crate::{
-    parse::{Parse, Peek},
-    parser::{Parser, Peeker},
-};
+use crate::{parse::Parse, parser::Parser};
 
+mod array_expr;
+mod call_expr;
+mod closure_expr;
 mod literal_expr;
 mod operator_expr;
+mod parenthesized_expr;
 mod struct_expr;
+mod tuple_expr;
 
 // impl Peek for Expression {
 //     fn peek(peeker: Peeker<'_>) -> Option<Self>
