@@ -48,7 +48,7 @@ impl Parse for SimplePath {
         // prepare an empty vector to store path segments
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
-        let simple_path = if let Some(first_segment) = parser.peek::<SimplePathSegmentKind>()? {
+        let simple_path = if let Ok(first_segment) = parser.peek::<SimplePathSegmentKind>() {
             // if the first `Token` is some `SimplePathSegmentKind`, advance the `Parser`
             parser.advance();
 
@@ -92,15 +92,12 @@ impl Parse for SimplePath {
 
             // assign `SimplePath`
             SimplePath {
-                first_segment,
+                first_segment: first_segment
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                 subsequent_segments,
             }
         } else {
-            // in this case, the next `Token` is either `Some(_)` or `None`
-            // i.e., not some `SimplePathSegmentKind`
-            // however, we checked that it is not `None` inside `Peeker::peek_keyword()`
-            // therefore it has to be some other `Token`
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(simple_path))
@@ -140,7 +137,7 @@ impl Parse for PathInExpr {
     {
         let mut subsequent_segments: Vec<(DblColon, PathIdenSegmentKind)> = Vec::new();
 
-        let path_expr = if let Some(first_segment) = parser.peek::<PathIdenSegmentKind>()? {
+        let path_expr = if let Ok(first_segment) = parser.peek::<PathIdenSegmentKind>() {
             parser.advance();
 
             let mut next_dbl_colon_opt = parser.peek::<Punctuation>()?;
@@ -170,11 +167,12 @@ impl Parse for PathInExpr {
             parser.advance();
 
             PathInExpr {
-                first_segment,
+                first_segment: first_segment
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                 subsequent_segments,
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(path_expr))
@@ -188,7 +186,7 @@ impl Parse for PathType {
     {
         let mut subsequent_segments: Vec<(DblColon, PathIdenSegmentKind)> = Vec::new();
 
-        let path_type = if let Some(first_segment) = parser.peek::<PathIdenSegmentKind>()? {
+        let path_type = if let Ok(first_segment) = parser.peek::<PathIdenSegmentKind>() {
             parser.advance();
 
             let mut next_dbl_colon_opt = parser.peek::<Punctuation>()?;
@@ -218,11 +216,12 @@ impl Parse for PathType {
             parser.advance();
 
             PathType {
-                first_segment,
+                first_segment: first_segment
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                 subsequent_segments,
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(path_type))

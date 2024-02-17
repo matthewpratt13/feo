@@ -64,14 +64,14 @@ impl Parse for InnerAttr {
         // if the `Token` is `Some(Punctuation)`, return `Some(Punctuation)`
         // if the `Token` is `Some(_)`, log `ParserErrorKind::InvalidToken`
         // if the `Token` is `None`, log `ParserErrorKind::TokenNotFound`
-        let hash_bang_opt = parser.peek::<Punctuation>()?;
+        let hash_bang_res = parser.peek::<Punctuation>();
 
-        let inner_attr = if let Some(Punctuation {
+        let inner_attr = if let Ok(Some(Punctuation {
             punc_kind: PuncKind::HashBang,
             ..
-        }) = hash_bang_opt
+        })) = hash_bang_res
         {
-            // if `hash_bang_opt` has the correct `PuncKind`, advance the `Parser`
+            // if `hash_bang_res` has the correct `PuncKind`, advance the `Parser`
             parser.advance();
 
             let open_bracket_opt = parser.peek::<Delimiter>()?;
@@ -101,10 +101,10 @@ impl Parse for InnerAttr {
 
                         // assign `InnerAttr`
                         InnerAttr {
-                            // `hash_bang_opt`, `open_bracket_opt` and `close_bracket_opt` are `Option`,
+                            // `hash_bang_res`, `open_bracket_opt` and `close_bracket_opt` are `Option`,
                             // and have been converted to `Result` and unwrapped to get the correct type
                             // the error is `Infallible` as we have already checked that they are `Some`
-                            hash_bang: hash_bang_opt
+                            hash_bang: hash_bang_res?
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                             open_bracket: open_bracket_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
@@ -134,11 +134,7 @@ impl Parse for InnerAttr {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            // in this case `hash_bang_opt` is either `Some(_)` or `None`
-            // i.e., not some `Punctuation { PuncKind::HashBang, .. }`
-            // or `None`; however, we checked that it is not `None` inside `Peeker::peek_punctuation()`
-            // therefore it has to be some other `Token`
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         // return the `InnerAttr`
@@ -151,12 +147,12 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_opt = parser.peek::<Punctuation>()?;
+        let hash_sign_res = parser.peek::<Punctuation>();
 
-        let outer_attr = if let Some(Punctuation {
+        let outer_attr = if let Ok(Some(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
-        }) = hash_sign_opt
+        })) = hash_sign_res
         {
             parser.advance();
 
@@ -182,7 +178,7 @@ impl Parse for OuterAttr {
                         parser.advance();
 
                         OuterAttr {
-                            hash_sign: hash_sign_opt
+                            hash_sign: hash_sign_res?
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                             open_bracket: open_bracket_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
@@ -200,7 +196,7 @@ impl Parse for OuterAttr {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+            return Ok(None);
         };
 
         Ok(Some(outer_attr))

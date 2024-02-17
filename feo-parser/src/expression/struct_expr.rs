@@ -113,39 +113,35 @@ impl Parse for StructExprFields {
             parser.advance();
 
             // create a var to store the current `Punctuation`
-            let mut next_comma_opt = parser.peek::<Punctuation>()?;
+            let mut next_comma_res = parser.peek::<Punctuation>();
 
             parser.advance();
 
             // iterate while the current `Punctuation` has `PuncKind::Comma`
-            while let Some(Punctuation {
+            while let Ok(Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            })) = next_comma_res
             {
                 // expect a `StructExprField` (which should be the next `Token`)
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     // push the current `Punctuation` and the next `StructExprField`
                     subsequent_fields.push((
-                        next_comma_opt
+                        next_comma_res?
                             .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                         next_field,
                     ));
 
                     parser.advance();
                 } else {
-                    // in this case, the next `Token` is either `Some(_)` or `None`
-                    // i.e., not some `StructExprField`
-                    // however, we checked that it is not `None` inside `Peeker::peek_punctuation()`
-                    // therefore it has to be some other `Token`
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    break;
                 }
 
                 // peek for a `Punctuation`
                 // if one exists, set it to `next_comma_opt` and advance the `Parser`,
                 // else break
                 if let Ok(p) = parser.take::<Punctuation>() {
-                    next_comma_opt = p;
+                    next_comma_res = Ok(p);
                 } else {
                     break;
                 }
