@@ -1,28 +1,30 @@
-use feo_error::parser_error::ParserErrorKind;
-use feo_types::literal::{FloatType, IntType, LiteralKind, UIntType};
+use feo_types::{
+    literal::{FloatType, IntType, LiteralKind, UIntType},
+    Literal, U256,
+};
 
 use crate::{parse::Peek, parser::Peeker};
 
 impl Peek for LiteralKind {
-    fn peek(peeker: Peeker<'_>) -> Result<Option<Self>, ParserErrorKind>
+    fn peek(peeker: Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let literal_kind = if let Ok(c) = peeker.peek_char_lit() {
+        let literal_kind = if let Some(c) = Literal::<char>::peek(peeker) {
             LiteralKind::Char(c)
-        } else if let Ok(s) = peeker.peek_string_lit() {
+        } else if let Some(s) = Literal::<String>::peek(peeker) {
             LiteralKind::String(s)
-        } else if let Ok(b) = peeker.peek_bool_lit() {
+        } else if let Some(b) = Literal::<bool>::peek(peeker) {
             LiteralKind::Bool(b)
-        } else if let Ok(i) = peeker.peek_int_lit() {
+        } else if let Some(i) = Literal::<IntType>::peek(peeker) {
             match i.clone().into_inner() {
                 Some(t) => match t {
                     IntType::I32(_) => LiteralKind::I32(i),
                     IntType::I64(_) => LiteralKind::I64(i),
                 },
-                None => return Err(ParserErrorKind::TokenNotFound),
+                _ => return None,
             }
-        } else if let Ok(ui) = peeker.peek_uint_lit() {
+        } else if let Some(ui) = Literal::<UIntType>::peek(peeker) {
             match ui.clone().into_inner() {
                 Some(t) => match t {
                     UIntType::U8(_) => LiteralKind::U8(ui),
@@ -30,22 +32,22 @@ impl Peek for LiteralKind {
                     UIntType::U32(_) => LiteralKind::U32(ui),
                     UIntType::U64(_) => LiteralKind::U64(ui),
                 },
-                None => return Err(ParserErrorKind::TokenNotFound),
+                _ => return None,
             }
-        } else if let Ok(u) = peeker.peek_u256_lit() {
+        } else if let Some(u) = Literal::<U256>::peek(peeker) {
             LiteralKind::U256(u)
-        } else if let Ok(f) = peeker.peek_float_lit() {
+        } else if let Some(f) = Literal::<FloatType>::peek(peeker) {
             match f.clone().into_inner() {
                 Some(t) => match t {
                     FloatType::F32(_) => LiteralKind::F32(f),
                     FloatType::F64(_) => LiteralKind::F64(f),
                 },
-                None => return Err(ParserErrorKind::TokenNotFound),
+                _ => return None,
             }
         } else {
-            return Ok(None);
+            return None;
         };
 
-        Ok(Some(literal_kind))
+        Some(literal_kind)
     }
 }
