@@ -51,7 +51,7 @@ impl Parse for SimplePath {
                 if let Some(next_path_segment) = parser.peek::<SimplePathSegmentKind>() {
                     subsequent_segments.push((
                         next_dbl_colon_opt
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
                         next_path_segment,
                     ));
 
@@ -131,7 +131,7 @@ impl Parse for PathInExpr {
 
                     subsequent_segments.push((
                         next_dbl_colon_opt
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
                         next_path_segment,
                     ));
                 } else {
@@ -181,7 +181,7 @@ impl Parse for PathType {
                 if let Some(next_path_segment) = parser.peek::<PathIdenSegmentKind>() {
                     subsequent_segments.push((
                         next_dbl_colon_opt
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
                         next_path_segment,
                     ));
 

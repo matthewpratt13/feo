@@ -58,8 +58,9 @@ impl Parse for StructExprField {
 
                         let field_content = (
                             id,
-                            colon_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            colon_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
                             Box::new(r),
                         );
 
@@ -89,8 +90,6 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         let struct_expr_fields = if let Ok(first_field) = StructExprField::parse(parser) {
-            parser.advance();
-
             let mut next_comma_opt = parser.peek::<Punctuation>();
 
             parser.advance();
@@ -100,12 +99,11 @@ impl Parse for StructExprFields {
                 ..
             }) = next_comma_opt
             {
-                if let Ok(next_field) = StructExprField::parse(parser) {
+                if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((
                         next_comma_opt
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
-                        next_field
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
+                        next_field,
                     ));
 
                     parser.advance();
@@ -124,7 +122,7 @@ impl Parse for StructExprFields {
 
             StructExprFields {
                 first_field: first_field
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
                 subsequent_fields,
             }
         } else {
@@ -153,8 +151,6 @@ impl Parse for StructExpr {
                 parser.advance();
 
                 if let Ok(struct_expr_fields_opt) = StructExprFields::parse(parser) {
-                    parser.advance();
-
                     let close_brace_opt = parser.peek::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -165,13 +161,19 @@ impl Parse for StructExpr {
                         parser.advance();
 
                         StructExpr {
-                            item_path: item_path
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
-                            open_brace: open_brace_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            item_path: item_path.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
+
+                            open_brace: open_brace_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
+
                             struct_expr_fields_opt,
-                            close_brace: close_brace_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+
+                            close_brace: close_brace_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));

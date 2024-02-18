@@ -78,15 +78,18 @@ impl Parse for InnerAttr {
                         parser.advance();
 
                         InnerAttr {
-                            hash_bang: hash_bang_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            hash_bang: hash_bang_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
 
-                            open_bracket: open_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            open_bracket: open_bracket_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
 
                             attribute,
-                            close_bracket: close_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            close_bracket: close_bracket_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
@@ -141,13 +144,16 @@ impl Parse for OuterAttr {
                         parser.advance();
 
                         OuterAttr {
-                            hash_sign: hash_sign_res
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
-                            open_bracket: open_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            hash_sign: hash_sign_res.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
+                            open_bracket: open_bracket_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
                             attribute,
-                            close_bracket: close_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            close_bracket: close_bracket_opt.ok_or_else(|| {
+                                parser.log_error(ParserErrorKind::UnexpectedToken)
+                            })?,
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
