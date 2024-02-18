@@ -7,7 +7,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    Delimiter, Punctuation,
+    Delimiter, Keyword, Punctuation,
 };
 
 use crate::{
@@ -20,7 +20,7 @@ impl Peek for AttributeKind {
     where
         Self: Sized,
     {
-        let attr_kind = if let Ok(k) = peeker.peek_keyword() {
+        let attr_kind = if let Some(k) = Keyword::peek(peeker) {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwContract => AttributeKind::KwContract(k),
