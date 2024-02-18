@@ -22,18 +22,14 @@ impl Parse for StructExprField {
     where
         Self: Sized,
     {
-        // prepare an empty vector to store attributes
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
         let struct_expr_field = if let Ok(first_attr) = OuterAttr::parse(parser) {
-            // push the first attribute to the vector
             attributes
                 .push(first_attr.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?);
 
-            parser.advance(); // advance the parser
+            parser.advance();
 
-            // push `OuterAttr` to `attributes` as long as there are some,
-            // else break
             while let Ok(next_attr) = OuterAttr::parse(parser) {
                 if let Some(a) = next_attr {
                     attributes.push(a);
@@ -43,53 +39,33 @@ impl Parse for StructExprField {
                 }
             }
 
-            // advance the `Parser` once there are no more `OuterAttr`
             parser.advance();
 
-            // peek the next `Token`, expecting an `Identifier`
             if let Some(id) = parser.peek::<Identifier>() {
                 parser.advance();
 
-                // peek the next `Token`, expecting a `Punctuation`
                 let colon_opt = parser.peek::<Punctuation>();
 
-                // check to see if `colon_opt` has `PuncKind::Colon`
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
                 }) = colon_opt
                 {
-                    // if so, advance the `Parser`
                     parser.advance();
 
-                    // parse the next `Token`, continue if it is `Some`
                     if let Some(r) = Returnable::parse(parser)? {
                         parser.advance();
 
-                        // collect the elements for the `StructExprField` into a tuple
                         let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
-                        // assign the `StructExprField`
                         StructExprField(attributes, field_content)
                     } else {
-                        // in this case, the next `Expression` is either `Some(_)` or `None`
-                        // i.e., not some `Returnable`
-                        // however, we checked that it is not `None` inside the `parse()` function
-                        // therefore it has to be some other `Expression` (or `Token`)
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                     }
                 } else {
-                    // in this case, the next `Token` is either `Some(_)` or `None`
-                    // i.e., not some `Punctuation`
-                    // however, we checked that it is not `None` inside `Peeker::peek_punctuation()`
-                    // therefore it has to be some other `Token`
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
             } else {
-                // in this case, the next `Token` is either `Some(_)` or `None`
-                // i.e., not some `Identifier`
-                // however, we checked that it is not `None` inside `Peeker::peek_identifier()`
-                // therefore it has to be some other `Token`
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
@@ -105,27 +81,21 @@ impl Parse for StructExprFields {
     where
         Self: Sized,
     {
-        // prepare an empty vector to store fields
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         let struct_expr_fields = if let Ok(first_field) = StructExprField::parse(parser) {
-            // if the first `Token` is some `StructExprField`, advance the `Parser`
             parser.advance();
 
-            // create a var to store the current `Punctuation`
             let mut next_comma_opt = parser.peek::<Punctuation>();
 
             parser.advance();
 
-            // iterate while the current `Punctuation` has `PuncKind::Comma`
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
             }) = next_comma_opt
             {
-                // expect a `StructExprField` (which should be the next `Token`)
                 if let Ok(next_field) = StructExprField::parse(parser) {
-                    // push the current `Punctuation` and the next `StructExprField`
                     subsequent_fields.push((
                         next_comma_opt
                             .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
@@ -138,9 +108,6 @@ impl Parse for StructExprFields {
                     break;
                 }
 
-                // peek for a `Punctuation`
-                // if one exists, set it to `next_comma_opt` and advance the `Parser`,
-                // else break
                 if let Some(p) = parser.take::<Punctuation>() {
                     next_comma_opt = Some(p);
                 } else {
@@ -148,10 +115,8 @@ impl Parse for StructExprFields {
                 }
             }
 
-            // consume the final token
             parser.advance();
 
-            // assign `StructExprFields`
             StructExprFields {
                 first_field: first_field
                     .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,

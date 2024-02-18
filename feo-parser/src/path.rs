@@ -34,41 +34,28 @@ impl Parse for SimplePath {
     where
         Self: Sized,
     {
-        // prepare an empty vector to store path segments
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
         let simple_path = if let Some(first_segment) = parser.peek::<SimplePathSegmentKind>() {
-            // if the first `Token` is some `SimplePathSegmentKind`, advance the `Parser`
             parser.advance();
 
-            // create a var to store the current `Punctuation`
             let mut next_dbl_colon_opt = parser.peek::<Punctuation>();
 
             parser.advance();
 
-            // iterate while the current `Punctuation` has `PuncKind::DblColon`
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
             }) = next_dbl_colon_opt
             {
-                // peek for a `SimplePathSegmentKind` (which should be the next `Token`)
                 if let Some(next_path_segment) = parser.peek::<SimplePathSegmentKind>() {
-                    // push the current `Punctuation` and the next `SimplePathSegmentKind`
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
 
                     parser.advance();
                 } else {
-                    // in this case, the next `Token` is either `Some(_)` or `None`
-                    // i.e., not some `SimplePathSegmentKind`
-                    // however, we checked that it is not `None` inside `Peeker::peek_keyword()`
-                    // therefore it has to be some other `Token`
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
 
-                // peek for a `Punctuation`
-                // if one exists, set it to `next_dbl_colon_opt` and advance the `Parser`,
-                // else break
                 if let Some(p) = parser.take::<Punctuation>() {
                     next_dbl_colon_opt = Some(p);
                 } else {
@@ -76,10 +63,8 @@ impl Parse for SimplePath {
                 }
             }
 
-            // consume the final token
             parser.advance();
 
-            // assign `SimplePath`
             SimplePath {
                 first_segment,
                 subsequent_segments,

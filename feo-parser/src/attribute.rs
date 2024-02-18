@@ -30,20 +30,14 @@ impl Peek for AttributeKind {
                 KeywordKind::KwStorage => AttributeKind::KwStorage(k),
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
-                // unexpected `KeywordKind`
                 _ => return None,
             }
         } else if let Some(p) = SimplePathSegmentKind::peek(peeker) {
-            // if the next `Token` is some `SimplePathSegmentKind`, return `AttributeKind::Path`
             AttributeKind::Path(p)
-            // else if the next `Token` is `Some(_)`, `None` or `Err`, simply return `Ok(None)`
         } else {
-            // all we really need to know at this point is whether there is an `AttributeKind`;
-            // if there isn't one, returning `None` is fine – we don't need to throw an error
             return None;
         };
 
-        // return the `AttributeKind`
         Some(attr_kind)
     }
 }
@@ -53,11 +47,6 @@ impl Parse for InnerAttr {
     where
         Self: Sized,
     {
-        // create a `Peeker` from a `TokenStream` at the current position
-        // and call `Punctuation::peek()`; unwrap the `Result`
-        // if the `Token` is `Some(Punctuation)`, return `Some(Punctuation)`
-        // if the `Token` is `Some(_)`, log `ParserErrorKind::InvalidToken`
-        // if the `Token` is `None`, log `ParserErrorKind::TokenNotFound`
         let hash_bang_opt = parser.peek::<Punctuation>();
 
         let inner_attr = if let Some(Punctuation {
@@ -65,7 +54,6 @@ impl Parse for InnerAttr {
             ..
         }) = hash_bang_opt
         {
-            // if `hash_bang_res` has the correct `PuncKind`, advance the `Parser`
             parser.advance();
 
             let open_bracket_opt = parser.peek::<Delimiter>();
@@ -77,9 +65,6 @@ impl Parse for InnerAttr {
             {
                 parser.advance();
 
-                // create a `Peeker` from a `TokenStream` at the current position
-                // and call `Attribute::peek()`; unwrap the `Result`
-                // the token can be any `AttributeKind`, as long as it is `Some`
                 if let Some(attribute) = parser.peek::<AttributeKind>() {
                     parser.advance();
 
@@ -90,14 +75,9 @@ impl Parse for InnerAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        // consume the final `Token`
                         parser.advance();
 
-                        // assign `InnerAttr`
                         InnerAttr {
-                            // `hash_bang_res`, `open_bracket_opt` and `close_bracket_opt` are `Option`,
-                            // and have been converted to `Result` and unwrapped to get the correct type
-                            // the error is `Infallible` as we have already checked that they are `Some`
                             hash_bang: hash_bang_opt
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
 
@@ -109,31 +89,18 @@ impl Parse for InnerAttr {
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
                         }
                     } else {
-                        // in this case `close_bracket_opt` is either `Some(_)` or `None`
-                        // i.e., not some `Delimiter { (DelimKind::Bracket, DelimOrientation::Close), .. }`
-                        // or `None`; however, we checked that it is not `None` inside `Peeker::peek_delimiter()`
-                        // therefore it has to be some other `Token`
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                     }
                 } else {
-                    // in this case `attribute` is either `Some(_)` or `None`
-                    // i.e., it must be something other than an `AttributeKind`, or must be `None`
-                    // however, we checked that it is not `None` inside `Peeker::peek_keyword()`
-                    // therefore it has to be some other `Token`
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
                 }
             } else {
-                // in this case `open_bracket_opt` is either `Some(_)` or `None`
-                // i.e., not some `Delimiter { (DelimKind::Bracket, DelimOrientation::Open), .. }`
-                // or `None`; however, we checked that it is not `None` inside `Peeker::peek_delimiter()`
-                // therefore it has to be some other `Token`
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
             return Ok(None);
         };
 
-        // return the `InnerAttr`
         Ok(Some(inner_attr))
     }
 }
