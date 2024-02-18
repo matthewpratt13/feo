@@ -92,13 +92,13 @@ impl Parse for InnerAttr {
                             })?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                        return Ok(None);
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    return Ok(None);
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -113,12 +113,12 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_res = parser.peek::<Punctuation>();
+        let hash_sign_opt = parser.peek::<Punctuation>();
 
         let outer_attr = if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
-        }) = hash_sign_res
+        }) = hash_sign_opt
         {
             parser.advance();
 
@@ -144,7 +144,7 @@ impl Parse for OuterAttr {
                         parser.advance();
 
                         OuterAttr {
-                            hash_sign: hash_sign_res.ok_or_else(|| {
+                            hash_sign: hash_sign_opt.ok_or_else(|| {
                                 parser.log_error(ParserErrorKind::UnexpectedToken)
                             })?,
                             open_bracket: open_bracket_opt.ok_or_else(|| {
@@ -156,13 +156,13 @@ impl Parse for OuterAttr {
                             })?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                        return Ok(None);
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    return Ok(None);
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Ok(None);
             }
         } else {
             return Ok(None);

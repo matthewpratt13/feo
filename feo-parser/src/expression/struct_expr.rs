@@ -24,10 +24,8 @@ impl Parse for StructExprField {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        let struct_expr_field = if let Ok(first_attr) = OuterAttr::parse(parser) {
-            attributes
-                .push(first_attr.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?);
-
+        let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
+            attributes.push(first_attr);
             parser.advance();
 
             while let Ok(next_attr) = OuterAttr::parse(parser) {
@@ -66,13 +64,13 @@ impl Parse for StructExprField {
 
                         StructExprField(attributes, field_content)
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                        return Ok(None);
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    return Ok(None);
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -89,7 +87,7 @@ impl Parse for StructExprFields {
     {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
-        let struct_expr_fields = if let Ok(first_field) = StructExprField::parse(parser) {
+        let struct_expr_fields = if let Some(first_field) = StructExprField::parse(parser)? {
             let mut next_comma_opt = parser.peek::<Punctuation>();
 
             parser.advance();
@@ -121,8 +119,7 @@ impl Parse for StructExprFields {
             parser.advance();
 
             StructExprFields {
-                first_field: first_field
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
+                first_field,
                 subsequent_fields,
             }
         } else {
@@ -138,7 +135,7 @@ impl Parse for StructExpr {
     where
         Self: Sized,
     {
-        let struct_expr = if let Ok(item_path) = PathInExpr::parse(parser) {
+        let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
             parser.advance();
 
             let open_brace_opt = parser.peek::<Delimiter>();
@@ -150,8 +147,10 @@ impl Parse for StructExpr {
             {
                 parser.advance();
 
-                if let Ok(struct_expr_fields_opt) = StructExprFields::parse(parser) {
+                if let Some(struct_expr_fields_opt) = StructExprFields::parse(parser)? {
                     let close_brace_opt = parser.peek::<Delimiter>();
+                    
+                    parser.advance();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
@@ -161,28 +160,26 @@ impl Parse for StructExpr {
                         parser.advance();
 
                         StructExpr {
-                            item_path: item_path.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
+                            item_path,
 
                             open_brace: open_brace_opt.ok_or_else(|| {
                                 parser.log_error(ParserErrorKind::UnexpectedToken)
                             })?,
 
-                            struct_expr_fields_opt,
+                            struct_expr_fields_opt: Some(struct_expr_fields_opt),
 
                             close_brace: close_brace_opt.ok_or_else(|| {
                                 parser.log_error(ParserErrorKind::UnexpectedToken)
                             })?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                        return Ok(None);
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    return Ok(None);
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -206,8 +203,8 @@ impl Parse for UnitStructExpr {
     where
         Self: Sized,
     {
-        let unit_struct_expr = if let Ok(path) = PathInExpr::parse(parser) {
-            UnitStructExpr(path.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?)
+        let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
+            UnitStructExpr(path)
         } else {
             return Ok(None);
         };
