@@ -56,7 +56,12 @@ impl Parse for StructExprField {
                     if let Some(r) = Returnable::parse(parser)? {
                         parser.advance();
 
-                        let field_content = (id, colon_opt.unwrap(), Box::new(r));
+                        let field_content = (
+                            id,
+                            colon_opt
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
+                            Box::new(r),
+                        );
 
                         StructExprField(attributes, field_content)
                     } else {
@@ -163,10 +168,10 @@ impl Parse for StructExpr {
                             item_path: item_path
                                 .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                             open_brace: open_brace_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                             struct_expr_fields_opt,
                             close_brace: close_brace_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));

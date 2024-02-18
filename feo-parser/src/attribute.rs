@@ -79,14 +79,14 @@ impl Parse for InnerAttr {
 
                         InnerAttr {
                             hash_bang: hash_bang_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
 
                             open_bracket: open_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
 
                             attribute,
                             close_bracket: close_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
@@ -142,12 +142,12 @@ impl Parse for OuterAttr {
 
                         OuterAttr {
                             hash_sign: hash_sign_res
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                             open_bracket: open_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                             attribute,
                             close_bracket: close_bracket_opt
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::Infallible))?,
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?,
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
