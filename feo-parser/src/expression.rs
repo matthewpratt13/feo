@@ -111,10 +111,7 @@ impl Parse for Returnable {
                 })); // TODO
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable` expression",
-                found: "unknown",
-            }));
+            return Err(parser.log_error(ParserErrorKind::InvalidToken));
         };
 
         parser.advance();
