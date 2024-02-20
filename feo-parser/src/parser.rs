@@ -44,18 +44,18 @@ impl Parser {
 
     // peek at the current `T` and return it if it exists (without advancing)
     pub fn peek_current<T: Peek>(&self) -> Result<T, ErrorEmitted> {
-        Peeker::with(&self.stream().tokens(), self.pos, &self.handler)
+        Peeker::with(&self.stream().tokens(), self.pos, &self.handler)?
             .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
     }
 
     // peek at the next `T` and return it if it exists (without advancing)
     pub fn peek_next<T: Peek>(&self) -> Result<T, ErrorEmitted> {
-        Peeker::with(&self.stream().tokens(), self.pos + 1, &self.handler)
+        Peeker::with(&self.stream().tokens(), self.pos + 1, &self.handler)?
             .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
     }
 
     // peek at the current `Token`, advance the `Parser`; return the peeked `Token` or return `None`
-    pub fn take<T: Peek>(&mut self) -> Option<T> {
+    pub fn take<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
         let value = Peeker::with(&self.stream().tokens(), self.pos, &self.handler);
         self.advance();
         value
@@ -89,7 +89,11 @@ pub struct Peeker<'a, 'b> {
 
 impl<'a, 'b> Peeker<'a, 'b> {
     // peek for a `T` in `&[Token]'; return `T` if it exists or return `None`
-    fn with<T: Peek>(tokens: &'a [Token], pos: usize, handler: &'b Handler) -> Option<T> {
+    fn with<T: Peek>(
+        tokens: &'a [Token],
+        pos: usize,
+        handler: &'b Handler,
+    ) -> Result<Option<T>, ErrorEmitted> {
         let peeker = Peeker {
             tokens,
             pos,
@@ -255,109 +259,109 @@ impl<'a, 'b> Peeker<'a, 'b> {
 }
 
 impl Peek for Literal<char> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_char_lit() {
-            Ok(c) => Some(c),
-            Err(_) => None,
+            Ok(c) => Ok(Some(c)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Literal<String> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_string_lit() {
-            Ok(s) => Some(s),
-            Err(_) => None,
+            Ok(s) => Ok(Some(s)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Literal<bool> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_bool_lit() {
-            Ok(b) => Some(b),
-            Err(_) => None,
+            Ok(b) => Ok(Some(b)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Literal<IntType> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_int_lit() {
-            Ok(i) => Some(i),
-            Err(_) => None,
+            Ok(i) => Ok(Some(i)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Literal<UIntType> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_uint_lit() {
-            Ok(ui) => Some(ui),
-            Err(_) => None,
+            Ok(ui) => Ok(Some(ui)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Literal<U256> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_u256_lit() {
-            Ok(u) => Some(u),
-            Err(_) => None,
+            Ok(u) => Ok(Some(u)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Literal<FloatType> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_float_lit() {
-            Ok(f) => Some(f),
-            Err(_) => None,
+            Ok(f) => Ok(Some(f)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Identifier {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_identifier() {
-            Ok(id) => Some(id),
-            Err(_) => None,
+            Ok(id) => Ok(Some(id)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Keyword {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_keyword() {
-            Ok(k) => Some(k),
-            Err(_) => None,
+            Ok(k) => Ok(Some(k)),
+            Err(e) => Err(e),
         }
     }
 }
@@ -375,25 +379,25 @@ impl Peek for Keyword {
 // }
 
 impl Peek for Delimiter {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_delimiter() {
-            Ok(d) => Some(d),
-            Err(_) => None,
+            Ok(d) => Ok(Some(d)),
+            Err(e) => Err(e),
         }
     }
 }
 
 impl Peek for Punctuation {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         match peeker.peek_punctuation() {
-            Ok(p) => Some(p),
-            Err(_) => None,
+            Ok(p) => Ok(Some(p)),
+            Err(e) => Err(e),
         }
     }
 }

@@ -52,32 +52,28 @@ impl Parse for StructExprField {
                         let field_content = (id, colon_res?, Box::new(r));
                         StructExprField(attributes, field_content)
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                             expected: "`Returnable`",
                             found: "`unknown`",
-                        });
-                        return Ok(None);
+                        }));
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "colon punctuation (`:`)",
                         found: "`unknown`",
-                    });
-                    return Ok(None);
+                    }));
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "identifier",
                     found: "`unknown`",
-                });
-                return Ok(None);
+                }));
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`OuterAttr`",
                 found: "`unknown`",
-            });
-            return Ok(None);
+            }));
         };
 
         Ok(Some(struct_expr_field))
@@ -122,11 +118,10 @@ impl Parse for StructExprFields {
                 subsequent_fields,
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`StructExprField`",
                 found: "unknown", // TODO
-            });
-            return Ok(None);
+            }));
         };
 
         Ok(Some(struct_expr_fields))
@@ -165,32 +160,28 @@ impl Parse for StructExpr {
                             close_brace: close_brace_res?,
                         }
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                             expected: "close brace delimiter (`}`)",
                             found: "unknown", // TODO
-                        });
-                        return Ok(None);
+                        }));
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`StructExprFields`",
                         found: "unknown", // TODO
-                    });
-                    return Ok(None);
+                    }));
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "open brace delimiter (`{`)",
                     found: "unknown", // TODO
-                });
-                return Ok(None);
+                }));
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathExpr`",
                 found: "unknown", // TODO
-            });
-            return Ok(None);
+            }));
         };
 
         Ok(Some(struct_expr))
@@ -214,11 +205,10 @@ impl Parse for UnitStructExpr {
         let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
             UnitStructExpr(path)
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathExpr`",
                 found: "unknown", // TODO
-            });
-            return Ok(None);
+            }));
         };
 
         Ok(Some(unit_struct_expr))
