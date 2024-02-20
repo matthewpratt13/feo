@@ -32,6 +32,10 @@ impl Parse for Returnable {
         Self: Sized,
     {
         let expr = if let Ok(id) = parser.peek_current::<Identifier>() {
+            // TODO: what if one of these is `Err` but a subsequent one is `Ok` ? (on propagation)
+            // TODO: do we return the first `Err` or continue to check ?
+            // TODO: perhaps check `if let Ok(x) = SomeExpr::parse(parser)` (i.e. no question mark)
+            // TODO: then unwrap  the`Some` or `None` and return the relevant `Returnable` variant
             if let Some(fc) = FunctionCallExpr::parse(parser)? {
                 Returnable::FunctionCallExpr(fc)
             } else if let Some(mc) = MethodCallExpr::parse(parser)? {
