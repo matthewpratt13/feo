@@ -3,7 +3,7 @@ use std::fmt;
 
 use feo_types::span::Position;
 
-#[derive(Default, Debug, Copy, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub enum ParserErrorKind {
     ParseCharError,
     ParseBoolError,
@@ -13,16 +13,13 @@ pub enum ParserErrorKind {
     ParseFloatError,
     CharPositionNotFound,
 
-    // TODO: change formatting to "expected some `Token`, found `None`"
     TokenNotFound,
-
-    // TODO: change formatting to "invalid token: {}"
     InvalidToken,
 
-    // TODO: change formatting to "expected {}, found {}"
-    UnexpectedToken,
-
-    Infallible,
+    UnexpectedToken {
+        expected: String,
+        found: String,
+    },
 
     #[default]
     UnknownError,
@@ -40,9 +37,12 @@ impl fmt::Display for ParserErrorKind {
             ParserErrorKind::CharPositionNotFound => write!(f, "cannot detect char position"),
             ParserErrorKind::TokenNotFound => write!(f, "token not found"),
             ParserErrorKind::InvalidToken => write!(f, "invalid token"),
-            ParserErrorKind::UnexpectedToken => write!(f, "unexpected token"),
+            ParserErrorKind::UnexpectedToken { expected, found } => write!(
+                f,
+                "unexpected token. expected {}, found {}",
+                expected, found,
+            ),
             ParserErrorKind::UnknownError => write!(f, "unknown error"),
-            ParserErrorKind::Infallible => write!(f, "infallible error"),
         }
     }
 }

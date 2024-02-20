@@ -32,7 +32,7 @@ impl CompilerError {
     pub fn error_kind(&self) -> Box<dyn Error> {
         match self {
             CompilerError::Lex(l) => Box::new(l.error_kind),
-            CompilerError::Parser(p) => Box::new(p.error_kind),
+            CompilerError::Parser(p) => Box::new(p.error_kind.clone()),
             CompilerError::Type(t) => Box::new(t.error_kind),
             CompilerError::UnexpectedError => Box::new(ParserErrorKind::UnknownError),
         }

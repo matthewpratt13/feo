@@ -52,19 +52,31 @@ impl Parse for StructExprField {
                         let field_content = (id, colon_res?, Box::new(r));
                         StructExprField(attributes, field_content)
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken);
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Returnable`".to_string(),
+                            found: "`unknown`".to_string(),
+                        });
                         return Ok(None);
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "colon punctuation (`:`)".to_string(),
+                        found: "`unknown`".to_string(),
+                    });
                     return Ok(None);
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken);
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "identifier".to_string(),
+                    found: "`unknown`".to_string(),
+                });
                 return Ok(None);
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`OuterAttr`".to_string(),
+                found: "`unknown`".to_string(),
+            });
             return Ok(None);
         };
 
@@ -110,7 +122,10 @@ impl Parse for StructExprFields {
                 subsequent_fields,
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`StructExprField`".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 
@@ -150,19 +165,31 @@ impl Parse for StructExpr {
                             close_brace: close_brace_res?,
                         }
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken);
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "close brace delimiter (`}`)".to_string(),
+                            found: "unknown".to_string(), // TODO
+                        });
                         return Ok(None);
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`StructExprFields`".to_string(),
+                        found: "unknown".to_string(), // TODO
+                    });
                     return Ok(None);
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken);
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "open brace delimiter (`{`)".to_string(),
+                    found: "unknown".to_string(), // TODO
+                });
                 return Ok(None);
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`PathExpr`".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 
@@ -187,7 +214,10 @@ impl Parse for UnitStructExpr {
         let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
             UnitStructExpr(path)
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`PathExpr`".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 

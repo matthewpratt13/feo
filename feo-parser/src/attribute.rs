@@ -84,19 +84,31 @@ impl Parse for InnerAttr {
                             close_bracket: close_bracket_res?,
                         }
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken);
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "close bracket delimiter (`]`)".to_string(),
+                            found: "unknown".to_string(), // TODO
+                        });
                         return Ok(None);
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`AttributeKind`".to_string(),
+                        found: "unknown".to_string(), // TODO
+                    });
                     return Ok(None);
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken);
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "open bracket delimiter (`[`)".to_string(),
+                    found: "unknown".to_string(), // TODO
+                });
                 return Ok(None);
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "hash-bang punctuation (`#!`)".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 
@@ -146,19 +158,31 @@ impl Parse for OuterAttr {
                             close_bracket: close_bracket_res?,
                         }
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken);
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "close bracket delimiter (`]`)".to_string(),
+                            found: "unknown".to_string(), // TODO
+                        });
                         return Ok(None);
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`AttributeKind`".to_string(),
+                        found: "unknown".to_string(), // TODO
+                    });
                     return Ok(None);
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken);
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "open bracket delimiter (`[`)".to_string(),
+                    found: "unknown".to_string(), // TODO
+                });
                 return Ok(None);
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "hash sign (`#`) punctuation".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 

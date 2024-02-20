@@ -5,7 +5,7 @@ pub trait Spanned {
     fn span(&self) -> Span;
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct Position {
     input: Arc<String>,
     pos: usize,

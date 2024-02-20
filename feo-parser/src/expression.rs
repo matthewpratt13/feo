@@ -63,7 +63,10 @@ impl Parse for Returnable {
             } else if let Some(par) = ParenthesizedExpr::parse(parser)? {
                 Returnable::ParenthesizedExpr(par)
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Returnable`".to_string(),
+                    found: "unknown".to_string(),
+                })); // TODO
             }
         } else if let Ok(l) = parser.peek_current::<LiteralKind>() {
             if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
@@ -83,7 +86,10 @@ impl Parse for Returnable {
             } else if let Some(pe) = PathInExpr::parse(parser)? {
                 Returnable::PathExpr(pe)
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Returnable`".to_string(),
+                    found: "unknown".to_string(),
+                })); // TODO
             }
         } else if let Ok(_) = parser.peek_current::<Punctuation>() {
             if let Some(cwb) = ClosureWithBlock::parse(parser)? {
@@ -99,10 +105,16 @@ impl Parse for Returnable {
             } else if let Some(ue) = UnderscoreExpr::parse(parser)? {
                 Returnable::UnderscoreExpr(ue)
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Returnable`".to_string(),
+                    found: "unknown".to_string(),
+                })); // TODO
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Returnable`".to_string(),
+                found: "unknown".to_string(),
+            });
             return Ok(None);
         };
 

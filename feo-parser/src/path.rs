@@ -61,7 +61,10 @@ impl Parse for SimplePath {
                         break;
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "double colon punctuation (`::`)".to_string(),
+                        found: "unknown".to_string(), // TODO
+                    });
                     return Ok(None);
                 }
             }
@@ -73,7 +76,10 @@ impl Parse for SimplePath {
                 subsequent_segments,
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`SimplePathSegmentKind`".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 
@@ -136,7 +142,10 @@ impl Parse for PathInExpr {
                         break;
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "double colon punctuation (`::`)".to_string(),
+                        found: "unknown".to_string(), // TODO
+                    });
                     return Ok(None);
                 }
             }
@@ -148,7 +157,10 @@ impl Parse for PathInExpr {
                 subsequent_segments,
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`PathIdenSegmentKind`".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 
@@ -185,7 +197,10 @@ impl Parse for PathType {
                         break;
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`PathIdenSegmentKind`".to_string(),
+                        found: "unknown".to_string(), // TODO
+                    });
                     return Ok(None);
                 }
             }
@@ -197,7 +212,10 @@ impl Parse for PathType {
                 subsequent_segments,
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken);
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "double colon punctuation (`::`)".to_string(),
+                found: "unknown".to_string(), // TODO
+            });
             return Ok(None);
         };
 
