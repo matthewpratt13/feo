@@ -35,7 +35,11 @@ impl Parse for Returnable {
             // TODO: what if one of these is `Err` but a subsequent one is `Ok` ? (on propagation)
             // TODO: do we return the first `Err` or continue to check ?
             // TODO: perhaps check `if let Ok(x) = SomeExpr::parse(parser)` (i.e. no question mark)
-            // TODO: then unwrap  the`Some` or `None` and return the relevant `Returnable` variant
+            // TODO: then unwrap the `Some` or `None` and return the relevant `Returnable` variant
+            // TODO: e.g., with `.ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))`
+            // TODO: it may just be a bit repetitive for each instance, though
+            // TODO: an alternative could be to change inner `Returnable` variant types to `Option`
+            // TODO: or to change `parse()` return type to `Result<Self, ErrorEmitted>`
             if let Some(fc) = FunctionCallExpr::parse(parser)? {
                 Returnable::FunctionCallExpr(fc)
             } else if let Some(mc) = MethodCallExpr::parse(parser)? {
