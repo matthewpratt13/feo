@@ -102,6 +102,7 @@ impl Parse for Returnable {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 

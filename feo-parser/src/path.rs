@@ -44,24 +44,25 @@ impl Parse for SimplePath {
 
             let mut next_dbl_colon_res = parser.peek_current::<Punctuation>();
 
-            parser.advance();
-
             while let Ok(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
             }) = next_dbl_colon_res
             {
+                parser.advance();
+
                 if let Ok(next_path_segment) = parser.peek_current::<SimplePathSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_res?, next_path_segment));
-                    parser.advance();
-                } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
-                }
 
-                if let Some(p) = parser.take::<Punctuation>() {
-                    next_dbl_colon_res = Ok(p);
+                    if let Ok(p) = parser.peek_next::<Punctuation>() {
+                        next_dbl_colon_res = Ok(p);
+                        parser.advance();
+                    } else {
+                        break;
+                    }
                 } else {
-                    break;
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    return Ok(None);
                 }
             }
 
@@ -72,6 +73,7 @@ impl Parse for SimplePath {
                 subsequent_segments,
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
@@ -117,13 +119,13 @@ impl Parse for PathInExpr {
 
             let mut next_dbl_colon_res = parser.peek_current::<Punctuation>();
 
-            parser.advance();
-
             while let Ok(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
             }) = next_dbl_colon_res
             {
+                parser.advance();
+
                 if let Ok(next_path_segment) = parser.peek_current::<PathIdenSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_res?, next_path_segment));
 
@@ -134,7 +136,8 @@ impl Parse for PathInExpr {
                         break;
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    return Ok(None);
                 }
             }
 
@@ -145,6 +148,7 @@ impl Parse for PathInExpr {
                 subsequent_segments,
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
@@ -164,13 +168,13 @@ impl Parse for PathType {
 
             let mut next_dbl_colon_res = parser.peek_current::<Punctuation>();
 
-            parser.advance();
-
             while let Ok(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
             }) = next_dbl_colon_res
             {
+                parser.advance();
+
                 if let Ok(next_path_segment) = parser.peek_current::<PathIdenSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_res?, next_path_segment));
 
@@ -181,7 +185,8 @@ impl Parse for PathType {
                         break;
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
+                    return Ok(None);
                 }
             }
 
@@ -192,6 +197,7 @@ impl Parse for PathType {
                 subsequent_segments,
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 

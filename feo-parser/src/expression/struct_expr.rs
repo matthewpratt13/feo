@@ -6,7 +6,7 @@ use feo_ast::{
     path::PathInExpr,
 };
 
-use feo_error::handler::ErrorEmitted;
+use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
@@ -50,18 +50,21 @@ impl Parse for StructExprField {
 
                     if let Some(r) = Returnable::parse(parser)? {
                         let field_content = (id, colon_res?, Box::new(r));
-
                         StructExprField(attributes, field_content)
                     } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken);
                         return Ok(None);
                     }
                 } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
                     return Ok(None);
                 }
             } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken);
                 return Ok(None);
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
@@ -79,13 +82,13 @@ impl Parse for StructExprFields {
         let struct_expr_fields = if let Some(first_field) = StructExprField::parse(parser)? {
             let mut next_comma_res = parser.peek_current::<Punctuation>();
 
-            parser.advance();
-
             while let Ok(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
             }) = next_comma_res
             {
+                parser.advance();
+
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((next_comma_res?, next_field));
 
@@ -107,6 +110,7 @@ impl Parse for StructExprFields {
                 subsequent_fields,
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
@@ -146,15 +150,19 @@ impl Parse for StructExpr {
                             close_brace: close_brace_res?,
                         }
                     } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken);
                         return Ok(None);
                     }
                 } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
                     return Ok(None);
                 }
             } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken);
                 return Ok(None);
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
@@ -179,6 +187,7 @@ impl Parse for UnitStructExpr {
         let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
             UnitStructExpr(path)
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 

@@ -2,7 +2,7 @@ use feo_ast::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     path::SimplePathSegmentKind,
 };
-use feo_error::handler::ErrorEmitted;
+use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -84,15 +84,19 @@ impl Parse for InnerAttr {
                             close_bracket: close_bracket_res?,
                         }
                     } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken);
                         return Ok(None);
                     }
                 } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
                     return Ok(None);
                 }
             } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken);
                 return Ok(None);
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
@@ -142,15 +146,19 @@ impl Parse for OuterAttr {
                             close_bracket: close_bracket_res?,
                         }
                     } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken);
                         return Ok(None);
                     }
                 } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken);
                     return Ok(None);
                 }
             } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken);
                 return Ok(None);
             }
         } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken);
             return Ok(None);
         };
 
