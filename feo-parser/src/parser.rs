@@ -43,13 +43,13 @@ impl Parser {
     }
 
     // peek at the current `T` and return it if it exists (without advancing)
-    pub fn peek_current<T: Peek>(&mut self) -> Result<T, ErrorEmitted> {
+    pub fn peek_current<T: Peek>(&self) -> Result<T, ErrorEmitted> {
         Peeker::with(&self.stream().tokens(), self.pos)
             .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
     }
 
     // peek at the next `T` and return it if it exists (without advancing)
-    pub fn peek_next<T: Peek>(&mut self) -> Result<T, ErrorEmitted> {
+    pub fn peek_next<T: Peek>(&self) -> Result<T, ErrorEmitted> {
         Peeker::with(&self.stream().tokens(), self.pos + 1)
             .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
     }
