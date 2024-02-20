@@ -3,7 +3,7 @@ use std::fmt;
 
 use feo_types::span::Position;
 
-#[derive(Default, Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Copy, Clone, PartialEq)]
 pub enum ParserErrorKind {
     ParseCharError,
     ParseBoolError,
@@ -17,8 +17,8 @@ pub enum ParserErrorKind {
     InvalidToken,
 
     UnexpectedToken {
-        expected: String,
-        found: String,
+        expected: &'static str,
+        found: &'static str,
     },
 
     #[default]

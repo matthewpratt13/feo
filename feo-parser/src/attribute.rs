@@ -16,7 +16,7 @@ use crate::{
 };
 
 impl Peek for AttributeKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -85,29 +85,29 @@ impl Parse for InnerAttr {
                         }
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close bracket delimiter (`]`)".to_string(),
-                            found: "unknown".to_string(), // TODO
+                            expected: "close bracket delimiter (`]`)",
+                            found: "unknown", // TODO
                         });
                         return Ok(None);
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`AttributeKind`".to_string(),
-                        found: "unknown".to_string(), // TODO
+                        expected: "`AttributeKind`",
+                        found: "unknown", // TODO
                     });
                     return Ok(None);
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open bracket delimiter (`[`)".to_string(),
-                    found: "unknown".to_string(), // TODO
+                    expected: "open bracket delimiter (`[`)",
+                    found: "unknown", // TODO
                 });
                 return Ok(None);
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash-bang punctuation (`#!`)".to_string(),
-                found: "unknown".to_string(), // TODO
+                expected: "hash-bang punctuation (`#!`)",
+                found: "unknown", // TODO
             });
             return Ok(None);
         };
@@ -159,29 +159,29 @@ impl Parse for OuterAttr {
                         }
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close bracket delimiter (`]`)".to_string(),
-                            found: "unknown".to_string(), // TODO
+                            expected: "close bracket delimiter (`]`)",
+                            found: "unknown", // TODO
                         });
                         return Ok(None);
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`AttributeKind`".to_string(),
-                        found: "unknown".to_string(), // TODO
+                        expected: "`AttributeKind`",
+                        found: "unknown", // TODO
                     });
                     return Ok(None);
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open bracket delimiter (`[`)".to_string(),
-                    found: "unknown".to_string(), // TODO
+                    expected: "open bracket delimiter (`[`)",
+                    found: "unknown", // TODO
                 });
                 return Ok(None);
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash sign (`#`) punctuation".to_string(),
-                found: "unknown".to_string(), // TODO
+                expected: "hash sign (`#`) punctuation",
+                found: "unknown", // TODO
             });
             return Ok(None);
         };

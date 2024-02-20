@@ -6,7 +6,7 @@ use feo_types::{
 use crate::{parse::Peek, parser::Peeker};
 
 impl Peek for LiteralKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {

@@ -16,7 +16,7 @@ struct HandlerInner {
 impl Handler {
     pub fn emit_err(&self, err: CompilerError) -> ErrorEmitted {
         self.inner.borrow_mut().errors.push(err);
-        ErrorEmitted { _phantom: () }
+        ErrorEmitted::emit()
     }
 
     pub fn emit_warn(&self, warn: CompilerWarning) {
@@ -34,4 +34,10 @@ impl Handler {
 #[derive(Debug)]
 pub struct ErrorEmitted {
     _phantom: (),
+}
+
+impl ErrorEmitted {
+    pub fn emit() -> Self {
+        Self { _phantom: () }
+    }
 }

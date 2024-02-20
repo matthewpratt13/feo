@@ -13,7 +13,7 @@ use crate::{
 };
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -40,11 +40,11 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
 }
 
 impl Peek for ComparisonOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)  {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::LessThan => ComparisonOperatorKind::LessThan(p),
                 PuncKind::GreaterThan => ComparisonOperatorKind::GreaterThan(p),
@@ -63,11 +63,11 @@ impl Peek for ComparisonOperatorKind {
 }
 
 impl Peek for CompoundAssignOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)  {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::PercentEquals => CompoundAssignOperatorKind::ModulusAssign(p),
                 PuncKind::AsteriskEquals => CompoundAssignOperatorKind::MultiplyAssign(p),
@@ -85,11 +85,11 @@ impl Peek for CompoundAssignOperatorKind {
 }
 
 impl Peek for LazyBoolOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)  {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
                 PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
@@ -104,11 +104,11 @@ impl Peek for LazyBoolOperatorKind {
 }
 
 impl Peek for NegationOperatorKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)  {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::Minus => NegationOperatorKind::InvertNumeric(p),
                 PuncKind::Bang => NegationOperatorKind::InvertBool(p),
@@ -124,7 +124,7 @@ impl Peek for NegationOperatorKind {
 
 // TODO: how ??
 impl Peek for UnwrapOperandKind {
-    fn peek(peeker: Peeker<'_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {

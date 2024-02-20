@@ -53,29 +53,29 @@ impl Parse for StructExprField {
                         StructExprField(attributes, field_content)
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`Returnable`".to_string(),
-                            found: "`unknown`".to_string(),
+                            expected: "`Returnable`",
+                            found: "`unknown`",
                         });
                         return Ok(None);
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "colon punctuation (`:`)".to_string(),
-                        found: "`unknown`".to_string(),
+                        expected: "colon punctuation (`:`)",
+                        found: "`unknown`",
                     });
                     return Ok(None);
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "identifier".to_string(),
-                    found: "`unknown`".to_string(),
+                    expected: "identifier",
+                    found: "`unknown`",
                 });
                 return Ok(None);
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`OuterAttr`".to_string(),
-                found: "`unknown`".to_string(),
+                expected: "`OuterAttr`",
+                found: "`unknown`",
             });
             return Ok(None);
         };
@@ -123,8 +123,8 @@ impl Parse for StructExprFields {
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`StructExprField`".to_string(),
-                found: "unknown".to_string(), // TODO
+                expected: "`StructExprField`",
+                found: "unknown", // TODO
             });
             return Ok(None);
         };
@@ -166,29 +166,29 @@ impl Parse for StructExpr {
                         }
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close brace delimiter (`}`)".to_string(),
-                            found: "unknown".to_string(), // TODO
+                            expected: "close brace delimiter (`}`)",
+                            found: "unknown", // TODO
                         });
                         return Ok(None);
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`StructExprFields`".to_string(),
-                        found: "unknown".to_string(), // TODO
+                        expected: "`StructExprFields`",
+                        found: "unknown", // TODO
                     });
                     return Ok(None);
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open brace delimiter (`{`)".to_string(),
-                    found: "unknown".to_string(), // TODO
+                    expected: "open brace delimiter (`{`)",
+                    found: "unknown", // TODO
                 });
                 return Ok(None);
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathExpr`".to_string(),
-                found: "unknown".to_string(), // TODO
+                expected: "`PathExpr`",
+                found: "unknown", // TODO
             });
             return Ok(None);
         };
@@ -215,8 +215,8 @@ impl Parse for UnitStructExpr {
             UnitStructExpr(path)
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathExpr`".to_string(),
-                found: "unknown".to_string(), // TODO
+                expected: "`PathExpr`",
+                found: "unknown", // TODO
             });
             return Ok(None);
         };

@@ -64,8 +64,8 @@ impl Parse for Returnable {
                 Returnable::ParenthesizedExpr(par)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`".to_string(),
-                    found: "unknown".to_string(),
+                    expected: "`Returnable`",
+                    found: "unknown",
                 })); // TODO
             }
         } else if let Ok(l) = parser.peek_current::<LiteralKind>() {
@@ -87,8 +87,8 @@ impl Parse for Returnable {
                 Returnable::PathExpr(pe)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`".to_string(),
-                    found: "unknown".to_string(),
+                    expected: "`Returnable`",
+                    found: "unknown",
                 })); // TODO
             }
         } else if let Ok(_) = parser.peek_current::<Punctuation>() {
@@ -106,14 +106,14 @@ impl Parse for Returnable {
                 Returnable::UnderscoreExpr(ue)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`".to_string(),
-                    found: "unknown".to_string(),
+                    expected: "`Returnable`",
+                    found: "unknown",
                 })); // TODO
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable`".to_string(),
-                found: "unknown".to_string(),
+                expected: "`Returnable`",
+                found: "unknown",
             });
             return Ok(None);
         };
