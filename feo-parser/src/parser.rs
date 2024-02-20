@@ -33,12 +33,12 @@ impl Parser {
         &self.stream
     }
 
-    pub fn current_token(&self) -> Option<Token> {
-        self.stream.tokens().get(self.pos).cloned()
-    }
-
     pub fn pos(&self) -> usize {
         self.pos
+    }
+
+    pub fn current_token(&self) -> Option<Token> {
+        self.stream.tokens().get(self.pos).cloned()
     }
 
     pub fn advance(&mut self) -> Option<Token> {
@@ -46,12 +46,19 @@ impl Parser {
         self.stream.next()
     }
 
-    // peek at the next `Token` and return it if it exists (without advancing)
-    pub fn peek<T: Peek>(&mut self) -> Option<T> {
+    // peek at the current `T` and return it if it exists (without advancing)
+    pub fn peek_current<T: Peek>(&mut self) -> Result<T, ErrorEmitted> {
         Peeker::with(&self.stream().tokens(), self.pos)
+            .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
     }
 
-    // peek at the next `Token`, advance the `Parser`; return the peeked `Token` or return `None`
+    // peek at the next `T` and return it if it exists (without advancing)
+    pub fn peek_next<T: Peek>(&mut self) -> Result<T, ErrorEmitted> {
+        Peeker::with(&self.stream().tokens(), self.pos + 1)
+            .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
+    }
+
+    // peek at the current `Token`, advance the `Parser`; return the peeked `Token` or return `None`
     pub fn take<T: Peek>(&mut self) -> Option<T> {
         let value = Peeker::with(&self.stream().tokens(), self.pos);
         self.advance();
@@ -84,9 +91,9 @@ impl<'a> Peeker<'a> {
         value
     }
 
-    // peek for the next `Token`; return it if it exists or return `None`
+    // peek for the current `Token`; return it if it exists or return `None`
     pub fn peek_token(&self) -> Option<Token> {
-        self.tokens.get(self.pos + 1).cloned()
+        self.tokens.get(self.pos).cloned()
     }
 
     // peek for a `Literal`; return it if it exists, or return `Self` (i.e., do nothing)
@@ -154,7 +161,7 @@ impl<'a> Peeker<'a> {
     }
 
     // pub fn peek_doc_comment(&self) -> Result<DocComment, Self> {
-    //     match self.peek_token() {
+    //     match self.current_token() {
     //         Some(Token::DocComment(dc)) => Ok(dc),
     //         _ => Err(*self),
     //     }
@@ -175,7 +182,7 @@ impl<'a> Peeker<'a> {
     }
 
     // pub fn peek_type_ann(&self) -> Result<TypeAnnotation, Self> {
-    //     match self.peek_token() {
+    //     match self.current_token() {
     //         Some(Token::TypeAnn(ta)) => Ok(ta),
     //         _ => Err(*self),
     //     }

@@ -31,9 +31,7 @@ impl Parse for Returnable {
     where
         Self: Sized,
     {
-        let expr = if let Some(id) = parser.peek::<Identifier>() {
-            parser.advance();
-
+        let expr = if let Ok(id) = parser.peek_current::<Identifier>() {
             if let Some(fc) = FunctionCallExpr::parse(parser)? {
                 Returnable::FunctionCallExpr(fc)
             } else if let Some(mc) = MethodCallExpr::parse(parser)? {
@@ -53,9 +51,7 @@ impl Parse for Returnable {
             } else {
                 Returnable::Identifier(id)
             }
-        } else if let Some(_) = parser.peek::<Delimiter>() {
-            parser.advance();
-
+        } else if let Ok(_) = parser.peek_current::<Delimiter>() {
             if let Some(ae) = ArrayExpr::parse(parser)? {
                 Returnable::ArrayExpr(ae)
             } else if let Some(ie) = IndexExpr::parse(parser)? {
@@ -69,9 +65,7 @@ impl Parse for Returnable {
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
-        } else if let Some(l) = parser.peek::<LiteralKind>() {
-            parser.advance();
-
+        } else if let Ok(l) = parser.peek_current::<LiteralKind>() {
             if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
                 Returnable::ArithmeticOrLogicalExpr(al)
             } else if let Some(tc) = TypeCastExpr::parse(parser)? {
@@ -79,9 +73,7 @@ impl Parse for Returnable {
             } else {
                 Returnable::LiteralExpr(l)
             }
-        } else if let Some(_) = parser.peek::<Keyword>() {
-            parser.advance();
-
+        } else if let Ok(_) = parser.peek_current::<Keyword>() {
             if let Some(se) = StructExpr::parse(parser)? {
                 Returnable::StructExpr(StructExprKind::Struct(se))
             } else if let Some(ts) = TupleStructExpr::parse(parser)? {
@@ -93,9 +85,7 @@ impl Parse for Returnable {
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken));
             }
-        } else if let Some(_) = parser.peek::<Punctuation>() {
-            parser.advance();
-
+        } else if let Ok(_) = parser.peek_current::<Punctuation>() {
             if let Some(cwb) = ClosureWithBlock::parse(parser)? {
                 Returnable::ClosureWithBlock(cwb)
             } else if let Some(c) = ClosureWithoutBlock::parse(parser)? {
@@ -114,6 +104,8 @@ impl Parse for Returnable {
         } else {
             return Ok(None);
         };
+
+        parser.advance();
 
         Ok(Some(expr))
     }

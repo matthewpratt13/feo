@@ -6,7 +6,7 @@ use feo_ast::{
     path::PathInExpr,
 };
 
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::handler::ErrorEmitted;
 
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
@@ -26,7 +26,6 @@ impl Parse for StructExprField {
 
         let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
             attributes.push(first_attr);
-            parser.advance();
 
             while let Ok(next_attr) = OuterAttr::parse(parser) {
                 if let Some(a) = next_attr {
@@ -37,30 +36,20 @@ impl Parse for StructExprField {
                 }
             }
 
-            parser.advance();
-
-            if let Some(id) = parser.peek::<Identifier>() {
+            if let Ok(id) = parser.peek_current::<Identifier>() {
                 parser.advance();
 
-                let colon_opt = parser.peek::<Punctuation>();
+                let colon_res = parser.peek_current::<Punctuation>();
 
-                if let Some(Punctuation {
+                if let Ok(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
-                }) = colon_opt
+                }) = colon_res
                 {
                     parser.advance();
 
                     if let Some(r) = Returnable::parse(parser)? {
-                        parser.advance();
-
-                        let field_content = (
-                            id,
-                            colon_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
-                            Box::new(r),
-                        );
+                        let field_content = (id, colon_res?, Box::new(r));
 
                         StructExprField(attributes, field_content)
                     } else {
@@ -88,29 +77,24 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         let struct_expr_fields = if let Some(first_field) = StructExprField::parse(parser)? {
-            let mut next_comma_opt = parser.peek::<Punctuation>();
+            let mut next_comma_res = parser.peek_current::<Punctuation>();
 
             parser.advance();
 
-            while let Some(Punctuation {
+            while let Ok(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = next_comma_res
             {
                 if let Some(next_field) = StructExprField::parse(parser)? {
-                    subsequent_fields.push((
-                        next_comma_opt
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::UnexpectedToken))?,
-                        next_field,
-                    ));
+                    subsequent_fields.push((next_comma_res?, next_field));
 
-                    parser.advance();
-                } else {
-                    break;
-                }
-
-                if let Some(p) = parser.take::<Punctuation>() {
-                    next_comma_opt = Some(p);
+                    if let Ok(p) = parser.peek_next::<Punctuation>() {
+                        next_comma_res = Ok(p);
+                        parser.advance();
+                    } else {
+                        break;
+                    }
                 } else {
                     break;
                 }
@@ -136,41 +120,30 @@ impl Parse for StructExpr {
         Self: Sized,
     {
         let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
-            parser.advance();
+            let open_brace_res = parser.peek_current::<Delimiter>();
 
-            let open_brace_opt = parser.peek::<Delimiter>();
-
-            if let Some(Delimiter {
+            if let Ok(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = open_brace_opt
+            }) = open_brace_res
             {
                 parser.advance();
 
-                if let Some(struct_expr_fields_opt) = StructExprFields::parse(parser)? {
-                    let close_brace_opt = parser.peek::<Delimiter>();
-                    
-                    parser.advance();
+                if let Some(struct_expr_fields) = StructExprFields::parse(parser)? {
+                    let close_brace_res = parser.peek_current::<Delimiter>();
 
-                    if let Some(Delimiter {
+                    if let Ok(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
-                    }) = close_brace_opt
+                    }) = close_brace_res
                     {
                         parser.advance();
 
                         StructExpr {
                             item_path,
-
-                            open_brace: open_brace_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
-
-                            struct_expr_fields_opt: Some(struct_expr_fields_opt),
-
-                            close_brace: close_brace_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
+                            open_brace: open_brace_res?,
+                            struct_expr_fields_opt: Some(struct_expr_fields),
+                            close_brace: close_brace_res?,
                         }
                     } else {
                         return Ok(None);

@@ -2,7 +2,7 @@ use feo_ast::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     path::SimplePathSegmentKind,
 };
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::handler::ErrorEmitted;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -47,49 +47,41 @@ impl Parse for InnerAttr {
     where
         Self: Sized,
     {
-        let hash_bang_opt = parser.peek::<Punctuation>();
+        let hash_bang_res = parser.peek_current::<Punctuation>();
 
-        let inner_attr = if let Some(Punctuation {
+        let inner_attr = if let Ok(Punctuation {
             punc_kind: PuncKind::HashBang,
             ..
-        }) = hash_bang_opt
+        }) = hash_bang_res
         {
             parser.advance();
 
-            let open_bracket_opt = parser.peek::<Delimiter>();
+            let open_bracket_res = parser.peek_current::<Delimiter>();
 
-            if let Some(Delimiter {
+            if let Ok(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
-            }) = open_bracket_opt
+            }) = open_bracket_res
             {
                 parser.advance();
 
-                if let Some(attribute) = parser.peek::<AttributeKind>() {
+                if let Ok(attribute) = parser.peek_current::<AttributeKind>() {
                     parser.advance();
 
-                    let close_bracket_opt = parser.peek::<Delimiter>();
+                    let close_bracket_res = parser.peek_current::<Delimiter>();
 
-                    if let Some(Delimiter {
+                    if let Ok(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
-                    }) = close_bracket_opt
+                    }) = close_bracket_res
                     {
                         parser.advance();
 
                         InnerAttr {
-                            hash_bang: hash_bang_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
-
-                            open_bracket: open_bracket_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
-
+                            hash_bang: hash_bang_res?,
+                            open_bracket: open_bracket_res?,
                             attribute,
-                            close_bracket: close_bracket_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
+                            close_bracket: close_bracket_res?,
                         }
                     } else {
                         return Ok(None);
@@ -113,47 +105,41 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_opt = parser.peek::<Punctuation>();
+        let hash_sign_res = parser.peek_current::<Punctuation>();
 
-        let outer_attr = if let Some(Punctuation {
+        let outer_attr = if let Ok(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
-        }) = hash_sign_opt
+        }) = hash_sign_res
         {
             parser.advance();
 
-            let open_bracket_opt = parser.peek::<Delimiter>();
+            let open_bracket_res = parser.peek_current::<Delimiter>();
 
-            if let Some(Delimiter {
+            if let Ok(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
-            }) = open_bracket_opt
+            }) = open_bracket_res
             {
                 parser.advance();
 
-                if let Some(attribute) = parser.peek::<AttributeKind>() {
+                if let Ok(attribute) = parser.peek_current::<AttributeKind>() {
                     parser.advance();
 
-                    let close_bracket_opt = parser.peek::<Delimiter>();
+                    let close_bracket_res = parser.peek_current::<Delimiter>();
 
-                    if let Some(Delimiter {
+                    if let Ok(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
-                    }) = close_bracket_opt
+                    }) = close_bracket_res
                     {
                         parser.advance();
 
                         OuterAttr {
-                            hash_sign: hash_sign_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
-                            open_bracket: open_bracket_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
+                            hash_sign: hash_sign_res?,
+                            open_bracket: open_bracket_res?,
                             attribute,
-                            close_bracket: close_bracket_opt.ok_or_else(|| {
-                                parser.log_error(ParserErrorKind::UnexpectedToken)
-                            })?,
+                            close_bracket: close_bracket_res?,
                         }
                     } else {
                         return Ok(None);
