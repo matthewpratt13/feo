@@ -37,10 +37,6 @@ impl Parser {
         self.pos
     }
 
-    pub fn current_token(&self) -> Option<Token> {
-        self.stream.tokens().get(self.pos).cloned()
-    }
-
     pub fn advance(&mut self) -> Option<Token> {
         self.pos += 1;
         self.stream.next()
