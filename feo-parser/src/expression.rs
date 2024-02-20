@@ -64,7 +64,7 @@ impl Parse for Returnable {
                 Returnable::ParenthesizedExpr(par)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`",
+                    expected: "`Returnable` expression",
                     found: "unknown",
                 })); // TODO
             }
@@ -87,7 +87,7 @@ impl Parse for Returnable {
                 Returnable::PathExpr(pe)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`",
+                    expected: "`Returnable` expression",
                     found: "unknown",
                 })); // TODO
             }
@@ -106,16 +106,15 @@ impl Parse for Returnable {
                 Returnable::UnderscoreExpr(ue)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`",
+                    expected: "`Returnable` expression",
                     found: "unknown",
                 })); // TODO
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable`",
+            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Returnable` expression",
                 found: "unknown",
-            });
-            return Ok(None);
+            }));
         };
 
         parser.advance();
