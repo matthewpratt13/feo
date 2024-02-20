@@ -17,6 +17,11 @@ use feo_types::{
 
 use crate::{parse::Parse, parser::Parser};
 
+// TODO: Collect errors in a list rather than stopping at the first error.
+// TODO: This allows you to report all encountered errors in a single run,
+// TODO: giving the user a comprehensive view of what needs to be fixed
+// TODO: You might use a global or passed-through error list for this purpose.
+
 impl Parse for StructExprField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
@@ -54,25 +59,25 @@ impl Parse for StructExprField {
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                             expected: "`Returnable`",
-                            found: "`unknown`",
+                            found: "`unknown`", // TODO
                         }));
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "colon punctuation (`:`)",
-                        found: "`unknown`",
+                        found: "`unknown`", // TODO
                     }));
                 }
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "identifier",
-                    found: "`unknown`",
+                    found: "`unknown`", // TODO
                 }));
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`OuterAttr`",
-                found: "`unknown`",
+                found: "`unknown`", // TODO
             }));
         };
 

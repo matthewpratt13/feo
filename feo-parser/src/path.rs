@@ -34,6 +34,11 @@ impl Peek for SimplePathSegmentKind {
     }
 }
 
+// TODO: Collect errors in a list rather than stopping at the first error.
+// TODO: This allows you to report all encountered errors in a single run,
+// TODO: giving the user a comprehensive view of what needs to be fixed
+// TODO: You might use a global or passed-through error list for this purpose.
+
 impl Parse for SimplePath {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
