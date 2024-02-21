@@ -29,6 +29,8 @@ pub enum ParserErrorKind {
         token: String,
     },
 
+    // TODO: add `MissingDelimiter`
+
     UnexpectedToken {
         expected: String,
         found: String,
