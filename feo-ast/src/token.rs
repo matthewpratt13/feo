@@ -1,3 +1,5 @@
+use std::fmt;
+
 use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     span::{Span, Spanned},
@@ -46,6 +48,30 @@ impl Spanned for Token {
             Token::Punc(p) => p.span(),
             Token::TypeAnn(ta) => ta.span(),
             Token::EOF => Span::default(),
+        }
+    }
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Token::CharLit(c) => write!(f, "{}", c),
+            Token::StringLit(s) => {
+                write!(f, "{}", s)
+            }
+            Token::BoolLit(b) => write!(f, "`{}`", b),
+            Token::IntLit(i) => write!(f, "`{}`", i),
+            Token::UIntLit(ui) => write!(f, "`{}`", ui),
+            Token::U256Lit(u) => write!(f, "`{}`", u),
+            Token::FloatLit(fl) => write!(f, "`{}`", fl),
+            Token::Iden(id) => write!(f, "`{}`", id.name),
+            Token::Keyword(k) => write!(f, "`{}`", k.keyword_kind.as_str()),
+            Token::Comment(c) => write!(f, "`{}`", c.data),
+            Token::DocComment(dc) => write!(f, "`{}`", dc.content),
+            Token::Delim(d) => write!(f, "`{}`", d.clone().as_char()),
+            Token::Punc(p) => write!(f, "`{}`", p.punc_kind.as_str()),
+            Token::TypeAnn(ta) => write!(f, "`{}`", ta.type_ann_kind.as_str()),
+            Token::EOF => write!(f, "end of file"),
         }
     }
 }

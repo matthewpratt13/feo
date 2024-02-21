@@ -1,9 +1,11 @@
 use std::error::Error;
 use std::fmt;
 
+use feo_types::keyword::KeywordKind;
+use feo_types::punctuation::PuncKind;
 use feo_types::span::Position;
 
-#[derive(Default, Debug, Copy, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub enum ParserErrorKind {
     ParseCharError,
     ParseBoolError,
@@ -14,11 +16,22 @@ pub enum ParserErrorKind {
     CharPositionNotFound,
 
     TokenNotFound,
-    InvalidToken,
+
+    InvalidKeyword {
+        keyword_kind: KeywordKind,
+    },
+
+    InvalidPunctuation {
+        punc_kind: PuncKind,
+    },
+
+    InvalidToken {
+        token: String,
+    },
 
     UnexpectedToken {
-        expected: &'static str,
-        found: &'static str,
+        expected: String,
+        found: String,
     },
 
     #[default]
@@ -34,9 +47,17 @@ impl fmt::Display for ParserErrorKind {
             ParserErrorKind::ParseUIntError => write!(f, "unable to parse uint"),
             ParserErrorKind::ParseU256Error => write!(f, "unable to parse u256"),
             ParserErrorKind::ParseFloatError => write!(f, "unable to parse float"),
-            ParserErrorKind::CharPositionNotFound => write!(f, "cannot detect char position"),
+            ParserErrorKind::CharPositionNotFound => write!(f, "cannot detect character position"),
             ParserErrorKind::TokenNotFound => write!(f, "token not found"),
-            ParserErrorKind::InvalidToken => write!(f, "invalid token"),
+            ParserErrorKind::InvalidKeyword { keyword_kind } => {
+                write!(f, "invalid `KeywordKind` in this context: {}", keyword_kind.as_str())
+            }
+            ParserErrorKind::InvalidPunctuation { punc_kind } => {
+                write!(f, "invalid `PuncKind` in this context: {}", punc_kind.as_str())
+            }
+            ParserErrorKind::InvalidToken { token } => {
+                write!(f, "invalid token in this context: {}", token)
+            }
             ParserErrorKind::UnexpectedToken { expected, found } => write!(
                 f,
                 "unexpected token. expected {}, found {}",

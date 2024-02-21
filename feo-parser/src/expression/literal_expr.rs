@@ -25,9 +25,12 @@ impl Peek for LiteralKind {
                 },
                 _ => {
                     return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "integer type",
-                        found: "unknown",
-                    })); // TODO
+                        expected: "integer type".to_string(),
+                        found: peeker
+                            .peek_token()
+                            .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
+                    }));
                 }
             }
         } else if let Some(ui) = Literal::<UIntType>::peek(peeker)? {
@@ -40,9 +43,12 @@ impl Peek for LiteralKind {
                 },
                 _ => {
                     return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "unsigned integer type",
-                        found: "unknown",
-                    })); // TODO
+                        expected: "unsigned integer type".to_string(),
+                        found: peeker
+                            .peek_token()
+                            .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
+                    }));
                 }
             }
         } else if let Some(u) = Literal::<U256>::peek(peeker)? {
@@ -55,16 +61,22 @@ impl Peek for LiteralKind {
                 },
                 _ => {
                     return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "floating-point number type",
-                        found: "unknown",
-                    })); // TODO
+                        expected: "floating-point number type".to_string(),
+                        found: peeker
+                            .peek_token()
+                            .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
+                    }));
                 }
             }
         } else {
             return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "literal type",
-                found: "unknown",
-            })); // TODO
+                expected: "literal type".to_string(),
+                found: peeker
+                    .peek_token()
+                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
+            }));
         };
 
         Ok(Some(literal_kind))

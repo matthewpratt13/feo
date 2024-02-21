@@ -58,26 +58,38 @@ impl Parse for StructExprField {
                         StructExprField(attributes, field_content)
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`Returnable`",
-                            found: "`unknown`", // TODO
+                            expected: "`Returnable`".to_string(),
+                            found: parser
+                                .current_token()
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                                .to_string(),
                         }));
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "colon punctuation (`:`)",
-                        found: "`unknown`", // TODO
+                        expected: "colon punctuation (`:`)".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "identifier",
-                    found: "`unknown`", // TODO
+                    expected: "identifier".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
                 }));
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`OuterAttr`",
-                found: "`unknown`", // TODO
+                expected: "`OuterAttr`".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 
@@ -124,8 +136,11 @@ impl Parse for StructExprFields {
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`StructExprField`",
-                found: "unknown", // TODO
+                expected: "`StructExprField`".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 
@@ -166,26 +181,38 @@ impl Parse for StructExpr {
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close brace delimiter (`}`)",
-                            found: "unknown", // TODO
+                            expected: "close brace delimiter (`}`)".to_string(),
+                            found: parser
+                                .current_token()
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                                .to_string(),
                         }));
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`StructExprFields`",
-                        found: "unknown", // TODO
+                        expected: "`StructExprFields`".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open brace delimiter (`{`)",
-                    found: "unknown", // TODO
+                    expected: "open brace delimiter (`{`)".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
                 }));
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathExpr`",
-                found: "unknown", // TODO
+                expected: "`PathExpr`".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 
@@ -211,8 +238,11 @@ impl Parse for UnitStructExpr {
             UnitStructExpr(path)
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathExpr`",
-                found: "unknown", // TODO
+                expected: "`PathExpr`".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 

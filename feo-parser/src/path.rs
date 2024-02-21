@@ -21,13 +21,20 @@ impl Peek for SimplePathSegmentKind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
                 KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
-                _ => return Err(peeker.log_error(ParserErrorKind::InvalidToken)),
+                _ => {
+                    return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
+                        keyword_kind: k.keyword_kind,
+                    }))
+                }
             }
         } else {
             return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`SimplePathSegmentKind`",
-                found: "unknown",
-            })); // TODO
+                expected: "`SimplePathSegmentKind`".to_string(),
+                found: peeker
+                    .peek_token()
+                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
+            }));
         };
 
         Ok(Some(segment_kind))
@@ -70,8 +77,11 @@ impl Parse for SimplePath {
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "double colon punctuation (`::`)",
-                        found: "unknown", // TODO
+                        expected: "double colon punctuation (`::`)".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             }
@@ -84,8 +94,11 @@ impl Parse for SimplePath {
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`SimplePathSegmentKind`",
-                found: "unknown", // TODO
+                expected: "`SimplePathSegmentKind`".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 
@@ -106,13 +119,20 @@ impl Peek for PathIdenSegmentKind {
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
                 KeywordKind::KwSelfType => PathIdenSegmentKind::KwSelfType(k),
                 KeywordKind::KwSuper => PathIdenSegmentKind::KwSuper(k),
-                _ => return Err(peeker.log_error(ParserErrorKind::InvalidToken)),
+                _ => {
+                    return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
+                        keyword_kind: k.keyword_kind,
+                    }))
+                }
             }
         } else {
             return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathIdenSegmentKind`",
-                found: "unknown",
-            })); // TODO
+                expected: "`PathIdenSegmentKind`".to_string(),
+                found: peeker
+                    .peek_token()
+                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
+            }));
         };
 
         Ok(Some(segment_kind))
@@ -152,8 +172,11 @@ impl Parse for PathInExpr {
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "double colon punctuation (`::`)",
-                        found: "unknown", // TODO
+                        expected: "double colon punctuation (`::`)".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             }
@@ -166,8 +189,11 @@ impl Parse for PathInExpr {
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathIdenSegmentKind`",
-                found: "unknown", // TODO
+                expected: "`PathIdenSegmentKind`".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 
@@ -205,8 +231,11 @@ impl Parse for PathType {
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`PathIdenSegmentKind`",
-                        found: "unknown", // TODO
+                        expected: "`PathIdenSegmentKind`".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             }
@@ -219,8 +248,11 @@ impl Parse for PathType {
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "double colon punctuation (`::`)",
-                found: "unknown", // TODO
+                expected: "double colon punctuation (`::`)".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 

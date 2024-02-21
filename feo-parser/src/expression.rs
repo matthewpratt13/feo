@@ -72,9 +72,12 @@ impl Parse for Returnable {
                 Returnable::ParenthesizedExpr(par)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable` expression",
-                    found: "unknown",
-                })); // TODO
+                    expected: "`Returnable` expression".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
+                }));
             }
         } else if let Ok(l) = parser.peek_current::<LiteralKind>() {
             if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
@@ -95,9 +98,12 @@ impl Parse for Returnable {
                 Returnable::PathExpr(pe)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable` expression",
-                    found: "unknown",
-                })); // TODO
+                    expected: "`Returnable` expression".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
+                }));
             }
         } else if let Ok(_) = parser.peek_current::<Punctuation>() {
             if let Some(cwb) = ClosureWithBlock::parse(parser)? {
@@ -114,12 +120,20 @@ impl Parse for Returnable {
                 Returnable::UnderscoreExpr(ue)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable` expression",
-                    found: "unknown",
-                })); // TODO
+                    expected: "`Returnable` expression".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
+                }));
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::InvalidToken));
+            return Err(parser.log_error(ParserErrorKind::InvalidToken {
+                token: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
+            }));
         };
 
         parser.advance();

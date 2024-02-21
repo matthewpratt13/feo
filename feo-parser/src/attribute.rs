@@ -30,15 +30,22 @@ impl Peek for AttributeKind {
                 KeywordKind::KwStorage => AttributeKind::KwStorage(k),
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
-                _ => return Err(peeker.log_error(ParserErrorKind::InvalidToken)),
+                _ => {
+                    return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
+                        keyword_kind: k.keyword_kind,
+                    }))
+                }
             }
         } else if let Some(p) = SimplePathSegmentKind::peek(peeker)? {
             AttributeKind::Path(p)
         } else {
             return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`AttributeKind`",
-                found: "unknown",
-            })); // TODO
+                expected: "`AttributeKind`".to_string(),
+                found: peeker
+                    .peek_token()
+                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
+            }));
         };
 
         Ok(Some(attr_kind))
@@ -93,26 +100,38 @@ impl Parse for InnerAttr {
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close bracket delimiter (`]`)",
-                            found: "unknown", // TODO
+                            expected: "close bracket delimiter (`]`)".to_string(),
+                            found: parser
+                                .current_token()
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                                .to_string(),
                         }));
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`AttributeKind`",
-                        found: "unknown", // TODO
+                        expected: "`AttributeKind`".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open bracket delimiter (`[`)",
-                    found: "unknown", // TODO
+                    expected: "open bracket delimiter (`[`)".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
                 }));
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash-bang punctuation (`#!`)",
-                found: "unknown", // TODO
+                expected: "hash-bang punctuation (`#!`)".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 
@@ -163,26 +182,38 @@ impl Parse for OuterAttr {
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close bracket delimiter (`]`)",
-                            found: "unknown", // TODO
+                            expected: "close bracket delimiter (`]`)".to_string(),
+                            found: parser
+                                .current_token()
+                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                                .to_string(),
                         }));
                     }
                 } else {
                     return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`AttributeKind`",
-                        found: "unknown", // TODO
+                        expected: "`AttributeKind`".to_string(),
+                        found: parser
+                            .current_token()
+                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                            .to_string(),
                     }));
                 }
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open bracket delimiter (`[`)",
-                    found: "unknown", // TODO
+                    expected: "open bracket delimiter (`[`)".to_string(),
+                    found: parser
+                        .current_token()
+                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                        .to_string(),
                 }));
             }
         } else {
             return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash sign (`#`) punctuation",
-                found: "unknown", // TODO
+                expected: "hash sign (`#`) punctuation".to_string(),
+                found: parser
+                    .current_token()
+                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
+                    .to_string(),
             }));
         };
 

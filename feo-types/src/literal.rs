@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{self, Debug};
 
 use crate::{
     span::{Span, Spanned},
@@ -32,6 +32,15 @@ pub enum IntType {
     I64(i64),
 }
 
+impl fmt::Display for IntType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            IntType::I32(i) => write!(f, "{}", i),
+            IntType::I64(i) => write!(f, "{}", i),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub enum UIntType {
     U8(u8),
@@ -40,10 +49,30 @@ pub enum UIntType {
     U64(u64),
 }
 
+impl fmt::Display for UIntType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            UIntType::U8(ui) => write!(f, "{}", ui),
+            UIntType::U16(ui) => write!(f, "{}", ui),
+            UIntType::U32(ui) => write!(f, "{}", ui),
+            UIntType::U64(ui) => write!(f, "{}", ui),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub enum FloatType {
     F32(f32),
     F64(f64),
+}
+
+impl fmt::Display for FloatType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            FloatType::F32(fl) => write!(f, "{}", fl),
+            FloatType::F64(fl) => write!(f, "{}", fl),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -74,6 +103,15 @@ where
 {
     fn span(&self) -> Span {
         self.span.clone()
+    }
+}
+
+impl<T> fmt::Display for Literal<T>
+where
+    T: LiteralType + fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+     write!(f, "{}", self.inner_value)
     }
 }
 
