@@ -14,10 +14,10 @@ impl Identifier {
 
 pub fn is_keyword(iden: &str) -> bool {
     [
-        "abi", "abstract", "as", "break", "const", "continue", "contract", "crate", "deref", "dyn",
+        "abi", "abstract", "as", "break", "const", "continue", "contract", "crate",
         "else", "enum", "export", "extern", "for", "func", "if", "impl", "import", "in", "let",
-        "library", "loop", "match", "mod", "mut", "None", "program", "pub", "ref", "return",
-        "script", "self", "Self", "static", "storage", "struct", "super", "trait", "type",
+        "library", "loop", "match", "mod", "mut", "payable", "pub", "ref", "return",
+        "script", "self", "Self", "static", "storage", "struct", "super", "topic", "trait", "type",
         "unsafe", "where", "while",
     ]
     .contains(&iden)
