@@ -85,10 +85,17 @@ impl ParseTerm for SimplePath {
 
             parser.next_token();
 
-            Some(SimplePath {
-                first_segment,
-                subsequent_segments,
-            })
+            if !subsequent_segments.is_empty() {
+                Some(SimplePath {
+                    first_segment,
+                    subsequent_segments: Some(subsequent_segments),
+                })
+            } else {
+                Some(SimplePath {
+                    first_segment,
+                    subsequent_segments: None,
+                })
+            }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`SimplePathSegmentKind`".to_string(),
@@ -151,6 +158,7 @@ impl ParseTerm for PathInExpr {
         let path_expr = if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
             parser.next_token();
 
+            // TODO: fix to not return an error if not given a `Punctuation`
             let mut next_dbl_colon_opt = parser.peek_current::<Punctuation>();
 
             while let Some(Punctuation {
@@ -179,10 +187,17 @@ impl ParseTerm for PathInExpr {
 
             parser.next_token();
 
-            Some(PathInExpr {
-                first_segment,
-                subsequent_segments,
-            })
+            if !subsequent_segments.is_empty() {
+                Some(PathInExpr {
+                    first_segment,
+                    subsequent_segments: Some(subsequent_segments),
+                })
+            } else {
+                Some(PathInExpr {
+                    first_segment,
+                    subsequent_segments: None,
+                })
+            }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathIdenSegmentKind`".to_string(),
@@ -238,10 +253,17 @@ impl ParseTerm for PathType {
 
             parser.next_token();
 
-            Some(PathType {
-                first_segment,
-                subsequent_segments,
-            })
+            if !subsequent_segments.is_empty() {
+                Some(PathType {
+                    first_segment,
+                    subsequent_segments: Some(subsequent_segments),
+                })
+            } else {
+                Some(PathType {
+                    first_segment,
+                    subsequent_segments: None,
+                })
+            }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "double colon punctuation (`::`)".to_string(),

@@ -255,10 +255,6 @@ mod tests {
 
     #[test]
     fn parse_struct() {
-        // TODO: test currently failing due to error in reading `PathExpr`
-        // TODO: it returns a `{` (what we want) but expects a `Punctuation` (i.e., `DblColon`)
-        // TODO: which is the first element in `subsequent_segments`
-        // TODO: solution – make `subsequent_segments` optional ?
         let source_code = r#"
         SomeStruct {
             foo: String,

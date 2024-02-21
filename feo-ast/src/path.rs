@@ -55,8 +55,11 @@ impl Spanned for PathExpr {
     fn span(&self) -> Span {
         let start_pos = self.first_segment.span().start();
 
-        let end_pos = if let Some(s) = self.subsequent_segments.last() {
-            s.1.span().end()
+        let end_pos = if let Some(s) = &self.subsequent_segments {
+            match s.last() {
+                Some(t) => t.1.span().end(),
+                None => self.first_segment.span().end(),
+            }
         } else {
             self.first_segment.span().end()
         };
@@ -75,15 +78,18 @@ pub type PathPatt = PathExpr;
 #[derive(Debug, Clone)]
 pub struct SimplePath {
     pub first_segment: SimplePathSegmentKind,
-    pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
+    pub subsequent_segments: Option<Vec<(DblColon, SimplePathSegmentKind)>>,
 }
 
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
         let start_pos = self.first_segment.span().start();
 
-        let end_pos = if let Some(s) = self.subsequent_segments.last() {
-            s.1.span().end()
+        let end_pos = if let Some(s) = &self.subsequent_segments {
+            match s.last() {
+                Some(t) => t.1.span().end(),
+                None => self.first_segment.span().end(),
+            }
         } else {
             self.first_segment.span().end()
         };
@@ -99,21 +105,24 @@ impl Spanned for SimplePath {
 #[derive(Debug, Clone)]
 pub struct PathInExpr {
     pub first_segment: PathExprSegment,
-    pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
+    pub subsequent_segments: Option<Vec<(DblColon, PathExprSegment)>>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PathType {
     pub first_segment: PathTypeSegment,
-    pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,
+    pub subsequent_segments: Option<Vec<(DblColon, PathTypeSegment)>>,
 }
 
 impl Spanned for PathType {
     fn span(&self) -> Span {
         let start_pos = self.first_segment.span().start();
 
-        let end_pos = if let Some(s) = self.subsequent_segments.last() {
-            s.1.span().end()
+        let end_pos = if let Some(s) = &self.subsequent_segments {
+            match s.last() {
+                Some(t) => t.1.span().end(),
+                None => self.first_segment.span().end(),
+            }
         } else {
             self.first_segment.span().end()
         };
