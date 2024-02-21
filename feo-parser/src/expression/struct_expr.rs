@@ -180,12 +180,8 @@ impl Parse for StructExpr {
                             close_brace: close_brace_res?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close brace delimiter (`}`)".to_string(),
-                            found: parser
-                                .current_token()
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                                .to_string(),
+                        return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "}".to_string(),
                         }));
                     }
                 } else {
@@ -198,12 +194,8 @@ impl Parse for StructExpr {
                     }));
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open brace delimiter (`{`)".to_string(),
-                    found: parser
-                        .current_token()
-                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                        .to_string(),
+                return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "{".to_string(),
                 }));
             }
         } else {

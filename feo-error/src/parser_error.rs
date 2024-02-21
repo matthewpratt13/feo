@@ -15,7 +15,9 @@ pub enum ParserErrorKind {
     ParseFloatError,
     CharPositionNotFound,
 
-    TokenNotFound,
+    MissingDelimiter {
+        delim: String,
+    },
 
     InvalidKeyword {
         keyword_kind: KeywordKind,
@@ -29,12 +31,12 @@ pub enum ParserErrorKind {
         token: String,
     },
 
-    // TODO: add `MissingDelimiter`
-
     UnexpectedToken {
         expected: String,
         found: String,
     },
+
+    TokenNotFound,
 
     #[default]
     UnknownError,
@@ -50,12 +52,22 @@ impl fmt::Display for ParserErrorKind {
             ParserErrorKind::ParseU256Error => write!(f, "unable to parse u256"),
             ParserErrorKind::ParseFloatError => write!(f, "unable to parse float"),
             ParserErrorKind::CharPositionNotFound => write!(f, "cannot detect character position"),
-            ParserErrorKind::TokenNotFound => write!(f, "token not found"),
+            ParserErrorKind::MissingDelimiter { delim } => {
+                write!(f, "missing delimiter: `{}`", delim)
+            }
             ParserErrorKind::InvalidKeyword { keyword_kind } => {
-                write!(f, "invalid `KeywordKind` in this context: {}", keyword_kind.as_str())
+                write!(
+                    f,
+                    "invalid `KeywordKind` in this context: {}",
+                    keyword_kind.as_str()
+                )
             }
             ParserErrorKind::InvalidPunctuation { punc_kind } => {
-                write!(f, "invalid `PuncKind` in this context: {}", punc_kind.as_str())
+                write!(
+                    f,
+                    "invalid `PuncKind` in this context: {}",
+                    punc_kind.as_str()
+                )
             }
             ParserErrorKind::InvalidToken { token } => {
                 write!(f, "invalid token in this context: {}", token)
@@ -65,6 +77,7 @@ impl fmt::Display for ParserErrorKind {
                 "unexpected token. expected {}, found {}",
                 expected, found,
             ),
+            ParserErrorKind::TokenNotFound => write!(f, "token not found"),
             ParserErrorKind::UnknownError => write!(f, "unknown error"),
         }
     }

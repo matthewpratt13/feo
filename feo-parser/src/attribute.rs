@@ -99,12 +99,8 @@ impl Parse for InnerAttr {
                             close_bracket: close_bracket_res?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close bracket delimiter (`]`)".to_string(),
-                            found: parser
-                                .current_token()
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                                .to_string(),
+                        return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "]".to_string(),
                         }));
                     }
                 } else {
@@ -117,12 +113,8 @@ impl Parse for InnerAttr {
                     }));
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open bracket delimiter (`[`)".to_string(),
-                    found: parser
-                        .current_token()
-                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                        .to_string(),
+                return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "[".to_string(),
                 }));
             }
         } else {
@@ -181,12 +173,8 @@ impl Parse for OuterAttr {
                             close_bracket: close_bracket_res?,
                         }
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "close bracket delimiter (`]`)".to_string(),
-                            found: parser
-                                .current_token()
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                                .to_string(),
+                        return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "]".to_string(),
                         }));
                     }
                 } else {
@@ -199,12 +187,8 @@ impl Parse for OuterAttr {
                     }));
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "open bracket delimiter (`[`)".to_string(),
-                    found: parser
-                        .current_token()
-                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                        .to_string(),
+                return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "[".to_string(),
                 }));
             }
         } else {
