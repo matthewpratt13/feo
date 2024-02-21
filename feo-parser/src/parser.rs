@@ -38,8 +38,12 @@ impl Parser {
     }
 
     pub fn advance(&mut self) -> Option<Token> {
-        self.pos += 1;
-        self.stream.next()
+        let token = self.current_token();
+        if token.is_some() {
+            self.pos += 1;
+        }
+
+        token
     }
 
     pub fn current_token(&self) -> Option<Token> {
