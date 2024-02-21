@@ -52,6 +52,8 @@ impl Parse for StructExprField {
                     if let Some(r) = Returnable::parse(parser)? {
                         let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
+                        parser.next_token();
+
                         StructExprField(attributes, field_content)
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {

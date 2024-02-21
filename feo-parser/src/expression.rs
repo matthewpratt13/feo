@@ -136,8 +136,6 @@ impl Parse for Returnable {
             }));
         };
 
-        parser.next_token();
-
         Ok(Some(expr))
     }
 }
