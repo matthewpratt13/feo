@@ -244,3 +244,36 @@ impl ParseExpr for UnitStructExpr {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_struct() {
+        // TODO: test currently failing due to error in reading `PathExpr`
+        // TODO: it returns a `{` (what we want) but expects a `Punctuation` (i.e., `DblColon`)
+        // TODO: which is the first element in `subsequent_segments`
+        // TODO: solution – make `subsequent_segments` optional ?
+        let source_code = r#"
+        Struct {
+            foo: String,
+            bar: i32,
+            baz: bool
+        }"#;
+
+        let handler = Handler::default();
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let struct_expr = StructExpr::parse(&mut parser).expect("unable to parse source code");
+
+        println!("{:#?}", struct_expr);
+    }
+}

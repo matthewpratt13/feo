@@ -47,7 +47,7 @@ impl<'a> Lexer<'a> {
 
     // main lexer function
     // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
-    fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
+    pub fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
         let mut num_open_delimiters: usize = 0; // to check for unclosed delimiters

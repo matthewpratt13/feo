@@ -101,7 +101,7 @@ pub struct Peeker<'a, 'b> {
 
 impl<'a, 'b> Peeker<'a, 'b> {
     // peek for a `T` in `&[Token]'; return `T` if it exists or return an error
-    fn with<T: Peek>(
+    pub fn with<T: Peek>(
         tokens: &'a [Token],
         pos: usize,
         handler: &'b Handler,
