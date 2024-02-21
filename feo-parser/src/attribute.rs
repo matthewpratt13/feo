@@ -69,7 +69,7 @@ impl Parse for InnerAttr {
             ..
         }) = hash_bang_res
         {
-            parser.advance();
+            parser.next_token();
 
             let open_bracket_res = parser.peek_current::<Delimiter>();
 
@@ -78,10 +78,10 @@ impl Parse for InnerAttr {
                 ..
             }) = open_bracket_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Ok(attribute) = parser.peek_current::<AttributeKind>() {
-                    parser.advance();
+                    parser.next_token();
 
                     let close_bracket_res = parser.peek_current::<Delimiter>();
 
@@ -90,7 +90,7 @@ impl Parse for InnerAttr {
                         ..
                     }) = close_bracket_res
                     {
-                        parser.advance();
+                        parser.next_token();
 
                         InnerAttr {
                             hash_bang: hash_bang_res?,
@@ -151,7 +151,7 @@ impl Parse for OuterAttr {
             ..
         }) = hash_sign_res
         {
-            parser.advance();
+            parser.next_token();
 
             let open_bracket_res = parser.peek_current::<Delimiter>();
 
@@ -160,10 +160,10 @@ impl Parse for OuterAttr {
                 ..
             }) = open_bracket_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Ok(attribute) = parser.peek_current::<AttributeKind>() {
-                    parser.advance();
+                    parser.next_token();
 
                     let close_bracket_res = parser.peek_current::<Delimiter>();
 
@@ -172,7 +172,7 @@ impl Parse for OuterAttr {
                         ..
                     }) = close_bracket_res
                     {
-                        parser.advance();
+                        parser.next_token();
 
                         OuterAttr {
                             hash_sign: hash_sign_res?,

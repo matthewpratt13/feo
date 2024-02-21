@@ -55,7 +55,7 @@ impl Parse for SimplePath {
 
         let simple_path = if let Ok(first_segment) = parser.peek_current::<SimplePathSegmentKind>()
         {
-            parser.advance();
+            parser.next_token();
 
             let mut next_dbl_colon_res = parser.peek_current::<Punctuation>();
 
@@ -64,14 +64,14 @@ impl Parse for SimplePath {
                 ..
             }) = next_dbl_colon_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Ok(next_path_segment) = parser.peek_current::<SimplePathSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_res?, next_path_segment));
 
                     if let Ok(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_res = Ok(p);
-                        parser.advance();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -86,7 +86,7 @@ impl Parse for SimplePath {
                 }
             }
 
-            parser.advance();
+            parser.next_token();
 
             SimplePath {
                 first_segment,
@@ -150,7 +150,7 @@ impl Parse for PathInExpr {
         let mut subsequent_segments: Vec<(DblColon, PathIdenSegmentKind)> = Vec::new();
 
         let path_expr = if let Ok(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
-            parser.advance();
+            parser.next_token();
 
             let mut next_dbl_colon_res = parser.peek_current::<Punctuation>();
 
@@ -159,14 +159,14 @@ impl Parse for PathInExpr {
                 ..
             }) = next_dbl_colon_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Ok(next_path_segment) = parser.peek_current::<PathIdenSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_res?, next_path_segment));
 
                     if let Ok(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_res = Ok(p);
-                        parser.advance();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -181,7 +181,7 @@ impl Parse for PathInExpr {
                 }
             }
 
-            parser.advance();
+            parser.next_token();
 
             PathInExpr {
                 first_segment,
@@ -209,7 +209,7 @@ impl Parse for PathType {
         let mut subsequent_segments: Vec<(DblColon, PathIdenSegmentKind)> = Vec::new();
 
         let path_type = if let Ok(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
-            parser.advance();
+            parser.next_token();
 
             let mut next_dbl_colon_res = parser.peek_current::<Punctuation>();
 
@@ -218,14 +218,14 @@ impl Parse for PathType {
                 ..
             }) = next_dbl_colon_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Ok(next_path_segment) = parser.peek_current::<PathIdenSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_res?, next_path_segment));
 
                     if let Ok(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_res = Ok(p);
-                        parser.advance();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -240,7 +240,7 @@ impl Parse for PathType {
                 }
             }
 
-            parser.advance();
+            parser.next_token();
 
             PathType {
                 first_segment,

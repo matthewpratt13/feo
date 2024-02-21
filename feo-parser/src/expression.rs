@@ -136,7 +136,7 @@ impl Parse for Returnable {
             }));
         };
 
-        parser.advance();
+        parser.next_token();
 
         Ok(Some(expr))
     }

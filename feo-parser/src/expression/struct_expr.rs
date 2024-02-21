@@ -35,14 +35,14 @@ impl Parse for StructExprField {
             while let Ok(next_attr) = OuterAttr::parse(parser) {
                 if let Some(a) = next_attr {
                     attributes.push(a);
-                    parser.advance();
+                    parser.next_token();
                 } else {
                     break;
                 }
             }
 
             if let Ok(id) = parser.peek_current::<Identifier>() {
-                parser.advance();
+                parser.next_token();
 
                 let colon_res = parser.peek_current::<Punctuation>();
 
@@ -51,7 +51,7 @@ impl Parse for StructExprField {
                     ..
                 }) = colon_res
                 {
-                    parser.advance();
+                    parser.next_token();
 
                     if let Some(r) = Returnable::parse(parser)? {
                         let field_content = (id, colon_res?, Box::new(r));
@@ -112,14 +112,14 @@ impl Parse for StructExprFields {
                 ..
             }) = next_comma_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((next_comma_res?, next_field));
 
                     if let Ok(p) = parser.peek_next::<Punctuation>() {
                         next_comma_res = Ok(p);
-                        parser.advance();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -128,7 +128,7 @@ impl Parse for StructExprFields {
                 }
             }
 
-            parser.advance();
+            parser.next_token();
 
             StructExprFields {
                 first_field,
@@ -161,7 +161,7 @@ impl Parse for StructExpr {
                 ..
             }) = open_brace_res
             {
-                parser.advance();
+                parser.next_token();
 
                 if let Some(struct_expr_fields) = StructExprFields::parse(parser)? {
                     let close_brace_res = parser.peek_current::<Delimiter>();
@@ -171,7 +171,7 @@ impl Parse for StructExpr {
                         ..
                     }) = close_brace_res
                     {
-                        parser.advance();
+                        parser.next_token();
 
                         StructExpr {
                             item_path,

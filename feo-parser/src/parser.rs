@@ -37,7 +37,7 @@ impl Parser {
         self.pos
     }
 
-    pub fn advance(&mut self) -> Option<Token> {
+    pub fn next_token(&mut self) -> Option<Token> {
         let token = self.current_token();
         if token.is_some() {
             self.pos += 1;
@@ -65,7 +65,7 @@ impl Parser {
     // peek at the current `Token`, advance the `Parser`; return the peeked `Token` or return `None`
     pub fn take<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
         let value = Peeker::with(&self.stream().tokens(), self.pos, &self.handler);
-        self.advance();
+        self.next_token();
         value
     }
 
