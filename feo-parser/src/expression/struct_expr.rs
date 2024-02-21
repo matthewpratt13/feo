@@ -145,6 +145,8 @@ impl ParseTerm for StructExprFields {
     }
 }
 
+// TODO: test this implementation
+
 impl ParseExpr for StructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
