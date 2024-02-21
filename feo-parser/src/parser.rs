@@ -37,10 +37,12 @@ impl Parser {
         self.pos
     }
 
+    // return the current token
     pub fn current_token(&self) -> Option<Token> {
         self.stream.tokens().get(self.pos).cloned()
     }
 
+    // advance the parser and return the current token
     pub fn next_token(&mut self) -> Option<Token> {
         let token = self.current_token();
         if token.is_some() {
@@ -50,21 +52,19 @@ impl Parser {
         token
     }
 
-    // peek at the current `T` and return it if it exists (without advancing)
-    pub fn peek_current<T: Peek>(&self) -> Result<T, ErrorEmitted> {
-        Peeker::with(&self.stream().tokens(), self.pos, &self.handler)?
-            .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
+    // peek at the current `T` and return it if it exists (without advancing) or return `None`
+    pub fn peek_current<T: Peek>(&self) -> Option<T> {
+        Peeker::with(&self.stream().tokens(), self.pos, &self.handler).unwrap_or(None)
     }
 
-    // peek at the next `T` and return it if it exists (without advancing)
-    pub fn peek_next<T: Peek>(&self) -> Result<T, ErrorEmitted> {
-        Peeker::with(&self.stream().tokens(), self.pos + 1, &self.handler)?
-            .ok_or_else(|| self.log_error(ParserErrorKind::TokenNotFound))
+    // peek at the next `T` and return it if it exists (without advancing) or return `None`
+    pub fn peek_next<T: Peek>(&self) -> Option<T> {
+        Peeker::with(&self.stream().tokens(), self.pos + 1, &self.handler).unwrap_or(None)
     }
 
-    // peek at the current `Token`, advance the `Parser`; return the peeked `Token` or return `None`
-    pub fn take<T: Peek>(&mut self) -> Result<Option<T>, ErrorEmitted> {
-        let value = Peeker::with(&self.stream().tokens(), self.pos, &self.handler);
+    // peek at the current `Token`, advance the parser; return the peeked `Token` or return `None`
+    pub fn take<T: Peek>(&mut self) -> Option<T> {
+        let value = Peeker::with(&self.stream().tokens(), self.pos, &self.handler).unwrap_or(None);
         self.next_token();
         value
     }
@@ -96,7 +96,7 @@ pub struct Peeker<'a, 'b> {
 }
 
 impl<'a, 'b> Peeker<'a, 'b> {
-    // peek for a `T` in `&[Token]'; return `T` if it exists or return `None`
+    // peek for a `T` in `&[Token]'; return `T` if it exists or return an error
     fn with<T: Peek>(
         tokens: &'a [Token],
         pos: usize,

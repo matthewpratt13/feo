@@ -62,41 +62,41 @@ impl Parse for InnerAttr {
     where
         Self: Sized,
     {
-        let hash_bang_res = parser.peek_current::<Punctuation>();
+        let hash_bang_opt = parser.peek_current::<Punctuation>();
 
-        let inner_attr = if let Ok(Punctuation {
+        let inner_attr = if let Some(Punctuation {
             punc_kind: PuncKind::HashBang,
             ..
-        }) = hash_bang_res
+        }) = hash_bang_opt
         {
             parser.next_token();
 
             let open_bracket_res = parser.peek_current::<Delimiter>();
 
-            if let Ok(Delimiter {
+            if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
             }) = open_bracket_res
             {
                 parser.next_token();
 
-                if let Ok(attribute) = parser.peek_current::<AttributeKind>() {
+                if let Some(attribute) = parser.peek_current::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_res = parser.peek_current::<Delimiter>();
+                    let close_bracket_opt = parser.peek_current::<Delimiter>();
 
-                    if let Ok(Delimiter {
+                    if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
-                    }) = close_bracket_res
+                    }) = close_bracket_opt
                     {
                         parser.next_token();
 
                         InnerAttr {
-                            hash_bang: hash_bang_res?,
-                            open_bracket: open_bracket_res?,
+                            hash_bang: hash_bang_opt.unwrap(),
+                            open_bracket: open_bracket_res.unwrap(),
                             attribute,
-                            close_bracket: close_bracket_res?,
+                            close_bracket: close_bracket_opt.unwrap(),
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
@@ -136,41 +136,41 @@ impl Parse for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_res = parser.peek_current::<Punctuation>();
+        let hash_sign_opt = parser.peek_current::<Punctuation>();
 
-        let outer_attr = if let Ok(Punctuation {
+        let outer_attr = if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
-        }) = hash_sign_res
+        }) = hash_sign_opt
         {
             parser.next_token();
 
             let open_bracket_res = parser.peek_current::<Delimiter>();
 
-            if let Ok(Delimiter {
+            if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
                 ..
             }) = open_bracket_res
             {
                 parser.next_token();
 
-                if let Ok(attribute) = parser.peek_current::<AttributeKind>() {
+                if let Some(attribute) = parser.peek_current::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_res = parser.peek_current::<Delimiter>();
+                    let close_bracket_opt = parser.peek_current::<Delimiter>();
 
-                    if let Ok(Delimiter {
+                    if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
-                    }) = close_bracket_res
+                    }) = close_bracket_opt
                     {
                         parser.next_token();
 
                         OuterAttr {
-                            hash_sign: hash_sign_res?,
-                            open_bracket: open_bracket_res?,
+                            hash_sign: hash_sign_opt.unwrap(),
+                            open_bracket: open_bracket_res.unwrap(),
                             attribute,
-                            close_bracket: close_bracket_res?,
+                            close_bracket: close_bracket_opt.unwrap(),
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::MissingDelimiter {

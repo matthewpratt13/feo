@@ -41,20 +41,21 @@ impl Parse for StructExprField {
                 }
             }
 
-            if let Ok(id) = parser.peek_current::<Identifier>() {
+            if let Some(id) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let colon_res = parser.peek_current::<Punctuation>();
+                let colon_opt = parser.peek_current::<Punctuation>();
 
-                if let Ok(Punctuation {
+                if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
-                }) = colon_res
+                }) = colon_opt
                 {
                     parser.next_token();
 
                     if let Some(r) = Returnable::parse(parser)? {
-                        let field_content = (id, colon_res?, Box::new(r));
+                        let field_content = (id, colon_opt.unwrap(), Box::new(r));
+                        
                         StructExprField(attributes, field_content)
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -105,20 +106,20 @@ impl Parse for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         let struct_expr_fields = if let Some(first_field) = StructExprField::parse(parser)? {
-            let mut next_comma_res = parser.peek_current::<Punctuation>();
+            let mut next_comma_opt = parser.peek_current::<Punctuation>();
 
-            while let Ok(Punctuation {
+            while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_res
+            }) = next_comma_opt
             {
                 parser.next_token();
 
                 if let Some(next_field) = StructExprField::parse(parser)? {
-                    subsequent_fields.push((next_comma_res?, next_field));
+                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
 
-                    if let Ok(p) = parser.peek_next::<Punctuation>() {
-                        next_comma_res = Ok(p);
+                    if let Some(p) = parser.peek_next::<Punctuation>() {
+                        next_comma_opt = Some(p);
                         parser.next_token();
                     } else {
                         break;
@@ -154,30 +155,30 @@ impl Parse for StructExpr {
         Self: Sized,
     {
         let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
-            let open_brace_res = parser.peek_current::<Delimiter>();
+            let open_brace_opt = parser.peek_current::<Delimiter>();
 
-            if let Ok(Delimiter {
+            if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = open_brace_res
+            }) = open_brace_opt
             {
                 parser.next_token();
 
                 if let Some(struct_expr_fields) = StructExprFields::parse(parser)? {
-                    let close_brace_res = parser.peek_current::<Delimiter>();
+                    let close_brace_opt = parser.peek_current::<Delimiter>();
 
-                    if let Ok(Delimiter {
+                    if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
                         ..
-                    }) = close_brace_res
+                    }) = close_brace_opt
                     {
                         parser.next_token();
 
                         StructExpr {
                             item_path,
-                            open_brace: open_brace_res?,
+                            open_brace: open_brace_opt.unwrap(),
                             struct_expr_fields_opt: Some(struct_expr_fields),
-                            close_brace: close_brace_res?,
+                            close_brace: close_brace_opt.unwrap(),
                         }
                     } else {
                         return Err(parser.log_error(ParserErrorKind::MissingDelimiter {

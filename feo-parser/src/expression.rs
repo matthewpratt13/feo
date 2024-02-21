@@ -31,7 +31,7 @@ impl Parse for Returnable {
     where
         Self: Sized,
     {
-        let expr = if let Ok(id) = parser.peek_current::<Identifier>() {
+        let expr = if let Some(id) = parser.peek_current::<Identifier>() {
             // TODO: what if one of these is `Err` but a subsequent one is `Ok` ? (on propagation)
             // TODO: do we return the first `Err` or continue to check ?
             // TODO: perhaps check `if let Ok(x) = SomeExpr::parse(parser)` (i.e. no question mark)
@@ -59,7 +59,7 @@ impl Parse for Returnable {
             } else {
                 Returnable::Identifier(id)
             }
-        } else if let Ok(_) = parser.peek_current::<Delimiter>() {
+        } else if let Some(_) = parser.peek_current::<Delimiter>() {
             if let Some(ae) = ArrayExpr::parse(parser)? {
                 Returnable::ArrayExpr(ae)
             } else if let Some(ie) = IndexExpr::parse(parser)? {
@@ -72,14 +72,14 @@ impl Parse for Returnable {
                 Returnable::ParenthesizedExpr(par)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable` expression".to_string(),
+                    expected: "`Returnable`".to_string(),
                     found: parser
                         .current_token()
                         .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
                         .to_string(),
                 }));
             }
-        } else if let Ok(l) = parser.peek_current::<LiteralKind>() {
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             if let Some(al) = ArithmeticOrLogicalExpr::parse(parser)? {
                 Returnable::ArithmeticOrLogicalExpr(al)
             } else if let Some(tc) = TypeCastExpr::parse(parser)? {
@@ -87,7 +87,7 @@ impl Parse for Returnable {
             } else {
                 Returnable::Literal(l)
             }
-        } else if let Ok(_) = parser.peek_current::<Keyword>() {
+        } else if let Some(_) = parser.peek_current::<Keyword>() {
             if let Some(se) = StructExpr::parse(parser)? {
                 Returnable::StructExpr(StructExprKind::Struct(se))
             } else if let Some(ts) = TupleStructExpr::parse(parser)? {
@@ -98,14 +98,14 @@ impl Parse for Returnable {
                 Returnable::PathExpr(pe)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable` expression".to_string(),
+                    expected: "`Returnable`".to_string(),
                     found: parser
                         .current_token()
                         .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
                         .to_string(),
                 }));
             }
-        } else if let Ok(_) = parser.peek_current::<Punctuation>() {
+        } else if let Some(_) = parser.peek_current::<Punctuation>() {
             if let Some(cwb) = ClosureWithBlock::parse(parser)? {
                 Returnable::ClosureWithBlock(cwb)
             } else if let Some(c) = ClosureWithoutBlock::parse(parser)? {
@@ -120,7 +120,7 @@ impl Parse for Returnable {
                 Returnable::UnderscoreExpr(ue)
             } else {
                 return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable` expression".to_string(),
+                    expected: "`Returnable`".to_string(),
                     found: parser
                         .current_token()
                         .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
