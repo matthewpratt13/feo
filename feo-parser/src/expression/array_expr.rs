@@ -2,9 +2,9 @@ use feo_ast::expression::{ArrayExpr, IndexExpr};
 
 use feo_error::handler::ErrorEmitted;
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{parse::ParseExpr, parser::Parser};
 
-impl Parse for ArrayExpr {
+impl ParseExpr for ArrayExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -13,7 +13,7 @@ impl Parse for ArrayExpr {
     }
 }
 
-impl Parse for IndexExpr {
+impl ParseExpr for IndexExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,

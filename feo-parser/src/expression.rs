@@ -14,7 +14,7 @@ use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 
 use feo_types::{literal::LiteralKind, Delimiter, Identifier, Keyword, Punctuation};
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{parse::{ParseExpr, ParseTerm}, parser::Parser};
 
 mod array_expr;
 mod call_expr;
@@ -26,7 +26,7 @@ mod parenthesized_expr;
 mod struct_expr;
 mod tuple_expr;
 
-impl Parse for Returnable {
+impl ParseExpr for Returnable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,

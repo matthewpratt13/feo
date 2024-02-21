@@ -5,7 +5,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{Parse, Peek},
+    parse::{ParseTerm, Peek},
     parser::{Parser, Peeker},
 };
 
@@ -46,14 +46,15 @@ impl Peek for SimplePathSegmentKind {
 // TODO: giving the user a comprehensive view of what needs to be fixed
 // TODO: You might use a global or passed-through error list for this purpose.
 
-impl Parse for SimplePath {
+impl ParseTerm for SimplePath {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
     {
         let mut subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)> = Vec::new();
 
-        let simple_path = if let Some(first_segment) = parser.peek_current::<SimplePathSegmentKind>()
+        let simple_path = if let Some(first_segment) =
+            parser.peek_current::<SimplePathSegmentKind>()
         {
             parser.next_token();
 
@@ -142,7 +143,7 @@ impl Peek for PathIdenSegmentKind {
 // NOTE: `PathType` and `PathInExpr` (`PathExpr`) are identical in terms of their fields' types
 // they just use different type aliases for `PathIdenSegmentKind`
 // (i.e., `PathExprSegment` and `PathTypeSegment`)
-impl Parse for PathInExpr {
+impl ParseTerm for PathInExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -201,7 +202,7 @@ impl Parse for PathInExpr {
     }
 }
 
-impl Parse for PathType {
+impl ParseTerm for PathType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,

@@ -11,7 +11,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{Parse, Peek},
+    parse::{ParseTerm, Peek},
     parser::{Parser, Peeker},
 };
 
@@ -57,7 +57,7 @@ impl Peek for AttributeKind {
 // TODO: giving the user a comprehensive view of what needs to be fixed
 // TODO: You might use a global or passed-through error list for this purpose.
 
-impl Parse for InnerAttr {
+impl ParseTerm for InnerAttr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -90,8 +90,6 @@ impl Parse for InnerAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        parser.next_token();
-
                         InnerAttr {
                             hash_bang: hash_bang_opt.unwrap(),
                             open_bracket: open_bracket_res.unwrap(),
@@ -131,7 +129,7 @@ impl Parse for InnerAttr {
     }
 }
 
-impl Parse for OuterAttr {
+impl ParseTerm for OuterAttr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -164,8 +162,6 @@ impl Parse for OuterAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        parser.next_token();
-
                         OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_res.unwrap(),

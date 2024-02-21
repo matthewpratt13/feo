@@ -15,14 +15,17 @@ use feo_types::{
     Delimiter, Identifier, Punctuation,
 };
 
-use crate::{parse::Parse, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 // TODO: Collect errors in a list rather than stopping at the first error.
 // TODO: This allows you to report all encountered errors in a single run,
 // TODO: giving the user a comprehensive view of what needs to be fixed
 // TODO: You might use a global or passed-through error list for this purpose.
 
-impl Parse for StructExprField {
+impl ParseTerm for StructExprField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -31,6 +34,7 @@ impl Parse for StructExprField {
 
         let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
             attributes.push(first_attr);
+            parser.next_token();
 
             while let Some(next_attr) = OuterAttr::parse(parser)? {
                 attributes.push(next_attr);
@@ -96,7 +100,7 @@ impl Parse for StructExprField {
     }
 }
 
-impl Parse for StructExprFields {
+impl ParseTerm for StructExprFields {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -147,7 +151,7 @@ impl Parse for StructExprFields {
     }
 }
 
-impl Parse for StructExpr {
+impl ParseExpr for StructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -211,7 +215,7 @@ impl Parse for StructExpr {
     }
 }
 
-impl Parse for TupleStructExpr {
+impl ParseExpr for TupleStructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
@@ -220,7 +224,7 @@ impl Parse for TupleStructExpr {
     }
 }
 
-impl Parse for UnitStructExpr {
+impl ParseExpr for UnitStructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
     where
         Self: Sized,
