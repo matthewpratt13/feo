@@ -3,7 +3,7 @@ use feo_types::{
     utils::Underscore,
 };
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct UnderscoreExpr {
     underscore: Underscore,
 }

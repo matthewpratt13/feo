@@ -5,7 +5,7 @@ use feo_types::{
 
 use super::Returnable;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ReturnExpr {
     kw_return: KwReturn,
     expression_opt: Option<Box<Returnable>>,

@@ -5,7 +5,7 @@ use feo_types::{
 
 use super::Expression;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ParenthesizedExpr {
     open_parenthesis: Parenthesis,
     enclosed_operand: Box<Expression>,

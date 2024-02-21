@@ -21,7 +21,7 @@ use crate::{
 
 // statement: component of a block, which is a component of an outer expression / function
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Statement {
     ConstantVarDef(ConstantVarDef),
     StaticVarDef(StaticVarDef),
@@ -47,7 +47,7 @@ pub enum Statement {
     LetStatement(LetStatement),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ExprStatement {
     expression: Expression,
     semicolon_opt: Option<Semicolon>,
@@ -71,7 +71,7 @@ impl Spanned for ExprStatement {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct LetStatement {
     attributes: Vec<OuterAttr>,
     kw_let: KwLet,

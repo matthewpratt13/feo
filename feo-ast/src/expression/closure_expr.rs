@@ -7,7 +7,7 @@ use crate::{attribute::OuterAttr, pattern::Pattern, ty::Type};
 
 use super::{BlockExpr, Returnable};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ClosureParamsOpt {
     None(DblPipe),
     MaybeSome((Pipe, Option<ClosureParams>, Pipe)),
@@ -30,13 +30,13 @@ impl Spanned for ClosureParamsOpt {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ClosureExprKind {
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ClosureWithBlock {
     params: ClosureParamsOpt,
     return_type_opt: Option<(ThinArrow, Box<Type>)>,
@@ -52,7 +52,7 @@ impl Spanned for ClosureWithBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
     body_operand: Box<Returnable>,
@@ -67,7 +67,7 @@ impl Spanned for ClosureWithoutBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ClosureParams {
     first_param: ClosureParam,
     subsequent_params: Vec<(Comma, ClosureParam)>,
@@ -89,7 +89,7 @@ impl Spanned for ClosureParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ClosureParam {
     attributes: Vec<OuterAttr>,
     pattern: Box<Pattern>,

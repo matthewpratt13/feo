@@ -8,7 +8,7 @@ use crate::{attribute::OuterAttr, ty::Type};
 
 use super::{VisibilityKind, WhereClause};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum StructDefKind {
     Struct(StructDef),
     TupleStruct(TupleStructDef),
@@ -17,7 +17,7 @@ pub enum StructDefKind {
 
 pub type StructFieldName = Identifier;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -48,14 +48,14 @@ impl Spanned for StructDef {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructDefFields {
     first_field: StructDefField,
     subsequent_fields: Vec<(Comma, StructDefField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructDefField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -64,7 +64,7 @@ pub struct StructDefField {
     field_type: Box<Type>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleStructDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -96,21 +96,21 @@ impl Spanned for TupleStructDef {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleStructDefElements {
     first_field: TupleStructDefField,
     subsequent_fields: Vec<(Comma, TupleStructDefField)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleStructDefField {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
     field_type: Box<Type>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct UnitStructDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

@@ -7,14 +7,14 @@ use feo_types::{
 
 use crate::path::PathExpr;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum RangePatt {
     RangeFromPatt(RangeFromPatt),
     RangeInclusivePatt(RangeInclusivePatt),
     RangeToInclusivePatt(RangeToInclusivePatt),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum RangePattBound {
     CharLit(Literal<char>),
     IntLit(Literal<IntType>),
@@ -37,7 +37,7 @@ impl Spanned for RangePattBound {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeFromPatt {
     from: RangePattBound,
     dot_dot_equals: DotDotEquals,
@@ -55,7 +55,7 @@ impl Spanned for RangeFromPatt {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeInclusivePatt {
     from: RangePattBound,
     dot_dot_equals: DotDotEquals,
@@ -74,7 +74,7 @@ impl Spanned for RangeInclusivePatt {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeToInclusivePatt {
     from: RangePattBound,
     dot_dot_equals: DotDotEquals,

@@ -31,7 +31,7 @@ use self::{
 
 // patterns are used: to match values against structures; in variable declarations; as func params
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Pattern {
     CallParams(CallParams),
     ClosureParam(ClosureParam),
@@ -86,7 +86,7 @@ impl Spanned for Pattern {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum PatternWithoutRange {
     Literal(LiteralKind),
     IdentifierPatt(IdentifierPatt),

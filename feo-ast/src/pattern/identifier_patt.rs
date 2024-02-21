@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct IdentifierPatt {
     kw_ref_opt: Option<KwRef>,
     kw_mut_opt: Option<KwMut>,

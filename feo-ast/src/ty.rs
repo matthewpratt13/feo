@@ -23,7 +23,7 @@ use self::{
 
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Type {
     // primitives (built-in)
     Char(Primitive<char>),

@@ -7,7 +7,7 @@ use crate::path::PathExprSegment;
 
 use super::{Callable, Returnable};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct FunctionCallExpr {
     function_operand: Box<Callable>,
     open_parenthesis: Parenthesis,
@@ -24,7 +24,7 @@ impl Spanned for FunctionCallExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct MethodCallExpr {
     receiver: Box<Callable>,
     dot: Dot,
@@ -43,7 +43,7 @@ impl Spanned for MethodCallExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct CallParams {
     first_param: Box<Returnable>,
     subsequent_params: Vec<(Comma, Returnable)>,

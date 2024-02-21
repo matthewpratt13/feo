@@ -7,7 +7,7 @@ use crate::expression::DerefOperator;
 
 use super::PatternWithoutRange;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ReferencePatt {
     kw_ref: DerefOperator,
     kw_mut_opt: Option<KwMut>,

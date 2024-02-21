@@ -5,7 +5,7 @@ use feo_types::{
 
 use super::Pattern;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ParenthesizedPatt {
     open_parenthesis: Parenthesis,
     pattern: Box<Pattern>,

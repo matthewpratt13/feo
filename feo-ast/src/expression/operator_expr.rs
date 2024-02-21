@@ -12,7 +12,7 @@ use feo_types::{
 
 use super::{Assignable, BooleanOperand, Castable, Operable};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum OperatorExprKind {
     Assignment(AssignmentExpr),
     ArithmeticOrLogical(ArithmeticOrLogicalExpr),
@@ -43,7 +43,7 @@ impl Spanned for OperatorExprKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ArithmeticOrLogicalOperatorKind {
     Add(Plus),
     Subtract(Minus),
@@ -57,7 +57,7 @@ pub enum ArithmeticOrLogicalOperatorKind {
     ShiftRight(DblGreaterThan),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ComparisonOperatorKind {
     Equality(DblEquals),
     NotEqual(BangEquals),
@@ -67,7 +67,7 @@ pub enum ComparisonOperatorKind {
     GreaterThanOrEqual(GreaterThanEquals),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum CompoundAssignOperatorKind {
     AddAssign(PlusEquals),
     SubtractAssign(MinusEquals),
@@ -76,13 +76,13 @@ pub enum CompoundAssignOperatorKind {
     ModulusAssign(PercentEquals),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum LazyBoolOperatorKind {
     LazyAnd(DblAmpersand),
     LazyOr(DblPipe),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum NegationOperatorKind {
     InvertNumeric(Minus),
     InvertBool(Bang),
@@ -97,7 +97,7 @@ impl Spanned for NegationOperatorKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum UnwrapOperandKind {
     Option(Option<Box<Operable>>),
     Result(Result<Box<Operable>, CompilerError>),
@@ -129,7 +129,7 @@ pub type CastOperator = KwAs;
 pub type DerefOperator = Asterisk;
 pub type RefOperator = (Ampersand, Option<KwMut>);
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ArithmeticOrLogicalExpr {
     lhs: Box<Operable>,
     operator: ArithmeticOrLogicalOperatorKind,
@@ -145,7 +145,7 @@ impl Spanned for ArithmeticOrLogicalExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct AssignmentExpr {
     assignee: Box<Operable>,
     operator: AssignOperator,
@@ -161,7 +161,7 @@ impl Spanned for AssignmentExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct CompoundAssignmentExpr {
     assignee: Box<Operable>,
     operator: CompoundAssignOperatorKind,
@@ -177,7 +177,7 @@ impl Spanned for CompoundAssignmentExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ComparisonExpr {
     lhs: Box<Operable>,
     operator: ComparisonOperatorKind,
@@ -193,7 +193,7 @@ impl Spanned for ComparisonExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct DereferenceExpr {
     operator: DerefOperator,
     operand: Box<Assignable>,
@@ -208,7 +208,7 @@ impl Spanned for DereferenceExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct LazyBoolExpr {
     lhs: Box<BooleanOperand>,
     operator: LazyBoolOperatorKind,
@@ -224,7 +224,7 @@ impl Spanned for LazyBoolExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct NegationExpr {
     operator: NegationOperatorKind,
     operand: Box<Operable>,
@@ -239,7 +239,7 @@ impl Spanned for NegationExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ReferenceExpr {
     operator: RefOperator,
     operand: Box<Assignable>,
@@ -254,7 +254,7 @@ impl Spanned for ReferenceExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TypeCastExpr {
     lhs: Box<Castable>,
     operator: CastOperator,
@@ -270,7 +270,7 @@ impl Spanned for TypeCastExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct UnwrapExpr {
     operand: UnwrapOperandKind,
     operator: QuestionMark,

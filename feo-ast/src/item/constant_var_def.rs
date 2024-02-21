@@ -8,7 +8,7 @@ use crate::{attribute::OuterAttr, expression::Expression, ty::Type};
 
 use super::VisibilityKind;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ConstantVarDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -39,7 +39,7 @@ impl Spanned for ConstantVarDef {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StaticVarDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

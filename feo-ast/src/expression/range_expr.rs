@@ -5,7 +5,7 @@ use feo_types::{
 
 use super::Operable;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum RangeExprKind {
     RangeFullExpr(RangeFullExpr),
     RangeFromToExpr(RangeFromToExpr),
@@ -30,7 +30,7 @@ impl Spanned for RangeExprKind {
 
 pub type RangeFullExpr = DblDot;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeFromToExpr {
     from_operand: Box<Operable>,
     dbl_dot: DblDot,
@@ -46,7 +46,7 @@ impl Spanned for RangeFromToExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeFromExpr {
     from_operand: Box<Operable>,
     dbl_dot: DblDot,
@@ -61,7 +61,7 @@ impl Spanned for RangeFromExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeToExpr {
     dbl_dot: DblDot,
     to_operand: Box<Operable>,
@@ -76,7 +76,7 @@ impl Spanned for RangeToExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeInclusiveExpr {
     from_operand: Box<Operable>,
     dot_dot_equals: DotDotEquals,
@@ -92,7 +92,7 @@ impl Spanned for RangeInclusiveExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RangeToInclusiveExpr {
     dot_dot_equals: DotDotEquals,
     to_operand_incl: Box<Operable>,

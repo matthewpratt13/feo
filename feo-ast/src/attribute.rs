@@ -8,7 +8,7 @@ use feo_types::{
 
 use crate::path::SimplePathSegmentKind;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum AttributeKind {
     KwAbstract(KwAbstract),
     KwContract(KwContract),
@@ -22,7 +22,7 @@ pub enum AttributeKind {
     Path(SimplePathSegmentKind),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct InnerAttr {
     pub hash_bang: HashBang,
     pub open_bracket: Bracket,
@@ -39,7 +39,7 @@ impl Spanned for InnerAttr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct OuterAttr {
     pub hash_sign: HashSign,
     pub open_bracket: Bracket,

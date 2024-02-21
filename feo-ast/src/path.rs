@@ -6,7 +6,7 @@ use feo_types::{
     Identifier,
 };
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum SimplePathSegmentKind {
     Iden(Identifier),
     KwCrate(KwCrate),
@@ -25,7 +25,7 @@ impl Spanned for SimplePathSegmentKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum PathIdenSegmentKind {
     Iden(Identifier),
     KwCrate(KwCrate),
@@ -72,7 +72,7 @@ impl Spanned for PathExpr {
 pub type PathPatt = PathExpr;
 
 // points to either a local variable or an item
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct SimplePath {
     pub first_segment: SimplePathSegmentKind,
     pub subsequent_segments: Vec<(DblColon, SimplePathSegmentKind)>,
@@ -96,13 +96,13 @@ impl Spanned for SimplePath {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PathInExpr {
     pub first_segment: PathExprSegment,
     pub subsequent_segments: Vec<(DblColon, PathExprSegment)>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PathType {
     pub first_segment: PathTypeSegment,
     pub subsequent_segments: Vec<(DblColon, PathTypeSegment)>,

@@ -260,7 +260,7 @@ mod tests {
         // TODO: which is the first element in `subsequent_segments`
         // TODO: solution – make `subsequent_segments` optional ?
         let source_code = r#"
-        Struct {
+        SomeStruct {
             foo: String,
             bar: i32,
             baz: bool

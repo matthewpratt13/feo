@@ -9,7 +9,7 @@ use crate::ty::TupleType;
 
 use super::{Returnable, TupleStructExpr};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum TupleKind {
     Tuple(TupleType),
     TupleStruct(TupleStructExpr),
@@ -24,7 +24,7 @@ impl Spanned for TupleKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleExpr {
     open_parenthesis: Parenthesis,
     elements_opt: Option<TupleElements>,
@@ -40,13 +40,13 @@ impl Spanned for TupleExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleElements {
     initializer_operands: Vec<(Returnable, Comma)>,
     trailing_operand_opt: Option<Box<Returnable>>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleIndexExpr {
     operand: TupleKind,
     dot: Dot,

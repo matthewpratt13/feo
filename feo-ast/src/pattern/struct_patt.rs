@@ -8,7 +8,7 @@ use crate::{attribute::OuterAttr, path::PathInExpr};
 
 use super::Pattern;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructPatt {
     object_path: PathInExpr,
     open_brace: Brace,
@@ -28,13 +28,13 @@ impl Spanned for StructPatt {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructPattFields {
     first_field: StructPattField,
     subsequent_fields: Vec<(Comma, StructPattField)>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructPattField {
     attributes: Vec<OuterAttr>,
     field_name: Identifier,
@@ -42,7 +42,7 @@ pub struct StructPattField {
     data: Box<Pattern>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleStructPatt {
     object_path: PathInExpr,
     open_parenthesis: Parenthesis,
@@ -62,7 +62,7 @@ impl Spanned for TupleStructPatt {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleStructElements {
     first_item: Box<Pattern>,
     subsequent_fields: Vec<(Comma, Pattern)>,

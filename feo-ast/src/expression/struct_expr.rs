@@ -8,7 +8,7 @@ use crate::{attribute::OuterAttr, path::PathInExpr};
 
 use super::Returnable;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum StructExprKind {
     Struct(StructExpr),
     TupleStruct(TupleStructExpr),
@@ -25,7 +25,7 @@ impl Spanned for StructExprKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructExpr {
     pub item_path: PathInExpr,
     pub open_brace: Brace,
@@ -42,16 +42,16 @@ impl Spanned for StructExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Returnable>));
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct StructExprFields {
     pub first_field: StructExprField,
     pub subsequent_fields: Vec<(Comma, StructExprField)>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TupleStructExpr {
     pub item_path: PathInExpr,
     pub open_parenthesis: Parenthesis,
@@ -68,7 +68,7 @@ impl Spanned for TupleStructExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct UnitStructExpr(pub PathInExpr);
 
 impl Spanned for UnitStructExpr {

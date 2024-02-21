@@ -6,7 +6,7 @@ use feo_types::{
 
 use super::Type;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ArrayType {
     open_bracket: Bracket,
     element_type: Box<Type>,

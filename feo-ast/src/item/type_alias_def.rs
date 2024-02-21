@@ -8,7 +8,7 @@ use crate::{attribute::OuterAttr, ty::Type};
 
 use super::{TypeParamBounds, VisibilityKind};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TypeAliasDef {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

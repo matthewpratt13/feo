@@ -7,7 +7,7 @@ use crate::statement::Statement;
 
 use super::ExprWithoutBlock;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct BlockExpr {
     open_brace: Brace,
     statements_opt: Option<Vec<Statement>>,

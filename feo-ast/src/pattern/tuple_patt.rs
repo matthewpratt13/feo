@@ -5,7 +5,7 @@ use feo_types::{
 
 use super::Pattern;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TuplePatt {
     open_parenthesis: Parenthesis,
     tuple_patt_elements_opt: Option<TuplePattElements>,
@@ -24,7 +24,7 @@ impl Spanned for TuplePatt {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TuplePattElements {
     first_element: Box<Pattern>,
     subsequent_elements: Vec<(Comma, Pattern)>,

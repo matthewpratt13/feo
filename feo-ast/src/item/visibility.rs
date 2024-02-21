@@ -3,7 +3,7 @@ use feo_types::{
     utils::{KwCrate, KwPub, Parenthesis},
 };
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum VisibilityKind {
     Pub(KwPub),
     PubCrate(PubCrateVisibility),
@@ -18,7 +18,7 @@ impl Spanned for VisibilityKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PubCrateVisibility {
     kw_pub: KwPub,
     open_parenthesis: Parenthesis,

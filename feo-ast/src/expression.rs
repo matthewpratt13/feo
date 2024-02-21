@@ -64,7 +64,7 @@ use self::{
 
 // expressions always produce / evaluate to a value, and may have (side) effects
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Expression {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
@@ -119,7 +119,7 @@ impl Spanned for Expression {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Assignable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),
@@ -142,7 +142,7 @@ impl Spanned for Assignable {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum BooleanOperand {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
@@ -197,7 +197,7 @@ impl Spanned for BooleanOperand {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Callable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),
@@ -220,7 +220,7 @@ impl Spanned for Callable {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Castable {
     Char(Literal<char>),
     Bool(Literal<bool>),
@@ -289,7 +289,7 @@ pub enum Constant {
     UnderscoreExpr(UnderscoreExpr),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ExprWithBlock {
     BlockExpr(BlockExpr),
     ClosureWithBlock(ClosureWithBlock),
@@ -310,7 +310,7 @@ impl Spanned for ExprWithBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ExprWithoutBlock {
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
@@ -334,7 +334,7 @@ pub enum ExprWithoutBlock {
     UnderscoreExpr(UnderscoreExpr),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Iterable {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
@@ -357,7 +357,7 @@ pub enum Iterable {
     PathExpr(PathExpr),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Operable {
     Identifier(Identifier),
     IndexExpr(IndexExpr),
@@ -396,7 +396,7 @@ impl Spanned for Operable {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Returnable {
     Identifier(Identifier),
     ArrayExpr(ArrayExpr),

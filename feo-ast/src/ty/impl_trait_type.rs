@@ -6,7 +6,7 @@ use feo_types::{
 use crate::path::PathType;
 
 // (one bound)
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ImplTraitType {
     kw_impl: KwImpl,
     trait_bound: TraitBound,

@@ -11,20 +11,20 @@ use crate::{
 
 use super::{ConstantVarDef, FunctionWithBlock, TypeAliasDef, WhereClause};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum InherentImplItem {
     ConstantVarDef(ConstantVarDef),
     FuncWithBlock(FunctionWithBlock),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum TraitImplItem {
     ConstantVarDef(ConstantVarDef),
     FuncWithBlock(FunctionWithBlock),
     TypeAliasDef(TypeAliasDef),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct InherentImplBlock {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,
@@ -53,7 +53,7 @@ impl Spanned for InherentImplBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TraitImplBlock {
     outer_attributes: Vec<OuterAttr>,
     kw_impl: KwImpl,

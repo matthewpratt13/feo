@@ -7,13 +7,13 @@ use feo_types::{
 
 use super::Iterable;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ArrayElementsKind {
     CommaSeparated(ArrayElementsCommaSeparated),
     RepeatedValue(ArrayElementsRepeatedValue),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ArrayExpr {
     open_bracket: Bracket,
     elements_opt: Option<ArrayElementsKind>,
@@ -29,21 +29,21 @@ impl Spanned for ArrayExpr {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ArrayElementsCommaSeparated {
     first_element: Box<Iterable>,
     subsequent_elements: Vec<(Comma, Iterable)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ArrayElementsRepeatedValue {
     repeat_operand: Box<Iterable>,
     semicolon: Semicolon,
     num_repeats: Literal<UIntType>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct IndexExpr {
     indexed_operand: ArrayExpr,
     open_bracket: Bracket,

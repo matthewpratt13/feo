@@ -43,7 +43,7 @@ pub use self::{
 
 // items are components of a crate, organized by a set of modules
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Item {
     ConstantVarDef(ConstantVarDef),
     StaticVarDef(StaticVarDef),
@@ -101,21 +101,21 @@ mod where_clause {
 
     use crate::ty::{TraitBound, Type};
 
-    #[derive(Clone)]
+    #[derive(Debug, Clone)]
     pub struct WhereClause {
         kw_where: Keyword,
         type_bounds: Vec<(TypeBound, Comma)>,
         trailing_type_bound_opt: Option<TypeBound>,
     }
 
-    #[derive(Clone)]
+    #[derive(Debug, Clone)]
     pub struct TypeBound {
         ty: Type,
         colon: Colon,
         type_param_bounds_opt: Option<TypeParamBounds>,
     }
 
-    #[derive(Clone)]
+    #[derive(Debug, Clone)]
     pub struct TypeParamBounds {
         first_bound: TraitBound,
         subsequent_bounds: Vec<(Plus, TraitBound)>,

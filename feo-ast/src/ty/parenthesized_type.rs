@@ -5,7 +5,7 @@ use feo_types::{
 
 use super::Type;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ParenthesizedType {
     open_parenthesis: Parenthesis,
     ty: Box<Type>,

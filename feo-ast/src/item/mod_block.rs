@@ -8,13 +8,13 @@ use crate::attribute::OuterAttr;
 
 use super::{Item, VisibilityKind};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ModBlock {
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ModWithBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -44,7 +44,7 @@ impl Spanned for ModWithBody {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ModWithoutBody {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,

@@ -13,7 +13,7 @@ use crate::{
 
 use super::VisibilityKind;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum FunctionDefKind {
     FuncSig((FunctionSig, Semicolon)),
     FuncDef(FunctionWithBlock),
@@ -40,13 +40,13 @@ impl Spanned for FunctionDefKind {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum FuncOrMethodParam {
     FuncParam(FunctionParam),
     MethodParam(MethodParam),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct FunctionWithBlock {
     function_sig: FunctionSig,
     function_body: ExprWithBlock,
@@ -68,7 +68,7 @@ impl Spanned for FunctionWithBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct FunctionSig {
     attributes: Vec<OuterAttr>,
     visibility_opt: Option<VisibilityKind>,
@@ -99,27 +99,27 @@ impl Spanned for FunctionSig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct FunctionParams {
     first_param: FuncOrMethodParam,
     subsequent_params: Vec<(Comma, FunctionParam)>,
     trailing_comma_opt: Option<Comma>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct FunctionParam {
     param_pattern: Box<Pattern>,
     colon: Colon,
     param_type: Box<Type>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct MethodParam {
     self_param: SelfParam,
     trailing_comma_opt: Option<Comma>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct SelfParam {
     ref_operator: RefOperator,
     kw_self: KwSelf,
