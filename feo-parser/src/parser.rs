@@ -37,6 +37,10 @@ impl Parser {
         self.pos
     }
 
+    pub fn current_token(&self) -> Option<Token> {
+        self.stream.tokens().get(self.pos).cloned()
+    }
+
     pub fn next_token(&mut self) -> Option<Token> {
         let token = self.current_token();
         if token.is_some() {
@@ -44,10 +48,6 @@ impl Parser {
         }
 
         token
-    }
-
-    pub fn current_token(&self) -> Option<Token> {
-        self.stream.tokens().get(self.pos).cloned()
     }
 
     // peek at the current `T` and return it if it exists (without advancing)
