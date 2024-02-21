@@ -85,7 +85,7 @@ impl Parse for Returnable {
             } else if let Some(tc) = TypeCastExpr::parse(parser)? {
                 Returnable::TypeCastExpr(tc)
             } else {
-                Returnable::LiteralExpr(l)
+                Returnable::Literal(l)
             }
         } else if let Ok(_) = parser.peek_current::<Keyword>() {
             if let Some(se) = StructExpr::parse(parser)? {

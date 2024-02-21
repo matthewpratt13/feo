@@ -5,7 +5,7 @@ use feo_types::{
     Literal,
 };
 
-use super::IterableExpr;
+use super::Iterable;
 
 #[derive(Clone)]
 pub enum ArrayElementsKind {
@@ -31,14 +31,14 @@ impl Spanned for ArrayExpr {
 
 #[derive(Clone)]
 pub struct ArrayElementsCommaSeparated {
-    first_element: Box<IterableExpr>,
-    subsequent_elements: Vec<(Comma, IterableExpr)>,
+    first_element: Box<Iterable>,
+    subsequent_elements: Vec<(Comma, Iterable)>,
     trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Clone)]
 pub struct ArrayElementsRepeatedValue {
-    repeat_operand: Box<IterableExpr>,
+    repeat_operand: Box<Iterable>,
     semicolon: Semicolon,
     num_repeats: Literal<UIntType>,
 }

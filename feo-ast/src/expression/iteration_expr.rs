@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::pattern::Pattern;
 
-use super::{BlockExpr, BooleanOperand, IterableExpr};
+use super::{BlockExpr, BooleanOperand, Iterable};
 
 #[derive(Clone)]
 pub enum IterationExprKind {
@@ -67,7 +67,7 @@ pub struct IterLoopExpr {
     kw_for: KwFor,
     pattern: Box<Pattern>,
     kw_in: KwIn,
-    iterator: Box<IterableExpr>,
+    iterator: Box<Iterable>,
     block: BlockExpr,
 }
 

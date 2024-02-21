@@ -78,7 +78,7 @@ pub enum Expression {
     IterationExpr(IterationExprKind),
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
-    LiteralExpr(LiteralKind),
+    Literal(LiteralKind),
     MatchExpr(MatchExpr),
     OperatorExpr(OperatorExprKind),
     ParenthesizedExpr(ParenthesizedExpr),
@@ -103,7 +103,7 @@ impl Spanned for Expression {
             Expression::FieldAccessExpr(fa) => fa.span(),
             Expression::IfExpr(ife) => ife.span(),
             Expression::IterationExpr(ite) => ite.span(),
-            Expression::LiteralExpr(le) => le.span(),
+            Expression::Literal(lit) => lit.span(),
             Expression::MatchExpr(me) => me.span(),
             Expression::OperatorExpr(oe) => oe.span(),
             Expression::ParenthesizedExpr(par) => par.span(),
@@ -163,7 +163,7 @@ pub enum BooleanOperand {
     ReturnExpr(ReturnExpr),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
-    LiteralExpr(LiteralKind),
+    Literal(LiteralKind),
     PathExpr(PathExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
@@ -190,7 +190,7 @@ impl Spanned for BooleanOperand {
             BooleanOperand::ReturnExpr(rtn) => rtn.span(),
             BooleanOperand::TupleExpr(te) => te.span(),
             BooleanOperand::TupleIndexExpr(tie) => tie.span(),
-            BooleanOperand::LiteralExpr(le) => le.span(),
+            BooleanOperand::Literal(lit) => lit.span(),
             BooleanOperand::PathExpr(pat) => pat.span(),
             BooleanOperand::UnderscoreExpr(ue) => ue.span(),
         }
@@ -335,7 +335,7 @@ pub enum ExprWithoutBlock {
 }
 
 #[derive(Clone)]
-pub enum IterableExpr {
+pub enum Iterable {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
     BlockExpr(BlockExpr),
@@ -353,7 +353,7 @@ pub enum IterableExpr {
     ReturnExpr(ReturnExpr),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
-    LiteralExpr(LiteralKind),
+    Literal(LiteralKind),
     PathExpr(PathExpr),
 }
 
@@ -365,7 +365,8 @@ pub enum Operable {
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
-    LiteralExpr(LiteralKind),
+    Literal(LiteralKind),
+    ParenthesizedExpr(ParenthesizedExpr),
     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
     DereferenceExpr(DereferenceExpr),
     NegationExpr(NegationExpr),
@@ -383,7 +384,8 @@ impl Spanned for Operable {
             Operable::FunctionCallExpr(fc) => fc.span(),
             Operable::MethodCallExpr(mc) => mc.span(),
             Operable::FieldAccessExpr(fa) => fa.span(),
-            Operable::LiteralExpr(le) => le.span(),
+            Operable::Literal(lit) => lit.span(),
+            Operable::ParenthesizedExpr(par) => par.span(),
             Operable::ArithmeticOrLogicalExpr(al) => al.span(),
             Operable::DereferenceExpr(de) => de.span(),
             Operable::NegationExpr(ne) => ne.span(),
@@ -405,7 +407,7 @@ pub enum Returnable {
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
     FieldAccessExpr(FieldAccessExpr),
-    LiteralExpr(LiteralKind),
+    Literal(LiteralKind),
     PathExpr(PathExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
@@ -431,7 +433,7 @@ impl Spanned for Returnable {
             Returnable::ClosureWithBlock(cwb) => cwb.span(),
             Returnable::ClosureWithoutBlock(c) => c.span(),
             Returnable::FieldAccessExpr(fa) => fa.span(),
-            Returnable::LiteralExpr(le) => le.span(),
+            Returnable::Literal(lit) => lit.span(),
             Returnable::PathExpr(pat) => pat.span(),
             Returnable::StructExpr(se) => se.span(),
             Returnable::TupleExpr(te) => te.span(),
