@@ -32,13 +32,9 @@ impl Parse for StructExprField {
         let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
             attributes.push(first_attr);
 
-            while let Ok(next_attr) = OuterAttr::parse(parser) {
-                if let Some(a) = next_attr {
-                    attributes.push(a);
-                    parser.next_token();
-                } else {
-                    break;
-                }
+            while let Some(next_attr) = OuterAttr::parse(parser)? {
+                attributes.push(next_attr);
+                parser.next_token();
             }
 
             if let Some(id) = parser.peek_current::<Identifier>() {
@@ -55,7 +51,7 @@ impl Parse for StructExprField {
 
                     if let Some(r) = Returnable::parse(parser)? {
                         let field_content = (id, colon_opt.unwrap(), Box::new(r));
-                        
+
                         StructExprField(attributes, field_content)
                     } else {
                         return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
