@@ -4,7 +4,7 @@ use feo_ast::expression::{
     LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
     TypeCastExpr, UnderscoreExpr, UnwrapExpr, UnwrapOperandKind,
 };
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::{error::CompilerError, handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{
@@ -183,7 +183,7 @@ impl Peek for UnwrapOperandKind {
 }
 
 impl ParseExpr for ArithmeticOrLogicalExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -192,7 +192,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
 }
 
 impl ParseExpr for AssignmentExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -201,7 +201,7 @@ impl ParseExpr for AssignmentExpr {
 }
 
 impl ParseExpr for ComparisonExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -210,7 +210,7 @@ impl ParseExpr for ComparisonExpr {
 }
 
 impl ParseExpr for CompoundAssignmentExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -219,7 +219,7 @@ impl ParseExpr for CompoundAssignmentExpr {
 }
 
 impl ParseExpr for DereferenceExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -228,7 +228,7 @@ impl ParseExpr for DereferenceExpr {
 }
 
 impl ParseExpr for LazyBoolExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -237,7 +237,7 @@ impl ParseExpr for LazyBoolExpr {
 }
 
 impl ParseExpr for NegationExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -246,7 +246,7 @@ impl ParseExpr for NegationExpr {
 }
 
 impl ParseExpr for ReferenceExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -255,7 +255,7 @@ impl ParseExpr for ReferenceExpr {
 }
 
 impl ParseExpr for TypeCastExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -264,7 +264,7 @@ impl ParseExpr for TypeCastExpr {
 }
 
 impl ParseExpr for UnderscoreExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -273,7 +273,7 @@ impl ParseExpr for UnderscoreExpr {
 }
 
 impl ParseExpr for UnwrapExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {

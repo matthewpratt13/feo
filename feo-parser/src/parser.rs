@@ -85,6 +85,10 @@ impl Parser {
 
         self.handler.emit_err(CompilerError::Parser(err))
     }
+
+    pub fn errors(&self) -> Vec<CompilerError> {
+        self.handler.clone().get_inner().0
+    }
 }
 
 // type that allows for peeking at the next `Token` in a `&[Token]` without advancing the parser

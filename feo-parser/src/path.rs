@@ -1,5 +1,8 @@
-use feo_ast::path::{PathIdenSegmentKind, PathInExpr, PathType, SimplePath, SimplePathSegmentKind};
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_ast::{
+    path::{PathIdenSegmentKind, PathInExpr, PathType, SimplePath, SimplePathSegmentKind},
+    token::Token,
+};
+use feo_error::{error::CompilerError, handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{
     keyword::KeywordKind, punctuation::PuncKind, utils::DblColon, Identifier, Keyword, Punctuation,
 };
@@ -41,13 +44,8 @@ impl Peek for SimplePathSegmentKind {
     }
 }
 
-// TODO: Collect errors in a list rather than stopping at the first error.
-// TODO: This allows you to report all encountered errors in a single run,
-// TODO: giving the user a comprehensive view of what needs to be fixed
-// TODO: You might use a global or passed-through error list for this purpose.
-
 impl ParseTerm for SimplePath {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -77,33 +75,33 @@ impl ParseTerm for SimplePath {
                         break;
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "double colon punctuation (`::`)".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    break;
                 }
             }
 
             parser.next_token();
 
-            SimplePath {
+            Some(SimplePath {
                 first_segment,
                 subsequent_segments,
-            }
+            })
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`SimplePathSegmentKind`".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(simple_path))
+        if let Some(sp) = simple_path {
+            Ok(Some(sp))
+        } else {
+            Err(parser.errors())
+        }
     }
 }
 
@@ -144,7 +142,7 @@ impl Peek for PathIdenSegmentKind {
 // they just use different type aliases for `PathIdenSegmentKind`
 // (i.e., `PathExprSegment` and `PathTypeSegment`)
 impl ParseTerm for PathInExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -172,38 +170,37 @@ impl ParseTerm for PathInExpr {
                         break;
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "double colon punctuation (`::`)".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                 }
             }
 
             parser.next_token();
 
-            PathInExpr {
+            Some(PathInExpr {
                 first_segment,
                 subsequent_segments,
-            }
+            })
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathIdenSegmentKind`".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(path_expr))
+        if let Some(pe) = path_expr {
+            Ok(Some(pe))
+        } else {
+            Err(parser.errors())
+        }
     }
 }
 
 impl ParseTerm for PathType {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -231,32 +228,32 @@ impl ParseTerm for PathType {
                         break;
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`PathIdenSegmentKind`".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    break;
                 }
             }
 
             parser.next_token();
 
-            PathType {
+            Some(PathType {
                 first_segment,
                 subsequent_segments,
-            }
+            })
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "double colon punctuation (`::`)".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(path_type))
+        if let Some(pt) = path_type {
+            Ok(Some(pt))
+        } else {
+            Err(parser.errors())
+        }
     }
 }

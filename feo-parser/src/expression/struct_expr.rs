@@ -4,9 +4,10 @@ use feo_ast::{
         Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExpr, UnitStructExpr,
     },
     path::PathInExpr,
+    token::Token,
 };
 
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
@@ -20,13 +21,8 @@ use crate::{
     parser::Parser,
 };
 
-// TODO: Collect errors in a list rather than stopping at the first error.
-// TODO: This allows you to report all encountered errors in a single run,
-// TODO: giving the user a comprehensive view of what needs to be fixed
-// TODO: You might use a global or passed-through error list for this purpose.
-
 impl ParseTerm for StructExprField {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -58,50 +54,46 @@ impl ParseTerm for StructExprField {
 
                         parser.next_token();
 
-                        StructExprField(attributes, field_content)
+                        Some(StructExprField(attributes, field_content))
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
                             expected: "`Returnable`".to_string(),
-                            found: parser
-                                .current_token()
-                                .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                                .to_string(),
-                        }));
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                        None
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "colon punctuation (`:`)".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    None
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "identifier".to_string(),
-                    found: parser
-                        .current_token()
-                        .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                        .to_string(),
-                }));
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+                None
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`OuterAttr`".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(struct_expr_field))
+        if let Some(sef) = struct_expr_field {
+            Ok(Some(sef))
+        } else {
+            Err(parser.errors())
+        }
     }
 }
 
 impl ParseTerm for StructExprFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -133,26 +125,28 @@ impl ParseTerm for StructExprFields {
 
             parser.next_token();
 
-            StructExprFields {
+            Some(StructExprFields {
                 first_field,
                 subsequent_fields,
-            }
+            })
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`StructExprField`".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(struct_expr_fields))
+        if let Some(sef) = struct_expr_fields {
+            Ok(Some(sef))
+        } else {
+            Err(parser.errors())
+        }
     }
 }
 
 impl ParseExpr for StructExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -176,47 +170,49 @@ impl ParseExpr for StructExpr {
                     {
                         parser.next_token();
 
-                        StructExpr {
+                        Some(StructExpr {
                             item_path,
                             open_brace: open_brace_opt.unwrap(),
                             struct_expr_fields_opt: Some(struct_expr_fields),
                             close_brace: close_brace_opt.unwrap(),
-                        }
+                        })
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: "}".to_string(),
-                        }));
+                        });
+                        None
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`StructExprFields`".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    None
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "{".to_string(),
-                }));
+                });
+                None
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathExpr`".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(struct_expr))
+        if let Some(se) = struct_expr {
+            Ok(Some(se))
+        } else {
+            Err(parser.errors())
+        }
     }
 }
 
 impl ParseExpr for TupleStructExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -225,22 +221,24 @@ impl ParseExpr for TupleStructExpr {
 }
 
 impl ParseExpr for UnitStructExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
         let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
-            UnitStructExpr(path)
+            Some(UnitStructExpr(path))
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathExpr`".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(unit_struct_expr))
+        if let Some(us) = unit_struct_expr {
+            Ok(Some(us))
+        } else {
+            Err(parser.errors())
+        }
     }
 }

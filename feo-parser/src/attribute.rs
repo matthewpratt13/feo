@@ -1,8 +1,9 @@
 use feo_ast::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
     path::SimplePathSegmentKind,
+    token::Token,
 };
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::{error::CompilerError, handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -52,13 +53,8 @@ impl Peek for AttributeKind {
     }
 }
 
-// TODO: Collect errors in a list rather than stopping at the first error.
-// TODO: This allows you to report all encountered errors in a single run,
-// TODO: giving the user a comprehensive view of what needs to be fixed
-// TODO: You might use a global or passed-through error list for this purpose.
-
 impl ParseTerm for InnerAttr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -90,47 +86,49 @@ impl ParseTerm for InnerAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        InnerAttr {
+                        Some(InnerAttr {
                             hash_bang: hash_bang_opt.unwrap(),
                             open_bracket: open_bracket_res.unwrap(),
                             attribute,
                             close_bracket: close_bracket_opt.unwrap(),
-                        }
+                        })
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: "]".to_string(),
-                        }));
+                        });
+                        None
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`AttributeKind`".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    None
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "[".to_string(),
-                }));
+                });
+                None
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "hash-bang punctuation (`#!`)".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(inner_attr))
+        if let Some(ia) = inner_attr {
+            Ok(Some(ia))
+        } else {
+            Err(parser.errors())
+        }
     }
 }
 
 impl ParseTerm for OuterAttr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -162,41 +160,43 @@ impl ParseTerm for OuterAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        OuterAttr {
+                        Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_res.unwrap(),
                             attribute,
                             close_bracket: close_bracket_opt.unwrap(),
-                        }
+                        })
                     } else {
-                        return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: "]".to_string(),
-                        }));
+                        });
+                        None
                     }
                 } else {
-                    return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`AttributeKind`".to_string(),
-                        found: parser
-                            .current_token()
-                            .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                            .to_string(),
-                    }));
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    None
                 }
             } else {
-                return Err(parser.log_error(ParserErrorKind::MissingDelimiter {
+                parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "[".to_string(),
-                }));
+                });
+                None
             }
         } else {
-            return Err(parser.log_error(ParserErrorKind::UnexpectedToken {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "hash sign (`#`) punctuation".to_string(),
-                found: parser
-                    .current_token()
-                    .ok_or_else(|| parser.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+            None
         };
 
-        Ok(Some(outer_attr))
+        if let Some(oa) = outer_attr {
+            Ok(Some(oa))
+        } else {
+            Err(parser.errors())
+        }
     }
 }

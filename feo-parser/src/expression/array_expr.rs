@@ -1,11 +1,11 @@
 use feo_ast::expression::{ArrayExpr, IndexExpr};
 
-use feo_error::handler::ErrorEmitted;
+use feo_error::error::CompilerError;
 
 use crate::{parse::ParseExpr, parser::Parser};
 
 impl ParseExpr for ArrayExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -14,7 +14,7 @@ impl ParseExpr for ArrayExpr {
 }
 
 impl ParseExpr for IndexExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {

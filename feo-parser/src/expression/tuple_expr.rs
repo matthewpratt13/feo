@@ -1,10 +1,10 @@
 use feo_ast::expression::{TupleExpr, TupleIndexExpr};
-use feo_error::handler::ErrorEmitted;
+use feo_error::error::CompilerError;
 
 use crate::{parse::ParseExpr, parser::Parser};
 
 impl ParseExpr for TupleExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
@@ -13,7 +13,7 @@ impl ParseExpr for TupleExpr {
 }
 
 impl ParseExpr for TupleIndexExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, ErrorEmitted>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
