@@ -658,6 +658,8 @@ impl<'a> Lexer<'a> {
                     tokens.push(punctuation);
                 }
 
+                _ if !self.peek_next().is_some() => tokens.push(Some(Token::EOF)),
+
                 _ => return Err(self.log_error(LexErrorKind::InvalidChar(c))),
             }
         }
@@ -910,7 +912,7 @@ mod tests {
             println!(
                 "error: {}, \nposition: line {}, col {}",
                 lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 813,
+                lexer.errors().pop().expect("Error not found").line_col().0 + 731,
                 lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
