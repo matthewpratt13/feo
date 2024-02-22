@@ -13,11 +13,11 @@ use crate::{
 };
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)? {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::Percent => ArithmeticOrLogicalOperatorKind::Modulus(p),
                 PuncKind::Ampersand => ArithmeticOrLogicalOperatorKind::LogicalAnd(p),
@@ -30,31 +30,33 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
                 PuncKind::DblLessThan => ArithmeticOrLogicalOperatorKind::ShiftLeft(p),
                 PuncKind::DblGreaterThan => ArithmeticOrLogicalOperatorKind::ShiftRight(p),
                 _ => {
-                    return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                        punc_kind: p.punc_kind,
-                    }))
+                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
+                    //     punc_kind: p.punc_kind,
+                    // }))
+                    return None;
                 }
             }
         } else {
-            return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "arithmetic or logical operator punctuation".to_string(),
-                found: peeker
-                    .peek_token()
-                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "arithmetic or logical operator punctuation".to_string(),
+            //     found: peeker
+            //         .peek_token()
+            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+            //         .to_string(),
+            // }));
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for ComparisonOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)? {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::LessThan => ComparisonOperatorKind::LessThan(p),
                 PuncKind::GreaterThan => ComparisonOperatorKind::GreaterThan(p),
@@ -63,31 +65,33 @@ impl Peek for ComparisonOperatorKind {
                 PuncKind::DblEquals => ComparisonOperatorKind::Equality(p),
                 PuncKind::GreaterThanEquals => ComparisonOperatorKind::GreaterThanOrEqual(p),
                 _ => {
-                    return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                        punc_kind: p.punc_kind,
-                    }))
+                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
+                    //     punc_kind: p.punc_kind,
+                    // }))
+                    return None;
                 }
             }
         } else {
-            return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "comparison operator punctuation".to_string(),
-                found: peeker
-                    .peek_token()
-                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "comparison operator punctuation".to_string(),
+            //     found: peeker
+            //         .peek_token()
+            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+            //         .to_string(),
+            // }));
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for CompoundAssignOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)? {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::PercentEquals => CompoundAssignOperatorKind::ModulusAssign(p),
                 PuncKind::AsteriskEquals => CompoundAssignOperatorKind::MultiplyAssign(p),
@@ -95,86 +99,92 @@ impl Peek for CompoundAssignOperatorKind {
                 PuncKind::MinusEquals => CompoundAssignOperatorKind::SubtractAssign(p),
                 PuncKind::ForwardSlashEquals => CompoundAssignOperatorKind::DivideAssign(p),
                 _ => {
-                    return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                        punc_kind: p.punc_kind,
-                    }))
+                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
+                    //     punc_kind: p.punc_kind,
+                    // }))
+                    return None;
                 }
             }
         } else {
-            return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "compound assignment punctuation".to_string(),
-                found: peeker
-                    .peek_token()
-                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "compound assignment punctuation".to_string(),
+            //     found: peeker
+            //         .peek_token()
+            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+            //         .to_string(),
+            // }));
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for LazyBoolOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)? {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
                 PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
                 _ => {
-                    return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                        punc_kind: p.punc_kind,
-                    }))
+                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
+                    //     punc_kind: p.punc_kind,
+                    // }))
+                    return None;
                 }
             }
         } else {
-            return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "lazy boolean operator punctuation`".to_string(),
-                found: peeker
-                    .peek_token()
-                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "lazy boolean operator punctuation`".to_string(),
+            //     found: peeker
+            //         .peek_token()
+            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+            //         .to_string(),
+            // }));
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 impl Peek for NegationOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker)? {
+        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
             match p.punc_kind {
                 PuncKind::Minus => NegationOperatorKind::InvertNumeric(p),
                 PuncKind::Bang => NegationOperatorKind::InvertBool(p),
                 _ => {
-                    return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                        punc_kind: p.punc_kind,
-                    }))
+                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
+                    //     punc_kind: p.punc_kind,
+                    // }))
+                    return None;
                 }
             }
         } else {
-            return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "negation operator punctuation (`-` or `!`)".to_string(),
-                found: peeker
-                    .peek_token()
-                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "negation operator punctuation (`-` or `!`)".to_string(),
+            //     found: peeker
+            //         .peek_token()
+            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+            //         .to_string(),
+            // }));
+            return None;
         };
 
-        Ok(Some(operator_kind))
+        Some(operator_kind)
     }
 }
 
 // TODO: how ??
 impl Peek for UnwrapOperandKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {

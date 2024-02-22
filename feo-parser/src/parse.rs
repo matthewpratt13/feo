@@ -16,7 +16,7 @@ pub trait ParseTerm {
 }
 
 pub trait Peek {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized;
 }

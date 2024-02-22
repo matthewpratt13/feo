@@ -17,11 +17,11 @@ use crate::{
 };
 
 impl Peek for AttributeKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Result<Option<Self>, ErrorEmitted>
+    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
     where
         Self: Sized,
     {
-        let attr_kind = if let Some(k) = Keyword::peek(peeker)? {
+        let attr_kind = if let Some(k) = Keyword::peek(peeker) {
             match k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwContract => AttributeKind::KwContract(k),
@@ -31,25 +31,27 @@ impl Peek for AttributeKind {
                 KeywordKind::KwStorage => AttributeKind::KwStorage(k),
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
-                _ => {
-                    return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
-                        keyword_kind: k.keyword_kind,
-                    }))
-                }
+                // _ => {
+                //     return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
+                //         keyword_kind: k.keyword_kind,
+                //     }))
+                // }
+                _ => return None,
             }
-        } else if let Some(p) = SimplePathSegmentKind::peek(peeker)? {
+        } else if let Some(p) = SimplePathSegmentKind::peek(peeker) {
             AttributeKind::Path(p)
         } else {
-            return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`AttributeKind`".to_string(),
-                found: peeker
-                    .peek_token()
-                    .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    .to_string(),
-            }));
+            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "`AttributeKind`".to_string(),
+            //     found: peeker
+            //         .peek_token()
+            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
+            //         .to_string(),
+            // }));
+            return None;
         };
 
-        Ok(Some(attr_kind))
+        Some(attr_kind)
     }
 }
 
