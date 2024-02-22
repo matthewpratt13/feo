@@ -74,6 +74,7 @@ impl ParseTerm for SimplePath {
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_opt = Some(p);
                         parser.next_token();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -86,7 +87,7 @@ impl ParseTerm for SimplePath {
                 }
             }
 
-            parser.next_token();
+            // parser.next_token();
 
             if !subsequent_segments.is_empty() {
                 Some(SimplePath {
@@ -179,6 +180,7 @@ impl ParseTerm for PathInExpr {
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_opt = Some(p);
                         parser.next_token();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -191,7 +193,7 @@ impl ParseTerm for PathInExpr {
                 }
             }
 
-            parser.next_token();
+            // parser.next_token();
 
             if !subsequent_segments.is_empty() {
                 Some(PathInExpr {
@@ -245,6 +247,7 @@ impl ParseTerm for PathType {
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_opt = Some(p);
                         parser.next_token();
+                        parser.next_token();
                     } else {
                         break;
                     }
@@ -257,7 +260,7 @@ impl ParseTerm for PathType {
                 }
             }
 
-            parser.next_token();
+            // parser.next_token();
 
             if !subsequent_segments.is_empty() {
                 Some(PathType {

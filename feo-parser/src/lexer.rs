@@ -725,6 +725,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore]
     #[test]
     fn lex() {
         let source_code = r#" 

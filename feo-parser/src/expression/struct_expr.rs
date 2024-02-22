@@ -39,7 +39,7 @@ impl ParseTerm for StructExprField {
             }
         }
 
-        let struct_expr_field = if let Some(id) = parser.peek_current::<Identifier>() {
+        if let Some(id) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
             let colon_opt = parser.peek_current::<Punctuation>();
@@ -54,40 +54,29 @@ impl ParseTerm for StructExprField {
                 if let Some(r) = Returnable::parse(parser)? {
                     let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
-                    parser.next_token();
-
                     if !attributes.is_empty() {
-                        Some(StructExprField(Some(attributes), field_content))
-                    } else {
-                        Some(StructExprField(None, field_content))
+                        return Ok(Some(StructExprField(Some(attributes), field_content)));
                     }
-                } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Returnable`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-                    None
+                    return Ok(Some(StructExprField(None, field_content)));
                 }
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Returnable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "colon punctuation (`:`)".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
-                None
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "identifier".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
-        };
-
-        if let Some(sef) = struct_expr_field {
-            Ok(Some(sef))
-        } else {
-            Err(parser.errors())
         }
+
+        Err(parser.errors())
     }
 }
 
@@ -98,7 +87,9 @@ impl ParseTerm for StructExprFields {
     {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
-        let struct_expr_fields = if let Some(first_field) = StructExprField::parse(parser)? {
+        if let Some(first_field) = StructExprField::parse(parser)? {
+            parser.next_token();
+
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
 
             while let Some(Punctuation {
@@ -112,8 +103,8 @@ impl ParseTerm for StructExprFields {
                     subsequent_fields.push((next_comma_opt.unwrap(), next_field));
 
                     if let Some(p) = parser.peek_next::<Punctuation>() {
-                        next_comma_opt = Some(p);
                         parser.next_token();
+                        next_comma_opt = Some(p);
                     } else {
                         break;
                     }
@@ -122,37 +113,27 @@ impl ParseTerm for StructExprFields {
                 }
             }
 
-            parser.next_token();
-
-            Some(StructExprFields {
+            return Ok(Some(StructExprFields {
                 first_field,
                 subsequent_fields,
-            })
+            }));
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`StructExprField`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
         };
 
-        if let Some(sef) = struct_expr_fields {
-            Ok(Some(sef))
-        } else {
-            Err(parser.errors())
-        }
+        Err(parser.errors())
     }
 }
-
-// TODO: test this implementation
 
 impl ParseExpr for StructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
-            // parser.next_token();
+        if let Some(item_path) = PathInExpr::parse(parser)? {
             let open_brace_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -163,6 +144,8 @@ impl ParseExpr for StructExpr {
                 parser.next_token();
 
                 if let Some(struct_expr_fields) = StructExprFields::parse(parser)? {
+                    parser.next_token();
+
                     let close_brace_opt = parser.peek_current::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -172,44 +155,35 @@ impl ParseExpr for StructExpr {
                     {
                         parser.next_token();
 
-                        Some(StructExpr {
+                        return Ok(Some(StructExpr {
                             item_path,
                             open_brace: open_brace_opt.unwrap(),
                             struct_expr_fields_opt: Some(struct_expr_fields),
                             close_brace: close_brace_opt.unwrap(),
-                        })
-                    } else {
-                        parser.log_error(ParserErrorKind::MissingDelimiter {
-                            delim: "}".to_string(),
-                        });
-                        None
+                        }));
                     }
+                    parser.log_error(ParserErrorKind::MissingDelimiter {
+                        delim: "}".to_string(),
+                    });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`StructExprFields`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
-                    None
                 }
             } else {
                 parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "{".to_string(),
                 });
-                None
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`PathExpr`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
         };
 
-        if let Some(se) = struct_expr {
-            Ok(Some(se))
-        } else {
-            Err(parser.errors())
-        }
+        Err(parser.errors())
     }
 }
 
@@ -257,9 +231,9 @@ mod tests {
     fn parse_struct() {
         let source_code = r#"
         SomeStruct {
-            foo: q,
-            bar: r,
-            baz: s,
+            foo: "a",
+            bar: 1,
+            baz: x
         }"#;
 
         let handler = Handler::default();
@@ -270,7 +244,8 @@ mod tests {
 
         let mut parser = Parser::new(token_stream, handler);
 
-        let struct_expr = StructExpr::parse(&mut parser);
+        let struct_expr =
+            StructExpr::parse(&mut parser).expect("unable to parse struct expression with errors");
 
         println!("{:#?}", struct_expr);
     }

@@ -124,6 +124,8 @@ impl ParseExpr for Returnable {
             None
         };
 
+        // parser.next_token();
+
         if let Some(e) = expr {
             Ok(Some(e))
         } else {
