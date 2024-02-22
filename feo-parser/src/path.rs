@@ -182,6 +182,7 @@ impl ParseTerm for PathInExpr {
                         expected: "double colon punctuation (`::`)".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
+                    break;
                 }
             }
 
