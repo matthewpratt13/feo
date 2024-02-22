@@ -43,7 +43,7 @@ impl Spanned for StructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct StructExprField(pub Vec<OuterAttr>, pub (Identifier, Colon, Box<Returnable>));
+pub struct StructExprField(pub Option<Vec<OuterAttr>>, pub (Identifier, Colon, Box<Returnable>));
 
 #[derive(Debug, Clone)]
 pub struct StructExprFields {

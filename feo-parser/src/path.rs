@@ -2,7 +2,7 @@ use feo_ast::{
     path::{PathIdenSegmentKind, PathInExpr, PathType, SimplePath, SimplePathSegmentKind},
     token::Token,
 };
-use feo_error::{error::CompilerError, handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     keyword::KeywordKind, punctuation::PuncKind, utils::DblColon, Identifier, Keyword, Punctuation,
 };
@@ -13,7 +13,7 @@ use crate::{
 };
 
 impl Peek for SimplePathSegmentKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -100,10 +100,10 @@ impl ParseTerm for SimplePath {
                 })
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`SimplePathSegmentKind`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            // parser.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "`SimplePathSegmentKind`".to_string(),
+            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            // });
             None
         };
 
@@ -116,7 +116,7 @@ impl ParseTerm for SimplePath {
 }
 
 impl Peek for PathIdenSegmentKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -205,10 +205,10 @@ impl ParseTerm for PathInExpr {
                 })
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathIdenSegmentKind`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            // parser.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "`PathIdenSegmentKind`".to_string(),
+            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            // });
             None
         };
 
@@ -271,10 +271,10 @@ impl ParseTerm for PathType {
                 })
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathIdenSegmentKind`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            // parser.log_error(ParserErrorKind::UnexpectedToken {
+            //     expected: "`PathIdenSegmentKind`".to_string(),
+            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            // });
             None
         };
 

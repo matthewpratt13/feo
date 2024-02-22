@@ -3,7 +3,7 @@ use feo_ast::{
     path::SimplePathSegmentKind,
     token::Token,
 };
-use feo_error::{error::CompilerError, handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -17,7 +17,7 @@ use crate::{
 };
 
 impl Peek for AttributeKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -162,6 +162,8 @@ impl ParseTerm for OuterAttr {
                         ..
                     }) = close_bracket_opt
                     {
+                        parser.next_token();
+
                         Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
@@ -189,7 +191,7 @@ impl ParseTerm for OuterAttr {
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash sign (`#`) punctuation".to_string(),
+                expected: "hash sign punctuation (`#`)".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
             None

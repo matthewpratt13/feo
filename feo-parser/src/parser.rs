@@ -54,17 +54,17 @@ impl Parser {
 
     // peek at the current `T` and return it if it exists (without advancing) or return `None`
     pub fn peek_current<T: Peek>(&self) -> Option<T> {
-        Peeker::with(&self.stream().tokens(), self.pos, &self.handler)
+        Peeker::with(&self.stream().tokens(), self.pos)
     }
 
     // peek at the next `T` and return it if it exists (without advancing) or return `None`
     pub fn peek_next<T: Peek>(&self) -> Option<T> {
-        Peeker::with(&self.stream().tokens(), self.pos + 1, &self.handler)
+        Peeker::with(&self.stream().tokens(), self.pos + 1)
     }
 
     // peek at the current `Token`, advance the parser; return the peeked `Token` or return `None`
     pub fn take<T: Peek>(&mut self) -> Option<T> {
-        let value = Peeker::with(&self.stream().tokens(), self.pos, &self.handler);
+        let value = Peeker::with(&self.stream().tokens(), self.pos);
         self.next_token();
         value
     }
@@ -93,19 +93,22 @@ impl Parser {
 
 // type that allows for peeking at the next `Token` in a `&[Token]` without advancing the parser
 #[derive(Copy, Clone)]
-pub struct Peeker<'a, 'b> {
+pub struct Peeker<'a> {
     tokens: &'a [Token],
     pos: usize,
-    handler: &'b Handler,
+    // handler: &'b Handler,
 }
 
-impl<'a, 'b> Peeker<'a, 'b> {
+impl<'a> Peeker<'a> {
     // peek for a `T` in `&[Token]'; return `T` if it exists or return an error
-    pub fn with<T: Peek>(tokens: &'a [Token], pos: usize, handler: &'b Handler) -> Option<T> {
+    pub fn with<T: Peek>(
+        tokens: &'a [Token],
+        pos: usize, /* handler: &'b Handler */
+    ) -> Option<T> {
         let peeker = Peeker {
             tokens,
             pos,
-            handler,
+            // handler,
         };
         let value = T::peek(&peeker);
 
@@ -298,21 +301,21 @@ impl<'a, 'b> Peeker<'a, 'b> {
     //     }
     // }
 
-    pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
-        let err = ParserError {
-            error_kind,
-            position: Position::new(
-                &self.tokens[self.pos].span().source(),
-                self.tokens[self.pos].span().start(),
-            ),
-        };
+    // pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
+    //     let err = ParserError {
+    //         error_kind,
+    //         position: Position::new(
+    //             &self.tokens[self.pos].span().source(),
+    //             self.tokens[self.pos].span().start(),
+    //         ),
+    //     };
 
-        self.handler.emit_err(CompilerError::Parser(err))
-    }
+    //     self.handler.emit_err(CompilerError::Parser(err))
+    // }
 }
 
 impl Peek for Literal<char> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -324,7 +327,7 @@ impl Peek for Literal<char> {
 }
 
 impl Peek for Literal<String> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -336,7 +339,7 @@ impl Peek for Literal<String> {
 }
 
 impl Peek for Literal<bool> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -348,7 +351,7 @@ impl Peek for Literal<bool> {
 }
 
 impl Peek for Literal<IntType> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -360,7 +363,7 @@ impl Peek for Literal<IntType> {
 }
 
 impl Peek for Literal<UIntType> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -372,7 +375,7 @@ impl Peek for Literal<UIntType> {
 }
 
 impl Peek for Literal<U256> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -384,7 +387,7 @@ impl Peek for Literal<U256> {
 }
 
 impl Peek for Literal<FloatType> {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -396,7 +399,7 @@ impl Peek for Literal<FloatType> {
 }
 
 impl Peek for Identifier {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -408,7 +411,7 @@ impl Peek for Identifier {
 }
 
 impl Peek for Keyword {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -432,7 +435,7 @@ impl Peek for Keyword {
 // }
 
 impl Peek for Delimiter {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -444,7 +447,7 @@ impl Peek for Delimiter {
 }
 
 impl Peek for Punctuation {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {

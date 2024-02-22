@@ -28,57 +28,56 @@ impl ParseTerm for StructExprField {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        let struct_expr_field = if let Some(first_attr) = OuterAttr::parse(parser)? {
-            attributes.push(first_attr);
-            parser.next_token();
-
+        if let Some(Punctuation {
+            punc_kind: PuncKind::HashSign,
+            ..
+        }) = parser.peek_current()
+        {
             while let Some(next_attr) = OuterAttr::parse(parser)? {
                 attributes.push(next_attr);
                 parser.next_token();
             }
+        }
 
-            if let Some(id) = parser.peek_current::<Identifier>() {
+        let struct_expr_field = if let Some(id) = parser.peek_current::<Identifier>() {
+            parser.next_token();
+
+            let colon_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Colon,
+                ..
+            }) = colon_opt
+            {
                 parser.next_token();
 
-                let colon_opt = parser.peek_current::<Punctuation>();
+                if let Some(r) = Returnable::parse(parser)? {
+                    let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
-                if let Some(Punctuation {
-                    punc_kind: PuncKind::Colon,
-                    ..
-                }) = colon_opt
-                {
                     parser.next_token();
 
-                    if let Some(r) = Returnable::parse(parser)? {
-                        let field_content = (id, colon_opt.unwrap(), Box::new(r));
-
-                        parser.next_token();
-
-                        Some(StructExprField(attributes, field_content))
+                    if !attributes.is_empty() {
+                        Some(StructExprField(Some(attributes), field_content))
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`Returnable`".to_string(),
-                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                        });
-                        None
+                        Some(StructExprField(None, field_content))
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "colon punctuation (`:`)".to_string(),
+                        expected: "`Returnable`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                     None
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "identifier".to_string(),
+                    expected: "colon punctuation (`:`)".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
                 None
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`OuterAttr`".to_string(),
+                expected: "identifier".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
             None
@@ -153,6 +152,7 @@ impl ParseExpr for StructExpr {
         Self: Sized,
     {
         let struct_expr = if let Some(item_path) = PathInExpr::parse(parser)? {
+            // parser.next_token();
             let open_brace_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -257,18 +257,20 @@ mod tests {
     fn parse_struct() {
         let source_code = r#"
         SomeStruct {
-            foo: String,
-            bar: i32,
-            baz: bool
+            foo: q,
+            bar: r,
+            baz: s,
         }"#;
 
         let handler = Handler::default();
         let mut lexer = Lexer::new(&source_code, handler.clone());
         let token_stream = lexer.lex().expect("unable to lex source code");
 
+        // println!("{:#?}", token_stream);
+
         let mut parser = Parser::new(token_stream, handler);
 
-        let struct_expr = StructExpr::parse(&mut parser).expect("unable to parse source code");
+        let struct_expr = StructExpr::parse(&mut parser);
 
         println!("{:#?}", struct_expr);
     }

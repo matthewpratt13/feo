@@ -4,7 +4,7 @@ use feo_ast::expression::{
     LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
     TypeCastExpr, UnderscoreExpr, UnwrapExpr, UnwrapOperandKind,
 };
-use feo_error::{error::CompilerError, handler::ErrorEmitted, parser_error::ParserErrorKind};
+use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{
@@ -13,7 +13,7 @@ use crate::{
 };
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -52,7 +52,7 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
 }
 
 impl Peek for ComparisonOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -87,7 +87,7 @@ impl Peek for ComparisonOperatorKind {
 }
 
 impl Peek for CompoundAssignOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -121,7 +121,7 @@ impl Peek for CompoundAssignOperatorKind {
 }
 
 impl Peek for LazyBoolOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -152,7 +152,7 @@ impl Peek for LazyBoolOperatorKind {
 }
 
 impl Peek for NegationOperatorKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
@@ -184,7 +184,7 @@ impl Peek for NegationOperatorKind {
 
 // TODO: how ??
 impl Peek for UnwrapOperandKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {

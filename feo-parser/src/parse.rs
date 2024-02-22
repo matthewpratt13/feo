@@ -1,4 +1,4 @@
-use feo_error::{error::CompilerError, handler::ErrorEmitted};
+use feo_error::error::CompilerError;
 
 use crate::parser::{Parser, Peeker};
 
@@ -16,7 +16,7 @@ pub trait ParseTerm {
 }
 
 pub trait Peek {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized;
 }

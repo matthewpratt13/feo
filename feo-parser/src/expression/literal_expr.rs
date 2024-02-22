@@ -1,4 +1,3 @@
-use feo_error::{handler::ErrorEmitted, parser_error::ParserErrorKind};
 use feo_types::{
     literal::{FloatType, IntType, LiteralKind, UIntType},
     Literal, U256,
@@ -7,7 +6,7 @@ use feo_types::{
 use crate::{parse::Peek, parser::Peeker};
 
 impl Peek for LiteralKind {
-    fn peek(peeker: &Peeker<'_, '_>) -> Option<Self>
+    fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized,
     {
