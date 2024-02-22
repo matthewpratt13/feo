@@ -245,7 +245,7 @@ mod tests {
         let mut parser = Parser::new(token_stream, handler);
 
         let struct_expr =
-            StructExpr::parse(&mut parser).expect("unable to parse struct expression with errors");
+            StructExpr::parse(&mut parser).expect("unable to parse struct expression");
 
         println!("{:#?}", struct_expr);
     }
