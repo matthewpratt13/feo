@@ -3,7 +3,6 @@ use feo_ast::{
     expression::{
         Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExpr, UnitStructExpr,
     },
-    path::PathInExpr,
     token::Token,
 };
 
@@ -133,7 +132,9 @@ impl ParseExpr for StructExpr {
     where
         Self: Sized,
     {
-        if let Some(item_path) = PathInExpr::parse(parser)? {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            parser.next_token();
+
             let open_brace_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -156,7 +157,7 @@ impl ParseExpr for StructExpr {
                         parser.next_token();
 
                         return Ok(Some(StructExpr {
-                            item_path,
+                            id,
                             open_brace: open_brace_opt.unwrap(),
                             struct_expr_fields_opt: Some(struct_expr_fields),
                             close_brace: close_brace_opt.unwrap(),
@@ -201,21 +202,15 @@ impl ParseExpr for UnitStructExpr {
     where
         Self: Sized,
     {
-        let unit_struct_expr = if let Some(path) = PathInExpr::parse(parser)? {
-            Some(UnitStructExpr(path))
-        } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathExpr`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
-            None
-        };
-
-        if let Some(us) = unit_struct_expr {
-            Ok(Some(us))
-        } else {
-            Err(parser.errors())
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            parser.next_token();
+            return Ok(Some(UnitStructExpr(id)));
         }
+        parser.log_error(ParserErrorKind::UnexpectedToken {
+            expected: "`PathExpr`".to_string(),
+            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+        });
+        Err(parser.errors())
     }
 }
 

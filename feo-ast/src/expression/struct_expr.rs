@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{attribute::OuterAttr, path::PathInExpr};
+use crate::attribute::OuterAttr;
 
 use super::Returnable;
 
@@ -27,7 +27,7 @@ impl Spanned for StructExprKind {
 
 #[derive(Debug, Clone)]
 pub struct StructExpr {
-    pub item_path: PathInExpr,
+    pub id: Identifier,
     pub open_brace: Brace,
     pub struct_expr_fields_opt: Option<StructExprFields>,
     pub close_brace: Brace,
@@ -35,7 +35,7 @@ pub struct StructExpr {
 
 impl Spanned for StructExpr {
     fn span(&self) -> Span {
-        let s1 = self.item_path.span();
+        let s1 = self.id.span();
         let s2 = self.close_brace.span();
 
         Span::join(s1, s2)
@@ -43,7 +43,10 @@ impl Spanned for StructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct StructExprField(pub Option<Vec<OuterAttr>>, pub (Identifier, Colon, Box<Returnable>));
+pub struct StructExprField(
+    pub Option<Vec<OuterAttr>>,
+    pub (Identifier, Colon, Box<Returnable>),
+);
 
 #[derive(Debug, Clone)]
 pub struct StructExprFields {
@@ -53,7 +56,7 @@ pub struct StructExprFields {
 
 #[derive(Debug, Clone)]
 pub struct TupleStructExpr {
-    pub item_path: PathInExpr,
+    pub id: Identifier,
     pub open_parenthesis: Parenthesis,
     pub params_opt: Option<(Box<Returnable>, Vec<(Comma, Returnable)>, Option<Comma>)>,
     pub close_parenthesis: Parenthesis,
@@ -61,7 +64,7 @@ pub struct TupleStructExpr {
 
 impl Spanned for TupleStructExpr {
     fn span(&self) -> Span {
-        let s1 = self.item_path.span();
+        let s1 = self.id.span();
         let s2 = self.close_parenthesis.span();
 
         Span::join(s1, s2)
@@ -69,7 +72,7 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct UnitStructExpr(pub PathInExpr);
+pub struct UnitStructExpr(pub Identifier);
 
 impl Spanned for UnitStructExpr {
     fn span(&self) -> Span {
