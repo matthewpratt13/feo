@@ -30,23 +30,12 @@ impl Peek for AttributeKind {
                 KeywordKind::KwStorage => AttributeKind::KwStorage(k),
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
-                // _ => {
-                //     return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
-                //         keyword_kind: k.keyword_kind,
-                //     }))
-                // }
+
                 _ => return None,
             }
         } else if let Some(id) = Identifier::peek(peeker) {
             AttributeKind::Iden(id)
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`AttributeKind`".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 
@@ -61,7 +50,7 @@ impl ParseTerm for InnerAttr {
     {
         let hash_bang_opt = parser.peek_current::<Punctuation>();
 
-        let inner_attr = if let Some(Punctuation {
+        if let Some(Punctuation {
             punc_kind: PuncKind::HashBang,
             ..
         }) = hash_bang_opt
@@ -87,44 +76,35 @@ impl ParseTerm for InnerAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        Some(InnerAttr {
+                        return Ok(Some(InnerAttr {
                             hash_bang: hash_bang_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
                             attribute,
                             close_bracket: close_bracket_opt.unwrap(),
-                        })
-                    } else {
-                        parser.log_error(ParserErrorKind::MissingDelimiter {
-                            delim: "]".to_string(),
-                        });
-                        None
+                        }));
                     }
+                    parser.log_error(ParserErrorKind::MissingDelimiter {
+                        delim: "]".to_string(),
+                    });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`AttributeKind`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
-                    None
                 }
             } else {
                 parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "[".to_string(),
                 });
-                None
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "hash-bang punctuation (`#!`)".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
-        };
-
-        if let Some(ia) = inner_attr {
-            Ok(Some(ia))
-        } else {
-            Err(parser.errors())
         }
+
+        Err(parser.errors())
     }
 }
 
@@ -161,8 +141,6 @@ impl ParseTerm for OuterAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        // parser.next_token();
-
                         return Ok(Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),

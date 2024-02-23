@@ -32,8 +32,6 @@ impl ParseTerm for StructExprField {
             ..
         }) = parser.peek_current()
         {
-            // parser.next_token();
-
             while let Some(next_attr) = OuterAttr::parse(parser)? {
                 attributes.push(next_attr);
 
@@ -129,12 +127,11 @@ impl ParseTerm for StructExprFields {
                 first_field,
                 subsequent_fields,
             }));
-        } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`StructExprField`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
-        };
+        }
+        parser.log_error(ParserErrorKind::UnexpectedToken {
+            expected: "`StructExprField`".to_string(),
+            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+        });
 
         Err(parser.errors())
     }

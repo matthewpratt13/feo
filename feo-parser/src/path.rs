@@ -25,21 +25,10 @@ impl Peek for SimplePathSegmentKind {
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
                 KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
                 _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
-                    //     keyword_kind: k.keyword_kind,
-                    // }))
                     return None;
                 }
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`SimplePathSegmentKind`".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
-
             return None;
         };
 
@@ -87,8 +76,6 @@ impl ParseTerm for SimplePath {
                 }
             }
 
-            // parser.next_token();
-
             if !subsequent_segments.is_empty() {
                 Some(SimplePath {
                     first_segment,
@@ -101,10 +88,6 @@ impl ParseTerm for SimplePath {
                 })
             }
         } else {
-            // parser.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`SimplePathSegmentKind`".to_string(),
-            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            // });
             None
         };
 
@@ -130,20 +113,10 @@ impl Peek for PathIdenSegmentKind {
                 KeywordKind::KwSelfType => PathIdenSegmentKind::KwSelfType(k),
                 KeywordKind::KwSuper => PathIdenSegmentKind::KwSuper(k),
                 _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidKeyword {
-                    //     keyword_kind: k.keyword_kind,
-                    // }))
                     return None;
                 }
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`PathIdenSegmentKind`".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 
@@ -193,8 +166,6 @@ impl ParseTerm for PathInExpr {
                 }
             }
 
-            // parser.next_token();
-
             if !subsequent_segments.is_empty() {
                 Some(PathInExpr {
                     first_segment,
@@ -207,10 +178,6 @@ impl ParseTerm for PathInExpr {
                 })
             }
         } else {
-            // parser.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`PathIdenSegmentKind`".to_string(),
-            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            // });
             None
         };
 
@@ -274,10 +241,6 @@ impl ParseTerm for PathType {
                 })
             }
         } else {
-            // parser.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`PathIdenSegmentKind`".to_string(),
-            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            // });
             None
         };
 
