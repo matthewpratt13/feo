@@ -189,7 +189,7 @@ impl ParseExpr for StructExpr {
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`PathExpr`".to_string(),
+                expected: "identifier".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         };
@@ -217,7 +217,7 @@ impl ParseExpr for UnitStructExpr {
             return Ok(Some(UnitStructExpr(id)));
         }
         parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`PathExpr`".to_string(),
+            expected: "identifier".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
         });
         Err(parser.errors())
