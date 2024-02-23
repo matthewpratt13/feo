@@ -34,7 +34,6 @@ impl ParseTerm for StructExprField {
         {
             while let Some(next_attr) = OuterAttr::parse(parser)? {
                 attributes.push(next_attr);
-
                 parser.next_token();
 
                 if let Some(Punctuation {
@@ -67,8 +66,10 @@ impl ParseTerm for StructExprField {
                     if !attributes.is_empty() {
                         return Ok(Some(StructExprField(Some(attributes), field_content)));
                     }
+
                     return Ok(Some(StructExprField(None, field_content)));
                 }
+
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`Returnable`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -128,6 +129,7 @@ impl ParseTerm for StructExprFields {
                 subsequent_fields,
             }));
         }
+
         parser.log_error(ParserErrorKind::UnexpectedToken {
             expected: "`StructExprField`".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -173,6 +175,7 @@ impl ParseExpr for StructExpr {
                             close_brace: close_brace_opt.unwrap(),
                         }));
                     }
+
                     parser.log_error(ParserErrorKind::MissingDelimiter {
                         delim: "}".to_string(),
                     });
@@ -216,10 +219,12 @@ impl ParseExpr for UnitStructExpr {
             parser.next_token();
             return Ok(Some(UnitStructExpr(id)));
         }
+
         parser.log_error(ParserErrorKind::UnexpectedToken {
             expected: "identifier".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
         });
+
         Err(parser.errors())
     }
 }
@@ -243,7 +248,9 @@ mod tests {
         }"#;
 
         let handler = Handler::default();
+
         let mut lexer = Lexer::new(&source_code, handler.clone());
+
         let token_stream = lexer.lex().expect("unable to lex source code");
 
         println!("{:#?}", token_stream);

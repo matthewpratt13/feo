@@ -24,9 +24,7 @@ impl Peek for SimplePathSegmentKind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
                 KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
-                _ => {
-                    return None;
-                }
+                _ => return None,
             }
         } else {
             return None;
@@ -80,11 +78,13 @@ impl ParseTerm for SimplePath {
                     subsequent_segments: Some(subsequent_segments),
                 }));
             }
+
             return Ok(Some(SimplePath {
                 first_segment,
                 subsequent_segments: None,
             }));
         }
+
         parser.log_error(ParserErrorKind::UnexpectedToken {
             expected: "`SimplePathSegmentKind`".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -107,9 +107,7 @@ impl Peek for PathIdenSegmentKind {
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
                 KeywordKind::KwSelfType => PathIdenSegmentKind::KwSelfType(k),
                 KeywordKind::KwSuper => PathIdenSegmentKind::KwSuper(k),
-                _ => {
-                    return None;
-                }
+                _ => return None,
             }
         } else {
             return None;
@@ -166,11 +164,13 @@ impl ParseTerm for PathInExpr {
                     subsequent_segments: Some(subsequent_segments),
                 }));
             }
+
             return Ok(Some(PathInExpr {
                 first_segment,
                 subsequent_segments: None,
             }));
         }
+
         parser.log_error(ParserErrorKind::UnexpectedToken {
             expected: "`PathIdenSegmentKind`".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -224,11 +224,13 @@ impl ParseTerm for PathType {
                     subsequent_segments: Some(subsequent_segments),
                 }));
             }
+
             return Ok(Some(PathType {
                 first_segment,
                 subsequent_segments: None,
             }));
         }
+
         parser.log_error(ParserErrorKind::UnexpectedToken {
             expected: "`PathIdenSegmentKind`".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),

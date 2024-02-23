@@ -27,6 +27,15 @@ use crate::{
     statement::{ExprStatement, LetStatement},
 };
 
+use self::{
+    block_expr::BlockExpr,
+    iteration_expr::{
+        BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,
+    },
+    range_expr::RangeExprKind,
+    return_expr::ReturnExpr,
+};
+
 pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
     call_expr::CallParams,
@@ -51,15 +60,6 @@ pub use self::{
     },
     tuple_expr::{TupleExpr, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
-};
-
-use self::{
-    block_expr::BlockExpr,
-    iteration_expr::{
-        BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,
-    },
-    range_expr::RangeExprKind,
-    return_expr::ReturnExpr,
 };
 
 // expressions always produce / evaluate to a value, and may have (side) effects

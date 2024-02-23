@@ -65,7 +65,9 @@ impl Parser {
     // peek at the current `Token`, advance the parser; return the peeked `Token` or return `None`
     pub fn take<T: Peek>(&mut self) -> Option<T> {
         let value = Peeker::with(&self.stream().tokens(), self.pos);
+
         self.next_token();
+
         value
     }
 

@@ -96,8 +96,10 @@ impl Spanned for Item {
 }
 
 mod where_clause {
-    use feo_types::utils::{Colon, Comma, Plus};
-    use feo_types::Keyword;
+    use feo_types::{
+        utils::{Colon, Comma, Plus},
+        Keyword,
+    };
 
     use crate::ty::{TraitBound, Type};
 

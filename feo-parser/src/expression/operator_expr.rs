@@ -29,21 +29,9 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
                 PuncKind::Pipe => ArithmeticOrLogicalOperatorKind::LogicalOr(p),
                 PuncKind::DblLessThan => ArithmeticOrLogicalOperatorKind::ShiftLeft(p),
                 PuncKind::DblGreaterThan => ArithmeticOrLogicalOperatorKind::ShiftRight(p),
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                    //     punc_kind: p.punc_kind,
-                    // }))
-                    return None;
-                }
+                _ => return None,
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "arithmetic or logical operator punctuation".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 
@@ -64,21 +52,9 @@ impl Peek for ComparisonOperatorKind {
                 PuncKind::LessThanEquals => ComparisonOperatorKind::LessThanOrEqual(p),
                 PuncKind::DblEquals => ComparisonOperatorKind::Equality(p),
                 PuncKind::GreaterThanEquals => ComparisonOperatorKind::GreaterThanOrEqual(p),
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                    //     punc_kind: p.punc_kind,
-                    // }))
-                    return None;
-                }
+                _ => return None,
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "comparison operator punctuation".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 
@@ -98,21 +74,9 @@ impl Peek for CompoundAssignOperatorKind {
                 PuncKind::PlusEquals => CompoundAssignOperatorKind::AddAssign(p),
                 PuncKind::MinusEquals => CompoundAssignOperatorKind::SubtractAssign(p),
                 PuncKind::ForwardSlashEquals => CompoundAssignOperatorKind::DivideAssign(p),
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                    //     punc_kind: p.punc_kind,
-                    // }))
-                    return None;
-                }
+                _ => return None,
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "compound assignment punctuation".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 
@@ -129,21 +93,9 @@ impl Peek for LazyBoolOperatorKind {
             match p.punc_kind {
                 PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
                 PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                    //     punc_kind: p.punc_kind,
-                    // }))
-                    return None;
-                }
+                _ => return None,
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "lazy boolean operator punctuation`".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 
@@ -160,21 +112,9 @@ impl Peek for NegationOperatorKind {
             match p.punc_kind {
                 PuncKind::Minus => NegationOperatorKind::InvertNumeric(p),
                 PuncKind::Bang => NegationOperatorKind::InvertBool(p),
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::InvalidPunctuation {
-                    //     punc_kind: p.punc_kind,
-                    // }))
-                    return None;
-                }
+                _ => return None,
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "negation operator punctuation (`-` or `!`)".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 

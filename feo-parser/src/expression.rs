@@ -23,13 +23,13 @@ impl ParseExpr for Returnable {
     where
         Self: Sized,
     {
-        let expr = if let Some(id) = parser.peek_current::<Identifier>() {
+        if let Some(id) = parser.peek_current::<Identifier>() {
             // if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
             //     Some(Returnable::FunctionCallExpr(fc))
             // } else if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
             //     Some(Returnable::MethodCallExpr(mc))
             // } else if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-            // //     Some(Returnable::FieldAccessExpr(fa))
+            //     Some(Returnable::FieldAccessExpr(fa))
             // } else if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
             //     Some(Returnable::StructExpr(StructExprKind::Struct(se)))
             // } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
@@ -41,7 +41,7 @@ impl ParseExpr for Returnable {
             // } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
             //     Some(Returnable::ArithmeticOrLogicalExpr(al))
             // } else {
-            Some(Returnable::Identifier(id))
+            return Ok(Some(Returnable::Identifier(id)));
             // }
         } else if let Some(_) = parser.peek_current::<Delimiter>() {
             // if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
@@ -59,7 +59,7 @@ impl ParseExpr for Returnable {
                 expected: "`Returnable`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
+
             // }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             // if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
@@ -67,7 +67,7 @@ impl ParseExpr for Returnable {
             // } else if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
             // Some(Returnable::TypeCastExpr(tc))
             // } else {
-            Some(Returnable::Literal(l))
+            return Ok(Some(Returnable::Literal(l)));
             // }
         } else if let Some(_) = parser.peek_current::<Keyword>() {
             // if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
@@ -83,7 +83,6 @@ impl ParseExpr for Returnable {
                 expected: "`Returnable`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
             // }
             // } else if let Some(_) = parser.peek_current::<Punctuation>() {
             //     if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
@@ -103,21 +102,15 @@ impl ParseExpr for Returnable {
             //             expected: "`Returnable`".to_string(),
             //             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             //         });
-            //         None
             //     }
         } else {
             parser.log_error(ParserErrorKind::InvalidToken {
                 token: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
         };
 
-        // parser.next_token();
+        parser.next_token();
 
-        if let Some(e) = expr {
-            Ok(Some(e))
-        } else {
-            Err(parser.errors())
-        }
+        Err(parser.errors())
     }
 }

@@ -22,16 +22,7 @@ impl Peek for LiteralKind {
                     IntType::I32(_) => LiteralKind::I32(i),
                     IntType::I64(_) => LiteralKind::I64(i),
                 },
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                    //     expected: "integer type".to_string(),
-                    //     found: peeker
-                    //         .peek_token()
-                    //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    //         .to_string(),
-                    // }));
-                    return None;
-                }
+                _ => return None,
             }
         } else if let Some(ui) = Literal::<UIntType>::peek(peeker) {
             match ui.clone().into_inner() {
@@ -41,17 +32,7 @@ impl Peek for LiteralKind {
                     UIntType::U32(_) => LiteralKind::U32(ui),
                     UIntType::U64(_) => LiteralKind::U64(ui),
                 },
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                    //     expected: "unsigned integer type".to_string(),
-                    //     found: peeker
-                    //         .peek_token()
-                    //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    //         .to_string(),
-                    // }));
-
-                    return None;
-                }
+                _ => return None,
             }
         } else if let Some(u) = Literal::<U256>::peek(peeker) {
             LiteralKind::U256(u)
@@ -61,25 +42,9 @@ impl Peek for LiteralKind {
                     FloatType::F32(_) => LiteralKind::F32(f),
                     FloatType::F64(_) => LiteralKind::F64(f),
                 },
-                _ => {
-                    // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-                    //     expected: "floating-point number type".to_string(),
-                    //     found: peeker
-                    //         .peek_token()
-                    //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-                    //         .to_string(),
-                    // }));
-                    return None;
-                }
+                _ => return None,
             }
         } else {
-            // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "literal type".to_string(),
-            //     found: peeker
-            //         .peek_token()
-            //         .ok_or_else(|| peeker.log_error(ParserErrorKind::TokenNotFound))?
-            //         .to_string(),
-            // }));
             return None;
         };
 

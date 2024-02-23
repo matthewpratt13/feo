@@ -30,7 +30,6 @@ impl Peek for AttributeKind {
                 KeywordKind::KwStorage => AttributeKind::KwStorage(k),
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
-
                 _ => return None,
             }
         } else if let Some(id) = Identifier::peek(peeker) {
@@ -83,6 +82,7 @@ impl ParseTerm for InnerAttr {
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
                     }
+
                     parser.log_error(ParserErrorKind::MissingDelimiter {
                         delim: "]".to_string(),
                     });
@@ -148,6 +148,7 @@ impl ParseTerm for OuterAttr {
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
                     }
+
                     parser.log_error(ParserErrorKind::MissingDelimiter {
                         delim: "]".to_string(),
                     });
@@ -186,7 +187,9 @@ mod tests {
         let source_code = r#"#[unsafe]"#;
 
         let handler = Handler::default();
+
         let mut lexer = Lexer::new(&source_code, handler.clone());
+
         let token_stream = lexer.lex().expect("unable to lex source code");
 
         println!("{:#?}", token_stream);
