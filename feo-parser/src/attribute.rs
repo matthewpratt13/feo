@@ -135,7 +135,7 @@ impl ParseTerm for OuterAttr {
     {
         let hash_sign_opt = parser.peek_current::<Punctuation>();
 
-        let outer_attr = if let Some(Punctuation {
+        if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
         }) = hash_sign_opt
@@ -161,45 +161,36 @@ impl ParseTerm for OuterAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        parser.next_token();
+                        // parser.next_token();
 
-                        Some(OuterAttr {
+                        return Ok(Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
                             attribute,
                             close_bracket: close_bracket_opt.unwrap(),
-                        })
-                    } else {
-                        parser.log_error(ParserErrorKind::MissingDelimiter {
-                            delim: "]".to_string(),
-                        });
-                        None
+                        }));
                     }
+                    parser.log_error(ParserErrorKind::MissingDelimiter {
+                        delim: "]".to_string(),
+                    });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`AttributeKind`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
-                    None
                 }
             } else {
                 parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "[".to_string(),
                 });
-                None
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "hash sign punctuation (`#`)".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-            None
-        };
-
-        if let Some(oa) = outer_attr {
-            Ok(Some(oa))
-        } else {
-            Err(parser.errors())
         }
+
+        Err(parser.errors())
     }
 }

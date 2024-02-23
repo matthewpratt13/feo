@@ -32,9 +32,22 @@ impl ParseTerm for StructExprField {
             ..
         }) = parser.peek_current()
         {
+            // parser.next_token();
+
             while let Some(next_attr) = OuterAttr::parse(parser)? {
                 attributes.push(next_attr);
+
                 parser.next_token();
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::Comma,
+                    ..
+                }) = parser.peek_current()
+                {
+                    parser.next_token();
+                } else {
+                    break;
+                }
             }
         }
 
@@ -226,6 +239,7 @@ mod tests {
     fn parse_struct() {
         let source_code = r#"
         SomeStruct {
+            #[abstract]
             foo: "a",
             bar: 1,
             baz: x
@@ -235,7 +249,7 @@ mod tests {
         let mut lexer = Lexer::new(&source_code, handler.clone());
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        // println!("{:#?}", token_stream);
+        println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
