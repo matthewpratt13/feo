@@ -4,9 +4,8 @@ use feo_types::{
         Bracket, HashBang, HashSign, KwAbstract, KwContract, KwExport, KwExtern, KwPayable,
         KwStorage, KwTopic, KwUnsafe,
     },
+    Identifier,
 };
-
-use crate::path::SimplePathSegmentKind;
 
 #[derive(Debug, Clone)]
 pub enum AttributeKind {
@@ -19,7 +18,7 @@ pub enum AttributeKind {
     KwTopic(KwTopic),
     KwUnsafe(KwUnsafe),
 
-    Path(SimplePathSegmentKind),
+    Iden(Identifier),
 }
 
 #[derive(Debug, Clone)]

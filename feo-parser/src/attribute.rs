@@ -1,6 +1,5 @@
 use feo_ast::{
     attribute::{AttributeKind, InnerAttr, OuterAttr},
-    path::SimplePathSegmentKind,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -8,7 +7,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    Delimiter, Keyword, Punctuation,
+    Delimiter, Identifier, Keyword, Punctuation,
 };
 
 use crate::{
@@ -38,8 +37,8 @@ impl Peek for AttributeKind {
                 // }
                 _ => return None,
             }
-        } else if let Some(p) = SimplePathSegmentKind::peek(peeker) {
-            AttributeKind::Path(p)
+        } else if let Some(id) = Identifier::peek(peeker) {
+            AttributeKind::Iden(id)
         } else {
             // return Err(peeker.log_error(ParserErrorKind::UnexpectedToken {
             //     expected: "`AttributeKind`".to_string(),
