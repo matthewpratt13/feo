@@ -1,18 +1,12 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-use feo_ast::{
-    expression::{Callable, Returnable},
-    token::Token,
-};
+use feo_ast::{expression::Returnable, token::Token};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 
-use feo_types::{literal::LiteralKind, Delimiter, Identifier, Keyword, Punctuation};
+use feo_types::{literal::LiteralKind, Identifier};
 
-use crate::{
-    parse::{ParseExpr, Peek},
-    parser::{Parser, Peeker},
-};
+use crate::{parse::ParseExpr, parser::Parser};
 
 mod array_expr;
 mod call_expr;
@@ -114,45 +108,5 @@ impl ParseExpr for Returnable {
         parser.next_token();
 
         Err(parser.errors())
-    }
-}
-
-impl Peek for Returnable {
-    fn peek(peeker: &Peeker<'_>) -> Option<Self>
-    where
-        Self: Sized,
-    {
-        let returnable = if let Some(id) = Identifier::peek(peeker) {
-            match peeker.peek_next_token() {
-                // Some(_) => todo!(),
-                Some(_) => Returnable::Identifier(id),
-                None => return None,
-            }
-        } else if let Some(d) = Delimiter::peek(peeker) {
-            todo!()
-        } else if let Some(l) = LiteralKind::peek(peeker) {
-            match peeker.peek_next_token() {
-                // Some(_) => todo!(),
-                Some(_) => Returnable::Literal(l),
-                None => return None,
-            }
-        } else if let Some(k) = Keyword::peek(peeker) {
-            todo!()
-        } else if let Some(p) = Punctuation::peek(peeker) {
-            todo!()
-        } else {
-            return None;
-        };
-
-        Some(returnable)
-    }
-}
-
-impl Peek for Callable {
-    fn peek(peeker: &Peeker<'_>) -> Option<Self>
-    where
-        Self: Sized,
-    {
-        todo!()
     }
 }
