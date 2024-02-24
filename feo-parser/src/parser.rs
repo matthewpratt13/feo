@@ -114,6 +114,10 @@ impl<'a> Peeker<'a> {
         self.tokens.get(self.pos).cloned()
     }
 
+    pub fn peek_next_token(&self) -> Option<Token> {
+        self.tokens.get(self.pos + 1).cloned()
+    }
+
     // peek for a `Literal`; return it if it exists, or return an error
     pub fn peek_char_lit(&self) -> Result<Literal<char>, Self> {
         match self.peek_token() {

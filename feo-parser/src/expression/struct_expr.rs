@@ -60,7 +60,7 @@ impl ParseTerm for StructExprField {
             {
                 parser.next_token();
 
-                if let Some(r) = Returnable::parse(parser)? {
+                if let Some(r) = parser.peek_current::<Returnable>() {
                     let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
                     if !attributes.is_empty() {
