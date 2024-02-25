@@ -28,6 +28,7 @@ impl Peek for AttributeKind {
                 KeywordKind::KwExtern => AttributeKind::KwExtern(k),
                 KeywordKind::KwPayable => AttributeKind::KwPayable(k),
                 KeywordKind::KwStorage => AttributeKind::KwStorage(k),
+                KeywordKind::KwTest => AttributeKind::KwTest(k),
                 KeywordKind::KwTopic => AttributeKind::KwTopic(k),
                 KeywordKind::KwUnsafe => AttributeKind::KwUnsafe(k),
                 _ => return None,

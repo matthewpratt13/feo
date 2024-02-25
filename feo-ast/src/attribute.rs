@@ -15,6 +15,7 @@ pub enum AttributeKind {
     KwExtern(KwExtern),
     KwPayable(KwPayable),
     KwStorage(KwStorage),
+    KwTest(KwTest),
     KwTopic(KwTopic),
     KwUnsafe(KwUnsafe),
 
