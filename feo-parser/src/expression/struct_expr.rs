@@ -392,8 +392,7 @@ mod tests {
 
     #[test]
     fn parse_tuple_struct() {
-        let source_code = r#"
-        SomeStruct(foo, bar, baz)"#;
+        let source_code = r#"SomeStruct(foo, bar, baz)"#;
 
         let handler = Handler::default();
 

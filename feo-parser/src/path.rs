@@ -253,8 +253,7 @@ mod tests {
 
     #[test]
     fn parse_path() {
-        let source_code = r#"
-        crate::module::Object"#;
+        let source_code = r#"crate::module::Object"#;
 
         let handler = Handler::default();
 
