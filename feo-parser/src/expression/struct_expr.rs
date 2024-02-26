@@ -248,7 +248,7 @@ impl ParseTerm for TupleStructElements {
                 ..
             }) = trailing_comma_opt
             {
-                // parser.next_token();
+                parser.next_token();
 
                 if !subsequent_elements.is_empty() {
                     return Ok(Some(TupleStructElements((
