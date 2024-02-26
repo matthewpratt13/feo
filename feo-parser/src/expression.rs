@@ -1,12 +1,21 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-use feo_ast::{expression::Returnable, token::Token};
+use feo_ast::{
+    expression::{
+        ArrayExpr, Assignable, Returnable, StructExpr, StructExprKind, TupleStructExpr,
+        UnderscoreExpr, UnitStructExpr,
+    },
+    path::PathInExpr,
+    token::Token,
+};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_types::{literal::LiteralKind, Delimiter, Identifier, Keyword, Punctuation};
 
-use feo_types::{literal::LiteralKind, Identifier};
-
-use crate::{parse::ParseExpr, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 mod array_expr;
 mod call_expr;
@@ -17,6 +26,64 @@ mod operator_expr;
 mod parenthesized_expr;
 mod struct_expr;
 mod tuple_expr;
+
+impl ParseExpr for Assignable {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::StructExpr(StructExprKind::Struct(se))));
+            } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::StructExpr(StructExprKind::TupleStruct(
+                    ts,
+                ))));
+            } else if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::StructExpr(StructExprKind::UnitStruct(us))));
+            } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::PathExpr(pat)));
+            } else {
+                return Ok(Some(Assignable::Identifier(id)));
+            }
+        } else if let Some(_) = parser.peek_current::<Delimiter>() {
+            if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::ArrayExpr(ae)));
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Assignable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else if let Some(_) = parser.peek_current::<Keyword>() {
+            if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::PathExpr(pe)));
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Assignable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else if let Some(_) = parser.peek_current::<Punctuation>() {
+            if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Assignable::UnderscoreExpr(ue)));
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Assignable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            parser.log_error(ParserErrorKind::InvalidToken {
+                token: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        }
+
+        parser.next_token();
+
+        Err(parser.errors())
+    }
+}
 
 impl ParseExpr for Returnable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -32,7 +99,7 @@ impl ParseExpr for Returnable {
             //     return Ok(Some(Returnable::FieldAccessExpr(fa)));
             // } else if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
             // if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-            // return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
+            //     return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
             // } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
             //         ts,
@@ -70,7 +137,7 @@ impl ParseExpr for Returnable {
             //    return Ok( Some(Returnable::TypeCastExpr(tc)))
             //     } else {
             return Ok(Some(Returnable::Literal(l)));
-            //     }
+            // }
             // } else if let Some(_) = parser.peek_current::<Keyword>() {
             //     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
             //         return Ok(Some(Returnable::PathExpr(pe)));
