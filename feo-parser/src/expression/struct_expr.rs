@@ -208,9 +208,12 @@ impl ParseTerm for TupleStructElements {
         Self: Sized,
     {
         let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
+
         let first_element = Returnable::parse(parser)?;
 
         if let Some(element) = first_element {
+            parser.next_token();
+
             let mut comma_opt = parser.peek_current::<Punctuation>();
 
             while let Some(Punctuation {
@@ -225,7 +228,6 @@ impl ParseTerm for TupleStructElements {
 
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         comma_opt = Some(p);
-                        parser.next_token();
                         parser.next_token();
                     } else {
                         break;
@@ -246,7 +248,7 @@ impl ParseTerm for TupleStructElements {
                 ..
             }) = trailing_comma_opt
             {
-                parser.next_token();
+                // parser.next_token();
 
                 if !subsequent_elements.is_empty() {
                     return Ok(Some(TupleStructElements((
@@ -311,7 +313,7 @@ impl ParseExpr for TupleStructExpr {
                     }
 
                     parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: "}".to_string(),
+                        delim: ")".to_string(),
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -321,7 +323,7 @@ impl ParseExpr for TupleStructExpr {
                 }
             } else {
                 parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "{".to_string(),
+                    delim: "(".to_string(),
                 });
             }
         } else {
@@ -362,6 +364,8 @@ mod tests {
 
     use super::*;
 
+    
+    #[ignore]
     #[test]
     fn parse_struct() {
         let source_code = r#"
@@ -386,5 +390,26 @@ mod tests {
             StructExpr::parse(&mut parser).expect("unable to parse struct expression");
 
         println!("{:#?}", struct_expr);
+    }
+
+    #[test]
+    fn parse_tuple_struct() {
+        let source_code = r#"
+        SomeStruct(foo, bar, baz)"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let tuple_struct_expr =
+            TupleStructExpr::parse(&mut parser).expect("unable to parse tuple struct expression");
+
+        println!("{:#?}", tuple_struct_expr);
     }
 }

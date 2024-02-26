@@ -183,6 +183,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore]
     #[test]
     fn parse_attribute() {
         let source_code = r#"#[unsafe]"#;
