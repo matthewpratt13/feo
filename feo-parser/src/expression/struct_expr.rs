@@ -1,7 +1,8 @@
 use feo_ast::{
     attribute::OuterAttr,
     expression::{
-        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExpr, UnitStructExpr,
+        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructElements,
+        TupleStructExpr, UnitStructExpr,
     },
     token::Token,
 };
@@ -196,6 +197,77 @@ impl ParseExpr for StructExpr {
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         };
+
+        Err(parser.errors())
+    }
+}
+
+impl ParseTerm for TupleStructElements {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
+        let first_element = Returnable::parse(parser)?;
+
+        if let Some(element) = first_element {
+            let mut comma_opt = parser.peek_current::<Punctuation>();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = comma_opt
+            {
+                parser.next_token();
+
+                if let Some(next_element) = Returnable::parse(parser)? {
+                    subsequent_elements.push((comma_opt.unwrap(), next_element));
+
+                    if let Some(p) = parser.peek_next::<Punctuation>() {
+                        comma_opt = Some(p);
+                        parser.next_token();
+                        parser.next_token();
+                    } else {
+                        break;
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`Returnable`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    break;
+                }
+            }
+
+            let trailing_comma_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = trailing_comma_opt
+            {
+                parser.next_token();
+
+                if !subsequent_elements.is_empty() {
+                    return Ok(Some(TupleStructElements((
+                        Box::new(element),
+                        Some(subsequent_elements),
+                        trailing_comma_opt,
+                    ))));
+                }
+            } else {
+                return Ok(Some(TupleStructElements((
+                    Box::new(element),
+                    None,
+                    trailing_comma_opt,
+                ))));
+            }
+        } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Returnable`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        }
 
         Err(parser.errors())
     }

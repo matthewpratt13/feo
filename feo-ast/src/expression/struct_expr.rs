@@ -58,7 +58,7 @@ pub struct StructExprFields {
 pub struct TupleStructExpr {
     pub id: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub params_opt: Option<(Box<Returnable>, Vec<(Comma, Returnable)>, Option<Comma>)>,
+    pub params_opt: Option<TupleStructElements>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -70,6 +70,9 @@ impl Spanned for TupleStructExpr {
         Span::join(s1, s2)
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct TupleStructElements(pub (Box<Returnable>, Option<Vec<(Comma, Returnable)>>, Option<Comma>));
 
 #[derive(Debug, Clone)]
 pub struct UnitStructExpr(pub Identifier);

@@ -35,6 +35,7 @@ pub type KwStatic = Keyword;
 pub type KwStorage = Keyword;
 pub type KwStruct = Keyword;
 pub type KwSuper = Keyword;
+pub type KwTest = Keyword;
 pub type KwTopic = Keyword;
 pub type KwTrait = Keyword;
 pub type KwType = Keyword;
