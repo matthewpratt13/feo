@@ -98,21 +98,25 @@ impl ParseExpr for Returnable {
             // } else if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::FieldAccessExpr(fa)));
             // } else if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-            // if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
-            // } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
-            //         ts,
-            //     ))));
-            // } else if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
-            // } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::PathExpr(pat)));
+            if let Ok(se) = StructExpr::parse(parser) {
+                match se {
+                    Some(t) => return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(t)))),
+                    None => todo!(),
+                }
+                return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
+            } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
+                    ts,
+                ))));
+            } else if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
+            } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Returnable::PathExpr(pat)));
             // } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
-            // } else {
-            return Ok(Some(Returnable::Identifier(id)));
-            // }
+            } else {
+                return Ok(Some(Returnable::Identifier(id)));
+            }
             // } else if let Some(_) = parser.peek_current::<Delimiter>() {
             // if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::ArrayExpr(ae)))
