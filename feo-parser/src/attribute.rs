@@ -183,7 +183,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn parse_attribute() {
         let source_code = r#"#[unsafe]"#;
@@ -194,7 +193,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        println!("{:#?}", token_stream);
+        // println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 

@@ -56,9 +56,10 @@ impl ParseTerm for SimplePath {
                 if let Some(next_path_segment) = parser.peek_current::<SimplePathSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
 
+                    parser.next_token();
+
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_opt = Some(p);
-                        parser.next_token();
                         parser.next_token();
                     } else {
                         break;
@@ -86,7 +87,7 @@ impl ParseTerm for SimplePath {
         }
 
         parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`SimplePathSegmentKind`".to_string(),
+            expected: "`PathIdenSegmentKind`".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
         });
 
@@ -142,9 +143,10 @@ impl ParseTerm for PathInExpr {
                 if let Some(next_path_segment) = parser.peek_current::<PathIdenSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
 
+                    parser.next_token();
+
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_opt = Some(p);
-                        parser.next_token();
                         parser.next_token();
                     } else {
                         break;
@@ -202,9 +204,10 @@ impl ParseTerm for PathType {
                 if let Some(next_path_segment) = parser.peek_current::<PathIdenSegmentKind>() {
                     subsequent_segments.push((next_dbl_colon_opt.unwrap(), next_path_segment));
 
+                    parser.next_token();
+
                     if let Some(p) = parser.peek_next::<Punctuation>() {
                         next_dbl_colon_opt = Some(p);
-                        parser.next_token();
                         parser.next_token();
                     } else {
                         break;
@@ -237,5 +240,34 @@ impl ParseTerm for PathType {
         });
 
         Err(parser.errors())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_path() {
+        let source_code = r#"
+        crate::module::Object"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let tuple_struct_expr = PathInExpr::parse(&mut parser).expect("unable to parse path");
+
+        println!("{:#?}", tuple_struct_expr);
     }
 }
