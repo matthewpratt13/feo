@@ -114,11 +114,14 @@ impl ParseExpr for Returnable {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
                             ts,
                         ))));
-                    } else if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
+                    }
+                    if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
-                    } else if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                    }
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::FunctionCallExpr(fc)));
-                    } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
+                    }
+                    if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::PathExpr(pat)));
                     }
                 }
@@ -133,13 +136,14 @@ impl ParseExpr for Returnable {
                 }) => {
                     if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::MethodCallExpr(mc)));
-                    } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                    }
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
                             ts,
                         ))));
                     }
                 }
-                
+
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
                     ..
