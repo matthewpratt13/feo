@@ -3,9 +3,9 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, FunctionCallExpr, MethodCallExpr,
-        Returnable, StructExpr, StructExprKind, TupleStructExpr, TypeCastExpr, UnderscoreExpr,
-        UnitStructExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, ClosureWithBlock, ClosureWithoutBlock,
+        DereferenceExpr, FunctionCallExpr, MethodCallExpr, NegationExpr, ReferenceExpr, Returnable,
+        StructExpr, StructExprKind, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
     },
     path::PathInExpr,
     token::Token,
@@ -288,25 +288,51 @@ impl ParseExpr for Returnable {
                 expected: "`Returnable`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-        } else if let Some(_) = parser.peek_current::<Punctuation>() {
-            // if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::ClosureWithBlock(cwb)));
-            // } else if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::ClosureWithoutBlock(c)));
-            // } else if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::DereferenceExpr(de)));
-            // } else if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::NegationExpr(ne)));
-            // } else if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::ReferenceExpr(re)));
-            // } else if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::UnderscoreExpr(ue)));
-            // } else {
-            //     parser.log_error(ParserErrorKind::UnexpectedToken {
-            //         expected: "`Returnable`".to_string(),
-            //         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            //     });
-            // }
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
+            match p.punc_kind {
+                PuncKind::Underscore => {
+                    if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::UnderscoreExpr(ue)));
+                    }
+                }
+
+                PuncKind::Bang | PuncKind::Minus => {
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::NegationExpr(ne)));
+                    }
+                }
+
+                PuncKind::Ampersand => {
+                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ReferenceExpr(re)));
+                    }
+                }
+
+                PuncKind::Asterisk => {
+                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::DereferenceExpr(de)));
+                    }
+                }
+
+                PuncKind::Pipe => {
+                    if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ClosureWithBlock(cwb)));
+                    }
+                }
+
+                PuncKind::DblPipe => {
+                    if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ClosureWithoutBlock(c)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Returnable`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
         } else {
             parser.log_error(ParserErrorKind::InvalidToken {
                 token: parser.current_token().unwrap_or(Token::EOF).to_string(),
