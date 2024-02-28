@@ -3,8 +3,8 @@
 
 use feo_ast::{
     expression::{
-        ArrayExpr, Assignable, FunctionCallExpr, Returnable, StructExpr, StructExprKind,
-        TupleStructExpr, UnderscoreExpr, UnitStructExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, FunctionCallExpr, MethodCallExpr,
+        Returnable, StructExpr, StructExprKind, TupleStructExpr, UnderscoreExpr, UnitStructExpr,
     },
     path::PathInExpr,
     token::Token,
@@ -13,6 +13,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     literal::LiteralKind,
+    punctuation::PuncKind,
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
@@ -95,7 +96,7 @@ impl ParseExpr for Returnable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
@@ -122,8 +123,72 @@ impl ParseExpr for Returnable {
                     }
                 }
 
-                _ => return Ok(Some(Returnable::Identifier(id))),
+                _ => (),
             }
+
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::FullStop,
+                    ..
+                }) => {
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::MethodCallExpr(mc)));
+                    } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
+                            ts,
+                        ))));
+                    }
+                }
+                
+                Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            return Ok(Some(Returnable::Identifier(id)));
 
             // if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::FunctionCallExpr(fc)));
@@ -142,8 +207,8 @@ impl ParseExpr for Returnable {
             //     return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
             // } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::PathExpr(pat)));
-            // // } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-            // //     return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
+            // } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+            //     return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
             // } else {
             // }
             // } else if let Some(_) = parser.peek_current::<Delimiter>() {
