@@ -193,29 +193,7 @@ impl ParseExpr for Returnable {
             }
 
             return Ok(Some(Returnable::Identifier(id)));
-
-            // if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::FunctionCallExpr(fc)));
-            // } else if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::MethodCallExpr(mc)));
-            // } else if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::FieldAccessExpr(fa)));
-            // } else if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-            // else if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
-            // } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
-            //         ts,
-            //     ))));
-            // } else if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
-            // } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::PathExpr(pat)));
-            // } else if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
-            // } else {
-            // }
-            // } else if let Some(_) = parser.peek_current::<Delimiter>() {
+        } else if let Some(_) = parser.peek_current::<Delimiter>() {
             // if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::ArrayExpr(ae)))
             // } else if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
@@ -239,8 +217,7 @@ impl ParseExpr for Returnable {
             //    return Ok( Some(Returnable::TypeCastExpr(tc)))
             //     } else {
             return Ok(Some(Returnable::Literal(l)));
-            // }
-            // } else if let Some(_) = parser.peek_current::<Keyword>() {
+        } else if let Some(_) = parser.peek_current::<Keyword>() {
             //     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
             //         return Ok(Some(Returnable::PathExpr(pe)));
             //     } else {
@@ -249,7 +226,7 @@ impl ParseExpr for Returnable {
             //             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             //         });
             //     }
-            // } else if let Some(_) = parser.peek_current::<Punctuation>() {
+        } else if let Some(_) = parser.peek_current::<Punctuation>() {
             // if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::ClosureWithBlock(cwb)));
             // } else if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
