@@ -1,7 +1,7 @@
 use feo_types::{
     literal::UIntType,
     span::{Span, Spanned},
-    utils::{Comma, Dot, Parenthesis},
+    utils::{Comma, FullStop, Parenthesis},
     Literal,
 };
 
@@ -49,14 +49,14 @@ pub struct TupleElements {
 #[derive(Debug, Clone)]
 pub struct TupleIndexExpr {
     operand: TupleKind,
-    dot: Dot,
+    full_stop: FullStop,
     index: Literal<UIntType>,
 }
 
 impl Spanned for TupleIndexExpr {
     fn span(&self) -> Span {
         let start_pos = self.operand.span().start();
-        let end_pos = self.dot.span().end() + format!("{:?}", self.index).len();
+        let end_pos = self.full_stop.span().end() + format!("{:?}", self.index).len();
         let source = self.operand.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);

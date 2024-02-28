@@ -1,9 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Comma, Dot, Parenthesis},
+    utils::{Comma, FullStop, Parenthesis},
 };
-
-use crate::path::PathExprSegment;
 
 use super::{Callable, Returnable};
 
@@ -27,8 +25,7 @@ impl Spanned for FunctionCallExpr {
 #[derive(Debug, Clone)]
 pub struct MethodCallExpr {
     receiver: Box<Callable>,
-    dot: Dot,
-    method_path: PathExprSegment,
+    full_stop: FullStop,
     open_parenthesis: Parenthesis,
     call_params_opt: Option<CallParams>,
     close_parenthesis: Parenthesis,
