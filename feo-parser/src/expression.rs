@@ -199,7 +199,9 @@ impl ParseExpr for Returnable {
             }
 
             return Ok(Some(Returnable::Identifier(id)));
-        } else if let Some(_) = parser.peek_current::<Delimiter>() {
+        }
+
+        if let Some(_) = parser.peek_current::<Delimiter>() {
             // if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::ArrayExpr(ae)))
             // } else if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
@@ -216,7 +218,9 @@ impl ParseExpr for Returnable {
             //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             // });
             // }
-        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+        }
+
+        if let Some(l) = parser.peek_current::<LiteralKind>() {
             match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
@@ -279,7 +283,9 @@ impl ParseExpr for Returnable {
             }
 
             return Ok(Some(Returnable::Literal(l)));
-        } else if let Some(_) = parser.peek_current::<Keyword>() {
+        }
+
+        if let Some(_) = parser.peek_current::<Keyword>() {
             if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::PathExpr(pe)));
             }
@@ -288,7 +294,9 @@ impl ParseExpr for Returnable {
                 expected: "`Returnable`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
-        } else if let Some(p) = parser.peek_current::<Punctuation>() {
+        }
+
+        if let Some(p) = parser.peek_current::<Punctuation>() {
             match p.punc_kind {
                 PuncKind::Underscore => {
                     if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
