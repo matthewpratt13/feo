@@ -3,10 +3,10 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, ClosureWithBlock, ClosureWithoutBlock,
-        DereferenceExpr, FunctionCallExpr, IndexExpr, MethodCallExpr, NegationExpr,
-        ParenthesizedExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr,
-        TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr,
+        FunctionCallExpr, IndexExpr, MethodCallExpr, NegationExpr, ParenthesizedExpr,
+        ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr,
+        TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
     },
     path::PathInExpr,
     token::Token,
@@ -35,64 +35,6 @@ mod parenthesized_expr;
 mod struct_expr;
 mod tuple_expr;
 
-impl ParseExpr for Assignable {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        if let Some(id) = parser.peek_current::<Identifier>() {
-            if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::StructExpr(StructExprKind::Struct(se))));
-            } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::StructExpr(StructExprKind::TupleStruct(
-                    ts,
-                ))));
-            } else if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::StructExpr(StructExprKind::UnitStruct(us))));
-            } else if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::PathExpr(pat)));
-            } else {
-                return Ok(Some(Assignable::Identifier(id)));
-            }
-        } else if let Some(_) = parser.peek_current::<Delimiter>() {
-            if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::ArrayExpr(ae)));
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Assignable`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
-        } else if let Some(_) = parser.peek_current::<Keyword>() {
-            if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::PathExpr(pe)));
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Assignable`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
-        } else if let Some(_) = parser.peek_current::<Punctuation>() {
-            if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::UnderscoreExpr(ue)));
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Assignable`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
-        } else {
-            parser.log_error(ParserErrorKind::InvalidToken {
-                token: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
-        }
-
-        parser.next_token();
-
-        Err(parser.errors())
-    }
-}
-
 impl ParseExpr for Returnable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -104,8 +46,7 @@ impl ParseExpr for Returnable {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
                 }) => {
-                    // `ok()` to discard the `Err` and keep on checking
-                    if let Some(se) = StructExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
                     }
                 }
@@ -114,21 +55,21 @@ impl ParseExpr for Returnable {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
                 }) => {
-                    if let Some(ts) = TupleStructExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
                             ts,
                         ))));
                     }
 
-                    if let Some(us) = UnitStructExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
                     }
 
-                    if let Some(fc) = FunctionCallExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::FunctionCallExpr(fc)));
                     }
 
-                    if let Some(pat) = PathInExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::PathExpr(pat)));
                     }
                 }
@@ -141,11 +82,11 @@ impl ParseExpr for Returnable {
                     punc_kind: PuncKind::FullStop,
                     ..
                 }) => {
-                    if let Some(mc) = MethodCallExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::MethodCallExpr(mc)));
                     }
 
-                    if let Some(ts) = TupleStructExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
                             ts,
                         ))));
@@ -192,7 +133,7 @@ impl ParseExpr for Returnable {
                     punc_kind: PuncKind::DblGreaterThan,
                     ..
                 }) => {
-                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
                     }
                 }
@@ -205,33 +146,26 @@ impl ParseExpr for Returnable {
 
         if let Some(_) = parser.peek_current::<Delimiter>() {
             // TODO: these may give us problems later
-            if let Some(ae) = ArrayExpr::parse(parser).ok().unwrap_or(None) {
+            if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::ArrayExpr(ae)));
             }
 
-            if let Some(ie) = IndexExpr::parse(parser).ok().unwrap_or(None) {
+            if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::IndexExpr(ie)));
             }
 
-            if let Some(te) = TupleExpr::parse(parser).ok().unwrap_or(None) {
+            if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::TupleExpr(te)));
             }
 
-            if let Some(ti) = TupleIndexExpr::parse(parser).ok().unwrap_or(None) {
+            if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::TupleIndexExpr(ti)));
             }
 
-            if let Some(par) = ParenthesizedExpr::parse(parser).ok().unwrap_or(None) {
+            if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::ParenthesizedExpr(par)));
             }
-
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
-        }
-
-        if let Some(l) = parser.peek_current::<LiteralKind>() {
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
@@ -273,7 +207,7 @@ impl ParseExpr for Returnable {
                     punc_kind: PuncKind::DblGreaterThan,
                     ..
                 }) => {
-                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
                     }
                 }
@@ -284,7 +218,7 @@ impl ParseExpr for Returnable {
             if let Some(k) = parser.peek_next::<Keyword>() {
                 match k.keyword_kind {
                     KeywordKind::KwAs => {
-                        if let Some(tc) = TypeCastExpr::parse(parser).ok().unwrap_or(None) {
+                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Returnable::TypeCastExpr(tc)));
                         }
                     }
@@ -297,68 +231,54 @@ impl ParseExpr for Returnable {
         }
 
         if let Some(_) = parser.peek_current::<Keyword>() {
-            if let Some(pe) = PathInExpr::parse(parser).ok().unwrap_or(None) {
+            if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::PathExpr(pe)));
             }
-
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
-        }
-
-        if let Some(p) = parser.peek_current::<Punctuation>() {
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match p.punc_kind {
                 PuncKind::Underscore => {
-                    if let Some(ue) = UnderscoreExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::UnderscoreExpr(ue)));
                     }
                 }
 
                 PuncKind::Bang | PuncKind::Minus => {
-                    if let Some(ne) = NegationExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::NegationExpr(ne)));
                     }
                 }
 
                 PuncKind::Ampersand => {
-                    if let Some(re) = ReferenceExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ReferenceExpr(re)));
                     }
                 }
 
                 PuncKind::Asterisk => {
-                    if let Some(de) = DereferenceExpr::parse(parser).ok().unwrap_or(None) {
+                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::DereferenceExpr(de)));
                     }
                 }
 
                 PuncKind::Pipe => {
-                    if let Some(cwb) = ClosureWithBlock::parse(parser).ok().unwrap_or(None) {
+                    if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ClosureWithBlock(cwb)));
                     }
                 }
 
                 PuncKind::DblPipe => {
-                    if let Some(c) = ClosureWithoutBlock::parse(parser).ok().unwrap_or(None) {
+                    if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ClosureWithoutBlock(c)));
                     }
                 }
 
                 _ => (),
             }
-
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
         } else {
             parser.log_error(ParserErrorKind::InvalidToken {
                 token: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         }
-
-        parser.next_token();
 
         Err(parser.errors())
     }
