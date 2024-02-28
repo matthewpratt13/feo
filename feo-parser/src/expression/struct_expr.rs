@@ -366,7 +366,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn parse_struct() {
         let source_code = r#"
