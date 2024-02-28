@@ -204,9 +204,11 @@ impl ParseExpr for Returnable {
         }
 
         if let Some(_) = parser.peek_current::<Delimiter>() {
+            // TODO: these may give us problems later
             if let Some(ae) = ArrayExpr::parse(parser).ok().unwrap_or(None) {
                 return Ok(Some(Returnable::ArrayExpr(ae)));
             }
+
             if let Some(ie) = IndexExpr::parse(parser).ok().unwrap_or(None) {
                 return Ok(Some(Returnable::IndexExpr(ie)));
             }
