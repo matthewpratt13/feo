@@ -98,11 +98,7 @@ impl ParseExpr for Returnable {
             // } else if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::FieldAccessExpr(fa)));
             // } else if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-            if let Ok(se) = StructExpr::parse(parser) {
-                match se {
-                    Some(t) => return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(t)))),
-                    None => todo!(),
-                }
+            if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::StructExpr(StructExprKind::Struct(se))));
             } else if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
                 return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(

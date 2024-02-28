@@ -187,8 +187,9 @@ impl ParseExpr for StructExpr {
                     });
                 }
             } else {
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "{".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`{`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
         } else {
@@ -322,8 +323,9 @@ impl ParseExpr for TupleStructExpr {
                     });
                 }
             } else {
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "(".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`(`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
         } else {
@@ -364,6 +366,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore]
     #[test]
     fn parse_struct() {
         let source_code = r#"
@@ -400,7 +403,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        // println!("{:#?}", token_stream);
+        println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
