@@ -4,7 +4,8 @@
 use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, FunctionCallExpr, MethodCallExpr,
-        Returnable, StructExpr, StructExprKind, TupleStructExpr, UnderscoreExpr, UnitStructExpr,
+        Returnable, StructExpr, StructExprKind, TupleStructExpr, TypeCastExpr, UnderscoreExpr,
+        UnitStructExpr,
     },
     path::PathInExpr,
     token::Token,
@@ -12,6 +13,7 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
     literal::LiteralKind,
     punctuation::PuncKind,
     Delimiter, Identifier, Keyword, Punctuation,
@@ -115,12 +117,15 @@ impl ParseExpr for Returnable {
                             ts,
                         ))));
                     }
+
                     if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
                     }
+
                     if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::FunctionCallExpr(fc)));
                     }
+
                     if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::PathExpr(pat)));
                     }
@@ -137,6 +142,7 @@ impl ParseExpr for Returnable {
                     if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::MethodCallExpr(mc)));
                     }
+
                     if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::StructExpr(StructExprKind::TupleStruct(
                             ts,
@@ -211,11 +217,67 @@ impl ParseExpr for Returnable {
             // });
             // }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            //     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-            //        return Ok( Some(Returnable::ArithmeticOrLogicalExpr(al)))
-            //     } else if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
-            //    return Ok( Some(Returnable::TypeCastExpr(tc)))
-            //     } else {
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            if let Some(k) = parser.peek_next::<Keyword>() {
+                match k.keyword_kind {
+                    KeywordKind::KwAs => {
+                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Returnable::TypeCastExpr(tc)));
+                        }
+                    }
+
+                    _ => (),
+                }
+            }
+
             return Ok(Some(Returnable::Literal(l)));
         } else if let Some(_) = parser.peek_current::<Keyword>() {
             //     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
