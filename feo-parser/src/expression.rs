@@ -4,8 +4,9 @@
 use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, ClosureWithBlock, ClosureWithoutBlock,
-        DereferenceExpr, FunctionCallExpr, MethodCallExpr, NegationExpr, ReferenceExpr, Returnable,
-        StructExpr, StructExprKind, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
+        DereferenceExpr, FunctionCallExpr, IndexExpr, MethodCallExpr, NegationExpr,
+        ParenthesizedExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr,
+        TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
     },
     path::PathInExpr,
     token::Token,
@@ -203,22 +204,29 @@ impl ParseExpr for Returnable {
         }
 
         if let Some(_) = parser.peek_current::<Delimiter>() {
-            // if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::ArrayExpr(ae)))
-            // } else if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::IndexExpr(ie)))
-            // } else if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-            //    return Ok( Some(Returnable::TupleExpr(te)))
-            // } else if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::TupleIndexExpr(ti)))
-            // } else if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-            //     return Ok(Some(Returnable::ParenthesizedExpr(par)))
-            // } else {
-            // parser.log_error(ParserErrorKind::UnexpectedToken {
-            //     expected: "`Returnable`".to_string(),
-            //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            // });
-            // }
+            if let Some(ae) = ArrayExpr::parse(parser).ok().unwrap_or(None) {
+                return Ok(Some(Returnable::ArrayExpr(ae)));
+            }
+            if let Some(ie) = IndexExpr::parse(parser).ok().unwrap_or(None) {
+                return Ok(Some(Returnable::IndexExpr(ie)));
+            }
+
+            if let Some(te) = TupleExpr::parse(parser).ok().unwrap_or(None) {
+                return Ok(Some(Returnable::TupleExpr(te)));
+            }
+
+            if let Some(ti) = TupleIndexExpr::parse(parser).ok().unwrap_or(None) {
+                return Ok(Some(Returnable::TupleIndexExpr(ti)));
+            }
+
+            if let Some(par) = ParenthesizedExpr::parse(parser).ok().unwrap_or(None) {
+                return Ok(Some(Returnable::ParenthesizedExpr(par)));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Returnable`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
         }
 
         if let Some(l) = parser.peek_current::<LiteralKind>() {
