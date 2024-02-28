@@ -280,14 +280,14 @@ impl ParseExpr for Returnable {
 
             return Ok(Some(Returnable::Literal(l)));
         } else if let Some(_) = parser.peek_current::<Keyword>() {
-            //     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-            //         return Ok(Some(Returnable::PathExpr(pe)));
-            //     } else {
-            //         parser.log_error(ParserErrorKind::UnexpectedToken {
-            //             expected: "`Returnable`".to_string(),
-            //             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            //         });
-            //     }
+            if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Returnable::PathExpr(pe)));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Returnable`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
         } else if let Some(_) = parser.peek_current::<Punctuation>() {
             // if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
             //     return Ok(Some(Returnable::ClosureWithBlock(cwb)));
