@@ -63,11 +63,16 @@ impl ParseExpr for Castable {
                 LiteralKind::F32(f) => return Ok(Some(Castable::F32(f))),
                 LiteralKind::F64(f) => return Ok(Some(Castable::F64(f))),
 
-                _ => (),
+                _ => {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "numeric type".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
             }
         }
 
-        Ok(None)
+        Err(parser.errors())
     }
 }
 
@@ -290,7 +295,7 @@ impl ParseExpr for Returnable {
                     }
                 }
 
-                _ => (),
+                _ => return Ok(None),
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match p.punc_kind {
@@ -330,12 +335,10 @@ impl ParseExpr for Returnable {
                     }
                 }
 
-                _ => (),
+                _ => return Ok(None),
             }
         } else {
-            parser.log_error(ParserErrorKind::InvalidToken {
-                token: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         }
 
         Err(parser.errors())
