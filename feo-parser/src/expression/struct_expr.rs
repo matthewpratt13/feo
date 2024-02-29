@@ -121,6 +121,10 @@ impl ParseTerm for StructExprFields {
                         break;
                     }
                 } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`StructExprField`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                     break;
                 }
             }
