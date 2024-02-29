@@ -3,10 +3,10 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr,
-        FunctionCallExpr, IndexExpr, MethodCallExpr, NegationExpr, ParenthesizedExpr,
-        ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr,
-        TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, Castable, ClosureWithBlock, ClosureWithoutBlock,
+        DereferenceExpr, FunctionCallExpr, IndexExpr, MethodCallExpr, NegationExpr,
+        ParenthesizedExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr,
+        TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
@@ -35,6 +35,44 @@ mod parenthesized_expr;
 mod struct_expr;
 mod tuple_expr;
 mod underscore_expr;
+
+impl ParseExpr for Castable {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            let path_expr = PathInExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Castable::PathExpr(path_expr)));
+        }
+
+        if let Some(l) = parser.peek_current::<LiteralKind>() {
+            match l {
+                LiteralKind::I32(i) => return Ok(Some(Castable::I32(i))),
+                LiteralKind::I64(i) => return Ok(Some(Castable::I64(i))),
+                LiteralKind::U8(ui) => return Ok(Some(Castable::U8(ui))),
+                LiteralKind::U16(ui) => return Ok(Some(Castable::U16(ui))),
+                LiteralKind::U32(ui) => return Ok(Some(Castable::U32(ui))),
+                LiteralKind::U64(ui) => return Ok(Some(Castable::U64(ui))),
+                LiteralKind::U256(u) => return Ok(Some(Castable::U256(u))),
+                LiteralKind::F32(f) => return Ok(Some(Castable::F32(f))),
+                LiteralKind::F64(f) => return Ok(Some(Castable::F64(f))),
+
+                _ => (),
+            }
+        }
+
+        parser.log_error(ParserErrorKind::InvalidToken {
+            token: parser.current_token().unwrap_or(Token::EOF).to_string(),
+        });
+
+        Err(parser.errors())
+    }
+}
 
 impl ParseExpr for Returnable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
