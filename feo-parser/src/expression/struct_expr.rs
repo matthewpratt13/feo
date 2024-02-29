@@ -129,9 +129,20 @@ impl ParseTerm for StructExprFields {
                 }
             }
 
+            let trailing_comma_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = trailing_comma_opt
+            {
+                parser.next_token();
+            }
+
             return Ok(Some(StructExprFields {
                 first_field,
                 subsequent_fields,
+                trailing_comma_opt,
             }));
         }
 
