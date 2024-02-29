@@ -243,8 +243,8 @@ impl Spanned for NegationExpr {
 
 #[derive(Debug, Clone)]
 pub struct ReferenceExpr {
-    operator: RefOperator,
-    operand: Box<Assignable>,
+    pub operator: RefOperator,
+    pub operand: Box<Assignable>,
 }
 
 impl Spanned for ReferenceExpr {

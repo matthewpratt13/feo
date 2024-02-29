@@ -8,7 +8,7 @@ use feo_ast::{
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, Punctuation};
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
     parse::{ParseExpr, Peek},
@@ -229,7 +229,45 @@ impl ParseExpr for ReferenceExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let ampersand_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::Ampersand,
+            ..
+        }) = ampersand_opt
+        {
+            parser.next_token();
+
+            let kw_mut_opt = parser.peek_current::<Keyword>();
+
+            if let Some(Keyword {
+                keyword_kind: KeywordKind::KwMut,
+                ..
+            }) = kw_mut_opt
+            {
+                parser.next_token();
+            }
+
+            let operator = (ampersand_opt.unwrap(), kw_mut_opt);
+
+            if let Some(operand) = Assignable::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(ReferenceExpr {
+                    operator,
+                    operand: Box::new(operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Assignable".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -277,5 +315,25 @@ mod tests {
             DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
 
         println!("{:#?}", deref_expr);
+    }
+
+    #[test]
+    fn parse_ref_expr() {
+        let source_code = r#"&mut x"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let ref_expr =
+            ReferenceExpr::parse(&mut parser).expect("unable to parse reference expression");
+
+        println!("{:#?}", ref_expr);
     }
 }
