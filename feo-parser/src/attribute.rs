@@ -100,7 +100,7 @@ impl ParseTerm for InnerAttr {
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash-bang punctuation (`#!`)".to_string(),
+                expected: "`#!`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         }
@@ -166,7 +166,7 @@ impl ParseTerm for OuterAttr {
             }
         } else {
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "hash sign punctuation (`#`)".to_string(),
+                expected: "`#`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         }
