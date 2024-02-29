@@ -53,6 +53,8 @@ impl ParseExpr for Castable {
 
         if let Some(l) = parser.peek_current::<LiteralKind>() {
             match l {
+                LiteralKind::Char(c) => return Ok(Some(Castable::Char(c))),
+                LiteralKind::Bool(b) => return Ok(Some(Castable::Bool(b))),
                 LiteralKind::I32(i) => return Ok(Some(Castable::I32(i))),
                 LiteralKind::I64(i) => return Ok(Some(Castable::I64(i))),
                 LiteralKind::U8(ui) => return Ok(Some(Castable::U8(ui))),

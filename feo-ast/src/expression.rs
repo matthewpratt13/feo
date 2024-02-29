@@ -220,6 +220,8 @@ impl Spanned for Callable {
 
 #[derive(Debug, Clone)]
 pub enum Castable {
+    Char(Literal<char>),
+    Bool(Literal<bool>),
     I32(Literal<IntType>),
     I64(Literal<IntType>),
     U8(Literal<UIntType>),
@@ -235,6 +237,8 @@ pub enum Castable {
 impl Spanned for Castable {
     fn span(&self) -> Span {
         match self {
+            Castable::Char(c) => c.span(),
+            Castable::Bool(b) => b.span(),
             Castable::I32(i) => i.span(),
             Castable::I64(i) => i.span(),
             Castable::U8(ui) => ui.span(),
