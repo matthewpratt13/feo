@@ -34,6 +34,7 @@ mod operator_expr;
 mod parenthesized_expr;
 mod struct_expr;
 mod tuple_expr;
+mod underscore_expr;
 
 impl ParseExpr for Returnable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

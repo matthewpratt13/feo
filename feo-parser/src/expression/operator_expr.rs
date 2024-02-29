@@ -2,7 +2,7 @@ use feo_ast::expression::{
     ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
     ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DereferenceExpr,
     LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
-    TypeCastExpr, UnderscoreExpr, UnwrapExpr, UnwrapOperandKind,
+    TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
 };
 use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
@@ -205,15 +205,6 @@ impl ParseExpr for ReferenceExpr {
 }
 
 impl ParseExpr for TypeCastExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-}
-
-impl ParseExpr for UnderscoreExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
