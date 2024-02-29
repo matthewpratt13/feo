@@ -10,6 +10,8 @@ use feo_types::{
     },
 };
 
+use crate::ty::Type;
+
 use super::{Assignable, BooleanOperand, Castable, Operable};
 
 #[derive(Debug, Clone)]
@@ -256,9 +258,9 @@ impl Spanned for ReferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct TypeCastExpr {
-    lhs: Box<Castable>,
-    operator: CastOperator,
-    rhs: Box<Castable>,
+    pub lhs: Box<Castable>,
+    pub operator: CastOperator,
+    pub rhs: Box<Type>,
 }
 
 impl Spanned for TypeCastExpr {

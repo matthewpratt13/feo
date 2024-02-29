@@ -1,14 +1,11 @@
-use feo_ast::{
-    expression::{
-        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, Castable,
-        ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
-        DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
-        ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
-    },
-    token::Token,
+use feo_ast::expression::{
+    ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
+    ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DereferenceExpr,
+    LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
+    TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
 };
-use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
+use feo_error::error::CompilerError;
+use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{
     parse::{ParseExpr, Peek},
@@ -212,43 +209,7 @@ impl ParseExpr for TypeCastExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = Castable::parse(parser)? {
-            parser.next_token();
-
-            let operator_opt = parser.peek_current::<Keyword>();
-
-            if let Some(Keyword {
-                keyword_kind: KeywordKind::KwAs,
-                ..
-            }) = operator_opt
-            {
-                parser.next_token();
-
-                if let Some(rhs) = Castable::parse(parser)? {
-                    parser.next_token();
-
-                    return Ok(Some(TypeCastExpr {
-                        lhs: Box::new(lhs),
-                        operator: operator_opt.unwrap(),
-                        rhs: Box::new(rhs),
-                    }));
-                } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Castable`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-                }
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`as`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
-        } else {
-            return Ok(None);
-        }
-
-        Err(parser.errors())
+        todo!();
     }
 }
 
