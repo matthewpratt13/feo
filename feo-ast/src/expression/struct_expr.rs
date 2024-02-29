@@ -52,7 +52,7 @@ pub struct StructExprField(
 pub struct StructExprFields {
     pub first_field: StructExprField,
     pub subsequent_fields: Vec<(Comma, StructExprField)>, // TODO: make optional
-    // TODO: add optional trailing comma
+    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
@@ -73,7 +73,13 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructElements(pub (Box<Returnable>, Option<Vec<(Comma, Returnable)>>, Option<Comma>));
+pub struct TupleStructElements(
+    pub  (
+        Box<Returnable>,
+        Option<Vec<(Comma, Returnable)>>,
+        Option<Comma>,
+    ),
+);
 
 #[derive(Debug, Clone)]
 pub struct UnitStructExpr(pub Identifier);
