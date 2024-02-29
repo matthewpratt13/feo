@@ -211,9 +211,7 @@ impl ParseTerm for TupleStructElements {
     {
         let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
 
-        let first_element = Returnable::parse(parser)?;
-
-        if let Some(element) = first_element {
+        if let Some(element) = Returnable::parse(parser)? {
             parser.next_token();
 
             let mut comma_opt = parser.peek_current::<Punctuation>();
@@ -228,9 +226,10 @@ impl ParseTerm for TupleStructElements {
                 if let Some(next_element) = Returnable::parse(parser)? {
                     subsequent_elements.push((comma_opt.unwrap(), next_element));
 
-                    if let Some(p) = parser.peek_next::<Punctuation>() {
+                    parser.next_token();
+
+                    if let Some(p) = parser.peek_current::<Punctuation>() {
                         comma_opt = Some(p);
-                        parser.next_token();
                     } else {
                         break;
                     }
@@ -251,29 +250,27 @@ impl ParseTerm for TupleStructElements {
             }) = trailing_comma_opt
             {
                 parser.next_token();
+            }
 
-                if !subsequent_elements.is_empty() {
+            match subsequent_elements.is_empty() {
+                true => {
+                    return Ok(Some(TupleStructElements((
+                        Box::new(element),
+                        None,
+                        trailing_comma_opt,
+                    ))))
+                }
+                false => {
                     return Ok(Some(TupleStructElements((
                         Box::new(element),
                         Some(subsequent_elements),
                         trailing_comma_opt,
-                    ))));
+                    ))))
                 }
-            } else {
-                return Ok(Some(TupleStructElements((
-                    Box::new(element),
-                    None,
-                    trailing_comma_opt,
-                ))));
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Returnable`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
@@ -295,8 +292,6 @@ impl ParseExpr for TupleStructExpr {
                 parser.next_token();
 
                 if let Some(elements) = TupleStructElements::parse(parser)? {
-                    parser.next_token();
-
                     let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -330,10 +325,7 @@ impl ParseExpr for TupleStructExpr {
                 });
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "identifier".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         }
 
         Err(parser.errors())
@@ -393,10 +385,9 @@ mod tests {
         println!("{:#?}", struct_expr);
     }
 
-    #[ignore]
     #[test]
     fn parse_tuple_struct() {
-        let source_code = r#"SomeStruct(foo, bar, baz)"#;
+        let source_code = r#"SomeStruct(foo, bar, baz,)"#;
 
         let handler = Handler::default();
 
