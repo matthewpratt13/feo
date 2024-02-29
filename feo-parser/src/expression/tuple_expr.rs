@@ -3,19 +3,17 @@ use feo_ast::{
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, utils::Comma, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+    utils::Comma,
+    Delimiter, Punctuation,
+};
 
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
 };
-
-// for reference:
-// pub struct TupleElements {
-//     pub first_element: Box<Returnable>,
-//     pub subsequent_elements_opt: Option<Vec<(Comma, Returnable)>>,
-//     pub trailing_comma_opt: Option<Comma>,
-// }
 
 impl ParseTerm for TupleElements {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -85,7 +83,51 @@ impl ParseExpr for TupleExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+        if let Some(Delimiter {
+            delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+            ..
+        }) = open_parenthesis_opt
+        {
+            parser.next_token();
+
+            if let Some(elements) = TupleElements::parse(parser)? {
+                parser.next_token();
+
+                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                    ..
+                }) = close_parenthesis_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(TupleExpr {
+                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                        elements,
+                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                    }));
+                }
+                
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: ")".to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`TupleElements`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`(`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        }
+
+        Err(parser.errors())
     }
 }
 

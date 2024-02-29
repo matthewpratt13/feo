@@ -26,9 +26,9 @@ impl Spanned for TupleKind {
 
 #[derive(Debug, Clone)]
 pub struct TupleExpr {
-    open_parenthesis: Parenthesis,
-    elements_opt: Option<TupleElements>,
-    close_parenthesis: Parenthesis,
+    pub open_parenthesis: Parenthesis,
+    pub elements: TupleElements,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for TupleExpr {
