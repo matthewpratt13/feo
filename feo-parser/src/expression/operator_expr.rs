@@ -1,10 +1,10 @@
-use feo_ast::expression::{
-    ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
-    ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DereferenceExpr,
-    LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind, ReferenceExpr,
-    TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
-};
-use feo_error::error::CompilerError;
+use feo_ast::{expression::{
+    ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
+    ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
+    DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
+    ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+}, token::Token};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{
@@ -173,7 +173,33 @@ impl ParseExpr for DereferenceExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let operator_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::Asterisk,
+            ..
+        }) = operator_opt
+        {
+            parser.next_token();
+
+            if let Some(operand) = Assignable::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(DereferenceExpr {
+                    operator: operator_opt.unwrap(),
+                    operand: Box::new(operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Assignable`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

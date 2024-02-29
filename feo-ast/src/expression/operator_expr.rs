@@ -197,8 +197,8 @@ impl Spanned for ComparisonExpr {
 
 #[derive(Debug, Clone)]
 pub struct DereferenceExpr {
-    operator: DerefOperator,
-    operand: Box<Assignable>,
+    pub operator: DerefOperator,
+    pub operand: Box<Assignable>,
 }
 
 impl Spanned for DereferenceExpr {
