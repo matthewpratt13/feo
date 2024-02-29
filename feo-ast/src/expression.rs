@@ -199,7 +199,6 @@ impl Spanned for BooleanOperand {
 
 #[derive(Debug, Clone)]
 pub enum Callable {
-    Identifier(Identifier),
     ArrayExpr(ArrayExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
@@ -210,11 +209,10 @@ pub enum Callable {
 impl Spanned for Callable {
     fn span(&self) -> Span {
         match self {
-            Callable::Identifier(id) => id.span(),
             Callable::ArrayExpr(ae) => ae.span(),
             Callable::StructExpr(se) => se.span(),
             Callable::TupleExpr(te) => te.span(),
-            Callable::PathExpr(pat) => pat.span(),
+            Callable::PathExpr(pth) => pth.span(),
             Callable::ParenthesizedExpr(par) => par.span(),
         }
     }
@@ -222,8 +220,6 @@ impl Spanned for Callable {
 
 #[derive(Debug, Clone)]
 pub enum Castable {
-    Char(Literal<char>),
-    Bool(Literal<bool>),
     I32(Literal<IntType>),
     I64(Literal<IntType>),
     U8(Literal<UIntType>),
@@ -233,13 +229,12 @@ pub enum Castable {
     U256(Literal<U256>),
     F32(Literal<FloatType>),
     F64(Literal<FloatType>),
+    PathExpr(PathExpr),
 }
 
 impl Spanned for Castable {
     fn span(&self) -> Span {
         match self {
-            Castable::Char(c) => c.span(),
-            Castable::Bool(b) => b.span(),
             Castable::I32(i) => i.span(),
             Castable::I64(i) => i.span(),
             Castable::U8(ui) => ui.span(),
@@ -249,6 +244,7 @@ impl Spanned for Castable {
             Castable::U256(u) => u.span(),
             Castable::F32(f) => f.span(),
             Castable::F64(f) => f.span(),
+            Castable::PathExpr(pth) => pth.span(),
         }
     }
 }
@@ -359,13 +355,13 @@ pub enum Iterable {
 
 #[derive(Debug, Clone)]
 pub enum Operable {
-    Identifier(Identifier),
     IndexExpr(IndexExpr),
     TupleIndexExpr(TupleIndexExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
     Literal(LiteralKind),
+    PathExpr(PathExpr),
     ParenthesizedExpr(ParenthesizedExpr),
     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
     DereferenceExpr(DereferenceExpr),
@@ -378,13 +374,13 @@ pub enum Operable {
 impl Spanned for Operable {
     fn span(&self) -> Span {
         match self {
-            Operable::Identifier(id) => id.span(),
             Operable::IndexExpr(ie) => ie.span(),
             Operable::TupleIndexExpr(ti) => ti.span(),
             Operable::FunctionCallExpr(fc) => fc.span(),
             Operable::MethodCallExpr(mc) => mc.span(),
             Operable::FieldAccessExpr(fa) => fa.span(),
             Operable::Literal(lit) => lit.span(),
+            Operable::PathExpr(pth) =>  pth.span(),
             Operable::ParenthesizedExpr(par) => par.span(),
             Operable::ArithmeticOrLogicalExpr(al) => al.span(),
             Operable::DereferenceExpr(de) => de.span(),
@@ -398,7 +394,6 @@ impl Spanned for Operable {
 
 #[derive(Debug, Clone)]
 pub enum Returnable {
-    Identifier(Identifier),
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
     TupleIndexExpr(TupleIndexExpr),
@@ -424,7 +419,6 @@ pub enum Returnable {
 impl Spanned for Returnable {
     fn span(&self) -> Span {
         match self {
-            Returnable::Identifier(id) => id.span(),
             Returnable::ArrayExpr(ae) => ae.span(),
             Returnable::IndexExpr(ie) => ie.span(),
             Returnable::TupleIndexExpr(ti) => ti.span(),
@@ -434,7 +428,7 @@ impl Spanned for Returnable {
             Returnable::ClosureWithoutBlock(c) => c.span(),
             Returnable::FieldAccessExpr(fa) => fa.span(),
             Returnable::Literal(lit) => lit.span(),
-            Returnable::PathExpr(pat) => pat.span(),
+            Returnable::PathExpr(pth) => pth.span(),
             Returnable::StructExpr(se) => se.span(),
             Returnable::TupleExpr(te) => te.span(),
             Returnable::ParenthesizedExpr(par) => par.span(),

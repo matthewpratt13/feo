@@ -8,7 +8,7 @@ use feo_ast::{
         ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr,
         TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
     },
-    path::PathInExpr,
+    path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -141,7 +141,12 @@ impl ParseExpr for Returnable {
                 _ => (),
             }
 
-            return Ok(Some(Returnable::Identifier(id)));
+            let path_expr = PathInExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Returnable::PathExpr(path_expr)));
         }
 
         if let Some(_) = parser.peek_current::<Delimiter>() {
@@ -230,9 +235,15 @@ impl ParseExpr for Returnable {
             return Ok(Some(Returnable::Literal(l)));
         }
 
-        if let Some(_) = parser.peek_current::<Keyword>() {
-            if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::PathExpr(pe)));
+        if let Some(k) = parser.peek_current::<Keyword>() {
+            match k.keyword_kind {
+                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::PathExpr(pe)));
+                    }
+                }
+
+                _ => (),
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match p.punc_kind {
