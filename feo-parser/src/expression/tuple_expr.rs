@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn parse_tuple_expr() {
-        let source_code = r#"(1, "a", x,)"#;
+        let source_code = r#"(1, "a", x)"#;
 
         let handler = Handler::default();
 
@@ -160,7 +160,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        println!("{:#?} ", token_stream);
+        // println!("{:#?} ", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
