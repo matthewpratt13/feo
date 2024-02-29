@@ -51,7 +51,7 @@ pub struct StructExprField(
 #[derive(Debug, Clone)]
 pub struct StructExprFields {
     pub first_field: StructExprField,
-    pub subsequent_fields: Vec<(Comma, StructExprField)>, // TODO: make optional
+    pub subsequent_fields: Option<Vec<(Comma, StructExprField)>>,
     pub trailing_comma_opt: Option<Comma>,
 }
 

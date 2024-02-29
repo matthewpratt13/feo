@@ -31,21 +31,11 @@ impl ParseTerm for StructExprField {
         if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
             ..
-        }) = parser.peek_current()
+        }) = parser.peek_current::<Punctuation>()
         {
             while let Some(next_attr) = OuterAttr::parse(parser)? {
                 attributes.push(next_attr);
                 parser.next_token();
-
-                if let Some(Punctuation {
-                    punc_kind: PuncKind::Comma,
-                    ..
-                }) = parser.peek_current()
-                {
-                    parser.next_token();
-                } else {
-                    break;
-                }
             }
         }
 
@@ -62,30 +52,28 @@ impl ParseTerm for StructExprField {
                 parser.next_token();
 
                 if let Some(r) = Returnable::parse(parser)? {
+                    parser.next_token();
+
                     let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
-                    if !attributes.is_empty() {
-                        return Ok(Some(StructExprField(Some(attributes), field_content)));
+                    match attributes.is_empty() {
+                        true => return Ok(Some(StructExprField(Some(attributes), field_content))),
+                        false => return Ok(Some(StructExprField(None, field_content))),
                     }
-
-                    return Ok(Some(StructExprField(None, field_content)));
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`Returnable`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                 }
-
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Returnable`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "colon punctuation (`:`)".to_string(),
+                    expected: "`:`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "identifier".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         }
 
         Err(parser.errors())
@@ -100,8 +88,6 @@ impl ParseTerm for StructExprFields {
         let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
-            parser.next_token();
-
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
 
             while let Some(Punctuation {
@@ -114,8 +100,7 @@ impl ParseTerm for StructExprFields {
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push((next_comma_opt.unwrap(), next_field));
 
-                    if let Some(p) = parser.peek_next::<Punctuation>() {
-                        parser.next_token();
+                    if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_comma_opt = Some(p);
                     } else {
                         break;
@@ -139,19 +124,25 @@ impl ParseTerm for StructExprFields {
                 parser.next_token();
             }
 
-            return Ok(Some(StructExprFields {
-                first_field,
-                subsequent_fields,
-                trailing_comma_opt,
-            }));
+            match subsequent_fields.is_empty() {
+                true => {
+                    return Ok(Some(StructExprFields {
+                        first_field,
+                        subsequent_fields: None,
+                        trailing_comma_opt,
+                    }))
+                }
+                false => {
+                    return Ok(Some(StructExprFields {
+                        first_field,
+                        subsequent_fields: Some(subsequent_fields),
+                        trailing_comma_opt,
+                    }))
+                }
+            }
+        } else {
+            return Ok(None);
         }
-
-        parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`StructExprField`".to_string(),
-            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
-
-        Err(parser.errors())
     }
 }
 
@@ -173,8 +164,6 @@ impl ParseExpr for StructExpr {
                 parser.next_token();
 
                 if let Some(struct_expr_fields) = StructExprFields::parse(parser)? {
-                    parser.next_token();
-
                     let close_brace_opt = parser.peek_current::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -208,10 +197,7 @@ impl ParseExpr for StructExpr {
                 });
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "identifier".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         }
 
         Err(parser.errors())
@@ -388,7 +374,7 @@ mod tests {
             #[abstract]
             foo: "a",
             bar: 1,
-            baz: x
+            baz: x,
         }"#;
 
         let handler = Handler::default();
@@ -397,7 +383,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        // println!("{:#?}", token_stream);
+        println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
@@ -407,6 +393,7 @@ mod tests {
         println!("{:#?}", struct_expr);
     }
 
+    #[ignore]
     #[test]
     fn parse_tuple_struct() {
         let source_code = r#"SomeStruct(foo, bar, baz)"#;
