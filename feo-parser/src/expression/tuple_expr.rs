@@ -126,10 +126,7 @@ impl ParseExpr for TupleExpr {
                 });
             }
         } else {
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`(`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         }
 
         Err(parser.errors())
