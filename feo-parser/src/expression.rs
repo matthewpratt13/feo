@@ -108,10 +108,6 @@ impl ParseExpr for Returnable {
                     if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::FunctionCallExpr(fc)));
                     }
-
-                    if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Returnable::PathExpr(pat)));
-                    }
                 }
 
                 _ => (),
@@ -175,6 +171,15 @@ impl ParseExpr for Returnable {
                 }) => {
                     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ArithmeticOrLogicalExpr(al)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) => {
+                    if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::PathExpr(pat)));
                     }
                 }
 
