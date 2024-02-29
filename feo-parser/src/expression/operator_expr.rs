@@ -1,9 +1,12 @@
-use feo_ast::{expression::{
-    ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
-    ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
-    DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
-    ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
-}, token::Token};
+use feo_ast::{
+    expression::{
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
+        ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
+        DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
+        ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+    },
+    token::Token,
+};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Punctuation};
 
@@ -245,5 +248,34 @@ impl ParseExpr for UnwrapExpr {
         Self: Sized,
     {
         todo!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_deref_expr() {
+        let source_code = r#"*x"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let deref_expr =
+            DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
+
+        println!("{:#?}", deref_expr);
     }
 }
