@@ -42,8 +42,9 @@ impl Spanned for TupleExpr {
 
 #[derive(Debug, Clone)]
 pub struct TupleElements {
-    initializer_operands: Vec<(Returnable, Comma)>,
-    trailing_operand_opt: Option<Box<Returnable>>,
+    pub first_element: Box<Returnable>,
+    pub subsequent_elements_opt: Option<Vec<(Comma, Returnable)>>,
+    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]

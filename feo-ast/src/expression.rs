@@ -58,7 +58,7 @@ pub use self::{
         StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructElements,
         TupleStructExpr, UnitStructExpr,
     },
-    tuple_expr::{TupleExpr, TupleIndexExpr},
+    tuple_expr::{TupleElements, TupleExpr, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
 };
 
