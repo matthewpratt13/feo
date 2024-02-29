@@ -87,7 +87,7 @@ impl ParseTerm for SimplePath {
         }
 
         parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`PathIdenSegmentKind`".to_string(),
+            expected: "`SimplePathSegmentKind`".to_string(),
             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
         });
 

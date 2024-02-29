@@ -71,6 +71,11 @@ impl ParseTerm for TupleElements {
             }));
         }
 
+        parser.log_error(ParserErrorKind::UnexpectedToken {
+            expected: "`Returnable`".to_string(),
+            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+        });
+
         Err(parser.errors())
     }
 }
