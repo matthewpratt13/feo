@@ -67,11 +67,7 @@ impl ParseExpr for Castable {
             }
         }
 
-        parser.log_error(ParserErrorKind::InvalidToken {
-            token: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
-
-        Err(parser.errors())
+        Ok(None)
     }
 }
 
