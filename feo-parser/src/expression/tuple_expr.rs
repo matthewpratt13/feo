@@ -20,8 +20,10 @@ impl ParseTerm for TupleElements {
     where
         Self: Sized,
     {
+        let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
+
         if let Some(first_element) = Returnable::parse(parser)? {
-            let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
+            parser.next_token();
 
             let mut comma_opt = parser.peek_current::<Punctuation>();
 
@@ -51,8 +53,6 @@ impl ParseTerm for TupleElements {
             }
 
             let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            parser.next_token();
 
             if !subsequent_elements.is_empty() {
                 return Ok(Some(TupleElements {
@@ -110,7 +110,7 @@ impl ParseExpr for TupleExpr {
                         close_parenthesis: close_parenthesis_opt.unwrap(),
                     }));
                 }
-                
+
                 parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: ")".to_string(),
                 });
@@ -137,5 +137,33 @@ impl ParseExpr for TupleIndexExpr {
         Self: Sized,
     {
         todo!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_tuple_expr() {
+        let source_code = r#"(1, "a", x)"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        println!("{:#?} ", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let tuple_expr = TupleExpr::parse(&mut parser).expect("unable to parse tuple expression");
+
+        println!("{:#?}", tuple_expr);
     }
 }
