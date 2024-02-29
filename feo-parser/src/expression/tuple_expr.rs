@@ -37,9 +37,10 @@ impl ParseTerm for TupleElements {
                 if let Some(next_element) = Returnable::parse(parser)? {
                     subsequent_elements.push((comma_opt.unwrap(), next_element));
 
-                    if let Some(p) = parser.peek_next::<Punctuation>() {
+                    parser.next_token();
+
+                    if let Some(p) = parser.peek_current::<Punctuation>() {
                         comma_opt = Some(p);
-                        parser.next_token();
                     } else {
                         break;
                     }
@@ -54,27 +55,33 @@ impl ParseTerm for TupleElements {
 
             let trailing_comma_opt = parser.peek_current::<Punctuation>();
 
-            if !subsequent_elements.is_empty() {
-                return Ok(Some(TupleElements {
-                    first_element: Box::new(first_element),
-                    subsequent_elements_opt: Some(subsequent_elements),
-                    trailing_comma_opt,
-                }));
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = trailing_comma_opt
+            {
+                parser.next_token();
             }
 
-            return Ok(Some(TupleElements {
-                first_element: Box::new(first_element),
-                subsequent_elements_opt: None,
-                trailing_comma_opt,
-            }));
+            match subsequent_elements.is_empty() {
+                true => {
+                    return Ok(Some(TupleElements {
+                        first_element: Box::new(first_element),
+                        subsequent_elements_opt: None,
+                        trailing_comma_opt,
+                    }))
+                }
+                false => {
+                    return Ok(Some(TupleElements {
+                        first_element: Box::new(first_element),
+                        subsequent_elements_opt: Some(subsequent_elements),
+                        trailing_comma_opt,
+                    }))
+                }
+            }
+        } else {
+            return Ok(None);
         }
-
-        parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`Returnable`".to_string(),
-            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
-
-        Err(parser.errors())
     }
 }
 
@@ -93,8 +100,6 @@ impl ParseExpr for TupleExpr {
             parser.next_token();
 
             if let Some(elements) = TupleElements::parse(parser)? {
-                parser.next_token();
-
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {
@@ -150,7 +155,7 @@ mod tests {
 
     #[test]
     fn parse_tuple_expr() {
-        let source_code = r#"(1, "a", x)"#;
+        let source_code = r#"(1, "a", x,)"#;
 
         let handler = Handler::default();
 
