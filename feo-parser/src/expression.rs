@@ -189,26 +189,32 @@ impl ParseExpr for Returnable {
             return Ok(Some(Returnable::PathExpr(path_expr)));
         }
 
-        if let Some(_) = parser.peek_current::<Delimiter>() {
-            // TODO: these may give us problems later
-            if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::ArrayExpr(ae)));
-            }
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            match d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::TupleExpr(te)));
+                    }
 
-            if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::IndexExpr(ie)));
-            }
+                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::TupleIndexExpr(ti)));
+                    }
 
-            if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::TupleExpr(te)));
-            }
+                    if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ParenthesizedExpr(par)));
+                    }
+                }
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::IndexExpr(ie)));
+                    }
 
-            if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::TupleIndexExpr(ti)));
-            }
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ArrayExpr(ae)));
+                    }
+                }
 
-            if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::ParenthesizedExpr(par)));
+                _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             match parser.peek_next::<Punctuation>() {
