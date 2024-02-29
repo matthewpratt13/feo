@@ -18,7 +18,7 @@ mod underscore_expr;
 use feo_types::{
     literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
     span::{Span, Spanned},
-    Identifier, U256,
+    U256,
 };
 
 use crate::{
@@ -121,7 +121,6 @@ impl Spanned for Expression {
 
 #[derive(Debug, Clone)]
 pub enum Assignable {
-    Identifier(Identifier),
     ArrayExpr(ArrayExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
@@ -132,7 +131,6 @@ pub enum Assignable {
 impl Spanned for Assignable {
     fn span(&self) -> Span {
         match self {
-            Assignable::Identifier(id) => id.span(),
             Assignable::ArrayExpr(ae) => ae.span(),
             Assignable::StructExpr(se) => se.span(),
             Assignable::TupleExpr(te) => te.span(),
