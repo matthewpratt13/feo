@@ -5,7 +5,7 @@ use feo_types::{
 
 #[derive(Debug, Clone)]
 pub struct UnderscoreExpr {
-    underscore: Underscore,
+    pub underscore: Underscore,
 }
 
 impl Spanned for UnderscoreExpr {

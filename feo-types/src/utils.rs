@@ -1,4 +1,4 @@
-use crate::{Delimiter, Keyword, Punctuation};
+use crate::{Delimiter, Identifier, Keyword, Punctuation};
 
 pub type Brace = Delimiter;
 pub type Bracket = Delimiter;
@@ -79,4 +79,5 @@ pub type QuestionMark = Punctuation;
 pub type Semicolon = Punctuation;
 pub type ForwardSlashEquals = Punctuation;
 pub type ThinArrow = Punctuation;
-pub type Underscore = Punctuation;
+
+pub type Underscore = Identifier;
