@@ -46,3 +46,32 @@ impl ParseExpr for ReturnExpr {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_return_expr() {
+        let source_code = r#"return x"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let return_expr =
+            ReturnExpr::parse(&mut parser).expect("unable to parse return expression");
+
+        println!("{:#?}", return_expr);
+    }
+}
