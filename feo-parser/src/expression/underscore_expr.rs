@@ -1,11 +1,11 @@
 use feo_ast::{expression::UnderscoreExpr, token::Token};
-use feo_error::parser_error::ParserErrorKind;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::Identifier;
 
 use crate::{parse::ParseExpr, parser::Parser};
 
 impl ParseExpr for UnderscoreExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<feo_error::error::CompilerError>>
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {

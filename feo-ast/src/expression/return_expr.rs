@@ -7,8 +7,8 @@ use super::Returnable;
 
 #[derive(Debug, Clone)]
 pub struct ReturnExpr {
-    kw_return: KwReturn,
-    expression_opt: Option<Box<Returnable>>,
+    pub kw_return: KwReturn,
+    pub expression_opt: Option<Box<Returnable>>,
 }
 
 impl Spanned for ReturnExpr {

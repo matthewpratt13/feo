@@ -32,6 +32,7 @@ mod field_access_expr;
 mod literal_expr;
 mod operator_expr;
 mod parenthesized_expr;
+mod return_expr;
 mod struct_expr;
 mod tuple_expr;
 mod underscore_expr;

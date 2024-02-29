@@ -33,7 +33,6 @@ use self::{
         BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,
     },
     range_expr::RangeExprKind,
-    return_expr::ReturnExpr,
 };
 
 pub use self::{
@@ -54,6 +53,7 @@ pub use self::{
         OperatorExprKind, RefOperator, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
     parenthesized_expr::ParenthesizedExpr,
+    return_expr::ReturnExpr,
     struct_expr::{
         StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructElements,
         TupleStructExpr, UnitStructExpr,
@@ -380,7 +380,7 @@ impl Spanned for Operable {
             Operable::MethodCallExpr(mc) => mc.span(),
             Operable::FieldAccessExpr(fa) => fa.span(),
             Operable::Literal(lit) => lit.span(),
-            Operable::PathExpr(pth) =>  pth.span(),
+            Operable::PathExpr(pth) => pth.span(),
             Operable::ParenthesizedExpr(par) => par.span(),
             Operable::ArithmeticOrLogicalExpr(al) => al.span(),
             Operable::DereferenceExpr(de) => de.span(),
