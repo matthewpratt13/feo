@@ -7,9 +7,9 @@ use super::Expression;
 
 #[derive(Debug, Clone)]
 pub struct ParenthesizedExpr {
-    open_parenthesis: Parenthesis,
-    enclosed_operand: Box<Expression>,
-    close_parenthesis: Parenthesis,
+    pub open_parenthesis: Parenthesis,
+    pub enclosed_operand: Box<Expression>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for ParenthesizedExpr {

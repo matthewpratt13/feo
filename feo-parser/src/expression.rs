@@ -3,7 +3,7 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, Castable, ClosureWithBlock,
+        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, Callable, Castable, ClosureWithBlock,
         ClosureWithoutBlock, DereferenceExpr, FunctionCallExpr, IndexExpr, MethodCallExpr,
         NegationExpr, ParenthesizedExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind,
         TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr,
@@ -110,6 +110,97 @@ impl ParseExpr for Assignable {
                 PuncKind::Underscore => {
                     if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Assignable::UnderscoreExpr(ue)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
+    }
+}
+
+impl ParseExpr for Callable {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            match parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::StructExpr(StructExprKind::TupleStruct(ts))));
+                    }
+
+                    if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::StructExpr(StructExprKind::UnitStruct(us))));
+                    }
+                }
+
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::StructExpr(StructExprKind::Struct(se))));
+                    }
+                }
+
+                _ => (),
+            }
+
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) => {
+                    if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::PathExpr(pat)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            let path_expr = PathInExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Callable::PathExpr(path_expr)));
+        }
+
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            match d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::TupleExpr(te)));
+                    }
+
+                    if let Some(pe) = ParenthesizedExpr::parse(parser)? {
+                        return Ok(Some(Callable::ParenthesizedExpr(pe)));
+                    }
+                }
+
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(ae) = ArrayExpr::parse(parser)? {
+                        return Ok(Some(Callable::ArrayExpr(ae)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(k) = parser.peek_current::<Keyword>() {
+            match k.keyword_kind {
+                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::PathExpr(pe)));
                     }
                 }
 
