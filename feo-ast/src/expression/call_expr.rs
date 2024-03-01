@@ -42,9 +42,9 @@ impl Spanned for MethodCallExpr {
 
 #[derive(Debug, Clone)]
 pub struct CallParams {
-    first_param: Box<Returnable>,
-    subsequent_params: Vec<(Comma, Returnable)>,
-    trailing_comma_opt: Option<Comma>,
+    pub first_param: Box<Returnable>,
+    pub subsequent_params: Vec<(Comma, Returnable)>,
+    pub trailing_comma_opt: Option<Comma>,
 }
 
 impl Spanned for CallParams {
