@@ -19,6 +19,7 @@ use crate::{
 
 use self::{
     array_type::ArrayType, impl_trait_type::ImplTraitType, parenthesized_type::ParenthesizedType,
+    reference_type::ReferenceType,
 };
 
 pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
@@ -56,6 +57,8 @@ pub enum Type {
     // trait type
     ImplTrait(ImplTraitType),
 
+    ReferenceType(ReferenceType),
+
     ParenthesizedType(ParenthesizedType),
     InferredType,
 }
@@ -85,6 +88,7 @@ impl Spanned for Type {
                 ClosureExprKind::ClosureWithBlock(cwb) => cwb.span(),
                 ClosureExprKind::ClosureWithoutBlock(cb) => cb.span(),
             },
+            Type::ReferenceType(r) => r.span(),
             Type::ImplTrait(imp) => imp.span(),
             Type::ParenthesizedType(par) => par.span(),
             Type::InferredType => Span::default(),

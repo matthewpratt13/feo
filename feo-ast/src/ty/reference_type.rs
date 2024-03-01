@@ -5,11 +5,11 @@ use feo_types::{
 
 use super::Type;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ReferenceType {
     ampersand: Ampersand,
     kw_mut: KwMut,
-    ty: Type,
+    ty: Box<Type>,
 }
 
 impl Spanned for ReferenceType {

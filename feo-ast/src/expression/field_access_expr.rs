@@ -9,9 +9,9 @@ use super::Assignable;
 
 #[derive(Debug, Clone)]
 pub struct FieldAccessExpr {
-    container_operand: Box<Assignable>,
-    full_stop: FullStop,
-    field_name: StructFieldName,
+    pub container_operand: Box<Assignable>,
+    pub full_stop: FullStop,
+    pub field_name: StructFieldName,
 }
 
 impl Spanned for FieldAccessExpr {
