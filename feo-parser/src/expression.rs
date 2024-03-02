@@ -3,11 +3,11 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, Callable, Castable, ClosureWithBlock,
-        ClosureWithoutBlock, DereferenceExpr, FieldAccessExpr, FunctionCallExpr, IndexExpr,
-        Iterable, MethodCallExpr, NegationExpr, ParenthesizedExpr, ReferenceExpr, Returnable,
-        StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
-        UnderscoreExpr, UnitStructExpr, UnwrapExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, Callable, Castable,
+        ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, FieldAccessExpr, FunctionCallExpr,
+        IndexExpr, Iterable, MethodCallExpr, NegationExpr, ParenthesizedExpr, ReferenceExpr,
+        Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
+        TypeCastExpr, UnderscoreExpr, UnitStructExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
@@ -27,6 +27,7 @@ use crate::{
 };
 
 mod array_expr;
+mod block_expr;
 mod call_expr;
 mod closure_expr;
 mod field_access_expr;

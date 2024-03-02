@@ -28,13 +28,13 @@ use crate::{
 };
 
 use self::{
-    block_expr::BlockExpr,
     iteration_expr::{BreakExpr, ContinueExpr},
     range_expr::RangeExprKind,
 };
 
 pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
+    block_expr::BlockExpr,
     call_expr::CallParams,
     call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{
