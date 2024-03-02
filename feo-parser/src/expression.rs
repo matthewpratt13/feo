@@ -129,32 +129,6 @@ impl ParseExpr for Callable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Delimiter>() {
-                Some(Delimiter {
-                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
-                    ..
-                }) => {
-                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Callable::StructExpr(StructExprKind::TupleStruct(ts))));
-                    }
-
-                    if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Callable::StructExpr(StructExprKind::UnitStruct(us))));
-                    }
-                }
-
-                Some(Delimiter {
-                    delim: (DelimKind::Brace, DelimOrientation::Open),
-                    ..
-                }) => {
-                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Callable::StructExpr(StructExprKind::Struct(se))));
-                    }
-                }
-
-                _ => (),
-            }
-
             match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::DblColon,

@@ -198,7 +198,6 @@ impl Spanned for BooleanOperand {
 #[derive(Debug, Clone)]
 pub enum Callable {
     ArrayExpr(ArrayExpr),
-    StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     PathExpr(PathExpr),
     ParenthesizedExpr(ParenthesizedExpr),
@@ -208,7 +207,6 @@ impl Spanned for Callable {
     fn span(&self) -> Span {
         match self {
             Callable::ArrayExpr(ae) => ae.span(),
-            Callable::StructExpr(se) => se.span(),
             Callable::TupleExpr(te) => te.span(),
             Callable::PathExpr(pth) => pth.span(),
             Callable::ParenthesizedExpr(par) => par.span(),

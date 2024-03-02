@@ -99,7 +99,7 @@ impl ParseExpr for FunctionCallExpr {
                 parser.next_token();
 
                 if let Some(call_params) = CallParams::parse(parser)? {
-                    parser.next_token();
+                    // parser.next_token();
 
                     let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
@@ -120,11 +120,6 @@ impl ParseExpr for FunctionCallExpr {
 
                     parser.log_error(ParserErrorKind::MissingDelimiter {
                         delim: "`)`".to_string(),
-                    });
-                } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`CallParams`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
             } else {
