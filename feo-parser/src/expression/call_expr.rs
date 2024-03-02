@@ -1,9 +1,14 @@
 use feo_ast::{
-    expression::{CallParams, FunctionCallExpr, MethodCallExpr, Returnable},
+    expression::{CallParams, Callable, FunctionCallExpr, MethodCallExpr, Returnable},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, utils::Comma, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+    utils::Comma,
+    Delimiter, Punctuation,
+};
 
 use crate::{
     parse::{ParseExpr, ParseTerm},
@@ -81,7 +86,58 @@ impl ParseExpr for FunctionCallExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(function_operand) = Callable::parse(parser)? {
+            parser.next_token();
+
+            let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                ..
+            }) = open_parenthesis_opt
+            {
+                parser.next_token();
+
+                if let Some(call_params) = CallParams::parse(parser)? {
+                    parser.next_token();
+
+                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                        ..
+                    }) = close_parenthesis_opt
+                    {
+                        parser.next_token();
+
+                        return Ok(Some(FunctionCallExpr {
+                            function_operand: Box::new(function_operand),
+                            open_parenthesis: open_parenthesis_opt.unwrap(),
+                            call_params_opt: Some(call_params),
+                            close_parenthesis: close_parenthesis_opt.unwrap(),
+                        }));
+                    }
+
+                    parser.log_error(ParserErrorKind::MissingDelimiter {
+                        delim: ")".to_string(),
+                    });
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`CallParams`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`(`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
