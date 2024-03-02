@@ -11,8 +11,9 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{ParseTerm, Peek},
-    parser::{Parser, Peeker},
+    parse::ParseTerm,
+    parser::Parser,
+    peek::{Peek, Peeker},
 };
 
 impl Peek for AttributeKind {

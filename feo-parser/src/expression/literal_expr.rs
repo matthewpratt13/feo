@@ -1,9 +1,8 @@
+use crate::peek::{Peek, Peeker};
 use feo_types::{
     literal::{FloatType, IntType, LiteralKind, UIntType},
     Literal, U256,
 };
-
-use crate::{parse::Peek, parser::Peeker};
 
 impl Peek for LiteralKind {
     fn peek(peeker: &Peeker<'_>) -> Option<Self>

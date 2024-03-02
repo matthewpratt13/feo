@@ -19,7 +19,7 @@ use feo_types::{
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::parser::{Parser, Peeker};
+use crate::parser::Parser;
 
 pub trait ParseExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -34,11 +34,7 @@ pub trait ParseTerm {
         Self: Sized;
 }
 
-pub trait Peek {
-    fn peek(peeker: &Peeker<'_>) -> Option<Self>
-    where
-        Self: Sized;
-}
+///////////////////////////////////////////////////////////////////////////////
 
 impl ParseExpr for Assignable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

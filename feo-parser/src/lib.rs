@@ -4,3 +4,4 @@ mod lexer;
 mod parse;
 mod parser;
 mod path;
+mod peek;

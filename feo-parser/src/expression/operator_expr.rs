@@ -11,8 +11,9 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseExpr, Peek},
-    parser::{Parser, Peeker},
+    parse::ParseExpr,
+    parser::Parser,
+    peek::{Peek, Peeker},
 };
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
