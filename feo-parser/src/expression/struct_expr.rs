@@ -211,25 +211,25 @@ impl ParseTerm for TupleStructElements {
     {
         let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
 
-        if let Some(element) = Returnable::parse(parser)? {
+        if let Some(first_element) = Returnable::parse(parser)? {
             parser.next_token();
 
-            let mut comma_opt = parser.peek_current::<Punctuation>();
+            let mut next_comma_opt = parser.peek_current::<Punctuation>();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = comma_opt
+            }) = next_comma_opt
             {
                 parser.next_token();
 
                 if let Some(next_element) = Returnable::parse(parser)? {
-                    subsequent_elements.push((comma_opt.unwrap(), next_element));
+                    subsequent_elements.push((next_comma_opt.unwrap(), next_element));
 
                     parser.next_token();
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
-                        comma_opt = Some(p);
+                        next_comma_opt = Some(p);
                     } else {
                         break;
                     }
@@ -254,12 +254,12 @@ impl ParseTerm for TupleStructElements {
 
             match subsequent_elements.is_empty() {
                 true => Ok(Some(TupleStructElements((
-                    Box::new(element),
+                    Box::new(first_element),
                     None,
                     trailing_comma_opt,
                 )))),
                 false => Ok(Some(TupleStructElements((
-                    Box::new(element),
+                    Box::new(first_element),
                     Some(subsequent_elements),
                     trailing_comma_opt,
                 )))),
