@@ -30,7 +30,7 @@ use crate::{
 use self::iteration_expr::{BreakExpr, ContinueExpr};
 
 pub use self::{
-    array_expr::{ArrayExpr, IndexExpr},
+    array_expr::{ArrayElementsCommaSeparated, ArrayElementsRepeatedValue, ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
     call_expr::{CallParams, FunctionCallExpr, MethodCallExpr},
     closure_expr::{

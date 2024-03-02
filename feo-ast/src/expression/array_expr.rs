@@ -31,16 +31,16 @@ impl Spanned for ArrayExpr {
 
 #[derive(Debug, Clone)]
 pub struct ArrayElementsCommaSeparated {
-    first_element: Box<Iterable>,
-    subsequent_elements: Vec<(Comma, Iterable)>,
-    trailing_comma_opt: Option<Comma>,
+    pub first_element: Box<Iterable>,
+    pub subsequent_elements: Option<Vec<(Comma, Iterable)>>,
+    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ArrayElementsRepeatedValue {
-    repeat_operand: Box<Iterable>,
-    semicolon: Semicolon,
-    num_repeats: Literal<UIntType>,
+    pub repeat_operand: Box<Iterable>,
+    pub semicolon: Semicolon,
+    pub num_repeats: Literal<UIntType>,
 }
 
 #[derive(Debug, Clone)]
