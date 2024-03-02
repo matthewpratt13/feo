@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::attribute::OuterAttr;
+use crate::{attribute::OuterAttr, path::PathInExpr};
 
 use super::Returnable;
 
@@ -82,7 +82,7 @@ pub struct TupleStructElements(
 );
 
 #[derive(Debug, Clone)]
-pub struct UnitStructExpr(pub Identifier);
+pub struct UnitStructExpr(pub PathInExpr);
 
 impl Spanned for UnitStructExpr {
     fn span(&self) -> Span {

@@ -29,9 +29,7 @@ use crate::{
 
 use self::{
     block_expr::BlockExpr,
-    iteration_expr::{
-        BreakExpr, ContinueExpr, InfiniteLoopExpr, IterationExprKind, PredicateLoopExpr,
-    },
+    iteration_expr::{BreakExpr, ContinueExpr},
     range_expr::RangeExprKind,
 };
 
@@ -45,7 +43,7 @@ pub use self::{
     },
     conditional_expr::{IfExpr, MatchExpr},
     field_access_expr::FieldAccessExpr,
-    iteration_expr::IterLoopExpr,
+    iteration_expr::{InfiniteLoopExpr, IterLoopExpr, IterationExprKind, PredicateLoopExpr},
     operator_expr::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DerefOperator,
@@ -197,8 +195,6 @@ impl Spanned for BooleanOperand {
 
 #[derive(Debug, Clone)]
 pub enum Callable {
-    ArrayExpr(ArrayExpr),
-    TupleExpr(TupleExpr),
     PathExpr(PathExpr),
     ParenthesizedExpr(ParenthesizedExpr),
 }
@@ -206,8 +202,6 @@ pub enum Callable {
 impl Spanned for Callable {
     fn span(&self) -> Span {
         match self {
-            Callable::ArrayExpr(ae) => ae.span(),
-            Callable::TupleExpr(te) => te.span(),
             Callable::PathExpr(pth) => pth.span(),
             Callable::ParenthesizedExpr(par) => par.span(),
         }
@@ -339,14 +333,13 @@ pub enum Iterable {
     MethodCallExpr(MethodCallExpr),
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
     FieldAccessExpr(FieldAccessExpr),
-    IterationExpr(IterationExprKind),
-    OperatorExpr(OperatorExprKind),
+    DereferenceExpr(DereferenceExpr),
+    ReferenceExpr(ReferenceExpr),
+    TypeCastExpr(TypeCastExpr),
+    UnwrapExpr(UnwrapExpr),
     ParenthesizedExpr(ParenthesizedExpr),
     RangeExpr(RangeExprKind),
-    ReturnExpr(ReturnExpr),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
     Literal(LiteralKind),
