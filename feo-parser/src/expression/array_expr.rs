@@ -206,7 +206,56 @@ impl ParseExpr for IndexExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(indexed_operand) = ArrayExpr::parse(parser)? {
+            let open_bracket_opt = parser.peek_current::<Delimiter>();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Bracket, DelimOrientation::Open),
+                ..
+            }) = open_bracket_opt
+            {
+                parser.next_token();
+
+                if let Some(index) = parser.peek_current::<Literal<UIntType>>() {
+                    parser.next_token();
+
+                    let close_bracket_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Bracket, DelimOrientation::Close),
+                        ..
+                    }) = close_bracket_opt
+                    {
+                        parser.next_token();
+
+                        return Ok(Some(IndexExpr {
+                            indexed_operand,
+                            open_bracket: open_bracket_opt.unwrap(),
+                            index,
+                            close_bracket: close_bracket_opt.unwrap(),
+                        }));
+                    } else {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "]".to_string(),
+                        });
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`UIntType`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`[`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -235,5 +284,24 @@ mod tests {
         let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse array expression");
 
         println!("{:#?}", array_expr);
+    }
+
+    #[test]
+    fn parse_index_expr() {
+        let source_code = r#"foo[1]"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let index_expr = IndexExpr::parse(&mut parser).expect("unable to parse index expression");
+
+        println!("{:#?}", index_expr);
     }
 }

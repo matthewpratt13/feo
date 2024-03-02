@@ -45,10 +45,10 @@ pub struct ArrayElementsRepeatedValue {
 
 #[derive(Debug, Clone)]
 pub struct IndexExpr {
-    indexed_operand: ArrayExpr,
-    open_bracket: Bracket,
-    index: Literal<UIntType>,
-    close_bracket: Bracket,
+    pub indexed_operand: ArrayExpr,
+    pub open_bracket: Bracket,
+    pub index: Literal<UIntType>,
+    pub close_bracket: Bracket,
 }
 
 impl Spanned for IndexExpr {
