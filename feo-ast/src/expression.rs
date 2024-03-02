@@ -27,10 +27,7 @@ use crate::{
     statement::{ExprStatement, LetStatement},
 };
 
-use self::{
-    iteration_expr::{BreakExpr, ContinueExpr},
-    range_expr::RangeExprKind,
-};
+use self::iteration_expr::{BreakExpr, ContinueExpr};
 
 pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
@@ -51,6 +48,10 @@ pub use self::{
         OperatorExprKind, RefOperator, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
     parenthesized_expr::ParenthesizedExpr,
+    range_expr::{
+        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr,
+        RangeToInclusiveExpr,
+    },
     return_expr::ReturnExpr,
     struct_expr::{
         StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructElements,
