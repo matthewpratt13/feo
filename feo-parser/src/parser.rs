@@ -58,15 +58,6 @@ impl Parser {
         Peeker::with(&self.stream().tokens(), self.pos + 1)
     }
 
-    // peek at the current `Token`, advance the parser; return the peeked `Token` or return `None`
-    pub fn take<T: Peek>(&mut self) -> Option<T> {
-        let value = Peeker::with(&self.stream().tokens(), self.pos);
-
-        self.next_token();
-
-        value
-    }
-
     pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
         let err = ParserError {
             error_kind,

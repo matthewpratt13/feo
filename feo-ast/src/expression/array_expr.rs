@@ -8,7 +8,7 @@ use feo_types::{
 use super::Iterable;
 
 #[derive(Debug, Clone)]
-pub enum ArrayElementsKind {
+enum ArrayElementsKind {
     CommaSeparated(ArrayElementsCommaSeparated),
     RepeatedValue(ArrayElementsRepeatedValue),
 }

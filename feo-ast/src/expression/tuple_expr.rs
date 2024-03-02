@@ -10,7 +10,7 @@ use crate::ty::TupleType;
 use super::{Returnable, TupleStructExpr};
 
 #[derive(Debug, Clone)]
-pub enum TupleKind {
+enum TupleKind {
     Tuple(TupleType),
     TupleStruct(TupleStructExpr),
 }
