@@ -64,23 +64,19 @@ impl ParseTerm for TupleElements {
             }
 
             match subsequent_elements.is_empty() {
-                true => {
-                    return Ok(Some(TupleElements {
-                        first_element: Box::new(first_element),
-                        subsequent_elements_opt: None,
-                        trailing_comma_opt,
-                    }))
-                }
-                false => {
-                    return Ok(Some(TupleElements {
-                        first_element: Box::new(first_element),
-                        subsequent_elements_opt: Some(subsequent_elements),
-                        trailing_comma_opt,
-                    }))
-                }
+                true => Ok(Some(TupleElements {
+                    first_element: Box::new(first_element),
+                    subsequent_elements_opt: None,
+                    trailing_comma_opt,
+                })),
+                false => Ok(Some(TupleElements {
+                    first_element: Box::new(first_element),
+                    subsequent_elements_opt: Some(subsequent_elements),
+                    trailing_comma_opt,
+                })),
             }
         } else {
-            return Ok(None);
+            Ok(None)
         }
     }
 }

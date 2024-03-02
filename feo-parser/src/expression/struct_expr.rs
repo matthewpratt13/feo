@@ -125,23 +125,19 @@ impl ParseTerm for StructExprFields {
             }
 
             match subsequent_fields.is_empty() {
-                true => {
-                    return Ok(Some(StructExprFields {
-                        first_field,
-                        subsequent_fields: None,
-                        trailing_comma_opt,
-                    }))
-                }
-                false => {
-                    return Ok(Some(StructExprFields {
-                        first_field,
-                        subsequent_fields: Some(subsequent_fields),
-                        trailing_comma_opt,
-                    }))
-                }
+                true => Ok(Some(StructExprFields {
+                    first_field,
+                    subsequent_fields: None,
+                    trailing_comma_opt,
+                })),
+                false => Ok(Some(StructExprFields {
+                    first_field,
+                    subsequent_fields: Some(subsequent_fields),
+                    trailing_comma_opt,
+                })),
             }
         } else {
-            return Ok(None);
+            Ok(None)
         }
     }
 }
