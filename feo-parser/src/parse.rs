@@ -5,7 +5,7 @@ use feo_ast::{
         IndexExpr, Iterable, MethodCallExpr, NegationExpr, ParenthesizedExpr, RangeExprKind,
         RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
         ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr,
-        TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr, UnwrapExpr,
+        TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
@@ -66,9 +66,9 @@ impl ParseExpr for Assignable {
                 _ => (),
             }
 
-            if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::StructExpr(StructExprKind::UnitStruct(us))));
-            }
+            // if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
+            //     return Ok(Some(Assignable::StructExpr(StructExprKind::UnitStruct(us))));
+            // }
 
             let path_expr = PathInExpr {
                 first_segment: PathIdenSegmentKind::Iden(id),
@@ -553,9 +553,9 @@ impl ParseExpr for Returnable {
                 _ => (),
             }
 
-            if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
-            }
+            // if let Some(us) = UnitStructExpr::parse(parser).unwrap_or(None) {
+            //     return Ok(Some(Returnable::StructExpr(StructExprKind::UnitStruct(us))));
+            // }
 
             let path_expr = PathInExpr {
                 first_segment: PathIdenSegmentKind::Iden(id),

@@ -146,8 +146,6 @@ impl ParseExpr for ArrayExpr {
             parser.next_token();
 
             if let Some(elements) = ArrayElementsCommaSeparated::parse(parser)? {
-                parser.next_token();
-
                 let close_bracket_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {
@@ -191,7 +189,7 @@ impl ParseExpr for ArrayExpr {
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "ArrayElementsKind`".to_string(),
+                    expected: "`ArrayElementsKind`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -209,5 +207,33 @@ impl ParseExpr for IndexExpr {
         Self: Sized,
     {
         todo!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_array_expr() {
+        let source_code = r#"[1, 2, 3, 4] [a; 4]"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse array expression");
+
+        println!("{:#?}", array_expr);
     }
 }
