@@ -43,7 +43,7 @@ impl Spanned for MethodCallExpr {
 #[derive(Debug, Clone)]
 pub struct CallParams {
     pub first_param: Box<Returnable>,
-    pub subsequent_params: Vec<(Comma, Returnable)>,
+    pub subsequent_params: Option<Vec<(Comma, Returnable)>>,
     pub trailing_comma_opt: Option<Comma>,
 }
 
@@ -51,12 +51,15 @@ impl Spanned for CallParams {
     fn span(&self) -> Span {
         let s1 = self.first_param.span();
 
-        let s2 = match self.subsequent_params.last() {
-            Some(sp) => match &self.trailing_comma_opt {
-                Some(tc) => tc.span(),
-                None => sp.1.span(),
+        let s2 = match &self.subsequent_params {
+            Some(sp) => match sp.last() {
+                Some(p) => p.1.span(),
+                None => self.first_param.span(),
             },
-            None => self.first_param.span(),
+            None => match &self.trailing_comma_opt {
+                Some(t) => t.span(),
+                None => self.first_param.span(),
+            },
         };
 
         Span::join(s1, s2)

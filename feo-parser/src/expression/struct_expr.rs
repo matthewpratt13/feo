@@ -253,23 +253,19 @@ impl ParseTerm for TupleStructElements {
             }
 
             match subsequent_elements.is_empty() {
-                true => {
-                    return Ok(Some(TupleStructElements((
-                        Box::new(element),
-                        None,
-                        trailing_comma_opt,
-                    ))))
-                }
-                false => {
-                    return Ok(Some(TupleStructElements((
-                        Box::new(element),
-                        Some(subsequent_elements),
-                        trailing_comma_opt,
-                    ))))
-                }
+                true => Ok(Some(TupleStructElements((
+                    Box::new(element),
+                    None,
+                    trailing_comma_opt,
+                )))),
+                false => Ok(Some(TupleStructElements((
+                    Box::new(element),
+                    Some(subsequent_elements),
+                    trailing_comma_opt,
+                )))),
             }
         } else {
-            return Ok(None);
+            Ok(None)
         }
     }
 }
