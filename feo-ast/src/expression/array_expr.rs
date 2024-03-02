@@ -8,16 +8,16 @@ use feo_types::{
 use super::Iterable;
 
 #[derive(Debug, Clone)]
-enum ArrayElementsKind {
+pub enum ArrayElementsKind {
     CommaSeparated(ArrayElementsCommaSeparated),
     RepeatedValue(ArrayElementsRepeatedValue),
 }
 
 #[derive(Debug, Clone)]
 pub struct ArrayExpr {
-    open_bracket: Bracket,
-    elements_opt: Option<ArrayElementsKind>,
-    close_bracket: Bracket,
+    pub open_bracket: Bracket,
+    pub elements_opt: Option<ArrayElementsKind>,
+    pub close_bracket: Bracket,
 }
 
 impl Spanned for ArrayExpr {
