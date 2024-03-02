@@ -5,9 +5,10 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, Callable, Castable,
         ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, FieldAccessExpr, FunctionCallExpr,
-        IndexExpr, Iterable, MethodCallExpr, NegationExpr, ParenthesizedExpr, ReferenceExpr,
-        Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
-        TypeCastExpr, UnderscoreExpr, UnitStructExpr, UnwrapExpr,
+        IndexExpr, Iterable, MethodCallExpr, NegationExpr, ParenthesizedExpr, RangeExprKind,
+        RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
+        ReferenceExpr, Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr,
+        TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnitStructExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
@@ -250,14 +251,6 @@ impl ParseExpr for Iterable {
                         return Ok(Some(Iterable::FunctionCallExpr(fc)));
                     }
                 }
-                Some(Delimiter {
-                    delim: (DelimKind::Bracket, DelimOrientation::Open),
-                    ..
-                }) => todo!(),
-                Some(Delimiter {
-                    delim: (DelimKind::Brace, DelimOrientation::Open),
-                    ..
-                }) => todo!(),
 
                 _ => (),
             }
@@ -282,6 +275,26 @@ impl ParseExpr for Iterable {
                 }) => {
                     if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::UnwrapExpr(ue)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblDot,
+                    ..
+                }) => {
+                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeToExpr(rte))));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DotDotEquals,
+                    ..
+                }) => {
+                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(
+                            RangeExprKind::RangeToInclusiveExpr(rti),
+                        )));
                     }
                 }
 
@@ -338,6 +351,34 @@ impl ParseExpr for Iterable {
                 _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            if let Some(p) = parser.peek_next::<Punctuation>() {
+                match p.punc_kind {
+                    PuncKind::DblDot => {
+                        if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromToExpr(
+                                rft,
+                            ))));
+                        }
+
+                        if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromExpr(
+                                rfe,
+                            ))));
+                        }
+                    }
+
+                    PuncKind::DotDotEquals => {
+                        if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Iterable::RangeExpr(
+                                RangeExprKind::RangeInclusiveExpr(rie),
+                            )));
+                        }
+                    }
+
+                    _ => (),
+                }
+            }
+
             if let Some(k) = parser.peek_next::<Keyword>() {
                 match k.keyword_kind {
                     KeywordKind::KwAs => {
@@ -349,6 +390,7 @@ impl ParseExpr for Iterable {
                     _ => (),
                 }
             }
+
             return Ok(Some(Iterable::Literal(l)));
         }
 
@@ -379,6 +421,20 @@ impl ParseExpr for Iterable {
                 PuncKind::Pipe => {
                     if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::ClosureWithBlock(cwb)));
+                    }
+                }
+
+                PuncKind::DblDot => {
+                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeToExpr(rte))));
+                    }
+                }
+
+                PuncKind::DotDotEquals => {
+                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(
+                            RangeExprKind::RangeToInclusiveExpr(rti),
+                        )));
                     }
                 }
 
