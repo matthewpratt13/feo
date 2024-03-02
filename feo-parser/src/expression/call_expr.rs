@@ -7,7 +7,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
     utils::Comma,
-    Delimiter, Punctuation,
+    Delimiter, Identifier, Punctuation,
 };
 
 use crate::{
@@ -139,7 +139,73 @@ impl ParseExpr for MethodCallExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(receiver) = Callable::parse(parser)? {
+            parser.next_token();
+
+            let full_stop_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::FullStop,
+                ..
+            }) = full_stop_opt
+            {
+                parser.next_token();
+
+                if let Some(method_name) = parser.peek_current::<Identifier>() {
+                    parser.next_token();
+
+                    let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                        ..
+                    }) = open_parenthesis_opt
+                    {
+                        parser.next_token();
+
+                        let call_params_opt = CallParams::parse(parser)?;
+
+                        let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                        if let Some(Delimiter {
+                            delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                            ..
+                        }) = close_parenthesis_opt
+                        {
+                            parser.next_token();
+
+                            return Ok(Some(MethodCallExpr {
+                                receiver: Box::new(receiver),
+                                full_stop: full_stop_opt.unwrap(),
+                                method_name,
+                                open_parenthesis: open_parenthesis_opt.unwrap(),
+                                call_params_opt,
+                                close_parenthesis: close_parenthesis_opt.unwrap(),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "`)`".to_string(),
+                        });
+                    } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`(`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                } else {
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`.`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -161,7 +227,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        println!("{:#?}", token_stream);
+        // println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
@@ -169,5 +235,25 @@ mod tests {
             FunctionCallExpr::parse(&mut parser).expect("unable to parse function call expression");
 
         println!("{:#?}", function_call_expr);
+    }
+
+    #[test]
+    fn parse_method_call_expr() {
+        let source_code = r#"foo.bar(baz, "a", 1)"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let method_call_expr =
+            MethodCallExpr::parse(&mut parser).expect("unable to parse method call expression");
+
+        println!("{:#?}", method_call_expr);
     }
 }

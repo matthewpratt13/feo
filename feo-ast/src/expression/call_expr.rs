@@ -1,6 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
     utils::{Comma, FullStop, Parenthesis},
+    Identifier,
 };
 
 use super::{Callable, Returnable};
@@ -24,11 +25,12 @@ impl Spanned for FunctionCallExpr {
 
 #[derive(Debug, Clone)]
 pub struct MethodCallExpr {
-    receiver: Box<Callable>,
-    full_stop: FullStop,
-    open_parenthesis: Parenthesis,
-    call_params_opt: Option<CallParams>,
-    close_parenthesis: Parenthesis,
+    pub receiver: Box<Callable>,
+    pub full_stop: FullStop,
+    pub method_name: Identifier,
+    pub open_parenthesis: Parenthesis,
+    pub call_params_opt: Option<CallParams>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for MethodCallExpr {
