@@ -98,30 +98,28 @@ impl ParseExpr for FunctionCallExpr {
             {
                 parser.next_token();
 
-                if let Some(call_params) = CallParams::parse(parser)? {
-                    // parser.next_token();
+                let call_params_opt = CallParams::parse(parser)?;
 
-                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
-                    if let Some(Delimiter {
-                        delim: (DelimKind::Parenthesis, DelimOrientation::Close),
-                        ..
-                    }) = close_parenthesis_opt
-                    {
-                        parser.next_token();
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                    ..
+                }) = close_parenthesis_opt
+                {
+                    parser.next_token();
 
-                        return Ok(Some(FunctionCallExpr {
-                            function_operand: Box::new(function_operand),
-                            open_parenthesis: open_parenthesis_opt.unwrap(),
-                            call_params_opt: Some(call_params),
-                            close_parenthesis: close_parenthesis_opt.unwrap(),
-                        }));
-                    }
-
-                    parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: "`)`".to_string(),
-                    });
+                    return Ok(Some(FunctionCallExpr {
+                        function_operand: Box::new(function_operand),
+                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                        call_params_opt,
+                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                    }));
                 }
+
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "`)`".to_string(),
+                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`(`".to_string(),
