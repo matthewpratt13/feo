@@ -7,10 +7,10 @@ use super::{Callable, Returnable};
 
 #[derive(Debug, Clone)]
 pub struct FunctionCallExpr {
-    function_operand: Box<Callable>,
-    open_parenthesis: Parenthesis,
-    call_params_opt: Option<CallParams>,
-    close_parenthesis: Parenthesis,
+    pub function_operand: Box<Callable>,
+    pub open_parenthesis: Parenthesis,
+    pub call_params_opt: Option<CallParams>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for FunctionCallExpr {

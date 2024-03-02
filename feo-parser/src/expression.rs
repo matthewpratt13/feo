@@ -160,8 +160,8 @@ impl ParseExpr for Callable {
                     punc_kind: PuncKind::DblColon,
                     ..
                 }) => {
-                    if let Some(pat) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Callable::PathExpr(pat)));
+                    if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Callable::PathExpr(pth)));
                     }
                 }
 
