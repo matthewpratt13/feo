@@ -1,9 +1,12 @@
-use feo_ast::{expression::{
-    ArrayElementsCommaSeparated, ArrayElementsRepeatedValue, ArrayExpr, IndexExpr, Iterable,
-}, token::Token};
+use feo_ast::{
+    expression::{
+        ArrayElementsCommaSeparated, ArrayElementsRepeatedValue, ArrayExpr, IndexExpr, Iterable,
+    },
+    token::Token,
+};
 
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, utils::Comma, Punctuation};
+use feo_types::{literal::UIntType, punctuation::PuncKind, utils::Comma, Literal, Punctuation};
 
 use crate::{
     parse::{ParseExpr, ParseTerm},
@@ -81,7 +84,43 @@ impl ParseTerm for ArrayElementsRepeatedValue {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(repeat_operand) = Iterable::parse(parser)? {
+            parser.next_token();
+
+            let semicolon_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Semicolon,
+                ..
+            }) = semicolon_opt
+            {
+                parser.next_token();
+
+                if let Some(num_repeats) = parser.peek_current::<Literal<UIntType>>() {
+                    parser.next_token();
+
+                    return Ok(Some(ArrayElementsRepeatedValue {
+                        repeat_operand: Box::new(repeat_operand),
+                        semicolon: semicolon_opt.unwrap(),
+                        num_repeats,
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`UIntType`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`;`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
