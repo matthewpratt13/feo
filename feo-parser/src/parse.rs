@@ -488,6 +488,26 @@ impl ParseExpr for Operable {
                 | Some(Punctuation {
                     punc_kind: PuncKind::Percent,
                     ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
                 }) => {
                     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Operable::ArithmeticOrLogicalExpr(al)));
@@ -554,6 +574,26 @@ impl ParseExpr for Operable {
                 })
                 | Some(Punctuation {
                     punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
                     ..
                 }) => {
                     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
