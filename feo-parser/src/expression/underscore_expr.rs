@@ -49,6 +49,6 @@ mod tests {
         let underscore_expr =
             UnderscoreExpr::parse(&mut parser).expect("unable to parse underscore expression");
 
-        println!("{:#?}", underscore_expr);
+        println!("{:#?}", &underscore_expr);
     }
 }

@@ -42,7 +42,7 @@ impl ParseExpr for Assignable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Delimiter>() {
+            match &parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -66,7 +66,7 @@ impl ParseExpr for Assignable {
                 _ => (),
             }
 
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
@@ -88,7 +88,7 @@ impl ParseExpr for Assignable {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Assignable::TupleExpr(te)));
@@ -104,7 +104,7 @@ impl ParseExpr for Assignable {
                 _ => return Ok(None),
             }
         } else if let Some(k) = parser.peek_current::<Keyword>() {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Assignable::PathExpr(pe)));
@@ -114,7 +114,7 @@ impl ParseExpr for Assignable {
                 _ => return Ok(None),
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::Underscore => {
                     if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Assignable::UnderscoreExpr(ue)));
@@ -137,7 +137,7 @@ impl ParseExpr for Callable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
@@ -159,7 +159,7 @@ impl ParseExpr for Callable {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(pe) = ParenthesizedExpr::parse(parser)? {
                         return Ok(Some(Callable::ParenthesizedExpr(pe)));
@@ -169,7 +169,7 @@ impl ParseExpr for Callable {
                 _ => return Ok(None),
             }
         } else if let Some(k) = parser.peek_current::<Keyword>() {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Callable::PathExpr(pe)));
@@ -233,7 +233,7 @@ impl ParseExpr for Iterable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Delimiter>() {
+            match &parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -246,7 +246,7 @@ impl ParseExpr for Iterable {
                 _ => (),
             }
 
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -301,7 +301,7 @@ impl ParseExpr for Iterable {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::TupleIndexExpr(ti)));
@@ -335,7 +335,7 @@ impl ParseExpr for Iterable {
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             if let Some(p) = parser.peek_next::<Punctuation>() {
-                match p.punc_kind {
+                match &p.punc_kind {
                     PuncKind::DblDot => {
                         if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromToExpr(
@@ -363,7 +363,7 @@ impl ParseExpr for Iterable {
             }
 
             if let Some(k) = parser.peek_next::<Keyword>() {
-                match k.keyword_kind {
+                match &k.keyword_kind {
                     KeywordKind::KwAs => {
                         if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Iterable::TypeCastExpr(tc)));
@@ -378,7 +378,7 @@ impl ParseExpr for Iterable {
         }
 
         if let Some(k) = parser.peek_current::<Keyword>() {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::PathExpr(pe)));
@@ -388,7 +388,7 @@ impl ParseExpr for Iterable {
                 _ => return Ok(None),
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::Asterisk => {
                     if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::DereferenceExpr(de)));
@@ -442,7 +442,7 @@ impl ParseExpr for Operable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Delimiter>() {
+            match &parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -455,7 +455,7 @@ impl ParseExpr for Operable {
                 _ => (),
             }
 
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -515,7 +515,7 @@ impl ParseExpr for Operable {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Operable::ParenthesizedExpr(par)));
@@ -535,7 +535,7 @@ impl ParseExpr for Operable {
                 _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
                     ..
@@ -565,7 +565,7 @@ impl ParseExpr for Operable {
             }
 
             if let Some(k) = parser.peek_next::<Keyword>() {
-                match k.keyword_kind {
+                match &k.keyword_kind {
                     KeywordKind::KwAs => {
                         if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Operable::TypeCastExpr(tc)));
@@ -580,7 +580,7 @@ impl ParseExpr for Operable {
         }
 
         if let Some(k) = parser.peek_current::<Keyword>() {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Operable::PathExpr(pe)));
@@ -590,7 +590,7 @@ impl ParseExpr for Operable {
                 _ => return Ok(None),
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::Ampersand => {
                     if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Operable::ReferenceExpr(re)));
@@ -625,7 +625,7 @@ impl ParseExpr for Returnable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Delimiter>() {
+            match &parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -653,7 +653,7 @@ impl ParseExpr for Returnable {
                 _ => (),
             }
 
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -742,7 +742,7 @@ impl ParseExpr for Returnable {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::ParenthesizedExpr(par)));
@@ -770,7 +770,7 @@ impl ParseExpr for Returnable {
                 _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            match parser.peek_next::<Punctuation>() {
+            match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
                     ..
@@ -820,7 +820,7 @@ impl ParseExpr for Returnable {
             }
 
             if let Some(k) = parser.peek_next::<Keyword>() {
-                match k.keyword_kind {
+                match &k.keyword_kind {
                     KeywordKind::KwAs => {
                         if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Returnable::TypeCastExpr(tc)));
@@ -835,7 +835,7 @@ impl ParseExpr for Returnable {
         }
 
         if let Some(k) = parser.peek_current::<Keyword>() {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::PathExpr(pe)));
@@ -845,7 +845,7 @@ impl ParseExpr for Returnable {
                 _ => return Ok(None),
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::Underscore => {
                     if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::UnderscoreExpr(ue)));

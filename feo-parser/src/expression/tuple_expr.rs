@@ -63,7 +63,7 @@ impl ParseTerm for TupleElements {
                 parser.next_token();
             }
 
-            match subsequent_elements.is_empty() {
+            match &subsequent_elements.is_empty() {
                 true => Ok(Some(TupleElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: None,

@@ -68,7 +68,7 @@ impl ParseTerm for ArrayElementsCommaSeparated {
                 parser.next_token();
             }
 
-            match subsequent_elements.is_empty() {
+            match &subsequent_elements.is_empty() {
                 true => Ok(Some(ArrayElementsCommaSeparated {
                     first_element: Box::new(first_element),
                     subsequent_elements: None,
@@ -229,11 +229,11 @@ impl ParseExpr for IndexExpr {
                             index,
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
-                    } else {
-                        parser.log_error(ParserErrorKind::MissingDelimiter {
-                            delim: "]".to_string(),
-                        });
                     }
+                    
+                    parser.log_error(ParserErrorKind::MissingDelimiter {
+                        delim: "]".to_string(),
+                    });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`UIntType`".to_string(),

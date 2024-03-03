@@ -63,7 +63,7 @@ impl ParseTerm for CallParams {
                 parser.next_token();
             }
 
-            match subsequent_params.is_empty() {
+            match &subsequent_params.is_empty() {
                 true => Ok(Some(CallParams {
                     first_param: Box::new(first_param),
                     subsequent_params: None,

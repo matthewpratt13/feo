@@ -22,7 +22,7 @@ impl Peek for AttributeKind {
         Self: Sized,
     {
         let attr_kind = if let Some(k) = Keyword::peek(peeker) {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwAbstract => AttributeKind::KwAbstract(k),
                 KeywordKind::KwContract => AttributeKind::KwContract(k),
                 KeywordKind::KwExport => AttributeKind::KwExport(k),

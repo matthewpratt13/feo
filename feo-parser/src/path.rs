@@ -21,7 +21,7 @@ impl Peek for SimplePathSegmentKind {
         let segment_kind = if let Some(id) = Identifier::peek(peeker) {
             SimplePathSegmentKind::Iden(id)
         } else if let Some(k) = Keyword::peek(peeker) {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
                 KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
@@ -74,25 +74,20 @@ impl ParseTerm for SimplePath {
                 }
             }
 
-            if !subsequent_segments.is_empty() {
-                return Ok(Some(SimplePath {
+            match &subsequent_segments.is_empty() {
+                true => Ok(Some(SimplePath {
+                    first_segment,
+                    subsequent_segments: None,
+                })),
+
+                false => Ok(Some(SimplePath {
                     first_segment,
                     subsequent_segments: Some(subsequent_segments),
-                }));
+                })),
             }
-
-            return Ok(Some(SimplePath {
-                first_segment,
-                subsequent_segments: None,
-            }));
+        } else {
+            Ok(None)
         }
-
-        parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`SimplePathSegmentKind`".to_string(),
-            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
-
-        Err(parser.errors())
     }
 }
 
@@ -104,7 +99,7 @@ impl Peek for PathIdenSegmentKind {
         let segment_kind = if let Some(id) = Identifier::peek(peeker) {
             PathIdenSegmentKind::Iden(id)
         } else if let Some(k) = Keyword::peek(peeker) {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
                 KeywordKind::KwSelfType => PathIdenSegmentKind::KwSelfType(k),
@@ -161,25 +156,19 @@ impl ParseTerm for PathInExpr {
                 }
             }
 
-            if !subsequent_segments.is_empty() {
-                return Ok(Some(PathInExpr {
+            match &subsequent_segments.is_empty() {
+                true => Ok(Some(PathInExpr {
+                    first_segment,
+                    subsequent_segments: None,
+                })),
+                false => Ok(Some(PathInExpr {
                     first_segment,
                     subsequent_segments: Some(subsequent_segments),
-                }));
+                })),
             }
-
-            return Ok(Some(PathInExpr {
-                first_segment,
-                subsequent_segments: None,
-            }));
+        } else {
+            Ok(None)
         }
-
-        parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`PathIdenSegmentKind`".to_string(),
-            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
-
-        Err(parser.errors())
     }
 }
 
@@ -222,25 +211,20 @@ impl ParseTerm for PathType {
                 }
             }
 
-            if !subsequent_segments.is_empty() {
-                return Ok(Some(PathType {
+            match &subsequent_segments.is_empty() {
+                true => Ok(Some(PathType {
+                    first_segment,
+                    subsequent_segments: None,
+                })),
+
+                false => Ok(Some(PathType {
                     first_segment,
                     subsequent_segments: Some(subsequent_segments),
-                }));
+                })),
             }
-
-            return Ok(Some(PathType {
-                first_segment,
-                subsequent_segments: None,
-            }));
+        } else {
+            Ok(None)
         }
-
-        parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "`PathIdenSegmentKind`".to_string(),
-            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
-
-        Err(parser.errors())
     }
 }
 

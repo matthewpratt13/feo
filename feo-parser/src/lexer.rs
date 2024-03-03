@@ -912,9 +912,9 @@ mod tests {
         } else {
             println!(
                 "error: {}, \nposition: line {}, col {}",
-                lexer.errors().pop().expect("Error not found").error_kind(),
-                lexer.errors().pop().expect("Error not found").line_col().0 + 731,
-                lexer.errors().pop().expect("Error not found").line_col().1,
+                &lexer.errors().pop().expect("Error not found").error_kind(),
+                &lexer.errors().pop().expect("Error not found").line_col().0 + 731,
+                &lexer.errors().pop().expect("Error not found").line_col().1,
             );
         }
     }

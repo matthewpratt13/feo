@@ -22,7 +22,7 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
         Self: Sized,
     {
         let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::Percent => ArithmeticOrLogicalOperatorKind::Modulus(p),
                 PuncKind::Ampersand => ArithmeticOrLogicalOperatorKind::LogicalAnd(p),
                 PuncKind::Asterisk => ArithmeticOrLogicalOperatorKind::Multiply(p),
@@ -49,7 +49,7 @@ impl Peek for ComparisonOperatorKind {
         Self: Sized,
     {
         let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::LessThan => ComparisonOperatorKind::LessThan(p),
                 PuncKind::GreaterThan => ComparisonOperatorKind::GreaterThan(p),
                 PuncKind::BangEquals => ComparisonOperatorKind::NotEqual(p),
@@ -72,7 +72,7 @@ impl Peek for CompoundAssignOperatorKind {
         Self: Sized,
     {
         let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::PercentEquals => CompoundAssignOperatorKind::ModulusAssign(p),
                 PuncKind::AsteriskEquals => CompoundAssignOperatorKind::MultiplyAssign(p),
                 PuncKind::PlusEquals => CompoundAssignOperatorKind::AddAssign(p),
@@ -94,7 +94,7 @@ impl Peek for LazyBoolOperatorKind {
         Self: Sized,
     {
         let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
                 PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
                 _ => return None,
@@ -113,7 +113,7 @@ impl Peek for NegationOperatorKind {
         Self: Sized,
     {
         let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
-            match p.punc_kind {
+            match &p.punc_kind {
                 PuncKind::Minus => NegationOperatorKind::InvertNumeric(p),
                 PuncKind::Bang => NegationOperatorKind::InvertBool(p),
                 _ => return None,
@@ -147,7 +147,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
             if let Some(p) = parser.peek_current::<Punctuation>() {
                 parser.next_token();
 
-                let operator = match p {
+                let operator = match &p {
                     Punctuation {
                         punc_kind: PuncKind::Plus,
                         ..
@@ -395,6 +395,26 @@ mod tests {
             .expect("unable to parse arithmetic expression");
 
         println!("{:#?}", arithmetic_expr);
+    }    
+    
+    #[test]
+    fn parse_logical_expr() {
+        let source_code = r#"1 | 2"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let logical_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
+            .expect("unable to parse logical expression");
+
+        println!("{:#?}", logical_expr);
     }
 
     #[test]

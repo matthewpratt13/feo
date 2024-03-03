@@ -56,7 +56,7 @@ impl ParseTerm for StructExprField {
 
                     let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
-                    match attributes.is_empty() {
+                    match &attributes.is_empty() {
                         true => return Ok(Some(StructExprField(Some(attributes), field_content))),
                         false => return Ok(Some(StructExprField(None, field_content))),
                     }
@@ -124,7 +124,7 @@ impl ParseTerm for StructExprFields {
                 parser.next_token();
             }
 
-            match subsequent_fields.is_empty() {
+            match &subsequent_fields.is_empty() {
                 true => Ok(Some(StructExprFields {
                     first_field,
                     subsequent_fields: None,
@@ -248,7 +248,7 @@ impl ParseTerm for TupleStructElements {
                 parser.next_token();
             }
 
-            match subsequent_elements.is_empty() {
+            match &subsequent_elements.is_empty() {
                 true => Ok(Some(TupleStructElements((
                     Box::new(first_element),
                     None,
