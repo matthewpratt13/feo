@@ -6,6 +6,7 @@ mod block_expr;
 mod call_expr;
 mod closure_expr;
 mod field_access_expr;
+mod iteration_expr;
 mod literal_expr;
 mod operator_expr;
 mod parenthesized_expr;
