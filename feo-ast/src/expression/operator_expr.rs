@@ -149,9 +149,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 
 #[derive(Debug, Clone)]
 pub struct AssignmentExpr {
-    assignee: Box<Operable>,
-    operator: AssignOperator,
-    new_value: Box<Operable>,
+    pub assignee: Box<Operable>,
+    pub operator: AssignOperator,
+    pub new_value: Box<Operable>,
 }
 
 impl Spanned for AssignmentExpr {

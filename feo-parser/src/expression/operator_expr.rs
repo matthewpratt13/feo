@@ -229,7 +229,43 @@ impl ParseExpr for AssignmentExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(assignee) = Operable::parse(parser)? {
+            parser.next_token();
+
+            let equals_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Equals,
+                ..
+            }) = equals_opt
+            {
+                parser.next_token();
+
+                if let Some(new_value) = Operable::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(AssignmentExpr {
+                        assignee: Box::new(assignee),
+                        operator: equals_opt.unwrap(),
+                        new_value: Box::new(new_value),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Operable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`=`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -377,6 +413,7 @@ mod tests {
 
     use super::*;
 
+    // TODO: throws stack overflow error – likely due to nested enums. fix.
     #[test]
     fn parse_arithmetic_expr() {
         let source_code = r#"1 + 2"#;
@@ -395,8 +432,9 @@ mod tests {
             .expect("unable to parse arithmetic expression");
 
         println!("{:#?}", arithmetic_expr);
-    }    
-    
+    }
+
+    // TODO: throws stack overflow error – likely due to nested enums. fix.
     #[test]
     fn parse_logical_expr() {
         let source_code = r#"1 | 2"#;
@@ -415,6 +453,26 @@ mod tests {
             .expect("unable to parse logical expression");
 
         println!("{:#?}", logical_expr);
+    }
+
+    #[test]
+    fn parse_assignment_expr() {
+        let source_code = r#"x = 2"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let assignment_expr =
+            AssignmentExpr::parse(&mut parser).expect("unable to parse assignment expression");
+
+        println!("{:#?}", assignment_expr);
     }
 
     #[test]
