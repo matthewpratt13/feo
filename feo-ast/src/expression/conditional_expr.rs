@@ -12,17 +12,17 @@ use super::{Assignable, BlockExpr, BooleanOperand, Expression};
 
 #[derive(Debug, Clone)]
 pub struct IfExpr {
-    kw_if: KwIf,
-    condition_operand: Box<BooleanOperand>,
-    if_block: Box<BlockExpr>,
-    else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
-    else_block_opt: Option<(KwElse, BlockExpr)>,
+    pub kw_if: KwIf,
+    pub condition_operand: Box<BooleanOperand>,
+    pub if_block: Box<BlockExpr>,
+    pub else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
+    pub trailing_else_block_opt: Option<(KwElse, BlockExpr)>,
 }
 
 impl Spanned for IfExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_if.span();
-        let s2 = match &self.else_block_opt {
+        let s2 = match &self.trailing_else_block_opt {
             Some(e) => e.1.span(),
             None => match &self.else_if_blocks_opt {
                 Some(ei) => match ei.last() {

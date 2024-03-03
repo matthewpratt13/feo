@@ -472,7 +472,7 @@ impl ParseExpr for LazyBoolExpr {
                             expected: "`LazyBoolOperatorKind`".to_string(),
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
-                        return Ok(None);
+                        return Err(parser.errors());
                     }
                 };
 
@@ -531,7 +531,7 @@ impl ParseExpr for NegationExpr {
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
 
-                    return Ok(None);
+                    return Err(parser.errors());
                 }
             };
 
@@ -747,8 +747,8 @@ mod tests {
             DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
 
         println!("{:#?}", deref_expr);
-    } 
-    
+    }
+
     #[test]
     fn parse_lazy_bool_expr() {
         let source_code = r#"x && y"#;
