@@ -581,7 +581,7 @@ mod tests {
 
     #[test]
     fn parse_arithmetic_expr() {
-        let source_code = r#"x + 2 "#;
+        let source_code = r#"x + 2"#;
 
         let handler = Handler::default();
 
