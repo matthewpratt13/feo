@@ -1,8 +1,10 @@
 use feo_ast::{
-    attribute::OuterAttr, expression::{
+    attribute::OuterAttr,
+    expression::{
         Returnable, StructExpr, StructExprField, StructExprFields, TupleStructElements,
-        TupleStructExpr, UnitStructExpr,
-    }, path::PathInExpr, token::Token
+        TupleStructExpr,
+    },
+    token::Token,
 };
 
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -317,25 +319,6 @@ impl ParseExpr for TupleStructExpr {
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
-    }
-}
-
-impl ParseExpr for UnitStructExpr {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        if let Some(id) = PathInExpr::parse(parser)? {
-            parser.next_token();
-            return Ok(Some(UnitStructExpr(id)));
-        }
-
-        parser.log_error(ParserErrorKind::UnexpectedToken {
-            expected: "identifier".to_string(),
-            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-        });
 
         Err(parser.errors())
     }

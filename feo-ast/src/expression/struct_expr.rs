@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{attribute::OuterAttr, path::PathInExpr};
+use crate::attribute::OuterAttr;
 
 use super::Returnable;
 
@@ -12,7 +12,6 @@ use super::Returnable;
 pub enum StructExprKind {
     Struct(StructExpr),
     TupleStruct(TupleStructExpr),
-    UnitStruct(UnitStructExpr),
 }
 
 impl Spanned for StructExprKind {
@@ -20,7 +19,6 @@ impl Spanned for StructExprKind {
         match self {
             StructExprKind::Struct(s) => s.span(),
             StructExprKind::TupleStruct(ts) => ts.span(),
-            StructExprKind::UnitStruct(us) => us.span(),
         }
     }
 }
@@ -80,15 +78,3 @@ pub struct TupleStructElements(
         Option<Comma>,
     ),
 );
-
-#[derive(Debug, Clone)]
-pub struct UnitStructExpr(pub PathInExpr);
-
-impl Spanned for UnitStructExpr {
-    fn span(&self) -> Span {
-        let s1 = self.0.span();
-        let s2 = self.0.span();
-
-        Span::join(s1, s2)
-    }
-}
