@@ -2,12 +2,10 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, Callable,
         Castable, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, FieldAccessExpr,
-        FunctionCallExpr, IfExpr, IndexExpr, InfiniteLoopExpr, IterLoopExpr, Iterable,
-        IterationExprKind, MatchExpr, MethodCallExpr, NegationExpr, Operable, ParenthesizedExpr,
-        PredicateLoopExpr, RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr,
-        RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, ReturnExpr, Returnable, StructExpr,
-        StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr,
-        UnwrapExpr,
+        FunctionCallExpr, IndexExpr, Iterable, MethodCallExpr, NegationExpr, Operable,
+        ParenthesizedExpr, RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr,
+        RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind,
+        TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
@@ -118,8 +116,8 @@ impl ParseExpr for Assignable {
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
                 PuncKind::Underscore => {
-                    if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Assignable::UnderscoreExpr(ue)));
+                    if let Some(und) = UnderscoreExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Assignable::UnderscoreExpr(und)));
                     }
                 }
 
@@ -167,33 +165,20 @@ impl ParseExpr for BooleanOperand {
                 }
 
                 Some(Punctuation {
-                    punc_kind: PuncKind::DblDot,
-                    ..
-                }) => {
-                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::RangeExpr(RangeExprKind::RangeToExpr(
-                            rte,
-                        ))));
-                    }
-                }
-
-                Some(Punctuation {
-                    punc_kind: PuncKind::DotDotEquals,
-                    ..
-                }) => {
-                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::RangeExpr(
-                            RangeExprKind::RangeToInclusiveExpr(rti),
-                        )));
-                    }
-                }
-
-                Some(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
                 }) => {
                     if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(BooleanOperand::PathExpr(pth)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::QuestionMark,
+                    ..
+                }) => {
+                    if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(BooleanOperand::UnwrapExpr(ue)));
                     }
                 }
 
@@ -215,10 +200,6 @@ impl ParseExpr for BooleanOperand {
                         return Ok(Some(BooleanOperand::ParenthesizedExpr(par)));
                     }
 
-                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::TupleExpr(te)));
-                    }
-
                     if let Some(tie) = TupleIndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(BooleanOperand::TupleIndexExpr(tie)));
                     }
@@ -227,10 +208,6 @@ impl ParseExpr for BooleanOperand {
                 (DelimKind::Bracket, DelimOrientation::Open) => {
                     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(BooleanOperand::IndexExpr(ie)));
-                    }
-
-                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::ArrayExpr(ae)));
                     }
                 }
 
@@ -243,78 +220,14 @@ impl ParseExpr for BooleanOperand {
                 _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            if let Some(p) = parser.peek_next::<Punctuation>() {
-                match &p.punc_kind {
-                    PuncKind::DblDot => {
-                        if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(BooleanOperand::RangeExpr(
-                                RangeExprKind::RangeFromToExpr(rft),
-                            )));
-                        }
-
-                        if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(BooleanOperand::RangeExpr(
-                                RangeExprKind::RangeFromExpr(rfe),
-                            )));
-                        }
-                    }
-
-                    PuncKind::DotDotEquals => {
-                        if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(BooleanOperand::RangeExpr(
-                                RangeExprKind::RangeInclusiveExpr(rie),
-                            )));
-                        }
-                    }
-
-                    _ => (),
-                }
-            }
-
             return Ok(Some(BooleanOperand::Literal(l)));
         }
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwIf => {
-                    if let Some(ife) = IfExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::IfExpr(ife)));
-                    }
-                }
-
-                KeywordKind::KwFor => {
-                    if let Some(ile) = IterLoopExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::IterationExpr(
-                            IterationExprKind::IterLoop(ile),
-                        )));
-                    }
-                }
-
-                KeywordKind::KwLoop => {
-                    if let Some(inf) = InfiniteLoopExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::IterationExpr(
-                            IterationExprKind::InfiniteLoop(inf),
-                        )));
-                    }
-                }
-
-                KeywordKind::KwMatch => {
-                    if let Some(me) = MatchExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::MatchExpr(me)));
-                    }
-                }
-
-                KeywordKind::KwReturn => {
-                    if let Some(re) = ReturnExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::ReturnExpr(re)));
-                    }
-                }
-
-                KeywordKind::KwWhile => {
-                    if let Some(ple) = PredicateLoopExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::IterationExpr(
-                            IterationExprKind::PredicateLoop(ple),
-                        )));
+                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(BooleanOperand::PathExpr(pe)));
                     }
                 }
 
@@ -322,21 +235,9 @@ impl ParseExpr for BooleanOperand {
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
-                PuncKind::Pipe => {
-                    if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::ClosureWithBlock(cwb)));
-                    }
-                }
-
-                PuncKind::DblPipe => {
-                    if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::ClosureWithoutBlock(c)));
-                    }
-                }
-
                 PuncKind::Underscore => {
-                    if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::UnderscoreExpr(ue)));
+                    if let Some(und) = UnderscoreExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(BooleanOperand::UnderscoreExpr(und)));
                     }
                 }
 
@@ -620,12 +521,6 @@ impl ParseExpr for Iterable {
                     }
                 }
 
-                PuncKind::Pipe => {
-                    if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::ClosureWithBlock(cwb)));
-                    }
-                }
-
                 PuncKind::DblDot => {
                     if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeToExpr(rte))));
@@ -640,11 +535,6 @@ impl ParseExpr for Iterable {
                     }
                 }
 
-                PuncKind::DblPipe => {
-                    if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::ClosureWithoutBlock(c)));
-                    }
-                }
                 _ => return Ok(None),
             }
         } else {
@@ -1006,8 +896,8 @@ impl ParseExpr for Returnable {
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
                 PuncKind::Underscore => {
-                    if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Returnable::UnderscoreExpr(ue)));
+                    if let Some(und) = UnderscoreExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::UnderscoreExpr(und)));
                     }
                 }
 
