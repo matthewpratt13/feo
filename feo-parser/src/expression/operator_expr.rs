@@ -3,7 +3,7 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
         ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
         DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
-        ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+        Operable, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
     token::Token,
 };
@@ -141,7 +141,240 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(lhs) = Operable::parse(parser)? {
+            parser.next_token();
+
+            if let Some(operator) = parser.peek_current::<Punctuation>() {
+                match operator {
+                    Punctuation {
+                        punc_kind: PuncKind::Plus,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::Add(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::Minus,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::Subtract(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::Asterisk,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::Multiply(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::ForwardSlash,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::Divide(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::Percent,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::Modulus(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::Ampersand,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::LogicalAnd(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::Pipe,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::LogicalOr(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::Caret,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::LogicalXOr(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::DblLessThan,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::ShiftLeft(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                    Punctuation {
+                        punc_kind: PuncKind::DblGreaterThan,
+                        ..
+                    } => {
+                        parser.next_token();
+
+                        if let Some(rhs) = Operable::parse(parser)? {
+                            parser.next_token();
+
+                            return Ok(Some(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(lhs),
+                                operator: ArithmeticOrLogicalOperatorKind::ShiftRight(operator),
+                                rhs: Box::new(rhs),
+                            }));
+                        }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`Operable`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+
+                    _ => {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`ArithmeticOrLogicalOperatorKind`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`ArithmeticOrLogicalOperatorKind`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -297,6 +530,26 @@ mod tests {
     use crate::lexer::Lexer;
 
     use super::*;
+
+    #[test]
+    fn parse_arithmetic_expr() {
+        let source_code = r#"1+2"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let arithmetic_expr =
+            DereferenceExpr::parse(&mut parser).expect("unable to parse arithmetic expression");
+
+        println!("{:#?}", arithmetic_expr);
+    }
 
     #[test]
     fn parse_deref_expr() {
