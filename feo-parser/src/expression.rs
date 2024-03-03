@@ -5,6 +5,7 @@ mod array_expr;
 mod block_expr;
 mod call_expr;
 mod closure_expr;
+mod conditional_expr;
 mod field_access_expr;
 mod iteration_expr;
 mod literal_expr;

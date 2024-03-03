@@ -25,11 +25,23 @@ impl Spanned for IterationExprKind {
     }
 }
 
-#[allow(dead_code)]
-pub type BreakExpr = Keyword;
+#[derive(Debug, Clone)]
+pub struct BreakExpr(pub Keyword);
 
-#[allow(dead_code)]
-pub type ContinueExpr = Keyword;
+impl Spanned for BreakExpr {
+    fn span(&self) -> Span {
+        self.0.span()
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ContinueExpr(pub Keyword);
+
+impl Spanned for ContinueExpr {
+    fn span(&self) -> Span {
+        self.0.span()
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct InfiniteLoopExpr {
