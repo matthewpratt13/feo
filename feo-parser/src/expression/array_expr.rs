@@ -187,11 +187,6 @@ impl ParseExpr for ArrayExpr {
                 parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "]".to_string(),
                 });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`ArrayElementsKind`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             }
         } else {
             return Ok(None);
@@ -269,7 +264,7 @@ mod tests {
 
     #[test]
     fn parse_array_expr() {
-        let source_code = r#"[1, 2, 3, 4] [a; 4]"#;
+        let source_code = r#"[1, 2, 3, 4] [a; 4] []"#;
 
         let handler = Handler::default();
 
