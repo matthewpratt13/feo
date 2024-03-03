@@ -147,7 +147,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
             if let Some(p) = parser.peek_current::<Punctuation>() {
                 parser.next_token();
 
-                let operator = match &p {
+                let operator = match p {
                     Punctuation {
                         punc_kind: PuncKind::Plus,
                         ..
