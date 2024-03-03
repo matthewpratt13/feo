@@ -133,9 +133,9 @@ pub type RefOperator = (Ampersand, Option<KwMut>);
 
 #[derive(Debug, Clone)]
 pub struct ArithmeticOrLogicalExpr {
-    lhs: Box<Operable>,
-    operator: ArithmeticOrLogicalOperatorKind,
-    rhs: Box<Operable>,
+    pub lhs: Box<Operable>,
+    pub operator: ArithmeticOrLogicalOperatorKind,
+    pub rhs: Box<Operable>,
 }
 
 impl Spanned for ArithmeticOrLogicalExpr {
