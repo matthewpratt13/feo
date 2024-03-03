@@ -517,12 +517,12 @@ impl ParseExpr for Operable {
         if let Some(d) = parser.peek_current::<Delimiter>() {
             match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
-                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Operable::TupleIndexExpr(ti)));
-                    }
-
                     if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Operable::ParenthesizedExpr(par)));
+                    }
+
+                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Operable::TupleIndexExpr(ti)));
                     }
                 }
 
@@ -744,16 +744,16 @@ impl ParseExpr for Returnable {
         if let Some(d) = parser.peek_current::<Delimiter>() {
             match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::ParenthesizedExpr(par)));
+                    }
+
                     if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::TupleIndexExpr(ti)));
                     }
 
                     if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::TupleExpr(te)));
-                    }
-
-                    if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Returnable::ParenthesizedExpr(par)));
                     }
                 }
 
