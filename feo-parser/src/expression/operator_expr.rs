@@ -342,7 +342,71 @@ impl ParseExpr for ComparisonExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(lhs) = Operable::parse(parser)? {
+            parser.next_token();
+
+            if let Some(p) = parser.peek_current::<Punctuation>() {
+                parser.next_token();
+
+                let operator = match p {
+                    Punctuation {
+                        punc_kind: PuncKind::DblEquals,
+                        ..
+                    } => ComparisonOperatorKind::Equality(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::BangEquals,
+                        ..
+                    } => ComparisonOperatorKind::NotEqual(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::LessThan,
+                        ..
+                    } => ComparisonOperatorKind::LessThan(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::GreaterThan,
+                        ..
+                    } => ComparisonOperatorKind::GreaterThan(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::LessThanEquals,
+                        ..
+                    } => ComparisonOperatorKind::LessThanOrEqual(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::GreaterThanEquals,
+                        ..
+                    } => ComparisonOperatorKind::GreaterThanOrEqual(p),
+
+                    _ => return Ok(None),
+                };
+
+                if let Some(rhs) = Operable::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(ComparisonExpr {
+                        lhs: Box::new(lhs),
+                        operator,
+                        rhs: Box::new(rhs),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Operable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`ComparisonOperatorKind`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -395,7 +459,50 @@ impl ParseExpr for NegationExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let negation_operator_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(p) = parser.peek_current::<Punctuation>() {
+            parser.next_token();
+
+            let operator = match p {
+                Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                } => NegationOperatorKind::InvertNumeric(p),
+
+                Punctuation {
+                    punc_kind: PuncKind::Bang,
+                    ..
+                } => NegationOperatorKind::InvertBool(p),
+
+                _ => {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`Operable`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+
+                    return Ok(None);
+                }
+            };
+
+            if let Some(operand) = Operable::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(NegationExpr {
+                    operator,
+                    operand: Box::new(operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Operable`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -553,6 +660,26 @@ mod tests {
     }
 
     #[test]
+    fn parse_comparison_expr() {
+        let source_code = r#"x > 2"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let comparison_expr = CompoundAssignmentExpr::parse(&mut parser)
+            .expect("unable to parse comparison expression");
+
+        println!("{:#?}", comparison_expr);
+    }
+
+    #[test]
     fn parse_deref_expr() {
         let source_code = r#"*x"#;
 
@@ -570,6 +697,26 @@ mod tests {
             DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
 
         println!("{:#?}", deref_expr);
+    }
+
+    #[test]
+    fn parse_negation_expr() {
+        let source_code = r#"!x"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let negation_expr =
+            DereferenceExpr::parse(&mut parser).expect("unable to parse negation expression");
+
+        println!("{:#?}", negation_expr);
     }
 
     #[test]
