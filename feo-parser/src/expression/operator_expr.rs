@@ -413,10 +413,9 @@ mod tests {
 
     use super::*;
 
-    // TODO: throws stack overflow error – likely due to nested enums. fix.
     #[test]
     fn parse_arithmetic_expr() {
-        let source_code = r#"1 + 2"#;
+        let source_code = r#"x + 2 "#;
 
         let handler = Handler::default();
 
@@ -434,7 +433,6 @@ mod tests {
         println!("{:#?}", arithmetic_expr);
     }
 
-    // TODO: throws stack overflow error – likely due to nested enums. fix.
     #[test]
     fn parse_logical_expr() {
         let source_code = r#"1 | 2"#;
