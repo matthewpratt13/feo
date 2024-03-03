@@ -181,9 +181,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonExpr {
-    lhs: Box<Operable>,
-    operator: ComparisonOperatorKind,
-    rhs: Box<Operable>,
+    pub lhs: Box<Operable>,
+    pub operator: ComparisonOperatorKind,
+    pub rhs: Box<Operable>,
 }
 
 impl Spanned for ComparisonExpr {
@@ -228,8 +228,8 @@ impl Spanned for LazyBoolExpr {
 
 #[derive(Debug, Clone)]
 pub struct NegationExpr {
-    operator: NegationOperatorKind,
-    operand: Box<Operable>,
+    pub operator: NegationOperatorKind,
+    pub operand: Box<Operable>,
 }
 
 impl Spanned for NegationExpr {
