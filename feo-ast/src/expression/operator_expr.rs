@@ -165,9 +165,9 @@ impl Spanned for AssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct CompoundAssignmentExpr {
-    assignee: Box<Operable>,
-    operator: CompoundAssignOperatorKind,
-    new_value: Box<Operable>,
+    pub assignee: Box<Operable>,
+    pub operator: CompoundAssignOperatorKind,
+    pub new_value: Box<Operable>,
 }
 
 impl Spanned for CompoundAssignmentExpr {

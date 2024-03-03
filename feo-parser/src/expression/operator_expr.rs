@@ -269,16 +269,75 @@ impl ParseExpr for AssignmentExpr {
     }
 }
 
-impl ParseExpr for ComparisonExpr {
+impl ParseExpr for CompoundAssignmentExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(assignee) = Operable::parse(parser)? {
+            parser.next_token();
+
+            if let Some(p) = parser.peek_current::<Punctuation>() {
+                parser.next_token();
+
+                let operator = match p {
+                    Punctuation {
+                        punc_kind: PuncKind::PlusEquals,
+                        ..
+                    } => CompoundAssignOperatorKind::AddAssign(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::Minus,
+                        ..
+                    } => CompoundAssignOperatorKind::SubtractAssign(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::Asterisk,
+                        ..
+                    } => CompoundAssignOperatorKind::MultiplyAssign(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::ForwardSlash,
+                        ..
+                    } => CompoundAssignOperatorKind::DivideAssign(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::Percent,
+                        ..
+                    } => CompoundAssignOperatorKind::ModulusAssign(p),
+
+                    _ => return Ok(None),
+                };
+
+                if let Some(new_value) = Operable::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(CompoundAssignmentExpr {
+                        assignee: Box::new(assignee),
+                        operator,
+                        new_value: Box::new(new_value),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Operable`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`CompoundAssignOperatorKind`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
-impl ParseExpr for CompoundAssignmentExpr {
+impl ParseExpr for ComparisonExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -471,6 +530,26 @@ mod tests {
             AssignmentExpr::parse(&mut parser).expect("unable to parse assignment expression");
 
         println!("{:#?}", assignment_expr);
+    }
+
+    #[test]
+    fn parse_compound_assignment_expr() {
+        let source_code = r#"x += 2"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let compound_assignment_expr = CompoundAssignmentExpr::parse(&mut parser)
+            .expect("unable to parse compound assignment expression");
+
+        println!("{:#?}", compound_assignment_expr);
     }
 
     #[test]
