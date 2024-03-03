@@ -56,7 +56,7 @@ impl<'a> Lexer<'a> {
         while let Some(c) = self.current_char() {
             let start_pos = self.pos;
 
-            match c {
+            match &c {
                 _ if c.is_whitespace() => {
                     self.skip_whitespace();
                 }
@@ -65,7 +65,7 @@ impl<'a> Lexer<'a> {
                     self.advance(); // skip first '/'
                     let mut block_comment_open = false;
 
-                    match self.current_char() {
+                    match &self.current_char() {
                         Some('/') => {
                             self.advance(); // skip second '/'
 
@@ -79,9 +79,9 @@ impl<'a> Lexer<'a> {
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
-                                    } else {
-                                        self.advance();
                                     }
+
+                                    self.advance();
                                 }
 
                                 let raw_content = self.input[start_pos..self.pos].to_string();
@@ -101,9 +101,9 @@ impl<'a> Lexer<'a> {
                                 while let Some(c) = self.current_char() {
                                     if c == '\n' {
                                         break;
-                                    } else {
-                                        self.advance();
                                     }
+
+                                    self.advance();
                                 }
 
                                 let raw_data = self.input[start_pos..self.pos].to_string();
@@ -132,9 +132,9 @@ impl<'a> Lexer<'a> {
                                     self.advance(); // skip closing '/'
                                     block_comment_open = false;
                                     break;
-                                } else {
-                                    self.advance();
                                 }
+
+                                self.advance();
                             }
 
                             let raw_data = self.input[start_pos..self.pos].to_string();
@@ -174,7 +174,7 @@ impl<'a> Lexer<'a> {
                         }
                     }
 
-                    if buf == "true" || buf == "false" {
+                    if &buf == "true" || &buf == "false" {
                         let bool_literal = Literal::<bool>::tokenize(
                             &self.input,
                             &buf,
@@ -223,7 +223,7 @@ impl<'a> Lexer<'a> {
                 '(' | '[' | '{' => {
                     self.advance(); // skip opening delimiter
 
-                    match c {
+                    match &c {
                         '(' => {
                             let delimiter = Delimiter::tokenize(
                                 &self.input,
@@ -268,7 +268,7 @@ impl<'a> Lexer<'a> {
                 ')' | ']' | '}' => {
                     self.advance(); // skip closing delimiter (advance counter for correct end pos)
 
-                    match c {
+                    match &c {
                         ')' => {
                             let delimiter = Delimiter::tokenize(
                                 &self.input,
@@ -504,7 +504,7 @@ impl<'a> Lexer<'a> {
                 _ if c == '0'
                     && self
                         .peek_next()
-                        .is_some_and(|x| x.to_lowercase().to_string() == "x") =>
+                        .is_some_and(|x| &x.to_lowercase().to_string() == "x") =>
                 {
                     // `start_pos` is global `start_pos` (above)
 
