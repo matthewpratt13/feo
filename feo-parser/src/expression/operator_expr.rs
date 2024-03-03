@@ -1,9 +1,9 @@
 use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
-        ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
-        DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
-        Operable, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+        BooleanOperand, ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind,
+        CompoundAssignmentExpr, DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr,
+        NegationOperatorKind, Operable, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
     token::Token,
 };
@@ -450,7 +450,57 @@ impl ParseExpr for LazyBoolExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(lhs) = BooleanOperand::parse(parser)? {
+            parser.next_token();
+
+            if let Some(p) = parser.peek_current::<Punctuation>() {
+                parser.next_token();
+
+                let operator = match p {
+                    Punctuation {
+                        punc_kind: PuncKind::DblAmpersand,
+                        ..
+                    } => LazyBoolOperatorKind::LazyAnd(p),
+
+                    Punctuation {
+                        punc_kind: PuncKind::DblPipe,
+                        ..
+                    } => LazyBoolOperatorKind::LazyOr(p),
+
+                    _ => {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`LazyBoolOperatorKind`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                        return Ok(None);
+                    }
+                };
+
+                if let Some(rhs) = BooleanOperand::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(LazyBoolExpr {
+                        lhs: Box::new(lhs),
+                        operator,
+                        rhs: Box::new(rhs),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`BooleanOperand`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`LazyBoolOperatorKind`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -697,6 +747,26 @@ mod tests {
             DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
 
         println!("{:#?}", deref_expr);
+    } 
+    
+    #[test]
+    fn parse_lazy_bool_expr() {
+        let source_code = r#"x && y"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let lazy_bool_expr =
+            LazyBoolExpr::parse(&mut parser).expect("unable to parse lazy bool expression");
+
+        println!("{:#?}", lazy_bool_expr);
     }
 
     #[test]

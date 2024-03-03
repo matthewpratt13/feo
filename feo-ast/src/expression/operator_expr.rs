@@ -212,9 +212,9 @@ impl Spanned for DereferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct LazyBoolExpr {
-    lhs: Box<BooleanOperand>,
-    operator: LazyBoolOperatorKind,
-    rhs: Box<BooleanOperand>,
+   pub lhs: Box<BooleanOperand>,
+   pub operator: LazyBoolOperatorKind,
+   pub rhs: Box<BooleanOperand>,
 }
 
 impl Spanned for LazyBoolExpr {
