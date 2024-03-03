@@ -59,9 +59,9 @@ impl Spanned for InfiniteLoopExpr {
 
 #[derive(Debug, Clone)]
 pub struct PredicateLoopExpr {
-    kw_while: KwWhile,
-    conditional_operand: Box<BooleanOperand>,
-    block: Box<BlockExpr>,
+    pub kw_while: KwWhile,
+    pub conditional_operand: Box<BooleanOperand>,
+    pub block: Box<BlockExpr>,
 }
 
 impl Spanned for PredicateLoopExpr {
