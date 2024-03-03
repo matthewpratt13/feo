@@ -12,7 +12,7 @@ impl ParseExpr for UnderscoreExpr {
         if let Some(id) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
-            return Ok(Some(UnderscoreExpr { underscore: id }));
+            return Ok(Some(UnderscoreExpr(id)));
         }
 
         parser.log_error(ParserErrorKind::UnexpectedToken {

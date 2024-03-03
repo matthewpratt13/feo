@@ -1,7 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{KwFor, KwIn, KwLoop, KwWhile},
-    Keyword,
+    utils::{KwBreak, KwContinue, KwFor, KwIn, KwLoop, KwWhile},
 };
 
 use crate::pattern::Pattern;
@@ -26,7 +25,7 @@ impl Spanned for IterationExprKind {
 }
 
 #[derive(Debug, Clone)]
-pub struct BreakExpr(pub Keyword);
+pub struct BreakExpr(pub KwBreak);
 
 impl Spanned for BreakExpr {
     fn span(&self) -> Span {
@@ -35,7 +34,7 @@ impl Spanned for BreakExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct ContinueExpr(pub Keyword);
+pub struct ContinueExpr(pub KwContinue);
 
 impl Spanned for ContinueExpr {
     fn span(&self) -> Span {

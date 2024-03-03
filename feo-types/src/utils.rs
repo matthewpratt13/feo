@@ -6,7 +6,9 @@ pub type Parenthesis = Delimiter;
 
 pub type KwAbstract = Keyword;
 pub type KwAs = Keyword;
+pub type KwBreak = Keyword;
 pub type KwConst = Keyword;
+pub type KwContinue = Keyword;
 pub type KwContract = Keyword;
 pub type KwCrate = Keyword;
 pub type KwDeref = Keyword;

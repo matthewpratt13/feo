@@ -4,12 +4,10 @@ use feo_types::{
 };
 
 #[derive(Debug, Clone)]
-pub struct UnderscoreExpr {
-    pub underscore: Underscore,
-}
+pub struct UnderscoreExpr(pub Underscore);
 
 impl Spanned for UnderscoreExpr {
     fn span(&self) -> Span {
-        self.underscore.span()
+        self.0.span()
     }
 }
