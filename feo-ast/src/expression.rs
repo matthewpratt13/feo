@@ -145,8 +145,6 @@ impl Spanned for Assignable {
 pub enum BooleanOperand {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
-    BreakExpr(BreakExpr),
-    ContinueExpr(ContinueExpr),
     BlockExpr(BlockExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
@@ -172,8 +170,6 @@ impl Spanned for BooleanOperand {
         match self {
             BooleanOperand::ArrayExpr(ae) => ae.span(),
             BooleanOperand::IndexExpr(ie) => ie.span(),
-            BooleanOperand::BreakExpr(be) => be.span(),
-            BooleanOperand::ContinueExpr(ce) => ce.span(),
             BooleanOperand::BlockExpr(be) => be.span(),
             BooleanOperand::FunctionCallExpr(fc) => fc.span(),
             BooleanOperand::MethodCallExpr(mc) => mc.span(),

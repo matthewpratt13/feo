@@ -276,17 +276,6 @@ impl ParseExpr for BooleanOperand {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                // KeywordKind::KwBreak => {
-                //     if let Some(be) = BreakExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(BooleanOperand::BreakExpr(be)));
-                //     }
-                // }
-
-                // KeywordKind::KwContinue => {
-                //     if let Some(ce) = ContinueExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(BooleanOperand::ContinueExpr(ce)));
-                //     }
-                // }
                 KeywordKind::KwIf => {
                     if let Some(ife) = IfExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(BooleanOperand::IfExpr(ife)));
