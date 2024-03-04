@@ -12,7 +12,31 @@ impl ParseExpr for InfiniteLoopExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let kw_loop_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwLoop,
+            ..
+        }) = kw_loop_opt
+        {
+            parser.next_token();
+
+            if let Some(block) = BlockExpr::parse(parser)? {
+                return Ok(Some(InfiniteLoopExpr {
+                    kw_loop: kw_loop_opt.unwrap(),
+                    block,
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`BlockExpr`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

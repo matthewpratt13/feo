@@ -44,8 +44,8 @@ impl Spanned for ContinueExpr {
 
 #[derive(Debug, Clone)]
 pub struct InfiniteLoopExpr {
-    kw_loop: KwLoop,
-    block: BlockExpr,
+    pub kw_loop: KwLoop,
+    pub block: BlockExpr,
 }
 
 impl Spanned for InfiniteLoopExpr {
