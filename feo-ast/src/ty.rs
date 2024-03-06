@@ -55,7 +55,7 @@ pub enum Type {
     Closure(ClosureExprKind),
 
     // trait type
-    ImplTrait(ImplTraitType),
+    ImplTrait(ImplTraitType), // TODO: come up with a better name
 
     ReferenceType(ReferenceType),
 
