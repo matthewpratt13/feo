@@ -197,15 +197,10 @@ impl Spanned for Callable {
 pub enum Castable {
     Char(Literal<char>),
     Bool(Literal<bool>),
-    I32(Literal<IntType>),
-    I64(Literal<IntType>),
-    U8(Literal<UIntType>),
-    U16(Literal<UIntType>),
-    U32(Literal<UIntType>),
-    U64(Literal<UIntType>),
+    Int(Literal<IntType>),
+    UInt(Literal<UIntType>),
     U256(Literal<U256>),
-    F32(Literal<FloatType>),
-    F64(Literal<FloatType>),
+    Float(Literal<FloatType>),
     PathExpr(PathExpr),
 }
 
@@ -214,15 +209,10 @@ impl Spanned for Castable {
         match self {
             Castable::Char(c) => c.span(),
             Castable::Bool(b) => b.span(),
-            Castable::I32(i) => i.span(),
-            Castable::I64(i) => i.span(),
-            Castable::U8(ui) => ui.span(),
-            Castable::U16(ui) => ui.span(),
-            Castable::U32(ui) => ui.span(),
-            Castable::U64(ui) => ui.span(),
+            Castable::Int(i) => i.span(),
+            Castable::UInt(ui) => ui.span(),
             Castable::U256(u) => u.span(),
-            Castable::F32(f) => f.span(),
-            Castable::F64(f) => f.span(),
+            Castable::Float(f) => f.span(),
             Castable::PathExpr(pth) => pth.span(),
         }
     }

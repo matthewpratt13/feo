@@ -324,15 +324,10 @@ impl ParseExpr for Castable {
             match l {
                 LiteralKind::Char(c) => return Ok(Some(Castable::Char(c))),
                 LiteralKind::Bool(b) => return Ok(Some(Castable::Bool(b))),
-                LiteralKind::I32(i) => return Ok(Some(Castable::I32(i))),
-                LiteralKind::I64(i) => return Ok(Some(Castable::I64(i))),
-                LiteralKind::U8(ui) => return Ok(Some(Castable::U8(ui))),
-                LiteralKind::U16(ui) => return Ok(Some(Castable::U16(ui))),
-                LiteralKind::U32(ui) => return Ok(Some(Castable::U32(ui))),
-                LiteralKind::U64(ui) => return Ok(Some(Castable::U64(ui))),
+                LiteralKind::Int(i) => return Ok(Some(Castable::Int(i))),
+                LiteralKind::UInt(ui) => return Ok(Some(Castable::UInt(ui))),
                 LiteralKind::U256(u) => return Ok(Some(Castable::U256(u))),
-                LiteralKind::F32(f) => return Ok(Some(Castable::F32(f))),
-                LiteralKind::F64(f) => return Ok(Some(Castable::F64(f))),
+                LiteralKind::Float(f) => return Ok(Some(Castable::Float(f))),
 
                 _ => {
                     parser.log_error(ParserErrorKind::UnexpectedToken {

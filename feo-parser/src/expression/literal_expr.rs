@@ -18,18 +18,18 @@ impl Peek for LiteralKind {
         } else if let Some(i) = Literal::<IntType>::peek(peeker) {
             match i.clone().into_inner() {
                 Some(t) => match t {
-                    IntType::I32(_) => LiteralKind::I32(i),
-                    IntType::I64(_) => LiteralKind::I64(i),
+                    IntType::I32(_) => LiteralKind::Int(i),
+                    IntType::I64(_) => LiteralKind::Int(i),
                 },
                 _ => return None,
             }
         } else if let Some(ui) = Literal::<UIntType>::peek(peeker) {
             match ui.clone().into_inner() {
                 Some(t) => match t {
-                    UIntType::U8(_) => LiteralKind::U8(ui),
-                    UIntType::U16(_) => LiteralKind::U16(ui),
-                    UIntType::U32(_) => LiteralKind::U32(ui),
-                    UIntType::U64(_) => LiteralKind::U64(ui),
+                    UIntType::U8(_) => LiteralKind::UInt(ui),
+                    UIntType::U16(_) => LiteralKind::UInt(ui),
+                    UIntType::U32(_) => LiteralKind::UInt(ui),
+                    UIntType::U64(_) => LiteralKind::UInt(ui),
                 },
                 _ => return None,
             }
@@ -38,8 +38,8 @@ impl Peek for LiteralKind {
         } else if let Some(f) = Literal::<FloatType>::peek(peeker) {
             match f.clone().into_inner() {
                 Some(t) => match t {
-                    FloatType::F32(_) => LiteralKind::F32(f),
-                    FloatType::F64(_) => LiteralKind::F64(f),
+                    FloatType::F32(_) => LiteralKind::Float(f),
+                    FloatType::F64(_) => LiteralKind::Float(f),
                 },
                 _ => return None,
             }

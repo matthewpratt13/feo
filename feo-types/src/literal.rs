@@ -120,15 +120,10 @@ pub enum LiteralKind {
     Char(Literal<char>),
     String(Literal<String>),
     Bool(Literal<bool>),
-    I32(Literal<IntType>),
-    I64(Literal<IntType>),
-    U8(Literal<UIntType>),
-    U16(Literal<UIntType>),
-    U32(Literal<UIntType>),
-    U64(Literal<UIntType>),
+    Int(Literal<IntType>),
+    UInt(Literal<UIntType>),
     U256(Literal<U256>),
-    F32(Literal<FloatType>),
-    F64(Literal<FloatType>),
+    Float(Literal<FloatType>),
 }
 
 impl LiteralKind {
@@ -145,11 +140,11 @@ impl LiteralKind {
     }
 
     pub fn default_int() -> LiteralKind {
-        LiteralKind::I64(Literal::new(IntType::I64(i64::default()), Span::default()))
+        LiteralKind::Int(Literal::new(IntType::I64(i64::default()), Span::default()))
     }
 
     pub fn default_uint() -> LiteralKind {
-        LiteralKind::U64(Literal::new(UIntType::U64(u64::default()), Span::default()))
+        LiteralKind::UInt(Literal::new(UIntType::U64(u64::default()), Span::default()))
     }
 
     pub fn default_u256() -> LiteralKind {
@@ -157,7 +152,7 @@ impl LiteralKind {
     }
 
     pub fn default_float() -> LiteralKind {
-        LiteralKind::F64(Literal::new(
+        LiteralKind::Float(Literal::new(
             FloatType::F64(f64::default()),
             Span::default(),
         ))
@@ -170,15 +165,10 @@ impl Spanned for LiteralKind {
             LiteralKind::Char(c) => c.span(),
             LiteralKind::String(s) => s.span(),
             LiteralKind::Bool(b) => b.span(),
-            LiteralKind::I32(i) => i.span(),
-            LiteralKind::I64(i) => i.span(),
-            LiteralKind::U8(ui) => ui.span(),
-            LiteralKind::U16(ui) => ui.span(),
-            LiteralKind::U32(ui) => ui.span(),
-            LiteralKind::U64(ui) => ui.span(),
+            LiteralKind::Int(i) => i.span(),
+            LiteralKind::UInt(ui) => ui.span(),
             LiteralKind::U256(u) => u.span(),
-            LiteralKind::F32(f) => f.span(),
-            LiteralKind::F64(f) => f.span(),
+            LiteralKind::Float(f) => f.span(),
         }
     }
 }
