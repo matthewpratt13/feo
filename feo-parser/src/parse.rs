@@ -331,7 +331,7 @@ impl ParseExpr for Castable {
 
                 _ => {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "numeric type".to_string(),
+                        expected: "`Castable`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
