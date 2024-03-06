@@ -5,11 +5,7 @@ use crate::{
     U256,
 };
 
-pub trait LiteralType
-where
-    Self: 'static,
-{
-}
+pub trait LiteralType {}
 
 impl LiteralType for char {}
 
@@ -83,7 +79,7 @@ pub struct Literal<T: LiteralType> {
 
 impl<T> Literal<T>
 where
-    T: LiteralType,
+    T: LiteralType + 'static,
 {
     pub fn new(raw_value: T, span: Span) -> Literal<T> {
         Literal::<T> {

@@ -5,11 +5,15 @@ use crate::{
     U256,
 };
 
-pub trait PrimitiveType {}
+pub trait PrimitiveType
+where
+    Self: Sized,
+{
+}
 
 impl PrimitiveType for char {}
 
-impl PrimitiveType for &'static str {}
+impl PrimitiveType for String {}
 
 impl PrimitiveType for bool {}
 
@@ -34,6 +38,15 @@ impl PrimitiveType for f64 {}
 #[derive(Debug, PartialEq, PartialOrd, Copy, Clone)]
 pub struct Primitive<P: PrimitiveType>(pub P);
 
+impl<P> Primitive<P>
+where
+    P: PrimitiveType + 'static,
+{
+    pub fn inner_ref(&self) -> &P {
+        &self.0
+    }
+}
+
 impl<P> Spanned for Primitive<P>
 where
     P: PrimitiveType + Spanned,
@@ -49,7 +62,7 @@ impl Spanned for char {
     }
 }
 
-impl Spanned for &'static str {
+impl Spanned for String {
     fn span(&self) -> Span {
         Span::default()
     }

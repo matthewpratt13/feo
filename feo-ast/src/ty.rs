@@ -28,7 +28,7 @@ pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
 pub enum Type {
     // primitives (built-in)
     Char(Primitive<char>),
-    Str(Primitive<&'static str>),
+    Str(Primitive<String>),
     Bool(Primitive<bool>),
     I32(Primitive<i32>),
     I64(Primitive<i64>),
