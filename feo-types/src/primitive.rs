@@ -31,8 +31,8 @@ impl PrimitiveType for f32 {}
 
 impl PrimitiveType for f64 {}
 
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Primitive<P: PrimitiveType>(P);
+#[derive(Debug, PartialEq, PartialOrd, Copy, Clone)]
+pub struct Primitive<P: PrimitiveType>(pub P);
 
 impl<P> Spanned for Primitive<P>
 where
