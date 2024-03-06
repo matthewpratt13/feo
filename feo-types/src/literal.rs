@@ -111,7 +111,7 @@ where
     T: LiteralType + fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-     write!(f, "{}", self.inner_value)
+        write!(f, "{}", self.inner_value)
     }
 }
 

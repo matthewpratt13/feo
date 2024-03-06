@@ -34,15 +34,6 @@ impl PrimitiveType for f64 {}
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Primitive<P: PrimitiveType>(P);
 
-impl<P> Primitive<P>
-where
-    P: PrimitiveType + Spanned,
-{
-    pub fn raw_value(self) -> P {
-        self.0
-    }
-}
-
 impl<P> Spanned for Primitive<P>
 where
     P: PrimitiveType + Spanned,
