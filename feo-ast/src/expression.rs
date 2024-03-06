@@ -76,11 +76,11 @@ pub enum Expression {
     ClosureWithoutBlock(ClosureWithoutBlock),
     FieldAccessExpr(FieldAccessExpr),
     IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
     IterationExpr(IterationExprKind),
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
     Literal(LiteralKind),
-    MatchExpr(MatchExpr),
     OperatorExpr(OperatorExprKind),
     ParenthesizedExpr(ParenthesizedExpr),
     PathExpr(PathExpr),
@@ -103,9 +103,11 @@ impl Spanned for Expression {
             Expression::ClosureWithoutBlock(c) => c.span(),
             Expression::FieldAccessExpr(fa) => fa.span(),
             Expression::IfExpr(ife) => ife.span(),
-            Expression::IterationExpr(ite) => ite.span(),
-            Expression::Literal(lit) => lit.span(),
             Expression::MatchExpr(me) => me.span(),
+            Expression::IterationExpr(ite) => ite.span(),
+            Expression::ContinueExpr(ce) => ce.span(),
+            Expression::BreakExpr(be) => be.span(),
+            Expression::Literal(lit) => lit.span(),
             Expression::OperatorExpr(oe) => oe.span(),
             Expression::ParenthesizedExpr(par) => par.span(),
             Expression::PathExpr(pie) => pie.span(),
@@ -113,8 +115,6 @@ impl Spanned for Expression {
             Expression::ReturnExpr(rtn) => rtn.span(),
             Expression::StructExpr(se) => se.span(),
             Expression::TupleExpr(te) => te.span(),
-            Expression::BreakExpr(be) => be.span(),
-            Expression::ContinueExpr(ce) => ce.span(),
             Expression::UnderscoreExpr(ue) => ue.span(),
         }
     }
@@ -123,9 +123,9 @@ impl Spanned for Expression {
 #[derive(Debug, Clone)]
 pub enum Assignable {
     ArrayExpr(ArrayExpr),
+    PathExpr(PathExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
-    PathExpr(PathExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
 
@@ -133,9 +133,9 @@ impl Spanned for Assignable {
     fn span(&self) -> Span {
         match self {
             Assignable::ArrayExpr(ae) => ae.span(),
+            Assignable::PathExpr(pe) => pe.span(),
             Assignable::StructExpr(se) => se.span(),
             Assignable::TupleExpr(te) => te.span(),
-            Assignable::PathExpr(pe) => pe.span(),
             Assignable::UnderscoreExpr(ue) => ue.span(),
         }
     }
@@ -148,12 +148,12 @@ pub enum BooleanOperand {
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
+    Literal(LiteralKind),
     ComparisonExpr(ComparisonExpr),
     NegationExpr(NegationExpr),
     UnwrapExpr(UnwrapExpr),
     ParenthesizedExpr(ParenthesizedExpr),
     TupleIndexExpr(TupleIndexExpr),
-    Literal(LiteralKind),
     PathExpr(PathExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
@@ -166,12 +166,12 @@ impl Spanned for BooleanOperand {
             BooleanOperand::FunctionCallExpr(fc) => fc.span(),
             BooleanOperand::MethodCallExpr(mc) => mc.span(),
             BooleanOperand::FieldAccessExpr(fa) => fa.span(),
+            BooleanOperand::Literal(lit) => lit.span(),
             BooleanOperand::ComparisonExpr(ce) => ce.span(),
             BooleanOperand::NegationExpr(ne) => ne.span(),
             BooleanOperand::UnwrapExpr(ue) => ue.span(),
             BooleanOperand::ParenthesizedExpr(par) => par.span(),
             BooleanOperand::TupleIndexExpr(tie) => tie.span(),
-            BooleanOperand::Literal(lit) => lit.span(),
             BooleanOperand::PathExpr(pth) => pth.span(),
             BooleanOperand::UnderscoreExpr(und) => und.span(),
         }
@@ -180,15 +180,15 @@ impl Spanned for BooleanOperand {
 
 #[derive(Debug, Clone)]
 pub enum Callable {
-    PathExpr(PathExpr),
     ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
 }
 
 impl Spanned for Callable {
     fn span(&self) -> Span {
         match self {
-            Callable::PathExpr(pth) => pth.span(),
             Callable::ParenthesizedExpr(par) => par.span(),
+            Callable::PathExpr(pth) => pth.span(),
         }
     }
 }
@@ -222,13 +222,14 @@ pub enum Constant {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
     BlockExpr(BlockExpr),
+    FieldAccessExpr(FieldAccessExpr),
     IfExpr(IfExpr),
     MatchExpr(MatchExpr),
     BreakExpr(BreakExpr),
     ContinueExpr(ContinueExpr),
-    FieldAccessExpr(FieldAccessExpr),
     InfiniteLoopExpr(InfiniteLoopExpr),
     PredicateLoopExpr(PredicateLoopExpr),
+    Literal(LiteralKind),
     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
     AssignmentExpr(AssignmentExpr),
     CompoundAssignmentExpr(CompoundAssignmentExpr),
@@ -238,20 +239,19 @@ pub enum Constant {
     NegationExpr(NegationExpr),
     TypeCastExpr(TypeCastExpr),
     ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
     RangeExpr(RangeExprKind),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
+    UnderscoreExpr(UnderscoreExpr),
     ConstantVarDef(ConstantVarDef),
     StaticVarDef(StaticVarDef),
     EnumDef(EnumDef),
     EnumVariantStruct(EnumVariantStruct),
     EnumVariantTuple(EnumVariantTuple),
-    Literal(LiteralKind),
-    PathExpr(PathExpr),
     ExprStatement(ExprStatement),
     LetStatement(LetStatement),
-    UnderscoreExpr(UnderscoreExpr),
 }
 
 #[derive(Debug, Clone)]
@@ -277,26 +277,26 @@ impl Spanned for ExprWithBlock {
 
 #[derive(Debug, Clone)]
 pub enum ExprWithoutBlock {
-    BreakExpr(BreakExpr),
-    ContinueExpr(ContinueExpr),
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
     ClosureWithoutBlock(ClosureWithoutBlock),
+    BreakExpr(BreakExpr),
+    ContinueExpr(ContinueExpr),
     FieldAccessExpr(FieldAccessExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    Literal(LiteralKind),
+    MethodCallExpr(MethodCallExpr),
     OperatorExpr(OperatorExprKind),
     ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
     RangeExpr(RangeExprKind),
     ReturnExpr(ReturnExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
+    UnderscoreExpr(UnderscoreExpr),
     EnumDef(EnumDef),
     EnumVariantStruct(EnumVariantStruct),
-    Literal(LiteralKind),
-    PathExpr(PathExpr),
-    UnderscoreExpr(UnderscoreExpr),
 }
 
 #[derive(Debug, Clone)]
@@ -304,36 +304,36 @@ pub enum Iterable {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
     BlockExpr(BlockExpr),
+    FieldAccessExpr(FieldAccessExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
-    FieldAccessExpr(FieldAccessExpr),
+    Literal(LiteralKind),
     DereferenceExpr(DereferenceExpr),
     ReferenceExpr(ReferenceExpr),
     TypeCastExpr(TypeCastExpr),
     UnwrapExpr(UnwrapExpr),
     ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
     RangeExpr(RangeExprKind),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
-    Literal(LiteralKind),
-    PathExpr(PathExpr),
 }
 
 #[derive(Debug, Clone)]
 pub enum Operable {
     IndexExpr(IndexExpr),
-    TupleIndexExpr(TupleIndexExpr),
+    FieldAccessExpr(FieldAccessExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
-    FieldAccessExpr(FieldAccessExpr),
     Literal(LiteralKind),
-    PathExpr(PathExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
     DereferenceExpr(DereferenceExpr),
     NegationExpr(NegationExpr),
-    ReferenceExpr(ReferenceExpr),
     TypeCastExpr(TypeCastExpr),
+    ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
+    ReferenceExpr(ReferenceExpr),
+    TupleIndexExpr(TupleIndexExpr),
     UnwrapExpr(UnwrapExpr),
 }
 
@@ -341,18 +341,18 @@ impl Spanned for Operable {
     fn span(&self) -> Span {
         match self {
             Operable::IndexExpr(ie) => ie.span(),
-            Operable::TupleIndexExpr(ti) => ti.span(),
+            Operable::FieldAccessExpr(fa) => fa.span(),
             Operable::FunctionCallExpr(fc) => fc.span(),
             Operable::MethodCallExpr(mc) => mc.span(),
-            Operable::FieldAccessExpr(fa) => fa.span(),
             Operable::Literal(lit) => lit.span(),
-            Operable::PathExpr(pth) => pth.span(),
-            Operable::ParenthesizedExpr(par) => par.span(),
             Operable::ArithmeticOrLogicalExpr(al) => al.span(),
             Operable::DereferenceExpr(de) => de.span(),
             Operable::NegationExpr(ne) => ne.span(),
-            Operable::ReferenceExpr(re) => re.span(),
             Operable::TypeCastExpr(tc) => tc.span(),
+            Operable::ParenthesizedExpr(par) => par.span(),
+            Operable::PathExpr(pth) => pth.span(),
+            Operable::ReferenceExpr(re) => re.span(),
+            Operable::TupleIndexExpr(ti) => ti.span(),
             Operable::UnwrapExpr(ue) => ue.span(),
         }
     }
@@ -362,23 +362,23 @@ impl Spanned for Operable {
 pub enum Returnable {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
     ClosureWithBlock(ClosureWithBlock),
     ClosureWithoutBlock(ClosureWithoutBlock),
     FieldAccessExpr(FieldAccessExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
     Literal(LiteralKind),
-    PathExpr(PathExpr),
     StructExpr(StructExprKind),
-    TupleExpr(TupleExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
     DereferenceExpr(DereferenceExpr),
     NegationExpr(NegationExpr),
     ReferenceExpr(ReferenceExpr),
     TypeCastExpr(TypeCastExpr),
     UnwrapExpr(UnwrapExpr),
+    ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
+    TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
 
@@ -387,23 +387,23 @@ impl Spanned for Returnable {
         match self {
             Returnable::ArrayExpr(ae) => ae.span(),
             Returnable::IndexExpr(ie) => ie.span(),
-            Returnable::TupleIndexExpr(ti) => ti.span(),
-            Returnable::FunctionCallExpr(fc) => fc.span(),
-            Returnable::MethodCallExpr(mc) => mc.span(),
             Returnable::ClosureWithBlock(cwb) => cwb.span(),
             Returnable::ClosureWithoutBlock(c) => c.span(),
             Returnable::FieldAccessExpr(fa) => fa.span(),
+            Returnable::FunctionCallExpr(fc) => fc.span(),
+            Returnable::MethodCallExpr(mc) => mc.span(),
             Returnable::Literal(lit) => lit.span(),
-            Returnable::PathExpr(pth) => pth.span(),
             Returnable::StructExpr(se) => se.span(),
-            Returnable::TupleExpr(te) => te.span(),
-            Returnable::ParenthesizedExpr(par) => par.span(),
             Returnable::ArithmeticOrLogicalExpr(al) => al.span(),
             Returnable::DereferenceExpr(de) => de.span(),
             Returnable::NegationExpr(ne) => ne.span(),
             Returnable::ReferenceExpr(re) => re.span(),
             Returnable::TypeCastExpr(tc) => tc.span(),
             Returnable::UnwrapExpr(ue) => ue.span(),
+            Returnable::ParenthesizedExpr(par) => par.span(),
+            Returnable::PathExpr(pth) => pth.span(),
+            Returnable::TupleExpr(te) => te.span(),
+            Returnable::TupleIndexExpr(ti) => ti.span(),
             Returnable::UnderscoreExpr(und) => und.span(),
         }
     }
