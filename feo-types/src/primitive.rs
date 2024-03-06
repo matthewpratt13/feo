@@ -39,7 +39,7 @@ where
     P: PrimitiveType + Spanned,
 {
     fn span(&self) -> Span {
-        self.0.span().clone()
+        self.0.span()
     }
 }
 
