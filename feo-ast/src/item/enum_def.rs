@@ -27,19 +27,17 @@ pub struct EnumDef {
 
 impl Spanned for EnumDef {
     fn span(&self) -> Span {
-        let start_pos = match self.attributes.first() {
-            Some(a) => a.span().start(),
+        let s1 = match self.attributes.first() {
+            Some(a) => a.span(),
             None => match &self.visibility_opt {
-                Some(v) => v.span().start(),
-                None => self.kw_enum.span().start(),
+                Some(v) => v.span(),
+                None => self.kw_enum.span(),
             },
         };
-        let end_pos = self.close_brace.span().end();
-        let source = self.kw_enum.span().source();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
+        let s2 = self.close_brace.span();
 
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -68,13 +66,10 @@ pub struct EnumVariantStruct {
 
 impl Spanned for EnumVariantStruct {
     fn span(&self) -> Span {
-        let start_pos = self.open_brace.span().start();
-        let end_pos = self.close_brace.span().end();
-        let source = self.open_brace.span().source();
+        let s1 = self.open_brace.span();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -87,12 +82,9 @@ pub struct EnumVariantTuple {
 
 impl Spanned for EnumVariantTuple {
     fn span(&self) -> Span {
-        let start_pos = self.open_parenthesis.span().start();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.open_parenthesis.span().source();
+        let s1 = self.open_parenthesis.span();
+        let s2 = self.close_parenthesis.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

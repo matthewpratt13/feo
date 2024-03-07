@@ -38,18 +38,15 @@ pub struct InherentImplBlock {
 
 impl Spanned for InherentImplBlock {
     fn span(&self) -> Span {
-        let start_pos = if let Some(a) = self.outer_attributes.first() {
-            a.span().start()
+        let s1 = if let Some(a) = self.outer_attributes.first() {
+            a.span()
         } else {
-            self.kw_impl.span().start()
+            self.kw_impl.span()
         };
 
-        let end_pos = self.close_brace.span().end();
-        let source = self.kw_impl.span().source();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -69,17 +66,14 @@ pub struct TraitImplBlock {
 
 impl Spanned for TraitImplBlock {
     fn span(&self) -> Span {
-        let start_pos = if let Some(a) = self.outer_attributes.first() {
-            a.span().start()
+        let s1 = if let Some(a) = self.outer_attributes.first() {
+            a.span()
         } else {
-            self.kw_impl.span().start()
+            self.kw_impl.span()
         };
 
-        let end_pos = self.close_brace.span().end();
-        let source = self.kw_impl.span().source();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

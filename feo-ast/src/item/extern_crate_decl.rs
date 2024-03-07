@@ -20,13 +20,10 @@ pub struct ExternCrateDecl {
 
 impl Spanned for ExternCrateDecl {
     fn span(&self) -> Span {
-        let start_pos = self.kw_extern_crate.0.span().start();
-        let end_pos = self.semicolon.span().end();
-        let source = self.kw_extern_crate.0.span().source();
+        let s1 = self.kw_extern_crate.0.span();
+        let s2 = self.semicolon.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -38,12 +35,9 @@ pub struct AsClause {
 
 impl Spanned for AsClause {
     fn span(&self) -> Span {
-        let start_pos = self.kw_as.span().start();
-        let end_pos = self.new_name.span().end();
-        let source = self.kw_as.span().source();
+        let s1 = self.kw_as.span();
+        let s2 = self.new_name.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

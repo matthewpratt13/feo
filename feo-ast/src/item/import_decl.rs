@@ -24,18 +24,15 @@ pub struct ImportDecl {
 
 impl Spanned for ImportDecl {
     fn span(&self) -> Span {
-        let start_pos = if let Some(v) = &self.visibility_opt {
-            v.span().start()
+        let s1 = if let Some(v) = &self.visibility_opt {
+            v.span()
         } else {
-            self.kw_import.span().start()
+            self.kw_import.span()
         };
 
-        let end_pos = self.semicolon.span().end();
-        let source = self.kw_import.span().source();
+        let s2 = self.semicolon.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -47,23 +44,20 @@ pub struct PathWildcard {
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
-        let start_pos = match self.full_path.first() {
+        let s1 = match self.full_path.first() {
             Some(p) => match p {
                 Some(q) => match &q.0 {
-                    Some(r) => r.span().start(),
-                    None => self.asterisk.span().start(),
+                    Some(r) => r.span(),
+                    None => self.asterisk.span(),
                 },
-                None => self.asterisk.span().start(),
+                None => self.asterisk.span(),
             },
-            None => self.asterisk.span().start(),
+            None => self.asterisk.span(),
         };
 
-        let end_pos = self.asterisk.span().end();
-        let source = self.asterisk.span().source();
+        let s2 = self.asterisk.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -77,20 +71,17 @@ pub struct PathSubsetRecursive {
 
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
-        let start_pos = match &self.path_prefix_opt {
+        let s1 = match &self.path_prefix_opt {
             Some(p) => match &p.0 {
-                Some(q) => q.span().start(),
-                None => self.open_brace.span().start(),
+                Some(q) => q.span(),
+                None => self.open_brace.span(),
             },
-            None => self.open_brace.span().start(),
+            None => self.open_brace.span(),
         };
 
-        let end_pos = self.close_brace.span().end();
-        let source = self.open_brace.span().source();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -102,17 +93,13 @@ pub struct PathWithAsClause {
 
 impl Spanned for PathWithAsClause {
     fn span(&self) -> Span {
-        let start_pos = self.path_prefix.span().start();
-        let end_pos = if let Some(a) = &self.as_clause_opt {
-            a.span().end()
+        let s1 = self.path_prefix.span();
+        let s2 = if let Some(a) = &self.as_clause_opt {
+            a.span()
         } else {
-            self.path_prefix.span().end()
+            self.path_prefix.span()
         };
 
-        let source = self.path_prefix.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

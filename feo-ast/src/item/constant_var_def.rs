@@ -22,20 +22,17 @@ pub struct ConstantVarDef {
 
 impl Spanned for ConstantVarDef {
     fn span(&self) -> Span {
-        let start_pos = match self.attributes.first() {
-            Some(a) => a.span().start(),
+        let s1 = match self.attributes.first() {
+            Some(a) => a.span(),
             None => match &self.visibility_opt {
-                Some(v) => v.span().start(),
-                None => self.kw_const.span().start(),
+                Some(v) => v.span(),
+                None => self.kw_const.span(),
             },
         };
 
-        let end_pos = self.semicolon.span().end();
-        let source = self.kw_const.span().source();
+        let s2 = self.semicolon.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -54,20 +51,17 @@ pub struct StaticVarDef {
 
 impl Spanned for StaticVarDef {
     fn span(&self) -> Span {
-        let start_pos = match self.attributes.first() {
-            Some(a) => a.span().start(),
+        let s1 = match self.attributes.first() {
+            Some(a) => a.span(),
             None => match &self.visibility_opt {
-                Some(v) => v.span().start(),
-                None => self.kw_static.span().start(),
+                Some(v) => v.span(),
+                None => self.kw_static.span(),
             },
         };
 
-        let end_pos = self.semicolon.span().end();
-        let source = self.kw_static.span().source();
+        let s2 = self.semicolon.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
