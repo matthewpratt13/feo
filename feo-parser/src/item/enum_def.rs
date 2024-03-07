@@ -336,3 +336,37 @@ impl ParseTerm for EnumDef {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_enum_def() {
+        let source_code = r#"
+        enum Foo {
+            Bar,
+            Baz(u64),
+        }
+        "#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def type");
+
+        println!("{:#?}", enum_def);
+    }
+}
