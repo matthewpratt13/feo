@@ -8,8 +8,8 @@ use crate::path::PathType;
 // (one bound)
 #[derive(Debug, Clone)]
 pub struct ImplTraitType {
-    kw_impl: KwImpl,
-    trait_bound: TraitBound,
+    pub kw_impl: KwImpl,
+    pub trait_bound: TraitBound,
 }
 
 pub type TraitBound = PathType;
