@@ -94,7 +94,7 @@ mod tests {
 
     #[ignore] // TODO: remove when testing
     #[test]
-    fn parse_array_expr() {
+    fn parse_array_type() {
         let source_code = r#"[u8; 32]"#;
 
         let handler = Handler::default();

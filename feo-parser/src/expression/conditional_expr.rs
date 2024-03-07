@@ -129,3 +129,35 @@ impl ParseExpr for MatchExpr {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_if_expr() {
+        let source_code = r#"
+        if foo < 2 { 
+            print!("bar")
+        }"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let if_expr = IfExpr::parse(&mut parser).expect("unable to if expression");
+
+        println!("{:#?}", if_expr);
+    }
+}
