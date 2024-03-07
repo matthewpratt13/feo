@@ -7,7 +7,7 @@ use feo_ast::{
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
+use feo_types::{punctuation::PuncKind, utils::Comma, Identifier, Punctuation};
 
 use crate::{parse::ParseTerm, parser::Parser};
 
@@ -86,7 +86,60 @@ impl ParseTerm for StructDefFields {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_fields: Vec<(Comma, StructDefField)> = Vec::new();
+
+        if let Some(first_field) = StructDefField::parse(parser)? {
+            let mut next_comma_opt = parser.peek_current::<Punctuation>();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = next_comma_opt
+            {
+                parser.next_token();
+
+                if let Some(next_field) = StructDefField::parse(parser)? {
+                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+
+                    if let Some(p) = parser.peek_current::<Punctuation>() {
+                        next_comma_opt = Some(p);
+                    } else {
+                        break;
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`StructDefField`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            }
+
+            let trailing_comma_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = trailing_comma_opt
+            {
+                parser.next_token();
+            }
+
+            match &subsequent_fields.is_empty() {
+                true => Ok(Some(StructDefFields {
+                    first_field,
+                    subsequent_fields: None,
+                    trailing_comma_opt,
+                })),
+
+                false => Ok(Some(StructDefFields {
+                    first_field,
+                    subsequent_fields: Some(subsequent_fields),
+                    trailing_comma_opt,
+                })),
+            }
+        } else {
+            Ok(None)
+        }
     }
 }
 
