@@ -47,18 +47,18 @@ impl Spanned for StructDef {
 
 #[derive(Debug, Clone)]
 pub struct StructDefFields {
-    first_field: StructDefField,
-    subsequent_fields: Vec<(Comma, StructDefField)>,
-    trailing_comma_opt: Option<Comma>,
+    pub first_field: StructDefField,
+    pub subsequent_fields: Option<Vec<(Comma, StructDefField)>>,
+    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
 pub struct StructDefField {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    field_name: StructFieldName,
-    colon: Colon,
-    field_type: Box<Type>,
+    pub attributes: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub field_name: StructFieldName,
+    pub colon: Colon,
+    pub field_type: Box<Type>,
 }
 
 #[derive(Debug, Clone)]
@@ -92,16 +92,16 @@ impl Spanned for TupleStructDef {
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDefFields {
-    first_field: TupleStructDefField,
-    subsequent_fields: Vec<(Comma, TupleStructDefField)>,
-    trailing_comma_opt: Option<Comma>,
+    pub first_field: TupleStructDefField,
+    pub subsequent_fields: Option<Vec<(Comma, TupleStructDefField)>>,
+    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDefField {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    field_type: Box<Type>,
+    pub attributes: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub field_type: Box<Type>,
 }
 
 #[derive(Debug, Clone)]

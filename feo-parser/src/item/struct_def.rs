@@ -184,6 +184,60 @@ impl ParseTerm for TupleStructDefFields {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_fields: Vec<(Comma, TupleStructDefField)> = Vec::new();
+
+        if let Some(first_field) = TupleStructDefField::parse(parser)? {
+            let mut next_comma_opt = parser.peek_current::<Punctuation>();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = next_comma_opt
+            {
+                parser.next_token();
+
+                if let Some(next_field) = TupleStructDefField::parse(parser)? {
+                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+
+                    if let Some(p) = parser.peek_current::<Punctuation>() {
+                        next_comma_opt = Some(p)
+                    } else {
+                        break;
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`TupleStructDefField`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    break;
+                }
+            }
+
+            let trailing_comma_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = trailing_comma_opt
+            {
+                parser.next_token();
+            }
+
+            match &subsequent_fields.is_empty() {
+                true => Ok(Some(TupleStructDefFields {
+                    first_field,
+                    subsequent_fields: None,
+                    trailing_comma_opt,
+                })),
+
+                false => Ok(Some(TupleStructDefFields {
+                    first_field,
+                    subsequent_fields: Some(subsequent_fields),
+                    trailing_comma_opt,
+                })),
+            }
+        } else {
+            Ok(None)
+        }
     }
 }
