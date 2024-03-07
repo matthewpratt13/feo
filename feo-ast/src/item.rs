@@ -26,7 +26,9 @@ use self::{
 
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
-    enum_def::{EnumDef, EnumVariantStruct, EnumVariantTuple, EnumVariants},
+    enum_def::{
+        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
+    },
     extern_crate_decl::{AsClause, ExternCrateDecl},
     function_def::{FunctionDefKind, FunctionSig, FunctionWithBlock},
     impl_block::{InherentImplBlock, TraitImplBlock},

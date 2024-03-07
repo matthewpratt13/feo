@@ -1,6 +1,9 @@
 use feo_ast::{
     attribute::OuterAttr,
-    item::{EnumDef, EnumVariants, VisibilityKind},
+    item::{
+        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
+        VisibilityKind,
+    },
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -12,7 +15,43 @@ use feo_types::{
 
 use crate::{parse::ParseTerm, parser::Parser};
 
+impl ParseTerm for EnumVariant {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
 impl ParseTerm for EnumVariants {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParseTerm for EnumVariantType {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParseTerm for EnumVariantStruct {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParseTerm for EnumVariantTuple {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
