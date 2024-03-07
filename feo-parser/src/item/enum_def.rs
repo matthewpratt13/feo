@@ -10,7 +10,9 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    Delimiter, Identifier, Keyword,
+    punctuation::PuncKind,
+    utils::Comma,
+    Delimiter, Identifier, Keyword, Punctuation,
 };
 
 use crate::{parse::ParseTerm, parser::Parser};
@@ -70,7 +72,61 @@ impl ParseTerm for EnumVariants {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_variants: Vec<(Comma, EnumVariant)> = Vec::new();
+
+        if let Some(first_variant) = EnumVariant::parse(parser)? {
+            let mut next_comma_opt = parser.peek_current::<Punctuation>();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = next_comma_opt
+            {
+                parser.next_token();
+
+                if let Some(next_variant) = EnumVariant::parse(parser)? {
+                    subsequent_variants.push((next_comma_opt.unwrap(), next_variant));
+
+                    if let Some(p) = parser.peek_current::<Punctuation>() {
+                        next_comma_opt = Some(p);
+                    } else {
+                        break;
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`EnumVariant`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                    break;
+                }
+            }
+
+            let trailing_comma_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = trailing_comma_opt
+            {
+                parser.next_token();
+            }
+
+            match subsequent_variants.is_empty() {
+                true => Ok(Some(EnumVariants {
+                    first_variant,
+                    subsequent_variants: None,
+                    trailing_comma_opt,
+                })),
+
+                false => Ok(Some(EnumVariants {
+                    first_variant,
+                    subsequent_variants: Some(subsequent_variants),
+                    trailing_comma_opt,
+                })),
+            }
+        } else {
+            return Ok(None);
+        }
     }
 }
 
