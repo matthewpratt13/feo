@@ -23,7 +23,7 @@ impl ParseTerm for VisibilityKind {
             ..
         }) = kw_pub_opt
         {
-            match parser.peek_next::<Delimiter>() {
+            match &parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..

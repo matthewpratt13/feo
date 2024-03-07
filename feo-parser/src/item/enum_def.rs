@@ -45,7 +45,7 @@ impl ParseTerm for EnumVariant {
                 None
             };
 
-            match attributes.is_empty() {
+            match &attributes.is_empty() {
                 true => Ok(Some(EnumVariant {
                     attributes: Some(attributes),
                     visibility_opt,
@@ -110,7 +110,7 @@ impl ParseTerm for EnumVariants {
                 parser.next_token();
             }
 
-            match subsequent_variants.is_empty() {
+            match &subsequent_variants.is_empty() {
                 true => Ok(Some(EnumVariants {
                     first_variant,
                     subsequent_variants: None,
@@ -286,7 +286,7 @@ impl ParseTerm for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
-                        match attributes.is_empty() {
+                        match &attributes.is_empty() {
                             true => {
                                 return Ok(Some(EnumDef {
                                     attributes: None,
