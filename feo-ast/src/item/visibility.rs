@@ -20,10 +20,10 @@ impl Spanned for VisibilityKind {
 
 #[derive(Debug, Clone)]
 pub struct PubCrateVisibility {
-    kw_pub: KwPub,
-    open_parenthesis: Parenthesis,
-    kw_crate: KwCrate,
-    close_parenthesis: Parenthesis,
+    pub kw_pub: KwPub,
+    pub open_parenthesis: Parenthesis,
+    pub kw_crate: KwCrate,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for PubCrateVisibility {
