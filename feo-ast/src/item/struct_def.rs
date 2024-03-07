@@ -68,7 +68,7 @@ pub struct TupleStructDef {
     kw_struct: KwStruct,
     struct_name: Identifier,
     open_parenthesis: Parenthesis,
-    tuple_elements_opt: Option<TupleStructDefElements>,
+    tuple_elements_opt: Option<TupleStructDefFields>,
     close_parenthesis: Parenthesis,
     where_clause_opt: Option<WhereClause>,
     semicolon: Semicolon,
@@ -91,7 +91,7 @@ impl Spanned for TupleStructDef {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructDefElements {
+pub struct TupleStructDefFields {
     first_field: TupleStructDefField,
     subsequent_fields: Vec<(Comma, TupleStructDefField)>,
     trailing_comma_opt: Option<Comma>,

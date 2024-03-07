@@ -36,7 +36,7 @@ pub use self::{
     mod_block::ModBlock,
     struct_def::{
         StructDef, StructDefField, StructDefFields, StructFieldName, TupleStructDef,
-        TupleStructDefElements, UnitStructDef,
+        TupleStructDefField, TupleStructDefFields, UnitStructDef,
     },
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,

@@ -2,7 +2,7 @@ use feo_ast::{
     attribute::OuterAttr,
     item::{
         EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
-        StructDefFields, VisibilityKind,
+        StructDefFields, TupleStructDefFields, VisibilityKind,
     },
     token::Token,
 };
@@ -40,7 +40,6 @@ impl ParseTerm for EnumVariant {
             parser.next_token();
 
             let variant_type_opt = if let Some(v) = EnumVariantType::parse(parser)? {
-                parser.next_token();
                 Some(v)
             } else {
                 None
@@ -135,7 +134,13 @@ impl ParseTerm for EnumVariantType {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(s) = EnumVariantStruct::parse(parser)? {
+            Ok(Some(EnumVariantType::Struct(s)))
+        } else if let Some(t) = EnumVariantTuple::parse(parser)? {
+            Ok(Some(EnumVariantType::Tuple(t)))
+        } else {
+            Ok(None)
+        }
     }
 }
 
@@ -188,7 +193,42 @@ impl ParseTerm for EnumVariantTuple {
     where
         Self: Sized,
     {
-        todo!()
+        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+        if let Some(Delimiter {
+            delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+            ..
+        }) = open_parenthesis_opt
+        {
+            parser.next_token();
+
+            let elements_opt = if let Some(e) = TupleStructDefFields::parse(parser)? {
+                parser.next_token();
+                Some(e)
+            } else {
+                None
+            };
+
+            let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                ..
+            }) = close_parenthesis_opt
+            {
+                parser.next_token();
+
+                return Ok(Some(EnumVariantTuple {
+                    open_parenthesis: open_parenthesis_opt.unwrap(),
+                    elements_opt,
+                    close_parenthesis: close_parenthesis_opt.unwrap(),
+                }));
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
