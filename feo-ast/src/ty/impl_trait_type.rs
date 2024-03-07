@@ -16,12 +16,9 @@ pub type TraitBound = PathType;
 
 impl Spanned for ImplTraitType {
     fn span(&self) -> Span {
-        let start_pos = self.kw_impl.span().start();
-        let end_pos = self.trait_bound.span().end();
-        let source = self.kw_impl.span().source();
+        let s1 = self.kw_impl.span();
+        let s2 = self.trait_bound.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

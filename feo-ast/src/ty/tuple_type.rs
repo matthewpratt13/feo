@@ -15,13 +15,10 @@ pub struct TupleType {
 
 impl Spanned for TupleType {
     fn span(&self) -> Span {
-        let start_pos = self.open_parenthesis.span().start();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.open_parenthesis.span().source();
+        let s1 = self.open_parenthesis.span();
+        let s2 = self.close_parenthesis.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -32,12 +29,9 @@ pub struct UnitType {
 
 impl Spanned for UnitType {
     fn span(&self) -> Span {
-        let start_pos = self.open_parenthesis.span().start();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.open_parenthesis.span().source();
+        let s1 = self.open_parenthesis.span();
+        let s2 = self.close_parenthesis.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
