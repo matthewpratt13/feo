@@ -7,10 +7,10 @@ use super::Type;
 
 #[derive(Debug, Clone)]
 pub struct TupleType {
-    open_parenthesis: Parenthesis,
-    elements: Vec<(Type, Comma)>,
-    trailing_element: Box<Type>,
-    close_parenthesis: Parenthesis,
+    pub open_parenthesis: Parenthesis,
+    pub elements: Option<Vec<(Type, Comma)>>,
+    pub trailing_element: Box<Type>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for TupleType {
@@ -22,15 +22,13 @@ impl Spanned for TupleType {
     }
 }
 
-pub struct UnitType {
-    open_parenthesis: Parenthesis,
-    close_parenthesis: Parenthesis,
-}
+#[derive(Debug, Clone)]
+pub struct UnitType(pub Parenthesis, pub Parenthesis);
 
 impl Spanned for UnitType {
     fn span(&self) -> Span {
-        let s1 = self.open_parenthesis.span();
-        let s2 = self.close_parenthesis.span();
+        let s1 = self.0.span();
+        let s2 = self.1.span();
 
         Span::join(s1, s2)
     }

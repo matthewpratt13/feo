@@ -22,7 +22,7 @@ use self::{parenthesized_type::ParenthesizedType, reference_type::ReferenceType}
 pub use self::{
     array_type::ArrayType,
     impl_trait_type::{ImplTraitType, TraitBound},
-    tuple_type::TupleType,
+    tuple_type::{TupleType, UnitType},
 };
 
 #[derive(Debug, Clone)]
@@ -45,7 +45,7 @@ pub enum Type {
     Array(ArrayType),
     Tuple(TupleType),
 
-    Unit(()),
+    Unit(UnitType),
 
     // user-defined types
     Struct(StructExprKind),
@@ -81,7 +81,7 @@ impl Spanned for Type {
             Type::F64(f) => f.span(),
             Type::Array(arr) => arr.span(),
             Type::Tuple(tup) => tup.span(),
-            Type::Unit(_) => Span::default(),
+            Type::Unit(ut) => ut.span(),
             Type::Struct(stc) => stc.span(),
             Type::Enum(e) => e.span(),
             Type::Function(fun) => fun.span(),

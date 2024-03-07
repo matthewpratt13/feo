@@ -139,7 +139,7 @@ impl ParseTerm for UnitType {
                     close_parenthesis_opt.unwrap(),
                 )));
             }
-            
+
             parser.log_error(ParserErrorKind::UnexpectedToken {
                 expected: "`)`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -149,5 +149,53 @@ impl ParseTerm for UnitType {
         }
 
         Err(parser.errors())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_tuple_type() {
+        let source_code = r#"(u64, char, bool)"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let tuple_type = TupleType::parse(&mut parser).expect("unable to parse tuple type");
+
+        println!("{:#?}", tuple_type);
+    }
+
+    #[test]
+    fn parse_unit_type() {
+        let source_code = r#"()"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let unit_type = UnitType::parse(&mut parser).expect("unable to parse unit type");
+
+        println!("{:#?}", unit_type);
     }
 }
