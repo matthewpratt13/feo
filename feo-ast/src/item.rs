@@ -40,7 +40,7 @@ pub use self::{
     },
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
-    visibility::VisibilityKind,
+    visibility::{PubCrateVisibility, VisibilityKind},
 };
 
 // items are components of a crate, organized by a set of modules
