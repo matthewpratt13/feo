@@ -67,9 +67,9 @@ pub struct EnumVariant {
 
 #[derive(Debug, Clone)]
 pub struct EnumVariantStruct {
-    open_brace: Brace,
-    fields_opt: Option<StructDefFields>,
-    close_brace: Brace,
+    pub open_brace: Brace,
+    pub fields_opt: Option<StructDefFields>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for EnumVariantStruct {

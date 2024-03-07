@@ -2,7 +2,7 @@ use feo_ast::{
     attribute::OuterAttr,
     item::{
         EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
-        VisibilityKind,
+        StructDefFields, VisibilityKind,
     },
     token::Token,
 };
@@ -144,7 +144,42 @@ impl ParseTerm for EnumVariantStruct {
     where
         Self: Sized,
     {
-        todo!()
+        let open_brace_opt = parser.peek_current::<Delimiter>();
+
+        if let Some(Delimiter {
+            delim: (DelimKind::Brace, DelimOrientation::Open),
+            ..
+        }) = open_brace_opt
+        {
+            parser.next_token();
+
+            let fields_opt = if let Some(f) = StructDefFields::parse(parser)? {
+                parser.next_token();
+                Some(f)
+            } else {
+                None
+            };
+
+            let close_brace_opt = parser.peek_current::<Delimiter>();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Brace, DelimOrientation::Close),
+                ..
+            }) = close_brace_opt
+            {
+                parser.next_token();
+
+                return Ok(Some(EnumVariantStruct {
+                    open_brace: open_brace_opt.unwrap(),
+                    fields_opt,
+                    close_brace: close_brace_opt.unwrap(),
+                }));
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
