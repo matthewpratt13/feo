@@ -241,3 +241,57 @@ impl ParseTerm for TupleStructDefFields {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_struct_def_field() {
+        let source_code = r#"
+        #[foo]
+        pub bar: u64
+        "#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let struct_def_field =
+            StructDefField::parse(&mut parser).expect("unable to parse struct def field");
+
+        println!("{:#?}", struct_def_field);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_tuple_struct_def_field() {
+        let source_code = r#"#[foo] pub u64"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let tuple_struct_def_field =
+            TupleStructDefField::parse(&mut parser).expect("unable to parse tuple struct def field");
+
+        println!("{:#?}", tuple_struct_def_field);
+    }
+}
