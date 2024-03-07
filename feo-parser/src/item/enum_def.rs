@@ -347,11 +347,54 @@ mod tests {
 
     #[ignore] // TODO: remove when testing
     #[test]
+    fn parse_enum_variant_struct() {
+        let source_code = r#"Foo { bar: u64 }"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let enum_variant_struct =
+            EnumVariantStruct::parse(&mut parser).expect("unable to parse enum variant struct");
+
+        println!("{:#?}", enum_variant_struct);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_enum_variant_tuple() {
+        let source_code = r#"Foo(u64)"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let enum_variant_tuple =
+            EnumVariantTuple::parse(&mut parser).expect("unable to parse enum variant tuple");
+
+        println!("{:#?}", enum_variant_tuple);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
     fn parse_enum_def() {
         let source_code = r#"
+        #[abstract]
         enum Foo {
             Bar,
-            Baz(u64),
+            Baz(u64)
         }
         "#;
 
