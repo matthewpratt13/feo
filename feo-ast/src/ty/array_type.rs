@@ -8,11 +8,11 @@ use super::Type;
 
 #[derive(Debug, Clone)]
 pub struct ArrayType {
-    open_bracket: Bracket,
-    element_type: Box<Type>,
-    semicolon: Semicolon,
-    num_elements: Primitive<u64>,
-    close_bracket: Bracket,
+    pub open_bracket: Bracket,
+    pub element_type: Box<Type>,
+    pub semicolon: Semicolon,
+    pub num_elements: Primitive<u64>,
+    pub close_bracket: Bracket,
 }
 
 impl Spanned for ArrayType {

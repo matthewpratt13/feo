@@ -9,6 +9,7 @@ use feo_ast::{
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
+    Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
@@ -933,5 +934,14 @@ impl ParseExpr for Returnable {
         }
 
         Err(parser.errors())
+    }
+}
+
+impl ParseTerm for Type {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }

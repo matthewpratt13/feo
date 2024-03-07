@@ -6,4 +6,6 @@ pub mod pattern;
 pub mod statement;
 pub mod token;
 pub mod tokenize;
+
 pub mod ty;
+pub use ty::Type;

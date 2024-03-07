@@ -18,11 +18,11 @@ use crate::{
 };
 
 use self::{
-    array_type::ArrayType, impl_trait_type::ImplTraitType, parenthesized_type::ParenthesizedType,
+    impl_trait_type::ImplTraitType, parenthesized_type::ParenthesizedType,
     reference_type::ReferenceType,
 };
 
-pub use self::{impl_trait_type::TraitBound, tuple_type::TupleType};
+pub use self::{array_type::ArrayType, impl_trait_type::TraitBound, tuple_type::TupleType};
 
 #[derive(Debug, Clone)]
 pub enum Type {
