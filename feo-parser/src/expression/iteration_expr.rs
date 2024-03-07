@@ -93,3 +93,60 @@ impl ParseExpr for IterLoopExpr {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_infinite_loop_expr() {
+        let source_code = r#"
+        loop {
+            foo += 2
+        }"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let infinite_loop_expr =
+            InfiniteLoopExpr::parse(&mut parser).expect("unable to parse infinite loop expression");
+
+        println!("{:#?}", infinite_loop_expr);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_predicate_loop_expr() {
+        let source_code = r#"
+        while foo < 100 {
+            foo += 2
+        }"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let predicate_loop_expr = InfiniteLoopExpr::parse(&mut parser)
+            .expect("unable to parse predicate loop expression");
+
+        println!("{:#?}", predicate_loop_expr);
+    }
+}
