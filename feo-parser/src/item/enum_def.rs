@@ -20,7 +20,48 @@ impl ParseTerm for EnumVariant {
     where
         Self: Sized,
     {
-        todo!()
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        while let Some(a) = OuterAttr::parse(parser)? {
+            attributes.push(a);
+            parser.next_token();
+        }
+
+        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
+            parser.next_token();
+            Some(v)
+        } else {
+            None
+        };
+
+        if let Some(variant_name) = parser.peek_current::<Identifier>() {
+            parser.next_token();
+
+            let variant_type_opt = if let Some(v) = EnumVariantType::parse(parser)? {
+                parser.next_token();
+                Some(v)
+            } else {
+                None
+            };
+
+            match attributes.is_empty() {
+                true => Ok(Some(EnumVariant {
+                    attributes: Some(attributes),
+                    visibility_opt,
+                    variant_name,
+                    variant_type_opt,
+                })),
+
+                false => Ok(Some(EnumVariant {
+                    attributes: None,
+                    visibility_opt,
+                    variant_name,
+                    variant_type_opt,
+                })),
+            }
+        } else {
+            Ok(None)
+        }
     }
 }
 
