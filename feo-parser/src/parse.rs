@@ -1,3 +1,5 @@
+#![allow(unused_variables)]
+
 use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, Callable,

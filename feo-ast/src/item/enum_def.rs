@@ -16,23 +16,31 @@ pub enum EnumVariantType {
 
 #[derive(Debug, Clone)]
 pub struct EnumDef {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_enum: KwEnum,
-    enum_name: Identifier,
-    open_brace: Brace,
-    enum_variants_opt: Option<EnumVariants>,
-    close_brace: Brace,
+    pub attributes: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_enum: KwEnum,
+    pub enum_name: Identifier,
+    pub open_brace: Brace,
+    pub enum_variants_opt: Option<EnumVariants>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for EnumDef {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_enum.span(),
-            },
+        let s1 = if let Some(a) = &self.attributes {
+            match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_enum.span(),
+                },
+            }
+        } else {
+            if let Some(v) = &self.visibility_opt {
+                v.span()
+            } else {
+                self.kw_enum.span()
+            }
         };
 
         let s2 = self.close_brace.span();
