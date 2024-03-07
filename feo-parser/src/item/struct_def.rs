@@ -148,7 +148,34 @@ impl ParseTerm for TupleStructDefField {
     where
         Self: Sized,
     {
-        todo!()
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        while let Some(attr) = OuterAttr::parse(parser)? {
+            attributes.push(attr);
+            parser.next_token();
+        }
+
+        let visibility_opt = VisibilityKind::parse(parser)?;
+
+        if let Some(field_type) = Type::parse(parser)? {
+            parser.next_token();
+
+            match &attributes.is_empty() {
+                true => Ok(Some(TupleStructDefField {
+                    attributes: None,
+                    visibility_opt,
+                    field_type: Box::new(field_type),
+                })),
+
+                false => Ok(Some(TupleStructDefField {
+                    attributes: Some(attributes),
+                    visibility_opt,
+                    field_type: Box::new(field_type),
+                })),
+            }
+        } else {
+            Ok(None)
+        }
     }
 }
 
