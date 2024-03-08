@@ -39,7 +39,7 @@ impl ParseTerm for ParenthesizedType {
                         close_parenthesis_opt.unwrap(),
                     )));
                 }
-                
+
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`)`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -55,5 +55,35 @@ impl ParseTerm for ParenthesizedType {
         }
 
         Err(parser.errors())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_parenthesized_type() {
+        let source_code = r#"(u64)"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let parenthesized_type =
+            ParenthesizedType::parse(&mut parser).expect("unable to parse parenthesized type");
+
+        println!("{:#?}", parenthesized_type);
     }
 }
