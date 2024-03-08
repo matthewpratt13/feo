@@ -42,3 +42,32 @@ impl ParseTerm for IdentifierPatt {
         Ok(None)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_tuple_struct_def_field() {
+        let source_code = r#"ref mut foo"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let identifier_patt =
+            IdentifierPatt::parse(&mut parser).expect("unable to parse identifier pattern");
+
+        println!("{:#?}", identifier_patt);
+    }
+}
