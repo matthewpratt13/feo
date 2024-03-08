@@ -20,7 +20,7 @@ use crate::{
     statement::LetStatement,
 };
 
-use self::{
+pub use self::{
     identifier_patt::IdentifierPatt,
     parenthesized_patt::ParenthesizedPatt,
     range_patt::RangePatt,

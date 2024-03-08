@@ -5,5 +5,6 @@ mod lexer;
 mod parse;
 mod parser;
 mod path;
+mod pattern;
 mod peek;
 mod ty;
