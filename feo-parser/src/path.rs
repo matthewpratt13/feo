@@ -250,8 +250,8 @@ mod tests {
 
         let mut parser = Parser::new(token_stream, handler);
 
-        let tuple_struct_expr = PathInExpr::parse(&mut parser).expect("unable to parse path");
+        let path_in_expr = PathInExpr::parse(&mut parser).expect("unable to parse path");
 
-        println!("{:#?}", tuple_struct_expr);
+        println!("{:#?}", path_in_expr);
     }
 }
