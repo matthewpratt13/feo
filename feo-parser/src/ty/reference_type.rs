@@ -28,13 +28,13 @@ impl ParseTerm for ReferenceType {
                 parser.next_token();
             }
 
-            if let Some(t) = Type::parse(parser)? {
+            if let Some(ty) = Type::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(ReferenceType(
                     ampersand_opt.unwrap(),
                     kw_mut_opt,
-                    Box::new(t),
+                    Box::new(ty),
                 )));
             }
 

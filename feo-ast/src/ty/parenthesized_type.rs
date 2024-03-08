@@ -6,16 +6,12 @@ use feo_types::{
 use super::Type;
 
 #[derive(Debug, Clone)]
-pub struct ParenthesizedType {
-    open_parenthesis: Parenthesis,
-    ty: Box<Type>,
-    close_parenthesis: Parenthesis,
-}
+pub struct ParenthesizedType(pub Parenthesis, pub Box<Type>, pub Parenthesis);
 
 impl Spanned for ParenthesizedType {
     fn span(&self) -> Span {
-        let s1 = self.open_parenthesis.span();
-        let s2 = self.close_parenthesis.span();
+        let s1 = self.0.span();
+        let s2 = self.2.span();
 
         Span::join(s1, s2)
     }
