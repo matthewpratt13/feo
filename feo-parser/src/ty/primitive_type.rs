@@ -1,8 +1,10 @@
-use feo_ast::ty::PrimitiveType;
+/* use feo_ast::ty::PrimitiveType;
 use feo_error::error::CompilerError;
 use feo_types::literal::{FloatType, IntType, LiteralKind, UIntType};
 
 use crate::{parse::ParseTerm, parser::Parser};
+
+// parsing unnecessary – this would conflict with `Literal` in `Expression` variants etc.
 
 impl ParseTerm for PrimitiveType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -66,3 +68,4 @@ mod tests {
         println!("{:#?}", primitive_type);
     }
 }
+ */
