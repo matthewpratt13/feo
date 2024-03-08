@@ -57,7 +57,7 @@ pub struct StructExprFields {
 pub struct TupleStructExpr {
     pub id: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub elements_opt: Option<TupleStructElements>,
+    pub elements_opt: Option<TupleStructFields>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -71,7 +71,7 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructElements(
+pub struct TupleStructFields(
     pub  (
         Box<Returnable>,
         Option<Vec<(Comma, Returnable)>>,

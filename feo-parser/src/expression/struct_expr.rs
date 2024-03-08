@@ -1,7 +1,7 @@
 use feo_ast::{
     attribute::OuterAttr,
     expression::{
-        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructElements,
+        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructFields,
         TupleStructExpr,
     },
     token::Token,
@@ -200,7 +200,7 @@ impl ParseExpr for StructExpr {
     }
 }
 
-impl ParseTerm for TupleStructElements {
+impl ParseTerm for TupleStructFields {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -249,12 +249,12 @@ impl ParseTerm for TupleStructElements {
             }
 
             match &subsequent_elements.is_empty() {
-                true => Ok(Some(TupleStructElements((
+                true => Ok(Some(TupleStructFields((
                     Box::new(first_element),
                     None,
                     trailing_comma_opt,
                 )))),
-                false => Ok(Some(TupleStructElements((
+                false => Ok(Some(TupleStructFields((
                     Box::new(first_element),
                     Some(subsequent_elements),
                     trailing_comma_opt,
@@ -283,7 +283,7 @@ impl ParseExpr for TupleStructExpr {
             {
                 parser.next_token();
 
-                if let Some(elements) = TupleStructElements::parse(parser)? {
+                if let Some(elements) = TupleStructFields::parse(parser)? {
                     let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -306,7 +306,7 @@ impl ParseExpr for TupleStructExpr {
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`TupleStructElements`".to_string(),
+                        expected: "`TupleStructFields`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
