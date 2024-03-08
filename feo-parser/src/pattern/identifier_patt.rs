@@ -52,7 +52,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_tuple_struct_def_field() {
+    fn parse_identifier_patt() {
         let source_code = r#"ref mut foo"#;
 
         let handler = Handler::default();
