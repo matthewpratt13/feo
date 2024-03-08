@@ -939,6 +939,7 @@ impl ParseExpr for Returnable {
     }
 }
 
+// TODO: don't forget to account for the case where we encounter a `TypeAnnotation`
 impl ParseTerm for Type {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
