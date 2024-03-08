@@ -10,7 +10,7 @@ use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub struct ConstantVarDef {
-    attributes: Vec<OuterAttr>,
+    attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_const: KwConst,
     item_name: Identifier,
@@ -22,12 +22,15 @@ pub struct ConstantVarDef {
 
 impl Spanned for ConstantVarDef {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_const.span(),
+        let s1 = match &self.attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_const.span(),
+                },
             },
+            None => self.kw_const.span(),
         };
 
         let s2 = self.semicolon.span();
