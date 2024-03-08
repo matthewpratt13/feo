@@ -3,14 +3,11 @@
 mod array_type;
 mod impl_trait_type;
 mod parenthesized_type;
+mod primitive_type;
 mod reference_type;
 mod tuple_type;
 
-use feo_types::{
-    primitive::Primitive,
-    span::{Span, Spanned},
-    U256,
-};
+use feo_types::span::{Span, Spanned};
 
 use crate::{
     expression::{ClosureExprKind, StructExprKind},
@@ -21,6 +18,7 @@ pub use self::{
     array_type::ArrayType,
     impl_trait_type::{ImplTraitType, TraitBound},
     parenthesized_type::ParenthesizedType,
+    primitive_type::PrimitiveType,
     reference_type::ReferenceType,
     tuple_type::{TupleType, UnitType},
 };
@@ -28,18 +26,18 @@ pub use self::{
 #[derive(Debug, Clone)]
 pub enum Type {
     // primitives (built-in)
-    Char(Primitive<char>),
-    Str(Primitive<String>),
-    Bool(Primitive<bool>),
-    I32(Primitive<i32>),
-    I64(Primitive<i64>),
-    U8(Primitive<u8>),
-    U16(Primitive<u16>),
-    U32(Primitive<u32>),
-    U64(Primitive<u64>),
-    U256(Primitive<U256>),
-    F32(Primitive<f32>),
-    F64(Primitive<f64>),
+    Char(PrimitiveType),
+    String(PrimitiveType),
+    Bool(PrimitiveType),
+    I32(PrimitiveType),
+    I64(PrimitiveType),
+    U8(PrimitiveType),
+    U16(PrimitiveType),
+    U32(PrimitiveType),
+    U64(PrimitiveType),
+    U256(PrimitiveType),
+    F32(PrimitiveType),
+    F64(PrimitiveType),
 
     // built-in sequence types
     Array(ArrayType),
@@ -67,18 +65,18 @@ pub enum Type {
 impl Spanned for Type {
     fn span(&self) -> Span {
         match self {
-            Type::Char(c) => c.span(),
-            Type::Str(s) => s.span(),
-            Type::Bool(b) => b.span(),
-            Type::I32(i) => i.span(),
-            Type::I64(i) => i.span(),
-            Type::U8(ui) => ui.span(),
-            Type::U16(ui) => ui.span(),
-            Type::U32(ui) => ui.span(),
-            Type::U64(ui) => ui.span(),
-            Type::U256(u) => u.span(),
-            Type::F32(f) => f.span(),
-            Type::F64(f) => f.span(),
+            Type::Char(_)
+            | Type::String(_)
+            | Type::Bool(_)
+            | Type::I32(_)
+            | Type::I64(_)
+            | Type::U8(_)
+            | Type::U16(_)
+            | Type::U32(_)
+            | Type::U64(_)
+            | Type::U256(_)
+            | Type::F32(_)
+            | Type::F64(_) => Span::default(),
             Type::Array(arr) => arr.span(),
             Type::Tuple(tup) => tup.span(),
             Type::Unit(ut) => ut.span(),

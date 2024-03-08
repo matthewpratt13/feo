@@ -2,7 +2,7 @@ use feo_ast::{token::Token, ty::ArrayType, Type};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
-    primitive::Primitive,
+    literal::LiteralKind,
     punctuation::PuncKind,
     Delimiter, Punctuation,
 };
@@ -35,7 +35,9 @@ impl ParseTerm for ArrayType {
                 {
                     parser.next_token();
 
-                    if let Some(num_elements) = Primitive::<u64>::parse(parser)? {
+                    if let Some(LiteralKind::UInt(num_elements)) =
+                        parser.peek_current::<LiteralKind>()
+                    {
                         parser.next_token();
 
                         let close_bracket_opt = parser.peek_current::<Delimiter>();
@@ -59,7 +61,7 @@ impl ParseTerm for ArrayType {
                         });
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`Primitive<u64>`".to_string(),
+                            expected: "`UIntType`".to_string(),
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
                     }
