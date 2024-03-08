@@ -3,15 +3,17 @@
 mod array_type;
 mod impl_trait_type;
 mod parenthesized_type;
-pub mod reference_type;
+mod reference_type;
 mod tuple_type;
 
-use feo_types::span::{Span, Spanned};
+use feo_types::{
+    span::{Span, Spanned},
+    Primitive,
+};
 
 use crate::{
     expression::{ClosureExprKind, StructExprKind},
     item::{EnumDef, FunctionDefKind},
-    primitive::Primitive,
 };
 
 pub use self::{

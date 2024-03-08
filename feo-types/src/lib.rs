@@ -24,6 +24,9 @@ pub use crate::keyword::Keyword;
 pub mod literal;
 pub use crate::literal::Literal;
 
+pub mod primitive;
+pub use crate::primitive::Primitive;
+
 pub mod punctuation;
 pub use crate::punctuation::Punctuation;
 

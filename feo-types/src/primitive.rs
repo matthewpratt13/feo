@@ -1,4 +1,4 @@
-use feo_types::U256;
+use crate::U256;
 
 #[derive(Debug, Clone)]
 pub enum Primitive {
