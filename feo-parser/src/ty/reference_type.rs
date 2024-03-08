@@ -49,3 +49,33 @@ impl ParseTerm for ReferenceType {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_reference_type() {
+        let source_code = r#"&mut bool"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let reference_type =
+            ReferenceType::parse(&mut parser).expect("unable to parse reference type");
+
+        println!("{:#?}", reference_type);
+    }
+}
