@@ -37,3 +37,32 @@ impl ParseTerm for PrimitiveType {
         Ok(primitive)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_primitive_type() {
+        let source_code = r#""a" 1 bool"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let primitive_type =
+            PrimitiveType::parse(&mut parser).expect("unable to parse primitive type");
+
+        println!("{:#?}", primitive_type);
+    }
+}
