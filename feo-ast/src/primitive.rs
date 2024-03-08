@@ -1,7 +1,7 @@
 use feo_types::U256;
 
 #[derive(Debug, Clone)]
-pub enum PrimitiveType {
+pub enum Primitive {
     Char(char),
     String(String),
     Bool(bool),

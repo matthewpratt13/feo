@@ -3,8 +3,7 @@
 mod array_type;
 mod impl_trait_type;
 mod parenthesized_type;
-mod primitive_type;
-mod reference_type;
+pub mod reference_type;
 mod tuple_type;
 
 use feo_types::span::{Span, Spanned};
@@ -12,13 +11,13 @@ use feo_types::span::{Span, Spanned};
 use crate::{
     expression::{ClosureExprKind, StructExprKind},
     item::{EnumDef, FunctionDefKind},
+    primitive::Primitive,
 };
 
 pub use self::{
     array_type::ArrayType,
     impl_trait_type::{ImplTraitType, TraitBound},
     parenthesized_type::ParenthesizedType,
-    primitive_type::PrimitiveType,
     reference_type::ReferenceType,
     tuple_type::{TupleType, UnitType},
 };
@@ -26,18 +25,18 @@ pub use self::{
 #[derive(Debug, Clone)]
 pub enum Type {
     // primitives (built-in)
-    Char(PrimitiveType),
-    String(PrimitiveType),
-    Bool(PrimitiveType),
-    I32(PrimitiveType),
-    I64(PrimitiveType),
-    U8(PrimitiveType),
-    U16(PrimitiveType),
-    U32(PrimitiveType),
-    U64(PrimitiveType),
-    U256(PrimitiveType),
-    F32(PrimitiveType),
-    F64(PrimitiveType),
+    Char(Primitive),
+    String(Primitive),
+    Bool(Primitive),
+    I32(Primitive),
+    I64(Primitive),
+    U8(Primitive),
+    U16(Primitive),
+    U32(Primitive),
+    U64(Primitive),
+    U256(Primitive),
+    F32(Primitive),
+    F64(Primitive),
 
     // built-in sequence types
     Array(ArrayType),
