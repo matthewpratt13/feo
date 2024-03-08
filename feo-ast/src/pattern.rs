@@ -6,11 +6,11 @@ mod range_patt;
 mod reference_patt;
 mod struct_patt;
 mod tuple_patt;
+mod wildcard_patt;
 
 use feo_types::{
     literal::LiteralKind,
     span::{Span, Spanned},
-    utils::Underscore,
 };
 
 use crate::{
@@ -27,6 +27,7 @@ use self::{
     reference_patt::ReferencePatt,
     struct_patt::{StructPatt, TupleStructPatt},
     tuple_patt::TuplePatt,
+    wildcard_patt::WildcardPatt,
 };
 
 // patterns are used: to match values against structures; in variable declarations; as func params
@@ -52,7 +53,7 @@ pub enum Pattern {
     StructPatt(StructPatt),
     TupleStructPatt(TupleStructPatt),
     TuplePatt(TuplePatt),
-    WildcardPatt(Underscore),
+    WildcardPatt(WildcardPatt),
 }
 
 impl Spanned for Pattern {
