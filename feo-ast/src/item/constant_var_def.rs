@@ -10,14 +10,14 @@ use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub struct ConstantVarDef {
-    attributes: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_const: KwConst,
-    item_name: Identifier,
-    colon: Colon,
-    item_type: Box<Type>,
-    assignment_opt: Option<(Equals, Box<Expression>)>, // `None` is only allowed in a `TraitDef`
-    semicolon: Semicolon,
+    pub attributes: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_const: KwConst,
+    pub item_name: Identifier,
+    pub colon: Colon,
+    pub item_type: Box<Type>,
+    pub assignment_opt: Option<(Equals, Box<Expression>)>, // `None` is only allowed in a `TraitDef`
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for ConstantVarDef {
