@@ -17,11 +17,11 @@ use crate::{
     item::{EnumDef, FunctionDefKind},
 };
 
-use self::{parenthesized_type::ParenthesizedType, reference_type::ReferenceType};
-
 pub use self::{
     array_type::ArrayType,
     impl_trait_type::{ImplTraitType, TraitBound},
+    parenthesized_type::ParenthesizedType,
+    reference_type::ReferenceType,
     tuple_type::{TupleType, UnitType},
 };
 
