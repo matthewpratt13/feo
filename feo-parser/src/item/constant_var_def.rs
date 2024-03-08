@@ -8,7 +8,10 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseTerm for ConstantVarDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -61,7 +64,7 @@ impl ParseTerm for ConstantVarDef {
                                 parser.next_token();
 
                                 if let Some(expr) = Expression::parse(parser)? {
-                                    let assignment_opt = (equals_opt.unwrap(), expr);
+                                    let assignment_opt = (equals_opt.unwrap(), Box::new(expr));
 
                                     let semicolon_opt = parser.peek_current::<Punctuation>();
 

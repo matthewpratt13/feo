@@ -3,11 +3,12 @@
 use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, Callable,
-        Castable, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, FieldAccessExpr,
-        FunctionCallExpr, IndexExpr, Iterable, MethodCallExpr, NegationExpr, Operable,
-        ParenthesizedExpr, RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr,
-        RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, Returnable, StructExpr, StructExprKind,
-        TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr,
+        Castable, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, Expression,
+        FieldAccessExpr, FunctionCallExpr, IndexExpr, Iterable, MethodCallExpr, NegationExpr,
+        Operable, ParenthesizedExpr, RangeExprKind, RangeFromExpr, RangeFromToExpr,
+        RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, Returnable,
+        StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
+        UnderscoreExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::Token,
@@ -38,6 +39,15 @@ pub trait ParseTerm {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+impl ParseExpr for Expression {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
 
 impl ParseExpr for Assignable {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
