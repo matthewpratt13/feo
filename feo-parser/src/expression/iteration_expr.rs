@@ -144,7 +144,7 @@ mod tests {
 
         let mut parser = Parser::new(token_stream, handler);
 
-        let predicate_loop_expr = InfiniteLoopExpr::parse(&mut parser)
+        let predicate_loop_expr = PredicateLoopExpr::parse(&mut parser)
             .expect("unable to parse predicate loop expression");
 
         println!("{:#?}", predicate_loop_expr);
