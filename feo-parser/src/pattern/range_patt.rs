@@ -117,7 +117,33 @@ impl ParseTerm for RangeToInclusivePatt {
     where
         Self: Sized,
     {
-        todo!()
+        let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::DotDotEquals,
+            ..
+        }) = dot_dot_equals_opt
+        {
+            parser.next_token();
+
+            if let Some(to_incl) = parser.peek_current::<RangePattBound>() {
+                parser.next_token();
+
+                return Ok(Some(RangeToInclusivePatt {
+                    dot_dot_equals: dot_dot_equals_opt.unwrap(),
+                    to_incl,
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`RangePattBound`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
