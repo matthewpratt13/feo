@@ -1,7 +1,7 @@
 use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     span::{Span, Spanned},
-    utils::DotDotEquals,
+    utils::{DblDot, DotDotEquals},
     U256,
 };
 
@@ -40,13 +40,13 @@ impl Spanned for RangePattBound {
 #[derive(Debug, Clone)]
 pub struct RangeFromPatt {
     pub from: RangePattBound,
-    pub dot_dot_equals: DotDotEquals,
+    pub dbl_dot: DblDot,
 }
 
 impl Spanned for RangeFromPatt {
     fn span(&self) -> Span {
         let start_pos = self.from.span().start();
-        let end_pos = self.dot_dot_equals.span().end();
+        let end_pos = self.dbl_dot.span().end();
         let source = self.from.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -59,13 +59,13 @@ impl Spanned for RangeFromPatt {
 pub struct RangeInclusivePatt {
     from: RangePattBound,
     dot_dot_equals: DotDotEquals,
-    to: RangePattBound,
+    to_incl: RangePattBound,
 }
 
 impl Spanned for RangeInclusivePatt {
     fn span(&self) -> Span {
         let start_pos = self.from.span().start();
-        let end_pos = self.to.span().end();
+        let end_pos = self.to_incl.span().end();
         let source = self.from.span().source();
 
         let span = Span::new(source.as_str(), start_pos, end_pos);
@@ -76,19 +76,15 @@ impl Spanned for RangeInclusivePatt {
 
 #[derive(Debug, Clone)]
 pub struct RangeToInclusivePatt {
-    from: RangePattBound,
     dot_dot_equals: DotDotEquals,
-    to: RangePattBound,
+    to_incl: RangePattBound,
 }
 
 impl Spanned for RangeToInclusivePatt {
     fn span(&self) -> Span {
-        let start_pos = self.from.span().start();
-        let end_pos = self.to.span().end();
-        let source = self.from.span().source();
+        let s1 = self.dot_dot_equals.span();
+        let s2 = self.to_incl.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

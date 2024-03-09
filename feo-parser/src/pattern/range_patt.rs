@@ -50,22 +50,22 @@ impl ParseTerm for RangeFromPatt {
         if let Some(from) = parser.peek_current::<RangePattBound>() {
             parser.next_token();
 
-            let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+            let dbl_dot_opt = parser.peek_current::<Punctuation>();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DotDotEquals,
                 ..
-            }) = dot_dot_equals_opt
+            }) = dbl_dot_opt
             {
                 parser.next_token();
 
                 return Ok(Some(RangeFromPatt {
                     from,
-                    dot_dot_equals: dot_dot_equals_opt.unwrap(),
+                    dbl_dot: dbl_dot_opt.unwrap(),
                 }));
             }
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`..=`".to_string(),
+                expected: "`..`".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
