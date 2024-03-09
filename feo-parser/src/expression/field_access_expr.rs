@@ -76,5 +76,7 @@ mod tests {
 
         let field_access_expr =
             FieldAccessExpr::parse(&mut parser).expect("unable to parse field access expr");
+
+        println!("{:#?}", field_access_expr);
     }
 }
