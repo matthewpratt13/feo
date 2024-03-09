@@ -1,8 +1,11 @@
-use feo_ast::pattern::{
-    RangeFromPatt, RangeInclusivePatt, RangePattKind, RangePattBound, RangeToInclusivePatt,
+use feo_ast::{
+    pattern::{
+        RangeFromPatt, RangeInclusivePatt, RangePattBound, RangePattKind, RangeToInclusivePatt,
+    },
+    token::Token,
 };
-use feo_error::error::CompilerError;
-use feo_types::literal::LiteralKind;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_types::{literal::LiteralKind, punctuation::PuncKind, Punctuation};
 
 use crate::{
     parse::ParseTerm,
@@ -44,7 +47,32 @@ impl ParseTerm for RangeFromPatt {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(from) = parser.peek_current::<RangePattBound>() {
+            parser.next_token();
+
+            let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::DotDotEquals,
+                ..
+            }) = dot_dot_equals_opt
+            {
+                parser.next_token();
+
+                return Ok(Some(RangeFromPatt {
+                    from,
+                    dot_dot_equals: dot_dot_equals_opt.unwrap(),
+                }));
+            }
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`..=`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
