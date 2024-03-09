@@ -18,20 +18,18 @@ impl Peek for SimplePathSegmentKind {
     where
         Self: Sized,
     {
-        let segment_kind = if let Some(id) = Identifier::peek(peeker) {
-            SimplePathSegmentKind::Iden(id)
+        if let Some(id) = Identifier::peek(peeker) {
+            Some(SimplePathSegmentKind::Iden(id))
         } else if let Some(k) = Keyword::peek(peeker) {
             match &k.keyword_kind {
-                KeywordKind::KwCrate => SimplePathSegmentKind::KwCrate(k),
-                KeywordKind::KwSelf => SimplePathSegmentKind::KwSelf(k),
-                KeywordKind::KwSuper => SimplePathSegmentKind::KwSuper(k),
-                _ => return None,
+                KeywordKind::KwCrate => Some(SimplePathSegmentKind::KwCrate(k)),
+                KeywordKind::KwSelf => Some(SimplePathSegmentKind::KwSelf(k)),
+                KeywordKind::KwSuper => Some(SimplePathSegmentKind::KwSuper(k)),
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(segment_kind)
+            None
+        }
     }
 }
 
