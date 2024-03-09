@@ -5,7 +5,7 @@ use feo_types::{
     Literal,
 };
 
-use super::Iterable;
+use super::{Assignable, Iterable};
 
 #[derive(Debug, Clone)]
 pub enum ArrayElementsKind {
@@ -45,7 +45,7 @@ pub struct ArrayElementsRepeatedValue {
 
 #[derive(Debug, Clone)]
 pub struct IndexExpr {
-    pub indexed_operand: ArrayExpr,
+    pub indexed_operand: Assignable,
     pub open_bracket: Bracket,
     pub index: Literal<UIntType>,
     pub close_bracket: Bracket,

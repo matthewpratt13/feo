@@ -1,7 +1,7 @@
 use feo_ast::{
     expression::{
         ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
-        IndexExpr, Iterable,
+        Assignable, IndexExpr, Iterable,
     },
     token::Token,
 };
@@ -201,8 +201,11 @@ impl ParseExpr for IndexExpr {
     where
         Self: Sized,
     {
-        if let Some(indexed_operand) = ArrayExpr::parse(parser)? {
+        if let Some(indexed_operand) = Assignable::parse(parser)? {
+            parser.next_token();
+            
             let open_bracket_opt = parser.peek_current::<Delimiter>();
+
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -230,7 +233,7 @@ impl ParseExpr for IndexExpr {
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
                     }
-                    
+
                     parser.log_error(ParserErrorKind::MissingDelimiter {
                         delim: "]".to_string(),
                     });
@@ -291,7 +294,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        // println!("{:#?}", token_stream);
+        println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
