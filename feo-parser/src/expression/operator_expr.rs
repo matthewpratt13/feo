@@ -21,25 +21,23 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
+        if let Some(p) = Punctuation::peek(peeker) {
             match &p.punc_kind {
-                PuncKind::Percent => ArithmeticOrLogicalOperatorKind::Modulus(p),
-                PuncKind::Ampersand => ArithmeticOrLogicalOperatorKind::LogicalAnd(p),
-                PuncKind::Asterisk => ArithmeticOrLogicalOperatorKind::Multiply(p),
-                PuncKind::Plus => ArithmeticOrLogicalOperatorKind::Add(p),
-                PuncKind::Minus => ArithmeticOrLogicalOperatorKind::Subtract(p),
-                PuncKind::ForwardSlash => ArithmeticOrLogicalOperatorKind::Divide(p),
-                PuncKind::Caret => ArithmeticOrLogicalOperatorKind::LogicalXOr(p),
-                PuncKind::Pipe => ArithmeticOrLogicalOperatorKind::LogicalOr(p),
-                PuncKind::DblLessThan => ArithmeticOrLogicalOperatorKind::ShiftLeft(p),
-                PuncKind::DblGreaterThan => ArithmeticOrLogicalOperatorKind::ShiftRight(p),
-                _ => return None,
+                PuncKind::Percent => Some(ArithmeticOrLogicalOperatorKind::Modulus(p)),
+                PuncKind::Ampersand => Some(ArithmeticOrLogicalOperatorKind::LogicalAnd(p)),
+                PuncKind::Asterisk => Some(ArithmeticOrLogicalOperatorKind::Multiply(p)),
+                PuncKind::Plus => Some(ArithmeticOrLogicalOperatorKind::Add(p)),
+                PuncKind::Minus => Some(ArithmeticOrLogicalOperatorKind::Subtract(p)),
+                PuncKind::ForwardSlash => Some(ArithmeticOrLogicalOperatorKind::Divide(p)),
+                PuncKind::Caret => Some(ArithmeticOrLogicalOperatorKind::LogicalXOr(p)),
+                PuncKind::Pipe => Some(ArithmeticOrLogicalOperatorKind::LogicalOr(p)),
+                PuncKind::DblLessThan => Some(ArithmeticOrLogicalOperatorKind::ShiftLeft(p)),
+                PuncKind::DblGreaterThan => Some(ArithmeticOrLogicalOperatorKind::ShiftRight(p)),
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(operator_kind)
+            None
+        }
     }
 }
 
@@ -48,21 +46,19 @@ impl Peek for ComparisonOperatorKind {
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
+        if let Some(p) = Punctuation::peek(peeker) {
             match &p.punc_kind {
-                PuncKind::LessThan => ComparisonOperatorKind::LessThan(p),
-                PuncKind::GreaterThan => ComparisonOperatorKind::GreaterThan(p),
-                PuncKind::BangEquals => ComparisonOperatorKind::NotEqual(p),
-                PuncKind::LessThanEquals => ComparisonOperatorKind::LessThanOrEqual(p),
-                PuncKind::DblEquals => ComparisonOperatorKind::Equality(p),
-                PuncKind::GreaterThanEquals => ComparisonOperatorKind::GreaterThanOrEqual(p),
-                _ => return None,
+                PuncKind::LessThan => Some(ComparisonOperatorKind::LessThan(p)),
+                PuncKind::GreaterThan => Some(ComparisonOperatorKind::GreaterThan(p)),
+                PuncKind::BangEquals => Some(ComparisonOperatorKind::NotEqual(p)),
+                PuncKind::LessThanEquals => Some(ComparisonOperatorKind::LessThanOrEqual(p)),
+                PuncKind::DblEquals => Some(ComparisonOperatorKind::Equality(p)),
+                PuncKind::GreaterThanEquals => Some(ComparisonOperatorKind::GreaterThanOrEqual(p)),
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(operator_kind)
+            None
+        }
     }
 }
 
@@ -71,20 +67,18 @@ impl Peek for CompoundAssignOperatorKind {
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
+        if let Some(p) = Punctuation::peek(peeker) {
             match &p.punc_kind {
-                PuncKind::PercentEquals => CompoundAssignOperatorKind::ModulusAssign(p),
-                PuncKind::AsteriskEquals => CompoundAssignOperatorKind::MultiplyAssign(p),
-                PuncKind::PlusEquals => CompoundAssignOperatorKind::AddAssign(p),
-                PuncKind::MinusEquals => CompoundAssignOperatorKind::SubtractAssign(p),
-                PuncKind::ForwardSlashEquals => CompoundAssignOperatorKind::DivideAssign(p),
-                _ => return None,
+                PuncKind::PercentEquals => Some(CompoundAssignOperatorKind::ModulusAssign(p)),
+                PuncKind::AsteriskEquals => Some(CompoundAssignOperatorKind::MultiplyAssign(p)),
+                PuncKind::PlusEquals => Some(CompoundAssignOperatorKind::AddAssign(p)),
+                PuncKind::MinusEquals => Some(CompoundAssignOperatorKind::SubtractAssign(p)),
+                PuncKind::ForwardSlashEquals => Some(CompoundAssignOperatorKind::DivideAssign(p)),
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(operator_kind)
+            None
+        }
     }
 }
 
@@ -93,17 +87,15 @@ impl Peek for LazyBoolOperatorKind {
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
+        if let Some(p) = Punctuation::peek(peeker) {
             match &p.punc_kind {
-                PuncKind::DblAmpersand => LazyBoolOperatorKind::LazyAnd(p),
-                PuncKind::DblPipe => LazyBoolOperatorKind::LazyOr(p),
-                _ => return None,
+                PuncKind::DblAmpersand => Some(LazyBoolOperatorKind::LazyAnd(p)),
+                PuncKind::DblPipe => Some(LazyBoolOperatorKind::LazyOr(p)),
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(operator_kind)
+            None
+        }
     }
 }
 
@@ -112,17 +104,15 @@ impl Peek for NegationOperatorKind {
     where
         Self: Sized,
     {
-        let operator_kind = if let Some(p) = Punctuation::peek(peeker) {
+        if let Some(p) = Punctuation::peek(peeker) {
             match &p.punc_kind {
-                PuncKind::Minus => NegationOperatorKind::InvertNumeric(p),
-                PuncKind::Bang => NegationOperatorKind::InvertBool(p),
-                _ => return None,
+                PuncKind::Minus => Some(NegationOperatorKind::InvertNumeric(p)),
+                PuncKind::Bang => Some(NegationOperatorKind::InvertBool(p)),
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(operator_kind)
+            None
+        }
     }
 }
 
