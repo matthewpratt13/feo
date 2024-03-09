@@ -53,7 +53,7 @@ impl ParseTerm for RangeFromPatt {
             let dbl_dot_opt = parser.peek_current::<Punctuation>();
 
             if let Some(Punctuation {
-                punc_kind: PuncKind::DotDotEquals,
+                punc_kind: PuncKind::DblDot,
                 ..
             }) = dbl_dot_opt
             {
