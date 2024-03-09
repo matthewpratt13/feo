@@ -57,9 +57,9 @@ impl Spanned for RangeFromPatt {
 
 #[derive(Debug, Clone)]
 pub struct RangeInclusivePatt {
-    from: RangePattBound,
-    dot_dot_equals: DotDotEquals,
-    to_incl: RangePattBound,
+    pub from: RangePattBound,
+    pub dot_dot_equals: DotDotEquals,
+    pub to_incl: RangePattBound,
 }
 
 impl Spanned for RangeInclusivePatt {
