@@ -27,7 +27,7 @@ impl Spanned for StructExprKind {
 pub struct StructExpr {
     pub id: Identifier,
     pub open_brace: Brace,
-    pub struct_expr_fields_opt: Option<StructExprFields>,
+    pub fields_opt: Option<StructExprFields>,
     pub close_brace: Brace,
 }
 
@@ -41,12 +41,6 @@ impl Spanned for StructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct StructExprField(
-    pub Option<Vec<OuterAttr>>,
-    pub (Identifier, Colon, Box<Returnable>),
-);
-
-#[derive(Debug, Clone)]
 pub struct StructExprFields {
     pub first_field: StructExprField,
     pub subsequent_fields: Option<Vec<(Comma, StructExprField)>>,
@@ -54,10 +48,16 @@ pub struct StructExprFields {
 }
 
 #[derive(Debug, Clone)]
+pub struct StructExprField(
+    pub Option<Vec<OuterAttr>>,
+    pub (Identifier, Colon, Box<Returnable>),
+);
+
+#[derive(Debug, Clone)]
 pub struct TupleStructExpr {
     pub id: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub elements_opt: Option<TupleStructFields>,
+    pub elements_opt: Option<TupleStructExprFields>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -71,7 +71,7 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructFields(
+pub struct TupleStructExprFields(
     pub  (
         Box<Returnable>,
         Option<Vec<(Comma, Returnable)>>,

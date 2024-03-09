@@ -1,7 +1,7 @@
 use feo_ast::{
     attribute::OuterAttr,
     expression::{
-        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructFields,
+        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExprFields,
         TupleStructExpr,
     },
     token::Token,
@@ -172,7 +172,7 @@ impl ParseExpr for StructExpr {
                         return Ok(Some(StructExpr {
                             id,
                             open_brace: open_brace_opt.unwrap(),
-                            struct_expr_fields_opt: Some(struct_expr_fields),
+                            fields_opt: Some(struct_expr_fields),
                             close_brace: close_brace_opt.unwrap(),
                         }));
                     }
@@ -200,7 +200,7 @@ impl ParseExpr for StructExpr {
     }
 }
 
-impl ParseTerm for TupleStructFields {
+impl ParseTerm for TupleStructExprFields {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -249,12 +249,12 @@ impl ParseTerm for TupleStructFields {
             }
 
             match &subsequent_elements.is_empty() {
-                true => Ok(Some(TupleStructFields((
+                true => Ok(Some(TupleStructExprFields((
                     Box::new(first_element),
                     None,
                     trailing_comma_opt,
                 )))),
-                false => Ok(Some(TupleStructFields((
+                false => Ok(Some(TupleStructExprFields((
                     Box::new(first_element),
                     Some(subsequent_elements),
                     trailing_comma_opt,
@@ -283,7 +283,7 @@ impl ParseExpr for TupleStructExpr {
             {
                 parser.next_token();
 
-                if let Some(elements) = TupleStructFields::parse(parser)? {
+                if let Some(elements) = TupleStructExprFields::parse(parser)? {
                     let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -306,7 +306,7 @@ impl ParseExpr for TupleStructExpr {
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`TupleStructFields`".to_string(),
+                        expected: "`TupleStructExprFields`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }

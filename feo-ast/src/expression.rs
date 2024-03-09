@@ -56,7 +56,7 @@ pub use self::{
     },
     return_expr::ReturnExpr,
     struct_expr::{
-        StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructFields,
+        StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructExprFields,
         TupleStructExpr,
     },
     tuple_expr::{TupleElements, TupleExpr, TupleIndexExpr},

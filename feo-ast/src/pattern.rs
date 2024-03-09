@@ -24,10 +24,12 @@ pub use self::{
     identifier_patt::IdentifierPatt,
     parenthesized_patt::ParenthesizedPatt,
     range_patt::{
-        RangeFromPatt, RangeInclusivePatt, RangePattKind, RangePattBound, RangeToInclusivePatt,
+        RangeFromPatt, RangeInclusivePatt, RangePattBound, RangePattKind, RangeToInclusivePatt,
     },
     reference_patt::ReferencePatt,
-    struct_patt::{StructPatt, TupleStructPatt},
+    struct_patt::{
+        StructPatt, StructPattField, StructPattFields, TupleStructPatt, TupleStructPattFields,
+    },
     tuple_patt::TuplePatt,
     wildcard_patt::WildcardPatt,
 };

@@ -4,13 +4,13 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{attribute::OuterAttr, path::PathInExpr};
+use crate::attribute::OuterAttr;
 
 use super::Pattern;
 
 #[derive(Debug, Clone)]
 pub struct StructPatt {
-    object_path: PathInExpr,
+    id: Identifier,
     open_brace: Brace,
     fields_opt: Option<StructPattFields>,
     close_brace: Brace,
@@ -18,53 +18,40 @@ pub struct StructPatt {
 
 impl Spanned for StructPatt {
     fn span(&self) -> Span {
-        let start_pos = self.object_path.span().start();
-        let end_pos = self.close_brace.span().end();
-        let source = self.object_path.span().source();
+        let s1 = self.id.span();
+        let s2 = self.close_brace.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct StructPattFields {
     first_field: StructPattField,
-    subsequent_fields: Vec<(Comma, StructPattField)>,
+    subsequent_fields: Option<Vec<(Comma, StructPattField)>>,
 }
 
 #[derive(Debug, Clone)]
-pub struct StructPattField {
-    attributes: Vec<OuterAttr>,
-    field_name: Identifier,
-    colon: Colon,
-    data: Box<Pattern>,
-}
+pub struct StructPattField(
+    pub Option<Vec<OuterAttr>>,
+    pub (Identifier, Colon, Box<Pattern>),
+);
 
 #[derive(Debug, Clone)]
 pub struct TupleStructPatt {
-    object_path: PathInExpr,
+    id: Identifier,
     open_parenthesis: Parenthesis,
-    elements_opt: Option<TupleStructElements>,
+    elements_opt: Option<TupleStructPattFields>,
     close_parenthesis: Parenthesis,
 }
 
 impl Spanned for TupleStructPatt {
     fn span(&self) -> Span {
-        let start_pos = self.object_path.span().start();
-        let end_pos = self.close_parenthesis.span().end();
-        let source = self.object_path.span().source();
+        let s1 = self.id.span();
+        let s2 = self.close_parenthesis.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
-
 #[derive(Debug, Clone)]
-pub struct TupleStructElements {
-    first_item: Box<Pattern>,
-    subsequent_fields: Vec<(Comma, Pattern)>,
-    trailing_comma_opt: Option<Comma>,
-}
+pub struct TupleStructPattFields((Box<Pattern>, Option<Vec<(Comma, Pattern)>>, Option<Comma>));
