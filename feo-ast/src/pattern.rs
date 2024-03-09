@@ -23,7 +23,9 @@ use crate::{
 pub use self::{
     identifier_patt::IdentifierPatt,
     parenthesized_patt::ParenthesizedPatt,
-    range_patt::RangePatt,
+    range_patt::{
+        RangeFromPatt, RangeInclusivePatt, RangePatt, RangePattBound, RangeToInclusivePatt,
+    },
     reference_patt::ReferencePatt,
     struct_patt::{StructPatt, TupleStructPatt},
     tuple_patt::TuplePatt,
