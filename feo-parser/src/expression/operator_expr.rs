@@ -774,13 +774,13 @@ mod tests {
         let mut parser = Parser::new(token_stream, handler);
 
         let negation_expr =
-            DereferenceExpr::parse(&mut parser).expect("unable to parse negation expression");
+            NegationExpr::parse(&mut parser).expect("unable to parse negation expression");
 
         println!("{:#?}", negation_expr);
     }
 
     #[test]
-    fn parse_ref_expr() {
+    fn parse_reference_expr() {
         let source_code = r#"&mut x"#;
 
         let handler = Handler::default();
