@@ -103,6 +103,11 @@ impl ParseTerm for RangeInclusivePatt {
                     expected: "`RangePattBound`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`..=`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             }
         } else {
             return Ok(None);
@@ -165,7 +170,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        println!("{:#?}", token_stream);
+        // println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
@@ -190,7 +195,7 @@ mod tests {
         let mut parser = Parser::new(token_stream, handler);
 
         let range_inclusive_patt =
-            RangeFromPatt::parse(&mut parser).expect("unable to parse `RangeInclusivePatt`");
+            RangeInclusivePatt::parse(&mut parser).expect("unable to parse `RangeInclusivePatt`");
 
         println!("{:#?}", range_inclusive_patt);
     }
@@ -209,8 +214,8 @@ mod tests {
 
         let mut parser = Parser::new(token_stream, handler);
 
-        let range_to_inclusive_patt =
-            RangeFromPatt::parse(&mut parser).expect("unable to parse `RangeToInclusivePatt`");
+        let range_to_inclusive_patt = RangeToInclusivePatt::parse(&mut parser)
+            .expect("unable to parse `RangeToInclusivePatt`");
 
         println!("{:#?}", range_to_inclusive_patt);
     }

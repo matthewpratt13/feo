@@ -621,11 +621,11 @@ impl<'a> Lexer<'a> {
                 '.' => {
                     self.advance();
 
-                    if let Some('.') = self.peek_next() {
+                    if let Some('.') = self.current_char() {
                         self.advance();
                     }
 
-                    if self.current_char() == Some('.') {
+                    if let Some('=') = self.current_char() {
                         self.advance();
                     }
 

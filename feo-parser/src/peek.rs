@@ -19,7 +19,7 @@ pub(crate) struct Peeker<'a> {
 }
 
 impl<'a> Peeker<'a> {
-    // peek for a `T` in `&[Token]'; return `T` if it exists or return an error
+    // peek for a `T` in `&[Token]'; return `T` if it exists or return `None`
     pub(crate) fn with<T: Peek>(tokens: &'a [Token], pos: usize) -> Option<T> {
         let peeker = Peeker { tokens, pos };
         let value = T::peek(&peeker);
@@ -32,7 +32,8 @@ impl<'a> Peeker<'a> {
         self.tokens.get(self.pos).cloned()
     }
 
-    // peek for a `Literal`; return it if it exists, or return an error
+    // peek for a `Literal`; return it if it exists, or return `self`
+    // (i.e., do nothing)
     fn peek_char_lit(&self) -> Result<Literal<char>, Self> {
         match self.peek_token() {
             Some(Token::CharLit(c)) => Ok(c),
