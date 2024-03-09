@@ -13,19 +13,16 @@ pub struct IdentifierPatt {
 
 impl Spanned for IdentifierPatt {
     fn span(&self) -> Span {
-        let start_pos = match &self.kw_ref_opt {
-            Some(kwr) => kwr.span().start(),
+        let s1 = match &self.kw_ref_opt {
+            Some(kwr) => kwr.span(),
             None => match &self.kw_mut_opt {
-                Some(kwm) => kwm.span().start(),
-                None => self.name.span().start(),
+                Some(kwm) => kwm.span(),
+                None => self.name.span(),
             },
         };
 
-        let end_pos = self.name.span().end();
-        let source = self.name.span().source();
+        let s2 = self.name.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

@@ -45,13 +45,10 @@ pub struct RangeFromPatt {
 
 impl Spanned for RangeFromPatt {
     fn span(&self) -> Span {
-        let start_pos = self.from.span().start();
-        let end_pos = self.dbl_dot.span().end();
-        let source = self.from.span().source();
+        let s1 = self.from.span();
+        let s2 = self.dbl_dot.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -64,13 +61,10 @@ pub struct RangeInclusivePatt {
 
 impl Spanned for RangeInclusivePatt {
     fn span(&self) -> Span {
-        let start_pos = self.from.span().start();
-        let end_pos = self.to_incl.span().end();
-        let source = self.from.span().source();
+        let s1 = self.from.span();
+        let s2 = self.to_incl.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 

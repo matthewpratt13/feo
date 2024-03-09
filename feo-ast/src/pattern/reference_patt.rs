@@ -16,12 +16,9 @@ pub struct ReferencePatt {
 
 impl Spanned for ReferencePatt {
     fn span(&self) -> Span {
-        let start_pos = self.kw_ref.span().start();
-        let end_pos = self.pattern.span().end();
-        let source = self.kw_ref.span().source();
+        let s1 = self.kw_ref.span();
+        let s2 = self.pattern.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
