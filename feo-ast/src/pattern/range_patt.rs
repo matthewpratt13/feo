@@ -8,7 +8,7 @@ use feo_types::{
 use crate::path::PathExpr;
 
 #[derive(Debug, Clone)]
-pub enum RangePatt {
+pub enum RangePattKind {
     RangeFromPatt(RangeFromPatt),
     RangeInclusivePatt(RangeInclusivePatt),
     RangeToInclusivePatt(RangeToInclusivePatt),

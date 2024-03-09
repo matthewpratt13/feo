@@ -1,5 +1,5 @@
 use feo_ast::pattern::{
-    RangeFromPatt, RangeInclusivePatt, RangePatt, RangePattBound, RangeToInclusivePatt,
+    RangeFromPatt, RangeInclusivePatt, RangePattKind, RangePattBound, RangeToInclusivePatt,
 };
 use feo_error::error::CompilerError;
 use feo_types::literal::LiteralKind;
@@ -30,7 +30,7 @@ impl Peek for RangePattBound {
     }
 }
 
-impl ParseTerm for RangePatt {
+impl ParseTerm for RangePattKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
