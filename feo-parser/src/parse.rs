@@ -9,10 +9,7 @@ use feo_ast::{
         RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, Returnable,
         StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
         UnderscoreExpr, UnwrapExpr,
-    },
-    path::{PathIdenSegmentKind, PathInExpr},
-    token::Token,
-    Type,
+    }, path::{PathIdenSegmentKind, PathInExpr}, pattern::Pattern, token::Token, Type
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
@@ -946,6 +943,15 @@ impl ParseExpr for Returnable {
         }
 
         Err(parser.errors())
+    }
+}
+
+impl ParseTerm for Pattern {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }
 
