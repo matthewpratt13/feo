@@ -333,7 +333,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_struct() {
+    fn parse_struct_expr() {
         let source_code = r#"
         SomeStruct {
             #[abstract]
@@ -359,7 +359,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_tuple_struct() {
+    fn parse_tuple_struct_expr() {
         let source_code = r#"SomeStruct(foo, bar, baz,)"#;
 
         let handler = Handler::default();
