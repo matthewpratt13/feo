@@ -552,7 +552,7 @@ impl<'a> Lexer<'a> {
                     while let Some(c) = self.current_char() {
                         if c.is_digit(10) || c == '_' {
                             self.advance();
-                        } else if c == '.' && !is_float {
+                        } else if c == '.' && !is_float && self.peek_next() != Some('.') {
                             self.advance();
                             is_float = true;
                         } else {
@@ -618,13 +618,38 @@ impl<'a> Lexer<'a> {
                     tokens.push(punctuation);
                 }
 
+                '.' => {
+                    self.advance();
+
+                    if let Some('.') = self.peek_next() {
+                        self.advance();
+                    }
+
+                    if self.current_char() == Some('.') {
+                        self.advance();
+                    }
+
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let punc_content = Arc::new(&data);
+
+                    let punctuation = Punctuation::tokenize(
+                        &self.input,
+                        &punc_content,
+                        start_pos,
+                        self.pos,
+                        &mut self.handler,
+                    )?;
+
+                    tokens.push(punctuation);
+                }
+
                 '!'
                 | '#'..='&'
                 | '*'
                 | '+'
                 | '/'
                 | '-'
-                | '.'
                 | ':'
                 | '<'..='@'
                 | '\\'
