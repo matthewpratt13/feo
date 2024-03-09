@@ -644,6 +644,50 @@ impl<'a> Lexer<'a> {
                     tokens.push(punctuation);
                 }
 
+                '<' => {
+                    self.advance();
+
+                    if let Some('<') = self.peek_next() {
+                        self.advance();
+                    }
+
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let punc_content = Arc::new(&data);
+
+                    let punctuation = Punctuation::tokenize(
+                        &self.input,
+                        &punc_content,
+                        start_pos,
+                        self.pos,
+                        &mut self.handler,
+                    )?;
+
+                    tokens.push(punctuation);
+                }
+
+                '>' => {
+                    self.advance();
+
+                    if let Some('<') = self.peek_next() {
+                        self.advance();
+                    }
+
+                    let data = self.input[start_pos..self.pos].to_string();
+
+                    let punc_content = Arc::new(&data);
+
+                    let punctuation = Punctuation::tokenize(
+                        &self.input,
+                        &punc_content,
+                        start_pos,
+                        self.pos,
+                        &mut self.handler,
+                    )?;
+
+                    tokens.push(punctuation);
+                }
+
                 '!'
                 | '#'..='&'
                 | '*'
@@ -651,7 +695,9 @@ impl<'a> Lexer<'a> {
                 | '/'
                 | '-'
                 | ':'
-                | '<'..='@'
+                | '='
+                | '?'
+                | '@'
                 | '\\'
                 | '^'
                 | '`'
