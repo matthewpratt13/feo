@@ -9,44 +9,42 @@ impl Peek for LiteralKind {
     where
         Self: Sized,
     {
-        let literal_kind = if let Some(c) = Literal::<char>::peek(peeker) {
-            LiteralKind::Char(c)
+        if let Some(c) = Literal::<char>::peek(peeker) {
+            Some(LiteralKind::Char(c))
         } else if let Some(s) = Literal::<String>::peek(peeker) {
-            LiteralKind::String(s)
+            Some(LiteralKind::String(s))
         } else if let Some(b) = Literal::<bool>::peek(peeker) {
-            LiteralKind::Bool(b)
+            Some(LiteralKind::Bool(b))
         } else if let Some(i) = Literal::<IntType>::peek(peeker) {
             match i.clone().into_inner() {
                 Some(t) => match t {
-                    IntType::I32(_) => LiteralKind::Int(i),
-                    IntType::I64(_) => LiteralKind::Int(i),
+                    IntType::I32(_) => Some(LiteralKind::Int(i)),
+                    IntType::I64(_) => Some(LiteralKind::Int(i)),
                 },
-                _ => return None,
+                _ => None,
             }
         } else if let Some(ui) = Literal::<UIntType>::peek(peeker) {
             match ui.clone().into_inner() {
                 Some(t) => match t {
-                    UIntType::U8(_) => LiteralKind::UInt(ui),
-                    UIntType::U16(_) => LiteralKind::UInt(ui),
-                    UIntType::U32(_) => LiteralKind::UInt(ui),
-                    UIntType::U64(_) => LiteralKind::UInt(ui),
+                    UIntType::U8(_) => Some(LiteralKind::UInt(ui)),
+                    UIntType::U16(_) => Some(LiteralKind::UInt(ui)),
+                    UIntType::U32(_) => Some(LiteralKind::UInt(ui)),
+                    UIntType::U64(_) => Some(LiteralKind::UInt(ui)),
                 },
-                _ => return None,
+                _ => None,
             }
         } else if let Some(u) = Literal::<U256>::peek(peeker) {
-            LiteralKind::U256(u)
+            Some(LiteralKind::U256(u))
         } else if let Some(f) = Literal::<FloatType>::peek(peeker) {
             match f.clone().into_inner() {
                 Some(t) => match t {
-                    FloatType::F32(_) => LiteralKind::Float(f),
-                    FloatType::F64(_) => LiteralKind::Float(f),
+                    FloatType::F32(_) => Some(LiteralKind::Float(f)),
+                    FloatType::F64(_) => Some(LiteralKind::Float(f)),
                 },
-                _ => return None,
+                _ => None,
             }
         } else {
-            return None;
-        };
-
-        Some(literal_kind)
+            None
+        }
     }
 }
