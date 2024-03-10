@@ -64,7 +64,7 @@ impl ParseTerm for ConstantVarDef {
                                 parser.next_token();
 
                                 if let Some(expr) = Expression::parse(parser)? {
-                                    let assignment_opt = (equals_opt.unwrap(), Box::new(expr));
+                                    let assignment_opt = Box::new(expr);
 
                                     let semicolon_opt = parser.peek_current::<Punctuation>();
 
@@ -82,7 +82,6 @@ impl ParseTerm for ConstantVarDef {
                                                     visibility_opt,
                                                     kw_const: kw_const_opt.unwrap(),
                                                     item_name,
-                                                    colon: colon_opt.unwrap(),
                                                     item_type: Box::new(item_type),
                                                     assignment_opt: Some(assignment_opt),
                                                     semicolon: semicolon_opt.unwrap(),
@@ -95,7 +94,6 @@ impl ParseTerm for ConstantVarDef {
                                                     visibility_opt,
                                                     kw_const: kw_const_opt.unwrap(),
                                                     item_name,
-                                                    colon: colon_opt.unwrap(),
                                                     item_type: Box::new(item_type),
                                                     assignment_opt: Some(assignment_opt),
                                                     semicolon: semicolon_opt.unwrap(),

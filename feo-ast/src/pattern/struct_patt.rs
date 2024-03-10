@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Colon, Comma, Parenthesis},
+    utils::{Brace, Comma, Parenthesis},
     Identifier,
 };
 
@@ -28,15 +28,12 @@ impl Spanned for StructPatt {
 #[derive(Debug, Clone)]
 pub struct StructPattFields {
     first_field: StructPattField,
-    subsequent_fields: Option<Vec<(Comma, StructPattField)>>,
+    subsequent_fields: Option<Vec<StructPattField>>,
     trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
-pub struct StructPattField(
-    pub Option<Vec<OuterAttr>>,
-    pub (Identifier, Colon, Box<Pattern>),
-);
+pub struct StructPattField(pub Option<Vec<OuterAttr>>, pub (Identifier, Box<Pattern>));
 
 #[derive(Debug, Clone)]
 pub struct TupleStructPatt {
@@ -55,4 +52,4 @@ impl Spanned for TupleStructPatt {
     }
 }
 #[derive(Debug, Clone)]
-pub struct TupleStructPattFields((Box<Pattern>, Option<Vec<(Comma, Pattern)>>, Option<Comma>));
+pub struct TupleStructPattFields((Box<Pattern>, Option<Vec<Pattern>>, Option<Comma>));

@@ -29,7 +29,6 @@ impl ParseExpr for FieldAccessExpr {
 
                     return Ok(Some(FieldAccessExpr {
                         container_operand: Box::new(a),
-                        full_stop: full_stop_opt.unwrap(),
                         field_name,
                     }));
                 }

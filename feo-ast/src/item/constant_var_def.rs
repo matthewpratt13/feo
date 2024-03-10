@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Equals, KwConst, KwMut, KwStatic, Semicolon},
+    utils::{KwConst, KwMut, KwStatic, Semicolon},
     Identifier,
 };
 
@@ -14,9 +14,8 @@ pub struct ConstantVarDef {
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_const: KwConst,
     pub item_name: Identifier,
-    pub colon: Colon,
     pub item_type: Box<Type>,
-    pub assignment_opt: Option<(Equals, Box<Expression>)>, // `None` is only allowed in a `TraitDef`
+    pub assignment_opt: Option<Box<Expression>>, // `None` is only allowed in a `TraitDef`
     pub semicolon: Semicolon,
 }
 
@@ -46,9 +45,8 @@ pub struct StaticVarDef {
     kw_static: KwStatic,
     kw_mut_opt: Option<KwMut>,
     item_name: Identifier,
-    colon: Colon,
     item_type: Type,
-    assignment_opt: Option<(Equals, Expression)>,
+    assignment_opt: Option<Box<Expression>>,
     semicolon: Semicolon,
 }
 

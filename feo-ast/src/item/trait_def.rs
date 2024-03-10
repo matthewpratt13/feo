@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Colon, KwTrait},
+    utils::{Brace, KwTrait},
     Identifier,
 };
 
@@ -21,11 +21,11 @@ pub enum TraitDefItem {
 
 #[derive(Debug, Clone)]
 pub struct TraitDef {
-    outer_attributes: Vec<OuterAttr>,
+    outer_attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_trait: KwTrait,
     trait_name: Identifier,
-    type_param_bounds_opt: Option<(Colon, Option<TypeParamBounds>)>,
+    type_param_bounds_opt: Option<Option<TypeParamBounds>>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes: Vec<InnerAttr>,
@@ -35,8 +35,14 @@ pub struct TraitDef {
 
 impl Spanned for TraitDef {
     fn span(&self) -> Span {
-        let s1 = match self.outer_attributes.first() {
-            Some(a) => a.span(),
+        let s1 = match &self.outer_attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_trait.span(),
+                },
+            },
             None => match &self.visibility_opt {
                 Some(v) => v.span(),
                 None => self.kw_trait.span(),

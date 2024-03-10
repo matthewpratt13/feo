@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Comma, Parenthesis},
+    utils::Parenthesis,
 };
 
 use super::Type;
@@ -8,7 +8,7 @@ use super::Type;
 #[derive(Debug, Clone)]
 pub struct TupleType {
     pub open_parenthesis: Parenthesis,
-    pub elements: Option<Vec<(Type, Comma)>>,
+    pub elements: Option<Vec<Type>>,
     pub trailing_element: Box<Type>,
     pub close_parenthesis: Parenthesis,
 }

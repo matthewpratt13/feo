@@ -16,7 +16,7 @@ pub enum ModBlock {
 
 #[derive(Debug, Clone)]
 pub struct ModWithBody {
-    attributes: Vec<OuterAttr>,
+    attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_mod: KwMod,
     mod_name: Identifier,
@@ -27,8 +27,14 @@ pub struct ModWithBody {
 
 impl Spanned for ModWithBody {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
+        let s1 = match &self.attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_mod.span(),
+                },
+            },
             None => match &self.visibility_opt {
                 Some(v) => v.span(),
                 None => self.kw_mod.span(),
@@ -43,7 +49,7 @@ impl Spanned for ModWithBody {
 
 #[derive(Debug, Clone)]
 pub struct ModWithoutBody {
-    attributes: Vec<OuterAttr>,
+    attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_mod: KwMod,
     mod_name: Identifier,
@@ -52,14 +58,19 @@ pub struct ModWithoutBody {
 
 impl Spanned for ModWithoutBody {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
+        let s1 = match &self.attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_mod.span(),
+                },
+            },
             None => match &self.visibility_opt {
                 Some(v) => v.span(),
                 None => self.kw_mod.span(),
             },
         };
-
         let s2 = self.semicolon.span();
 
         Span::join(s1, s2)

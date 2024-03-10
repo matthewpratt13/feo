@@ -26,12 +26,10 @@ impl ParseTerm for ArrayType {
             if let Some(element_type) = Type::parse(parser)? {
                 parser.next_token();
 
-                let semicolon_opt = parser.peek_current::<Punctuation>();
-
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Semicolon,
                     ..
-                }) = semicolon_opt
+                }) = parser.peek_current::<Punctuation>()
                 {
                     parser.next_token();
 
@@ -50,7 +48,6 @@ impl ParseTerm for ArrayType {
                             return Ok(Some(ArrayType {
                                 open_bracket: open_bracket_opt.unwrap(),
                                 element_type: Box::new(element_type),
-                                semicolon: semicolon_opt.unwrap(),
                                 num_elements,
                                 close_bracket: close_bracket_opt.unwrap(),
                             }));

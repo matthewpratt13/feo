@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Comma, KwFunc, KwSelf, Parenthesis, Semicolon, ThinArrow},
+    utils::{Comma, KwFunc, KwSelf, Parenthesis, Semicolon},
     Identifier,
 };
 
@@ -22,19 +22,7 @@ pub enum FunctionDefKind {
 impl Spanned for FunctionDefKind {
     fn span(&self) -> Span {
         match self {
-            FunctionDefKind::FuncSig(fs) => {
-                let s1 = match fs.0.attributes.first() {
-                    Some(a) => a.span(),
-                    None => match &fs.0.visibility_opt {
-                        Some(v) => v.span(),
-                        None => fs.0.kw_func.span(),
-                    },
-                };
-
-                let s2 = fs.1.span();
-
-                Span::join(s1, s2)
-            }
+            FunctionDefKind::FuncSig(fs) => fs.0.span(),
             FunctionDefKind::FuncDef(fd) => fd.span(),
         }
     }
@@ -54,14 +42,7 @@ pub struct FunctionWithBlock {
 
 impl Spanned for FunctionWithBlock {
     fn span(&self) -> Span {
-        let s1 = match self.function_sig.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.function_sig.visibility_opt {
-                Some(v) => v.span(),
-                None => self.function_sig.kw_func.span(),
-            },
-        };
-
+        let s1 = self.function_sig.span();
         let s2 = self.function_body.span();
 
         Span::join(s1, s2)
@@ -70,20 +51,26 @@ impl Spanned for FunctionWithBlock {
 
 #[derive(Debug, Clone)]
 pub struct FunctionSig {
-    attributes: Vec<OuterAttr>,
+    attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: KwFunc,
     function_name: Identifier,
     open_parenthesis: Parenthesis,
     function_params_opt: Option<FunctionParams>,
     close_parenthesis: Parenthesis,
-    return_type_opt: Option<(ThinArrow, Box<Type>)>,
+    return_type_opt: Option<Box<Type>>,
 }
 
 impl Spanned for FunctionSig {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
+        let s1 = match &self.attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_func.span(),
+                },
+            },
             None => match &self.visibility_opt {
                 Some(v) => v.span(),
                 None => self.kw_func.span(),
@@ -91,7 +78,7 @@ impl Spanned for FunctionSig {
         };
 
         let s2 = match &self.return_type_opt {
-            Some(rt) => rt.1.span(),
+            Some(rt) => rt.span(),
             None => self.close_parenthesis.span(),
         };
 
@@ -102,14 +89,13 @@ impl Spanned for FunctionSig {
 #[derive(Debug, Clone)]
 pub struct FunctionParams {
     first_param: FuncOrMethodParam,
-    subsequent_params: Vec<(Comma, FunctionParam)>,
+    subsequent_params: Option<Vec<FunctionParam>>,
     trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
 pub struct FunctionParam {
     param_pattern: Box<Pattern>,
-    colon: Colon,
     param_type: Box<Type>,
 }
 
@@ -123,5 +109,5 @@ pub struct MethodParam {
 pub struct SelfParam {
     ref_operator: RefOperator,
     kw_self: KwSelf,
-    type_annotation_opt: Option<(Colon, Box<Type>)>,
+    type_annotation_opt: Option<Box<Type>>,
 }

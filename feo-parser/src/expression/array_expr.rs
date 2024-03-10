@@ -11,7 +11,6 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     literal::UIntType,
     punctuation::PuncKind,
-    utils::Comma,
     Delimiter, Literal, Punctuation,
 };
 
@@ -25,7 +24,7 @@ impl ParseTerm for ArrayElementsCommaSeparated {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<(Comma, Iterable)> = Vec::new();
+        let mut subsequent_elements: Vec<Iterable> = Vec::new();
 
         if let Some(first_element) = Iterable::parse(parser)? {
             parser.next_token();
@@ -40,7 +39,7 @@ impl ParseTerm for ArrayElementsCommaSeparated {
                 parser.next_token();
 
                 if let Some(next_element) = Iterable::parse(parser)? {
-                    subsequent_elements.push((next_comma_opt.unwrap(), next_element));
+                    subsequent_elements.push(next_element);
 
                     parser.next_token();
 
@@ -203,9 +202,8 @@ impl ParseExpr for IndexExpr {
     {
         if let Some(indexed_operand) = Assignable::parse(parser)? {
             parser.next_token();
-            
-            let open_bracket_opt = parser.peek_current::<Delimiter>();
 
+            let open_bracket_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),

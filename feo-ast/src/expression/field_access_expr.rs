@@ -1,7 +1,4 @@
-use feo_types::{
-    span::{Span, Spanned},
-    utils::FullStop,
-};
+use feo_types::span::{Span, Spanned};
 
 use crate::item::StructFieldName;
 
@@ -10,7 +7,6 @@ use super::Assignable;
 #[derive(Debug, Clone)]
 pub struct FieldAccessExpr {
     pub container_operand: Box<Assignable>,
-    pub full_stop: FullStop,
     pub field_name: StructFieldName,
 }
 

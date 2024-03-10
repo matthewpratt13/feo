@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Comma, DblPipe, Pipe, ThinArrow},
+    utils::{Comma, DblPipe, Pipe},
 };
 
 use crate::{attribute::OuterAttr, pattern::Pattern, ty::Type};
@@ -39,7 +39,7 @@ pub enum ClosureExprKind {
 #[derive(Debug, Clone)]
 pub struct ClosureWithBlock {
     params: ClosureParamsOpt,
-    return_type_opt: Option<(ThinArrow, Box<Type>)>,
+    return_type_opt: Option<Box<Type>>,
     block: BlockExpr,
 }
 
@@ -70,7 +70,7 @@ impl Spanned for ClosureWithoutBlock {
 #[derive(Debug, Clone)]
 pub struct ClosureParams {
     first_param: ClosureParam,
-    subsequent_params: Vec<(Comma, ClosureParam)>,
+    subsequent_params: Vec<ClosureParam>,
     trailing_comma_opt: Option<Comma>,
 }
 
@@ -80,7 +80,7 @@ impl Spanned for ClosureParams {
         let s2 = match self.subsequent_params.last() {
             Some(sp) => match &self.trailing_comma_opt {
                 Some(tc) => tc.span(),
-                None => sp.1.span(),
+                None => sp.span(),
             },
             None => self.first_param.span(),
         };
@@ -93,7 +93,7 @@ impl Spanned for ClosureParams {
 pub struct ClosureParam {
     attributes: Vec<OuterAttr>,
     pattern: Box<Pattern>,
-    type_annotation_opt: Option<(Colon, Box<Type>)>,
+    type_annotation_opt: Option<Box<Type>>,
 }
 
 impl Spanned for ClosureParam {
@@ -105,7 +105,7 @@ impl Spanned for ClosureParam {
         };
 
         let s2 = if let Some(ta) = &self.type_annotation_opt {
-            ta.1.span()
+            ta.span()
         } else {
             self.pattern.span()
         };

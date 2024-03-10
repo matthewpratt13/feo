@@ -1,7 +1,7 @@
 use feo_types::{
     literal::UIntType,
     span::{Span, Spanned},
-    utils::{Bracket, Semicolon},
+    utils::Bracket,
     Literal,
 };
 
@@ -11,7 +11,6 @@ use super::Type;
 pub struct ArrayType {
     pub open_bracket: Bracket,
     pub element_type: Box<Type>,
-    pub semicolon: Semicolon,
     pub num_elements: Literal<UIntType>,
     pub close_bracket: Bracket,
 }

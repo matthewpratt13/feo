@@ -6,7 +6,6 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
-    utils::Comma,
     Delimiter, Identifier, Punctuation,
 };
 
@@ -20,7 +19,7 @@ impl ParseTerm for CallParams {
     where
         Self: Sized,
     {
-        let mut subsequent_params: Vec<(Comma, Returnable)> = Vec::new();
+        let mut subsequent_params: Vec<Returnable> = Vec::new();
 
         if let Some(first_param) = Returnable::parse(parser)? {
             parser.next_token();
@@ -35,7 +34,7 @@ impl ParseTerm for CallParams {
                 parser.next_token();
 
                 if let Some(next_param) = Returnable::parse(parser)? {
-                    subsequent_params.push((next_comma_opt.unwrap(), next_param));
+                    subsequent_params.push(next_param);
 
                     parser.next_token();
 

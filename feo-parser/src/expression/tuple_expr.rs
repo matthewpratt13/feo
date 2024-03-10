@@ -6,7 +6,6 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
-    utils::Comma,
     Delimiter, Punctuation,
 };
 
@@ -20,7 +19,7 @@ impl ParseTerm for TupleElements {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
+        let mut subsequent_elements: Vec<Returnable> = Vec::new();
 
         if let Some(first_element) = Returnable::parse(parser)? {
             parser.next_token();
@@ -35,7 +34,7 @@ impl ParseTerm for TupleElements {
                 parser.next_token();
 
                 if let Some(next_element) = Returnable::parse(parser)? {
-                    subsequent_elements.push((next_comma_opt.unwrap(), next_element));
+                    subsequent_elements.push(next_element);
 
                     parser.next_token();
 

@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Comma, FatArrow, KwElse, KwIf, KwMatch},
+    utils::{Brace, KwElse, KwIf, KwMatch},
 };
 
 use crate::{
@@ -58,8 +58,8 @@ impl Spanned for MatchExpr {
 
 #[derive(Debug, Clone)]
 pub struct MatchArms {
-    arms: Vec<(MatchArm, FatArrow, Expression, Option<Comma>)>,
-    final_arm: (MatchArm, FatArrow, Box<Expression>, Option<Comma>),
+    arms: Vec<(MatchArm, Expression)>,
+    final_arm: (MatchArm, Box<Expression>),
 }
 
 #[derive(Debug, Clone)]

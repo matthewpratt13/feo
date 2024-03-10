@@ -11,7 +11,6 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    utils::Comma,
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
@@ -71,7 +70,7 @@ impl ParseTerm for EnumVariants {
     where
         Self: Sized,
     {
-        let mut subsequent_variants: Vec<(Comma, EnumVariant)> = Vec::new();
+        let mut subsequent_variants: Vec<EnumVariant> = Vec::new();
 
         if let Some(first_variant) = EnumVariant::parse(parser)? {
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
@@ -84,7 +83,7 @@ impl ParseTerm for EnumVariants {
                 parser.next_token();
 
                 if let Some(next_variant) = EnumVariant::parse(parser)? {
-                    subsequent_variants.push((next_comma_opt.unwrap(), next_variant));
+                    subsequent_variants.push(next_variant);
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_comma_opt = Some(p);
