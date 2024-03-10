@@ -54,15 +54,6 @@ pub struct StructDefFields {
     pub trailing_comma_opt: Option<Comma>,
 }
 
-// #[derive(Debug, Clone)]
-// pub struct StructDefField {
-//     pub attributes: Option<Vec<OuterAttr>>,
-//     pub visibility_opt: Option<VisibilityKind>,
-//     pub field_name: StructFieldName,
-//     pub colon: Colon,
-//     pub field_type: Box<Type>,
-// }
-
 #[derive(Debug, Clone)]
 
 pub struct StructDefField(
