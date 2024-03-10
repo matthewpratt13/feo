@@ -1,5 +1,5 @@
 use feo_types::{
-    utils::{Colon, Comma, Plus},
+    utils::{Colon, Comma},
     Keyword,
 };
 

@@ -5,7 +5,7 @@ use feo_ast::{
     ty::TraitBound,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, utils::Plus, Punctuation};
+use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{parse::ParseTerm, parser::Parser};
 
