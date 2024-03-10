@@ -111,6 +111,8 @@ impl ParseTerm for StructDefFields {
                         expected: "`StructDefField`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
+
+                    break;
                 }
             }
 
@@ -289,8 +291,8 @@ mod tests {
 
         let mut parser = Parser::new(token_stream, handler);
 
-        let tuple_struct_def_field =
-            TupleStructDefField::parse(&mut parser).expect("unable to parse tuple struct def field");
+        let tuple_struct_def_field = TupleStructDefField::parse(&mut parser)
+            .expect("unable to parse tuple struct def field");
 
         println!("{:#?}", tuple_struct_def_field);
     }

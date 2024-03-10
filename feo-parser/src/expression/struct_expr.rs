@@ -1,8 +1,8 @@
 use feo_ast::{
     attribute::OuterAttr,
     expression::{
-        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExprFields,
-        TupleStructExpr,
+        Returnable, StructExpr, StructExprField, StructExprFields, TupleStructExpr,
+        TupleStructExprFields,
     },
     token::Token,
 };
@@ -28,15 +28,9 @@ impl ParseTerm for StructExprField {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        if let Some(Punctuation {
-            punc_kind: PuncKind::HashSign,
-            ..
-        }) = parser.peek_current::<Punctuation>()
-        {
-            while let Some(next_attr) = OuterAttr::parse(parser)? {
-                attributes.push(next_attr);
-                parser.next_token();
-            }
+        while let Some(next_attr) = OuterAttr::parse(parser)? {
+            attributes.push(next_attr);
+            parser.next_token();
         }
 
         if let Some(id) = parser.peek_current::<Identifier>() {
@@ -57,8 +51,8 @@ impl ParseTerm for StructExprField {
                     let field_content = (id, colon_opt.unwrap(), Box::new(r));
 
                     match &attributes.is_empty() {
-                        true => return Ok(Some(StructExprField(Some(attributes), field_content))),
-                        false => return Ok(Some(StructExprField(None, field_content))),
+                        true => return Ok(Some(StructExprField(None, field_content))),
+                        false => return Ok(Some(StructExprField(Some(attributes), field_content))),
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -110,6 +104,7 @@ impl ParseTerm for StructExprFields {
                         expected: "`StructExprField`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
+
                     break;
                 }
             }
@@ -205,9 +200,9 @@ impl ParseTerm for TupleStructExprFields {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<(Comma, Returnable)> = Vec::new();
+        let mut subsequent_fields: Vec<(Comma, Returnable)> = Vec::new();
 
-        if let Some(first_element) = Returnable::parse(parser)? {
+        if let Some(first_field) = Returnable::parse(parser)? {
             parser.next_token();
 
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
@@ -219,8 +214,8 @@ impl ParseTerm for TupleStructExprFields {
             {
                 parser.next_token();
 
-                if let Some(next_element) = Returnable::parse(parser)? {
-                    subsequent_elements.push((next_comma_opt.unwrap(), next_element));
+                if let Some(next_field) = Returnable::parse(parser)? {
+                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
 
                     parser.next_token();
 
@@ -248,15 +243,15 @@ impl ParseTerm for TupleStructExprFields {
                 parser.next_token();
             }
 
-            match &subsequent_elements.is_empty() {
+            match &subsequent_fields.is_empty() {
                 true => Ok(Some(TupleStructExprFields((
-                    Box::new(first_element),
+                    Box::new(first_field),
                     None,
                     trailing_comma_opt,
                 )))),
                 false => Ok(Some(TupleStructExprFields((
-                    Box::new(first_element),
-                    Some(subsequent_elements),
+                    Box::new(first_field),
+                    Some(subsequent_fields),
                     trailing_comma_opt,
                 )))),
             }
@@ -283,7 +278,7 @@ impl ParseExpr for TupleStructExpr {
             {
                 parser.next_token();
 
-                if let Some(elements) = TupleStructExprFields::parse(parser)? {
+                if let Some(fields) = TupleStructExprFields::parse(parser)? {
                     let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                     if let Some(Delimiter {
@@ -296,7 +291,7 @@ impl ParseExpr for TupleStructExpr {
                         return Ok(Some(TupleStructExpr {
                             id,
                             open_parenthesis: open_parenthesis_opt.unwrap(),
-                            elements_opt: Some(elements),
+                            fields_opt: Some(fields),
                             close_parenthesis: close_parenthesis_opt.unwrap(),
                         }));
                     }

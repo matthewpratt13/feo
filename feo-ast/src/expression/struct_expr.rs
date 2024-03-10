@@ -57,7 +57,7 @@ pub struct StructExprField(
 pub struct TupleStructExpr {
     pub id: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub elements_opt: Option<TupleStructExprFields>,
+    pub fields_opt: Option<TupleStructExprFields>,
     pub close_parenthesis: Parenthesis,
 }
 
