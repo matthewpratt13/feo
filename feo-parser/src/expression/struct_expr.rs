@@ -45,10 +45,10 @@ impl ParseTerm for StructExprField {
             {
                 parser.next_token();
 
-                if let Some(r) = Returnable::parse(parser)? {
+                if let Some(value) = Returnable::parse(parser)? {
                     parser.next_token();
 
-                    let field_content = (id, colon_opt.unwrap(), Box::new(r));
+                    let field_content = (id, colon_opt.unwrap(), Box::new(value));
 
                     match &attributes.is_empty() {
                         true => return Ok(Some(StructExprField(None, field_content))),

@@ -40,25 +40,19 @@ impl ParseTerm for StructDefField {
                 if let Some(field_type) = Type::parse(parser)? {
                     parser.next_token();
 
+                    let field_content = (field_name, colon_opt.unwrap(), Box::new(field_type));
+
                     match &attributes.is_empty() {
                         true => {
-                            return Ok(Some(StructDefField {
-                                attributes: None,
-                                visibility_opt,
-                                field_name,
-                                colon: colon_opt.unwrap(),
-                                field_type: Box::new(field_type),
-                            }))
+                            return Ok(Some(StructDefField(None, visibility_opt, field_content)));
                         }
 
                         false => {
-                            return Ok(Some(StructDefField {
-                                attributes: Some(attributes),
+                            return Ok(Some(StructDefField(
+                                Some(attributes),
                                 visibility_opt,
-                                field_name,
-                                colon: colon_opt.unwrap(),
-                                field_type: Box::new(field_type),
-                            }))
+                                field_content,
+                            )));
                         }
                     }
                 } else {
@@ -163,17 +157,17 @@ impl ParseTerm for TupleStructDefField {
             parser.next_token();
 
             match &attributes.is_empty() {
-                true => Ok(Some(TupleStructDefField {
-                    attributes: None,
+                true => Ok(Some(TupleStructDefField(
+                    None,
                     visibility_opt,
-                    field_type: Box::new(field_type),
-                })),
+                    Box::new(field_type),
+                ))),
 
-                false => Ok(Some(TupleStructDefField {
-                    attributes: Some(attributes),
+                false => Ok(Some(TupleStructDefField(
+                    Some(attributes),
                     visibility_opt,
-                    field_type: Box::new(field_type),
-                })),
+                    Box::new(field_type),
+                ))),
             }
         } else {
             Ok(None)

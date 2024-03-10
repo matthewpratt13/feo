@@ -54,14 +54,22 @@ pub struct StructDefFields {
     pub trailing_comma_opt: Option<Comma>,
 }
 
+// #[derive(Debug, Clone)]
+// pub struct StructDefField {
+//     pub attributes: Option<Vec<OuterAttr>>,
+//     pub visibility_opt: Option<VisibilityKind>,
+//     pub field_name: StructFieldName,
+//     pub colon: Colon,
+//     pub field_type: Box<Type>,
+// }
+
 #[derive(Debug, Clone)]
-pub struct StructDefField {
-    pub attributes: Option<Vec<OuterAttr>>,
-    pub visibility_opt: Option<VisibilityKind>,
-    pub field_name: StructFieldName,
-    pub colon: Colon,
-    pub field_type: Box<Type>,
-}
+
+pub struct StructDefField(
+    pub Option<Vec<OuterAttr>>,
+    pub Option<VisibilityKind>,
+    pub (Identifier, Colon, Box<Type>),
+);
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDef {
@@ -103,8 +111,8 @@ pub struct TupleStructDefFields {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructDefField {
-    pub attributes: Option<Vec<OuterAttr>>,
-    pub visibility_opt: Option<VisibilityKind>,
-    pub field_type: Box<Type>,
-}
+pub struct TupleStructDefField(
+    pub Option<Vec<OuterAttr>>,
+    pub Option<VisibilityKind>,
+    pub Box<Type>,
+);
