@@ -14,7 +14,7 @@ impl ParseTerm for TypeParamBounds {
     where
         Self: Sized,
     {
-        let mut subsequent_bounds: Vec<(Plus, TraitBound)> = Vec::new();
+        let mut subsequent_bounds: Vec<TraitBound> = Vec::new();
 
         if let Some(first_bound) = PathType::parse(parser)? {
             let mut next_plus_opt = parser.peek_current::<Punctuation>();
@@ -27,7 +27,7 @@ impl ParseTerm for TypeParamBounds {
                 parser.next_token();
 
                 if let Some(next_bound) = PathType::parse(parser)? {
-                    subsequent_bounds.push((next_plus_opt.unwrap(), next_bound));
+                    subsequent_bounds.push(next_bound);
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_plus_opt = Some(p);

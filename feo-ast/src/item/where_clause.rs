@@ -22,6 +22,6 @@ pub struct TypeBound {
 #[derive(Debug, Clone)]
 pub struct TypeParamBounds {
     pub first_bound: TraitBound,
-    pub subsequent_bounds: Option<Vec<(Plus, TraitBound)>>,
+    pub subsequent_bounds: Option<Vec<TraitBound>>,
     pub trailing_comma_opt: Option<Comma>,
 }
