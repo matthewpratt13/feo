@@ -15,12 +15,10 @@ impl ParseExpr for FieldAccessExpr {
         if let Some(a) = Assignable::parse(parser)? {
             parser.next_token();
 
-            let full_stop_opt = parser.peek_current::<Punctuation>();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
-            }) = full_stop_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 

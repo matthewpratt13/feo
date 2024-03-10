@@ -23,7 +23,12 @@ impl ParseTerm for StructDefField {
             parser.next_token();
         }
 
-        let visibility_opt = VisibilityKind::parse(parser)?;
+        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
+            parser.next_token();
+            Some(v)
+        } else {
+            None
+        };
 
         if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
@@ -151,7 +156,12 @@ impl ParseTerm for TupleStructDefField {
             parser.next_token();
         }
 
-        let visibility_opt = VisibilityKind::parse(parser)?;
+        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
+            parser.next_token();
+            Some(v)
+        } else {
+            None
+        };
 
         if let Some(field_type) = Type::parse(parser)? {
             parser.next_token();

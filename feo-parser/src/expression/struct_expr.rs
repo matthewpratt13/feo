@@ -35,12 +35,10 @@ impl ParseTerm for StructExprField {
         if let Some(id) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
-            let colon_opt = parser.peek_current::<Punctuation>();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = colon_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
