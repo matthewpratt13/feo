@@ -17,8 +17,6 @@ impl ParseTerm for TypeParamBounds {
         let mut subsequent_bounds: Vec<(Plus, TraitBound)> = Vec::new();
 
         if let Some(first_bound) = PathType::parse(parser)? {
-            parser.next_token();
-
             let mut next_plus_opt = parser.peek_current::<Punctuation>();
 
             while let Some(Punctuation {
@@ -30,8 +28,6 @@ impl ParseTerm for TypeParamBounds {
 
                 if let Some(next_bound) = PathType::parse(parser)? {
                     subsequent_bounds.push((next_plus_opt.unwrap(), next_bound));
-
-                    parser.next_token();
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_plus_opt = Some(p);
@@ -90,5 +86,34 @@ impl ParseTerm for WhereClause {
         Self: Sized,
     {
         todo!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[test]
+    fn parse_type_param_bounds() {
+        let source_code = r#"Foo + Bar + Baz"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let type_param_bounds =
+            TypeParamBounds::parse(&mut parser).expect("unable to parse type param bounds");
+
+        println!("{:#?}", type_param_bounds);
     }
 }
