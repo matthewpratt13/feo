@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Colon, Comma, Parenthesis},
+    utils::{Brace, Comma, Parenthesis},
     Identifier,
 };
 
@@ -43,14 +43,14 @@ impl Spanned for StructExpr {
 #[derive(Debug, Clone)]
 pub struct StructExprFields {
     pub first_field: StructExprField,
-    pub subsequent_fields: Option<Vec<(Comma, StructExprField)>>,
+    pub subsequent_fields: Option<Vec<StructExprField>>,
     pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
 pub struct StructExprField(
     pub Option<Vec<OuterAttr>>,
-    pub (Identifier, Colon, Box<Returnable>),
+    pub (Identifier, Box<Returnable>),
 );
 
 #[derive(Debug, Clone)]
@@ -71,10 +71,4 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructExprFields(
-    pub  (
-        Box<Returnable>,
-        Option<Vec<(Comma, Returnable)>>,
-        Option<Comma>,
-    ),
-);
+pub struct TupleStructExprFields(pub (Box<Returnable>, Option<Vec<Returnable>>, Option<Comma>));

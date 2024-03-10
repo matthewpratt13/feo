@@ -12,7 +12,6 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     punctuation::PuncKind,
-    utils::Comma,
     Delimiter, Identifier, Punctuation,
 };
 
@@ -200,7 +199,7 @@ impl ParseTerm for TupleStructExprFields {
     where
         Self: Sized,
     {
-        let mut subsequent_fields: Vec<(Comma, Returnable)> = Vec::new();
+        let mut subsequent_fields: Vec<Returnable> = Vec::new();
 
         if let Some(first_field) = Returnable::parse(parser)? {
             parser.next_token();
@@ -215,7 +214,7 @@ impl ParseTerm for TupleStructExprFields {
                 parser.next_token();
 
                 if let Some(next_field) = Returnable::parse(parser)? {
-                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+                    subsequent_fields.push(next_field);
 
                     parser.next_token();
 
