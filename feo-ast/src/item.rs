@@ -20,10 +20,7 @@ use feo_types::{
 
 use crate::path::PathExpr;
 
-use self::{
-    struct_def::StructDefKind,
-    where_clause::{TypeParamBounds, WhereClause},
-};
+use self::struct_def::StructDefKind;
 
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
@@ -42,6 +39,7 @@ pub use self::{
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
     visibility::{PubCrateVisibility, VisibilityKind},
+    where_clause::{TypeParamBounds, WhereClause, TypeBound},
 };
 
 // items are components of a crate, organized by a set of modules
