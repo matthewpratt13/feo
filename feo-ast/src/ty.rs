@@ -14,6 +14,7 @@ use feo_types::{
 use crate::{
     expression::{ClosureExprKind, StructExprKind},
     item::{EnumDef, FunctionDefKind},
+    path::PathType,
 };
 
 pub use self::{
@@ -60,6 +61,8 @@ pub enum Type {
     ReferenceType(ReferenceType),
 
     ParenthesizedType(ParenthesizedType),
+    SelfType(PathType),
+
     InferredType,
 }
 
@@ -91,6 +94,7 @@ impl Spanned for Type {
             Type::ReferenceType(r) => r.span(),
             Type::ImplTrait(imp) => imp.span(),
             Type::ParenthesizedType(par) => par.span(),
+            Type::SelfType(st) => st.span(),
             Type::InferredType => Span::default(),
         }
     }
