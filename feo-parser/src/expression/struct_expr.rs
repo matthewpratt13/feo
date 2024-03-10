@@ -48,7 +48,7 @@ impl ParseTerm for StructExprField {
                 if let Some(value) = Returnable::parse(parser)? {
                     parser.next_token();
 
-                    let field_content = (id, colon_opt.unwrap(), Box::new(value));
+                    let field_content = (id, Box::new(value));
 
                     match &attributes.is_empty() {
                         true => return Ok(Some(StructExprField(None, field_content))),
@@ -79,7 +79,7 @@ impl ParseTerm for StructExprFields {
     where
         Self: Sized,
     {
-        let mut subsequent_fields: Vec<(Comma, StructExprField)> = Vec::new();
+        let mut subsequent_fields: Vec<StructExprField> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
@@ -92,7 +92,7 @@ impl ParseTerm for StructExprFields {
                 parser.next_token();
 
                 if let Some(next_field) = StructExprField::parse(parser)? {
-                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+                    subsequent_fields.push(next_field);
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_comma_opt = Some(p);
