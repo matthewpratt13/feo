@@ -12,14 +12,13 @@ use super::{VisibilityKind, WhereClause};
 pub enum StructDefKind {
     Struct(StructDef),
     TupleStruct(TupleStructDef),
-    UnitStruct(UnitStructDef),
 }
 
 pub type StructFieldName = Identifier;
 
 #[derive(Debug, Clone)]
 pub struct StructDef {
-    attributes: Vec<OuterAttr>,
+    attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KwStruct,
     struct_name: Identifier,
@@ -31,12 +30,15 @@ pub struct StructDef {
 
 impl Spanned for StructDef {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_struct.span(),
+        let s1 = match &self.attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_struct.span(),
+                },
             },
+            None => self.kw_struct.span(),
         };
 
         let s2 = self.close_brace.span();
@@ -63,7 +65,7 @@ pub struct StructDefField {
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDef {
-    attributes: Vec<OuterAttr>,
+    attributes: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_struct: KwStruct,
     struct_name: Identifier,
@@ -76,12 +78,15 @@ pub struct TupleStructDef {
 
 impl Spanned for TupleStructDef {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_struct.span(),
+        let s1 = match &self.attributes {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_struct.span(),
+                },
             },
+            None => self.kw_struct.span(),
         };
 
         let s2 = self.semicolon.span();
@@ -102,30 +107,4 @@ pub struct TupleStructDefField {
     pub attributes: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub field_type: Box<Type>,
-}
-
-#[derive(Debug, Clone)]
-pub struct UnitStructDef {
-    attributes: Vec<OuterAttr>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_struct: KwStruct,
-    struct_name: Identifier,
-    open_brace: Brace,
-    close_brace: Brace,
-}
-
-impl Spanned for UnitStructDef {
-    fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_struct.span(),
-            },
-        };
-
-        let s2 = self.close_brace.span();
-
-        Span::join(s1, s2)
-    }
 }

@@ -37,7 +37,7 @@ pub use self::{
     mod_block::ModBlock,
     struct_def::{
         StructDef, StructDefField, StructDefFields, StructFieldName, TupleStructDef,
-        TupleStructDefField, TupleStructDefFields, UnitStructDef,
+        TupleStructDefField, TupleStructDefFields,
     },
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
@@ -88,7 +88,6 @@ impl Spanned for Item {
             Item::StructDef(sd) => match sd {
                 StructDefKind::Struct(s) => s.span(),
                 StructDefKind::TupleStruct(ts) => ts.span(),
-                StructDefKind::UnitStruct(us) => us.span(),
             },
             Item::TraitDef(td) => td.span(),
             Item::TypeAliasDef(tad) => tad.span(),
