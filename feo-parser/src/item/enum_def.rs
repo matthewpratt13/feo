@@ -46,14 +46,14 @@ impl ParseTerm for EnumVariant {
 
             match &attributes.is_empty() {
                 true => Ok(Some(EnumVariant {
-                    attributes: Some(attributes),
+                    attributes: None,
                     visibility_opt,
                     variant_name,
                     variant_type_opt,
                 })),
 
                 false => Ok(Some(EnumVariant {
-                    attributes: None,
+                    attributes: Some(attributes),
                     visibility_opt,
                     variant_name,
                     variant_type_opt,
@@ -123,7 +123,7 @@ impl ParseTerm for EnumVariants {
                 })),
             }
         } else {
-            return Ok(None);
+            Ok(None)
         }
     }
 }

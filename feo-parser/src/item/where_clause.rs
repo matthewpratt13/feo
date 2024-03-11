@@ -87,27 +87,22 @@ impl ParseTerm for TypeBound {
             {
                 parser.next_token();
 
-                if let Some(type_param_bounds) = TypeParamBounds::parse(parser)? {
+                let type_param_bounds_opt = if let Some(t) = TypeParamBounds::parse(parser)? {
                     parser.next_token();
+                    Some(t)
+                } else {
+                    None
+                };
 
-                    return Ok(Some(TypeBound {
-                        ty,
-                        type_param_bounds_opt: Some(type_param_bounds),
-                    }));
-                }
-
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`TypeParamBounds`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            } else {
-                return Ok(None);
+                return Ok(Some(TypeBound {
+                    ty,
+                    type_param_bounds_opt,
+                }));
             }
+            Ok(None)
         } else {
-            return Ok(None);
+            Ok(None)
         }
-
-        Err(parser.errors())
     }
 }
 
@@ -128,6 +123,8 @@ impl ParseTerm for WhereClause {
             parser.next_token();
 
             if let Some(first_bound) = TypeBound::parse(parser)? {
+                parser.next_token();
+
                 let mut next_comma_opt = parser.peek_current::<Punctuation>();
 
                 while let Some(Punctuation {
@@ -139,6 +136,7 @@ impl ParseTerm for WhereClause {
 
                     if let Some(next_bound) = TypeBound::parse(parser)? {
                         subsequent_bounds.push(next_bound);
+                        parser.next_token();
 
                         if let Some(p) = parser.peek_current::<Punctuation>() {
                             next_comma_opt = Some(p);
@@ -154,8 +152,12 @@ impl ParseTerm for WhereClause {
                     }
                 }
 
-                // `TypeBound::parse` moves the parser one token forward is `TypeBound` exists
-                let trailing_type_bound_opt = TypeBound::parse(parser)?;
+                let trailing_type_bound_opt = if let Some(t) = TypeBound::parse(parser)? {
+                    parser.next_token();
+                    Some(t)
+                } else {
+                    None
+                };
 
                 match &subsequent_bounds.is_empty() {
                     true => {
