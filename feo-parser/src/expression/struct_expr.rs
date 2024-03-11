@@ -151,33 +151,32 @@ impl ParseExpr for StructExpr {
             {
                 parser.next_token();
 
-                if let Some(struct_expr_fields) = StructExprFields::parse(parser)? {
-                    let close_brace_opt = parser.peek_current::<Delimiter>();
-
-                    if let Some(Delimiter {
-                        delim: (DelimKind::Brace, DelimOrientation::Close),
-                        ..
-                    }) = close_brace_opt
-                    {
-                        parser.next_token();
-
-                        return Ok(Some(StructExpr {
-                            id,
-                            open_brace: open_brace_opt.unwrap(),
-                            fields_opt: Some(struct_expr_fields),
-                            close_brace: close_brace_opt.unwrap(),
-                        }));
-                    }
-
-                    parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: "}".to_string(),
-                    });
+                let fields_opt = if let Some(f) = StructExprFields::parse(parser)? {
+                    Some(f)
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`StructExprFields`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
+                    None
+                };
+
+                let close_brace_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Close),
+                    ..
+                }) = close_brace_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(StructExpr {
+                        id,
+                        open_brace: open_brace_opt.unwrap(),
+                        fields_opt,
+                        close_brace: close_brace_opt.unwrap(),
+                    }));
                 }
+
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "}".to_string(),
+                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`{`".to_string(),
@@ -275,33 +274,32 @@ impl ParseExpr for TupleStructExpr {
             {
                 parser.next_token();
 
-                if let Some(fields) = TupleStructExprFields::parse(parser)? {
-                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
-
-                    if let Some(Delimiter {
-                        delim: (DelimKind::Parenthesis, DelimOrientation::Close),
-                        ..
-                    }) = close_parenthesis_opt
-                    {
-                        parser.next_token();
-
-                        return Ok(Some(TupleStructExpr {
-                            id,
-                            open_parenthesis: open_parenthesis_opt.unwrap(),
-                            fields_opt: Some(fields),
-                            close_parenthesis: close_parenthesis_opt.unwrap(),
-                        }));
-                    }
-
-                    parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: ")".to_string(),
-                    });
+                let fields_opt = if let Some(f) = TupleStructExprFields::parse(parser)? {
+                    Some(f)
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`TupleStructExprFields`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
+                    None
+                };
+
+                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                    ..
+                }) = close_parenthesis_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(TupleStructExpr {
+                        id,
+                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                        fields_opt,
+                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                    }));
                 }
+
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: ")".to_string(),
+                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`(`".to_string(),
