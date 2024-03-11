@@ -11,7 +11,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     literal::UIntType,
     punctuation::PuncKind,
-    Delimiter, Literal, Punctuation,
+    Delimiter, Literal, Punctuation, U64Primitive,
 };
 
 use crate::{
@@ -108,12 +108,13 @@ impl ParseTerm for ArrayElementsRepeatedValue {
                     return Ok(Some(ArrayElementsRepeatedValue {
                         repeat_operand: Box::new(repeat_operand),
                         semicolon: semicolon_opt.unwrap(),
-                        num_repeats,
+                        num_repeats: U64Primitive::try_from(num_repeats)
+                            .expect("error converting `Literal<UIntType>` to `U64Primitive`"),
                     }));
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`UIntType`".to_string(),
+                    expected: "`Literal<UIntType>`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -227,7 +228,8 @@ impl ParseExpr for IndexExpr {
                         return Ok(Some(IndexExpr {
                             indexed_operand,
                             open_bracket: open_bracket_opt.unwrap(),
-                            index,
+                            index: U64Primitive::try_from(index)
+                                .expect("error converting `Literal<UIntType>` to `U64Primitive`"),
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
                     }
@@ -237,7 +239,7 @@ impl ParseExpr for IndexExpr {
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`UIntType`".to_string(),
+                        expected: "`Literal<UIntType>`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }

@@ -1,8 +1,6 @@
 use feo_types::{
-    literal::UIntType,
     span::{Span, Spanned},
-    utils::{Bracket, Comma, Semicolon},
-    Literal,
+    utils::{Bracket, Comma, Semicolon}, U64Primitive,
 };
 
 use super::{Assignable, Iterable};
@@ -40,14 +38,14 @@ pub struct ArrayElementsCommaSeparated {
 pub struct ArrayElementsRepeatedValue {
     pub repeat_operand: Box<Iterable>,
     pub semicolon: Semicolon,
-    pub num_repeats: Literal<UIntType>,
+    pub num_repeats: U64Primitive,
 }
 
 #[derive(Debug, Clone)]
 pub struct IndexExpr {
     pub indexed_operand: Assignable,
     pub open_bracket: Bracket,
-    pub index: Literal<UIntType>,
+    pub index: U64Primitive,
     pub close_bracket: Bracket,
 }
 

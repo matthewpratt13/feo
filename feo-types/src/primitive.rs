@@ -1,6 +1,8 @@
 use crate::{
+    error::TypeErrorKind,
+    literal::UIntType,
     span::{Span, Spanned},
-    U256,
+    Literal, U256,
 };
 
 #[derive(Debug, Clone)]
@@ -173,6 +175,25 @@ impl U64Primitive {
 impl Spanned for U64Primitive {
     fn span(&self) -> Span {
         self.span.clone()
+    }
+}
+
+impl TryFrom<Literal<UIntType>> for U64Primitive {
+    type Error = TypeErrorKind;
+
+    fn try_from(value: Literal<UIntType>) -> Result<Self, Self::Error> {
+        let uint = match value.clone().into_inner() {
+            Some(v) => match v {
+                UIntType::U64(ui) => ui,
+                _ => return Err(TypeErrorKind::MismatchedTypes),
+            },
+            None => return Err(TypeErrorKind::ValueNotFound),
+        };
+
+        Ok(Self {
+            value: uint,
+            span: value.span()
+        })
     }
 }
 

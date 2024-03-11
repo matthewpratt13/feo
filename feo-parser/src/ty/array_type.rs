@@ -4,7 +4,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     literal::LiteralKind,
     punctuation::PuncKind,
-    Delimiter, Punctuation,
+    Delimiter, Punctuation, U64Primitive,
 };
 
 use crate::{parse::ParseTerm, parser::Parser};
@@ -48,7 +48,8 @@ impl ParseTerm for ArrayType {
                             return Ok(Some(ArrayType {
                                 open_bracket: open_bracket_opt.unwrap(),
                                 element_type: Box::new(element_type),
-                                num_elements,
+                                num_elements: U64Primitive::try_from(num_elements)
+                                    .expect("error converting `Literal<u64>` to `U64Primitive`"),
                                 close_bracket: close_bracket_opt.unwrap(),
                             }));
                         }

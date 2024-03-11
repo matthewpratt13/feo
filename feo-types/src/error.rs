@@ -9,6 +9,8 @@ pub enum TypeErrorKind {
     UnexpectedPunctuation,
     UnrecognizedBuiltInTypeAnnotation,
     MismatchedTypeAnnotation,
+    MismatchedTypes,
+    ValueNotFound,
 
     #[default]
     UnknownError,
@@ -29,6 +31,11 @@ impl fmt::Display for TypeErrorKind {
             }
             TypeErrorKind::MismatchedTypeAnnotation => {
                 write!(f, "type annotation does not match value's type")
+            }
+            TypeErrorKind::MismatchedTypes => write!(f, "original type does not new value's type"),
+
+            TypeErrorKind::ValueNotFound => {
+                write!(f, "value not found")
             }
         }
     }
