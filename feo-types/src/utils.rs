@@ -42,6 +42,7 @@ pub type KwTopic = Keyword;
 pub type KwTrait = Keyword;
 pub type KwType = Keyword;
 pub type KwUnsafe = Keyword;
+pub type KwWhere = Keyword;
 pub type KwWhile = Keyword;
 
 pub type Ampersand = Punctuation;

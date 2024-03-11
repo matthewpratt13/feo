@@ -6,7 +6,7 @@ use feo_ast::{
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, Punctuation};
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{parse::ParseTerm, parser::Parser};
 
@@ -116,7 +116,76 @@ impl ParseTerm for WhereClause {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_bounds: Vec<TypeBound> = Vec::new();
+
+        let kw_where_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwWhere,
+            ..
+        }) = kw_where_opt
+        {
+            parser.next_token();
+
+            if let Some(first_bound) = TypeBound::parse(parser)? {
+                let mut next_comma_opt = parser.peek_current::<Punctuation>();
+
+                while let Some(Punctuation {
+                    punc_kind: PuncKind::Comma,
+                    ..
+                }) = next_comma_opt
+                {
+                    parser.next_token();
+
+                    if let Some(next_bound) = TypeBound::parse(parser)? {
+                        subsequent_bounds.push(next_bound);
+
+                        if let Some(p) = parser.peek_current::<Punctuation>() {
+                            next_comma_opt = Some(p);
+                        } else {
+                            break;
+                        }
+                    } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`TypeBound`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                        break;
+                    }
+                }
+
+                // `TypeBound::parse` moves the parser one token forward is `TypeBound` exists
+                let trailing_type_bound_opt = TypeBound::parse(parser)?;
+
+                match &subsequent_bounds.is_empty() {
+                    true => {
+                        return Ok(Some(WhereClause {
+                            kw_where: kw_where_opt.unwrap(),
+                            first_bound,
+                            subsequent_bounds: None,
+                            trailing_type_bound_opt,
+                        }))
+                    }
+                    false => {
+                        return Ok(Some(WhereClause {
+                            kw_where: kw_where_opt.unwrap(),
+                            first_bound,
+                            subsequent_bounds: Some(subsequent_bounds),
+                            trailing_type_bound_opt,
+                        }))
+                    }
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`TypeBound`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -166,5 +235,28 @@ mod tests {
         let type_bound = TypeBound::parse(&mut parser).expect("unable to parse type bound");
 
         println!("{:#?}", type_bound);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_where_clause() {
+        let source_code = r#"
+        where 
+            Self: Foo + Bar + Baz, 
+            T: Foo"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let where_clause = TypeBound::parse(&mut parser).expect("unable to parse where clause");
+
+        println!("{:#?}", where_clause);
     }
 }
