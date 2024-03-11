@@ -11,8 +11,8 @@ pub struct WhereClause {
 
 #[derive(Debug, Clone)]
 pub struct TypeBound {
-    ty: Type,
-    type_param_bounds_opt: Option<TypeParamBounds>,
+    pub ty: Type,
+    pub type_param_bounds_opt: Option<TypeParamBounds>,
 }
 
 #[derive(Debug, Clone)]

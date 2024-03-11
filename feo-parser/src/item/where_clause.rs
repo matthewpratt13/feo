@@ -3,6 +3,7 @@ use feo_ast::{
     path::PathType,
     token::Token,
     ty::TraitBound,
+    Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Punctuation};
@@ -76,7 +77,37 @@ impl ParseTerm for TypeBound {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(ty) = Type::parse(parser)? {
+            let colon_opt = parser.peek_next::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Colon,
+                ..
+            }) = colon_opt
+            {
+                parser.next_token();
+
+                if let Some(type_param_bounds) = TypeParamBounds::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(TypeBound {
+                        ty,
+                        type_param_bounds_opt: Some(type_param_bounds),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`TypeParamBounds`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                return Ok(None);
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -115,5 +146,25 @@ mod tests {
             TypeParamBounds::parse(&mut parser).expect("unable to parse type param bounds");
 
         println!("{:#?}", type_param_bounds);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_type_bound() {
+        let source_code = r#"Self: Foo + Bar + Baz"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let type_bound = TypeBound::parse(&mut parser).expect("unable to parse type bound");
+
+        println!("{:#?}", type_bound);
     }
 }
