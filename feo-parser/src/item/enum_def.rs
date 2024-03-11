@@ -406,7 +406,7 @@ mod tests {
 
         let mut parser = Parser::new(token_stream, handler);
 
-        let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def type");
+        let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
 
         println!("{:#?}", enum_def);
     }
