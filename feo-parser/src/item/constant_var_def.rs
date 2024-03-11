@@ -63,55 +63,53 @@ impl ParseTerm for ConstantVarDef {
                         {
                             parser.next_token();
 
-                            if let Some(expr) = Expression::parse(parser)? {
-                                let assignment_opt = Box::new(expr);
+                            let assignment_opt = if let Some(e) = Expression::parse(parser)? {
+                                parser.next_token();
+                                Some(Box::new(e))
+                            } else {
+                                None
+                            };
 
-                                let semicolon_opt = parser.peek_current::<Punctuation>();
+                            let semicolon_opt = parser.peek_current::<Punctuation>();
 
-                                if let Some(Punctuation {
-                                    punc_kind: PuncKind::Semicolon,
-                                    ..
-                                }) = semicolon_opt
-                                {
-                                    parser.next_token();
+                            if let Some(Punctuation {
+                                punc_kind: PuncKind::Semicolon,
+                                ..
+                            }) = semicolon_opt
+                            {
+                                parser.next_token();
 
-                                    match &attributes.is_empty() {
-                                        true => {
-                                            return Ok(Some(ConstantVarDef {
-                                                attributes: None,
-                                                visibility_opt,
-                                                kw_const: kw_const_opt.unwrap(),
-                                                item_name,
-                                                item_type: Box::new(item_type),
-                                                assignment_opt: Some(assignment_opt),
-                                                semicolon: semicolon_opt.unwrap(),
-                                            }))
-                                        }
+                                match &attributes.is_empty() {
+                                    true => {
+                                        return Ok(Some(ConstantVarDef {
+                                            attributes: None,
+                                            visibility_opt,
+                                            kw_const: kw_const_opt.unwrap(),
+                                            item_name,
+                                            item_type: Box::new(item_type),
+                                            assignment_opt,
+                                            semicolon: semicolon_opt.unwrap(),
+                                        }))
+                                    }
 
-                                        false => {
-                                            return Ok(Some(ConstantVarDef {
-                                                attributes: Some(attributes),
-                                                visibility_opt,
-                                                kw_const: kw_const_opt.unwrap(),
-                                                item_name,
-                                                item_type: Box::new(item_type),
-                                                assignment_opt: Some(assignment_opt),
-                                                semicolon: semicolon_opt.unwrap(),
-                                            }))
-                                        }
+                                    false => {
+                                        return Ok(Some(ConstantVarDef {
+                                            attributes: Some(attributes),
+                                            visibility_opt,
+                                            kw_const: kw_const_opt.unwrap(),
+                                            item_name,
+                                            item_type: Box::new(item_type),
+                                            assignment_opt,
+                                            semicolon: semicolon_opt.unwrap(),
+                                        }))
                                     }
                                 }
-
-                                parser.log_error(ParserErrorKind::UnexpectedToken {
-                                    expected: "`;`".to_string(),
-                                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                                });
-                            } else {
-                                parser.log_error(ParserErrorKind::UnexpectedToken {
-                                    expected: "`Expression`".to_string(),
-                                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                                });
                             }
+
+                            parser.log_error(ParserErrorKind::UnexpectedToken {
+                                expected: "`;`".to_string(),
+                                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                            });
                         } else {
                             parser.log_error(ParserErrorKind::UnexpectedToken {
                                 expected: "`=`".to_string(),
