@@ -116,7 +116,7 @@ impl ParseExpr for TupleExpr {
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`TupleElement`".to_string(),
+                    expected: "`TupleElements`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
