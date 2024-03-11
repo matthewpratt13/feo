@@ -1,13 +1,19 @@
 use feo_ast::{
     attribute::OuterAttr,
     item::{
-        StructDefField, StructDefFields, TupleStructDefField, TupleStructDefFields, VisibilityKind,
+        StructDef, StructDefField, StructDefFields, TupleStructDefField, TupleStructDefFields,
+        VisibilityKind, WhereClause,
     },
     token::Token,
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, utils::Comma, Identifier, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
+    punctuation::PuncKind,
+    Delimiter, Identifier, Keyword, Punctuation,
+};
 
 use crate::{parse::ParseTerm, parser::Parser};
 
@@ -33,19 +39,17 @@ impl ParseTerm for StructDefField {
         if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
-            let colon_opt = parser.peek_current::<Punctuation>();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = colon_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(field_type) = Type::parse(parser)? {
                     parser.next_token();
 
-                    let field_content = (field_name, colon_opt.unwrap(), Box::new(field_type));
+                    let field_content = (field_name, Box::new(field_type));
 
                     match &attributes.is_empty() {
                         true => {
@@ -85,7 +89,7 @@ impl ParseTerm for StructDefFields {
     where
         Self: Sized,
     {
-        let mut subsequent_fields: Vec<(Comma, StructDefField)> = Vec::new();
+        let mut subsequent_fields: Vec<StructDefField> = Vec::new();
 
         if let Some(first_field) = StructDefField::parse(parser)? {
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
@@ -98,7 +102,7 @@ impl ParseTerm for StructDefFields {
                 parser.next_token();
 
                 if let Some(next_field) = StructDefField::parse(parser)? {
-                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+                    subsequent_fields.push(next_field);
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_comma_opt = Some(p);
@@ -141,6 +145,120 @@ impl ParseTerm for StructDefFields {
         } else {
             Ok(None)
         }
+    }
+}
+
+impl ParseTerm for StructDef {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        while let Some(attr) = OuterAttr::parse(parser)? {
+            attributes.push(attr);
+            parser.next_token();
+        }
+
+        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
+            parser.next_token();
+            Some(v)
+        } else {
+            None
+        };
+
+        let kw_struct_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwStruct,
+            ..
+        }) = kw_struct_opt
+        {
+            parser.next_token();
+
+            if let Some(struct_name) = parser.peek_current::<Identifier>() {
+                parser.next_token();
+
+                let where_clause_opt = if let Some(wc) = WhereClause::parse(parser)? {
+                    parser.next_token();
+                    Some(wc)
+                } else {
+                    None
+                };
+
+                let open_brace_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) = open_brace_opt
+                {
+                    parser.next_token();
+
+                    let struct_fields_opt = if let Some(sf) = StructDefFields::parse(parser)? {
+                        parser.next_token();
+                        Some(sf)
+                    } else {
+                        None
+                    };
+
+                    let close_brace_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Brace, DelimOrientation::Close),
+                        ..
+                    }) = close_brace_opt
+                    {
+                        parser.next_token();
+
+                        match &attributes.is_empty() {
+                            true => {
+                                return Ok(Some(StructDef {
+                                    attributes: None,
+                                    visibility_opt,
+                                    kw_struct: kw_struct_opt.unwrap(),
+                                    struct_name,
+                                    where_clause_opt,
+                                    open_brace: open_brace_opt.unwrap(),
+                                    struct_fields_opt,
+                                    close_brace: close_brace_opt.unwrap(),
+                                }))
+                            }
+                            false => {
+                                return Ok(Some(StructDef {
+                                    attributes: Some(attributes),
+                                    visibility_opt,
+                                    kw_struct: kw_struct_opt.unwrap(),
+                                    struct_name,
+                                    where_clause_opt,
+                                    open_brace: open_brace_opt.unwrap(),
+                                    struct_fields_opt,
+                                    close_brace: close_brace_opt.unwrap(),
+                                }))
+                            }
+                        }
+                    } else {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "}".to_string(),
+                        });
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`{`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "identifier".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -190,7 +308,7 @@ impl ParseTerm for TupleStructDefFields {
     where
         Self: Sized,
     {
-        let mut subsequent_fields: Vec<(Comma, TupleStructDefField)> = Vec::new();
+        let mut subsequent_fields: Vec<TupleStructDefField> = Vec::new();
 
         if let Some(first_field) = TupleStructDefField::parse(parser)? {
             let mut next_comma_opt = parser.peek_current::<Punctuation>();
@@ -203,7 +321,7 @@ impl ParseTerm for TupleStructDefFields {
                 parser.next_token();
 
                 if let Some(next_field) = TupleStructDefField::parse(parser)? {
-                    subsequent_fields.push((next_comma_opt.unwrap(), next_field));
+                    subsequent_fields.push(next_field);
 
                     if let Some(p) = parser.peek_current::<Punctuation>() {
                         next_comma_opt = Some(p)

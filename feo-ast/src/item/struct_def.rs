@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Colon, Comma, KwStruct, Parenthesis, Semicolon},
+    utils::{Brace, Comma, KwStruct, Parenthesis, Semicolon},
     Identifier,
 };
 
@@ -18,14 +18,14 @@ pub type StructFieldName = Identifier;
 
 #[derive(Debug, Clone)]
 pub struct StructDef {
-    attributes: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_struct: KwStruct,
-    struct_name: Identifier,
-    where_clause_opt: Option<WhereClause>,
-    open_brace: Brace,
-    struct_fields_opt: Option<StructDefFields>,
-    close_brace: Brace,
+    pub attributes: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_struct: KwStruct,
+    pub struct_name: Identifier,
+    pub where_clause_opt: Option<WhereClause>,
+    pub open_brace: Brace,
+    pub struct_fields_opt: Option<StructDefFields>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for StructDef {
@@ -50,7 +50,7 @@ impl Spanned for StructDef {
 #[derive(Debug, Clone)]
 pub struct StructDefFields {
     pub first_field: StructDefField,
-    pub subsequent_fields: Option<Vec<(Comma, StructDefField)>>,
+    pub subsequent_fields: Option<Vec<StructDefField>>,
     pub trailing_comma_opt: Option<Comma>,
 }
 
@@ -59,7 +59,7 @@ pub struct StructDefFields {
 pub struct StructDefField(
     pub Option<Vec<OuterAttr>>,
     pub Option<VisibilityKind>,
-    pub (Identifier, Colon, Box<Type>),
+    pub (Identifier, Box<Type>),
 );
 
 #[derive(Debug, Clone)]
@@ -97,7 +97,7 @@ impl Spanned for TupleStructDef {
 #[derive(Debug, Clone)]
 pub struct TupleStructDefFields {
     pub first_field: TupleStructDefField,
-    pub subsequent_fields: Option<Vec<(Comma, TupleStructDefField)>>,
+    pub subsequent_fields: Option<Vec<TupleStructDefField>>,
     pub trailing_comma_opt: Option<Comma>,
 }
 
