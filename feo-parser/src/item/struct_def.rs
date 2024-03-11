@@ -555,7 +555,7 @@ mod tests {
         let source_code = r#"
         #[abstract]
         struct Foo {
-            bar: u64,
+            pub bar: u64,
             baz: bool,
         }
         "#;
@@ -573,5 +573,28 @@ mod tests {
         let struct_def = StructDef::parse(&mut parser).expect("unable to parse struct def");
 
         println!("{:#?}", struct_def);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_tuple_struct_def() {
+        let source_code = r#"
+        #[abstract]
+        struct Foo(pub u64, bool);
+        "#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let tuple_struct_def = TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct def");
+
+        println!("{:#?}", tuple_struct_def);
     }
 }

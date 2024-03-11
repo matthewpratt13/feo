@@ -24,7 +24,7 @@ pub struct StructDef {
     pub struct_name: Identifier,
     pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
-    pub struct_fields_opt: Option<StructDefFields>,
+    pub fields_opt: Option<StructDefFields>,
     pub close_brace: Brace,
 }
 
@@ -64,15 +64,15 @@ pub struct StructDefField(
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDef {
-    attributes: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_struct: KwStruct,
-    struct_name: Identifier,
-    open_parenthesis: Parenthesis,
-    tuple_elements_opt: Option<TupleStructDefFields>,
-    close_parenthesis: Parenthesis,
-    where_clause_opt: Option<WhereClause>,
-    semicolon: Semicolon,
+    pub attributes: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_struct: KwStruct,
+    pub struct_name: Identifier,
+    pub open_parenthesis: Parenthesis,
+    pub fields_opt: Option<TupleStructDefFields>,
+    pub close_parenthesis: Parenthesis,
+    pub where_clause_opt: Option<WhereClause>,
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for TupleStructDef {
