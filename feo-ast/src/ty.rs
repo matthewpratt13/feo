@@ -8,7 +8,8 @@ mod tuple_type;
 
 use feo_types::{
     span::{Span, Spanned},
-    Primitive,
+    BoolPrimitive, CharPrimitive, F32Primitive, F64Primitive, I32Primitive, I64Primitive,
+    StrPrimitive, U16Primitive, U256Primitive, U32Primitive, U64Primitive, U8Primitive,
 };
 
 use crate::{
@@ -28,18 +29,18 @@ pub use self::{
 #[derive(Debug, Clone)]
 pub enum Type {
     // primitives (built-in)
-    Char(Primitive),
-    String(Primitive),
-    Bool(Primitive),
-    I32(Primitive),
-    I64(Primitive),
-    U8(Primitive),
-    U16(Primitive),
-    U32(Primitive),
-    U64(Primitive),
-    U256(Primitive),
-    F32(Primitive),
-    F64(Primitive),
+    Char(CharPrimitive),
+    Str(StrPrimitive),
+    Bool(BoolPrimitive),
+    I32(I32Primitive),
+    I64(I64Primitive),
+    U8(U8Primitive),
+    U16(U16Primitive),
+    U32(U32Primitive),
+    U64(U64Primitive),
+    U256(U256Primitive),
+    F32(F32Primitive),
+    F64(F64Primitive),
 
     // built-in sequence types
     Array(ArrayType),
@@ -69,18 +70,18 @@ pub enum Type {
 impl Spanned for Type {
     fn span(&self) -> Span {
         match self {
-            Type::Char(_)
-            | Type::String(_)
-            | Type::Bool(_)
-            | Type::I32(_)
-            | Type::I64(_)
-            | Type::U8(_)
-            | Type::U16(_)
-            | Type::U32(_)
-            | Type::U64(_)
-            | Type::U256(_)
-            | Type::F32(_)
-            | Type::F64(_) => Span::default(),
+            Type::Char(c) => c.span(),
+            Type::Str(s) => s.span(),
+            Type::Bool(b) => b.span(),
+            Type::I32(ia) => ia.span(),
+            Type::I64(ib) => ib.span(),
+            Type::U8(uia) => uia.span(),
+            Type::U16(uib) => uib.span(),
+            Type::U32(uic) => uic.span(),
+            Type::U64(uid) => uid.span(),
+            Type::U256(u) => u.span(),
+            Type::F32(fa) => fa.span(),
+            Type::F64(fb) => fb.span(),
             Type::Array(arr) => arr.span(),
             Type::Tuple(tup) => tup.span(),
             Type::Unit(ut) => ut.span(),
