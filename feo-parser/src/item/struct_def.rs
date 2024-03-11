@@ -1,8 +1,8 @@
 use feo_ast::{
     attribute::OuterAttr,
     item::{
-        StructDef, StructDefField, StructDefFields, TupleStructDefField, TupleStructDefFields,
-        VisibilityKind, WhereClause,
+        StructDef, StructDefField, StructDefFields, TupleStructDef, TupleStructDefField,
+        TupleStructDefFields, VisibilityKind, WhereClause,
     },
     token::Token,
     Type,
@@ -24,8 +24,8 @@ impl ParseTerm for StructDefField {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(attr) = OuterAttr::parse(parser)? {
-            attributes.push(attr);
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
             parser.next_token();
         }
 
@@ -155,8 +155,8 @@ impl ParseTerm for StructDef {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(attr) = OuterAttr::parse(parser)? {
-            attributes.push(attr);
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
             parser.next_token();
         }
 
@@ -195,9 +195,9 @@ impl ParseTerm for StructDef {
                 {
                     parser.next_token();
 
-                    let struct_fields_opt = if let Some(sf) = StructDefFields::parse(parser)? {
+                    let fields_opt = if let Some(f) = StructDefFields::parse(parser)? {
                         parser.next_token();
-                        Some(sf)
+                        Some(f)
                     } else {
                         None
                     };
@@ -220,7 +220,7 @@ impl ParseTerm for StructDef {
                                     struct_name,
                                     where_clause_opt,
                                     open_brace: open_brace_opt.unwrap(),
-                                    struct_fields_opt,
+                                    fields_opt,
                                     close_brace: close_brace_opt.unwrap(),
                                 }))
                             }
@@ -232,7 +232,7 @@ impl ParseTerm for StructDef {
                                     struct_name,
                                     where_clause_opt,
                                     open_brace: open_brace_opt.unwrap(),
-                                    struct_fields_opt,
+                                    fields_opt,
                                     close_brace: close_brace_opt.unwrap(),
                                 }))
                             }
@@ -269,8 +269,8 @@ impl ParseTerm for TupleStructDefField {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(attr) = OuterAttr::parse(parser)? {
-            attributes.push(attr);
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
             parser.next_token();
         }
 
@@ -363,6 +363,136 @@ impl ParseTerm for TupleStructDefFields {
         } else {
             Ok(None)
         }
+    }
+}
+
+impl ParseTerm for TupleStructDef {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
+            parser.next_token();
+        }
+
+        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
+            parser.next_token();
+            Some(v)
+        } else {
+            None
+        };
+
+        let kw_struct_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwStruct,
+            ..
+        }) = kw_struct_opt
+        {
+            parser.next_token();
+
+            if let Some(struct_name) = parser.peek_current::<Identifier>() {
+                parser.next_token();
+
+                let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) = open_parenthesis_opt
+                {
+                    parser.next_token();
+
+                    let fields_opt = if let Some(f) = TupleStructDefFields::parse(parser)? {
+                        parser.next_token();
+                        Some(f)
+                    } else {
+                        None
+                    };
+
+                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                        ..
+                    }) = close_parenthesis_opt
+                    {
+                        parser.next_token();
+
+                        let where_clause_opt = if let Some(wc) = WhereClause::parse(parser)? {
+                            parser.next_token();
+                            Some(wc)
+                        } else {
+                            None
+                        };
+
+                        let semicolon_opt = parser.peek_current::<Punctuation>();
+
+                        if let Some(Punctuation {
+                            punc_kind: PuncKind::Semicolon,
+                            ..
+                        }) = semicolon_opt
+                        {
+                            parser.next_token();
+
+                            match &attributes.is_empty() {
+                                true => {
+                                    return Ok(Some(TupleStructDef {
+                                        attributes: None,
+                                        visibility_opt,
+                                        kw_struct: kw_struct_opt.unwrap(),
+                                        struct_name,
+                                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                                        fields_opt,
+                                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                                        where_clause_opt,
+                                        semicolon: semicolon_opt.unwrap(),
+                                    }));
+                                }
+                                false => {
+                                    return Ok(Some(TupleStructDef {
+                                        attributes: Some(attributes),
+                                        visibility_opt,
+                                        kw_struct: kw_struct_opt.unwrap(),
+                                        struct_name,
+                                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                                        fields_opt,
+                                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                                        where_clause_opt,
+                                        semicolon: semicolon_opt.unwrap(),
+                                    }));
+                                }
+                            }
+                        } else {
+                            parser.log_error(ParserErrorKind::MissingDelimiter {
+                                delim: ";".to_string(),
+                            });
+                        }
+                    } else {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "}".to_string(),
+                        });
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`{`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "identifier".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

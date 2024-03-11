@@ -23,8 +23,8 @@ impl ParseTerm for EnumVariant {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(a) = OuterAttr::parse(parser)? {
-            attributes.push(a);
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
             parser.next_token();
         }
 
@@ -238,8 +238,8 @@ impl ParseTerm for EnumDef {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(attr) = OuterAttr::parse(parser)? {
-            attributes.push(attr);
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
             parser.next_token();
         }
 

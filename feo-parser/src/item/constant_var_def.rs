@@ -20,8 +20,8 @@ impl ParseTerm for ConstantVarDef {
     {
         let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(attr) = OuterAttr::parse(parser)? {
-            attributes.push(attr);
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
             parser.next_token();
         }
 
