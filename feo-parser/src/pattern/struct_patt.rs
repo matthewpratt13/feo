@@ -45,7 +45,7 @@ impl ParseTerm for StructPattField {
                                 field_content,
                             }))
                         }
-                        
+
                         false => {
                             return Ok(Some(StructPattField {
                                 attributes_opt: Some(attributes),
@@ -151,13 +151,33 @@ mod tests {
     fn parse_struct_patt_field() {
         let source_code = r#"
             #[abstract]
+            #[unsafe]
+            foo: "a"
+            "#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let struct_patt_field =
+            StructPattField::parse(&mut parser).expect("unable to parse struct pattern field");
+
+        println!("{:#?}", struct_patt_field);
+    }
+    
+    #[test]
+    fn parse_struct_patt_fields() {
+        let source_code = r#"
+            #[export]
             foo: "a",
-        "#;
+            bar: 1,
+            #[abstract]
+            #[unsafe]
+            baz: x,
+            "#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_patt_fields =
-            StructPattField::parse(&mut parser).expect("unable to parse struct pattern field");
+            StructPattFields::parse(&mut parser).expect("unable to parse struct pattern fields");
 
         println!("{:#?}", struct_patt_fields);
     }
