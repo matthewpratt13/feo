@@ -1,6 +1,6 @@
 use feo_ast::pattern::{PatternWithoutRange, ReferencePatt};
 use feo_error::error::CompilerError;
-use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
+use feo_types::{keyword::KeywordKind, Keyword};
 
 use crate::{parse::ParsePatt, parser::Parser};
 
@@ -9,12 +9,12 @@ impl ParsePatt for ReferencePatt {
     where
         Self: Sized,
     {
-        let ampersand_opt = parser.peek_current::<Punctuation>();
+        let kw_ref_opt = parser.peek_current::<Keyword>();
 
-        if let Some(Punctuation {
-            punc_kind: PuncKind::Ampersand,
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwRef,
             ..
-        }) = ampersand_opt
+        }) = kw_ref_opt
         {
             let kw_mut_opt = parser.peek_current::<Keyword>();
 
@@ -29,7 +29,7 @@ impl ParsePatt for ReferencePatt {
                     parser.next_token();
 
                     return Ok(Some(ReferencePatt {
-                        ampersand: ampersand_opt.unwrap(),
+                        kw_ref: kw_ref_opt.unwrap(),
                         kw_mut_opt,
                         pattern: Box::new(pattern),
                     }));

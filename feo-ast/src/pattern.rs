@@ -76,6 +76,7 @@ pub enum PatternWithoutRange {
     StructPatt(StructPatt),
     TupleStructPatt(TupleStructPatt),
     TuplePatt(TuplePatt),
+    WildcardPatt(WildcardPatt),
 }
 
 impl Spanned for PatternWithoutRange {
@@ -89,6 +90,7 @@ impl Spanned for PatternWithoutRange {
             PatternWithoutRange::StructPatt(sp) => sp.span(),
             PatternWithoutRange::TupleStructPatt(tsp) => tsp.span(),
             PatternWithoutRange::TuplePatt(tup) => tup.span(),
+            PatternWithoutRange::WildcardPatt(wcp) => wcp.span(),
         }
     }
 }
