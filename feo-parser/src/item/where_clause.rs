@@ -193,9 +193,8 @@ impl ParseTerm for WhereClause {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
 
-    use crate::lexer::Lexer;
+    use crate::test_utils;
 
     use super::*;
 
@@ -203,15 +202,7 @@ mod tests {
     fn parse_type_param_bounds() {
         let source_code = r#"Foo + Bar + Baz"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let type_param_bounds =
             TypeParamBounds::parse(&mut parser).expect("unable to parse type param bounds");
@@ -224,15 +215,7 @@ mod tests {
     fn parse_type_bound() {
         let source_code = r#"Self: Foo + Bar + Baz"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let type_bound = TypeBound::parse(&mut parser).expect("unable to parse type bound");
 
@@ -247,17 +230,9 @@ mod tests {
             Self: Foo + Bar + Baz, 
             T: Foo"#;
 
-        let handler = Handler::default();
+        let mut parser = test_utils::get_parser(source_code, false);
 
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
-
-        let where_clause = TypeBound::parse(&mut parser).expect("unable to parse where clause");
+        let where_clause = WhereClause::parse(&mut parser).expect("unable to parse where clause");
 
         println!("{:#?}", where_clause);
     }

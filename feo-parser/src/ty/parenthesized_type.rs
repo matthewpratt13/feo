@@ -59,9 +59,8 @@ impl ParseTerm for ParenthesizedType {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
 
-    use crate::lexer::Lexer;
+    use crate::test_utils;
 
     use super::*;
 
@@ -70,15 +69,7 @@ mod tests {
     fn parse_parenthesized_type() {
         let source_code = r#"(u64)"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let parenthesized_type =
             ParenthesizedType::parse(&mut parser).expect("unable to parse parenthesized type");

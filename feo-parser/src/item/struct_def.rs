@@ -498,9 +498,8 @@ impl ParseTerm for TupleStructDef {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
 
-    use crate::lexer::Lexer;
+    use crate::test_utils;
 
     use super::*;
 
@@ -511,16 +510,8 @@ mod tests {
         #[foo]
         pub bar: u64
         "#;
-
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_def_field =
             StructDefField::parse(&mut parser).expect("unable to parse struct def field");
@@ -533,15 +524,7 @@ mod tests {
     fn parse_tuple_struct_def_field() {
         let source_code = r#"#[foo] pub u64"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let tuple_struct_def_field = TupleStructDefField::parse(&mut parser)
             .expect("unable to parse tuple struct def field");
@@ -557,18 +540,8 @@ mod tests {
         struct Foo {
             pub bar: u64,
             baz: bool,
-        }
-        "#;
-
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        }"#;
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_def = StructDef::parse(&mut parser).expect("unable to parse struct def");
 
@@ -583,17 +556,10 @@ mod tests {
         struct Foo(pub u64, bool);
         "#;
 
-        let handler = Handler::default();
+        let mut parser = test_utils::get_parser(source_code, false);
 
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
-
-        let tuple_struct_def = TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct def");
+        let tuple_struct_def =
+            TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct def");
 
         println!("{:#?}", tuple_struct_def);
     }

@@ -154,9 +154,8 @@ impl ParseTerm for RangeToInclusivePatt {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
 
-    use crate::lexer::Lexer;
+    use crate::test_utils;
 
     use super::*;
 
@@ -164,15 +163,7 @@ mod tests {
     fn parse_range_from_patt() {
         let source_code = r#"1.."#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let range_from_patt =
             RangeFromPatt::parse(&mut parser).expect("unable to parse `RangeFromPatt`");
@@ -184,15 +175,7 @@ mod tests {
     fn parse_range_inclusive_patt() {
         let source_code = r#"1..=10"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let range_inclusive_patt =
             RangeInclusivePatt::parse(&mut parser).expect("unable to parse `RangeInclusivePatt`");
@@ -204,15 +187,7 @@ mod tests {
     fn parse_range_to_inclusive_patt() {
         let source_code = r#"..=10"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let range_to_inclusive_patt = RangeToInclusivePatt::parse(&mut parser)
             .expect("unable to parse `RangeToInclusivePatt`");

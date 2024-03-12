@@ -337,9 +337,8 @@ impl ParseTerm for EnumDef {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
 
-    use crate::lexer::Lexer;
+    use crate::test_utils;
 
     use super::*;
 
@@ -348,15 +347,7 @@ mod tests {
     fn parse_enum_variant_struct() {
         let source_code = r#"Foo { bar: u64 }"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let enum_variant_struct =
             EnumVariantStruct::parse(&mut parser).expect("unable to parse enum variant struct");
@@ -369,15 +360,7 @@ mod tests {
     fn parse_enum_variant_tuple() {
         let source_code = r#"Foo(u64)"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let enum_variant_tuple =
             EnumVariantTuple::parse(&mut parser).expect("unable to parse enum variant tuple");
@@ -393,18 +376,9 @@ mod tests {
         enum Foo {
             Bar,
             Baz(u64)
-        }
-        "#;
+        }"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
 
