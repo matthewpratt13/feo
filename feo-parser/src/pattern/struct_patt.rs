@@ -348,4 +348,17 @@ mod tests {
 
         println!("{:#?}", tuple_struct_patt_fields);
     }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_tuple_struct_patt() {
+        let source_code = r#"SomeStruct(foo, "a", 1,)"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let tuple_struct_patt =
+            TupleStructPatt::parse(&mut parser).expect("unable to parse tuple struct pattern");
+
+        println!("{:#?}", tuple_struct_patt);
+    }
 }
