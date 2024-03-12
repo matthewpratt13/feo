@@ -46,22 +46,26 @@ impl ParseTerm for StructDefField {
             {
                 parser.next_token();
 
-                if let Some(field_type) = Type::parse(parser)? {
+                if let Some(ty) = Type::parse(parser)? {
                     parser.next_token();
 
-                    let field_content = (field_name, Box::new(field_type));
+                    let field_type = (field_name, Box::new(ty));
 
                     match &attributes.is_empty() {
                         true => {
-                            return Ok(Some(StructDefField(None, visibility_opt, field_content)));
+                            return Ok(Some(StructDefField {
+                                attributes_opt: None,
+                                visibility_opt,
+                                field_type,
+                            }));
                         }
 
                         false => {
-                            return Ok(Some(StructDefField(
-                                Some(attributes),
+                            return Ok(Some(StructDefField {
+                                attributes_opt: Some(attributes),
                                 visibility_opt,
-                                field_content,
-                            )));
+                                field_type,
+                            }));
                         }
                     }
                 } else {
@@ -188,7 +192,7 @@ impl ParseTerm for StructDef {
                         match &attributes.is_empty() {
                             true => {
                                 return Ok(Some(StructDef {
-                                    attributes: None,
+                                    attributes_opt: None,
                                     visibility_opt,
                                     kw_struct: kw_struct_opt.unwrap(),
                                     struct_name,
@@ -201,7 +205,7 @@ impl ParseTerm for StructDef {
 
                             false => {
                                 return Ok(Some(StructDef {
-                                    attributes: Some(attributes),
+                                    attributes_opt: Some(attributes),
                                     visibility_opt,
                                     kw_struct: kw_struct_opt.unwrap(),
                                     struct_name,
@@ -260,17 +264,17 @@ impl ParseTerm for TupleStructDefField {
             parser.next_token();
 
             match &attributes.is_empty() {
-                true => Ok(Some(TupleStructDefField(
-                    None,
+                true => Ok(Some(TupleStructDefField {
+                    attributes_opt: None,
                     visibility_opt,
-                    Box::new(field_type),
-                ))),
+                    field_type: Box::new(field_type),
+                })),
 
-                false => Ok(Some(TupleStructDefField(
-                    Some(attributes),
+                false => Ok(Some(TupleStructDefField {
+                    attributes_opt: Some(attributes),
                     visibility_opt,
-                    Box::new(field_type),
-                ))),
+                    field_type: Box::new(field_type),
+                })),
             }
         } else {
             Ok(None)
@@ -391,7 +395,7 @@ impl ParseTerm for TupleStructDef {
                             match &attributes.is_empty() {
                                 true => {
                                     return Ok(Some(TupleStructDef {
-                                        attributes: None,
+                                        attributes_opt: None,
                                         visibility_opt,
                                         kw_struct: kw_struct_opt.unwrap(),
                                         struct_name,
@@ -404,7 +408,7 @@ impl ParseTerm for TupleStructDef {
                                 }
                                 false => {
                                     return Ok(Some(TupleStructDef {
-                                        attributes: Some(attributes),
+                                        attributes_opt: Some(attributes),
                                         visibility_opt,
                                         kw_struct: kw_struct_opt.unwrap(),
                                         struct_name,

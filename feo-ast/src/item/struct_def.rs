@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Comma, KwStruct, Parenthesis, Semicolon},
+    utils::{Brace, KwStruct, Parenthesis, Semicolon},
     Identifier,
 };
 
@@ -18,7 +18,7 @@ pub type StructFieldName = Identifier;
 
 #[derive(Debug, Clone)]
 pub struct StructDef {
-    pub attributes: Option<Vec<OuterAttr>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_struct: KwStruct,
     pub struct_name: Identifier,
@@ -30,7 +30,7 @@ pub struct StructDef {
 
 impl Spanned for StructDef {
     fn span(&self) -> Span {
-        let s1 = match &self.attributes {
+        let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => match &self.visibility_opt {
@@ -51,20 +51,19 @@ impl Spanned for StructDef {
 pub struct StructDefFields {
     pub first_field: StructDefField,
     pub subsequent_fields: Option<Vec<StructDefField>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
 
-pub struct StructDefField(
-    pub Option<Vec<OuterAttr>>,
-    pub Option<VisibilityKind>,
-    pub (Identifier, Box<Type>),
-);
+pub struct StructDefField {
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub field_type: (Identifier, Box<Type>),
+}
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDef {
-    pub attributes: Option<Vec<OuterAttr>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_struct: KwStruct,
     pub struct_name: Identifier,
@@ -77,7 +76,7 @@ pub struct TupleStructDef {
 
 impl Spanned for TupleStructDef {
     fn span(&self) -> Span {
-        let s1 = match &self.attributes {
+        let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => match &self.visibility_opt {
@@ -98,12 +97,11 @@ impl Spanned for TupleStructDef {
 pub struct TupleStructDefFields {
     pub first_field: TupleStructDefField,
     pub subsequent_fields: Option<Vec<TupleStructDefField>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructDefField(
-    pub Option<Vec<OuterAttr>>,
-    pub Option<VisibilityKind>,
-    pub Box<Type>,
-);
+pub struct TupleStructDefField {
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub field_type: Box<Type>,
+}

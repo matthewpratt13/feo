@@ -47,10 +47,10 @@ pub struct StructExprFields {
 }
 
 #[derive(Debug, Clone)]
-pub struct StructExprField(
-    pub Option<Vec<OuterAttr>>,
-    pub (Identifier, Box<Returnable>),
-);
+pub struct StructExprField {
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub field_content: (Identifier, Box<Returnable>),
+}
 
 #[derive(Debug, Clone)]
 pub struct TupleStructExpr {
@@ -70,4 +70,7 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructExprFields(pub (Box<Returnable>, Option<Vec<Returnable>>));
+pub struct TupleStructExprFields {
+    pub first_field: Box<Returnable>,
+    pub subsequent_fields: Option<Vec<Returnable>>,
+}

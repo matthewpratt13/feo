@@ -39,8 +39,19 @@ impl ParseTerm for StructPattField {
                     let field_content = (field_name, Box::new(value));
 
                     match &attributes.is_empty() {
-                        true => return Ok(Some(StructPattField(None, field_content))),
-                        false => return Ok(Some(StructPattField(Some(attributes), field_content))),
+                        true => {
+                            return Ok(Some(StructPattField {
+                                attributes_opt: None,
+                                field_content,
+                            }))
+                        }
+                        
+                        false => {
+                            return Ok(Some(StructPattField {
+                                attributes_opt: Some(attributes),
+                                field_content,
+                            }))
+                        }
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {

@@ -48,8 +48,19 @@ impl ParseTerm for StructExprField {
                     let field_content = (field_name, Box::new(value));
 
                     match &attributes.is_empty() {
-                        true => return Ok(Some(StructExprField(None, field_content))),
-                        false => return Ok(Some(StructExprField(Some(attributes), field_content))),
+                        true => {
+                            return Ok(Some(StructExprField {
+                                attributes_opt: None,
+                                field_content,
+                            }))
+                        }
+                        
+                        false => {
+                            return Ok(Some(StructExprField {
+                                attributes_opt: Some(attributes),
+                                field_content,
+                            }))
+                        }
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -193,11 +204,15 @@ impl ParseTerm for TupleStructExprFields {
             }
 
             match &subsequent_fields.is_empty() {
-                true => Ok(Some(TupleStructExprFields((Box::new(first_field), None)))),
-                false => Ok(Some(TupleStructExprFields((
-                    Box::new(first_field),
-                    Some(subsequent_fields),
-                )))),
+                true => Ok(Some(TupleStructExprFields {
+                    first_field: Box::new(first_field),
+                    subsequent_fields: None,
+                })),
+
+                false => Ok(Some(TupleStructExprFields {
+                    first_field: Box::new(first_field),
+                    subsequent_fields: Some(subsequent_fields),
+                })),
             }
         } else {
             Ok(None)
