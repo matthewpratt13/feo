@@ -26,18 +26,31 @@ impl ParseTerm for StructPattField {
         if let Some(id) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
-            if let Some(p) = Pattern::parse(parser)? {
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Colon,
+                ..
+            }) = parser.peek_current::<Punctuation>()
+            {
                 parser.next_token();
 
-                let field_contents = (id, Box::new(p));
+                if let Some(value) = Pattern::parse(parser)? {
+                    parser.next_token();
 
-                match &attributes.is_empty() {
-                    true => return Ok(Some(StructPattField(None, field_contents))),
-                    false => return Ok(Some(StructPattField(Some(attributes), field_contents))),
+                    let field_content = (id, Box::new(value));
+
+                    match &attributes.is_empty() {
+                        true => return Ok(Some(StructPattField(None, field_content))),
+                        false => return Ok(Some(StructPattField(Some(attributes), field_content))),
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`Pattern`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Pattern`".to_string(),
+                    expected: "`:`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -57,54 +70,29 @@ impl ParseTerm for StructPattFields {
         let mut subsequent_fields: Vec<StructPattField> = Vec::new();
 
         if let Some(first_field) = StructPattField::parse(parser)? {
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(next_field) = StructPattField::parse(parser)? {
                     subsequent_fields.push(next_field);
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p)
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`StructPattField`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-
                     break;
                 }
-            }
-
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
             }
 
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(StructPattFields {
                     first_field,
                     subsequent_fields: None,
-                    trailing_comma_opt,
                 })),
 
                 false => Ok(Some(StructPattFields {
                     first_field,
                     subsequent_fields: Some(subsequent_fields),
-                    trailing_comma_opt,
                 })),
             }
         } else {

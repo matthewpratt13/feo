@@ -29,7 +29,6 @@ impl Spanned for StructPatt {
 pub struct StructPattFields {
     pub first_field: StructPattField,
     pub subsequent_fields: Option<Vec<StructPattField>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
