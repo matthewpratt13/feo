@@ -24,30 +24,17 @@ impl ParseTerm for TupleElements {
         if let Some(first_element) = Returnable::parse(parser)? {
             parser.next_token();
 
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(next_element) = Returnable::parse(parser)? {
                     subsequent_elements.push(next_element);
-
                     parser.next_token();
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p);
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Returnable`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                     break;
                 }
             }

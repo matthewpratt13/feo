@@ -28,9 +28,7 @@ impl ParseTerm for TupleType {
         {
             parser.next_token();
 
-            let mut next_element_opt = Type::parse(parser)?;
-
-            while let Some(element) = next_element_opt {
+            while let Some(element) = Type::parse(parser)? {
                 parser.next_token();
 
                 if let Some(Punctuation {
@@ -39,20 +37,8 @@ impl ParseTerm for TupleType {
                 }) = parser.peek_current::<Punctuation>()
                 {
                     elements.push(element);
-
                     parser.next_token();
-
-                    if let Some(e) = Type::parse(parser)? {
-                        next_element_opt = Some(e);
-                        parser.next_token();
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`,`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                     break;
                 }
             }
