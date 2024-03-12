@@ -223,7 +223,55 @@ impl ParsePatt for TupleStructPatt {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            parser.next_token();
+
+            let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                ..
+            }) = open_parenthesis_opt
+            {
+                parser.next_token();
+
+                let fields_opt = if let Some(f) = TupleStructPattFields::parse(parser)? {
+                    Some(f)
+                } else {
+                    None
+                };
+
+                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                    ..
+                }) = close_parenthesis_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(TupleStructPatt {
+                        id,
+                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                        fields_opt,
+                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: ")".to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`(`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

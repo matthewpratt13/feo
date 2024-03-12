@@ -39,10 +39,10 @@ pub struct StructPattField {
 
 #[derive(Debug, Clone)]
 pub struct TupleStructPatt {
-    id: Identifier,
-    open_parenthesis: Parenthesis,
-    elements_opt: Option<TupleStructPattFields>,
-    close_parenthesis: Parenthesis,
+    pub id: Identifier,
+    pub open_parenthesis: Parenthesis,
+    pub fields_opt: Option<TupleStructPattFields>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for TupleStructPatt {
