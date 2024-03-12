@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{Returnable, TupleElements, TupleExpr, TupleIndexExpr},
+    expression::{Returnable, TupleExprElements, TupleExpr, TupleIndexExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -14,7 +14,7 @@ use crate::{
     parser::Parser,
 };
 
-impl ParseTerm for TupleElements {
+impl ParseTerm for TupleExprElements {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -50,12 +50,12 @@ impl ParseTerm for TupleElements {
             }
 
             match &subsequent_elements.is_empty() {
-                true => Ok(Some(TupleElements {
+                true => Ok(Some(TupleExprElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: None,
                     trailing_comma_opt,
                 })),
-                false => Ok(Some(TupleElements {
+                false => Ok(Some(TupleExprElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: Some(subsequent_elements),
                     trailing_comma_opt,
@@ -81,7 +81,7 @@ impl ParseExpr for TupleExpr {
         {
             parser.next_token();
 
-            if let Some(elements) = TupleElements::parse(parser)? {
+            if let Some(elements) = TupleExprElements::parse(parser)? {
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {

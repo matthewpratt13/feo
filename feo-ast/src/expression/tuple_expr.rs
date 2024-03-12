@@ -26,7 +26,7 @@ impl Spanned for TupleKind {
 #[derive(Debug, Clone)]
 pub struct TupleExpr {
     pub open_parenthesis: Parenthesis,
-    pub elements: TupleElements,
+    pub elements: TupleExprElements,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -40,7 +40,7 @@ impl Spanned for TupleExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleElements {
+pub struct TupleExprElements {
     pub first_element: Box<Returnable>,
     pub subsequent_elements_opt: Option<Vec<Returnable>>,
     pub trailing_comma_opt: Option<Comma>,
