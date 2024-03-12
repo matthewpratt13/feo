@@ -13,12 +13,7 @@ use feo_types::{
     span::{Span, Spanned},
 };
 
-use crate::{
-    expression::{CallParams, ClosureParam, ClosureParams, IfExpr, IterLoopExpr, MatchExpr},
-    item::{ConstantVarDef, EnumVariantStruct, EnumVariantTuple},
-    path::PathPatt,
-    statement::LetStatement,
-};
+use crate::path::PathPatt;
 
 pub use self::{
     identifier_patt::IdentifierPatt,
@@ -38,18 +33,8 @@ pub use self::{
 
 #[derive(Debug, Clone)]
 pub enum Pattern {
-    CallParams(CallParams),
-    ClosureParam(ClosureParam),
-    ClosureParams(ClosureParams),
-    ConstantVarDef(ConstantVarDef),
-    EnumVariantStruct(EnumVariantStruct),
-    EnumVariantTuple(EnumVariantTuple),
-    LetStatement(LetStatement),
     Literal(LiteralKind),
     IdentifierPatt(IdentifierPatt),
-    IfExpr(IfExpr),
-    IterLoopExpr(IterLoopExpr),
-    MatchExpr(MatchExpr),
     ParenthesizedPatt(ParenthesizedPatt),
     RangePatt(RangePattKind),
     PathPatt(PathPatt),
@@ -63,18 +48,8 @@ pub enum Pattern {
 impl Spanned for Pattern {
     fn span(&self) -> Span {
         match self {
-            Pattern::CallParams(cal) => cal.span(),
-            Pattern::ClosureParam(clp) => clp.span(),
-            Pattern::ClosureParams(cls) => cls.span(),
-            Pattern::ConstantVarDef(cvd) => cvd.span(),
-            Pattern::EnumVariantStruct(evs) => evs.span(),
-            Pattern::EnumVariantTuple(evt) => evt.span(),
-            Pattern::LetStatement(ls) => ls.span(),
             Pattern::Literal(lit) => lit.span(),
             Pattern::IdentifierPatt(idp) => idp.span(),
-            Pattern::IfExpr(ife) => ife.span(),
-            Pattern::IterLoopExpr(ite) => ite.span(),
-            Pattern::MatchExpr(me) => me.span(),
             Pattern::ParenthesizedPatt(par) => par.span(),
             Pattern::RangePatt(rng) => match rng {
                 RangePattKind::RangeFromPatt(rfp) => rfp.span(),
