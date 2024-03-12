@@ -181,7 +181,40 @@ impl ParseTerm for TupleStructPattFields {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_fields: Vec<Pattern> = Vec::new();
+
+        if let Some(first_field) = Pattern::parse(parser)? {
+            parser.next_token();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = parser.peek_current()
+            {
+                parser.next_token();
+
+                if let Some(next_field) = Pattern::parse(parser)? {
+                    subsequent_fields.push(next_field);
+                    parser.next_token();
+                } else {
+                    break;
+                }
+            }
+
+            match &subsequent_fields.is_empty() {
+                true => Ok(Some(TupleStructPattFields {
+                    first_field: Box::new(first_field),
+                    subsequent_fields_opt: None,
+                })),
+
+                false => Ok(Some(TupleStructPattFields {
+                    first_field: Box::new(first_field),
+                    subsequent_fields_opt: Some(subsequent_fields),
+                })),
+            }
+        } else {
+            Ok(None)
+        }
     }
 }
 
@@ -250,8 +283,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_patt =
-            StructPatt::parse(&mut parser).expect("unable to parse struct pattern");
+        let struct_patt = StructPatt::parse(&mut parser).expect("unable to parse struct pattern");
 
         println!("{:#?}", struct_patt);
     }

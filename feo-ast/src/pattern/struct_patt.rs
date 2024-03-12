@@ -55,6 +55,6 @@ impl Spanned for TupleStructPatt {
 }
 #[derive(Debug, Clone)]
 pub struct TupleStructPattFields {
-    first_field: Box<Pattern>,
-    subsequent_fields_opt: Option<Vec<Pattern>>,
+    pub first_field: Box<Pattern>,
+    pub subsequent_fields_opt: Option<Vec<Pattern>>,
 }
