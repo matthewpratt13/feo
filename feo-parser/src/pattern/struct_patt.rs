@@ -237,4 +237,21 @@ mod tests {
 
         println!("{:#?}", struct_patt_fields);
     }
+
+    #[test]
+    fn parse_struct_patt() {
+        let source_code = r#"
+        SomeStruct {
+            foo: "a",
+            bar: 1,
+            baz: x,
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let struct_patt =
+            StructPatt::parse(&mut parser).expect("unable to parse struct pattern");
+
+        println!("{:#?}", struct_patt);
+    }
 }
