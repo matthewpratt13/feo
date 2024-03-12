@@ -91,17 +91,19 @@ impl Spanned for ClosureParams {
 
 #[derive(Debug, Clone)]
 pub struct ClosureParam {
-    attributes: Vec<OuterAttr>,
+    attributes_opt: Option<Vec<OuterAttr>>,
     pattern: Box<Pattern>,
     type_annotation_opt: Option<Box<Type>>,
 }
 
 impl Spanned for ClosureParam {
     fn span(&self) -> Span {
-        let s1 = if let Some(a) = self.attributes.first() {
-            a.span()
-        } else {
-            self.pattern.span()
+        let s1 = match &self.attributes_opt {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => self.pattern.span(),
+            },
+            None => self.pattern.span(),
         };
 
         let s2 = if let Some(ta) = &self.type_annotation_opt {

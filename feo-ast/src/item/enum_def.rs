@@ -16,7 +16,7 @@ pub enum EnumVariantType {
 
 #[derive(Debug, Clone)]
 pub struct EnumDef {
-    pub attributes: Option<Vec<OuterAttr>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_enum: KwEnum,
     pub enum_name: Identifier,
@@ -27,7 +27,7 @@ pub struct EnumDef {
 
 impl Spanned for EnumDef {
     fn span(&self) -> Span {
-        let s1 = if let Some(a) = &self.attributes {
+        let s1 = if let Some(a) = &self.attributes_opt {
             match a.first() {
                 Some(oa) => oa.span(),
                 None => match &self.visibility_opt {
@@ -58,7 +58,7 @@ pub struct EnumVariants {
 
 #[derive(Debug, Clone)]
 pub struct EnumVariant {
-    pub attributes: Option<Vec<OuterAttr>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub variant_name: Identifier,
     pub variant_type_opt: Option<EnumVariantType>,

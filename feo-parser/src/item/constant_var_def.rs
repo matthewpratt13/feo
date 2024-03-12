@@ -82,7 +82,7 @@ impl ParseTerm for ConstantVarDef {
                                 match &attributes.is_empty() {
                                     true => {
                                         return Ok(Some(ConstantVarDef {
-                                            attributes: None,
+                                            attributes_opt: None,
                                             visibility_opt,
                                             kw_const: kw_const_opt.unwrap(),
                                             item_name,
@@ -94,7 +94,7 @@ impl ParseTerm for ConstantVarDef {
 
                                     false => {
                                         return Ok(Some(ConstantVarDef {
-                                            attributes: Some(attributes),
+                                            attributes_opt: Some(attributes),
                                             visibility_opt,
                                             kw_const: kw_const_opt.unwrap(),
                                             item_name,

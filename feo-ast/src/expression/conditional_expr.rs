@@ -64,7 +64,7 @@ pub struct MatchArms {
 
 #[derive(Debug, Clone)]
 pub struct MatchArm {
-    attributes: Vec<OuterAttr>,
+    attributes_opt: Option<Vec<OuterAttr>>,
     pattern: Box<Pattern>,
     match_arm_guard_opt: Option<MatchArmGuard>,
 }

@@ -10,7 +10,7 @@ use super::{TypeParamBounds, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub struct TypeAliasDef {
-    attributes: Option<Vec<OuterAttr>>,
+    attributes_opt: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_type: KwType,
     type_name: Identifier,
@@ -21,7 +21,7 @@ pub struct TypeAliasDef {
 
 impl Spanned for TypeAliasDef {
     fn span(&self) -> Span {
-        let s1 = match &self.attributes {
+        let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => match &self.visibility_opt {

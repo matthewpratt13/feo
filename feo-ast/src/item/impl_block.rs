@@ -26,19 +26,19 @@ pub enum TraitImplItem {
 
 #[derive(Debug, Clone)]
 pub struct InherentImplBlock {
-    outer_attributes: Option<Vec<OuterAttr>>,
+    outer_attributes_opt: Option<Vec<OuterAttr>>,
     kw_impl: KwImpl,
     nominal_type: Type,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    inner_attributes: Option<Vec<InnerAttr>>,
+    inner_attributes_opt: Option<Vec<InnerAttr>>,
     associated_items: Option<Vec<InherentImplItem>>,
     close_brace: Brace,
 }
 
 impl Spanned for InherentImplBlock {
     fn span(&self) -> Span {
-        let s1 = match &self.outer_attributes {
+        let s1 = match &self.outer_attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => self.kw_impl.span(),
@@ -54,21 +54,21 @@ impl Spanned for InherentImplBlock {
 
 #[derive(Debug, Clone)]
 pub struct TraitImplBlock {
-    outer_attributes: Option<Vec<OuterAttr>>,
+    outer_attributes_opt: Option<Vec<OuterAttr>>,
     kw_impl: KwImpl,
     implemented_trait_path: PathType,
     kw_for: KwFor,
     implementing_type: Type,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    inner_attributes: Vec<InnerAttr>,
+    inner_attributes_opt: Option<Vec<InnerAttr>>,
     associated_items: Vec<TraitImplItem>,
     close_brace: Brace,
 }
 
 impl Spanned for TraitImplBlock {
     fn span(&self) -> Span {
-        let s1 = match &self.outer_attributes {
+        let s1 = match &self.outer_attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => self.kw_impl.span(),

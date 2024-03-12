@@ -71,7 +71,7 @@ impl Spanned for ExprStatement {
 
 #[derive(Debug, Clone)]
 pub struct LetStatement {
-    attributes: Vec<OuterAttr>,
+    attributes_opt: Option<Vec<OuterAttr>>,
     kw_let: KwLet,
     pattern: Box<Pattern>,
     type_ann_opt: Option<(Colon, Type)>,
@@ -81,17 +81,16 @@ pub struct LetStatement {
 
 impl Spanned for LetStatement {
     fn span(&self) -> Span {
-        let start_pos = if let Some(a) = self.attributes.first() {
-            a.span().start()
-        } else {
-            self.kw_let.span().start()
+        let s1 = match &self.attributes_opt {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => self.kw_let.span(),
+            },
+            None => self.kw_let.span(),
         };
 
-        let end_pos = self.semicolon.span().end();
-        let source = self.kw_let.span().source();
+        let s2 = self.semicolon.span();
 
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

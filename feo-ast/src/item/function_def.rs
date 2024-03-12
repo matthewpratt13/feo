@@ -51,7 +51,7 @@ impl Spanned for FunctionWithBlock {
 
 #[derive(Debug, Clone)]
 pub struct FunctionSig {
-    attributes: Option<Vec<OuterAttr>>,
+    attributes_opt: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_func: KwFunc,
     function_name: Identifier,
@@ -63,7 +63,7 @@ pub struct FunctionSig {
 
 impl Spanned for FunctionSig {
     fn span(&self) -> Span {
-        let s1 = match &self.attributes {
+        let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => match &self.visibility_opt {

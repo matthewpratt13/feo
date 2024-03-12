@@ -10,7 +10,7 @@ use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub struct ConstantVarDef {
-    pub attributes: Option<Vec<OuterAttr>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_const: KwConst,
     pub item_name: Identifier,
@@ -21,7 +21,7 @@ pub struct ConstantVarDef {
 
 impl Spanned for ConstantVarDef {
     fn span(&self) -> Span {
-        let s1 = match &self.attributes {
+        let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {
                 Some(oa) => oa.span(),
                 None => match &self.visibility_opt {
@@ -40,7 +40,7 @@ impl Spanned for ConstantVarDef {
 
 #[derive(Debug, Clone)]
 pub struct StaticVarDef {
-    attributes: Vec<OuterAttr>,
+    attributes_opt: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_static: KwStatic,
     kw_mut_opt: Option<KwMut>,
@@ -52,12 +52,15 @@ pub struct StaticVarDef {
 
 impl Spanned for StaticVarDef {
     fn span(&self) -> Span {
-        let s1 = match self.attributes.first() {
-            Some(a) => a.span(),
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_static.span(),
+        let s1 = match &self.attributes_opt {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_static.span(),
+                },
             },
+            None => self.kw_static.span(),
         };
 
         let s2 = self.semicolon.span();

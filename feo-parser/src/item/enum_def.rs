@@ -46,14 +46,14 @@ impl ParseTerm for EnumVariant {
 
             match &attributes.is_empty() {
                 true => Ok(Some(EnumVariant {
-                    attributes: None,
+                    attributes_opt: None,
                     visibility_opt,
                     variant_name,
                     variant_type_opt,
                 })),
 
                 false => Ok(Some(EnumVariant {
-                    attributes: Some(attributes),
+                    attributes_opt: Some(attributes),
                     visibility_opt,
                     variant_name,
                     variant_type_opt,
@@ -288,7 +288,7 @@ impl ParseTerm for EnumDef {
                         match &attributes.is_empty() {
                             true => {
                                 return Ok(Some(EnumDef {
-                                    attributes: None,
+                                    attributes_opt: None,
                                     visibility_opt,
                                     kw_enum: kw_enum_opt.unwrap(),
                                     enum_name,
@@ -300,7 +300,7 @@ impl ParseTerm for EnumDef {
 
                             false => {
                                 return Ok(Some(EnumDef {
-                                    attributes: Some(attributes),
+                                    attributes_opt: Some(attributes),
                                     visibility_opt,
                                     kw_enum: kw_enum_opt.unwrap(),
                                     enum_name,
