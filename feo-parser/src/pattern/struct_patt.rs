@@ -154,7 +154,7 @@ mod tests {
         let source_code = r#"
             #[abstract]
             foo: "a",
-        }"#;
+        "#;
 
         let handler = Handler::default();
 

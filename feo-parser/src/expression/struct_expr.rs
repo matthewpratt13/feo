@@ -79,53 +79,28 @@ impl ParseTerm for StructExprFields {
         let mut subsequent_fields: Vec<StructExprField> = Vec::new();
 
         if let Some(first_field) = StructExprField::parse(parser)? {
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(next_field) = StructExprField::parse(parser)? {
                     subsequent_fields.push(next_field);
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p);
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`StructExprField`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-
                     break;
                 }
-            }
-
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
             }
 
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(StructExprFields {
                     first_field,
                     subsequent_fields: None,
-                    trailing_comma_opt,
                 })),
                 false => Ok(Some(StructExprFields {
                     first_field,
                     subsequent_fields: Some(subsequent_fields),
-                    trailing_comma_opt,
                 })),
             }
         } else {
@@ -326,8 +301,35 @@ mod tests {
     fn parse_struct_expr_field() {
         let source_code = r#"
             #[abstract]
-            foo: "a"
-        }"#;
+            #[unsafe]
+            foo: "a",
+            "#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let struct_expr_field =
+            StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
+
+        println!("{:#?}", struct_expr_field);
+    }
+
+    #[test]
+    fn parse_struct_expr_fields() {
+        let source_code = r#"
+            #[abstract]
+            #[export]
+            foo: "a",
+            #[unsafe]
+            bar: 1,
+            "#;
 
         let handler = Handler::default();
 
@@ -340,7 +342,7 @@ mod tests {
         let mut parser = Parser::new(token_stream, handler);
 
         let struct_expr_fields =
-            StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
+            StructExprFields::parse(&mut parser).expect("unable to parse struct expression fields");
 
         println!("{:#?}", struct_expr_fields);
     }
@@ -349,7 +351,6 @@ mod tests {
     fn parse_struct_expr() {
         let source_code = r#"
         SomeStruct {
-            #[abstract]
             foo: "a",
             bar: 1,
             baz: x,
@@ -368,7 +369,7 @@ mod tests {
         let struct_expr =
             StructExpr::parse(&mut parser).expect("unable to parse struct expression");
 
-        println!("{:#?}", struct_expr);
+        // println!("{:#?}", struct_expr);
     }
 
     #[test]
@@ -381,7 +382,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        // println!("{:#?}", token_stream);
+        println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 

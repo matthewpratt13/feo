@@ -44,7 +44,6 @@ impl Spanned for StructExpr {
 pub struct StructExprFields {
     pub first_field: StructExprField,
     pub subsequent_fields: Option<Vec<StructExprField>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
