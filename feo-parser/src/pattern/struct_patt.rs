@@ -139,3 +139,36 @@ impl ParseTerm for TupleStructPatt {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::handler::Handler;
+
+    use crate::lexer::Lexer;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_struct_patt_field() {
+        let source_code = r#"
+            #[abstract]
+            foo: "a",
+        }"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let struct_patt_fields =
+            StructPattField::parse(&mut parser).expect("unable to parse struct patter field");
+
+        println!("{:#?}", struct_patt_fields);
+    }
+}
