@@ -53,7 +53,6 @@ impl Spanned for EnumDef {
 pub struct EnumVariants {
     pub first_variant: EnumVariant,
     pub subsequent_variants_opt: Option<Vec<EnumVariant>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]
