@@ -25,7 +25,7 @@ pub use self::{
     struct_patt::{
         StructPatt, StructPattField, StructPattFields, TupleStructPatt, TupleStructPattFields,
     },
-    tuple_patt::TuplePatt,
+    tuple_patt::{TuplePatt, TuplePattElements},
     wildcard_patt::WildcardPatt,
 };
 
