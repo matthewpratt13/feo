@@ -1,6 +1,7 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Bracket, Comma, Semicolon}, U64Primitive,
+    utils::{Bracket, Semicolon},
+    U64Primitive,
 };
 
 use super::{Assignable, Iterable};
@@ -31,7 +32,6 @@ impl Spanned for ArrayExpr {
 pub struct ArrayElementsCommaSeparated {
     pub first_element: Box<Iterable>,
     pub subsequent_elements_opt: Option<Vec<Iterable>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]

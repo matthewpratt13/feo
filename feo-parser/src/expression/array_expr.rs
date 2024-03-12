@@ -29,12 +29,10 @@ impl ParseTerm for ArrayElementsCommaSeparated {
         if let Some(first_element) = Iterable::parse(parser)? {
             parser.next_token();
 
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
@@ -42,41 +40,19 @@ impl ParseTerm for ArrayElementsCommaSeparated {
                     subsequent_elements.push(next_element);
 
                     parser.next_token();
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p);
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Iterable`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                     break;
                 }
-            }
-
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
             }
 
             match &subsequent_elements.is_empty() {
                 true => Ok(Some(ArrayElementsCommaSeparated {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: None,
-                    trailing_comma_opt,
                 })),
                 false => Ok(Some(ArrayElementsCommaSeparated {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: Some(subsequent_elements),
-                    trailing_comma_opt,
                 })),
             }
         } else {
@@ -259,7 +235,7 @@ impl ParseExpr for IndexExpr {
 
 #[cfg(test)]
 mod tests {
-    
+
     use crate::test_utils;
 
     use super::*;
