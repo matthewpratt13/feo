@@ -32,7 +32,7 @@ impl ParseTerm for StructExprField {
             parser.next_token();
         }
 
-        if let Some(id) = parser.peek_current::<Identifier>() {
+        if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
             if let Some(Punctuation {
@@ -45,7 +45,7 @@ impl ParseTerm for StructExprField {
                 if let Some(value) = Returnable::parse(parser)? {
                     parser.next_token();
 
-                    let field_content = (id, Box::new(value));
+                    let field_content = (field_name, Box::new(value));
 
                     match &attributes.is_empty() {
                         true => return Ok(Some(StructExprField(None, field_content))),

@@ -23,7 +23,7 @@ impl ParseTerm for StructPattField {
             parser.next_token();
         }
 
-        if let Some(id) = parser.peek_current::<Identifier>() {
+        if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
             if let Some(Punctuation {
@@ -36,7 +36,7 @@ impl ParseTerm for StructPattField {
                 if let Some(value) = Pattern::parse(parser)? {
                     parser.next_token();
 
-                    let field_content = (id, Box::new(value));
+                    let field_content = (field_name, Box::new(value));
 
                     match &attributes.is_empty() {
                         true => return Ok(Some(StructPattField(None, field_content))),

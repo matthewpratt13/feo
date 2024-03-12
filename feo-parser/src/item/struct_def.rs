@@ -92,54 +92,29 @@ impl ParseTerm for StructDefFields {
         let mut subsequent_fields: Vec<StructDefField> = Vec::new();
 
         if let Some(first_field) = StructDefField::parse(parser)? {
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(next_field) = StructDefField::parse(parser)? {
                     subsequent_fields.push(next_field);
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p);
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`StructDefField`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-
                     break;
                 }
-            }
-
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
             }
 
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(StructDefFields {
                     first_field,
                     subsequent_fields: None,
-                    trailing_comma_opt,
                 })),
 
                 false => Ok(Some(StructDefFields {
                     first_field,
                     subsequent_fields: Some(subsequent_fields),
-                    trailing_comma_opt,
                 })),
             }
         } else {
@@ -196,7 +171,6 @@ impl ParseTerm for StructDef {
                     parser.next_token();
 
                     let fields_opt = if let Some(f) = StructDefFields::parse(parser)? {
-                        parser.next_token();
                         Some(f)
                     } else {
                         None
@@ -224,6 +198,7 @@ impl ParseTerm for StructDef {
                                     close_brace: close_brace_opt.unwrap(),
                                 }))
                             }
+
                             false => {
                                 return Ok(Some(StructDef {
                                     attributes: Some(attributes),
@@ -311,53 +286,29 @@ impl ParseTerm for TupleStructDefFields {
         let mut subsequent_fields: Vec<TupleStructDefField> = Vec::new();
 
         if let Some(first_field) = TupleStructDefField::parse(parser)? {
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(next_field) = TupleStructDefField::parse(parser)? {
                     subsequent_fields.push(next_field);
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p)
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`TupleStructDefField`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                     break;
                 }
-            }
-
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
             }
 
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(TupleStructDefFields {
                     first_field,
                     subsequent_fields: None,
-                    trailing_comma_opt,
                 })),
 
                 false => Ok(Some(TupleStructDefFields {
                     first_field,
                     subsequent_fields: Some(subsequent_fields),
-                    trailing_comma_opt,
                 })),
             }
         } else {
@@ -407,7 +358,6 @@ impl ParseTerm for TupleStructDef {
                     parser.next_token();
 
                     let fields_opt = if let Some(f) = TupleStructDefFields::parse(parser)? {
-                        parser.next_token();
                         Some(f)
                     } else {
                         None
@@ -510,7 +460,7 @@ mod tests {
         #[foo]
         pub bar: u64
         "#;
-        
+
         let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_def_field =
