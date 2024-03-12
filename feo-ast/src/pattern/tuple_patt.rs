@@ -7,9 +7,9 @@ use super::Pattern;
 
 #[derive(Debug, Clone)]
 pub struct TuplePatt {
-    open_parenthesis: Parenthesis,
-    tuple_patt_elements_opt: Option<TuplePattElements>,
-    close_parenthesis: Parenthesis,
+    pub open_parenthesis: Parenthesis,
+    pub elements: TuplePattElements,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for TuplePatt {
