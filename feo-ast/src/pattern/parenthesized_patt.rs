@@ -7,9 +7,9 @@ use super::Pattern;
 
 #[derive(Debug, Clone)]
 pub struct ParenthesizedPatt {
-    open_parenthesis: Parenthesis,
-    pattern: Box<Pattern>,
-    close_parenthesis: Parenthesis,
+    pub open_parenthesis: Parenthesis,
+    pub pattern: Box<Pattern>,
+    pub close_parenthesis: Parenthesis,
 }
 
 impl Spanned for ParenthesizedPatt {
