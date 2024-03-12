@@ -135,7 +135,10 @@ impl ParseExpr for Assignable {
             }
         } else if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Assignable::PathExpr(pe)));
                     }
@@ -255,7 +258,10 @@ impl ParseExpr for BooleanOperand {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(BooleanOperand::PathExpr(pe)));
                     }
@@ -320,7 +326,10 @@ impl ParseExpr for Callable {
             }
         } else if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Callable::PathExpr(pe)));
                     }
@@ -524,7 +533,10 @@ impl ParseExpr for Iterable {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::PathExpr(pe)));
                     }
@@ -661,7 +673,10 @@ impl ParseExpr for Operable {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate | KeywordKind::KwSelf | KeywordKind::KwSuper => {
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => {
                     if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Operable::PathExpr(pe)));
                     }
