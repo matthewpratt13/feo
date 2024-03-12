@@ -9,7 +9,11 @@ use feo_ast::{
         RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, Returnable,
         StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
         UnderscoreExpr, UnwrapExpr,
-    }, path::{PathIdenSegmentKind, PathInExpr}, pattern::Pattern, token::Token, Type
+    },
+    path::{PathIdenSegmentKind, PathInExpr},
+    pattern::Pattern,
+    token::Token,
+    Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
@@ -30,6 +34,12 @@ pub trait ParseExpr {
 
 // literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
 pub trait ParseTerm {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized;
+}
+
+pub trait ParsePatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized;

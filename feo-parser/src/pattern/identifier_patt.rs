@@ -2,9 +2,9 @@ use feo_ast::pattern::IdentifierPatt;
 use feo_error::error::CompilerError;
 use feo_types::{keyword::KeywordKind, Identifier, Keyword};
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::ParsePatt, parser::Parser};
 
-impl ParseTerm for IdentifierPatt {
+impl ParsePatt for IdentifierPatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

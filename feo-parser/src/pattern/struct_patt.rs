@@ -13,7 +13,10 @@ use feo_types::{
     Delimiter, Identifier, Punctuation,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{
+    parse::{ParsePatt, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseTerm for StructPattField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -116,7 +119,7 @@ impl ParseTerm for StructPattFields {
     }
 }
 
-impl ParseTerm for StructPatt {
+impl ParsePatt for StructPatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -155,7 +158,7 @@ impl ParseTerm for StructPatt {
                         close_brace: close_brace_opt.unwrap(),
                     }));
                 }
-                
+
                 parser.log_error(ParserErrorKind::MissingDelimiter {
                     delim: "}".to_string(),
                 });
@@ -182,7 +185,7 @@ impl ParseTerm for TupleStructPattFields {
     }
 }
 
-impl ParseTerm for TupleStructPatt {
+impl ParsePatt for TupleStructPatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

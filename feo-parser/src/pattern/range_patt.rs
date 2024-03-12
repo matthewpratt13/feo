@@ -8,7 +8,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{literal::LiteralKind, punctuation::PuncKind, Punctuation};
 
 use crate::{
-    parse::ParseTerm,
+    parse::{ParsePatt, ParseTerm},
     parser::Parser,
     peek::{Peek, Peeker},
 };
@@ -42,7 +42,7 @@ impl ParseTerm for RangePattKind {
     }
 }
 
-impl ParseTerm for RangeFromPatt {
+impl ParsePatt for RangeFromPatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -72,7 +72,7 @@ impl ParseTerm for RangeFromPatt {
     }
 }
 
-impl ParseTerm for RangeInclusivePatt {
+impl ParsePatt for RangeInclusivePatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -117,7 +117,7 @@ impl ParseTerm for RangeInclusivePatt {
     }
 }
 
-impl ParseTerm for RangeToInclusivePatt {
+impl ParsePatt for RangeToInclusivePatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

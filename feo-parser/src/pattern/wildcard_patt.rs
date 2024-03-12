@@ -2,9 +2,9 @@ use feo_ast::pattern::WildcardPatt;
 use feo_error::error::CompilerError;
 use feo_types::Identifier;
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::ParsePatt, parser::Parser};
 
-impl ParseTerm for WildcardPatt {
+impl ParsePatt for WildcardPatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
