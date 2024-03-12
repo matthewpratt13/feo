@@ -11,7 +11,7 @@ use feo_ast::{
         UnderscoreExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr},
-    pattern::Pattern,
+    pattern::{Pattern, PatternWithoutRange},
     token::Token,
     Type,
 };
@@ -45,13 +45,11 @@ pub trait ParsePatt {
         Self: Sized;
 }
 
-
 pub trait ParseType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -965,6 +963,15 @@ impl ParseExpr for Returnable {
 }
 
 impl ParsePatt for Pattern {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParsePatt for PatternWithoutRange {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

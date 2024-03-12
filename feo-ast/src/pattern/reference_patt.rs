@@ -1,22 +1,20 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::KwMut,
+    utils::{Ampersand, KwMut},
 };
-
-use crate::expression::DerefOperator;
 
 use super::PatternWithoutRange;
 
 #[derive(Debug, Clone)]
 pub struct ReferencePatt {
-    kw_ref: DerefOperator,
-    kw_mut_opt: Option<KwMut>,
-    pattern: Box<PatternWithoutRange>,
+    pub ampersand: Ampersand,
+    pub kw_mut_opt: Option<KwMut>,
+    pub pattern: Box<PatternWithoutRange>,
 }
 
 impl Spanned for ReferencePatt {
     fn span(&self) -> Span {
-        let s1 = self.kw_ref.span();
+        let s1 = self.ampersand.span();
         let s2 = self.pattern.span();
 
         Span::join(s1, s2)
