@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Comma, FullStop, Parenthesis},
+    utils::{FullStop, Parenthesis},
     Identifier,
 };
 
@@ -46,7 +46,6 @@ impl Spanned for MethodCallExpr {
 pub struct CallParams {
     pub first_param: Box<Returnable>,
     pub subsequent_params_opt: Option<Vec<Returnable>>,
-    pub trailing_comma_opt: Option<Comma>,
 }
 
 impl Spanned for CallParams {
@@ -58,10 +57,7 @@ impl Spanned for CallParams {
                 Some(p) => p.span(),
                 None => self.first_param.span(),
             },
-            None => match &self.trailing_comma_opt {
-                Some(t) => t.span(),
-                None => self.first_param.span(),
-            },
+            None => self.first_param.span(),
         };
 
         Span::join(s1, s2)
