@@ -292,9 +292,10 @@ impl ParseExpr for TupleStructExpr {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
+    
     use crate::test_utils;
+
+    use super::*;
 
     #[test]
     fn parse_struct_expr_field() {

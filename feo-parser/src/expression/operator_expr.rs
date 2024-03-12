@@ -613,9 +613,8 @@ impl ParseExpr for UnwrapExpr {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
 
-    use crate::lexer::Lexer;
+    use crate::test_utils;
 
     use super::*;
 
@@ -623,15 +622,7 @@ mod tests {
     fn parse_arithmetic_expr() {
         let source_code = r#"x + 2"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let arithmetic_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
             .expect("unable to parse arithmetic expression");
@@ -643,15 +634,7 @@ mod tests {
     fn parse_logical_expr() {
         let source_code = r#"1 | 2"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let logical_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
             .expect("unable to parse logical expression");
@@ -663,15 +646,7 @@ mod tests {
     fn parse_assignment_expr() {
         let source_code = r#"x = 2"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let assignment_expr =
             AssignmentExpr::parse(&mut parser).expect("unable to parse assignment expression");
@@ -683,15 +658,7 @@ mod tests {
     fn parse_compound_assignment_expr() {
         let source_code = r#"x += 2"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let compound_assignment_expr = CompoundAssignmentExpr::parse(&mut parser)
             .expect("unable to parse compound assignment expression");
@@ -703,55 +670,31 @@ mod tests {
     fn parse_comparison_expr() {
         let source_code = r#"x > 2"#;
 
-        let handler = Handler::default();
+        let mut parser = test_utils::get_parser(source_code, false);
 
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
-
-        let comparison_expr = CompoundAssignmentExpr::parse(&mut parser)
-            .expect("unable to parse comparison expression");
+        let comparison_expr =
+            ComparisonExpr::parse(&mut parser).expect("unable to parse comparison expression");
 
         println!("{:#?}", comparison_expr);
     }
 
     #[test]
-    fn parse_deref_expr() {
+    fn parse_dereference_expr() {
         let source_code = r#"*x"#;
 
-        let handler = Handler::default();
+        let mut parser = test_utils::get_parser(source_code, false);
 
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
-
-        let deref_expr =
+        let dereference_expr =
             DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
 
-        println!("{:#?}", deref_expr);
+        println!("{:#?}", dereference_expr);
     }
 
     #[test]
     fn parse_lazy_bool_expr() {
         let source_code = r#"x && y"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let lazy_bool_expr =
             LazyBoolExpr::parse(&mut parser).expect("unable to parse lazy bool expression");
@@ -763,15 +706,7 @@ mod tests {
     fn parse_negation_expr() {
         let source_code = r#"!x"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let negation_expr =
             NegationExpr::parse(&mut parser).expect("unable to parse negation expression");
@@ -783,19 +718,11 @@ mod tests {
     fn parse_reference_expr() {
         let source_code = r#"&mut x"#;
 
-        let handler = Handler::default();
+        let mut parser = test_utils::get_parser(source_code, false);
 
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
-
-        let ref_expr =
+        let reference_expr =
             ReferenceExpr::parse(&mut parser).expect("unable to parse reference expression");
 
-        println!("{:#?}", ref_expr);
+        println!("{:#?}", reference_expr);
     }
 }
