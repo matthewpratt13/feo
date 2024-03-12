@@ -323,6 +323,29 @@ mod tests {
     use super::*;
 
     #[test]
+    fn parse_struct_expr_field() {
+        let source_code = r#"
+            #[abstract]
+            foo: "a"
+        }"#;
+
+        let handler = Handler::default();
+
+        let mut lexer = Lexer::new(&source_code, handler.clone());
+
+        let token_stream = lexer.lex().expect("unable to lex source code");
+
+        // println!("{:#?}", token_stream);
+
+        let mut parser = Parser::new(token_stream, handler);
+
+        let struct_expr_fields =
+            StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
+
+        println!("{:#?}", struct_expr_fields);
+    }
+
+    #[test]
     fn parse_struct_expr() {
         let source_code = r#"
         SomeStruct {

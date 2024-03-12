@@ -167,7 +167,7 @@ mod tests {
         let mut parser = Parser::new(token_stream, handler);
 
         let struct_patt_fields =
-            StructPattField::parse(&mut parser).expect("unable to parse struct patter field");
+            StructPattField::parse(&mut parser).expect("unable to parse struct pattern field");
 
         println!("{:#?}", struct_patt_fields);
     }
