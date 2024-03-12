@@ -7,4 +7,5 @@ mod parser;
 mod path;
 mod pattern;
 mod peek;
+pub mod test_utils;
 mod ty;

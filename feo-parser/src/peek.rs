@@ -13,7 +13,7 @@ pub trait Peek {
 
 // type that allows for peeking at the next `Token` in a `&[Token]` without advancing the parser
 #[derive(Debug, Copy, Clone)]
-pub(crate) struct Peeker<'a> {
+pub struct Peeker<'a> {
     tokens: &'a [Token],
     pos: usize,
 }

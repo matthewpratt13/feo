@@ -98,7 +98,7 @@ impl ParseTerm for StructExprFields {
                     first_field,
                     subsequent_fields: None,
                 })),
-                
+
                 false => Ok(Some(StructExprFields {
                     first_field,
                     subsequent_fields: Some(subsequent_fields),
@@ -292,11 +292,9 @@ impl ParseExpr for TupleStructExpr {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::handler::Handler;
-
-    use crate::lexer::Lexer;
-
     use super::*;
+
+    use crate::test_utils;
 
     #[test]
     fn parse_struct_expr_field() {
@@ -306,15 +304,7 @@ mod tests {
             foo: "a"
             "#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_expr_field =
             StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
@@ -333,15 +323,7 @@ mod tests {
             baz: x,
             "#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_expr_fields =
             StructExprFields::parse(&mut parser).expect("unable to parse struct expression fields");
@@ -358,15 +340,7 @@ mod tests {
             baz: x,
         }"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let struct_expr =
             StructExpr::parse(&mut parser).expect("unable to parse struct expression");
@@ -378,15 +352,7 @@ mod tests {
     fn parse_tuple_struct_expr() {
         let source_code = r#"SomeStruct(foo, bar, baz,)"#;
 
-        let handler = Handler::default();
-
-        let mut lexer = Lexer::new(&source_code, handler.clone());
-
-        let token_stream = lexer.lex().expect("unable to lex source code");
-
-        // println!("{:#?}", token_stream);
-
-        let mut parser = Parser::new(token_stream, handler);
+        let mut parser = test_utils::get_parser(source_code, false);
 
         let tuple_struct_expr =
             TupleStructExpr::parse(&mut parser).expect("unable to parse tuple struct expression");
