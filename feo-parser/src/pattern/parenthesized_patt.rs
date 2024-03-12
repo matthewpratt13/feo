@@ -66,7 +66,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_parenthesized_patt() {
         let source_code = r#"(x)"#;

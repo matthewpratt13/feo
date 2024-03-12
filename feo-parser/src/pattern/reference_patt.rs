@@ -49,10 +49,10 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
+    #[ignore] // TODO: fix – getting stack overflow (check use of `Box<PatternWithoutRange>`)
     #[test]
     fn parse_reference_patt() {
-        let source_code = r#"&mut x"#;
+        let source_code = r#"ref mut x"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
