@@ -2,9 +2,9 @@ use feo_ast::{path::PathType, ty::ImplTraitType};
 use feo_error::error::CompilerError;
 use feo_types::{keyword::KeywordKind, Keyword};
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::ParseType, parser::Parser};
 
-impl ParseTerm for ImplTraitType {
+impl ParseType for ImplTraitType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

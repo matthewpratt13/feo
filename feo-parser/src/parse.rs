@@ -45,6 +45,14 @@ pub trait ParsePatt {
         Self: Sized;
 }
 
+
+pub trait ParseType {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized;
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 
 impl ParseExpr for Expression {
@@ -956,7 +964,7 @@ impl ParseExpr for Returnable {
     }
 }
 
-impl ParseTerm for Pattern {
+impl ParsePatt for Pattern {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -966,7 +974,7 @@ impl ParseTerm for Pattern {
 }
 
 // TODO: don't forget to account for the case where we encounter a `TypeAnnotation`
-impl ParseTerm for Type {
+impl ParseType for Type {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

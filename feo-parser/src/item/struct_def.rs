@@ -15,7 +15,10 @@ use feo_types::{
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{
+    parse::{ParseTerm, ParseType},
+    parser::Parser,
+};
 
 impl ParseTerm for StructDefField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

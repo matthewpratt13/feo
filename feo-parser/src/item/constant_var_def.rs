@@ -9,7 +9,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseExpr, ParseTerm},
+    parse::{ParseExpr, ParseTerm, ParseType},
     parser::Parser,
 };
 

@@ -7,9 +7,9 @@ use feo_types::{
     Delimiter, Punctuation, U64Primitive,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::ParseType, parser::Parser};
 
-impl ParseTerm for ArrayType {
+impl ParseType for ArrayType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

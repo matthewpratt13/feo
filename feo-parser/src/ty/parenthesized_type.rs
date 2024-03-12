@@ -5,9 +5,9 @@ use feo_types::{
     Delimiter,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::ParseType, parser::Parser};
 
-impl ParseTerm for ParenthesizedType {
+impl ParseType for ParenthesizedType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

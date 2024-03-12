@@ -10,9 +10,9 @@ use feo_types::{
     Delimiter, Punctuation,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::ParseType, parser::Parser};
 
-impl ParseTerm for TupleType {
+impl ParseType for TupleType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -93,7 +93,7 @@ impl ParseTerm for TupleType {
     }
 }
 
-impl ParseTerm for UnitType {
+impl ParseType for UnitType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

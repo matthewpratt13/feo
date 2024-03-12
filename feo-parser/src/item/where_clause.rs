@@ -8,7 +8,7 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::{ParseTerm, ParseType}, parser::Parser};
 
 impl ParseTerm for TypeParamBounds {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

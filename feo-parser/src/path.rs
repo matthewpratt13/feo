@@ -8,7 +8,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::ParseTerm,
+    parse::{ParseTerm, ParseType},
     parser::Parser,
     peek::{Peek, Peeker},
 };
@@ -112,9 +112,6 @@ impl Peek for PathIdenSegmentKind {
     }
 }
 
-// NOTE: `PathType` and `PathInExpr` (`PathExpr`) are identical in terms of their fields' types
-// they just use different type aliases for `PathIdenSegmentKind`
-// (i.e., `PathExprSegment` and `PathTypeSegment`)
 impl ParseTerm for PathInExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -170,7 +167,7 @@ impl ParseTerm for PathInExpr {
     }
 }
 
-impl ParseTerm for PathType {
+impl ParseType for PathType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
