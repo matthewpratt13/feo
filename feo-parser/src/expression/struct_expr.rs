@@ -98,6 +98,7 @@ impl ParseTerm for StructExprFields {
                     first_field,
                     subsequent_fields: None,
                 })),
+                
                 false => Ok(Some(StructExprFields {
                     first_field,
                     subsequent_fields: Some(subsequent_fields),
@@ -302,7 +303,7 @@ mod tests {
         let source_code = r#"
             #[abstract]
             #[unsafe]
-            foo: "a",
+            foo: "a"
             "#;
 
         let handler = Handler::default();
@@ -324,11 +325,12 @@ mod tests {
     #[test]
     fn parse_struct_expr_fields() {
         let source_code = r#"
-            #[abstract]
             #[export]
             foo: "a",
-            #[unsafe]
             bar: 1,
+            #[abstract]
+            #[unsafe]
+            baz: x,
             "#;
 
         let handler = Handler::default();
@@ -369,7 +371,7 @@ mod tests {
         let struct_expr =
             StructExpr::parse(&mut parser).expect("unable to parse struct expression");
 
-        // println!("{:#?}", struct_expr);
+        println!("{:#?}", struct_expr);
     }
 
     #[test]
@@ -382,7 +384,7 @@ mod tests {
 
         let token_stream = lexer.lex().expect("unable to lex source code");
 
-        println!("{:#?}", token_stream);
+        // println!("{:#?}", token_stream);
 
         let mut parser = Parser::new(token_stream, handler);
 
