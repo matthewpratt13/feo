@@ -1,4 +1,4 @@
-use feo_types::utils::{Comma, KwWhere};
+use feo_types::utils::KwWhere;
 
 use crate::ty::{TraitBound, Type};
 
@@ -20,5 +20,4 @@ pub struct TypeBound {
 pub struct TypeParamBounds {
     pub first_bound: TraitBound,
     pub subsequent_bounds_opt: Option<Vec<TraitBound>>,
-    pub trailing_comma_opt: Option<Comma>,
 }

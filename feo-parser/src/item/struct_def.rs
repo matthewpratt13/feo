@@ -113,12 +113,12 @@ impl ParseTerm for StructDefFields {
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(StructDefFields {
                     first_field,
-                    subsequent_fields: None,
+                    subsequent_fields_opt: None,
                 })),
 
                 false => Ok(Some(StructDefFields {
                     first_field,
-                    subsequent_fields: Some(subsequent_fields),
+                    subsequent_fields_opt: Some(subsequent_fields),
                 })),
             }
         } else {
@@ -307,12 +307,12 @@ impl ParseTerm for TupleStructDefFields {
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(TupleStructDefFields {
                     first_field,
-                    subsequent_fields: None,
+                    subsequent_fields_opt: None,
                 })),
 
                 false => Ok(Some(TupleStructDefFields {
                     first_field,
-                    subsequent_fields: Some(subsequent_fields),
+                    subsequent_fields_opt: Some(subsequent_fields),
                 })),
             }
         } else {

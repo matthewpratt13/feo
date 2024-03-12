@@ -48,7 +48,7 @@ impl Spanned for StructDef {
 #[derive(Debug, Clone)]
 pub struct StructDefFields {
     pub first_field: StructDefField,
-    pub subsequent_fields: Option<Vec<StructDefField>>,
+    pub subsequent_fields_opt: Option<Vec<StructDefField>>,
 }
 
 #[derive(Debug, Clone)]
@@ -94,7 +94,7 @@ impl Spanned for TupleStructDef {
 #[derive(Debug, Clone)]
 pub struct TupleStructDefFields {
     pub first_field: TupleStructDefField,
-    pub subsequent_fields: Option<Vec<TupleStructDefField>>,
+    pub subsequent_fields_opt: Option<Vec<TupleStructDefField>>,
 }
 
 #[derive(Debug, Clone)]

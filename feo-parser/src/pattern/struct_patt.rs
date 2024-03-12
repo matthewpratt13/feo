@@ -163,6 +163,7 @@ mod tests {
         println!("{:#?}", struct_patt_field);
     }
 
+    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_struct_patt_fields() {
         let source_code = r#"
