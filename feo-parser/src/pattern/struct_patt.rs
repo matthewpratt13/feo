@@ -282,7 +282,7 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
+    #[ignore]
     #[test]
     fn parse_struct_patt_field() {
         let source_code = r#"
@@ -299,7 +299,7 @@ mod tests {
         println!("{:#?}", struct_patt_field);
     }
 
-    #[ignore] // TODO: remove when testing
+    #[ignore]
     #[test]
     fn parse_struct_patt_fields() {
         let source_code = r#"
@@ -319,7 +319,6 @@ mod tests {
         println!("{:#?}", struct_patt_fields);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_struct_patt() {
         let source_code = r#"
@@ -336,10 +335,9 @@ mod tests {
         println!("{:#?}", struct_patt);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_tuple_struct_patt_fields() {
-        let source_code = r#"foo, "a", 1)"#;
+        let source_code = r#"foo, "a", 1"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
@@ -349,7 +347,6 @@ mod tests {
         println!("{:#?}", tuple_struct_patt_fields);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_tuple_struct_patt() {
         let source_code = r#"SomeStruct(foo, "a", 1,)"#;

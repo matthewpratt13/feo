@@ -1084,18 +1084,18 @@ impl ParsePatt for Pattern {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwRef => {
-                    if let Some(rp) = ReferencePatt::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Pattern::ReferencePatt(rp)));
-                    }
-                }
-
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
                 | KeywordKind::KwSuper => {
                     if let Some(path_patt) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Pattern::PathPatt(path_patt)));
+                    }
+                }
+
+                KeywordKind::KwRef => {
+                    if let Some(rp) = ReferencePatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Pattern::ReferencePatt(rp)));
                     }
                 }
 

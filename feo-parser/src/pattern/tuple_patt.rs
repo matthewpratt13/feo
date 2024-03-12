@@ -20,6 +20,7 @@ impl ParseTerm for TuplePattElements {
         Self: Sized,
     {
         let mut subsequent_elements: Vec<Pattern> = Vec::new();
+
         if let Some(first_element) = Pattern::parse(parser)? {
             parser.next_token();
 
@@ -37,6 +38,8 @@ impl ParseTerm for TuplePattElements {
                     break;
                 }
             }
+            
+            parser.next_token();
 
             let trailing_comma_opt = parser.peek_current::<Punctuation>();
 
@@ -122,7 +125,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn parse_tuple_patt_elements() {
         let source_code = r#"1, "a", x"#;
