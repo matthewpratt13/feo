@@ -337,8 +337,20 @@ mod tests {
     }
 
     #[test]
+    fn parse_tuple_struct_expr_fields() {
+        let source_code = r#"foo, "a", 1"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let tuple_struct_expr_fields = TupleStructExprFields::parse(&mut parser)
+            .expect("unable to parse tuple struct expression fields");
+
+        println!("{:#?}", tuple_struct_expr_fields);
+    }
+
+    #[test]
     fn parse_tuple_struct_expr() {
-        let source_code = r#"SomeStruct(foo, bar, baz,)"#;
+        let source_code = r#"SomeStruct(foo, "a", 1,)"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
