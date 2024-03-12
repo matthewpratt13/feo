@@ -10,10 +10,10 @@ use super::Pattern;
 
 #[derive(Debug, Clone)]
 pub struct StructPatt {
-    id: Identifier,
-    open_brace: Brace,
-    fields_opt: Option<StructPattFields>,
-    close_brace: Brace,
+    pub id: Identifier,
+    pub open_brace: Brace,
+    pub fields_opt: Option<StructPattFields>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for StructPatt {

@@ -7,7 +7,11 @@ use feo_ast::{
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+    Delimiter, Identifier, Punctuation,
+};
 
 use crate::{parse::ParseTerm, parser::Parser};
 
@@ -117,7 +121,55 @@ impl ParseTerm for StructPatt {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            parser.next_token();
+
+            let open_brace_opt = parser.peek_current::<Delimiter>();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Brace, DelimOrientation::Open),
+                ..
+            }) = open_brace_opt
+            {
+                parser.next_token();
+
+                let fields_opt = if let Some(f) = StructPattFields::parse(parser)? {
+                    Some(f)
+                } else {
+                    None
+                };
+
+                let close_brace_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Close),
+                    ..
+                }) = close_brace_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(StructPatt {
+                        id,
+                        open_brace: open_brace_opt.unwrap(),
+                        fields_opt,
+                        close_brace: close_brace_opt.unwrap(),
+                    }));
+                }
+                
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "}".to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`{`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
