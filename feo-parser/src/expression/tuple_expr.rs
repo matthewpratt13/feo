@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{Returnable, TupleExprElements, TupleExpr, TupleIndexExpr},
+    expression::{Returnable, TupleExpr, TupleExprElements, TupleIndexExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -130,6 +130,17 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
+
+    #[test]
+    fn parse_tuple_expr_elements() {
+        let source_code = r#"1, "a", x"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let tuple_expr_elements = TupleExprElements::parse(&mut parser).expect("unable to parse tuple expression elements");
+
+        println!("{:#?}", tuple_expr_elements);
+    }
 
     #[test]
     fn parse_tuple_expr() {
