@@ -42,3 +42,23 @@ impl ParsePatt for ReferencePatt {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
+
+    use super::*;
+
+    #[ignore]
+    #[test]
+    fn parse_reference_patt() {
+        let source_code = r#"&mut x"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let reference_patt =
+            ReferencePatt::parse(&mut parser).expect("unable to parse reference pattern");
+
+        println!("{:#?}", reference_patt);
+    }
+}
