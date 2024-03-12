@@ -41,9 +41,9 @@ impl ParseTerm for StructPattField {
                 parser.next_token();
 
                 if let Some(value) = Pattern::parse(parser)? {
-                    parser.next_token();
-
                     let field_content = (field_name, Box::new(value));
+
+                    // parser.next_token();
 
                     match &attributes.is_empty() {
                         true => {
@@ -88,6 +88,8 @@ impl ParseTerm for StructPattFields {
         let mut subsequent_fields: Vec<StructPattField> = Vec::new();
 
         if let Some(first_field) = StructPattField::parse(parser)? {
+            parser.next_token();
+
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
@@ -97,6 +99,7 @@ impl ParseTerm for StructPattFields {
 
                 if let Some(next_field) = StructPattField::parse(parser)? {
                     subsequent_fields.push(next_field);
+                    // parser.next_token();
                 } else {
                     break;
                 }
@@ -137,6 +140,7 @@ impl ParsePatt for StructPatt {
                 parser.next_token();
 
                 let fields_opt = if let Some(f) = StructPattFields::parse(parser)? {
+                    parser.next_token();
                     Some(f)
                 } else {
                     None
@@ -282,7 +286,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn parse_struct_patt_field() {
         let source_code = r#"
@@ -299,7 +302,6 @@ mod tests {
         println!("{:#?}", struct_patt_field);
     }
 
-    #[ignore]
     #[test]
     fn parse_struct_patt_fields() {
         let source_code = r#"
@@ -325,7 +327,7 @@ mod tests {
         SomeStruct {
             foo: "a",
             bar: 1,
-            baz: x,
+            baz: x
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
