@@ -177,54 +177,26 @@ impl ParseTerm for TupleStructExprFields {
         if let Some(first_field) = Returnable::parse(parser)? {
             parser.next_token();
 
-            let mut next_comma_opt = parser.peek_current::<Punctuation>();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = next_comma_opt
+            }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
 
                 if let Some(next_field) = Returnable::parse(parser)? {
                     subsequent_fields.push(next_field);
-
                     parser.next_token();
-
-                    if let Some(p) = parser.peek_current::<Punctuation>() {
-                        next_comma_opt = Some(p);
-                    } else {
-                        break;
-                    }
                 } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Returnable`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                     break;
                 }
             }
 
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
-            }
-
             match &subsequent_fields.is_empty() {
-                true => Ok(Some(TupleStructExprFields((
-                    Box::new(first_field),
-                    None,
-                    trailing_comma_opt,
-                )))),
+                true => Ok(Some(TupleStructExprFields((Box::new(first_field), None)))),
                 false => Ok(Some(TupleStructExprFields((
                     Box::new(first_field),
                     Some(subsequent_fields),
-                    trailing_comma_opt,
                 )))),
             }
         } else {
@@ -292,7 +264,7 @@ impl ParseExpr for TupleStructExpr {
 
 #[cfg(test)]
 mod tests {
-    
+
     use crate::test_utils;
 
     use super::*;

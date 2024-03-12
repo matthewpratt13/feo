@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, Comma, Parenthesis},
+    utils::{Brace, Parenthesis},
     Identifier,
 };
 
@@ -70,4 +70,4 @@ impl Spanned for TupleStructExpr {
 }
 
 #[derive(Debug, Clone)]
-pub struct TupleStructExprFields(pub (Box<Returnable>, Option<Vec<Returnable>>, Option<Comma>));
+pub struct TupleStructExprFields(pub (Box<Returnable>, Option<Vec<Returnable>>));
