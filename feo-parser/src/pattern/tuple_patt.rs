@@ -68,3 +68,24 @@ impl ParsePatt for TuplePatt {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[ignore]
+    #[test]
+    fn parse_tuple_patt_elements() {
+        let source_code = r#"1, "a", x"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let tuple_patt_elements =
+            TuplePattElements::parse(&mut parser).expect("unable to parse tuple pattern elements");
+
+        println!("{:#?}", tuple_patt_elements);
+    }
+}
