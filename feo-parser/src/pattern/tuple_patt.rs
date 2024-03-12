@@ -134,4 +134,15 @@ mod tests {
 
         println!("{:#?}", tuple_patt_elements);
     }
+
+    #[test]
+    fn parse_tuple_patt() {
+        let source_code = r#"(1, "a", x)"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let tuple_patt = TuplePatt::parse(&mut parser).expect("unable to parse tuple pattern");
+
+        println!("{:#?}", tuple_patt);
+    }
 }
