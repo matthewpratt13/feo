@@ -1132,7 +1132,103 @@ impl ParsePatt for PatternWithoutRange {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            match &parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ts) = TupleStructPatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::TupleStructPatt(ts)));
+                    }
+                }
+
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(sp) = StructPatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::StructPatt(sp)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            match &parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) => {
+                    if let Some(path_patt) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::PathPatt(path_patt)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            let identifier_patt = IdentifierPatt {
+                kw_ref_opt: None,
+                kw_mut_opt: None,
+                name: id,
+            };
+
+            return Ok(Some(PatternWithoutRange::IdentifierPatt(identifier_patt)));
+        }
+
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            match &d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(par) = ParenthesizedPatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::ParenthesizedPatt(par)));
+                    }
+
+                    if let Some(tp) = TuplePatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::TuplePatt(tp)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            return Ok(Some(PatternWithoutRange::Literal(l)));
+        }
+
+        if let Some(k) = parser.peek_current::<Keyword>() {
+            match &k.keyword_kind {
+                KeywordKind::KwRef => {
+                    if let Some(rp) = ReferencePatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::ReferencePatt(rp)));
+                    }
+                }
+
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => {
+                    if let Some(path_patt) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::PathPatt(path_patt)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
+            match &p.punc_kind {
+                PuncKind::Underscore => {
+                    if let Some(wcp) = WildcardPatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(PatternWithoutRange::WildcardPatt(wcp)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
