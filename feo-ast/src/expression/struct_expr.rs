@@ -43,7 +43,7 @@ impl Spanned for StructExpr {
 #[derive(Debug, Clone)]
 pub struct StructExprFields {
     pub first_field: StructExprField,
-    pub subsequent_fields: Option<Vec<StructExprField>>,
+    pub subsequent_fields_opt: Option<Vec<StructExprField>>,
 }
 
 #[derive(Debug, Clone)]
@@ -72,5 +72,5 @@ impl Spanned for TupleStructExpr {
 #[derive(Debug, Clone)]
 pub struct TupleStructExprFields {
     pub first_field: Box<Returnable>,
-    pub subsequent_fields: Option<Vec<Returnable>>,
+    pub subsequent_fields_opt: Option<Vec<Returnable>>,
 }

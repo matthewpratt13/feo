@@ -8,7 +8,7 @@ use super::Type;
 #[derive(Debug, Clone)]
 pub struct TupleType {
     pub open_parenthesis: Parenthesis,
-    pub elements: Option<Vec<Type>>,
+    pub elements_opt: Option<Vec<Type>>,
     pub trailing_element: Box<Type>,
     pub close_parenthesis: Parenthesis,
 }

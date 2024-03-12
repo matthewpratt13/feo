@@ -65,12 +65,12 @@ impl ParseTerm for CallParams {
             match &subsequent_params.is_empty() {
                 true => Ok(Some(CallParams {
                     first_param: Box::new(first_param),
-                    subsequent_params: None,
+                    subsequent_params_opt: None,
                     trailing_comma_opt,
                 })),
                 false => Ok(Some(CallParams {
                     first_param: Box::new(first_param),
-                    subsequent_params: Some(subsequent_params),
+                    subsequent_params_opt: Some(subsequent_params),
                     trailing_comma_opt,
                 })),
             }

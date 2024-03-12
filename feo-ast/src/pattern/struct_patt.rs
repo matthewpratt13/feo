@@ -28,7 +28,7 @@ impl Spanned for StructPatt {
 #[derive(Debug, Clone)]
 pub struct StructPattFields {
     pub first_field: StructPattField,
-    pub subsequent_fields: Option<Vec<StructPattField>>,
+    pub subsequent_fields_opt: Option<Vec<StructPattField>>,
 }
 
 #[derive(Debug, Clone)]
@@ -56,5 +56,5 @@ impl Spanned for TupleStructPatt {
 #[derive(Debug, Clone)]
 pub struct TupleStructPattFields {
     first_field: Box<Pattern>,
-    subsequent_fields: Option<Vec<Pattern>>,
+    subsequent_fields_opt: Option<Vec<Pattern>>,
 }

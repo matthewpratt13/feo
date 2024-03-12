@@ -28,7 +28,7 @@ pub struct TraitDef {
     type_param_bounds_opt: Option<Option<TypeParamBounds>>,
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
-    inner_attributes_opt: Vec<InnerAttr>,
+    inner_attributes_opt: Option<Vec<InnerAttr>>,
     associated_items: Vec<TraitDefItem>,
     close_brace: Brace,
 }

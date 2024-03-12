@@ -14,8 +14,6 @@ pub enum StructDefKind {
     TupleStruct(TupleStructDef),
 }
 
-pub type StructFieldName = Identifier;
-
 #[derive(Debug, Clone)]
 pub struct StructDef {
     pub attributes_opt: Option<Vec<OuterAttr>>,

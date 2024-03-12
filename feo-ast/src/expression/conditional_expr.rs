@@ -42,7 +42,7 @@ pub struct MatchExpr {
     kw_match: KwMatch,
     scrutinee: Box<Assignable>, // except struct expression
     open_brace: Brace,
-    attributes: Vec<InnerAttr>,
+    attributes_opt: Option<Vec<InnerAttr>>,
     match_arms_opt: Option<MatchArms>,
     close_brace: Brace,
 }

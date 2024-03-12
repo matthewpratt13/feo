@@ -30,7 +30,7 @@ impl Spanned for ArrayExpr {
 #[derive(Debug, Clone)]
 pub struct ArrayElementsCommaSeparated {
     pub first_element: Box<Iterable>,
-    pub subsequent_elements: Option<Vec<Iterable>>,
+    pub subsequent_elements_opt: Option<Vec<Iterable>>,
     pub trailing_comma_opt: Option<Comma>,
 }
 

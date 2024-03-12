@@ -70,12 +70,12 @@ impl ParseTerm for ArrayElementsCommaSeparated {
             match &subsequent_elements.is_empty() {
                 true => Ok(Some(ArrayElementsCommaSeparated {
                     first_element: Box::new(first_element),
-                    subsequent_elements: None,
+                    subsequent_elements_opt: None,
                     trailing_comma_opt,
                 })),
                 false => Ok(Some(ArrayElementsCommaSeparated {
                     first_element: Box::new(first_element),
-                    subsequent_elements: Some(subsequent_elements),
+                    subsequent_elements_opt: Some(subsequent_elements),
                     trailing_comma_opt,
                 })),
             }

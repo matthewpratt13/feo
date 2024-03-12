@@ -11,7 +11,7 @@ use super::ExprWithoutBlock;
 pub struct BlockExpr {
     open_brace: Brace,
     statements_opt: Option<Vec<Statement>>,
-    final_operand_opt: Box<ExprWithoutBlock>,
+    final_operand_opt: Option<Box<ExprWithoutBlock>>,
     close_brace: Brace,
 }
 

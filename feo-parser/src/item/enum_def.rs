@@ -112,13 +112,13 @@ impl ParseTerm for EnumVariants {
             match &subsequent_variants.is_empty() {
                 true => Ok(Some(EnumVariants {
                     first_variant,
-                    subsequent_variants: None,
+                    subsequent_variants_opt: None,
                     trailing_comma_opt,
                 })),
 
                 false => Ok(Some(EnumVariants {
                     first_variant,
-                    subsequent_variants: Some(subsequent_variants),
+                    subsequent_variants_opt: Some(subsequent_variants),
                     trailing_comma_opt,
                 })),
             }

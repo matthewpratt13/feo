@@ -57,12 +57,12 @@ impl ParseTerm for TypeParamBounds {
             match &subsequent_bounds.is_empty() {
                 true => Ok(Some(TypeParamBounds {
                     first_bound,
-                    subsequent_bounds: None,
+                    subsequent_bounds_opt: None,
                     trailing_comma_opt,
                 })),
                 false => Ok(Some(TypeParamBounds {
                     first_bound,
-                    subsequent_bounds: Some(subsequent_bounds),
+                    subsequent_bounds_opt: Some(subsequent_bounds),
                     trailing_comma_opt,
                 })),
             }
@@ -164,7 +164,7 @@ impl ParseTerm for WhereClause {
                         return Ok(Some(WhereClause {
                             kw_where: kw_where_opt.unwrap(),
                             first_bound,
-                            subsequent_bounds: None,
+                            subsequent_bounds_opt: None,
                             trailing_type_bound_opt,
                         }))
                     }
@@ -172,7 +172,7 @@ impl ParseTerm for WhereClause {
                         return Ok(Some(WhereClause {
                             kw_where: kw_where_opt.unwrap(),
                             first_bound,
-                            subsequent_bounds: Some(subsequent_bounds),
+                            subsequent_bounds_opt: Some(subsequent_bounds),
                             trailing_type_bound_opt,
                         }))
                     }

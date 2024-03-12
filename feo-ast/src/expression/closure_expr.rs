@@ -70,19 +70,22 @@ impl Spanned for ClosureWithoutBlock {
 #[derive(Debug, Clone)]
 pub struct ClosureParams {
     first_param: ClosureParam,
-    subsequent_params: Vec<ClosureParam>,
+    subsequent_params_opt: Option<Vec<ClosureParam>>,
     trailing_comma_opt: Option<Comma>,
 }
 
 impl Spanned for ClosureParams {
     fn span(&self) -> Span {
         let s1 = self.first_param.span();
-        let s2 = match self.subsequent_params.last() {
-            Some(sp) => match &self.trailing_comma_opt {
-                Some(tc) => tc.span(),
-                None => sp.span(),
+        let s2 = match &self.trailing_comma_opt {
+            Some(tc) => tc.span(),
+            None => match &self.subsequent_params_opt {
+                Some(sp) => match sp.last() {
+                    Some(cp) => cp.span(),
+                    None => self.first_param.span(),
+                },
+                None => self.first_param.span(),
             },
-            None => self.first_param.span(),
         };
 
         Span::join(s1, s2)

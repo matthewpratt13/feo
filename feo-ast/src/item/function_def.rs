@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Comma, KwFunc, KwSelf, Parenthesis, Semicolon},
+    utils::{KwFunc, KwSelf, Parenthesis, Semicolon},
     Identifier,
 };
 
@@ -31,7 +31,7 @@ impl Spanned for FunctionDefKind {
 #[derive(Debug, Clone)]
 pub enum FuncOrMethodParam {
     FuncParam(FunctionParam),
-    MethodParam(MethodParam),
+    MethodParam(SelfParam),
 }
 
 #[derive(Debug, Clone)]
@@ -89,20 +89,13 @@ impl Spanned for FunctionSig {
 #[derive(Debug, Clone)]
 pub struct FunctionParams {
     first_param: FuncOrMethodParam,
-    subsequent_params: Option<Vec<FunctionParam>>,
-    trailing_comma_opt: Option<Comma>,
+    subsequent_params_opt: Option<Vec<FunctionParam>>,
 }
 
 #[derive(Debug, Clone)]
 pub struct FunctionParam {
     param_pattern: Box<Pattern>,
     param_type: Box<Type>,
-}
-
-#[derive(Debug, Clone)]
-pub struct MethodParam {
-    self_param: SelfParam,
-    trailing_comma_opt: Option<Comma>,
 }
 
 #[derive(Debug, Clone)]

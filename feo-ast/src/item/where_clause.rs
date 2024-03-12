@@ -6,7 +6,7 @@ use crate::ty::{TraitBound, Type};
 pub struct WhereClause {
     pub kw_where: KwWhere,
     pub first_bound: TypeBound,
-    pub subsequent_bounds: Option<Vec<TypeBound>>,
+    pub subsequent_bounds_opt: Option<Vec<TypeBound>>,
     pub trailing_type_bound_opt: Option<TypeBound>,
 }
 
@@ -19,6 +19,6 @@ pub struct TypeBound {
 #[derive(Debug, Clone)]
 pub struct TypeParamBounds {
     pub first_bound: TraitBound,
-    pub subsequent_bounds: Option<Vec<TraitBound>>,
+    pub subsequent_bounds_opt: Option<Vec<TraitBound>>,
     pub trailing_comma_opt: Option<Comma>,
 }

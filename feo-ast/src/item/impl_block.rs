@@ -32,7 +32,7 @@ pub struct InherentImplBlock {
     where_clause_opt: Option<WhereClause>,
     open_brace: Brace,
     inner_attributes_opt: Option<Vec<InnerAttr>>,
-    associated_items: Option<Vec<InherentImplItem>>,
+    associated_items: Vec<InherentImplItem>,
     close_brace: Brace,
 }
 

@@ -33,13 +33,13 @@ pub use self::{
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_block::ModBlock,
     struct_def::{
-        StructDef, StructDefField, StructDefFields, StructFieldName, TupleStructDef,
-        TupleStructDefField, TupleStructDefFields,
+        StructDef, StructDefField, StructDefFields, TupleStructDef, TupleStructDefField,
+        TupleStructDefFields,
     },
     trait_def::TraitDef,
     type_alias_def::TypeAliasDef,
     visibility::{PubCrateVisibility, VisibilityKind},
-    where_clause::{TypeParamBounds, WhereClause, TypeBound},
+    where_clause::{TypeBound, TypeParamBounds, WhereClause},
 };
 
 // items are components of a crate, organized by a set of modules

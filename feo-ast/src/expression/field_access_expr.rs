@@ -1,13 +1,14 @@
-use feo_types::span::{Span, Spanned};
-
-use crate::item::StructFieldName;
+use feo_types::{
+    span::{Span, Spanned},
+    Identifier,
+};
 
 use super::Assignable;
 
 #[derive(Debug, Clone)]
 pub struct FieldAccessExpr {
     pub container_operand: Box<Assignable>,
-    pub field_name: StructFieldName,
+    pub field_name: Identifier,
 }
 
 impl Spanned for FieldAccessExpr {

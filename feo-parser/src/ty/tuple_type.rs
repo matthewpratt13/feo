@@ -73,7 +73,7 @@ impl ParseTerm for TupleType {
                         true => {
                             return Ok(Some(TupleType {
                                 open_parenthesis: open_parenthesis_opt.unwrap(),
-                                elements: None,
+                                elements_opt: None,
                                 trailing_element: Box::new(trailing_element),
                                 close_parenthesis: close_parenthesis_opt.unwrap(),
                             }))
@@ -82,7 +82,7 @@ impl ParseTerm for TupleType {
                         false => {
                             return Ok(Some(TupleType {
                                 open_parenthesis: open_parenthesis_opt.unwrap(),
-                                elements: Some(elements),
+                                elements_opt: Some(elements),
                                 trailing_element: Box::new(trailing_element),
                                 close_parenthesis: close_parenthesis_opt.unwrap(),
                             }))

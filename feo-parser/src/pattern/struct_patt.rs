@@ -98,12 +98,12 @@ impl ParseTerm for StructPattFields {
             match &subsequent_fields.is_empty() {
                 true => Ok(Some(StructPattFields {
                     first_field,
-                    subsequent_fields: None,
+                    subsequent_fields_opt: None,
                 })),
 
                 false => Ok(Some(StructPattFields {
                     first_field,
-                    subsequent_fields: Some(subsequent_fields),
+                    subsequent_fields_opt: Some(subsequent_fields),
                 })),
             }
         } else {
@@ -162,7 +162,7 @@ mod tests {
 
         println!("{:#?}", struct_patt_field);
     }
-    
+
     #[test]
     fn parse_struct_patt_fields() {
         let source_code = r#"
