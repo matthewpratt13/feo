@@ -135,3 +135,47 @@ impl ParseExpr for ClosureWithBlock {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_closure_param() {
+        let source_code = r#"
+        #[abstract]
+        #[export]
+        foo: u64
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let closure_param =
+            ClosureParam::parse(&mut parser).expect("unable to parse closure param");
+
+        println!("{:#?}", closure_param);
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_closure_params() {
+        let source_code = r#"
+        #[abstract]
+        #[export]
+        foo: u64,
+        #[unsafe]
+        bar: bool,
+        baz: char
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let closure_params =
+            ClosureParams::parse(&mut parser).expect("unable to parse closure params");
+
+        println!("{:#?}", closure_params);
+    }
+}
