@@ -1,11 +1,19 @@
 use feo_ast::{
-    item::{FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, SelfParam},
+    attribute::OuterAttr,
+    item::{
+        FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, SelfParam, VisibilityKind,
+    },
     pattern::Pattern,
     token::Token,
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
+    punctuation::PuncKind,
+    Delimiter, Identifier, Keyword, Punctuation,
+};
 
 use crate::{
     parse::{ParsePatt, ParseTerm, ParseType},
@@ -181,7 +189,121 @@ impl ParseTerm for FunctionSig {
     where
         Self: Sized,
     {
-        todo!()
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
+            parser.next_token();
+        }
+
+        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
+            parser.next_token();
+            Some(v)
+        } else {
+            None
+        };
+
+        let kw_func_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwFunc,
+            ..
+        }) = kw_func_opt
+        {
+            parser.next_token();
+
+            if let Some(function_name) = parser.peek_current::<Identifier>() {
+                parser.next_token();
+
+                let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) = open_parenthesis_opt
+                {
+                    parser.next_token();
+
+                    let function_params_opt = if let Some(fp) = FunctionParams::parse(parser)? {
+                        Some(fp)
+                    } else {
+                        None
+                    };
+
+                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                        ..
+                    }) = close_parenthesis_opt
+                    {
+                        parser.next_token();
+
+                        let return_type_opt = if let Some(Punctuation {
+                            punc_kind: PuncKind::ThinArrow,
+                            ..
+                        }) = parser.peek_current::<Punctuation>()
+                        {
+                            parser.next_token();
+
+                            if let Some(ty) = Type::parse(parser)? {
+                                parser.next_token();
+                                Some(Box::new(ty))
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        };
+
+                        match &attributes.is_empty() {
+                            true => {
+                                return Ok(Some(FunctionSig {
+                                    attributes_opt: None,
+                                    visibility_opt,
+                                    kw_func: kw_func_opt.unwrap(),
+                                    function_name,
+                                    open_parenthesis: open_parenthesis_opt.unwrap(),
+                                    function_params_opt,
+                                    close_parenthesis: close_parenthesis_opt.unwrap(),
+                                    return_type_opt,
+                                }))
+                            }
+                            false => {
+                                return Ok(Some(FunctionSig {
+                                    attributes_opt: Some(attributes),
+                                    visibility_opt,
+                                    kw_func: kw_func_opt.unwrap(),
+                                    function_name,
+                                    open_parenthesis: open_parenthesis_opt.unwrap(),
+                                    function_params_opt,
+                                    close_parenthesis: close_parenthesis_opt.unwrap(),
+                                    return_type_opt,
+                                }))
+                            }
+                        }
+                    } else {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: ")".to_string(),
+                        });
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`(`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`func`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

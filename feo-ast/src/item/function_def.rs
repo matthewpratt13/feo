@@ -46,14 +46,14 @@ impl Spanned for FunctionWithBlock {
 
 #[derive(Debug, Clone)]
 pub struct FunctionSig {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_func: KwFunc,
-    function_name: Identifier,
-    open_parenthesis: Parenthesis,
-    function_params_opt: Option<FunctionParams>,
-    close_parenthesis: Parenthesis,
-    return_type_opt: Option<Box<Type>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_func: KwFunc,
+    pub function_name: Identifier,
+    pub open_parenthesis: Parenthesis,
+    pub function_params_opt: Option<FunctionParams>,
+    pub close_parenthesis: Parenthesis,
+    pub return_type_opt: Option<Box<Type>>,
 }
 
 impl Spanned for FunctionSig {
