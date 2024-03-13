@@ -10,14 +10,14 @@ use super::{BlockExpr, Returnable};
 #[derive(Debug, Clone)]
 pub enum ClosureParamsOpt {
     None(DblPipe),
-    MaybeSome((Pipe, Option<ClosureParams>, Pipe)),
+    Some((Pipe, ClosureParams, Pipe)),
 }
 
 impl Spanned for ClosureParamsOpt {
     fn span(&self) -> Span {
         match self {
             ClosureParamsOpt::None(n) => n.span(),
-            ClosureParamsOpt::MaybeSome(ms) => {
+            ClosureParamsOpt::Some(ms) => {
                 let s1 = ms.0.span();
                 let s2 = ms.2.span();
 

@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod array_type;
+mod function_type;
 mod impl_trait_type;
 mod parenthesized_type;
 mod reference_type;
@@ -12,12 +13,9 @@ use feo_types::{
     StrPrimitive, U16Primitive, U256Primitive, U32Primitive, U64Primitive, U8Primitive,
 };
 
-use crate::{
-    expression::{ClosureExprKind, StructExprKind},
-    item::{EnumDef, FunctionDefKind},
-    path::PathType,
-};
+use crate::path::PathType;
 
+use self::function_type::{ClosureType, FunctionType};
 pub use self::{
     array_type::ArrayType,
     impl_trait_type::{ImplTraitType, TraitBound},
@@ -49,12 +47,12 @@ pub enum Type {
     Unit(UnitType),
 
     // user-defined types
-    Struct(StructExprKind),
-    Enum(EnumDef),
+    Struct(PathType),
+    Enum(PathType),
 
     // function types
-    Function(FunctionDefKind),
-    Closure(ClosureExprKind),
+    Function(FunctionType),
+    Closure(ClosureType),
 
     // trait type
     ImplTrait(ImplTraitType), // TODO: come up with a better name
@@ -88,10 +86,7 @@ impl Spanned for Type {
             Type::Struct(stc) => stc.span(),
             Type::Enum(e) => e.span(),
             Type::Function(fun) => fun.span(),
-            Type::Closure(clo) => match clo {
-                ClosureExprKind::ClosureWithBlock(cwb) => cwb.span(),
-                ClosureExprKind::ClosureWithoutBlock(cb) => cb.span(),
-            },
+            Type::Closure(clo) => clo.span(),
             Type::ReferenceType(r) => r.span(),
             Type::ImplTrait(imp) => imp.span(),
             Type::ParenthesizedType(par) => par.span(),
