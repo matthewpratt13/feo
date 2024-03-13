@@ -42,13 +42,13 @@ impl Spanned for CharPrimitive {
 
 #[derive(Debug, Clone)]
 pub struct StrPrimitive {
-    pub value: &'static str,
+    pub value: String,
     pub type_ann: TypeAnnKind,
     span: Span,
 }
 
 impl StrPrimitive {
-    pub fn new(value: &'static str, span: Span) -> Self {
+    pub fn new(value: String, span: Span) -> Self {
         Self {
             value,
             type_ann: TypeAnnKind::TypeAnnStr,
