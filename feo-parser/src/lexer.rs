@@ -17,7 +17,7 @@ use feo_types::{
     delimiter, identifier,
     literal::{FloatType, IntType, UIntType},
     punctuation,
-    type_annotation::{self, TypeAnnotation},
+    type_annotation::{self, BuiltInType},
 };
 use feo_types::{
     literal::Literal, span::Position, Comment, Delimiter, DocComment, Identifier, Keyword,
@@ -197,16 +197,16 @@ impl<'a> Lexer<'a> {
                         )?;
 
                         tokens.push(keyword)
-                    } else if type_annotation::is_built_in_type_annotation(&buf) {
-                        let type_annotation = TypeAnnotation::tokenize(
-                            &self.input,
-                            &buf,
-                            start_pos,
-                            start_pos + buf.len(),
-                            &mut self.handler,
-                        )?;
+                    // } else if type_annotation::is_built_in_type_annotation(&buf) {
+                    //     let type_annotation = BuiltInType::tokenize(
+                    //         &self.input,
+                    //         &buf,
+                    //         start_pos,
+                    //         start_pos + buf.len(),
+                    //         &mut self.handler,
+                    //     )?;
 
-                        tokens.push(type_annotation);
+                    //     tokens.push(type_annotation);
                     } else {
                         let identifier = Identifier::tokenize(
                             &self.input,
@@ -750,7 +750,7 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
+    // #[ignore]
     #[test]
     fn lex() {
         let source_code = r#" 
@@ -929,7 +929,7 @@ mod tests {
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),
                     Token::Delim(d) => println!("Delim: {:?}", d.delim),
                     Token::Punc(p) => println!("Punc: {:?}", p.punc_kind),
-                    Token::TypeAnn(ta) => println!("TypeAnnotation: {:?}", ta.type_ann_kind),
+                    // Token::TypeAnn(ta) => println!("BuiltInType: {:?}", ta.type_annotation),
                     Token::EOF => println!("end of file"),
                 };
                 // }
