@@ -8,7 +8,10 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
-use crate::{parse::{ParseTerm, ParseType}, parser::Parser};
+use crate::{
+    parse::{ParseTerm, ParseType},
+    parser::Parser,
+};
 
 impl ParseTerm for TypeParamBounds {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -192,7 +195,8 @@ mod tests {
         let source_code = r#"
         where 
             Self: Foo + Bar + Baz, 
-            T: Foo"#;
+            T: Foo
+            "#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 

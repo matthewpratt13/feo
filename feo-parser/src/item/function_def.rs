@@ -314,7 +314,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_self_param() {
         let source_code = r#"&mut self: u64"#;
@@ -326,7 +325,6 @@ mod tests {
         println!("{:#?}", self_param);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_function_param() {
         let source_code = r#"foo: u64"#;
@@ -339,7 +337,6 @@ mod tests {
         println!("{:#?}", function_param);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_function_params() {
         let source_code = r#"foo: u64, bar: bool, baz: char"#;
@@ -352,7 +349,6 @@ mod tests {
         println!("{:#?}", function_params);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_function_sig() {
         let source_code = r#"

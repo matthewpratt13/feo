@@ -460,7 +460,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_struct_def_field() {
         let source_code = r#"
@@ -476,7 +475,6 @@ mod tests {
         println!("{:#?}", struct_def_field);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_tuple_struct_def_field() {
         let source_code = r#"#[foo] pub u64"#;
@@ -489,7 +487,6 @@ mod tests {
         println!("{:#?}", tuple_struct_def_field);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_struct_def() {
         let source_code = r#"
@@ -505,7 +502,6 @@ mod tests {
         println!("{:#?}", struct_def);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_tuple_struct_def() {
         let source_code = r#"
