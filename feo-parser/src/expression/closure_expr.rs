@@ -4,9 +4,10 @@ use feo_ast::{
         ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
     },
     pattern::Pattern,
+    token::Token,
     Type,
 };
-use feo_error::error::CompilerError;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{
@@ -19,7 +20,50 @@ impl ParseTerm for ClosureParamsOpt {
     where
         Self: Sized,
     {
-        todo!()
+        let pipe_or_dbl_pipe_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::Pipe,
+            ..
+        }) = pipe_or_dbl_pipe_opt
+        {
+            parser.next_token();
+
+            if let Some(params) = ClosureParams::parse(parser)? {
+                let pipe_opt = parser.peek_current::<Punctuation>();
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                }) = pipe_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(ClosureParamsOpt::Some((
+                        pipe_or_dbl_pipe_opt.unwrap(),
+                        params,
+                        pipe_opt.unwrap(),
+                    ))));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`|`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else if let Some(Punctuation {
+            punc_kind: PuncKind::DblPipe,
+            ..
+        }) = pipe_or_dbl_pipe_opt
+        {
+            parser.next_token();
+
+            return Ok(Some(ClosureParamsOpt::None(pipe_or_dbl_pipe_opt.unwrap())));
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -85,8 +129,6 @@ impl ParseTerm for ClosureParams {
         let mut subsequent_params: Vec<ClosureParam> = Vec::new();
 
         if let Some(first_param) = ClosureParam::parse(parser)? {
-            parser.next_token();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
@@ -142,7 +184,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_closure_param() {
         let source_code = r#"
@@ -159,7 +200,6 @@ mod tests {
         println!("{:#?}", closure_param);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_closure_params() {
         let source_code = r#"

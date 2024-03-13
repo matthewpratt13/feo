@@ -105,8 +105,6 @@ impl ParseType for ClosureType {
         Self: Sized,
     {
         if let Some(params) = ClosureParamsOpt::parse(parser)? {
-            parser.next_token();
-
             let return_type_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::ThinArrow,
                 ..
@@ -154,12 +152,10 @@ mod tests {
         println!("{:#?}", function_type);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_closure_type() {
         let source_code = r#"
         |foo: u64, bar: bool| -> char
-        ||
         "#;
 
         let mut parser = test_utils::get_parser(source_code, false);
