@@ -28,7 +28,9 @@ pub use self::{
         EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
     },
     extern_crate_decl::{AsClause, ExternCrateDecl},
-    function_def::{FunctionDefKind, FunctionSig, FunctionWithBlock},
+    function_def::{
+        FunctionDefKind, FunctionParam, FunctionParams, FunctionSig, FunctionWithBlock, SelfParam,
+    },
     impl_block::{InherentImplBlock, TraitImplBlock},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_block::ModBlock,
