@@ -22,7 +22,6 @@ use feo_types::{
 };
 
 use crate::{
-    item::{ConstantVarDef, EnumDef, EnumVariantStruct, EnumVariantTuple, StaticVarDef},
     path::PathExpr,
     statement::{ExprStatement, LetStatement},
 };
@@ -56,10 +55,10 @@ pub use self::{
     },
     return_expr::ReturnExpr,
     struct_expr::{
-        StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructExprFields,
-        TupleStructExpr,
+        StructExpr, StructExprField, StructExprFields, StructExprKind, TupleStructExpr,
+        TupleStructExprFields,
     },
-    tuple_expr::{TupleExprElements, TupleExpr, TupleIndexExpr},
+    tuple_expr::{TupleExpr, TupleExprElements, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
 };
 
@@ -245,11 +244,6 @@ pub enum Constant {
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
-    ConstantVarDef(ConstantVarDef),
-    StaticVarDef(StaticVarDef),
-    EnumDef(EnumDef),
-    EnumVariantStruct(EnumVariantStruct),
-    EnumVariantTuple(EnumVariantTuple),
     ExprStatement(ExprStatement),
     LetStatement(LetStatement),
 }
