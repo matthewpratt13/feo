@@ -5,6 +5,7 @@ mod function_type;
 mod impl_trait_type;
 mod parenthesized_type;
 mod reference_type;
+mod self_type;
 mod tuple_type;
 
 use feo_types::{
@@ -20,46 +21,35 @@ pub use self::{
     impl_trait_type::{ImplTraitType, TraitBound},
     parenthesized_type::ParenthesizedType,
     reference_type::ReferenceType,
+    self_type::SelfType,
     tuple_type::{TupleType, UnitType},
 };
 
 #[derive(Debug, Clone)]
 pub enum Type {
-    // primitives (built-in)
-    Char(BuiltInType),
-    Str(BuiltInType),
-    Bool(BuiltInType),
-    I32(BuiltInType),
-    I64(BuiltInType),
-    U8(BuiltInType),
-    U16(BuiltInType),
-    U32(BuiltInType),
-    U64(BuiltInType),
-    U256(BuiltInType),
-    F32(BuiltInType),
-    F64(BuiltInType),
+    // `char`, `str`, `bool`, numeric types
+    PrimitiveType(BuiltInType),
 
-    // built-in sequence types
-    Array(ArrayType),
-    Tuple(TupleType),
+    // sequence types (built in)
+    ArrayType(ArrayType),
+    TupleType(TupleType),
 
-    Unit(UnitType),
+    UnitType(UnitType),
 
-    // user-defined types
-    Struct(PathType),
-    Enum(PathType),
+    // structs, enums
+    UserDefinedType(PathType),
 
     // function types
-    Function(FunctionType),
-    Closure(ClosureType),
+    FunctionType(FunctionType),
+    ClosureType(ClosureType),
 
     // trait type
-    ImplTrait(ImplTraitType), // TODO: come up with a better name
+    ImplTraitType(ImplTraitType), // TODO: come up with a better name
 
     ReferenceType(ReferenceType),
 
     ParenthesizedType(ParenthesizedType),
-    SelfType(PathType),
+    SelfType(SelfType),
 
     InferredType(BuiltInType),
 }
@@ -67,27 +57,15 @@ pub enum Type {
 impl Spanned for Type {
     fn span(&self) -> Span {
         match self {
-            Type::Char(c) => c.span(),
-            Type::Str(s) => s.span(),
-            Type::Bool(b) => b.span(),
-            Type::I32(ia) => ia.span(),
-            Type::I64(ib) => ib.span(),
-            Type::U8(uia) => uia.span(),
-            Type::U16(uib) => uib.span(),
-            Type::U32(uic) => uic.span(),
-            Type::U64(uid) => uid.span(),
-            Type::U256(u) => u.span(),
-            Type::F32(fa) => fa.span(),
-            Type::F64(fb) => fb.span(),
-            Type::Array(arr) => arr.span(),
-            Type::Tuple(tup) => tup.span(),
-            Type::Unit(ut) => ut.span(),
-            Type::Struct(stc) => stc.span(),
-            Type::Enum(e) => e.span(),
-            Type::Function(fun) => fun.span(),
-            Type::Closure(clo) => clo.span(),
-            Type::ReferenceType(r) => r.span(),
-            Type::ImplTrait(imp) => imp.span(),
+            Type::PrimitiveType(pt) => pt.span(),
+            Type::ArrayType(arr) => arr.span(),
+            Type::TupleType(tup) => tup.span(),
+            Type::UnitType(ut) => ut.span(),
+            Type::UserDefinedType(ud) => ud.span(),
+            Type::FunctionType(fun) => fun.span(),
+            Type::ClosureType(clo) => clo.span(),
+            Type::ReferenceType(rt) => rt.span(),
+            Type::ImplTraitType(imp) => imp.span(),
             Type::ParenthesizedType(par) => par.span(),
             Type::SelfType(st) => st.span(),
             Type::InferredType(it) => it.span(),

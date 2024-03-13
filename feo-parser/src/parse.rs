@@ -10,13 +10,17 @@ use feo_ast::{
         StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
         UnderscoreExpr, UnwrapExpr,
     },
-    path::{PathIdenSegmentKind, PathInExpr},
+    path::{PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
         IdentifierPatt, ParenthesizedPatt, Pattern, PatternWithoutRange, RangeFromPatt,
         RangeInclusivePatt, RangePattKind, RangeToInclusivePatt, ReferencePatt, StructPatt,
         TuplePatt, TupleStructPatt, WildcardPatt,
     },
     token::Token,
+    ty::{
+        ArrayType, ClosureType, FunctionType, ParenthesizedType, ReferenceType, SelfType,
+        TupleType, UnitType,
+    },
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -25,7 +29,7 @@ use feo_types::{
     keyword::KeywordKind,
     literal::LiteralKind,
     punctuation::PuncKind,
-    Delimiter, Identifier, Keyword, Punctuation,
+    BuiltInType, Delimiter, Identifier, Keyword, Punctuation,
 };
 
 use crate::parser::Parser;
@@ -1243,6 +1247,99 @@ impl ParseType for Type {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            if &id.name.to_string() == "_" {
+                if let Some(bit) = BuiltInType::parse(parser).unwrap_or(None) {
+                    return Ok(Some(Type::InferredType(bit)));
+                }
+            }
+
+            if let Some(bit) = BuiltInType::parse(parser).unwrap_or(None) {
+                return Ok(Some(Type::PrimitiveType(bit)));
+            }
+
+            let path_type = PathType {
+                first_segment: PathTypeSegment::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Type::UserDefinedType(path_type)));
+        }
+
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            match d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(ut) = UnitType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::UnitType(ut)));
+                    }
+                    if let Some(par) = ParenthesizedType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::ParenthesizedType(par)));
+                    }
+
+                    if let Some(tup) = TupleType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::TupleType(tup)));
+                    }
+                }
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(arr) = ArrayType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::ArrayType(arr)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        }
+
+        if let Some(k) = parser.peek_current::<Keyword>() {
+            match k.keyword_kind {
+                KeywordKind::KwCrate | KeywordKind::KwSelfType | KeywordKind::KwSuper => {
+                    if let Some(path_type) = PathType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::UserDefinedType(path_type)));
+                    }
+                }
+
+                KeywordKind::KwFunc => {
+                    if let Some(ft) = FunctionType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::FunctionType(ft)));
+                    }
+                }
+
+                KeywordKind::KwSelf => {
+                    if let Some(st) = SelfType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::SelfType(st)));
+                    }
+
+                    if let Some(path_type) = PathType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::UserDefinedType(path_type)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
+            match &p.punc_kind {
+                PuncKind::Ampersand => {
+                    if let Some(rt) = ReferenceType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::ReferenceType(rt)));
+                    }
+                }
+
+                PuncKind::Pipe => {
+                    if let Some(clo) = ClosureType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::ClosureType(clo)));
+                    }
+                }
+
+                PuncKind::DblPipe => {
+                    if let Some(clo) = ClosureType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::ClosureType(clo)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        }
+
+        Err(parser.errors())
     }
 }
