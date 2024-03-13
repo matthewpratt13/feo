@@ -29,8 +29,8 @@ impl Spanned for FunctionType {
 
 #[derive(Debug, Clone)]
 pub struct ClosureType {
-    params: ClosureParamsOpt,
-    return_type_opt: Option<Box<Type>>,
+    pub params: ClosureParamsOpt,
+    pub return_type_opt: Option<Box<Type>>,
 }
 
 impl Spanned for ClosureType {

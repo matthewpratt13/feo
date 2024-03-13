@@ -1,4 +1,5 @@
 use feo_ast::{
+    expression::ClosureParamsOpt,
     item::FunctionParams,
     token::Token,
     ty::{ClosureType, FunctionType},
@@ -104,6 +105,32 @@ impl ParseType for ClosureType {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(params) = ClosureParamsOpt::parse(parser)? {
+            parser.next_token();
+
+            let return_type_opt = if let Some(Punctuation {
+                punc_kind: PuncKind::ThinArrow,
+                ..
+            }) = parser.peek_current()
+            {
+                parser.next_token();
+
+                if let Some(ty) = Type::parse(parser)? {
+                    parser.next_token();
+                    Some(Box::new(ty))
+                } else {
+                    None
+                }
+            } else {
+                None
+            };
+
+            return Ok(Some(ClosureType {
+                params,
+                return_type_opt,
+            }));
+        } else {
+            return Ok(None);
+        }
     }
 }
