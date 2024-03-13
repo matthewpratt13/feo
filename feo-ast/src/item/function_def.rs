@@ -1,15 +1,10 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{KwFunc, KwSelf, Parenthesis, Semicolon},
+    utils::{Ampersand, KwFunc, KwMut, KwSelf, Parenthesis, Semicolon},
     Identifier,
 };
 
-use crate::{
-    attribute::OuterAttr,
-    expression::{ExprWithBlock, RefOperator},
-    pattern::Pattern,
-    ty::Type,
-};
+use crate::{attribute::OuterAttr, expression::ExprWithBlock, pattern::Pattern, ty::Type};
 
 use super::VisibilityKind;
 
@@ -100,7 +95,8 @@ pub struct FunctionParam {
 
 #[derive(Debug, Clone)]
 pub struct SelfParam {
-    ref_operator: RefOperator,
-    kw_self: KwSelf,
-    type_annotation_opt: Option<Box<Type>>,
+    pub ampersand_opt: Option<Ampersand>,
+    pub kw_mut_opt: Option<KwMut>,
+    pub kw_self: KwSelf,
+    pub type_annotation_opt: Option<Box<Type>>,
 }

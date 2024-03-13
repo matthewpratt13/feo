@@ -1,14 +1,75 @@
-use feo_ast::item::{FunctionParam, FunctionParams, FunctionSig, SelfParam};
+use feo_ast::{
+    item::{FunctionParam, FunctionParams, FunctionSig, SelfParam},
+    Type,
+};
 use feo_error::error::CompilerError;
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{
+    parse::{ParseTerm, ParseType},
+    parser::Parser,
+};
 
 impl ParseTerm for SelfParam {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        todo!()
+        let ampersand_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::Ampersand,
+            ..
+        }) = ampersand_opt
+        {
+            parser.next_token();
+        }
+
+        let kw_mut_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwMut,
+            ..
+        }) = kw_mut_opt
+        {
+            parser.next_token();
+        }
+
+        let kw_self_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwSelf,
+            ..
+        }) = kw_self_opt
+        {
+            parser.next_token();
+
+            let type_annotation_opt = if let Some(Punctuation {
+                punc_kind: PuncKind::Colon,
+                ..
+            }) = parser.peek_current::<Punctuation>()
+            {
+                parser.next_token();
+
+                if let Some(ty) = Type::parse(parser)? {
+                    parser.next_token();
+                    Some(Box::new(ty))
+                } else {
+                    None
+                }
+            } else {
+                None
+            };
+
+            return Ok(Some(SelfParam {
+                ampersand_opt,
+                kw_mut_opt,
+                kw_self: kw_self_opt.unwrap(),
+                type_annotation_opt,
+            }));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
