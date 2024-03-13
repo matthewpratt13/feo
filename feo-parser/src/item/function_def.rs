@@ -352,7 +352,7 @@ mod tests {
         println!("{:#?}", function_params);
     }
 
-        #[ignore] // TODO: remove when testing
+    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_function_sig() {
         let source_code = r#"
