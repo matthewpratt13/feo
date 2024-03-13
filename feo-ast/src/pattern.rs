@@ -3,7 +3,6 @@
 mod identifier_patt;
 mod parenthesized_patt;
 mod range_patt;
-mod reference_patt;
 mod struct_patt;
 mod tuple_patt;
 mod wildcard_patt;
@@ -21,7 +20,6 @@ pub use self::{
     range_patt::{
         RangeFromPatt, RangeInclusivePatt, RangePattBound, RangePattKind, RangeToInclusivePatt,
     },
-    reference_patt::ReferencePatt,
     struct_patt::{
         StructPatt, StructPattField, StructPattFields, TupleStructPatt, TupleStructPattFields,
     },
@@ -38,7 +36,6 @@ pub enum Pattern {
     ParenthesizedPatt(ParenthesizedPatt),
     RangePatt(RangePattKind),
     PathPatt(PathPatt),
-    ReferencePatt(ReferencePatt),
     StructPatt(StructPatt),
     TupleStructPatt(TupleStructPatt),
     TuplePatt(TuplePatt),
@@ -57,40 +54,10 @@ impl Spanned for Pattern {
                 RangePattKind::RangeToInclusivePatt(rti) => rti.span(),
             },
             Pattern::PathPatt(pat) => pat.span(),
-            Pattern::ReferencePatt(rfp) => rfp.span(),
             Pattern::StructPatt(sp) => sp.span(),
             Pattern::TupleStructPatt(tsp) => tsp.span(),
             Pattern::TuplePatt(tup) => tup.span(),
             Pattern::WildcardPatt(wcp) => wcp.span(),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum PatternWithoutRange {
-    Literal(LiteralKind),
-    IdentifierPatt(IdentifierPatt),
-    ParenthesizedPatt(ParenthesizedPatt),
-    PathPatt(PathPatt),
-    ReferencePatt(ReferencePatt),
-    StructPatt(StructPatt),
-    TupleStructPatt(TupleStructPatt),
-    TuplePatt(TuplePatt),
-    WildcardPatt(WildcardPatt),
-}
-
-impl Spanned for PatternWithoutRange {
-    fn span(&self) -> Span {
-        match self {
-            PatternWithoutRange::Literal(lit) => lit.span(),
-            PatternWithoutRange::IdentifierPatt(id) => id.span(),
-            PatternWithoutRange::ParenthesizedPatt(par) => par.span(),
-            PatternWithoutRange::PathPatt(pat) => pat.span(),
-            PatternWithoutRange::ReferencePatt(rp) => rp.span(),
-            PatternWithoutRange::StructPatt(sp) => sp.span(),
-            PatternWithoutRange::TupleStructPatt(tsp) => tsp.span(),
-            PatternWithoutRange::TuplePatt(tup) => tup.span(),
-            PatternWithoutRange::WildcardPatt(wcp) => wcp.span(),
         }
     }
 }
