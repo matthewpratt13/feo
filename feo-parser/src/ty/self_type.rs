@@ -12,7 +12,7 @@ impl ParseType for SelfType {
         let kw_self_opt = parser.peek_current::<Keyword>();
 
         if let Some(Keyword {
-            keyword_kind: KeywordKind::KwSelf,
+            keyword_kind: KeywordKind::KwSelfType,
             ..
         }) = kw_self_opt
         {
@@ -22,5 +22,24 @@ impl ParseType for SelfType {
         } else {
             return Ok(None);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[test]
+    fn parse_self_type() {
+        let source_code = r#"Self"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let self_type = SelfType::parse(&mut parser).expect("unable to parse Self type");
+
+        println!("{:#?}", self_type);
     }
 }

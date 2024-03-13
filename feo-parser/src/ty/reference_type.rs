@@ -57,7 +57,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_reference_type() {
         let source_code = r#"&mut bool"#;

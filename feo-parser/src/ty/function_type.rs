@@ -146,7 +146,6 @@ mod tests {
     fn parse_function_type() {
         let source_code = r#"
         func (foo: u64, bar: bool) -> char
-        func ()
         "#;
 
         let mut parser = test_utils::get_parser(source_code, false);
@@ -157,7 +156,7 @@ mod tests {
         println!("{:#?}", function_type);
     }
 
-    #[ignore]
+    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_closure_type() {
         let source_code = r#"

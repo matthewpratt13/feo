@@ -64,7 +64,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_parenthesized_type() {
         let source_code = r#"(u64)"#;

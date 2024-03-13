@@ -23,3 +23,22 @@ impl ParseType for BuiltInType {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[test]
+    fn parse_built_in_type() {
+        let source_code = r#"u64"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let built_in_type = BuiltInType::parse(&mut parser).expect("unable to parse built-in type");
+
+        println!("{:#?}", built_in_type);
+    }
+}

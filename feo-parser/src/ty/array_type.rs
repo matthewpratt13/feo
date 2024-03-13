@@ -90,7 +90,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_array_type() {
         let source_code = r#"[u8; 32]"#;
