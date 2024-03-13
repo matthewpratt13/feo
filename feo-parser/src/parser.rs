@@ -66,7 +66,7 @@ impl Parser {
                 self.stream()
                     .tokens()
                     .get(self.pos)
-                    .expect("token not found")
+                    .expect("PositionError: token not found")
                     .span()
                     .start(),
             ),

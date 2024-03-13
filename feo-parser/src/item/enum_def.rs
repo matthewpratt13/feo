@@ -249,7 +249,6 @@ impl ParseItem for EnumDef {
                     parser.next_token();
 
                     let enum_variants_opt = if let Some(e) = EnumVariants::parse(parser)? {
-                        parser.next_token();
                         Some(e)
                     } else {
                         None
@@ -343,7 +342,6 @@ mod tests {
         println!("{:#?}", enum_variant_tuple);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_enum_def() {
         let source_code = r#"
@@ -353,7 +351,7 @@ mod tests {
             Baz(u64)
         }"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, true);
 
         let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
 
