@@ -351,4 +351,20 @@ mod tests {
 
         println!("{:#?}", function_params);
     }
+
+        #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_function_sig() {
+        let source_code = r#"
+        #[abstract]
+        pub func foo(bar: bool, baz: char) -> u64
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let function_sig =
+            FunctionSig::parse(&mut parser).expect("unable to parse function signature");
+
+        println!("{:#?}", function_sig);
+    }
 }
