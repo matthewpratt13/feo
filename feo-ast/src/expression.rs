@@ -21,10 +21,7 @@ use feo_types::{
     U256,
 };
 
-use crate::{
-    path::PathExpr,
-    statement::{ExprStatement, LetStatement},
-};
+use crate::path::PathExpr;
 
 use self::iteration_expr::{BreakExpr, ContinueExpr};
 
@@ -215,36 +212,6 @@ impl Spanned for Castable {
             Castable::PathExpr(pth) => pth.span(),
         }
     }
-}
-
-pub enum Constant {
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    BlockExpr(BlockExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
-    InfiniteLoopExpr(InfiniteLoopExpr),
-    PredicateLoopExpr(PredicateLoopExpr),
-    Literal(LiteralKind),
-    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
-    AssignmentExpr(AssignmentExpr),
-    CompoundAssignmentExpr(CompoundAssignmentExpr),
-    ComparisonAssignmentExpr(ComparisonExpr),
-    DerefExpr(DereferenceExpr),
-    LazyBoolExpr(LazyBoolExpr),
-    NegationExpr(NegationExpr),
-    TypeCastExpr(TypeCastExpr),
-    UnwrapExpr(UnwrapExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
-    PathExpr(PathExpr),
-    RangeExpr(RangeExprKind),
-    StructExpr(StructExprKind),
-    TupleExpr(TupleExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    UnderscoreExpr(UnderscoreExpr),
-    ExprStatement(ExprStatement),
-    LetStatement(LetStatement),
 }
 
 #[derive(Debug, Clone)]
