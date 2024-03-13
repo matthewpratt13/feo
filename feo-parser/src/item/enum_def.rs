@@ -137,7 +137,6 @@ impl ParseTerm for EnumVariantStruct {
             parser.next_token();
 
             let fields_opt = if let Some(f) = StructDefFields::parse(parser)? {
-                parser.next_token();
                 Some(f)
             } else {
                 None
@@ -181,7 +180,6 @@ impl ParseTerm for EnumVariantTuple {
             parser.next_token();
 
             let elements_opt = if let Some(e) = TupleStructDefFields::parse(parser)? {
-                parser.next_token();
                 Some(e)
             } else {
                 None
@@ -321,10 +319,9 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_enum_variant_struct() {
-        let source_code = r#"Foo { bar: u64 }"#;
+        let source_code = r#"{ bar: u64 }"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
@@ -334,10 +331,9 @@ mod tests {
         println!("{:#?}", enum_variant_struct);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_enum_variant_tuple() {
-        let source_code = r#"Foo(u64)"#;
+        let source_code = r#"(u64, bool)"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
