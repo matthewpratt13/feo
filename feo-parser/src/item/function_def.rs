@@ -155,4 +155,17 @@ mod tests {
 
         println!("{:#?}", self_param);
     }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_function_param() {
+        let source_code = r#"foo: u64"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let function_param =
+            FunctionParam::parse(&mut parser).expect("unable to parse function param");
+
+        println!("{:#?}", function_param);
+    }
 }
