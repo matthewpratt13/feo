@@ -28,19 +28,26 @@ impl ParseType for TupleType {
         {
             parser.next_token();
 
-            while let Some(element) = Type::parse(parser)? {
+            if let Some(element) = Type::parse(parser)? {
+                elements.push(element);
+                parser.next_token();
+            }
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = parser.peek_current::<Punctuation>()
+            {
                 parser.next_token();
 
-                if let Some(Punctuation {
-                    punc_kind: PuncKind::Comma,
-                    ..
-                }) = parser.peek_current::<Punctuation>()
-                {
+                if let Some(element) = Type::parse(parser)? {
                     elements.push(element);
                     parser.next_token();
                 } else {
                     break;
                 }
+
+                parser.next_token();
             }
 
             if let Some(trailing_element) = Type::parse(parser)? {
@@ -141,7 +148,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_tuple_type() {
         let source_code = r#"(u64, char, bool)"#;
