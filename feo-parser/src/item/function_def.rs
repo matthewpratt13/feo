@@ -16,7 +16,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{ParsePatt, ParseTerm, ParseType},
+    parse::{ParseItem, ParsePatt, ParseTerm, ParseType},
     parser::Parser,
 };
 
@@ -184,7 +184,7 @@ impl ParseTerm for FunctionParams {
     }
 }
 
-impl ParseTerm for FunctionSig {
+impl ParseItem for FunctionSig {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

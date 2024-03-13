@@ -16,7 +16,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{ParseTerm, ParseType},
+    parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
 };
 
@@ -130,7 +130,7 @@ impl ParseTerm for StructDefFields {
     }
 }
 
-impl ParseTerm for StructDef {
+impl ParseItem for StructDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

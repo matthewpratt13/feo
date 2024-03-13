@@ -14,7 +14,10 @@ use feo_types::{
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{
+    parse::{ParseItem, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseTerm for EnumVariant {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -207,7 +210,7 @@ impl ParseTerm for EnumVariantTuple {
     }
 }
 
-impl ParseTerm for EnumDef {
+impl ParseItem for EnumDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

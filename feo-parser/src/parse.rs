@@ -30,14 +30,20 @@ use feo_types::{
 
 use crate::parser::Parser;
 
+// literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
+pub trait ParseTerm {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized;
+}
+
 pub trait ParseExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized;
 }
 
-// literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
-pub trait ParseTerm {
+pub trait ParseItem {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized;

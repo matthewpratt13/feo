@@ -9,11 +9,11 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseExpr, ParseTerm, ParseType},
+    parse::{ParseExpr, ParseItem, ParseTerm, ParseType},
     parser::Parser,
 };
 
-impl ParseTerm for ConstantVarDef {
+impl ParseItem for ConstantVarDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
