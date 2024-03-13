@@ -57,7 +57,7 @@ impl ParseTerm for TypeBound {
         Self: Sized,
     {
         if let Some(ty) = Type::parse(parser)? {
-            let colon_opt = parser.peek_next::<Punctuation>();
+            let colon_opt = parser.peek_current::<Punctuation>();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
@@ -67,7 +67,6 @@ impl ParseTerm for TypeBound {
                 parser.next_token();
 
                 let type_param_bounds_opt = if let Some(t) = TypeParamBounds::parse(parser)? {
-                    parser.next_token();
                     Some(t)
                 } else {
                     None
@@ -102,8 +101,6 @@ impl ParseTerm for WhereClause {
             parser.next_token();
 
             if let Some(first_bound) = TypeBound::parse(parser)? {
-                parser.next_token();
-
                 while let Some(Punctuation {
                     punc_kind: PuncKind::Comma,
                     ..
@@ -113,14 +110,12 @@ impl ParseTerm for WhereClause {
 
                     if let Some(next_bound) = TypeBound::parse(parser)? {
                         subsequent_bounds.push(next_bound);
-                        parser.next_token();
                     } else {
                         break;
                     }
                 }
 
                 let trailing_type_bound_opt = if let Some(t) = TypeBound::parse(parser)? {
-                    parser.next_token();
                     Some(t)
                 } else {
                     None
@@ -177,7 +172,6 @@ mod tests {
         println!("{:#?}", type_param_bounds);
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_type_bound() {
         let source_code = r#"Self: Foo + Bar + Baz"#;
@@ -189,7 +183,7 @@ mod tests {
         println!("{:#?}", type_bound);
     }
 
-    #[ignore] // TODO: remove when testing
+    // #[ignore] // TODO: remove when testing
     #[test]
     fn parse_where_clause() {
         let source_code = r#"
