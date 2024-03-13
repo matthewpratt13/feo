@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{FunctionParam, FunctionParams, FunctionSig, SelfParam},
+    item::{FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, SelfParam},
     pattern::Pattern,
     token::Token,
     Type,
@@ -11,6 +11,21 @@ use crate::{
     parse::{ParsePatt, ParseTerm, ParseType},
     parser::Parser,
 };
+
+impl ParseTerm for FuncOrMethodParam {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(sp) = SelfParam::parse(parser)? {
+            Ok(Some(FuncOrMethodParam::MethodParam(sp)))
+        } else if let Some(fp) = FunctionParam::parse(parser)? {
+            Ok(Some(FuncOrMethodParam::FuncParam(fp)))
+        } else {
+            Ok(None)
+        }
+    }
+}
 
 impl ParseTerm for SelfParam {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

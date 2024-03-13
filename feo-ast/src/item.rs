@@ -29,7 +29,8 @@ pub use self::{
     },
     extern_crate_decl::{AsClause, ExternCrateDecl},
     function_def::{
-        FunctionDefKind, FunctionParam, FunctionParams, FunctionSig, FunctionWithBlock, SelfParam,
+        FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionParams, FunctionSig,
+        FunctionWithBlock, SelfParam,
     },
     impl_block::{InherentImplBlock, TraitImplBlock},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
