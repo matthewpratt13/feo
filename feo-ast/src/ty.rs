@@ -15,9 +15,9 @@ use feo_types::{
 
 use crate::path::PathType;
 
-use self::function_type::{ClosureType, FunctionType};
 pub use self::{
     array_type::ArrayType,
+    function_type::{ClosureType, FunctionType},
     impl_trait_type::{ImplTraitType, TraitBound},
     parenthesized_type::ParenthesizedType,
     reference_type::ReferenceType,
