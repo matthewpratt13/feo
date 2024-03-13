@@ -89,8 +89,8 @@ pub struct FunctionParams {
 
 #[derive(Debug, Clone)]
 pub struct FunctionParam {
-    param_pattern: Box<Pattern>,
-    param_type: Box<Type>,
+    pub param_pattern: Box<Pattern>,
+    pub param_type: Box<Type>,
 }
 
 #[derive(Debug, Clone)]

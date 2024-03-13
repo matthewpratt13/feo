@@ -1,12 +1,14 @@
 use feo_ast::{
     item::{FunctionParam, FunctionParams, FunctionSig, SelfParam},
+    pattern::Pattern,
+    token::Token,
     Type,
 };
-use feo_error::error::CompilerError;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseTerm, ParseType},
+    parse::{ParsePatt, ParseTerm, ParseType},
     parser::Parser,
 };
 
@@ -78,7 +80,42 @@ impl ParseTerm for FunctionParam {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(param_pattern) = Pattern::parse(parser)? {
+            parser.next_token();
+
+            let colon_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Colon,
+                ..
+            }) = colon_opt
+            {
+                parser.next_token();
+
+                if let Some(param_type) = Type::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(FunctionParam {
+                        param_pattern: Box::new(param_pattern),
+                        param_type: Box::new(param_type),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Type`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`:`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -110,7 +147,7 @@ mod tests {
     #[ignore] // TODO: remove when testing
     #[test]
     fn parse_self_param() {
-        let source_code = r#"&mut self"#;
+        let source_code = r#"&mut self: u64"#;
 
         let mut parser = test_utils::get_parser(source_code, false);
 
