@@ -13,6 +13,7 @@ pub enum ParserErrorKind {
     ParseUIntError,
     ParseU256Error,
     ParseFloatError,
+    ParseTypeAnnotationError,
     CharPositionNotFound,
 
     MissingDelimiter {
@@ -51,6 +52,9 @@ impl fmt::Display for ParserErrorKind {
             ParserErrorKind::ParseUIntError => write!(f, "unable to parse uint"),
             ParserErrorKind::ParseU256Error => write!(f, "unable to parse u256"),
             ParserErrorKind::ParseFloatError => write!(f, "unable to parse float"),
+            ParserErrorKind::ParseTypeAnnotationError => {
+                write!(f, "unable to parse type annotation")
+            }
             ParserErrorKind::CharPositionNotFound => write!(f, "cannot detect character position"),
             ParserErrorKind::MissingDelimiter { delim } => {
                 write!(f, "missing delimiter: `{}`", delim)

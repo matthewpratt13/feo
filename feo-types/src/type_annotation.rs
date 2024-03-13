@@ -1,14 +1,11 @@
 use std::str::FromStr;
 
-use crate::{
-    error::TypeErrorKind,
-    span::{Span, Spanned},
-};
+use crate::span::{Span, Spanned};
 
 // TODO: find a way to check that the type annotation matches the actual token's type
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum TypeAnnKind {
+pub enum TypeAnnotation {
     TypeAnnChar,
     TypeAnnStr,
     TypeAnnBool,
@@ -21,45 +18,48 @@ pub enum TypeAnnKind {
     TypeAnnU256,
     TypeAnnF32,
     TypeAnnF64,
+    TypeAnnInferred,
 }
 
-impl TypeAnnKind {
+impl TypeAnnotation {
     pub fn as_str(&self) -> &str {
         match self {
-            TypeAnnKind::TypeAnnChar => "char",
-            TypeAnnKind::TypeAnnStr => "str",
-            TypeAnnKind::TypeAnnBool => "bool",
-            TypeAnnKind::TypeAnnI32 => "i32",
-            TypeAnnKind::TypeAnnI64 => "i64",
-            TypeAnnKind::TypeAnnU8 => "u8",
-            TypeAnnKind::TypeAnnU16 => "u16",
-            TypeAnnKind::TypeAnnU32 => "u32",
-            TypeAnnKind::TypeAnnU64 => "u64",
-            TypeAnnKind::TypeAnnU256 => "u256",
-            TypeAnnKind::TypeAnnF32 => "f32",
-            TypeAnnKind::TypeAnnF64 => "f64",
+            TypeAnnotation::TypeAnnChar => "char",
+            TypeAnnotation::TypeAnnStr => "str",
+            TypeAnnotation::TypeAnnBool => "bool",
+            TypeAnnotation::TypeAnnI32 => "i32",
+            TypeAnnotation::TypeAnnI64 => "i64",
+            TypeAnnotation::TypeAnnU8 => "u8",
+            TypeAnnotation::TypeAnnU16 => "u16",
+            TypeAnnotation::TypeAnnU32 => "u32",
+            TypeAnnotation::TypeAnnU64 => "u64",
+            TypeAnnotation::TypeAnnU256 => "u256",
+            TypeAnnotation::TypeAnnF32 => "f32",
+            TypeAnnotation::TypeAnnF64 => "f64",
+            TypeAnnotation::TypeAnnInferred => "_",
         }
     }
 }
 
-impl FromStr for TypeAnnKind {
-    type Err = TypeErrorKind;
+impl FromStr for TypeAnnotation {
+    type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let type_ann = match s {
-            "char" => Ok(TypeAnnKind::TypeAnnChar),
-            "str" => Ok(TypeAnnKind::TypeAnnStr),
-            "bool" => Ok(TypeAnnKind::TypeAnnBool),
-            "i32" => Ok(TypeAnnKind::TypeAnnI32),
-            "i64" => Ok(TypeAnnKind::TypeAnnI64),
-            "u8" => Ok(TypeAnnKind::TypeAnnU8),
-            "u16" => Ok(TypeAnnKind::TypeAnnU16),
-            "u32" => Ok(TypeAnnKind::TypeAnnU32),
-            "u64" => Ok(TypeAnnKind::TypeAnnU64),
-            "u256" => Ok(TypeAnnKind::TypeAnnU256),
-            "f32" => Ok(TypeAnnKind::TypeAnnF32),
-            "f64" => Ok(TypeAnnKind::TypeAnnF64),
-            _ => Err(TypeErrorKind::UnrecognizedBuiltInTypeAnnotation),
+            "char" => Ok(TypeAnnotation::TypeAnnChar),
+            "str" => Ok(TypeAnnotation::TypeAnnStr),
+            "bool" => Ok(TypeAnnotation::TypeAnnBool),
+            "i32" => Ok(TypeAnnotation::TypeAnnI32),
+            "i64" => Ok(TypeAnnotation::TypeAnnI64),
+            "u8" => Ok(TypeAnnotation::TypeAnnU8),
+            "u16" => Ok(TypeAnnotation::TypeAnnU16),
+            "u32" => Ok(TypeAnnotation::TypeAnnU32),
+            "u64" => Ok(TypeAnnotation::TypeAnnU64),
+            "u256" => Ok(TypeAnnotation::TypeAnnU256),
+            "f32" => Ok(TypeAnnotation::TypeAnnF32),
+            "f64" => Ok(TypeAnnotation::TypeAnnF64),
+            "_" => Ok(TypeAnnotation::TypeAnnInferred),
+            _ => Err(()),
         }?;
 
         Ok(type_ann)
@@ -67,29 +67,22 @@ impl FromStr for TypeAnnKind {
 }
 
 #[derive(Debug, Clone)]
-pub struct TypeAnnotation {
-    pub type_ann_kind: TypeAnnKind,
+pub struct BuiltInType {
+    pub type_annotation: TypeAnnotation,
     span: Span,
 }
 
-impl TypeAnnotation {
-    pub fn new(type_ann_kind: TypeAnnKind, span: Span) -> Self {
+impl BuiltInType {
+    pub fn new(type_annotation: TypeAnnotation, span: Span) -> Self {
         Self {
-            type_ann_kind,
+            type_annotation,
             span,
         }
     }
 }
 
-impl Spanned for TypeAnnotation {
+impl Spanned for BuiltInType {
     fn span(&self) -> Span {
         self.span.clone()
     }
-}
-
-pub fn is_built_in_type_annotation(iden: &str) -> bool {
-    [
-        "char", "str", "bool", "i32", "i64", "u8", "u16", "u32", "u64", "u256", "f32", "f64",
-    ]
-    .contains(&iden)
 }

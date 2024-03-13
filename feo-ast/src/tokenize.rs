@@ -16,7 +16,6 @@ use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     punctuation::{PuncKind, Punctuation},
     span::{Position, Span},
-    type_annotation::{TypeAnnKind, TypeAnnotation},
     Identifier, U256,
 };
 
@@ -444,32 +443,6 @@ impl Tokenize for Punctuation {
         let punctuation = Punctuation::new(punc_kind, span);
 
         let token = Token::Punc(punctuation);
-
-        Ok(Some(token))
-    }
-}
-
-impl Tokenize for TypeAnnotation {
-    fn tokenize(
-        src: &str,
-        content: &str,
-        start: usize,
-        end: usize,
-        handler: &mut Handler,
-    ) -> Result<Option<Token>, ErrorEmitted> {
-        let span = Span::new(src, start, end);
-
-        let error = TypeError {
-            error_kind: TypeErrorKind::UnrecognizedBuiltInTypeAnnotation,
-            position: Position::new(src, start),
-        };
-
-        let type_ann_kind = TypeAnnKind::from_str(content)
-            .map_err(|_| handler.emit_err(CompilerError::Type(error)))?;
-
-        let type_annotation = TypeAnnotation::new(type_ann_kind, span);
-
-        let token = Token::TypeAnn(type_annotation);
 
         Ok(Some(token))
     }

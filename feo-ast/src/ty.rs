@@ -9,8 +9,7 @@ mod tuple_type;
 
 use feo_types::{
     span::{Span, Spanned},
-    BoolPrimitive, CharPrimitive, F32Primitive, F64Primitive, I32Primitive, I64Primitive,
-    StrPrimitive, U16Primitive, U256Primitive, U32Primitive, U64Primitive, U8Primitive,
+    BuiltInType,
 };
 
 use crate::path::PathType;
@@ -27,18 +26,18 @@ pub use self::{
 #[derive(Debug, Clone)]
 pub enum Type {
     // primitives (built-in)
-    Char(CharPrimitive),
-    Str(StrPrimitive),
-    Bool(BoolPrimitive),
-    I32(I32Primitive),
-    I64(I64Primitive),
-    U8(U8Primitive),
-    U16(U16Primitive),
-    U32(U32Primitive),
-    U64(U64Primitive),
-    U256(U256Primitive),
-    F32(F32Primitive),
-    F64(F64Primitive),
+    Char(BuiltInType),
+    Str(BuiltInType),
+    Bool(BuiltInType),
+    I32(BuiltInType),
+    I64(BuiltInType),
+    U8(BuiltInType),
+    U16(BuiltInType),
+    U32(BuiltInType),
+    U64(BuiltInType),
+    U256(BuiltInType),
+    F32(BuiltInType),
+    F64(BuiltInType),
 
     // built-in sequence types
     Array(ArrayType),
@@ -62,7 +61,7 @@ pub enum Type {
     ParenthesizedType(ParenthesizedType),
     SelfType(PathType),
 
-    InferredType,
+    InferredType(BuiltInType),
 }
 
 impl Spanned for Type {
@@ -91,7 +90,7 @@ impl Spanned for Type {
             Type::ImplTrait(imp) => imp.span(),
             Type::ParenthesizedType(par) => par.span(),
             Type::SelfType(st) => st.span(),
-            Type::InferredType => Span::default(),
+            Type::InferredType(it) => it.span(),
         }
     }
 }

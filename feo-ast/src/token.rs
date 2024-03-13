@@ -3,7 +3,7 @@ use std::fmt;
 use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     span::{Span, Spanned},
-    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, TypeAnnotation, U256,
+    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 #[derive(Debug, Clone)]
@@ -25,8 +25,6 @@ pub enum Token {
     Delim(Delimiter),
     Punc(Punctuation),
 
-    TypeAnn(TypeAnnotation),
-
     EOF,
 }
 
@@ -46,7 +44,6 @@ impl Spanned for Token {
             Token::DocComment(dc) => dc.span(),
             Token::Delim(d) => d.span(),
             Token::Punc(p) => p.span(),
-            Token::TypeAnn(ta) => ta.span(),
             Token::EOF => Span::default(),
         }
     }
@@ -70,7 +67,6 @@ impl fmt::Display for Token {
             Token::DocComment(dc) => write!(f, "`{}`", dc.content),
             Token::Delim(d) => write!(f, "`{}`", d.clone().as_char()),
             Token::Punc(p) => write!(f, "`{}`", p.punc_kind.as_str()),
-            Token::TypeAnn(ta) => write!(f, "`{}`", ta.type_ann_kind.as_str()),
             Token::EOF => write!(f, "end of file"),
         }
     }

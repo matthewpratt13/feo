@@ -17,7 +17,6 @@ use feo_types::{
     delimiter, identifier,
     literal::{FloatType, IntType, UIntType},
     punctuation,
-    type_annotation::{self, BuiltInType},
 };
 use feo_types::{
     literal::Literal, span::Position, Comment, Delimiter, DocComment, Identifier, Keyword,
@@ -197,16 +196,6 @@ impl<'a> Lexer<'a> {
                         )?;
 
                         tokens.push(keyword)
-                    // } else if type_annotation::is_built_in_type_annotation(&buf) {
-                    //     let type_annotation = BuiltInType::tokenize(
-                    //         &self.input,
-                    //         &buf,
-                    //         start_pos,
-                    //         start_pos + buf.len(),
-                    //         &mut self.handler,
-                    //     )?;
-
-                    //     tokens.push(type_annotation);
                     } else {
                         let identifier = Identifier::tokenize(
                             &self.input,

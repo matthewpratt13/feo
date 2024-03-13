@@ -2,7 +2,7 @@ use feo_ast::token::Token;
 
 use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
-    Delimiter, Identifier, Keyword, Punctuation, BuiltInType, U256,
+    Delimiter, Identifier, Keyword, Punctuation, U256,
 };
 
 pub trait Peek {
@@ -117,13 +117,6 @@ impl<'a> Peeker<'a> {
             _ => Err(*self),
         }
     }
-
-    // fn peek_type_annotation(&self) -> Result<BuiltInType, Self> {
-    //     match self.peek_token() {
-    //         Some(Token::TypeAnn(ta)) => Ok(ta),
-    //         _ => Err(*self),
-    //     }
-    // }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -271,15 +264,3 @@ impl Peek for Punctuation {
         }
     }
 }
-
-// impl Peek for BuiltInType {
-//     fn peek(peeker: &Peeker<'_>) -> Option<Self>
-//     where
-//         Self: Sized,
-//     {
-//         match peeker.peek_type_annotation() {
-//             Ok(ta) => Some(ta),
-//             Err(_) => None,
-//         }
-//     }
-// }

@@ -1238,7 +1238,6 @@ impl ParsePatt for PatternWithoutRange {
     }
 }
 
-// TODO: don't forget to account for the case where we encounter a `TypeAnnotation`
 impl ParseType for Type {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where

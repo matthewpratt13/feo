@@ -33,6 +33,6 @@ pub use crate::punctuation::Punctuation;
 pub mod span;
 
 pub mod type_annotation;
-pub use crate::type_annotation::TypeAnnotation;
+pub use crate::type_annotation::BuiltInType;
 
 pub mod utils;
