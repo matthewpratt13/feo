@@ -42,7 +42,6 @@ impl ParseType for FunctionType {
                 parser.next_token();
 
                 let function_params_opt = if let Some(p) = FunctionParams::parse(parser)? {
-                    parser.next_token();
                     Some(p)
                 } else {
                     None
@@ -141,7 +140,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn parse_function_type() {
         let source_code = r#"
