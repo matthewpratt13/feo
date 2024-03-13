@@ -217,7 +217,7 @@ mod tests {
         println!("{:#?}", function_param);
     }
 
-        #[ignore] // TODO: remove when testing
+    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_function_params() {
         let source_code = r#"foo: u64, bar: bool, baz: char"#;
