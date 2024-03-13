@@ -99,3 +99,23 @@ impl ParseTerm for FunctionSig {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_self_param() {
+        let source_code = r#"&mut self"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let self_param = SelfParam::parse(&mut parser).expect("unable to parse self param");
+
+        println!("{:#?}", self_param);
+    }
+}
