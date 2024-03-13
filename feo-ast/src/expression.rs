@@ -295,8 +295,6 @@ pub enum ExprWithoutBlock {
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
-    EnumDef(EnumDef),
-    EnumVariantStruct(EnumVariantStruct),
 }
 
 #[derive(Debug, Clone)]
