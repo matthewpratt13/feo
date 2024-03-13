@@ -18,13 +18,10 @@ impl Spanned for ClosureParamsOpt {
         match self {
             ClosureParamsOpt::None(n) => n.span(),
             ClosureParamsOpt::MaybeSome(ms) => {
-                let start_pos = ms.0.span().start();
-                let end_pos = ms.2.span().end();
-                let source = ms.0.span().source();
+                let s1 = ms.0.span();
+                let s2 = ms.2.span();
 
-                let span = Span::new(source.as_str(), start_pos, end_pos);
-
-                span
+                Span::join(s1, s2)
             }
         }
     }
