@@ -134,3 +134,41 @@ impl ParseType for ClosureType {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
+
+    use super::*;
+
+    #[ignore]
+    #[test]
+    fn parse_function_type() {
+        let source_code = r#"
+        func (foo: u64, bar: bool) -> char
+        func ()
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let function_type =
+            FunctionType::parse(&mut parser).expect("unable to parse function type");
+
+        println!("{:#?}", function_type);
+    }
+
+    #[ignore]
+    #[test]
+    fn parse_closure_type() {
+        let source_code = r#"
+        |foo: u64, bar: bool| -> char
+        ||
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let closure_type = ClosureType::parse(&mut parser).expect("unable to parse closure type");
+
+        println!("{:#?}", closure_type);
+    }
+}
