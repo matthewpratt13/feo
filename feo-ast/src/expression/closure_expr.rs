@@ -87,9 +87,9 @@ impl Spanned for ClosureParams {
 
 #[derive(Debug, Clone)]
 pub struct ClosureParam {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    pattern: Box<Pattern>,
-    type_annotation_opt: Option<Box<Type>>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub pattern: Box<Pattern>,
+    pub type_annotation_opt: Option<Box<Type>>,
 }
 
 impl Spanned for ClosureParam {
