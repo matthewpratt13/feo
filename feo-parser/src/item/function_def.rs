@@ -216,4 +216,17 @@ mod tests {
 
         println!("{:#?}", function_param);
     }
+
+        #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_function_params() {
+        let source_code = r#"foo: u64, bar: bool, baz: char"#;
+
+        let mut parser = test_utils::get_parser(source_code, false);
+
+        let function_params =
+            FunctionParams::parse(&mut parser).expect("unable to parse function params");
+
+        println!("{:#?}", function_params);
+    }
 }
