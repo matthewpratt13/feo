@@ -74,7 +74,6 @@ impl ParseTerm for ClosureParam {
         } else {
             return Ok(None);
         }
-
     }
 }
 
@@ -83,7 +82,39 @@ impl ParseTerm for ClosureParams {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_params: Vec<ClosureParam> = Vec::new();
+
+        if let Some(first_param) = ClosureParam::parse(parser)? {
+            parser.next_token();
+
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = parser.peek_current::<Punctuation>()
+            {
+                parser.next_token();
+
+                if let Some(next_param) = ClosureParam::parse(parser)? {
+                    subsequent_params.push(next_param);
+                } else {
+                    break;
+                }
+            }
+
+            match &subsequent_params.is_empty() {
+                true => Ok(Some(ClosureParams {
+                    first_param,
+                    subsequent_params_opt: None,
+                })),
+
+                false => Ok(Some(ClosureParams {
+                    first_param,
+                    subsequent_params_opt: Some(subsequent_params),
+                })),
+            }
+        } else {
+            Ok(None)
+        }
     }
 }
 

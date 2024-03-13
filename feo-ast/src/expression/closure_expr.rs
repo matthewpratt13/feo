@@ -66,8 +66,8 @@ impl Spanned for ClosureWithoutBlock {
 
 #[derive(Debug, Clone)]
 pub struct ClosureParams {
-    first_param: ClosureParam,
-    subsequent_params_opt: Option<Vec<ClosureParam>>,
+    pub first_param: ClosureParam,
+    pub subsequent_params_opt: Option<Vec<ClosureParam>>,
 }
 
 impl Spanned for ClosureParams {
