@@ -11,13 +11,13 @@ impl ParseType for BuiltInType {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            let type_ann = if let Ok(ta) = TypeAnnotation::from_str(&id.name) {
+            let type_annotation = if let Ok(ta) = TypeAnnotation::from_str(&id.name) {
                 ta
             } else {
                 return Ok(None);
             };
 
-            return Ok(Some(BuiltInType::new(type_ann, id.span())));
+            return Ok(Some(BuiltInType::new(type_annotation, id.span())));
         } else {
             return Ok(None);
         }
