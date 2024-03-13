@@ -139,7 +139,31 @@ impl ParseTerm for FunctionParams {
     where
         Self: Sized,
     {
-        todo!()
+        let mut subsequent_params: Vec<FunctionParam> = Vec::new();
+
+        if let Some(first_param) = FuncOrMethodParam::parse(parser)? {
+            while let Some(next_param) = FunctionParam::parse(parser)? {
+                subsequent_params.push(next_param);
+                parser.next_token();
+            }
+
+            match &subsequent_params.is_empty() {
+                true => {
+                    return Ok(Some(FunctionParams {
+                        first_param,
+                        subsequent_params_opt: None,
+                    }))
+                }
+                false => {
+                    return Ok(Some(FunctionParams {
+                        first_param,
+                        subsequent_params_opt: Some(subsequent_params),
+                    }))
+                }
+            }
+        } else {
+            return Ok(None);
+        }
     }
 }
 

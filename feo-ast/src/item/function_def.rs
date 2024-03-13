@@ -83,8 +83,8 @@ impl Spanned for FunctionSig {
 
 #[derive(Debug, Clone)]
 pub struct FunctionParams {
-    first_param: FuncOrMethodParam,
-    subsequent_params_opt: Option<Vec<FunctionParam>>,
+    pub first_param: FuncOrMethodParam,
+    pub subsequent_params_opt: Option<Vec<FunctionParam>>,
 }
 
 #[derive(Debug, Clone)]
