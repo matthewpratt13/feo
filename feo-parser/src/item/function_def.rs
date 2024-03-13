@@ -142,9 +142,18 @@ impl ParseTerm for FunctionParams {
         let mut subsequent_params: Vec<FunctionParam> = Vec::new();
 
         if let Some(first_param) = FuncOrMethodParam::parse(parser)? {
-            while let Some(next_param) = FunctionParam::parse(parser)? {
-                subsequent_params.push(next_param);
+            while let Some(Punctuation {
+                punc_kind: PuncKind::Comma,
+                ..
+            }) = parser.peek_current::<Punctuation>()
+            {
                 parser.next_token();
+
+                if let Some(next_param) = FunctionParam::parse(parser)? {
+                    subsequent_params.push(next_param);
+                } else {
+                    break;
+                }
             }
 
             match &subsequent_params.is_empty() {
