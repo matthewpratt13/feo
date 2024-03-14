@@ -628,8 +628,8 @@ impl ParseExpr for Expression {
                         punc_kind: PuncKind::DblColon,
                         ..
                     }) => {
-                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Expression::PathExpr(pe)));
+                        if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::PathExpr(pth)));
                         }
                     }
 
@@ -1192,8 +1192,14 @@ impl ParseExpr for Iterable {
                     punc_kind: PuncKind::DblDot,
                     ..
                 }) => {
-                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeToExpr(rte))));
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromExpr(rfe))));
+                    }
+
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromToExpr(
+                            rft,
+                        ))));
                     }
                 }
 
@@ -1201,9 +1207,9 @@ impl ParseExpr for Iterable {
                     punc_kind: PuncKind::DotDotEquals,
                     ..
                 }) => {
-                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::RangeExpr(
-                            RangeExprKind::RangeToInclusiveExpr(rti),
+                            RangeExprKind::RangeInclusiveExpr(rie),
                         )));
                     }
                 }
@@ -1226,22 +1232,22 @@ impl ParseExpr for Iterable {
                         return Ok(Some(Iterable::ParenthesizedExpr(par)));
                     }
 
-                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::TupleIndexExpr(ti)));
-                    }
-
                     if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::TupleExpr(te)));
+                    }
+
+                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::TupleIndexExpr(ti)));
                     }
                 }
 
                 (DelimKind::Bracket, DelimOrientation::Open) => {
-                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::IndexExpr(ie)));
-                    }
-
                     if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::ArrayExpr(ae)));
+                    }
+
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::IndexExpr(ie)));
                     }
                 }
 
