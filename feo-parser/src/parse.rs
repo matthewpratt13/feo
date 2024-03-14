@@ -72,7 +72,7 @@ impl ParseExpr for Expression {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -89,6 +89,15 @@ impl ParseExpr for Expression {
                 }
 
                 Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IndexExpr(ie)));
+                    }
+                }
+
+                Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
                 }) => {
@@ -100,7 +109,7 @@ impl ParseExpr for Expression {
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -213,7 +222,7 @@ impl ParseExpr for Expression {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::ParenthesizedExpr(par)));
@@ -261,7 +270,7 @@ impl ParseExpr for Expression {
                 }
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
                     ..
@@ -474,6 +483,8 @@ impl ParseExpr for Expression {
 
                 _ => return Ok(None),
             }
+        } else {
+            return Ok(None);
         }
 
         Err(parser.errors())
@@ -486,7 +497,7 @@ impl ParseExpr for Assignable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -510,7 +521,7 @@ impl ParseExpr for Assignable {
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
@@ -591,7 +602,7 @@ impl ParseExpr for BooleanOperand {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -601,10 +612,19 @@ impl ParseExpr for BooleanOperand {
                     }
                 }
 
+                Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(BooleanOperand::IndexExpr(ie)));
+                    }
+                }
+
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -721,7 +741,7 @@ impl ParseExpr for Callable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
@@ -817,7 +837,7 @@ impl ParseExpr for Iterable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -827,10 +847,19 @@ impl ParseExpr for Iterable {
                     }
                 }
 
+                Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::IndexExpr(ie)));
+                    }
+                }
+
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -1027,7 +1056,7 @@ impl ParseExpr for Operable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -1037,10 +1066,19 @@ impl ParseExpr for Operable {
                     }
                 }
 
+                Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Operable::IndexExpr(ie)));
+                    }
+                }
+
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -1160,7 +1198,7 @@ impl ParseExpr for Returnable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -1177,6 +1215,15 @@ impl ParseExpr for Returnable {
                 }
 
                 Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Returnable::IndexExpr(ie)));
+                    }
+                }
+
+                Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
                 }) => {
@@ -1188,7 +1235,7 @@ impl ParseExpr for Returnable {
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
@@ -1317,7 +1364,7 @@ impl ParseExpr for Returnable {
                 }
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
                     ..
@@ -1443,7 +1490,7 @@ impl ParsePatt for Pattern {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            match &parser.peek_next::<Delimiter>() {
+            match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -1465,7 +1512,7 @@ impl ParsePatt for Pattern {
                 _ => (),
             }
 
-            match &parser.peek_next::<Punctuation>() {
+            match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::DblColon,
                     ..
@@ -1587,7 +1634,7 @@ impl ParseType for Type {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if &id.name.to_string() == "_" {
+            if &id.name == "_" {
                 if let Some(bit) = BuiltInType::parse(parser).unwrap_or(None) {
                     return Ok(Some(Type::InferredType(bit)));
                 }
@@ -1643,7 +1690,7 @@ impl ParseType for Type {
         }
 
         if let Some(k) = parser.peek_current::<Keyword>() {
-            match k.keyword_kind {
+            match &k.keyword_kind {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
