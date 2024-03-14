@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{CallParams, Callable, FunctionCallExpr, MethodCallExpr, Returnable},
+    expression::{CallParams, Callable, Expression, FunctionCallExpr, MethodCallExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -19,11 +19,9 @@ impl ParseTerm for CallParams {
     where
         Self: Sized,
     {
-        let mut subsequent_params: Vec<Returnable> = Vec::new();
+        let mut subsequent_params: Vec<Expression> = Vec::new();
 
-        if let Some(first_param) = Returnable::parse(parser)? {
-            parser.next_token();
-
+        if let Some(first_param) = Expression::parse(parser)? {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
@@ -31,7 +29,7 @@ impl ParseTerm for CallParams {
             {
                 parser.next_token();
 
-                if let Some(next_param) = Returnable::parse(parser)? {
+                if let Some(next_param) = Expression::parse(parser)? {
                     subsequent_params.push(next_param);
 
                     parser.next_token();
