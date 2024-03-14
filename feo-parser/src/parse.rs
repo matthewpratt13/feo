@@ -795,10 +795,6 @@ impl ParseExpr for Assignable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Assignable::UnderscoreExpr(ue)));
-            }
-
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -904,10 +900,6 @@ impl ParseExpr for BooleanOperand {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(BooleanOperand::UnderscoreExpr(ue)));
-            }
-
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -1192,14 +1184,8 @@ impl ParseExpr for Iterable {
                     punc_kind: PuncKind::DblDot,
                     ..
                 }) => {
-                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromExpr(rfe))));
-                    }
-
-                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromToExpr(
-                            rft,
-                        ))));
+                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeToExpr(rte))));
                     }
                 }
 
@@ -1207,9 +1193,9 @@ impl ParseExpr for Iterable {
                     punc_kind: PuncKind::DotDotEquals,
                     ..
                 }) => {
-                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::RangeExpr(
-                            RangeExprKind::RangeInclusiveExpr(rie),
+                            RangeExprKind::RangeToInclusiveExpr(rti),
                         )));
                     }
                 }
@@ -1232,22 +1218,22 @@ impl ParseExpr for Iterable {
                         return Ok(Some(Iterable::ParenthesizedExpr(par)));
                     }
 
-                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::TupleExpr(te)));
-                    }
-
                     if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::TupleIndexExpr(ti)));
+                    }
+
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::TupleExpr(te)));
                     }
                 }
 
                 (DelimKind::Bracket, DelimOrientation::Open) => {
-                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::ArrayExpr(ae)));
-                    }
-
                     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Iterable::IndexExpr(ie)));
+                    }
+
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::ArrayExpr(ae)));
                     }
                 }
 
@@ -1510,10 +1496,6 @@ impl ParseExpr for Returnable {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Returnable::UnderscoreExpr(ue)));
-            }
-
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -1759,6 +1741,7 @@ impl ParseExpr for Returnable {
                 //         return Ok(Some(Returnable::UnderscoreExpr(und)));
                 //     }
                 // }
+
                 PuncKind::Bang | PuncKind::Minus => {
                     if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::NegationExpr(ne)));
