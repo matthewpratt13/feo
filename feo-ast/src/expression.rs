@@ -23,8 +23,6 @@ use feo_types::{
 
 use crate::path::PathExpr;
 
-use self::iteration_expr::{BreakExpr, ContinueExpr};
-
 pub use self::{
     array_expr::{
         ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
@@ -38,7 +36,10 @@ pub use self::{
     },
     conditional_expr::{IfExpr, MatchExpr},
     field_access_expr::FieldAccessExpr,
-    iteration_expr::{InfiniteLoopExpr, IterLoopExpr, IterationExprKind, PredicateLoopExpr},
+    iteration_expr::{
+        BreakExpr, ContinueExpr, InfiniteLoopExpr, IterLoopExpr, IterationExprKind,
+        PredicateLoopExpr,
+    },
     operator_expr::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DerefOperator,
@@ -102,8 +103,8 @@ impl Spanned for Expression {
             Expression::IfExpr(ife) => ife.span(),
             Expression::MatchExpr(me) => me.span(),
             Expression::IterationExpr(ite) => ite.span(),
-            Expression::ContinueExpr(ce) => ce.span(),
             Expression::BreakExpr(be) => be.span(),
+            Expression::ContinueExpr(ce) => ce.span(),
             Expression::Literal(lit) => lit.span(),
             Expression::OperatorExpr(oe) => oe.span(),
             Expression::ParenthesizedExpr(par) => par.span(),

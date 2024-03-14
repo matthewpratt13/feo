@@ -1,11 +1,32 @@
 use feo_ast::{
-    expression::{BlockExpr, BooleanOperand, InfiniteLoopExpr, IterLoopExpr, PredicateLoopExpr},
+    expression::{
+        BlockExpr, BooleanOperand, BreakExpr, ContinueExpr, InfiniteLoopExpr, IterLoopExpr,
+        PredicateLoopExpr,
+    },
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, Keyword};
 
 use crate::{parse::ParseExpr, parser::Parser};
+
+impl ParseExpr for BreakExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParseExpr for ContinueExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
 
 impl ParseExpr for InfiniteLoopExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

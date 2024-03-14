@@ -2,27 +2,27 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, Callable,
-        Castable, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, Expression,
-        FieldAccessExpr, FunctionCallExpr, IndexExpr, Iterable, MethodCallExpr, NegationExpr,
-        Operable, OperatorExprKind, ParenthesizedExpr, RangeExprKind, RangeFromExpr,
-        RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
-        Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
-        TypeCastExpr, UnderscoreExpr, UnwrapExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, BreakExpr,
+        Callable, Castable, ClosureWithBlock, ClosureWithoutBlock, ContinueExpr, DereferenceExpr,
+        Expression, FieldAccessExpr, FunctionCallExpr, IfExpr, IndexExpr, InfiniteLoopExpr,
+        IterLoopExpr, Iterable, IterationExprKind, MatchExpr, MethodCallExpr, NegationExpr,
+        Operable, OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind,
+        RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
+        ReferenceExpr, ReturnExpr, Returnable, StructExpr, StructExprKind, TupleExpr,
+        TupleIndexExpr, TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
         IdentifierPatt, ParenthesizedPatt, Pattern, RangeFromPatt, RangeInclusivePatt,
         RangePattKind, RangeToInclusivePatt, StructPatt, TuplePatt, TupleStructPatt, WildcardPatt,
     },
-    token::Token,
     ty::{
         ArrayType, ClosureType, FunctionType, ParenthesizedType, ReferenceType, SelfType,
         TupleType, UnitType,
     },
     Type,
 };
-use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_error::error::CompilerError;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -341,6 +341,139 @@ impl ParseExpr for Expression {
             }
 
             return Ok(Some(Expression::Literal(l)));
+        }
+
+        if let Some(k) = parser.peek_current::<Keyword>() {
+            match &k.keyword_kind {
+                KeywordKind::KwBreak => {
+                    if let Some(be) = BreakExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::BreakExpr(be)));
+                    }
+                }
+                KeywordKind::KwContinue => {
+                    if let Some(ce) = ContinueExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ContinueExpr(ce)));
+                    }
+                }
+
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::PathExpr(pe)));
+                        }
+                    }
+
+                    _ => return Ok(None),
+                },
+
+                KeywordKind::KwFor => {
+                    if let Some(ile) = IterLoopExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IterationExpr(
+                            IterationExprKind::IterLoop(ile),
+                        )));
+                    }
+                }
+                KeywordKind::KwIf => {
+                    if let Some(ife) = IfExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IfExpr(ife)));
+                    }
+                }
+                KeywordKind::KwLoop => {
+                    if let Some(inf) = InfiniteLoopExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IterationExpr(
+                            IterationExprKind::InfiniteLoop(inf),
+                        )));
+                    }
+                }
+
+                KeywordKind::KwMatch => {
+                    if let Some(me) = MatchExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::MatchExpr(me)));
+                    }
+                }
+
+                KeywordKind::KwReturn => {
+                    if let Some(rtn) = ReturnExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ReturnExpr(rtn)));
+                    }
+                }
+
+                KeywordKind::KwWhile => {
+                    if let Some(pre) = PredicateLoopExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IterationExpr(
+                            IterationExprKind::PredicateLoop(pre),
+                        )));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
+            match &p.punc_kind {
+                PuncKind::Underscore => {
+                    if let Some(und) = UnderscoreExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::UnderscoreExpr(und)));
+                    }
+                }
+
+                PuncKind::Bang | PuncKind::Minus => {
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::Negation(
+                            ne,
+                        ))));
+                    }
+                }
+
+                PuncKind::Ampersand => {
+                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::Reference(
+                            re,
+                        ))));
+                    }
+                }
+
+                PuncKind::Asterisk => {
+                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::Dereference(de),
+                        )));
+                    }
+                }
+
+                PuncKind::Pipe => {
+                    if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ClosureWithBlock(cwb)));
+                    }
+                }
+
+                PuncKind::DblDot => {
+                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeToExpr(rte))));
+                    }
+                }
+
+                PuncKind::DotDotEquals => {
+                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(
+                            RangeExprKind::RangeToInclusiveExpr(rti),
+                        )));
+                    }
+                }
+
+                PuncKind::DblPipe => {
+                    if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ClosureWithoutBlock(c)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
         }
 
         Err(parser.errors())
@@ -670,12 +803,7 @@ impl ParseExpr for Castable {
                 LiteralKind::U256(u) => return Ok(Some(Castable::U256(u))),
                 LiteralKind::Float(f) => return Ok(Some(Castable::Float(f))),
 
-                _ => {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Castable`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-                }
+                _ => return Ok(None),
             }
         }
 
