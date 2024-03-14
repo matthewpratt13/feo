@@ -288,11 +288,18 @@ impl ParseExpr for Assignable {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Assignable::PathExpr(pe)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Assignable::PathExpr(pe)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None),
+                },
 
                 _ => return Ok(None),
             }
@@ -411,11 +418,18 @@ impl ParseExpr for BooleanOperand {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(BooleanOperand::PathExpr(pe)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(BooleanOperand::PathExpr(pe)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None),
+                },
 
                 _ => return Ok(None),
             }
@@ -479,11 +493,18 @@ impl ParseExpr for Callable {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Callable::PathExpr(pe)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Callable::PathExpr(pe)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None),
+                },
 
                 _ => return Ok(None),
             }
@@ -686,11 +707,18 @@ impl ParseExpr for Iterable {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Iterable::PathExpr(pe)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Iterable::PathExpr(pe)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None),
+                },
 
                 _ => return Ok(None),
             }
@@ -826,11 +854,18 @@ impl ParseExpr for Operable {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Operable::PathExpr(pe)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Operable::PathExpr(pe)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None),
+                },
 
                 _ => return Ok(None),
             }
@@ -1078,11 +1113,18 @@ impl ParseExpr for Returnable {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Returnable::PathExpr(pe)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Returnable::PathExpr(pe)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None),
+                },
 
                 _ => return Ok(None),
             }
@@ -1237,11 +1279,18 @@ impl ParsePatt for Pattern {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
-                | KeywordKind::KwSuper => {
-                    if let Some(path_patt) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Pattern::PathPatt(path_patt)));
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(path_patt) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Pattern::PathPatt(path_patt)));
+                        }
                     }
-                }
+
+                    _ => return Ok(None)
+                },
 
                 _ => return Ok(None),
             }
