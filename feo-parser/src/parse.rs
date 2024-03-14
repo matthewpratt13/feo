@@ -82,16 +82,15 @@ impl ParseExpr for Expression {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
                 }) => {
-                    // TODO: remove (replace struct.id from `Identifier` type to `PathExpr` type)
                     if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::StructExpr(StructExprKind::TupleStruct(
                             ts,
                         ))));
                     }
 
-                    // if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Expression::FunctionCallExpr(fc)));
-                    // }
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::FunctionCallExpr(fc)));
+                    }
                 }
 
                 Some(Delimiter {
@@ -103,7 +102,6 @@ impl ParseExpr for Expression {
                     }
                 }
 
-                // TODO: remove (replace struct.id from `Identifier` type to `PathExpr` type)
                 Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
@@ -234,8 +232,16 @@ impl ParseExpr for Expression {
                     punc_kind: PuncKind::DblDot,
                     ..
                 }) => {
-                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeToExpr(rte))));
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
+                            rft,
+                        ))));
+                    }
+
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeFromExpr(
+                            rfe,
+                        ))));
                     }
                 }
 
@@ -243,9 +249,9 @@ impl ParseExpr for Expression {
                     punc_kind: PuncKind::DotDotEquals,
                     ..
                 }) => {
-                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::RangeExpr(
-                            RangeExprKind::RangeToInclusiveExpr(rti),
+                            RangeExprKind::RangeInclusiveExpr(rie),
                         )));
                     }
                 }
@@ -341,6 +347,30 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::MethodCallExpr(mc)));
                     }
 
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::TupleExpr(te)));
+                    }
+
+                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::TupleIndexExpr(ti)));
+                    }
+
+                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::Comparison(ce),
+                        )));
+                    }
+                }
+
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ArrayExpr(ae)));
+                    }
+
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IndexExpr(ie)));
+                    }
+
                     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::OperatorExpr(
                             OperatorExprKind::ArithmeticOrLogical(al),
@@ -353,22 +383,40 @@ impl ParseExpr for Expression {
                         )));
                     }
 
-                    if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::UnwrapExpr(ue),
-                        )));
-                    }
-
                     if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::OperatorExpr(
                             OperatorExprKind::CompoundAssign(cae),
                         )));
                     }
 
-                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::RangeExpr(
-                            RangeExprKind::RangeInclusiveExpr(rie),
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::Negation(
+                            ne,
+                        ))));
+                    }
+
+                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::Dereference(de),
                         )));
+                    }
+
+                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::Reference(
+                            re,
+                        ))));
+                    }
+
+                    if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::UnwrapExpr(ue),
+                        )));
+                    }
+
+                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
+                            lb,
+                        ))));
                     }
 
                     if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
@@ -383,28 +431,10 @@ impl ParseExpr for Expression {
                         ))));
                     }
 
-                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
-                            lb,
-                        ))));
-                    }
-
-                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::TupleExpr(te)));
-                    }
-
-                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::TupleIndexExpr(ti)));
-                    }
-                }
-
-                (DelimKind::Bracket, DelimOrientation::Open) => {
-                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::ArrayExpr(ae)));
-                    }
-
-                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::IndexExpr(ie)));
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(
+                            RangeExprKind::RangeInclusiveExpr(rie),
+                        )));
                     }
                 }
 
@@ -568,6 +598,12 @@ impl ParseExpr for Expression {
                 _ => (),
             }
 
+            if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(Expression::OperatorExpr(OperatorExprKind::Negation(
+                    ne,
+                ))));
+            }
+
             return Ok(Some(Expression::Literal(l)));
         }
 
@@ -592,57 +628,6 @@ impl ParseExpr for Expression {
                         punc_kind: PuncKind::DblColon,
                         ..
                     }) => {
-                        match parser.peek_next::<Punctuation>() {
-                            Some(Punctuation {
-                                punc_kind: PuncKind::FullStop,
-                                ..
-                            }) => {
-                                if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                                    return Ok(Some(Expression::MethodCallExpr(mc)));
-                                }
-
-                                if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                                    return Ok(Some(Expression::FieldAccessExpr(fa)));
-                                }
-                            }
-
-                            _ => (),
-                        }
-
-                        match parser.peek_next::<Delimiter>() {
-                            Some(Delimiter {
-                                delim: (DelimKind::Parenthesis, DelimOrientation::Open),
-                                ..
-                            }) => {
-                                if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                                    return Ok(Some(Expression::StructExpr(
-                                        StructExprKind::TupleStruct(ts),
-                                    )));
-                                }
-
-                                if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-                                    return Ok(Some(Expression::FunctionCallExpr(fc)));
-                                }
-                            }
-
-                            Some(Delimiter {
-                                delim: (DelimKind::Brace, DelimOrientation::Open),
-                                ..
-                            }) => {
-                                if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                                    return Ok(Some(Expression::StructExpr(
-                                        StructExprKind::Struct(se),
-                                    )));
-                                }
-                            }
-
-                            _ => (),
-                        }
-
-                        if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Expression::IndexExpr(ie)));
-                        }
-
                         if let Some(pe) = PathInExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Expression::PathExpr(pe)));
                         }
@@ -658,11 +643,13 @@ impl ParseExpr for Expression {
                         )));
                     }
                 }
+
                 KeywordKind::KwIf => {
                     if let Some(ife) = IfExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::IfExpr(ife)));
                     }
                 }
+
                 KeywordKind::KwLoop => {
                     if let Some(inf) = InfiniteLoopExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::IterationExpr(
@@ -704,6 +691,48 @@ impl ParseExpr for Expression {
                     if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::OperatorExpr(OperatorExprKind::Negation(
                             ne,
+                        ))));
+                    }
+
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(al),
+                        )));
+                    }
+
+                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::Comparison(ce),
+                        )));
+                    }
+
+                    if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::CompoundAssign(cae),
+                        )));
+                    }
+
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
+                            rft,
+                        ))));
+                    }
+
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeFromExpr(
+                            rfe,
+                        ))));
+                    }
+
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(
+                            RangeExprKind::RangeInclusiveExpr(rie),
+                        )));
+                    }
+
+                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
+                            lb,
                         ))));
                     }
                 }
