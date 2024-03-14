@@ -347,12 +347,12 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::MethodCallExpr(mc)));
                     }
 
-                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::TupleExpr(te)));
-                    }
-
                     if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::TupleIndexExpr(ti)));
+                    }
+
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::TupleExpr(te)));
                     }
 
                     if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
@@ -363,12 +363,12 @@ impl ParseExpr for Expression {
                 }
 
                 (DelimKind::Bracket, DelimOrientation::Open) => {
-                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::ArrayExpr(ae)));
-                    }
-
                     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::IndexExpr(ie)));
+                    }
+
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ArrayExpr(ae)));
                     }
 
                     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
@@ -1741,7 +1741,6 @@ impl ParseExpr for Returnable {
                 //         return Ok(Some(Returnable::UnderscoreExpr(und)));
                 //     }
                 // }
-
                 PuncKind::Bang | PuncKind::Minus => {
                     if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Returnable::NegationExpr(ne)));
