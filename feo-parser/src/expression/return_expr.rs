@@ -1,4 +1,4 @@
-use feo_ast::expression::{ReturnExpr, Returnable};
+use feo_ast::expression::{Expression, ReturnExpr};
 use feo_error::error::CompilerError;
 use feo_types::{keyword::KeywordKind, Keyword};
 
@@ -18,7 +18,7 @@ impl ParseExpr for ReturnExpr {
         {
             parser.next_token();
 
-            let expression_opt = if let Some(e) = Returnable::parse(parser)? {
+            let expression_opt = if let Some(e) = Expression::parse(parser)? {
                 parser.next_token();
                 Some(Box::new(e))
             } else {
