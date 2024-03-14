@@ -5,10 +5,10 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, Callable,
         Castable, ClosureWithBlock, ClosureWithoutBlock, DereferenceExpr, Expression,
         FieldAccessExpr, FunctionCallExpr, IndexExpr, Iterable, MethodCallExpr, NegationExpr,
-        Operable, ParenthesizedExpr, RangeExprKind, RangeFromExpr, RangeFromToExpr,
-        RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr, Returnable,
-        StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
-        UnderscoreExpr, UnwrapExpr,
+        Operable, OperatorExprKind, ParenthesizedExpr, RangeExprKind, RangeFromExpr,
+        RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
+        Returnable, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
+        TypeCastExpr, UnderscoreExpr, UnwrapExpr,
     },
     path::{PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -71,7 +71,148 @@ impl ParseExpr for Expression {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            match &parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::StructExpr(StructExprKind::TupleStruct(
+                            ts,
+                        ))));
+                    }
+
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::FunctionCallExpr(fc)));
+                    }
+                }
+
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::StructExpr(StructExprKind::Struct(se))));
+                    }
+                }
+
+                _ => (),
+            }
+
+            match &parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::FullStop,
+                    ..
+                }) => {
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::MethodCallExpr(mc)));
+                    }
+
+                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::FieldAccessExpr(fa)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(al),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) => {
+                    if let Some(path_expr) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::PathExpr(path_expr)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::QuestionMark,
+                    ..
+                }) => {
+                    if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::UnwrapExpr(ue),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblDot,
+                    ..
+                }) => {
+                    if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeToExpr(rte))));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DotDotEquals,
+                    ..
+                }) => {
+                    if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(
+                            RangeExprKind::RangeToInclusiveExpr(rti),
+                        )));
+                    }
+                }
+
+                _ => (),
+            }
+
+            let path_expr = PathInExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Expression::PathExpr(path_expr)));
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -1146,6 +1287,19 @@ impl ParseType for Type {
                 return Ok(Some(Type::PrimitiveType(bit)));
             }
 
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) => {
+                    if let Some(path_type) = PathType::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Type::UserDefinedType(path_type)));
+                    }
+                }
+
+                _ => (),
+            }
+
             let path_type = PathType {
                 first_segment: PathTypeSegment::Iden(id),
                 subsequent_segments: None,
@@ -1155,7 +1309,7 @@ impl ParseType for Type {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            match d.delim {
+            match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(ut) = UnitType::parse(parser).unwrap_or(None) {
                         return Ok(Some(Type::UnitType(ut)));
@@ -1180,25 +1334,29 @@ impl ParseType for Type {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match k.keyword_kind {
-                KeywordKind::KwCrate | KeywordKind::KwSelfType | KeywordKind::KwSuper => {
-                    if let Some(path_type) = PathType::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Type::UserDefinedType(path_type)));
+                KeywordKind::KwCrate
+                | KeywordKind::KwSelf
+                | KeywordKind::KwSelfType
+                | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblColon,
+                        ..
+                    }) => {
+                        if let Some(path_type) = PathType::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Type::UserDefinedType(path_type)));
+                        }
                     }
-                }
+
+                    _ => {
+                        if let Some(st) = SelfType::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Type::SelfType(st)));
+                        }
+                    }
+                },
 
                 KeywordKind::KwFunc => {
                     if let Some(ft) = FunctionType::parse(parser).unwrap_or(None) {
                         return Ok(Some(Type::FunctionType(ft)));
-                    }
-                }
-
-                KeywordKind::KwSelf => {
-                    if let Some(st) = SelfType::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Type::SelfType(st)));
-                    }
-
-                    if let Some(path_type) = PathType::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Type::UserDefinedType(path_type)));
                     }
                 }
 
