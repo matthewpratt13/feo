@@ -84,6 +84,7 @@ pub enum Expression {
     ReturnExpr(ReturnExpr),
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
 
@@ -111,6 +112,7 @@ impl Spanned for Expression {
             Expression::ReturnExpr(rtn) => rtn.span(),
             Expression::StructExpr(se) => se.span(),
             Expression::TupleExpr(te) => te.span(),
+            Expression::TupleIndexExpr(ti) => ti.span(),
             Expression::UnderscoreExpr(ue) => ue.span(),
         }
     }

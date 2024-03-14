@@ -212,6 +212,42 @@ impl ParseExpr for Expression {
             return Ok(Some(Expression::PathExpr(path_expr)));
         }
 
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            match d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ParenthesizedExpr(par)));
+                    }
+
+                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::TupleIndexExpr(ti)));
+                    }
+
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::TupleExpr(te)));
+                    }
+                }
+
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IndexExpr(ie)));
+                    }
+
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::ArrayExpr(ae)));
+                    }
+                }
+
+                (DelimKind::Brace, DelimOrientation::Open) => {
+                    if let Some(be) = BlockExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::BlockExpr(be)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        }
+
         Err(parser.errors())
     }
 }
@@ -1289,7 +1325,7 @@ impl ParsePatt for Pattern {
                         }
                     }
 
-                    _ => return Ok(None)
+                    _ => return Ok(None),
                 },
 
                 _ => return Ok(None),
