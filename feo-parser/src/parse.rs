@@ -246,6 +246,101 @@ impl ParseExpr for Expression {
 
                 _ => return Ok(None),
             }
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            if let Some(k) = parser.peek_next::<Keyword>() {
+                match &k.keyword_kind {
+                    KeywordKind::KwAs => {
+                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::OperatorExpr(OperatorExprKind::TypeCast(
+                                tc,
+                            ))));
+                        }
+                    }
+
+                    _ => (),
+                }
+            }
+
+            match &parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(al),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblDot,
+                    ..
+                }) => {
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
+                            rft,
+                        ))));
+                    }
+
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(RangeExprKind::RangeFromExpr(
+                            rfe,
+                        ))));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DotDotEquals,
+                    ..
+                }) => {
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::RangeExpr(
+                            RangeExprKind::RangeInclusiveExpr(rie),
+                        )));
+                    }
+                }
+
+                _ => (),
+            }
+
+            return Ok(Some(Expression::Literal(l)));
         }
 
         Err(parser.errors())
@@ -695,32 +790,34 @@ impl ParseExpr for Iterable {
                 _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            if let Some(p) = parser.peek_next::<Punctuation>() {
-                match &p.punc_kind {
-                    PuncKind::DblDot => {
-                        if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromToExpr(
-                                rft,
-                            ))));
-                        }
-
-                        if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromExpr(
-                                rfe,
-                            ))));
-                        }
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblDot,
+                    ..
+                }) => {
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromToExpr(
+                            rft,
+                        ))));
                     }
 
-                    PuncKind::DotDotEquals => {
-                        if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Iterable::RangeExpr(
-                                RangeExprKind::RangeInclusiveExpr(rie),
-                            )));
-                        }
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(RangeExprKind::RangeFromExpr(rfe))));
                     }
-
-                    _ => (),
                 }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DotDotEquals,
+                    ..
+                }) => {
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Iterable::RangeExpr(
+                            RangeExprKind::RangeInclusiveExpr(rie),
+                        )));
+                    }
+                }
+
+                _ => (),
             }
 
             if let Some(k) = parser.peek_next::<Keyword>() {
@@ -1080,6 +1177,18 @@ impl ParseExpr for Returnable {
                 _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            if let Some(k) = parser.peek_next::<Keyword>() {
+                match &k.keyword_kind {
+                    KeywordKind::KwAs => {
+                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Returnable::TypeCastExpr(tc)));
+                        }
+                    }
+
+                    _ => (),
+                }
+            }
+
             match &parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::Plus,
@@ -1127,18 +1236,6 @@ impl ParseExpr for Returnable {
                 }
 
                 _ => (),
-            }
-
-            if let Some(k) = parser.peek_next::<Keyword>() {
-                match &k.keyword_kind {
-                    KeywordKind::KwAs => {
-                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Returnable::TypeCastExpr(tc)));
-                        }
-                    }
-
-                    _ => (),
-                }
             }
 
             return Ok(Some(Returnable::Literal(l)));
