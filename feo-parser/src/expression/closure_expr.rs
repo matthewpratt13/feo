@@ -2,6 +2,7 @@ use feo_ast::{
     attribute::OuterAttr,
     expression::{
         ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
+        Expression,
     },
     pattern::Pattern,
     token::Token,
@@ -165,7 +166,27 @@ impl ParseExpr for ClosureWithoutBlock {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(params) = ClosureParamsOpt::parse(parser)? {
+            parser.next_token();
+
+            if let Some(body_operand) = Expression::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(ClosureWithoutBlock {
+                    params,
+                    body_operand: Box::new(body_operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Expression`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -217,5 +238,17 @@ mod tests {
             ClosureParams::parse(&mut parser).expect("unable to parse closure params");
 
         Ok(println!("{:#?}", closure_params))
+    }
+
+    #[test]
+    fn parse_closure_without_block() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"|foo: u64| return bar"#;
+
+        let mut parser = test_utils::get_parser(source_code, true)?;
+
+        let closure_without_block =
+            ClosureWithoutBlock::parse(&mut parser).expect("unable to parse closure without block");
+
+        Ok(println!("{:#?}", closure_without_block))
     }
 }
