@@ -152,46 +152,46 @@ impl ParsePatt for RangeToInclusivePatt {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_range_from_patt() {
-//         let source_code = r#"1.."#;
+    #[test]
+    fn parse_range_from_patt() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"1.."#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let range_from_patt =
-//             RangeFromPatt::parse(&mut parser).expect("unable to parse `RangeFromPatt`");
+        let range_from_patt =
+            RangeFromPatt::parse(&mut parser).expect("unable to parse `RangeFromPatt`");
 
-//         println!("{:#?}", range_from_patt);
-//     }
+        Ok(println!("{:#?}", range_from_patt))
+    }
 
-//     #[test]
-//     fn parse_range_inclusive_patt() {
-//         let source_code = r#"1..=10"#;
+    #[test]
+    fn parse_range_inclusive_patt() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"1..=10"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let range_inclusive_patt =
-//             RangeInclusivePatt::parse(&mut parser).expect("unable to parse `RangeInclusivePatt`");
+        let range_inclusive_patt =
+            RangeInclusivePatt::parse(&mut parser).expect("unable to parse `RangeInclusivePatt`");
 
-//         println!("{:#?}", range_inclusive_patt);
-//     }
+        Ok(println!("{:#?}", range_inclusive_patt))
+    }
 
-//     #[test]
-//     fn parse_range_to_inclusive_patt() {
-//         let source_code = r#"..=10"#;
+    #[test]
+    fn parse_range_to_inclusive_patt() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"..=10"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let range_to_inclusive_patt = RangeToInclusivePatt::parse(&mut parser)
-//             .expect("unable to parse `RangeToInclusivePatt`");
+        let range_to_inclusive_patt = RangeToInclusivePatt::parse(&mut parser)
+            .expect("unable to parse `RangeToInclusivePatt`");
 
-//         println!("{:#?}", range_to_inclusive_patt);
-//     }
-// }
+        Ok(println!("{:#?}", range_to_inclusive_patt))
+    }
+}

@@ -17,22 +17,22 @@ impl ParsePatt for WildcardPatt {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_wildcard_patt() {
-//         let source_code = r#"_"#;
+    #[test]
+    fn parse_wildcard_patt() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"_"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let wildcard_patt =
-//             WildcardPatt::parse(&mut parser).expect("unable to parse wildcard pattern");
+        let wildcard_patt =
+            WildcardPatt::parse(&mut parser).expect("unable to parse wildcard pattern");
 
-//         println!("{:#?}", wildcard_patt);
-//     }
-// }
+        Ok(println!("{:#?}", wildcard_patt))
+    }
+}

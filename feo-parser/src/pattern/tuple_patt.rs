@@ -38,7 +38,7 @@ impl ParseTerm for TuplePattElements {
                     break;
                 }
             }
-            
+
             parser.next_token();
 
             let trailing_comma_opt = parser.peek_current::<Punctuation>();
@@ -118,33 +118,33 @@ impl ParsePatt for TuplePatt {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_tuple_patt_elements() {
-//         let source_code = r#"1, "a", x"#;
+    #[test]
+    fn parse_tuple_patt_elements() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"1, "a", x"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let tuple_patt_elements =
-//             TuplePattElements::parse(&mut parser).expect("unable to parse tuple pattern elements");
+        let tuple_patt_elements =
+            TuplePattElements::parse(&mut parser).expect("unable to parse tuple pattern elements");
 
-//         println!("{:#?}", tuple_patt_elements);
-//     }
+        Ok(println!("{:#?}", tuple_patt_elements))
+    }
 
-//     #[test]
-//     fn parse_tuple_patt() {
-//         let source_code = r#"(1, "a", x)"#;
+    #[test]
+    fn parse_tuple_patt() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"(1, "a", x)"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let tuple_patt = TuplePatt::parse(&mut parser).expect("unable to parse tuple pattern");
+        let tuple_patt = TuplePatt::parse(&mut parser).expect("unable to parse tuple pattern");
 
-//         println!("{:#?}", tuple_patt);
-//     }
-// }
+        Ok(println!("{:#?}", tuple_patt))
+    }
+}
