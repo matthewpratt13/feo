@@ -1,10 +1,9 @@
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
-        BooleanOperand, ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind,
-        CompoundAssignmentExpr, DereferenceExpr, Expression, LazyBoolExpr, LazyBoolOperatorKind,
-        NegationExpr, NegationOperatorKind, Operable, ReferenceExpr, TypeCastExpr, UnwrapExpr,
-        UnwrapOperandKind,
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
+        ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
+        DereferenceExpr, Expression, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr,
+        NegationOperatorKind, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
     token::Token,
 };
@@ -415,7 +414,7 @@ impl ParseExpr for DereferenceExpr {
         {
             parser.next_token();
 
-            if let Some(operand) = Assignable::parse(parser)? {
+            if let Some(operand) = Expression::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(DereferenceExpr {
@@ -441,7 +440,7 @@ impl ParseExpr for LazyBoolExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = BooleanOperand::parse(parser)? {
+        if let Some(lhs) = Expression::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -467,7 +466,7 @@ impl ParseExpr for LazyBoolExpr {
                     }
                 };
 
-                if let Some(rhs) = BooleanOperand::parse(parser)? {
+                if let Some(rhs) = Expression::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(LazyBoolExpr {
@@ -526,7 +525,7 @@ impl ParseExpr for NegationExpr {
                 }
             };
 
-            if let Some(operand) = Operable::parse(parser)? {
+            if let Some(operand) = Expression::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(NegationExpr {
@@ -573,7 +572,7 @@ impl ParseExpr for ReferenceExpr {
 
             let operator = (ampersand_opt.unwrap(), kw_mut_opt);
 
-            if let Some(operand) = Assignable::parse(parser)? {
+            if let Some(operand) = Expression::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(ReferenceExpr {

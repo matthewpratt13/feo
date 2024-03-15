@@ -2,8 +2,8 @@
 
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, AssignmentExpr, BlockExpr, BooleanOperand,
-        BreakExpr, Callable, Castable, ClosureWithBlock, ClosureWithoutBlock, ComparisonExpr,
+        ArithmeticOrLogicalExpr, ArrayExpr, Assignable, BlockExpr, BooleanOperand, BreakExpr,
+        Callable, Castable, ClosureWithBlock, ClosureWithoutBlock, ComparisonExpr,
         CompoundAssignmentExpr, ContinueExpr, DereferenceExpr, Expression, FieldAccessExpr,
         FunctionCallExpr, IfExpr, IndexExpr, InfiniteLoopExpr, IterLoopExpr, Iterable,
         IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr, NegationExpr, Operable,
@@ -183,16 +183,6 @@ impl ParseExpr for Expression {
                 //         )));
                 //     }
                 // }
-                // Some(Punctuation {
-                //     punc_kind: PuncKind::Equals,
-                //     ..
-                // }) => {
-                //     if let Some(ae) = AssignmentExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(Expression::OperatorExpr(
-                //             OperatorExprKind::Assignment(ae),
-                //         )));
-                //     }
-                // }
 
                 // Some(Punctuation {
                 //     punc_kind: PuncKind::LessThan,
@@ -224,7 +214,6 @@ impl ParseExpr for Expression {
                 //         )));
                 //     }
                 // }
-
                 Some(Punctuation {
                     punc_kind: PuncKind::QuestionMark,
                     ..
@@ -263,21 +252,20 @@ impl ParseExpr for Expression {
                 //     }
                 // }
 
-                Some(Punctuation {
-                    punc_kind: PuncKind::DblAmpersand,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblPipe,
-                    ..
-                }) => {
-                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
-                            lb,
-                        ))));
-                    }
-                }
-
+                // Some(Punctuation {
+                //     punc_kind: PuncKind::DblAmpersand,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::DblPipe,
+                //     ..
+                // }) => {
+                //     if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
+                //             lb,
+                //         ))));
+                //     }
+                // }
                 Some(Punctuation {
                     punc_kind: PuncKind::DblDot,
                     ..
@@ -507,7 +495,6 @@ impl ParseExpr for Expression {
                 //         )));
                 //     }
                 // }
-
                 Some(Punctuation {
                     punc_kind: PuncKind::LessThan,
                     ..
