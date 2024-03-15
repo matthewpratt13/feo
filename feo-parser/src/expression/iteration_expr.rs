@@ -1,6 +1,6 @@
 use feo_ast::{
     expression::{
-        BlockExpr, BooleanOperand, BreakExpr, ContinueExpr, InfiniteLoopExpr, IterLoopExpr,
+        BlockExpr, BreakExpr, ContinueExpr, Expression, InfiniteLoopExpr, IterLoopExpr,
         PredicateLoopExpr,
     },
     token::Token,
@@ -75,7 +75,7 @@ impl ParseExpr for PredicateLoopExpr {
         {
             parser.next_token();
 
-            if let Some(conditional_operand) = BooleanOperand::parse(parser)? {
+            if let Some(conditional_operand) = Expression::parse(parser)? {
                 parser.next_token();
 
                 if let Some(block) = BlockExpr::parse(parser)? {

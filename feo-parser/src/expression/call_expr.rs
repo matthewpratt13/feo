@@ -1,5 +1,6 @@
 use feo_ast::{
-    expression::{CallParams, Callable, Expression, FunctionCallExpr, MethodCallExpr},
+    expression::{CallParams, Expression, FunctionCallExpr, MethodCallExpr},
+    path::PathInExpr,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -60,9 +61,7 @@ impl ParseExpr for FunctionCallExpr {
     where
         Self: Sized,
     {
-        if let Some(function_operand) = Callable::parse(parser)? {
-            parser.next_token();
-
+        if let Some(function_operand) = PathInExpr::parse(parser)? {
             let open_parenthesis_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -84,7 +83,7 @@ impl ParseExpr for FunctionCallExpr {
                     parser.next_token();
 
                     return Ok(Some(FunctionCallExpr {
-                        function_operand: Box::new(function_operand),
+                        function_operand,
                         open_parenthesis: open_parenthesis_opt.unwrap(),
                         call_params_opt,
                         close_parenthesis: close_parenthesis_opt.unwrap(),
@@ -113,9 +112,7 @@ impl ParseExpr for MethodCallExpr {
     where
         Self: Sized,
     {
-        if let Some(receiver) = Callable::parse(parser)? {
-            parser.next_token();
-
+        if let Some(receiver) = PathInExpr::parse(parser)? {
             let full_stop_opt = parser.peek_current::<Punctuation>();
 
             if let Some(Punctuation {
@@ -149,7 +146,7 @@ impl ParseExpr for MethodCallExpr {
                             parser.next_token();
 
                             return Ok(Some(MethodCallExpr {
-                                receiver: Box::new(receiver),
+                                receiver,
                                 full_stop: full_stop_opt.unwrap(),
                                 method_name,
                                 open_parenthesis: open_parenthesis_opt.unwrap(),

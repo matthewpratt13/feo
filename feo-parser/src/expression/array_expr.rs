@@ -1,7 +1,7 @@
 use feo_ast::{
     expression::{
         ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
-        Assignable, IndexExpr, Iterable,
+        Expression, IndexExpr,
     },
     token::Token,
 };
@@ -24,9 +24,9 @@ impl ParseTerm for ArrayElementsCommaSeparated {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<Iterable> = Vec::new();
+        let mut subsequent_elements: Vec<Expression> = Vec::new();
 
-        if let Some(first_element) = Iterable::parse(parser)? {
+        if let Some(first_element) = Expression::parse(parser)? {
             parser.next_token();
 
             while let Some(Punctuation {
@@ -36,7 +36,7 @@ impl ParseTerm for ArrayElementsCommaSeparated {
             {
                 parser.next_token();
 
-                if let Some(next_element) = Iterable::parse(parser)? {
+                if let Some(next_element) = Expression::parse(parser)? {
                     subsequent_elements.push(next_element);
 
                     parser.next_token();
@@ -66,7 +66,7 @@ impl ParseTerm for ArrayElementsRepeatedValue {
     where
         Self: Sized,
     {
-        if let Some(repeat_operand) = Iterable::parse(parser)? {
+        if let Some(repeat_operand) = Expression::parse(parser)? {
             parser.next_token();
 
             let semicolon_opt = parser.peek_current::<Punctuation>();
@@ -177,7 +177,7 @@ impl ParseExpr for IndexExpr {
     where
         Self: Sized,
     {
-        if let Some(indexed_operand) = Assignable::parse(parser)? {
+        if let Some(indexed_operand) = Expression::parse(parser)? {
             parser.next_token();
 
             let open_bracket_opt = parser.peek_current::<Delimiter>();
@@ -202,7 +202,7 @@ impl ParseExpr for IndexExpr {
                         parser.next_token();
 
                         return Ok(Some(IndexExpr {
-                            indexed_operand,
+                            indexed_operand: Box::new(indexed_operand),
                             open_bracket: open_bracket_opt.unwrap(),
                             index: U64Primitive::try_from(index)
                                 .expect("error converting `Literal<UIntType>` to `U64Primitive`"),
