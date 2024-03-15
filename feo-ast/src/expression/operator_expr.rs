@@ -10,7 +10,7 @@ use feo_types::{
     },
 };
 
-use super::Expression;
+use super::{Expression, Term};
 
 #[derive(Debug, Clone)]
 pub enum OperatorExprKind {
@@ -163,9 +163,9 @@ impl Spanned for AssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct CompoundAssignmentExpr {
-    pub assignee: Box<Expression>,
+    pub assignee: Box<Term>,
     pub operator: CompoundAssignOperatorKind,
-    pub new_value: Box<Expression>,
+    pub new_value: Box<Term>,
 }
 
 impl Spanned for CompoundAssignmentExpr {
@@ -227,7 +227,7 @@ impl Spanned for LazyBoolExpr {
 #[derive(Debug, Clone)]
 pub struct NegationExpr {
     pub operator: NegationOperatorKind,
-    pub operand: Box<Expression>,
+    pub operand: Box<Term>,
 }
 
 impl Spanned for NegationExpr {

@@ -160,3 +160,40 @@ pub enum ExprWithoutBlock {
     TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
+
+#[derive(Debug, Clone)]
+pub enum Term {
+    ArrayExpr(ArrayExpr),
+    IndexExpr(IndexExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
+    FieldAccessExpr(FieldAccessExpr),
+    Literal(LiteralKind),
+    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+    NegationExpr(NegationExpr),
+    ParenthesizedExpr(ParenthesizedExpr),
+    PathExpr(PathExpr),
+    StructExpr(StructExprKind),
+    TupleExpr(TupleExpr),
+    TupleIndexExpr(TupleIndexExpr),
+}
+
+impl Spanned for Term {
+    fn span(&self) -> Span {
+        match self {
+            Term::ArrayExpr(ae) => ae.span(),
+            Term::IndexExpr(ie) => ie.span(),
+            Term::FunctionCallExpr(fc) => fc.span(),
+            Term::MethodCallExpr(mc) => mc.span(),
+            Term::FieldAccessExpr(fa) => fa.span(),
+            Term::Literal(lit) => lit.span(),
+            Term::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            Term::NegationExpr(ne) => ne.span(),
+            Term::ParenthesizedExpr(par) => par.span(),
+            Term::PathExpr(pth) => pth.span(),
+            Term::StructExpr(se) => se.span(),
+            Term::TupleExpr(tup) => tup.span(),
+            Term::TupleIndexExpr(tie) => tie.span(),
+        }
+    }
+}

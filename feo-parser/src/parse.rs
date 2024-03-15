@@ -822,18 +822,51 @@ impl ParseTerm for Term {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
+            match parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::StructExpr(StructExprKind::TupleStruct(ts))));
+                    }
+
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::FunctionCallExpr(fc)));
+                    }
+                }
+
+                Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::IndexExpr(ie)));
+                    }
+                }
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::StructExpr(StructExprKind::Struct(se))));
+                    }
+                }
+                _ => (),
+            }
+
             match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
                     punc_kind: PuncKind::FullStop,
                     ..
                 }) => {
-                    // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Term::FieldAccessExpr(fa)));
-                    // }
+                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::FieldAccessExpr(fa)));
+                    }
 
-                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Expression::MethodCallExpr(mc)));
-                    // }
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::MethodCallExpr(mc)));
+                    }
                 }
 
                 Some(Punctuation {
@@ -900,24 +933,24 @@ impl ParseTerm for Term {
                             return Ok(Some(Term::ParenthesizedExpr(par)));
                         }
 
-                        // if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                        //     return Ok(Some(Expression::TupleIndexExpr(ti)));
-                        // }
+                        if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Term::TupleIndexExpr(ti)));
+                        }
 
-                        // if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                        //     return Ok(Some(Expression::TupleExpr(te)));
-                        // }
+                        if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Term::TupleExpr(te)));
+                        }
                     }
 
-                    // (DelimKind::Bracket, DelimOrientation::Open) => {
-                    //     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                    //         return Ok(Some(Expression::IndexExpr(ie)));
-                    //     }
+                    (DelimKind::Bracket, DelimOrientation::Open) => {
+                        if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Term::IndexExpr(ie)));
+                        }
 
-                    //     if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                    //         return Ok(Some(Expression::ArrayExpr(ae)));
-                    //     }
-                    // }
+                        if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Term::ArrayExpr(ae)));
+                        }
+                    }
                     _ => (),
                 }
 

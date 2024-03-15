@@ -3,12 +3,12 @@ use feo_types::{
     utils::KwReturn,
 };
 
-use super::Expression;
+use super::Term;
 
 #[derive(Debug, Clone)]
 pub struct ReturnExpr {
     pub kw_return: KwReturn,
-    pub expression_opt: Option<Box<Expression>>,
+    pub expression_opt: Option<Box<Term>>,
 }
 
 impl Spanned for ReturnExpr {
