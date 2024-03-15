@@ -4,6 +4,7 @@ use feo_ast::{
         Expression, StructExpr, StructExprField, StructExprFields, TupleStructExpr,
         TupleStructExprFields,
     },
+    path::PathInExpr,
     token::Token,
 };
 
@@ -126,9 +127,7 @@ impl ParseExpr for StructExpr {
     where
         Self: Sized,
     {
-        if let Some(id) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
+        if let Some(path) = PathInExpr::parse(parser)? {
             let open_brace_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -154,7 +153,7 @@ impl ParseExpr for StructExpr {
                     parser.next_token();
 
                     return Ok(Some(StructExpr {
-                        id,
+                        path,
                         open_brace: open_brace_opt.unwrap(),
                         fields_opt,
                         close_brace: close_brace_opt.unwrap(),
@@ -225,9 +224,7 @@ impl ParseExpr for TupleStructExpr {
     where
         Self: Sized,
     {
-        if let Some(id) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
+        if let Some(path) = PathInExpr::parse(parser)? {
             let open_parenthesis_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -253,7 +250,7 @@ impl ParseExpr for TupleStructExpr {
                     parser.next_token();
 
                     return Ok(Some(TupleStructExpr {
-                        id,
+                        path,
                         open_parenthesis: open_parenthesis_opt.unwrap(),
                         fields_opt,
                         close_parenthesis: close_parenthesis_opt.unwrap(),

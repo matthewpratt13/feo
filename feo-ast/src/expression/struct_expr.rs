@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::attribute::OuterAttr;
+use crate::{attribute::OuterAttr, path::PathInExpr};
 
 use super::Expression;
 
@@ -25,7 +25,7 @@ impl Spanned for StructExprKind {
 
 #[derive(Debug, Clone)]
 pub struct StructExpr {
-    pub id: Identifier,
+    pub path: PathInExpr,
     pub open_brace: Brace,
     pub fields_opt: Option<StructExprFields>,
     pub close_brace: Brace,
@@ -33,7 +33,7 @@ pub struct StructExpr {
 
 impl Spanned for StructExpr {
     fn span(&self) -> Span {
-        let s1 = self.id.span();
+        let s1 = self.path.span();
         let s2 = self.close_brace.span();
 
         Span::join(s1, s2)
@@ -54,7 +54,7 @@ pub struct StructExprField {
 
 #[derive(Debug, Clone)]
 pub struct TupleStructExpr {
-    pub id: Identifier,
+    pub path: PathInExpr,
     pub open_parenthesis: Parenthesis,
     pub fields_opt: Option<TupleStructExprFields>,
     pub close_parenthesis: Parenthesis,
@@ -62,7 +62,7 @@ pub struct TupleStructExpr {
 
 impl Spanned for TupleStructExpr {
     fn span(&self) -> Span {
-        let s1 = self.id.span();
+        let s1 = self.path.span();
         let s2 = self.close_parenthesis.span();
 
         Span::join(s1, s2)
