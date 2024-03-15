@@ -8,8 +8,8 @@ use feo_ast::{
         IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr, NegationExpr,
         OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind, RangeFromExpr,
         RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
-        ReturnExpr, StructExpr, StructExprKind, Term, TupleExpr, TupleIndexExpr, TupleStructExpr,
-        TypeCastExpr, UnderscoreExpr, UnwrapExpr,
+        ReturnExpr, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
+        TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -816,7 +816,7 @@ impl ParsePatt for Pattern {
     }
 }
 
-impl ParseTerm for Term {
+impl ParseTerm for Value {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -828,11 +828,11 @@ impl ParseTerm for Term {
                     ..
                 }) => {
                     if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::StructExpr(StructExprKind::TupleStruct(ts))));
+                        return Ok(Some(Value::StructExpr(StructExprKind::TupleStruct(ts))));
                     }
 
                     if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::FunctionCallExpr(fc)));
+                        return Ok(Some(Value::FunctionCallExpr(fc)));
                     }
                 }
 
@@ -841,7 +841,7 @@ impl ParseTerm for Term {
                     ..
                 }) => {
                     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::IndexExpr(ie)));
+                        return Ok(Some(Value::IndexExpr(ie)));
                     }
                 }
                 Some(Delimiter {
@@ -849,7 +849,7 @@ impl ParseTerm for Term {
                     ..
                 }) => {
                     if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::StructExpr(StructExprKind::Struct(se))));
+                        return Ok(Some(Value::StructExpr(StructExprKind::Struct(se))));
                     }
                 }
                 _ => (),
@@ -861,11 +861,11 @@ impl ParseTerm for Term {
                     ..
                 }) => {
                     if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::FieldAccessExpr(fa)));
+                        return Ok(Some(Value::FieldAccessExpr(fa)));
                     }
 
                     if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::MethodCallExpr(mc)));
+                        return Ok(Some(Value::MethodCallExpr(mc)));
                     }
                 }
 
@@ -910,7 +910,7 @@ impl ParseTerm for Term {
                     ..
                 }) => {
                     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::ArithmeticOrLogicalExpr(al)));
+                        return Ok(Some(Value::ArithmeticOrLogicalExpr(al)));
                     }
                 }
 
@@ -922,7 +922,7 @@ impl ParseTerm for Term {
                 subsequent_segments: None,
             };
 
-            return Ok(Some(Term::PathExpr(path_expr)));
+            return Ok(Some(Value::PathExpr(path_expr)));
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
@@ -930,43 +930,43 @@ impl ParseTerm for Term {
                 match &d.delim {
                     (DelimKind::Parenthesis, DelimOrientation::Open) => {
                         if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Term::ParenthesizedExpr(par)));
+                            return Ok(Some(Value::ParenthesizedExpr(par)));
                         }
 
                         if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Term::TupleIndexExpr(ti)));
+                            return Ok(Some(Value::TupleIndexExpr(ti)));
                         }
 
                         if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Term::TupleExpr(te)));
+                            return Ok(Some(Value::TupleExpr(te)));
                         }
                     }
 
                     (DelimKind::Bracket, DelimOrientation::Open) => {
                         if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Term::IndexExpr(ie)));
+                            return Ok(Some(Value::IndexExpr(ie)));
                         }
 
                         if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Term::ArrayExpr(ae)));
+                            return Ok(Some(Value::ArrayExpr(ae)));
                         }
                     }
                     _ => (),
                 }
 
-                return Ok(Some(Term::ParenthesizedExpr(par)));
+                return Ok(Some(Value::ParenthesizedExpr(par)));
             } else {
                 return Ok(None);
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            return Ok(Some(Term::Literal(l)));
+            return Ok(Some(Value::Literal(l)));
         }
 
         if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
                 PuncKind::Bang | PuncKind::Minus => {
                     if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Term::NegationExpr(ne)));
+                        return Ok(Some(Value::NegationExpr(ne)));
                     }
                 }
 

@@ -162,7 +162,7 @@ pub enum ExprWithoutBlock {
 }
 
 #[derive(Debug, Clone)]
-pub enum Term {
+pub enum Value {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
     FunctionCallExpr(FunctionCallExpr),
@@ -176,24 +176,26 @@ pub enum Term {
     StructExpr(StructExprKind),
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
+    UnderscoreExpr(UnderscoreExpr),
 }
 
-impl Spanned for Term {
+impl Spanned for Value {
     fn span(&self) -> Span {
         match self {
-            Term::ArrayExpr(ae) => ae.span(),
-            Term::IndexExpr(ie) => ie.span(),
-            Term::FunctionCallExpr(fc) => fc.span(),
-            Term::MethodCallExpr(mc) => mc.span(),
-            Term::FieldAccessExpr(fa) => fa.span(),
-            Term::Literal(lit) => lit.span(),
-            Term::ArithmeticOrLogicalExpr(ale) => ale.span(),
-            Term::NegationExpr(ne) => ne.span(),
-            Term::ParenthesizedExpr(par) => par.span(),
-            Term::PathExpr(pth) => pth.span(),
-            Term::StructExpr(se) => se.span(),
-            Term::TupleExpr(tup) => tup.span(),
-            Term::TupleIndexExpr(tie) => tie.span(),
+            Value::ArrayExpr(ae) => ae.span(),
+            Value::IndexExpr(ie) => ie.span(),
+            Value::FunctionCallExpr(fc) => fc.span(),
+            Value::MethodCallExpr(mc) => mc.span(),
+            Value::FieldAccessExpr(fa) => fa.span(),
+            Value::Literal(lit) => lit.span(),
+            Value::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            Value::NegationExpr(ne) => ne.span(),
+            Value::ParenthesizedExpr(par) => par.span(),
+            Value::PathExpr(pth) => pth.span(),
+            Value::StructExpr(se) => se.span(),
+            Value::TupleExpr(tup) => tup.span(),
+            Value::TupleIndexExpr(tie) => tie.span(),
+            Value::UnderscoreExpr(ue) => ue.span(),
         }
     }
 }

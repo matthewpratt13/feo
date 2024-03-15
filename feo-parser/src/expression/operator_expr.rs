@@ -3,7 +3,7 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
         DereferenceExpr, Expression, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr,
-        NegationOperatorKind, ReferenceExpr, Term, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+        NegationOperatorKind, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind, Value,
     },
     token::Token,
 };
@@ -264,7 +264,7 @@ impl ParseExpr for CompoundAssignmentExpr {
     where
         Self: Sized,
     {
-        if let Some(assignee) = Term::parse(parser)? {
+        if let Some(assignee) = Value::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -299,7 +299,7 @@ impl ParseExpr for CompoundAssignmentExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(new_value) = Term::parse(parser)? {
+                if let Some(new_value) = Value::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(CompoundAssignmentExpr {
@@ -525,7 +525,7 @@ impl ParseExpr for NegationExpr {
                 }
             };
 
-            if let Some(operand) = Term::parse(parser)? {
+            if let Some(operand) = Value::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(NegationExpr {
