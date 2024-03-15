@@ -57,22 +57,22 @@ impl ParseType for ParenthesizedType {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_parenthesized_type() {
-//         let source_code = r#"(u64)"#;
+    #[test]
+    fn parse_parenthesized_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"(u64)"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let parenthesized_type =
-//             ParenthesizedType::parse(&mut parser).expect("unable to parse parenthesized type");
+        let parenthesized_type =
+            ParenthesizedType::parse(&mut parser).expect("unable to parse parenthesized type");
 
-//         println!("{:#?}", parenthesized_type);
-//     }
-// }
+        Ok(println!("{:#?}", parenthesized_type))
+    }
+}

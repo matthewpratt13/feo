@@ -32,22 +32,22 @@ impl ParseType for ImplTraitType {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_impl_trait_type() {
-//         let source_code = r#"impl Foo"#;
+    #[test]
+    fn parse_impl_trait_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"impl Foo"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let impl_trait_type =
-//             ImplTraitType::parse(&mut parser).expect("unable to parse impl trait type");
+        let impl_trait_type =
+            ImplTraitType::parse(&mut parser).expect("unable to parse impl trait type");
 
-//         println!("{:#?}", impl_trait_type);
-//     }
-// }
+        Ok(println!("{:#?}", impl_trait_type))
+    }
+}

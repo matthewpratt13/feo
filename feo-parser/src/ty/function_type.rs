@@ -132,36 +132,36 @@ impl ParseType for ClosureType {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::test_utils;
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_function_type() {
-//         let source_code = r#"
-//         func (foo: u64, bar: bool) -> char
-//         "#;
+    #[test]
+    fn parse_function_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        func (foo: u64, bar: bool) -> char
+        "#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let function_type =
-//             FunctionType::parse(&mut parser).expect("unable to parse function type");
+        let function_type =
+            FunctionType::parse(&mut parser).expect("unable to parse function type");
 
-//         println!("{:#?}", function_type);
-//     }
+        Ok(println!("{:#?}", function_type))
+    }
 
-//     #[test]
-//     fn parse_closure_type() {
-//         let source_code = r#"
-//         |foo: u64, bar: bool| -> char
-//         "#;
+    #[test]
+    fn parse_closure_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        |foo: u64, bar: bool| -> char
+        "#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let closure_type = ClosureType::parse(&mut parser).expect("unable to parse closure type");
+        let closure_type = ClosureType::parse(&mut parser).expect("unable to parse closure type");
 
-//         println!("{:#?}", closure_type);
-//     }
-// }
+        Ok(println!("{:#?}", closure_type))
+    }
+}

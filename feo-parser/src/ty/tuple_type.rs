@@ -141,32 +141,32 @@ impl ParseType for UnitType {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_tuple_type() {
-//         let source_code = r#"(u64, char, bool)"#;
+    #[test]
+    fn parse_tuple_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"(u64, char, bool)"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let tuple_type = TupleType::parse(&mut parser).expect("unable to parse tuple type");
+        let tuple_type = TupleType::parse(&mut parser).expect("unable to parse tuple type");
 
-//         println!("{:#?}", tuple_type);
-//     }
+        Ok(println!("{:#?}", tuple_type))
+    }
 
-//     #[test]
-//     fn parse_unit_type() {
-//         let source_code = r#"()"#;
+    #[test]
+    fn parse_unit_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"()"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let unit_type = UnitType::parse(&mut parser).expect("unable to parse unit type");
+        let unit_type = UnitType::parse(&mut parser).expect("unable to parse unit type");
 
-//         println!("{:#?}", unit_type);
-//     }
-// }
+        Ok(println!("{:#?}", unit_type))
+    }
+}
