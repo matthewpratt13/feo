@@ -1,20 +1,18 @@
-use feo_ast::{
-    expression::{Assignable, FieldAccessExpr},
-    token::Token,
-};
+use feo_ast::{expression::FieldAccessExpr, path::PathInExpr, token::Token};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
 
-use crate::{parse::ParseExpr, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseExpr for FieldAccessExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        if let Some(a) = Assignable::parse(parser)? {
-            parser.next_token();
-
+        if let Some(container_operand) = PathInExpr::parse(parser)? {
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
@@ -26,7 +24,7 @@ impl ParseExpr for FieldAccessExpr {
                     parser.next_token();
 
                     return Ok(Some(FieldAccessExpr {
-                        container_operand: Box::new(a),
+                        container_operand,
                         field_name,
                     }));
                 }
@@ -49,22 +47,22 @@ impl ParseExpr for FieldAccessExpr {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_field_access_expr() {
-//         let source_code = r#"hello.world"#;
+    #[test]
+    fn parse_field_access_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"hello.world"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let field_access_expr =
-//             FieldAccessExpr::parse(&mut parser).expect("unable to parse field access expr");
+        let field_access_expr =
+            FieldAccessExpr::parse(&mut parser).expect("unable to parse field access expression");
 
-//         println!("{:#?}", field_access_expr);
-//     }
-// }
+        Ok(println!("{:#?}", field_access_expr))
+    }
+}
