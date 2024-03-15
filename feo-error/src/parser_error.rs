@@ -1,9 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-use feo_types::keyword::KeywordKind;
-use feo_types::punctuation::PuncKind;
-use feo_types::span::Position;
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, span::Position};
 
 #[derive(Default, Debug, Clone, PartialEq)]
 pub enum ParserErrorKind {

@@ -15,12 +15,10 @@ use feo_error::{
 
 use feo_types::{
     delimiter, identifier,
-    literal::{FloatType, IntType, UIntType},
+    literal::{FloatType, IntType, Literal, UIntType},
     punctuation,
-};
-use feo_types::{
-    literal::Literal, span::Position, Comment, Delimiter, DocComment, Identifier, Keyword,
-    Punctuation, U256,
+    span::Position,
+    Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
 pub struct Lexer<'a> {

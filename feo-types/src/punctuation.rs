@@ -11,7 +11,6 @@ pub enum PuncKind {
     Semicolon,
     Comma,
     FullStop,
-    // Underscore,
 
     DblDot,
     DotDotEquals,
@@ -62,7 +61,6 @@ impl PuncKind {
             PuncKind::Semicolon => ";",
             PuncKind::Comma => ",",
             PuncKind::FullStop => ".",
-            // PuncKind::Underscore => "_",
             PuncKind::DblDot => "..",
             PuncKind::DotDotEquals => "..=",
             PuncKind::DblColon => "::",
@@ -114,7 +112,6 @@ impl FromStr for PuncKind {
             ";" => Ok(PuncKind::Semicolon),
             "," => Ok(PuncKind::Comma),
             "." => Ok(PuncKind::FullStop),
-            // "_" => Ok(PuncKind::Underscore),
             ".." => Ok(PuncKind::DblDot),
             "..=" => Ok(PuncKind::DotDotEquals),
             "::" => Ok(PuncKind::DblColon),
