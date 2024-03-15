@@ -22,6 +22,8 @@ impl ParseTerm for CallParams {
         let mut subsequent_params: Vec<Expression> = Vec::new();
 
         if let Some(first_param) = Expression::parse(parser)? {
+            parser.next_token();
+
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
@@ -31,7 +33,6 @@ impl ParseTerm for CallParams {
 
                 if let Some(next_param) = Expression::parse(parser)? {
                     subsequent_params.push(next_param);
-
                     parser.next_token();
                 } else {
                     break;
@@ -182,33 +183,33 @@ impl ParseExpr for MethodCallExpr {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::test_utils;
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_function_call_expr() {
-//         let source_code = r#"foo(bar, "a", 1)"#;
+    #[test]
+    fn parse_function_call_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"foo(bar, "a", 1)"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let function_call_expr =
-//             FunctionCallExpr::parse(&mut parser).expect("unable to parse function call expression");
+        let function_call_expr =
+            FunctionCallExpr::parse(&mut parser).expect("unable to parse function call expression");
 
-//         println!("{:#?}", function_call_expr);
-//     }
+        Ok(println!("{:#?}", function_call_expr))
+    }
 
-//     #[test]
-//     fn parse_method_call_expr() {
-//         let source_code = r#"foo.bar(baz, "a", 1)"#;
+    #[test]
+    fn parse_method_call_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"foo.bar(baz, "a", 1)"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let method_call_expr =
-//             MethodCallExpr::parse(&mut parser).expect("unable to parse method call expression");
+        let method_call_expr =
+            MethodCallExpr::parse(&mut parser).expect("unable to parse method call expression");
 
-//         println!("{:#?}", method_call_expr);
-//     }
-// }
+        Ok(println!("{:#?}", method_call_expr))
+    }
+}
