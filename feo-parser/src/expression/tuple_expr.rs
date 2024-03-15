@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn parse_tuple_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"(1, "a, x)"#;
+        let source_code = r#"(1, "a", x)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
