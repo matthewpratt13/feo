@@ -4,7 +4,7 @@ use feo_types::{
     U64Primitive,
 };
 
-use super::Expression;
+use super::{Expression, Value};
 
 #[derive(Debug, Clone)]
 pub enum ArrayElementsKind {
@@ -30,13 +30,13 @@ impl Spanned for ArrayExpr {
 
 #[derive(Debug, Clone)]
 pub struct ArrayElementsCommaSeparated {
-    pub first_element: Box<Expression>,
-    pub subsequent_elements_opt: Option<Vec<Expression>>,
+    pub first_element: Box<Value>,
+    pub subsequent_elements_opt: Option<Vec<Value>>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ArrayElementsRepeatedValue {
-    pub repeat_operand: Box<Expression>,
+    pub repeat_operand: Box<Value>,
     pub semicolon: Semicolon,
     pub num_repeats: U64Primitive,
 }

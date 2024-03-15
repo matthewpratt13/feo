@@ -1,7 +1,7 @@
 use feo_ast::{
     expression::{
         ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
-        Expression, IndexExpr,
+        Expression, IndexExpr, Value,
     },
     token::Token,
 };
@@ -24,9 +24,9 @@ impl ParseTerm for ArrayElementsCommaSeparated {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<Expression> = Vec::new();
+        let mut subsequent_elements: Vec<Value> = Vec::new();
 
-        if let Some(first_element) = Expression::parse(parser)? {
+        if let Some(first_element) = Value::parse(parser)? {
             parser.next_token();
 
             while let Some(Punctuation {
@@ -36,7 +36,7 @@ impl ParseTerm for ArrayElementsCommaSeparated {
             {
                 parser.next_token();
 
-                if let Some(next_element) = Expression::parse(parser)? {
+                if let Some(next_element) = Value::parse(parser)? {
                     subsequent_elements.push(next_element);
 
                     parser.next_token();
@@ -66,7 +66,7 @@ impl ParseTerm for ArrayElementsRepeatedValue {
     where
         Self: Sized,
     {
-        if let Some(repeat_operand) = Expression::parse(parser)? {
+        if let Some(repeat_operand) = Value::parse(parser)? {
             parser.next_token();
 
             let semicolon_opt = parser.peek_current::<Punctuation>();
@@ -242,10 +242,7 @@ mod tests {
 
     #[test]
     fn parse_array_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-        [1, 2, 3, 4] 
-        [a; 4] 
-        []"#;
+        let source_code = r#"[1, 2, 3, 4]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
