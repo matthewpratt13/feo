@@ -10,9 +10,7 @@ use feo_types::{
     },
 };
 
-use crate::ty::Type;
-
-use super::{Assignable, BooleanOperand, Castable, Expression, Operable};
+use super::Expression;
 
 #[derive(Debug, Clone)]
 pub enum OperatorExprKind {
@@ -101,8 +99,8 @@ impl Spanned for NegationOperatorKind {
 
 #[derive(Debug, Clone)]
 pub enum UnwrapOperandKind {
-    Option(Option<Box<Operable>>),
-    Result(Result<Box<Operable>, CompilerError>),
+    Option(Option<Box<Expression>>),
+    Result(Result<Box<Expression>, CompilerError>),
 }
 
 impl Spanned for UnwrapOperandKind {
@@ -198,7 +196,7 @@ impl Spanned for ComparisonExpr {
 #[derive(Debug, Clone)]
 pub struct DereferenceExpr {
     pub operator: DerefOperator,
-    pub operand: Box<Assignable>,
+    pub operand: Box<Expression>,
 }
 
 impl Spanned for DereferenceExpr {
@@ -212,9 +210,9 @@ impl Spanned for DereferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct LazyBoolExpr {
-    pub lhs: Box<BooleanOperand>,
+    pub lhs: Box<Expression>,
     pub operator: LazyBoolOperatorKind,
-    pub rhs: Box<BooleanOperand>,
+    pub rhs: Box<Expression>,
 }
 
 impl Spanned for LazyBoolExpr {
@@ -229,7 +227,7 @@ impl Spanned for LazyBoolExpr {
 #[derive(Debug, Clone)]
 pub struct NegationExpr {
     pub operator: NegationOperatorKind,
-    pub operand: Box<Operable>,
+    pub operand: Box<Expression>,
 }
 
 impl Spanned for NegationExpr {
@@ -244,7 +242,7 @@ impl Spanned for NegationExpr {
 #[derive(Debug, Clone)]
 pub struct ReferenceExpr {
     pub operator: RefOperator,
-    pub operand: Box<Assignable>,
+    pub operand: Box<Expression>,
 }
 
 impl Spanned for ReferenceExpr {
@@ -258,9 +256,9 @@ impl Spanned for ReferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct TypeCastExpr {
-    pub lhs: Box<Castable>,
+    pub lhs: Box<Expression>,
     pub operator: CastOperator,
-    pub rhs: Box<Type>,
+    pub rhs: Box<Expression>,
 }
 
 impl Spanned for TypeCastExpr {
