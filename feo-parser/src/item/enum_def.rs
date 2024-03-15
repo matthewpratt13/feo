@@ -311,50 +311,50 @@ impl ParseItem for EnumDef {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_enum_variant_struct() {
-//         let source_code = r#"{ bar: u64 }"#;
+    #[test]
+    fn parse_enum_variant_struct() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"{ bar: u64 }"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let enum_variant_struct =
-//             EnumVariantStruct::parse(&mut parser).expect("unable to parse enum variant struct");
+        let enum_variant_struct =
+            EnumVariantStruct::parse(&mut parser).expect("unable to parse enum variant struct");
 
-//         println!("{:#?}", enum_variant_struct);
-//     }
+        Ok(println!("{:#?}", enum_variant_struct))
+    }
 
-//     #[test]
-//     fn parse_enum_variant_tuple() {
-//         let source_code = r#"(u64, bool)"#;
+    #[test]
+    fn parse_enum_variant_tuple() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"(u64, bool)"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let enum_variant_tuple =
-//             EnumVariantTuple::parse(&mut parser).expect("unable to parse enum variant tuple");
+        let enum_variant_tuple =
+            EnumVariantTuple::parse(&mut parser).expect("unable to parse enum variant tuple");
 
-//         println!("{:#?}", enum_variant_tuple);
-//     }
+        Ok(println!("{:#?}", enum_variant_tuple))
+    }
 
-//     #[test]
-//     fn parse_enum_def() {
-//         let source_code = r#"
-//         #[abstract]
-//         enum Foo {
-//             Bar,
-//             Baz(u64)
-//         }"#;
+    #[test]
+    fn parse_enum_def() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[abstract]
+        enum Foo {
+            Bar,
+            Baz(u64)
+        }"#;
 
-//         let mut parser = test_utils::get_parser(source_code, true);
+        let mut parser = test_utils::get_parser(source_code, true)?;
 
-//         let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
+        let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
 
-//         println!("{:#?}", enum_def);
-//     }
-// }
+        Ok(println!("{:#?}", enum_def))
+    }
+}

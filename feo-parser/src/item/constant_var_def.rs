@@ -142,23 +142,23 @@ impl ParseItem for ConstantVarDef {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[ignore] // TODO: remove when testing
-//     #[test]
-//     fn parse_constant_var_def() {
-//         let source_code = r#"const foo: u64 = 2;"#;
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_constant_var_def() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"const foo: u64 = 2;"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let constant_var_def =
-//             ConstantVarDef::parse(&mut parser).expect("unable to constant var def");
+        let constant_var_def =
+            ConstantVarDef::parse(&mut parser).expect("unable to constant var def");
 
-//         println!("{:#?}", constant_var_def);
-//     }
-// }
+        Ok(println!("{:#?}", constant_var_def))
+    }
+}
