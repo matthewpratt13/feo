@@ -351,7 +351,7 @@ mod tests {
             Baz(u64)
         }"#;
 
-        let mut parser = test_utils::get_parser(source_code, true)?;
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
         let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
 
