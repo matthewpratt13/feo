@@ -233,32 +233,35 @@ impl ParseExpr for IndexExpr {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_array_expr() {
-//         let source_code = r#"[1, 2, 3, 4] [a; 4] []"#;
+    #[test]
+    fn parse_array_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        [1, 2, 3, 4] 
+        [a; 4] 
+        []"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse array expression");
+        let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse array expression");
 
-//         println!("{:#?}", array_expr);
-//     }
+        Ok(println!("{:#?}", array_expr))
+    }
 
-//     #[test]
-//     fn parse_index_expr() {
-//         let source_code = r#"foo[1]"#;
+    #[test]
+    fn parse_index_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"foo[1]"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let index_expr = IndexExpr::parse(&mut parser).expect("unable to parse index expression");
+        let index_expr = IndexExpr::parse(&mut parser).expect("unable to parse index expression");
 
-//         println!("{:#?}", index_expr);
-//     }
-// }
+        Ok(println!("{:#?}", index_expr))
+    }
+}
