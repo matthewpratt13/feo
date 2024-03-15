@@ -1,12 +1,12 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Comma, Parenthesis},
+    utils::Parenthesis,
     U64Primitive,
 };
 
 use crate::ty::TupleType;
 
-use super::{Returnable, TupleStructExpr};
+use super::{Expression, TupleStructExpr};
 
 #[derive(Debug, Clone)]
 enum TupleKind {
@@ -41,9 +41,8 @@ impl Spanned for TupleExpr {
 
 #[derive(Debug, Clone)]
 pub struct TupleExprElements {
-    pub first_element: Box<Returnable>,
-    pub subsequent_elements_opt: Option<Vec<Returnable>>,
-    pub trailing_comma_opt: Option<Comma>,
+    pub first_element: Box<Expression>,
+    pub subsequent_elements_opt: Option<Vec<Expression>>,
 }
 
 #[derive(Debug, Clone)]

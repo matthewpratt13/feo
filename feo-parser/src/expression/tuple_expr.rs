@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{Returnable, TupleExpr, TupleExprElements, TupleIndexExpr},
+    expression::{Expression, TupleExpr, TupleExprElements, TupleIndexExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -19,9 +19,9 @@ impl ParseTerm for TupleExprElements {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<Returnable> = Vec::new();
+        let mut subsequent_elements: Vec<Expression> = Vec::new();
 
-        if let Some(first_element) = Returnable::parse(parser)? {
+        if let Some(first_element) = Expression::parse(parser)? {
             parser.next_token();
 
             while let Some(Punctuation {
@@ -31,34 +31,31 @@ impl ParseTerm for TupleExprElements {
             {
                 parser.next_token();
 
-                if let Some(next_element) = Returnable::parse(parser)? {
+                if let Some(next_element) = Expression::parse(parser)? {
                     subsequent_elements.push(next_element);
+                } else {
+                    break;
+                }
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::Comma,
+                    ..
+                }) = parser.peek_next::<Punctuation>()
+                {
                     parser.next_token();
                 } else {
                     break;
                 }
             }
 
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
-            }
-
             match &subsequent_elements.is_empty() {
                 true => Ok(Some(TupleExprElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: None,
-                    trailing_comma_opt,
                 })),
                 false => Ok(Some(TupleExprElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: Some(subsequent_elements),
-                    trailing_comma_opt,
                 })),
             }
         } else {
@@ -137,7 +134,8 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_expr_elements = TupleExprElements::parse(&mut parser).expect("unable to parse tuple expression elements");
+        let tuple_expr_elements = TupleExprElements::parse(&mut parser)
+            .expect("unable to parse tuple expression elements");
 
         println!("{:#?}", tuple_expr_elements);
     }
