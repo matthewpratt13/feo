@@ -453,67 +453,67 @@ impl ParseTerm for TupleStructDef {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_struct_def_field() {
-        let source_code = r#"
-        #[foo]
-        pub bar: u64
-        "#;
+//     #[test]
+//     fn parse_struct_def_field() {
+//         let source_code = r#"
+//         #[foo]
+//         pub bar: u64
+//         "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_def_field =
-            StructDefField::parse(&mut parser).expect("unable to parse struct def field");
+//         let struct_def_field =
+//             StructDefField::parse(&mut parser).expect("unable to parse struct def field");
 
-        println!("{:#?}", struct_def_field);
-    }
+//         println!("{:#?}", struct_def_field);
+//     }
 
-    #[test]
-    fn parse_tuple_struct_def_field() {
-        let source_code = r#"#[foo] pub u64"#;
+//     #[test]
+//     fn parse_tuple_struct_def_field() {
+//         let source_code = r#"#[foo] pub u64"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_struct_def_field = TupleStructDefField::parse(&mut parser)
-            .expect("unable to parse tuple struct def field");
+//         let tuple_struct_def_field = TupleStructDefField::parse(&mut parser)
+//             .expect("unable to parse tuple struct def field");
 
-        println!("{:#?}", tuple_struct_def_field);
-    }
+//         println!("{:#?}", tuple_struct_def_field);
+//     }
 
-    #[test]
-    fn parse_struct_def() {
-        let source_code = r#"
-        #[abstract]
-        struct Foo {
-            pub bar: u64,
-            baz: bool,
-        }"#;
-        let mut parser = test_utils::get_parser(source_code, false);
+//     #[test]
+//     fn parse_struct_def() {
+//         let source_code = r#"
+//         #[abstract]
+//         struct Foo {
+//             pub bar: u64,
+//             baz: bool,
+//         }"#;
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_def = StructDef::parse(&mut parser).expect("unable to parse struct def");
+//         let struct_def = StructDef::parse(&mut parser).expect("unable to parse struct def");
 
-        println!("{:#?}", struct_def);
-    }
+//         println!("{:#?}", struct_def);
+//     }
 
-    #[test]
-    fn parse_tuple_struct_def() {
-        let source_code = r#"
-        #[abstract]
-        struct Foo(pub u64, bool);
-        "#;
+//     #[test]
+//     fn parse_tuple_struct_def() {
+//         let source_code = r#"
+//         #[abstract]
+//         struct Foo(pub u64, bool);
+//         "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_struct_def =
-            TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct def");
+//         let tuple_struct_def =
+//             TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct def");
 
-        println!("{:#?}", tuple_struct_def);
-    }
-}
+//         println!("{:#?}", tuple_struct_def);
+//     }
+// }

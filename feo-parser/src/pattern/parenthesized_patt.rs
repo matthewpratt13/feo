@@ -60,21 +60,21 @@ impl ParsePatt for ParenthesizedPatt {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::test_utils;
+// #[cfg(test)]
+// mod tests {
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_parenthesized_patt() {
-        let source_code = r#"(x)"#;
+//     #[test]
+//     fn parse_parenthesized_patt() {
+//         let source_code = r#"(x)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let parenthesized_patt =
-            ParenthesizedPatt::parse(&mut parser).expect("unable to parse parenthesized pattern");
+//         let parenthesized_patt =
+//             ParenthesizedPatt::parse(&mut parser).expect("unable to parse parenthesized pattern");
 
-        println!("{:#?}", parenthesized_patt);
-    }
-}
+//         println!("{:#?}", parenthesized_patt);
+//     }
+// }

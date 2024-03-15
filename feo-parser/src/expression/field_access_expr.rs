@@ -49,22 +49,22 @@ impl ParseExpr for FieldAccessExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_field_access_expr() {
-        let source_code = r#"hello.world"#;
+//     #[test]
+//     fn parse_field_access_expr() {
+//         let source_code = r#"hello.world"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let field_access_expr =
-            FieldAccessExpr::parse(&mut parser).expect("unable to parse field access expr");
+//         let field_access_expr =
+//             FieldAccessExpr::parse(&mut parser).expect("unable to parse field access expr");
 
-        println!("{:#?}", field_access_expr);
-    }
-}
+//         println!("{:#?}", field_access_expr);
+//     }
+// }

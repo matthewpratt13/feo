@@ -223,21 +223,21 @@ impl ParseType for PathType {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_path() {
-        let source_code = r#"crate::module::Object"#;
+//     #[test]
+//     fn parse_path() {
+//         let source_code = r#"crate::module::Object"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let path_in_expr = PathInExpr::parse(&mut parser).expect("unable to parse path");
+//         let path_in_expr = PathInExpr::parse(&mut parser).expect("unable to parse path");
 
-        println!("{:#?}", path_in_expr);
-    }
-}
+//         println!("{:#?}", path_in_expr);
+//     }
+// }

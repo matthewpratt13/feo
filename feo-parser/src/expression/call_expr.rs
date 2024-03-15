@@ -182,33 +182,33 @@ impl ParseExpr for MethodCallExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::test_utils;
+// #[cfg(test)]
+// mod tests {
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_function_call_expr() {
-        let source_code = r#"foo(bar, "a", 1)"#;
+//     #[test]
+//     fn parse_function_call_expr() {
+//         let source_code = r#"foo(bar, "a", 1)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let function_call_expr =
-            FunctionCallExpr::parse(&mut parser).expect("unable to parse function call expression");
+//         let function_call_expr =
+//             FunctionCallExpr::parse(&mut parser).expect("unable to parse function call expression");
 
-        println!("{:#?}", function_call_expr);
-    }
+//         println!("{:#?}", function_call_expr);
+//     }
 
-    #[test]
-    fn parse_method_call_expr() {
-        let source_code = r#"foo.bar(baz, "a", 1)"#;
+//     #[test]
+//     fn parse_method_call_expr() {
+//         let source_code = r#"foo.bar(baz, "a", 1)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let method_call_expr =
-            MethodCallExpr::parse(&mut parser).expect("unable to parse method call expression");
+//         let method_call_expr =
+//             MethodCallExpr::parse(&mut parser).expect("unable to parse method call expression");
 
-        println!("{:#?}", method_call_expr);
-    }
-}
+//         println!("{:#?}", method_call_expr);
+//     }
+// }

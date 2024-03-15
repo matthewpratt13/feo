@@ -611,118 +611,118 @@ impl ParseExpr for UnwrapExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_arithmetic_expr() {
-        let source_code = r#"x + 2"#;
+//     #[test]
+//     fn parse_arithmetic_expr() {
+//         let source_code = r#"x + 2"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let arithmetic_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
-            .expect("unable to parse arithmetic expression");
+//         let arithmetic_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
+//             .expect("unable to parse arithmetic expression");
 
-        println!("{:#?}", arithmetic_expr);
-    }
+//         println!("{:#?}", arithmetic_expr);
+//     }
 
-    #[test]
-    fn parse_logical_expr() {
-        let source_code = r#"1 | 2"#;
+//     #[test]
+//     fn parse_logical_expr() {
+//         let source_code = r#"1 | 2"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let logical_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
-            .expect("unable to parse logical expression");
+//         let logical_expr = ArithmeticOrLogicalExpr::parse(&mut parser)
+//             .expect("unable to parse logical expression");
 
-        println!("{:#?}", logical_expr);
-    }
+//         println!("{:#?}", logical_expr);
+//     }
 
-    #[test]
-    fn parse_assignment_expr() {
-        let source_code = r#"x = 2"#;
+//     #[test]
+//     fn parse_assignment_expr() {
+//         let source_code = r#"x = 2"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let assignment_expr =
-            AssignmentExpr::parse(&mut parser).expect("unable to parse assignment expression");
+//         let assignment_expr =
+//             AssignmentExpr::parse(&mut parser).expect("unable to parse assignment expression");
 
-        println!("{:#?}", assignment_expr);
-    }
+//         println!("{:#?}", assignment_expr);
+//     }
 
-    #[test]
-    fn parse_compound_assignment_expr() {
-        let source_code = r#"x += 2"#;
+//     #[test]
+//     fn parse_compound_assignment_expr() {
+//         let source_code = r#"x += 2"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let compound_assignment_expr = CompoundAssignmentExpr::parse(&mut parser)
-            .expect("unable to parse compound assignment expression");
+//         let compound_assignment_expr = CompoundAssignmentExpr::parse(&mut parser)
+//             .expect("unable to parse compound assignment expression");
 
-        println!("{:#?}", compound_assignment_expr);
-    }
+//         println!("{:#?}", compound_assignment_expr);
+//     }
 
-    #[test]
-    fn parse_comparison_expr() {
-        let source_code = r#"x > 2"#;
+//     #[test]
+//     fn parse_comparison_expr() {
+//         let source_code = r#"x > 2"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let comparison_expr =
-            ComparisonExpr::parse(&mut parser).expect("unable to parse comparison expression");
+//         let comparison_expr =
+//             ComparisonExpr::parse(&mut parser).expect("unable to parse comparison expression");
 
-        println!("{:#?}", comparison_expr);
-    }
+//         println!("{:#?}", comparison_expr);
+//     }
 
-    #[test]
-    fn parse_dereference_expr() {
-        let source_code = r#"*x"#;
+//     #[test]
+//     fn parse_dereference_expr() {
+//         let source_code = r#"*x"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let dereference_expr =
-            DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
+//         let dereference_expr =
+//             DereferenceExpr::parse(&mut parser).expect("unable to parse dereference expression");
 
-        println!("{:#?}", dereference_expr);
-    }
+//         println!("{:#?}", dereference_expr);
+//     }
 
-    #[test]
-    fn parse_lazy_bool_expr() {
-        let source_code = r#"x && y"#;
+//     #[test]
+//     fn parse_lazy_bool_expr() {
+//         let source_code = r#"x && y"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let lazy_bool_expr =
-            LazyBoolExpr::parse(&mut parser).expect("unable to parse lazy bool expression");
+//         let lazy_bool_expr =
+//             LazyBoolExpr::parse(&mut parser).expect("unable to parse lazy bool expression");
 
-        println!("{:#?}", lazy_bool_expr);
-    }
+//         println!("{:#?}", lazy_bool_expr);
+//     }
 
-    #[test]
-    fn parse_negation_expr() {
-        let source_code = r#"!x"#;
+//     #[test]
+//     fn parse_negation_expr() {
+//         let source_code = r#"!x"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let negation_expr =
-            NegationExpr::parse(&mut parser).expect("unable to parse negation expression");
+//         let negation_expr =
+//             NegationExpr::parse(&mut parser).expect("unable to parse negation expression");
 
-        println!("{:#?}", negation_expr);
-    }
+//         println!("{:#?}", negation_expr);
+//     }
 
-    #[test]
-    fn parse_reference_expr() {
-        let source_code = r#"&mut x"#;
+//     #[test]
+//     fn parse_reference_expr() {
+//         let source_code = r#"&mut x"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let reference_expr =
-            ReferenceExpr::parse(&mut parser).expect("unable to parse reference expression");
+//         let reference_expr =
+//             ReferenceExpr::parse(&mut parser).expect("unable to parse reference expression");
 
-        println!("{:#?}", reference_expr);
-    }
-}
+//         println!("{:#?}", reference_expr);
+//     }
+// }

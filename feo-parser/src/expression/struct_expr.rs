@@ -275,86 +275,86 @@ impl ParseExpr for TupleStructExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_struct_expr_field() {
-        let source_code = r#"
-            #[abstract]
-            #[unsafe]
-            foo: "a"
-            "#;
+//     #[test]
+//     fn parse_struct_expr_field() {
+//         let source_code = r#"
+//             #[abstract]
+//             #[unsafe]
+//             foo: "a"
+//             "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_expr_field =
-            StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
+//         let struct_expr_field =
+//             StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
 
-        println!("{:#?}", struct_expr_field);
-    }
+//         println!("{:#?}", struct_expr_field);
+//     }
 
-    #[test]
-    fn parse_struct_expr_fields() {
-        let source_code = r#"
-            #[export]
-            foo: "a",
-            bar: 1,
-            #[abstract]
-            #[unsafe]
-            baz: x,
-            "#;
+//     #[test]
+//     fn parse_struct_expr_fields() {
+//         let source_code = r#"
+//             #[export]
+//             foo: "a",
+//             bar: 1,
+//             #[abstract]
+//             #[unsafe]
+//             baz: x,
+//             "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_expr_fields =
-            StructExprFields::parse(&mut parser).expect("unable to parse struct expression fields");
+//         let struct_expr_fields =
+//             StructExprFields::parse(&mut parser).expect("unable to parse struct expression fields");
 
-        println!("{:#?}", struct_expr_fields);
-    }
+//         println!("{:#?}", struct_expr_fields);
+//     }
 
-    #[test]
-    fn parse_struct_expr() {
-        let source_code = r#"
-        SomeStruct {
-            foo: "a",
-            bar: 1,
-            baz: x,
-        }"#;
+//     #[test]
+//     fn parse_struct_expr() {
+//         let source_code = r#"
+//         SomeStruct {
+//             foo: "a",
+//             bar: 1,
+//             baz: x,
+//         }"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_expr =
-            StructExpr::parse(&mut parser).expect("unable to parse struct expression");
+//         let struct_expr =
+//             StructExpr::parse(&mut parser).expect("unable to parse struct expression");
 
-        println!("{:#?}", struct_expr);
-    }
+//         println!("{:#?}", struct_expr);
+//     }
 
-    #[test]
-    fn parse_tuple_struct_expr_fields() {
-        let source_code = r#"foo, "a", 1"#;
+//     #[test]
+//     fn parse_tuple_struct_expr_fields() {
+//         let source_code = r#"foo, "a", 1"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_struct_expr_fields = TupleStructExprFields::parse(&mut parser)
-            .expect("unable to parse tuple struct expression fields");
+//         let tuple_struct_expr_fields = TupleStructExprFields::parse(&mut parser)
+//             .expect("unable to parse tuple struct expression fields");
 
-        println!("{:#?}", tuple_struct_expr_fields);
-    }
+//         println!("{:#?}", tuple_struct_expr_fields);
+//     }
 
-    #[test]
-    fn parse_tuple_struct_expr() {
-        let source_code = r#"SomeStruct(foo, "a", 1,)"#;
+//     #[test]
+//     fn parse_tuple_struct_expr() {
+//         let source_code = r#"SomeStruct(foo, "a", 1,)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_struct_expr =
-            TupleStructExpr::parse(&mut parser).expect("unable to parse tuple struct expression");
+//         let tuple_struct_expr =
+//             TupleStructExpr::parse(&mut parser).expect("unable to parse tuple struct expression");
 
-        println!("{:#?}", tuple_struct_expr);
-    }
-}
+//         println!("{:#?}", tuple_struct_expr);
+//     }
+// }

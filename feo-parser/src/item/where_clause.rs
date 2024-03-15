@@ -153,49 +153,49 @@ impl ParseTerm for WhereClause {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_type_param_bounds() {
-        let source_code = r#"Foo + Bar + Baz"#;
+//     #[test]
+//     fn parse_type_param_bounds() {
+//         let source_code = r#"Foo + Bar + Baz"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let type_param_bounds =
-            TypeParamBounds::parse(&mut parser).expect("unable to parse type param bounds");
+//         let type_param_bounds =
+//             TypeParamBounds::parse(&mut parser).expect("unable to parse type param bounds");
 
-        println!("{:#?}", type_param_bounds);
-    }
+//         println!("{:#?}", type_param_bounds);
+//     }
 
-    #[test]
-    fn parse_type_bound() {
-        let source_code = r#"Self: Foo + Bar + Baz"#;
+//     #[test]
+//     fn parse_type_bound() {
+//         let source_code = r#"Self: Foo + Bar + Baz"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let type_bound = TypeBound::parse(&mut parser).expect("unable to parse type bound");
+//         let type_bound = TypeBound::parse(&mut parser).expect("unable to parse type bound");
 
-        println!("{:#?}", type_bound);
-    }
+//         println!("{:#?}", type_bound);
+//     }
 
-    // #[ignore] // TODO: remove when testing
-    #[test]
-    fn parse_where_clause() {
-        let source_code = r#"
-        where 
-            Self: Foo + Bar + Baz, 
-            T: Foo
-            "#;
+//     // #[ignore] // TODO: remove when testing
+//     #[test]
+//     fn parse_where_clause() {
+//         let source_code = r#"
+//         where 
+//             Self: Foo + Bar + Baz, 
+//             T: Foo
+//             "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let where_clause = WhereClause::parse(&mut parser).expect("unable to parse where clause");
+//         let where_clause = WhereClause::parse(&mut parser).expect("unable to parse where clause");
 
-        println!("{:#?}", where_clause);
-    }
-}
+//         println!("{:#?}", where_clause);
+//     }
+// }

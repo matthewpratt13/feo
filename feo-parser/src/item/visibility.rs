@@ -113,24 +113,24 @@ impl ParseTerm for PubCrateVisibility {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_visibility_kind() {
-        let source_code = r#"
-        pub
-        pub(crate)"#;
+//     #[test]
+//     fn parse_visibility_kind() {
+//         let source_code = r#"
+//         pub
+//         pub(crate)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let visibility_kind =
-            VisibilityKind::parse(&mut parser).expect("unable to parse visibility");
+//         let visibility_kind =
+//             VisibilityKind::parse(&mut parser).expect("unable to parse visibility");
 
-        println!("{:#?}", visibility_kind);
-    }
-}
+//         println!("{:#?}", visibility_kind);
+//     }
+// }

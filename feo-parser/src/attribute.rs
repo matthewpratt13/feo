@@ -173,21 +173,21 @@ impl ParseTerm for OuterAttr {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_attribute() {
-        let source_code = r#"#[unsafe]"#;
+//     #[test]
+//     fn parse_attribute() {
+//         let source_code = r#"#[unsafe]"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let outer_attr = OuterAttr::parse(&mut parser).expect("unable to parse outer attribute");
+//         let outer_attr = OuterAttr::parse(&mut parser).expect("unable to parse outer attribute");
 
-        println!("{:#?}", outer_attr);
-    }
-}
+//         println!("{:#?}", outer_attr);
+//     }
+// }

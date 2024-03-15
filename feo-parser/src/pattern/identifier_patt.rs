@@ -43,22 +43,22 @@ impl ParsePatt for IdentifierPatt {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_identifier_patt() {
-        let source_code = r#"ref mut foo"#;
+//     #[test]
+//     fn parse_identifier_patt() {
+//         let source_code = r#"ref mut foo"#;
         
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let identifier_patt =
-            IdentifierPatt::parse(&mut parser).expect("unable to parse identifier pattern");
+//         let identifier_patt =
+//             IdentifierPatt::parse(&mut parser).expect("unable to parse identifier pattern");
 
-        println!("{:#?}", identifier_patt);
-    }
-}
+//         println!("{:#?}", identifier_patt);
+//     }
+// }

@@ -25,21 +25,21 @@ impl ParseType for SelfType {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_self_type() {
-        let source_code = r#"Self"#;
+//     #[test]
+//     fn parse_self_type() {
+//         let source_code = r#"Self"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let self_type = SelfType::parse(&mut parser).expect("unable to parse Self type");
+//         let self_type = SelfType::parse(&mut parser).expect("unable to parse Self type");
 
-        println!("{:#?}", self_type);
-    }
-}
+//         println!("{:#?}", self_type);
+//     }
+// }

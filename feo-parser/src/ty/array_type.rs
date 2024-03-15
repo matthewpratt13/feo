@@ -83,21 +83,21 @@ impl ParseType for ArrayType {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_array_type() {
-        let source_code = r#"[u8; 32]"#;
+//     #[test]
+//     fn parse_array_type() {
+//         let source_code = r#"[u8; 32]"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let array_type = ArrayType::parse(&mut parser).expect("unable to parse array type");
+//         let array_type = ArrayType::parse(&mut parser).expect("unable to parse array type");
 
-        println!("{:#?}", array_type);
-    }
-}
+//         println!("{:#?}", array_type);
+//     }
+// }

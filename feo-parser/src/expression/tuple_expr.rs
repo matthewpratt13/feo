@@ -33,15 +33,6 @@ impl ParseTerm for TupleExprElements {
 
                 if let Some(next_element) = Expression::parse(parser)? {
                     subsequent_elements.push(next_element);
-                } else {
-                    break;
-                }
-
-                if let Some(Punctuation {
-                    punc_kind: PuncKind::Comma,
-                    ..
-                }) = parser.peek_next::<Punctuation>()
-                {
                     parser.next_token();
                 } else {
                     break;
@@ -79,9 +70,6 @@ impl ParseExpr for TupleExpr {
             parser.next_token();
 
             if let Some(elements) = TupleExprElements::parse(parser)? {
-                parser.next_token();
-
-
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {
@@ -132,25 +120,25 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_tuple_expr_elements() {
+    fn parse_tuple_expr_elements() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"1, "a", x"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
         let tuple_expr_elements = TupleExprElements::parse(&mut parser)
             .expect("unable to parse tuple expression elements");
 
-        println!("{:#?}", tuple_expr_elements);
+        Ok(println!("{:#?}", tuple_expr_elements))
     }
 
     #[test]
-    fn parse_tuple_expr() {
-        let source_code = r#"(1, "a", x)"#;
+    fn parse_tuple_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"(1, "a, x)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
         let tuple_expr = TupleExpr::parse(&mut parser).expect("unable to parse tuple expression");
 
-        println!("{:#?}", tuple_expr);
+        Ok(println!("{:#?}", tuple_expr))
     }
 }

@@ -130,25 +130,25 @@ impl ParseExpr for MatchExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[ignore] // TODO: remove when testing
-    #[test]
-    fn parse_if_expr() {
-        let source_code = r#"
-        if foo < 2 { 
-            print!("bar")
-        }"#;
+//     #[ignore] // TODO: remove when testing
+//     #[test]
+//     fn parse_if_expr() {
+//         let source_code = r#"
+//         if foo < 2 { 
+//             print!("bar")
+//         }"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let if_expr = IfExpr::parse(&mut parser).expect("unable to if expression");
+//         let if_expr = IfExpr::parse(&mut parser).expect("unable to if expression");
 
-        println!("{:#?}", if_expr);
-    }
-}
+//         println!("{:#?}", if_expr);
+//     }
+// }

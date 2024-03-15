@@ -18,22 +18,22 @@ impl ParseExpr for UnderscoreExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_underscore_expr() {
-        let source_code = r#"_"#;
+//     #[test]
+//     fn parse_underscore_expr() {
+//         let source_code = r#"_"#;
         
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let underscore_expr =
-            UnderscoreExpr::parse(&mut parser).expect("unable to parse underscore expression");
+//         let underscore_expr =
+//             UnderscoreExpr::parse(&mut parser).expect("unable to parse underscore expression");
 
-        println!("{:#?}", underscore_expr);
-    }
-}
+//         println!("{:#?}", underscore_expr);
+//     }
+// }

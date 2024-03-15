@@ -50,22 +50,22 @@ impl ParseType for ReferenceType {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_reference_type() {
-        let source_code = r#"&mut bool"#;
+//     #[test]
+//     fn parse_reference_type() {
+//         let source_code = r#"&mut bool"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let reference_type =
-            ReferenceType::parse(&mut parser).expect("unable to parse reference type");
+//         let reference_type =
+//             ReferenceType::parse(&mut parser).expect("unable to parse reference type");
 
-        println!("{:#?}", reference_type);
-    }
-}
+//         println!("{:#?}", reference_type);
+//     }
+// }

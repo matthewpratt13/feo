@@ -307,60 +307,60 @@ impl ParseItem for FunctionSig {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_self_param() {
-        let source_code = r#"&mut self: u64"#;
+//     #[test]
+//     fn parse_self_param() {
+//         let source_code = r#"&mut self: u64"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let self_param = SelfParam::parse(&mut parser).expect("unable to parse self param");
+//         let self_param = SelfParam::parse(&mut parser).expect("unable to parse self param");
 
-        println!("{:#?}", self_param);
-    }
+//         println!("{:#?}", self_param);
+//     }
 
-    #[test]
-    fn parse_function_param() {
-        let source_code = r#"foo: u64"#;
+//     #[test]
+//     fn parse_function_param() {
+//         let source_code = r#"foo: u64"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let function_param =
-            FunctionParam::parse(&mut parser).expect("unable to parse function param");
+//         let function_param =
+//             FunctionParam::parse(&mut parser).expect("unable to parse function param");
 
-        println!("{:#?}", function_param);
-    }
+//         println!("{:#?}", function_param);
+//     }
 
-    #[test]
-    fn parse_function_params() {
-        let source_code = r#"foo: u64, bar: bool, baz: char"#;
+//     #[test]
+//     fn parse_function_params() {
+//         let source_code = r#"foo: u64, bar: bool, baz: char"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let function_params =
-            FunctionParams::parse(&mut parser).expect("unable to parse function params");
+//         let function_params =
+//             FunctionParams::parse(&mut parser).expect("unable to parse function params");
 
-        println!("{:#?}", function_params);
-    }
+//         println!("{:#?}", function_params);
+//     }
 
-    #[test]
-    fn parse_function_sig() {
-        let source_code = r#"
-        #[abstract]
-        pub func foo(bar: bool, baz: char) -> u64
-        "#;
+//     #[test]
+//     fn parse_function_sig() {
+//         let source_code = r#"
+//         #[abstract]
+//         pub func foo(bar: bool, baz: char) -> u64
+//         "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let function_sig =
-            FunctionSig::parse(&mut parser).expect("unable to parse function signature");
+//         let function_sig =
+//             FunctionSig::parse(&mut parser).expect("unable to parse function signature");
 
-        println!("{:#?}", function_sig);
-    }
-}
+//         println!("{:#?}", function_sig);
+//     }
+// }

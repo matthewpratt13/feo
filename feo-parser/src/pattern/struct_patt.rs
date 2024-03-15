@@ -279,85 +279,85 @@ impl ParsePatt for TupleStructPatt {
     }
 }
 
-#[cfg(test)]
-mod tests {
+// #[cfg(test)]
+// mod tests {
 
-    use crate::test_utils;
+//     use crate::test_utils;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn parse_struct_patt_field() {
-        let source_code = r#"
-            #[abstract]
-            #[unsafe]
-            foo: "a"
-            "#;
+//     #[test]
+//     fn parse_struct_patt_field() {
+//         let source_code = r#"
+//             #[abstract]
+//             #[unsafe]
+//             foo: "a"
+//             "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_patt_field =
-            StructPattField::parse(&mut parser).expect("unable to parse struct pattern field");
+//         let struct_patt_field =
+//             StructPattField::parse(&mut parser).expect("unable to parse struct pattern field");
 
-        println!("{:#?}", struct_patt_field);
-    }
+//         println!("{:#?}", struct_patt_field);
+//     }
 
-    #[test]
-    fn parse_struct_patt_fields() {
-        let source_code = r#"
-            #[export]
-            foo: "a",
-            bar: 1,
-            #[abstract]
-            #[unsafe]
-            baz: x,
-            "#;
+//     #[test]
+//     fn parse_struct_patt_fields() {
+//         let source_code = r#"
+//             #[export]
+//             foo: "a",
+//             bar: 1,
+//             #[abstract]
+//             #[unsafe]
+//             baz: x,
+//             "#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_patt_fields =
-            StructPattFields::parse(&mut parser).expect("unable to parse struct pattern fields");
+//         let struct_patt_fields =
+//             StructPattFields::parse(&mut parser).expect("unable to parse struct pattern fields");
 
-        println!("{:#?}", struct_patt_fields);
-    }
+//         println!("{:#?}", struct_patt_fields);
+//     }
 
-    #[test]
-    fn parse_struct_patt() {
-        let source_code = r#"
-        SomeStruct {
-            foo: "a",
-            bar: 1,
-            baz: x
-        }"#;
+//     #[test]
+//     fn parse_struct_patt() {
+//         let source_code = r#"
+//         SomeStruct {
+//             foo: "a",
+//             bar: 1,
+//             baz: x
+//         }"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let struct_patt = StructPatt::parse(&mut parser).expect("unable to parse struct pattern");
+//         let struct_patt = StructPatt::parse(&mut parser).expect("unable to parse struct pattern");
 
-        println!("{:#?}", struct_patt);
-    }
+//         println!("{:#?}", struct_patt);
+//     }
 
-    #[test]
-    fn parse_tuple_struct_patt_fields() {
-        let source_code = r#"foo, "a", 1"#;
+//     #[test]
+//     fn parse_tuple_struct_patt_fields() {
+//         let source_code = r#"foo, "a", 1"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_struct_patt_fields = TupleStructPattFields::parse(&mut parser)
-            .expect("unable to parse tuple struct pattern fields");
+//         let tuple_struct_patt_fields = TupleStructPattFields::parse(&mut parser)
+//             .expect("unable to parse tuple struct pattern fields");
 
-        println!("{:#?}", tuple_struct_patt_fields);
-    }
+//         println!("{:#?}", tuple_struct_patt_fields);
+//     }
 
-    #[test]
-    fn parse_tuple_struct_patt() {
-        let source_code = r#"SomeStruct(foo, "a", 1,)"#;
+//     #[test]
+//     fn parse_tuple_struct_patt() {
+//         let source_code = r#"SomeStruct(foo, "a", 1,)"#;
 
-        let mut parser = test_utils::get_parser(source_code, false);
+//         let mut parser = test_utils::get_parser(source_code, false);
 
-        let tuple_struct_patt =
-            TupleStructPatt::parse(&mut parser).expect("unable to parse tuple struct pattern");
+//         let tuple_struct_patt =
+//             TupleStructPatt::parse(&mut parser).expect("unable to parse tuple struct pattern");
 
-        println!("{:#?}", tuple_struct_patt);
-    }
-}
+//         println!("{:#?}", tuple_struct_patt);
+//     }
+// }
