@@ -367,7 +367,7 @@ impl<'a> Lexer<'a> {
                     }
 
                     if string_literal_open {
-                        panic!("Unclosed string literal");
+                        return Err(self.log_error(LexErrorKind::ExpectedClosingDoubleQuote));
                     }
                 }
 
