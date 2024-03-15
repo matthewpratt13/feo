@@ -2,8 +2,8 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
-        DereferenceExpr, Expression, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr,
-        NegationOperatorKind, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind, Value,
+        DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
+        ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind, Value,
     },
     token::Token,
 };
@@ -131,7 +131,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = Expression::parse(parser)? {
+        if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -191,7 +191,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(rhs) = Expression::parse(parser)? {
+                if let Some(rhs) = Value::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(ArithmeticOrLogicalExpr {
@@ -219,7 +219,7 @@ impl ParseExpr for AssignmentExpr {
     where
         Self: Sized,
     {
-        if let Some(assignee) = Expression::parse(parser)? {
+        if let Some(assignee) = Value::parse(parser)? {
             parser.next_token();
 
             let equals_opt = parser.peek_current::<Punctuation>();
@@ -231,7 +231,7 @@ impl ParseExpr for AssignmentExpr {
             {
                 parser.next_token();
 
-                if let Some(new_value) = Expression::parse(parser)? {
+                if let Some(new_value) = Value::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(AssignmentExpr {
@@ -332,7 +332,7 @@ impl ParseExpr for ComparisonExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = Expression::parse(parser)? {
+        if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -372,7 +372,7 @@ impl ParseExpr for ComparisonExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(rhs) = Expression::parse(parser)? {
+                if let Some(rhs) = Value::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(ComparisonExpr {
@@ -414,7 +414,7 @@ impl ParseExpr for DereferenceExpr {
         {
             parser.next_token();
 
-            if let Some(operand) = Expression::parse(parser)? {
+            if let Some(operand) = Value::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(DereferenceExpr {
@@ -440,7 +440,7 @@ impl ParseExpr for LazyBoolExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = Expression::parse(parser)? {
+        if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -466,7 +466,7 @@ impl ParseExpr for LazyBoolExpr {
                     }
                 };
 
-                if let Some(rhs) = Expression::parse(parser)? {
+                if let Some(rhs) = Value::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(LazyBoolExpr {
@@ -572,7 +572,7 @@ impl ParseExpr for ReferenceExpr {
 
             let operator = (ampersand_opt.unwrap(), kw_mut_opt);
 
-            if let Some(operand) = Expression::parse(parser)? {
+            if let Some(operand) = Value::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(ReferenceExpr {

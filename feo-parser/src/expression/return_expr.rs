@@ -1,11 +1,8 @@
-use feo_ast::expression::{ReturnExpr, Value};
+use feo_ast::expression::{Expression, ReturnExpr};
 use feo_error::error::CompilerError;
 use feo_types::{keyword::KeywordKind, Keyword};
 
-use crate::{
-    parse::{ParseExpr, ParseTerm},
-    parser::Parser,
-};
+use crate::{parse::ParseExpr, parser::Parser};
 
 impl ParseExpr for ReturnExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -21,7 +18,7 @@ impl ParseExpr for ReturnExpr {
         {
             parser.next_token();
 
-            let expression_opt = if let Some(e) = Value::parse(parser)? {
+            let expression_opt = if let Some(e) = Expression::parse(parser)? {
                 parser.next_token();
                 Some(Box::new(e))
             } else {

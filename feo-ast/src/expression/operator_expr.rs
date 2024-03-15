@@ -131,9 +131,9 @@ pub type RefOperator = (Ampersand, Option<KwMut>);
 
 #[derive(Debug, Clone)]
 pub struct ArithmeticOrLogicalExpr {
-    pub lhs: Box<Expression>,
+    pub lhs: Box<Value>,
     pub operator: ArithmeticOrLogicalOperatorKind,
-    pub rhs: Box<Expression>,
+    pub rhs: Box<Value>,
 }
 
 impl Spanned for ArithmeticOrLogicalExpr {
@@ -147,9 +147,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 
 #[derive(Debug, Clone)]
 pub struct AssignmentExpr {
-    pub assignee: Box<Expression>,
+    pub assignee: Box<Value>,
     pub operator: AssignOperator,
-    pub new_value: Box<Expression>,
+    pub new_value: Box<Value>,
 }
 
 impl Spanned for AssignmentExpr {
@@ -179,9 +179,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonExpr {
-    pub lhs: Box<Expression>,
+    pub lhs: Box<Value>,
     pub operator: ComparisonOperatorKind,
-    pub rhs: Box<Expression>,
+    pub rhs: Box<Value>,
 }
 
 impl Spanned for ComparisonExpr {
@@ -196,7 +196,7 @@ impl Spanned for ComparisonExpr {
 #[derive(Debug, Clone)]
 pub struct DereferenceExpr {
     pub operator: DerefOperator,
-    pub operand: Box<Expression>,
+    pub operand: Box<Value>,
 }
 
 impl Spanned for DereferenceExpr {
@@ -210,9 +210,9 @@ impl Spanned for DereferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct LazyBoolExpr {
-    pub lhs: Box<Expression>,
+    pub lhs: Box<Value>,
     pub operator: LazyBoolOperatorKind,
-    pub rhs: Box<Expression>,
+    pub rhs: Box<Value>,
 }
 
 impl Spanned for LazyBoolExpr {
@@ -242,7 +242,7 @@ impl Spanned for NegationExpr {
 #[derive(Debug, Clone)]
 pub struct ReferenceExpr {
     pub operator: RefOperator,
-    pub operand: Box<Expression>,
+    pub operand: Box<Value>,
 }
 
 impl Spanned for ReferenceExpr {
@@ -256,9 +256,9 @@ impl Spanned for ReferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct TypeCastExpr {
-    pub lhs: Box<Expression>,
+    pub lhs: Box<Value>,
     pub operator: CastOperator,
-    pub rhs: Box<Expression>,
+    pub rhs: Box<Value>,
 }
 
 impl Spanned for TypeCastExpr {
