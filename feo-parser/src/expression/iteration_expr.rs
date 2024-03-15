@@ -115,42 +115,42 @@ impl ParseExpr for IterLoopExpr {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[ignore] // TODO: remove when testing
-//     #[test]
-//     fn parse_infinite_loop_expr() {
-//         let source_code = r#"
-//         loop {
-//             foo += 2
-//         }"#;
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_infinite_loop_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        loop {
+            foo += 2
+        }"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let infinite_loop_expr =
-//             InfiniteLoopExpr::parse(&mut parser).expect("unable to parse infinite loop expression");
+        let infinite_loop_expr =
+            InfiniteLoopExpr::parse(&mut parser).expect("unable to parse infinite loop expression");
 
-//         println!("{:#?}", infinite_loop_expr);
-//     }
+        Ok(println!("{:#?}", infinite_loop_expr))
+    }
 
-//     #[ignore] // TODO: remove when testing
-//     #[test]
-//     fn parse_predicate_loop_expr() {
-//         let source_code = r#"
-//         while foo < 100 {
-//             foo += 2
-//         }"#;
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_predicate_loop_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        while foo < 100 {
+            foo += 2
+        }"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let predicate_loop_expr = PredicateLoopExpr::parse(&mut parser)
-//             .expect("unable to parse predicate loop expression");
+        let predicate_loop_expr = PredicateLoopExpr::parse(&mut parser)
+            .expect("unable to parse predicate loop expression");
 
-//         println!("{:#?}", predicate_loop_expr);
-//     }
-// }
+        Ok(println!("{:#?}", predicate_loop_expr))
+    }
+}
