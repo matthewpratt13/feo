@@ -73,8 +73,8 @@ impl ParseExpr for Expression {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if let Some(ue) = UnderscoreExpr::parse(parser).unwrap_or(None) {
-                return Ok(Some(Expression::UnderscoreExpr(ue)));
+            if &id.name == "_" {
+                return Ok(Some(Expression::UnderscoreExpr(UnderscoreExpr(id))));
             }
 
             match parser.peek_next::<Delimiter>() {
@@ -1787,10 +1787,9 @@ impl ParsePatt for Pattern {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if let Some(wcp) = WildcardPatt::parse(parser).unwrap_or(None) {
-                return Ok(Some(Pattern::WildcardPatt(wcp)));
+            if &id.name == "_" {
+                return Ok(Some(Pattern::WildcardPatt(WildcardPatt(id))));
             }
-
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -1934,7 +1933,7 @@ impl ParseType for Type {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            if &id.name == "_)" {
+            if &id.name == "_" {
                 if let Some(bit) = BuiltInType::parse(parser).unwrap_or(None) {
                     return Ok(Some(Type::InferredType(bit)));
                 }

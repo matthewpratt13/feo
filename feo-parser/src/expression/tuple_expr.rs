@@ -23,14 +23,14 @@ impl ParseTerm for TupleExprElements {
 
         if let Some(first_element) = Expression::parse(parser)? {
             parser.next_token();
-
+            
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
             }) = parser.peek_current::<Punctuation>()
             {
                 parser.next_token();
-
+                
                 if let Some(next_element) = Expression::parse(parser)? {
                     subsequent_elements.push(next_element);
                 } else {
