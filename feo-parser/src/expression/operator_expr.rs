@@ -3,7 +3,7 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
         DereferenceExpr, Expression, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr,
-        NegationOperatorKind, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+        NegationOperatorKind, ReferenceExpr, Term, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
     },
     token::Token,
 };
@@ -11,7 +11,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
-    parse::ParseExpr,
+    parse::{ParseExpr, ParseTerm},
     parser::Parser,
     peek::{Peek, Peeker},
 };
@@ -264,7 +264,7 @@ impl ParseExpr for CompoundAssignmentExpr {
     where
         Self: Sized,
     {
-        if let Some(assignee) = Expression::parse(parser)? {
+        if let Some(assignee) = Term::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -299,7 +299,7 @@ impl ParseExpr for CompoundAssignmentExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(new_value) = Expression::parse(parser)? {
+                if let Some(new_value) = Term::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(CompoundAssignmentExpr {
@@ -525,7 +525,7 @@ impl ParseExpr for NegationExpr {
                 }
             };
 
-            if let Some(operand) = Expression::parse(parser)? {
+            if let Some(operand) = Term::parse(parser)? {
                 parser.next_token();
 
                 return Ok(Some(NegationExpr {

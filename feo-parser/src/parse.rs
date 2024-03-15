@@ -8,10 +8,10 @@ use feo_ast::{
         IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr, NegationExpr,
         OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind, RangeFromExpr,
         RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
-        ReturnExpr, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
+        ReturnExpr, StructExpr, StructExprKind, Term, TupleExpr, TupleIndexExpr, TupleStructExpr,
         TypeCastExpr, UnderscoreExpr, UnwrapExpr,
     },
-    path::{PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
+    path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
         IdentifierPatt, ParenthesizedPatt, Pattern, RangeFromPatt, RangeInclusivePatt,
         RangePattKind, RangeToInclusivePatt, StructPatt, TuplePatt, TupleStructPatt, WildcardPatt,
@@ -134,53 +134,6 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::PathExpr(path_expr)));
                     }
                 }
-
-                // Some(Punctuation {
-                //     punc_kind: PuncKind::Plus,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Minus,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Asterisk,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::ForwardSlash,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Percent,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Ampersand,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Pipe,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Caret,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::DblLessThan,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::DblGreaterThan,
-                //     ..
-                // }) => {
-                //     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(Expression::OperatorExpr(
-                //             OperatorExprKind::ArithmeticOrLogical(al),
-                //         )));
-                //     }
-                // }
 
                 // Some(Punctuation {
                 //     punc_kind: PuncKind::LessThan,
@@ -447,52 +400,6 @@ impl ParseExpr for Expression {
             }
 
             match parser.peek_next::<Punctuation>() {
-                // Some(Punctuation {
-                //     punc_kind: PuncKind::Plus,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Minus,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Asterisk,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::ForwardSlash,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Percent,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Ampersand,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Pipe,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Caret,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::DblLessThan,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::DblGreaterThan,
-                //     ..
-                // }) => {
-                //     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(Expression::OperatorExpr(
-                //             OperatorExprKind::ArithmeticOrLogical(al),
-                //         )));
-                //     }
-                // }
                 Some(Punctuation {
                     punc_kind: PuncKind::LessThan,
                     ..
@@ -903,6 +810,135 @@ impl ParsePatt for Pattern {
             }
         } else {
             return Ok(None);
+        }
+
+        Err(parser.errors())
+    }
+}
+
+impl ParseTerm for Term {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::FullStop,
+                    ..
+                }) => {
+                    // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Term::FieldAccessExpr(fa)));
+                    // }
+
+                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Expression::MethodCallExpr(mc)));
+                    // }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::ArithmeticOrLogicalExpr(al)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            let path_expr = PathExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Term::PathExpr(path_expr)));
+        }
+
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                match &d.delim {
+                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                        if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Term::ParenthesizedExpr(par)));
+                        }
+
+                        // if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        //     return Ok(Some(Expression::TupleIndexExpr(ti)));
+                        // }
+
+                        // if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        //     return Ok(Some(Expression::TupleExpr(te)));
+                        // }
+                    }
+
+                    // (DelimKind::Bracket, DelimOrientation::Open) => {
+                    //     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                    //         return Ok(Some(Expression::IndexExpr(ie)));
+                    //     }
+
+                    //     if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                    //         return Ok(Some(Expression::ArrayExpr(ae)));
+                    //     }
+                    // }
+                    _ => (),
+                }
+
+                return Ok(Some(Term::ParenthesizedExpr(par)));
+            } else {
+                return Ok(None);
+            }
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            return Ok(Some(Term::Literal(l)));
+        }
+
+        if let Some(p) = parser.peek_current::<Punctuation>() {
+            match &p.punc_kind {
+                PuncKind::Bang | PuncKind::Minus => {
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Term::NegationExpr(ne)));
+                    }
+                }
+
+                _ => (),
+            }
         }
 
         Err(parser.errors())

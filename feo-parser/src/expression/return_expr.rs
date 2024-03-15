@@ -1,8 +1,11 @@
-use feo_ast::expression::{Expression, ReturnExpr};
+use feo_ast::expression::{ReturnExpr, Term};
 use feo_error::error::CompilerError;
 use feo_types::{keyword::KeywordKind, Keyword};
 
-use crate::{parse::ParseExpr, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseExpr for ReturnExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -18,7 +21,7 @@ impl ParseExpr for ReturnExpr {
         {
             parser.next_token();
 
-            let expression_opt = if let Some(e) = Expression::parse(parser)? {
+            let expression_opt = if let Some(e) = Term::parse(parser)? {
                 parser.next_token();
                 Some(Box::new(e))
             } else {
@@ -44,7 +47,7 @@ mod tests {
 
     #[test]
     fn parse_return_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"return x"#;
+        let source_code = r#"return x + 2"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
