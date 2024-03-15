@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{BlockExpr, BooleanOperand, IfExpr, MatchExpr},
+    expression::{BlockExpr, Expression, IfExpr, MatchExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -23,7 +23,7 @@ impl ParseExpr for IfExpr {
         {
             parser.next_token();
 
-            if let Some(condition_operand) = BooleanOperand::parse(parser)? {
+            if let Some(condition_operand) = Expression::parse(parser)? {
                 parser.next_token();
 
                 if let Some(if_block) = BlockExpr::parse(parser)? {
@@ -130,25 +130,25 @@ impl ParseExpr for MatchExpr {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[ignore] // TODO: remove when testing
-//     #[test]
-//     fn parse_if_expr() {
-//         let source_code = r#"
-//         if foo < 2 { 
-//             print!("bar")
-//         }"#;
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_if_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        if foo < 2 { 
+            print!("bar")
+        }"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let if_expr = IfExpr::parse(&mut parser).expect("unable to if expression");
+        let if_expr = IfExpr::parse(&mut parser).expect("unable to parse if expression");
 
-//         println!("{:#?}", if_expr);
-//     }
-// }
+        Ok(println!("{:#?}", if_expr))
+    }
+}

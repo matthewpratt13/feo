@@ -8,12 +8,12 @@ use crate::{
     pattern::Pattern,
 };
 
-use super::{Assignable, BlockExpr, BooleanOperand, Expression};
+use super::{BlockExpr, Expression};
 
 #[derive(Debug, Clone)]
 pub struct IfExpr {
     pub kw_if: KwIf,
-    pub condition_operand: Box<BooleanOperand>,
+    pub condition_operand: Box<Expression>,
     pub if_block: Box<BlockExpr>,
     pub else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
     pub trailing_else_block_opt: Option<(KwElse, BlockExpr)>,
@@ -40,7 +40,7 @@ impl Spanned for IfExpr {
 #[derive(Debug, Clone)]
 pub struct MatchExpr {
     kw_match: KwMatch,
-    scrutinee: Box<Assignable>, // except struct expression
+    scrutinee: Box<Expression>, // except struct expression
     open_brace: Brace,
     attributes_opt: Option<Vec<InnerAttr>>,
     match_arms_opt: Option<MatchArms>,
@@ -72,5 +72,5 @@ pub struct MatchArm {
 #[derive(Debug, Clone)]
 pub struct MatchArmGuard {
     kw_if: KwIf,
-    operand: Box<BooleanOperand>,
+    operand: Box<Expression>,
 }
