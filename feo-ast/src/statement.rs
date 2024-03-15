@@ -7,7 +7,7 @@ use feo_types::{
 
 use crate::{
     attribute::OuterAttr,
-    expression::{Assignable, Expression},
+    expression::Expression,
     item::{
         ConstantVarDef, EnumDef, EnumVariantStruct, ExternCrateDecl, FunctionDefKind, ImportDecl,
         InherentImplBlock, ModBlock, PathSubsetRecursive, PathWildcard, PathWithAsClause,
@@ -75,7 +75,7 @@ pub struct LetStatement {
     kw_let: KwLet,
     pattern: Box<Pattern>,
     type_ann_opt: Option<(Colon, Type)>,
-    assignment_opt: Option<(Equals, Assignable)>,
+    assignment_opt: Option<(Equals, Expression)>,
     semicolon: Semicolon,
 }
 

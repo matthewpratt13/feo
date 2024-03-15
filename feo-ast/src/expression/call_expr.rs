@@ -4,11 +4,13 @@ use feo_types::{
     Identifier,
 };
 
-use super::{Callable, Expression};
+use crate::path::PathInExpr;
+
+use super::Expression;
 
 #[derive(Debug, Clone)]
 pub struct FunctionCallExpr {
-    pub function_operand: Box<Callable>,
+    pub function_operand: PathInExpr,
     pub open_parenthesis: Parenthesis,
     pub call_params_opt: Option<CallParams>,
     pub close_parenthesis: Parenthesis,
@@ -25,7 +27,7 @@ impl Spanned for FunctionCallExpr {
 
 #[derive(Debug, Clone)]
 pub struct MethodCallExpr {
-    pub receiver: Box<Callable>,
+    pub receiver: PathInExpr,
     pub full_stop: FullStop,
     pub method_name: Identifier,
     pub open_parenthesis: Parenthesis,

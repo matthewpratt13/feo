@@ -16,9 +16,8 @@ mod tuple_expr;
 mod underscore_expr;
 
 use feo_types::{
-    literal::{FloatType, IntType, Literal, LiteralKind, UIntType},
+    literal::LiteralKind,
     span::{Span, Spanned},
-    U256,
 };
 
 use crate::path::PathExpr;
@@ -119,103 +118,103 @@ impl Spanned for Expression {
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum Assignable {
-    ArrayExpr(ArrayExpr),
-    PathExpr(PathExpr),
-    StructExpr(StructExprKind),
-    TupleExpr(TupleExpr),
-    UnderscoreExpr(UnderscoreExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Assignable {
+//     ArrayExpr(ArrayExpr),
+//     PathExpr(PathExpr),
+//     StructExpr(StructExprKind),
+//     TupleExpr(TupleExpr),
+//     UnderscoreExpr(UnderscoreExpr),
+// }
 
-impl Spanned for Assignable {
-    fn span(&self) -> Span {
-        match self {
-            Assignable::ArrayExpr(ae) => ae.span(),
-            Assignable::PathExpr(pe) => pe.span(),
-            Assignable::StructExpr(se) => se.span(),
-            Assignable::TupleExpr(te) => te.span(),
-            Assignable::UnderscoreExpr(ue) => ue.span(),
-        }
-    }
-}
+// impl Spanned for Assignable {
+//     fn span(&self) -> Span {
+//         match self {
+//             Assignable::ArrayExpr(ae) => ae.span(),
+//             Assignable::PathExpr(pe) => pe.span(),
+//             Assignable::StructExpr(se) => se.span(),
+//             Assignable::TupleExpr(te) => te.span(),
+//             Assignable::UnderscoreExpr(ue) => ue.span(),
+//         }
+//     }
+// }
 
-#[derive(Debug, Clone)]
-pub enum BooleanOperand {
-    IndexExpr(IndexExpr),
-    BlockExpr(BlockExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    Literal(LiteralKind),
-    ComparisonExpr(ComparisonExpr),
-    NegationExpr(NegationExpr),
-    UnwrapExpr(UnwrapExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    PathExpr(PathExpr),
-    UnderscoreExpr(UnderscoreExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum BooleanOperand {
+//     IndexExpr(IndexExpr),
+//     BlockExpr(BlockExpr),
+//     FunctionCallExpr(FunctionCallExpr),
+//     MethodCallExpr(MethodCallExpr),
+//     FieldAccessExpr(FieldAccessExpr),
+//     Literal(LiteralKind),
+//     ComparisonExpr(ComparisonExpr),
+//     NegationExpr(NegationExpr),
+//     UnwrapExpr(UnwrapExpr),
+//     ParenthesizedExpr(ParenthesizedExpr),
+//     TupleIndexExpr(TupleIndexExpr),
+//     PathExpr(PathExpr),
+//     UnderscoreExpr(UnderscoreExpr),
+// }
 
-impl Spanned for BooleanOperand {
-    fn span(&self) -> Span {
-        match self {
-            BooleanOperand::IndexExpr(ie) => ie.span(),
-            BooleanOperand::BlockExpr(be) => be.span(),
-            BooleanOperand::FunctionCallExpr(fc) => fc.span(),
-            BooleanOperand::MethodCallExpr(mc) => mc.span(),
-            BooleanOperand::FieldAccessExpr(fa) => fa.span(),
-            BooleanOperand::Literal(lit) => lit.span(),
-            BooleanOperand::ComparisonExpr(ce) => ce.span(),
-            BooleanOperand::NegationExpr(ne) => ne.span(),
-            BooleanOperand::UnwrapExpr(ue) => ue.span(),
-            BooleanOperand::ParenthesizedExpr(par) => par.span(),
-            BooleanOperand::TupleIndexExpr(tie) => tie.span(),
-            BooleanOperand::PathExpr(pth) => pth.span(),
-            BooleanOperand::UnderscoreExpr(und) => und.span(),
-        }
-    }
-}
+// impl Spanned for BooleanOperand {
+//     fn span(&self) -> Span {
+//         match self {
+//             BooleanOperand::IndexExpr(ie) => ie.span(),
+//             BooleanOperand::BlockExpr(be) => be.span(),
+//             BooleanOperand::FunctionCallExpr(fc) => fc.span(),
+//             BooleanOperand::MethodCallExpr(mc) => mc.span(),
+//             BooleanOperand::FieldAccessExpr(fa) => fa.span(),
+//             BooleanOperand::Literal(lit) => lit.span(),
+//             BooleanOperand::ComparisonExpr(ce) => ce.span(),
+//             BooleanOperand::NegationExpr(ne) => ne.span(),
+//             BooleanOperand::UnwrapExpr(ue) => ue.span(),
+//             BooleanOperand::ParenthesizedExpr(par) => par.span(),
+//             BooleanOperand::TupleIndexExpr(tie) => tie.span(),
+//             BooleanOperand::PathExpr(pth) => pth.span(),
+//             BooleanOperand::UnderscoreExpr(und) => und.span(),
+//         }
+//     }
+// }
 
-#[derive(Debug, Clone)]
-pub enum Callable {
-    ParenthesizedExpr(ParenthesizedExpr),
-    PathExpr(PathExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Callable {
+//     ParenthesizedExpr(ParenthesizedExpr),
+//     PathExpr(PathExpr),
+// }
 
-impl Spanned for Callable {
-    fn span(&self) -> Span {
-        match self {
-            Callable::ParenthesizedExpr(par) => par.span(),
-            Callable::PathExpr(pth) => pth.span(),
-        }
-    }
-}
+// impl Spanned for Callable {
+//     fn span(&self) -> Span {
+//         match self {
+//             Callable::ParenthesizedExpr(par) => par.span(),
+//             Callable::PathExpr(pth) => pth.span(),
+//         }
+//     }
+// }
 
-#[derive(Debug, Clone)]
-pub enum Castable {
-    Char(Literal<char>),
-    Bool(Literal<bool>),
-    Int(Literal<IntType>),
-    UInt(Literal<UIntType>),
-    U256(Literal<U256>),
-    Float(Literal<FloatType>),
-    PathExpr(PathExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Castable {
+//     Char(Literal<char>),
+//     Bool(Literal<bool>),
+//     Int(Literal<IntType>),
+//     UInt(Literal<UIntType>),
+//     U256(Literal<U256>),
+//     Float(Literal<FloatType>),
+//     PathExpr(PathExpr),
+// }
 
-impl Spanned for Castable {
-    fn span(&self) -> Span {
-        match self {
-            Castable::Char(c) => c.span(),
-            Castable::Bool(b) => b.span(),
-            Castable::Int(i) => i.span(),
-            Castable::UInt(ui) => ui.span(),
-            Castable::U256(u) => u.span(),
-            Castable::Float(f) => f.span(),
-            Castable::PathExpr(pth) => pth.span(),
-        }
-    }
-}
+// impl Spanned for Castable {
+//     fn span(&self) -> Span {
+//         match self {
+//             Castable::Char(c) => c.span(),
+//             Castable::Bool(b) => b.span(),
+//             Castable::Int(i) => i.span(),
+//             Castable::UInt(ui) => ui.span(),
+//             Castable::U256(u) => u.span(),
+//             Castable::Float(f) => f.span(),
+//             Castable::PathExpr(pth) => pth.span(),
+//         }
+//     }
+// }
 
 #[derive(Debug, Clone)]
 pub enum ExprWithBlock {
@@ -260,112 +259,112 @@ pub enum ExprWithoutBlock {
     UnderscoreExpr(UnderscoreExpr),
 }
 
-#[derive(Debug, Clone)]
-pub enum Iterable {
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    BlockExpr(BlockExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    Literal(LiteralKind),
-    DereferenceExpr(DereferenceExpr),
-    ReferenceExpr(ReferenceExpr),
-    TypeCastExpr(TypeCastExpr),
-    UnwrapExpr(UnwrapExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
-    PathExpr(PathExpr),
-    RangeExpr(RangeExprKind),
-    TupleExpr(TupleExpr),
-    TupleIndexExpr(TupleIndexExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Iterable {
+//     ArrayExpr(ArrayExpr),
+//     IndexExpr(IndexExpr),
+//     BlockExpr(BlockExpr),
+//     FieldAccessExpr(FieldAccessExpr),
+//     FunctionCallExpr(FunctionCallExpr),
+//     MethodCallExpr(MethodCallExpr),
+//     Literal(LiteralKind),
+//     DereferenceExpr(DereferenceExpr),
+//     ReferenceExpr(ReferenceExpr),
+//     TypeCastExpr(TypeCastExpr),
+//     UnwrapExpr(UnwrapExpr),
+//     ParenthesizedExpr(ParenthesizedExpr),
+//     PathExpr(PathExpr),
+//     RangeExpr(RangeExprKind),
+//     TupleExpr(TupleExpr),
+//     TupleIndexExpr(TupleIndexExpr),
+// }
 
-#[derive(Debug, Clone)]
-pub enum Operable {
-    IndexExpr(IndexExpr),
-    FieldAccessExpr(FieldAccessExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    Literal(LiteralKind),
-    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
-    DereferenceExpr(DereferenceExpr),
-    NegationExpr(NegationExpr),
-    TypeCastExpr(TypeCastExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
-    PathExpr(PathExpr),
-    ReferenceExpr(ReferenceExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    UnwrapExpr(UnwrapExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Operable {
+//     IndexExpr(IndexExpr),
+//     FieldAccessExpr(FieldAccessExpr),
+//     FunctionCallExpr(FunctionCallExpr),
+//     MethodCallExpr(MethodCallExpr),
+//     Literal(LiteralKind),
+//     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+//     DereferenceExpr(DereferenceExpr),
+//     NegationExpr(NegationExpr),
+//     TypeCastExpr(TypeCastExpr),
+//     ParenthesizedExpr(ParenthesizedExpr),
+//     PathExpr(PathExpr),
+//     ReferenceExpr(ReferenceExpr),
+//     TupleIndexExpr(TupleIndexExpr),
+//     UnwrapExpr(UnwrapExpr),
+// }
 
-impl Spanned for Operable {
-    fn span(&self) -> Span {
-        match self {
-            Operable::IndexExpr(ie) => ie.span(),
-            Operable::FieldAccessExpr(fa) => fa.span(),
-            Operable::FunctionCallExpr(fc) => fc.span(),
-            Operable::MethodCallExpr(mc) => mc.span(),
-            Operable::Literal(lit) => lit.span(),
-            Operable::ArithmeticOrLogicalExpr(al) => al.span(),
-            Operable::DereferenceExpr(de) => de.span(),
-            Operable::NegationExpr(ne) => ne.span(),
-            Operable::TypeCastExpr(tc) => tc.span(),
-            Operable::ParenthesizedExpr(par) => par.span(),
-            Operable::PathExpr(pth) => pth.span(),
-            Operable::ReferenceExpr(re) => re.span(),
-            Operable::TupleIndexExpr(ti) => ti.span(),
-            Operable::UnwrapExpr(ue) => ue.span(),
-        }
-    }
-}
+// impl Spanned for Operable {
+//     fn span(&self) -> Span {
+//         match self {
+//             Operable::IndexExpr(ie) => ie.span(),
+//             Operable::FieldAccessExpr(fa) => fa.span(),
+//             Operable::FunctionCallExpr(fc) => fc.span(),
+//             Operable::MethodCallExpr(mc) => mc.span(),
+//             Operable::Literal(lit) => lit.span(),
+//             Operable::ArithmeticOrLogicalExpr(al) => al.span(),
+//             Operable::DereferenceExpr(de) => de.span(),
+//             Operable::NegationExpr(ne) => ne.span(),
+//             Operable::TypeCastExpr(tc) => tc.span(),
+//             Operable::ParenthesizedExpr(par) => par.span(),
+//             Operable::PathExpr(pth) => pth.span(),
+//             Operable::ReferenceExpr(re) => re.span(),
+//             Operable::TupleIndexExpr(ti) => ti.span(),
+//             Operable::UnwrapExpr(ue) => ue.span(),
+//         }
+//     }
+// }
 
-#[derive(Debug, Clone)]
-pub enum Returnable {
-    ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    ClosureWithBlock(ClosureWithBlock),
-    ClosureWithoutBlock(ClosureWithoutBlock),
-    FieldAccessExpr(FieldAccessExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
-    Literal(LiteralKind),
-    StructExpr(StructExprKind),
-    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
-    DereferenceExpr(DereferenceExpr),
-    NegationExpr(NegationExpr),
-    ReferenceExpr(ReferenceExpr),
-    TypeCastExpr(TypeCastExpr),
-    UnwrapExpr(UnwrapExpr),
-    ParenthesizedExpr(ParenthesizedExpr),
-    PathExpr(PathExpr),
-    TupleExpr(TupleExpr),
-    TupleIndexExpr(TupleIndexExpr),
-    UnderscoreExpr(UnderscoreExpr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Returnable {
+//     ArrayExpr(ArrayExpr),
+//     IndexExpr(IndexExpr),
+//     ClosureWithBlock(ClosureWithBlock),
+//     ClosureWithoutBlock(ClosureWithoutBlock),
+//     FieldAccessExpr(FieldAccessExpr),
+//     FunctionCallExpr(FunctionCallExpr),
+//     MethodCallExpr(MethodCallExpr),
+//     Literal(LiteralKind),
+//     StructExpr(StructExprKind),
+//     ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+//     DereferenceExpr(DereferenceExpr),
+//     NegationExpr(NegationExpr),
+//     ReferenceExpr(ReferenceExpr),
+//     TypeCastExpr(TypeCastExpr),
+//     UnwrapExpr(UnwrapExpr),
+//     ParenthesizedExpr(ParenthesizedExpr),
+//     PathExpr(PathExpr),
+//     TupleExpr(TupleExpr),
+//     TupleIndexExpr(TupleIndexExpr),
+//     UnderscoreExpr(UnderscoreExpr),
+// }
 
-impl Spanned for Returnable {
-    fn span(&self) -> Span {
-        match self {
-            Returnable::ArrayExpr(ae) => ae.span(),
-            Returnable::IndexExpr(ie) => ie.span(),
-            Returnable::ClosureWithBlock(cwb) => cwb.span(),
-            Returnable::ClosureWithoutBlock(c) => c.span(),
-            Returnable::FieldAccessExpr(fa) => fa.span(),
-            Returnable::FunctionCallExpr(fc) => fc.span(),
-            Returnable::MethodCallExpr(mc) => mc.span(),
-            Returnable::Literal(lit) => lit.span(),
-            Returnable::StructExpr(se) => se.span(),
-            Returnable::ArithmeticOrLogicalExpr(al) => al.span(),
-            Returnable::DereferenceExpr(de) => de.span(),
-            Returnable::NegationExpr(ne) => ne.span(),
-            Returnable::ReferenceExpr(re) => re.span(),
-            Returnable::TypeCastExpr(tc) => tc.span(),
-            Returnable::UnwrapExpr(ue) => ue.span(),
-            Returnable::ParenthesizedExpr(par) => par.span(),
-            Returnable::PathExpr(pth) => pth.span(),
-            Returnable::TupleExpr(te) => te.span(),
-            Returnable::TupleIndexExpr(ti) => ti.span(),
-            Returnable::UnderscoreExpr(und) => und.span(),
-        }
-    }
-}
+// impl Spanned for Returnable {
+//     fn span(&self) -> Span {
+//         match self {
+//             Returnable::ArrayExpr(ae) => ae.span(),
+//             Returnable::IndexExpr(ie) => ie.span(),
+//             Returnable::ClosureWithBlock(cwb) => cwb.span(),
+//             Returnable::ClosureWithoutBlock(c) => c.span(),
+//             Returnable::FieldAccessExpr(fa) => fa.span(),
+//             Returnable::FunctionCallExpr(fc) => fc.span(),
+//             Returnable::MethodCallExpr(mc) => mc.span(),
+//             Returnable::Literal(lit) => lit.span(),
+//             Returnable::StructExpr(se) => se.span(),
+//             Returnable::ArithmeticOrLogicalExpr(al) => al.span(),
+//             Returnable::DereferenceExpr(de) => de.span(),
+//             Returnable::NegationExpr(ne) => ne.span(),
+//             Returnable::ReferenceExpr(re) => re.span(),
+//             Returnable::TypeCastExpr(tc) => tc.span(),
+//             Returnable::UnwrapExpr(ue) => ue.span(),
+//             Returnable::ParenthesizedExpr(par) => par.span(),
+//             Returnable::PathExpr(pth) => pth.span(),
+//             Returnable::TupleExpr(te) => te.span(),
+//             Returnable::TupleIndexExpr(ti) => ti.span(),
+//             Returnable::UnderscoreExpr(und) => und.span(),
+//         }
+//     }
+// }
