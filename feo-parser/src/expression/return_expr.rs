@@ -35,22 +35,22 @@ impl ParseExpr for ReturnExpr {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::test_utils;
+    use crate::test_utils;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn parse_return_expr() {
-//         let source_code = r#"return x"#;
+    #[test]
+    fn parse_return_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"return x"#;
 
-//         let mut parser = test_utils::get_parser(source_code, false);
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
-//         let return_expr =
-//             ReturnExpr::parse(&mut parser).expect("unable to parse return expression");
+        let return_expr =
+            ReturnExpr::parse(&mut parser).expect("unable to parse return expression");
 
-//         println!("{:#?}", return_expr);
-//     }
-// }
+        Ok(println!("{:#?}", return_expr))
+    }
+}
