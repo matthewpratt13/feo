@@ -12,7 +12,7 @@ use feo_types::{
 
 use crate::ty::Type;
 
-use super::{Assignable, BooleanOperand, Castable, Operable};
+use super::{Assignable, BooleanOperand, Castable, Expression, Operable};
 
 #[derive(Debug, Clone)]
 pub enum OperatorExprKind {
@@ -133,9 +133,9 @@ pub type RefOperator = (Ampersand, Option<KwMut>);
 
 #[derive(Debug, Clone)]
 pub struct ArithmeticOrLogicalExpr {
-    pub lhs: Box<Operable>,
+    pub lhs: Box<Expression>,
     pub operator: ArithmeticOrLogicalOperatorKind,
-    pub rhs: Box<Operable>,
+    pub rhs: Box<Expression>,
 }
 
 impl Spanned for ArithmeticOrLogicalExpr {
@@ -149,9 +149,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 
 #[derive(Debug, Clone)]
 pub struct AssignmentExpr {
-    pub assignee: Box<Operable>,
+    pub assignee: Box<Expression>,
     pub operator: AssignOperator,
-    pub new_value: Box<Operable>,
+    pub new_value: Box<Expression>,
 }
 
 impl Spanned for AssignmentExpr {
@@ -165,9 +165,9 @@ impl Spanned for AssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct CompoundAssignmentExpr {
-    pub assignee: Box<Operable>,
+    pub assignee: Box<Expression>,
     pub operator: CompoundAssignOperatorKind,
-    pub new_value: Box<Operable>,
+    pub new_value: Box<Expression>,
 }
 
 impl Spanned for CompoundAssignmentExpr {
@@ -181,9 +181,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonExpr {
-    pub lhs: Box<Operable>,
+    pub lhs: Box<Expression>,
     pub operator: ComparisonOperatorKind,
-    pub rhs: Box<Operable>,
+    pub rhs: Box<Expression>,
 }
 
 impl Spanned for ComparisonExpr {

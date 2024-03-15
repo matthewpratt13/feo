@@ -2,8 +2,9 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Assignable, AssignmentExpr,
         BooleanOperand, ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind,
-        CompoundAssignmentExpr, DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr,
-        NegationOperatorKind, Operable, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+        CompoundAssignmentExpr, DereferenceExpr, Expression, LazyBoolExpr, LazyBoolOperatorKind,
+        NegationExpr, NegationOperatorKind, Operable, ReferenceExpr, TypeCastExpr, UnwrapExpr,
+        UnwrapOperandKind,
     },
     token::Token,
 };
@@ -131,7 +132,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = Operable::parse(parser)? {
+        if let Some(lhs) = Expression::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -191,7 +192,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(rhs) = Operable::parse(parser)? {
+                if let Some(rhs) = Expression::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(ArithmeticOrLogicalExpr {
@@ -219,7 +220,7 @@ impl ParseExpr for AssignmentExpr {
     where
         Self: Sized,
     {
-        if let Some(assignee) = Operable::parse(parser)? {
+        if let Some(assignee) = Expression::parse(parser)? {
             parser.next_token();
 
             let equals_opt = parser.peek_current::<Punctuation>();
@@ -231,7 +232,7 @@ impl ParseExpr for AssignmentExpr {
             {
                 parser.next_token();
 
-                if let Some(new_value) = Operable::parse(parser)? {
+                if let Some(new_value) = Expression::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(AssignmentExpr {
@@ -264,7 +265,7 @@ impl ParseExpr for CompoundAssignmentExpr {
     where
         Self: Sized,
     {
-        if let Some(assignee) = Operable::parse(parser)? {
+        if let Some(assignee) = Expression::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -299,7 +300,7 @@ impl ParseExpr for CompoundAssignmentExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(new_value) = Operable::parse(parser)? {
+                if let Some(new_value) = Expression::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(CompoundAssignmentExpr {
@@ -332,7 +333,7 @@ impl ParseExpr for ComparisonExpr {
     where
         Self: Sized,
     {
-        if let Some(lhs) = Operable::parse(parser)? {
+        if let Some(lhs) = Expression::parse(parser)? {
             parser.next_token();
 
             if let Some(p) = parser.peek_current::<Punctuation>() {
@@ -372,7 +373,7 @@ impl ParseExpr for ComparisonExpr {
                     _ => return Ok(None),
                 };
 
-                if let Some(rhs) = Operable::parse(parser)? {
+                if let Some(rhs) = Expression::parse(parser)? {
                     parser.next_token();
 
                     return Ok(Some(ComparisonExpr {

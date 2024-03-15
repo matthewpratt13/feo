@@ -119,103 +119,111 @@ impl ParseExpr for Expression {
                     punc_kind: PuncKind::FullStop,
                     ..
                 }) => {
-                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::MethodCallExpr(mc)));
-                    }
-
                     if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::FieldAccessExpr(fa)));
                     }
-                }
 
-                Some(Punctuation {
-                    punc_kind: PuncKind::Plus,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Minus,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Asterisk,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::ForwardSlash,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Percent,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Ampersand,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Pipe,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Caret,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblLessThan,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblGreaterThan,
-                    ..
-                }) => {
-                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::ArithmeticOrLogical(al),
-                        )));
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::MethodCallExpr(mc)));
                     }
                 }
 
                 Some(Punctuation {
-                    punc_kind: PuncKind::Equals,
+                    punc_kind: PuncKind::DblColon,
                     ..
                 }) => {
-                    if let Some(ae) = AssignmentExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::Assignment(ae),
-                        )));
+                    if let Some(path_expr) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::PathExpr(path_expr)));
                     }
                 }
 
-                Some(Punctuation {
-                    punc_kind: PuncKind::LessThan,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::GreaterThan,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::LessThanEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::GreaterThanEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::BangEquals,
-                    ..
-                }) => {
-                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::Comparison(ce),
-                        )));
-                    }
-                }
+                // Some(Punctuation {
+                //     punc_kind: PuncKind::Plus,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Minus,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Asterisk,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::ForwardSlash,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Percent,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Ampersand,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Pipe,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Caret,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::DblLessThan,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::DblGreaterThan,
+                //     ..
+                // }) => {
+                //     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Expression::OperatorExpr(
+                //             OperatorExprKind::ArithmeticOrLogical(al),
+                //         )));
+                //     }
+                // }
+                // Some(Punctuation {
+                //     punc_kind: PuncKind::Equals,
+                //     ..
+                // }) => {
+                //     if let Some(ae) = AssignmentExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Expression::OperatorExpr(
+                //             OperatorExprKind::Assignment(ae),
+                //         )));
+                //     }
+                // }
+
+                // Some(Punctuation {
+                //     punc_kind: PuncKind::LessThan,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::GreaterThan,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::LessThanEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::GreaterThanEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::DblEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::BangEquals,
+                //     ..
+                // }) => {
+                //     if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Expression::OperatorExpr(
+                //             OperatorExprKind::Comparison(ce),
+                //         )));
+                //     }
+                // }
 
                 Some(Punctuation {
                     punc_kind: PuncKind::QuestionMark,
@@ -225,6 +233,48 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::OperatorExpr(
                             OperatorExprKind::UnwrapExpr(ue),
                         )));
+                    }
+                }
+
+                // Some(Punctuation {
+                //     punc_kind: PuncKind::PlusEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::MinusEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::AsteriskEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::ForwardSlashEquals,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::PercentEquals,
+                //     ..
+                // }) => {
+                //     if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Expression::OperatorExpr(
+                //             OperatorExprKind::CompoundAssign(cae),
+                //         )));
+                //     }
+                // }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblAmpersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblPipe,
+                    ..
+                }) => {
+                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
+                            lb,
+                        ))));
                     }
                 }
 
@@ -253,57 +303,6 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::RangeExpr(
                             RangeExprKind::RangeInclusiveExpr(rie),
                         )));
-                    }
-                }
-
-                Some(Punctuation {
-                    punc_kind: PuncKind::PlusEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::MinusEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::AsteriskEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::ForwardSlashEquals,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::PercentEquals,
-                    ..
-                }) => {
-                    if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::CompoundAssign(cae),
-                        )));
-                    }
-                }
-
-                Some(Punctuation {
-                    punc_kind: PuncKind::DblAmpersand,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblPipe,
-                    ..
-                }) => {
-                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
-                            lb,
-                        ))));
-                    }
-                }
-
-                Some(Punctuation {
-                    punc_kind: PuncKind::DblColon,
-                    ..
-                }) => {
-                    if let Some(path_expr) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::PathExpr(path_expr)));
                     }
                 }
 
@@ -462,52 +461,52 @@ impl ParseExpr for Expression {
             }
 
             match parser.peek_next::<Punctuation>() {
-                Some(Punctuation {
-                    punc_kind: PuncKind::Plus,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Minus,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Asterisk,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::ForwardSlash,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Percent,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Ampersand,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Pipe,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::Caret,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblLessThan,
-                    ..
-                })
-                | Some(Punctuation {
-                    punc_kind: PuncKind::DblGreaterThan,
-                    ..
-                }) => {
-                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::ArithmeticOrLogical(al),
-                        )));
-                    }
-                }
+                // Some(Punctuation {
+                //     punc_kind: PuncKind::Plus,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Minus,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Asterisk,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::ForwardSlash,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Percent,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Ampersand,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Pipe,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::Caret,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::DblLessThan,
+                //     ..
+                // })
+                // | Some(Punctuation {
+                //     punc_kind: PuncKind::DblGreaterThan,
+                //     ..
+                // }) => {
+                //     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Expression::OperatorExpr(
+                //             OperatorExprKind::ArithmeticOrLogical(al),
+                //         )));
+                //     }
+                // }
 
                 Some(Punctuation {
                     punc_kind: PuncKind::LessThan,
