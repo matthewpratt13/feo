@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, pattern::Pattern, ty::Type};
 
-use super::{BlockExpr, Returnable};
+use super::{BlockExpr, Expression};
 
 #[derive(Debug, Clone)]
 pub enum ClosureParamsOpt {
@@ -52,7 +52,7 @@ impl Spanned for ClosureWithBlock {
 #[derive(Debug, Clone)]
 pub struct ClosureWithoutBlock {
     params: ClosureParamsOpt,
-    body_operand: Box<Returnable>,
+    body_operand: Box<Expression>,
 }
 
 impl Spanned for ClosureWithoutBlock {

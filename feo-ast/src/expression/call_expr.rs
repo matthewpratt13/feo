@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use super::{Callable, Returnable};
+use super::{Callable, Expression};
 
 #[derive(Debug, Clone)]
 pub struct FunctionCallExpr {
@@ -44,8 +44,8 @@ impl Spanned for MethodCallExpr {
 
 #[derive(Debug, Clone)]
 pub struct CallParams {
-    pub first_param: Box<Returnable>,
-    pub subsequent_params_opt: Option<Vec<Returnable>>,
+    pub first_param: Box<Expression>,
+    pub subsequent_params_opt: Option<Vec<Expression>>,
 }
 
 impl Spanned for CallParams {
