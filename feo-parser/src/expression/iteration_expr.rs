@@ -15,7 +15,18 @@ impl ParseExpr for BreakExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let kw_break_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwBreak,
+            ..
+        }) = kw_break_opt
+        {
+            parser.next_token();
+            return Ok(Some(BreakExpr(kw_break_opt.unwrap())));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
@@ -24,7 +35,18 @@ impl ParseExpr for ContinueExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let kw_continue_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwContinue,
+            ..
+        }) = kw_continue_opt
+        {
+            parser.next_token();
+            return Ok(Some(ContinueExpr(kw_continue_opt.unwrap())));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
