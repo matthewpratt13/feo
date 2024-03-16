@@ -28,8 +28,6 @@ impl ParseTerm for ParenthesizedExpr {
             parser.next_token();
 
             if let Some(enclosed_operand) = Expression::parse(parser)? {
-                parser.next_token();
-
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {
@@ -56,5 +54,25 @@ impl ParseTerm for ParenthesizedExpr {
         }
 
         Err(parser.errors())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[test]
+    fn parse_parenthesized_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"(x + 2)"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let parenthesized_expr = ParenthesizedExpr::parse(&mut parser)
+            .expect("unable to parse parenthesized expression");
+
+        Ok(println!("{:#?}", parenthesized_expr))
     }
 }
