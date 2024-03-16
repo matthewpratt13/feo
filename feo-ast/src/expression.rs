@@ -30,10 +30,9 @@ pub use self::{
     block_expr::BlockExpr,
     call_expr::{CallParams, FunctionCallExpr, MethodCallExpr},
     closure_expr::{
-       ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock,
-        ClosureWithoutBlock,
+        ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
     },
-    conditional_expr::{IfExpr, MatchExpr},
+    conditional_expr::{IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr},
     field_access_expr::FieldAccessExpr,
     iteration_expr::{
         BreakExpr, ContinueExpr, InfiniteLoopExpr, IterLoopExpr, IterationExprKind,
@@ -52,8 +51,7 @@ pub use self::{
     },
     return_expr::ReturnExpr,
     struct_expr::{
-        StructExpr, StructExprField, StructExprFields, TupleStructExpr,
-        TupleStructExprFields,
+        StructExpr, StructExprField, StructExprFields, TupleStructExpr, TupleStructExprFields,
     },
     tuple_expr::{TupleExpr, TupleExprElements, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,

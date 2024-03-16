@@ -1,11 +1,14 @@
 use feo_ast::{
-    expression::{BlockExpr, Expression, IfExpr, MatchExpr},
+    expression::{BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, utils::KwElse, Keyword};
 
-use crate::{parse::ParseExpr, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseExpr for IfExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -118,6 +121,33 @@ impl ParseExpr for IfExpr {
         }
 
         Err(parser.errors())
+    }
+}
+
+impl ParseTerm for MatchArm {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParseTerm for MatchArms {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
+impl ParseTerm for MatchArmGuard {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }
 
