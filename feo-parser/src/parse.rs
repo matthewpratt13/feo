@@ -8,7 +8,7 @@ use feo_ast::{
         IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr, NegationExpr,
         OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind, RangeFromExpr,
         RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
-        ReturnExpr, StructExpr, StructExprKind, TupleExpr, TupleIndexExpr, TupleStructExpr,
+        ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr,
         TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
@@ -82,9 +82,7 @@ impl ParseExpr for Expression {
                     ..
                 }) => {
                     if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::StructExpr(StructExprKind::TupleStruct(
-                            ts,
-                        ))));
+                        return Ok(Some(Expression::TupleStructExpr(ts)));
                     }
 
                     if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
@@ -105,7 +103,7 @@ impl ParseExpr for Expression {
                     ..
                 }) => {
                     if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::StructExpr(StructExprKind::Struct(se))));
+                        return Ok(Some(Expression::StructExpr(se)));
                     }
                 }
 
@@ -1005,8 +1003,8 @@ impl ParseTerm for Value {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
                 }) => {
-                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::StructExpr(StructExprKind::TupleStruct(ts))));
+                    if let Some(tse) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::TupleStructExpr(tse)));
                     }
 
                     if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
@@ -1019,7 +1017,7 @@ impl ParseTerm for Value {
                     ..
                 }) => {
                     if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::StructExpr(StructExprKind::Struct(se))));
+                        return Ok(Some(Value::StructExpr(se)));
                     }
                 }
                 _ => (),

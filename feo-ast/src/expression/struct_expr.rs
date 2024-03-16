@@ -9,21 +9,6 @@ use crate::{attribute::OuterAttr, path::PathInExpr};
 use super::Value;
 
 #[derive(Debug, Clone)]
-pub enum StructExprKind {
-    Struct(StructExpr),
-    TupleStruct(TupleStructExpr),
-}
-
-impl Spanned for StructExprKind {
-    fn span(&self) -> Span {
-        match self {
-            StructExprKind::Struct(s) => s.span(),
-            StructExprKind::TupleStruct(ts) => ts.span(),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct StructExpr {
     pub path: PathInExpr,
     pub open_brace: Brace,
