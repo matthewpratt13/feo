@@ -10,6 +10,8 @@ use feo_types::{
     },
 };
 
+use crate::Type;
+
 use super::{Expression, Value};
 
 #[derive(Debug, Clone)]
@@ -258,7 +260,7 @@ impl Spanned for ReferenceExpr {
 pub struct TypeCastExpr {
     pub lhs: Box<Value>,
     pub operator: CastOperator,
-    pub rhs: Box<Value>,
+    pub rhs: Box<Type>,
 }
 
 impl Spanned for TypeCastExpr {
