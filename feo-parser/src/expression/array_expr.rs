@@ -1,7 +1,7 @@
 use feo_ast::{
     expression::{
         ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
-        Expression, IndexExpr, Value,
+        IndexExpr, Value,
     },
     token::Token,
 };
