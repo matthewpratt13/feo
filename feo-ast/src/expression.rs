@@ -30,7 +30,7 @@ pub use self::{
     block_expr::BlockExpr,
     call_expr::{CallParams, FunctionCallExpr, MethodCallExpr},
     closure_expr::{
-        ClosureExprKind, ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock,
+       ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock,
         ClosureWithoutBlock,
     },
     conditional_expr::{IfExpr, MatchExpr},

@@ -28,12 +28,6 @@ impl Spanned for ClosureParamsOpt {
 }
 
 #[derive(Debug, Clone)]
-pub enum ClosureExprKind {
-    ClosureWithBlock(ClosureWithBlock),
-    ClosureWithoutBlock(ClosureWithoutBlock),
-}
-
-#[derive(Debug, Clone)]
 pub struct ClosureWithBlock {
     params: ClosureParamsOpt,
     return_type_opt: Option<Box<Type>>,
