@@ -6,12 +6,13 @@ use feo_ast::{
         ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind, Value,
     },
     token::Token,
+    Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseExpr, ParseTerm},
+    parse::{ParseExpr, ParseTerm, ParseType},
     parser::Parser,
     peek::{Peek, Peeker},
 };
@@ -598,7 +599,43 @@ impl ParseExpr for TypeCastExpr {
     where
         Self: Sized,
     {
-        todo!();
+        if let Some(lhs) = Value::parse(parser)? {
+            parser.next_token();
+
+            let kw_as_opt = parser.peek_current::<Keyword>();
+
+            if let Some(Keyword {
+                keyword_kind: KeywordKind::KwAs,
+                ..
+            }) = kw_as_opt
+            {
+                parser.next_token();
+
+                if let Some(rhs) = Type::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(TypeCastExpr {
+                        lhs: Box::new(lhs),
+                        operator: kw_as_opt.unwrap(),
+                        rhs: Box::new(rhs),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Value`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`as`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -724,5 +761,17 @@ mod tests {
             ReferenceExpr::parse(&mut parser).expect("unable to parse reference expression");
 
         Ok(println!("{:#?}", reference_expr))
+    }
+
+    #[test]
+    fn parse_type_cast_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"1 as f64"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let type_cast_expr =
+            TypeCastExpr::parse(&mut parser).expect("unable to parse type_cast expression");
+
+        Ok(println!("{:#?}", type_cast_expr))
     }
 }
