@@ -64,13 +64,13 @@ pub struct MatchArms {
 
 #[derive(Debug, Clone)]
 pub struct MatchArm {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    pattern: Box<Pattern>,
-    match_arm_guard_opt: Option<MatchArmGuard>,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub pattern: Box<Pattern>,
+    pub match_arm_guard_opt: Option<MatchArmGuard>,
 }
 
 #[derive(Debug, Clone)]
 pub struct MatchArmGuard {
-    kw_if: KwIf,
-    operand: Box<Expression>,
+    pub kw_if: KwIf,
+    pub operand: Box<Expression>,
 }

@@ -1,12 +1,14 @@
 use feo_ast::{
+    attribute::OuterAttr,
     expression::{BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr},
+    pattern::Pattern,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, utils::KwElse, Keyword};
 
 use crate::{
-    parse::{ParseExpr, ParseTerm},
+    parse::{ParseExpr, ParsePatt, ParseTerm},
     parser::Parser,
 };
 
@@ -124,25 +126,85 @@ impl ParseExpr for IfExpr {
     }
 }
 
+impl ParseTerm for MatchArmGuard {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        let kw_if_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwIf,
+            ..
+        }) = kw_if_opt
+        {
+            parser.next_token();
+
+            if let Some(operand) = Expression::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(MatchArmGuard {
+                    kw_if: kw_if_opt.unwrap(),
+                    operand: Box::new(operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Expression`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
+    }
+}
+
 impl ParseTerm for MatchArm {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        todo!()
+        let mut attributes: Vec<OuterAttr> = Vec::new();
+
+        while let Some(oa) = OuterAttr::parse(parser)? {
+            attributes.push(oa);
+            parser.next_token();
+        }
+
+        if let Some(pattern) = Pattern::parse(parser)? {
+            parser.next_token();
+
+            let match_arm_guard_opt = if let Some(mag) = MatchArmGuard::parse(parser)? {
+                Some(mag)
+            } else {
+                None
+            };
+
+            match &attributes.is_empty() {
+                true => {
+                    return Ok(Some(MatchArm {
+                        attributes_opt: None,
+                        pattern: Box::new(pattern),
+                        match_arm_guard_opt,
+                    }))
+                }
+                false => {
+                    return Ok(Some(MatchArm {
+                        attributes_opt: Some(attributes),
+                        pattern: Box::new(pattern),
+                        match_arm_guard_opt,
+                    }))
+                }
+            }
+        } else {
+            return Ok(None);
+        }
     }
 }
 
 impl ParseTerm for MatchArms {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-}
-
-impl ParseTerm for MatchArmGuard {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
