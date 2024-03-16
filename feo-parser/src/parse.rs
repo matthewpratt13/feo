@@ -875,107 +875,6 @@ impl ParsePatt for Pattern {
     }
 }
 
-impl ParseTerm for Value {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        if let Some(id) = parser.peek_current::<Identifier>() {
-            match parser.peek_next::<Delimiter>() {
-                Some(Delimiter {
-                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
-                    ..
-                }) => {
-                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::StructExpr(StructExprKind::TupleStruct(ts))));
-                    }
-
-                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::FunctionCallExpr(fc)));
-                    }
-                }
-
-                Some(Delimiter {
-                    delim: (DelimKind::Brace, DelimOrientation::Open),
-                    ..
-                }) => {
-                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::StructExpr(StructExprKind::Struct(se))));
-                    }
-                }
-                _ => (),
-            }
-
-            match parser.peek_next::<Punctuation>() {
-                Some(Punctuation {
-                    punc_kind: PuncKind::FullStop,
-                    ..
-                }) => {
-                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::FieldAccessExpr(fa)));
-                    }
-
-                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::MethodCallExpr(mc)));
-                    }
-                }
-
-                _ => (),
-            }
-
-            let path_expr = PathExpr {
-                first_segment: PathIdenSegmentKind::Iden(id),
-                subsequent_segments: None,
-            };
-
-            return Ok(Some(Value::PathExpr(path_expr)));
-        }
-
-        if let Some(d) = parser.peek_current::<Delimiter>() {
-            if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                match &d.delim {
-                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
-                        if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::ParenthesizedExpr(par)));
-                        }
-
-                        if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::TupleExpr(te)));
-                        }
-                    }
-
-                    (DelimKind::Bracket, DelimOrientation::Open) => {
-                        if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::ArrayExpr(ae)));
-                        }
-                    }
-                    _ => (),
-                }
-
-                return Ok(Some(Value::ParenthesizedExpr(par)));
-            } else {
-                return Ok(None);
-            }
-        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
-            return Ok(Some(Value::Literal(l)));
-        }
-
-        if let Some(p) = parser.peek_current::<Punctuation>() {
-            match &p.punc_kind {
-                PuncKind::Bang | PuncKind::Minus => {
-                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::NegationExpr(ne)));
-                    }
-                }
-
-                _ => (),
-            }
-        }
-
-        Err(parser.errors())
-    }
-}
-
 impl ParseType for Type {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -1088,6 +987,107 @@ impl ParseType for Type {
                 }
 
                 _ => return Ok(None),
+            }
+        }
+
+        Err(parser.errors())
+    }
+}
+
+impl ParseTerm for Value {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            match parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::StructExpr(StructExprKind::TupleStruct(ts))));
+                    }
+
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::FunctionCallExpr(fc)));
+                    }
+                }
+
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::StructExpr(StructExprKind::Struct(se))));
+                    }
+                }
+                _ => (),
+            }
+
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::FullStop,
+                    ..
+                }) => {
+                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::FieldAccessExpr(fa)));
+                    }
+
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::MethodCallExpr(mc)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            let path_expr = PathExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(Value::PathExpr(path_expr)));
+        }
+
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                match &d.delim {
+                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                        if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Value::ParenthesizedExpr(par)));
+                        }
+
+                        if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Value::TupleExpr(te)));
+                        }
+                    }
+
+                    (DelimKind::Bracket, DelimOrientation::Open) => {
+                        if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Value::ArrayExpr(ae)));
+                        }
+                    }
+                    _ => (),
+                }
+
+                return Ok(Some(Value::ParenthesizedExpr(par)));
+            } else {
+                return Ok(None);
+            }
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            return Ok(Some(Value::Literal(l)));
+        }
+
+        if let Some(p) = parser.peek_current::<Punctuation>() {
+            match &p.punc_kind {
+                PuncKind::Bang | PuncKind::Minus => {
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::NegationExpr(ne)));
+                    }
+                }
+
+                _ => (),
             }
         }
 
