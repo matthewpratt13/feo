@@ -144,6 +144,28 @@ mod tests {
 
     use super::*;
 
+    #[test]
+    fn parse_break_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"break"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let break_expr = BreakExpr::parse(&mut parser).expect("unable to parse break expression");
+
+        Ok(println!("{:#?}", break_expr))
+    }
+
+    #[test]
+    fn parse_continue_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"continue"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let continue_expr = ContinueExpr::parse(&mut parser).expect("unable to parse continue expression");
+
+        Ok(println!("{:#?}", continue_expr))
+    }
+
     #[ignore] // TODO: remove when testing
     #[test]
     fn parse_infinite_loop_expr() -> Result<(), Vec<CompilerError>> {
