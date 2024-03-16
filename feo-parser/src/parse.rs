@@ -87,19 +87,19 @@ impl ParseExpr for Expression {
                         ))));
                     }
 
-                    // if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Expression::FunctionCallExpr(fc)));
-                    // }
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::FunctionCallExpr(fc)));
+                    }
                 }
 
-                // Some(Delimiter {
-                //     delim: (DelimKind::Bracket, DelimOrientation::Open),
-                //     ..
-                // }) => {
-                //     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(Expression::IndexExpr(ie)));
-                //     }
-                // }
+                Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::IndexExpr(ie)));
+                    }
+                }
                 Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
@@ -121,9 +121,9 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::FieldAccessExpr(fa)));
                     }
 
-                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Expression::MethodCallExpr(mc)));
-                    // }
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::MethodCallExpr(mc)));
+                    }
                 }
 
                 Some(Punctuation {
@@ -896,14 +896,6 @@ impl ParseTerm for Value {
                 }
 
                 Some(Delimiter {
-                    delim: (DelimKind::Bracket, DelimOrientation::Open),
-                    ..
-                }) => {
-                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::IndexExpr(ie)));
-                    }
-                }
-                Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
                 }) => {
@@ -928,50 +920,6 @@ impl ParseTerm for Value {
                     }
                 }
 
-                // Some(Punctuation {
-                //     punc_kind: PuncKind::Plus,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Minus,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Asterisk,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::ForwardSlash,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Percent,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Ampersand,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Pipe,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::Caret,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::DblLessThan,
-                //     ..
-                // })
-                // | Some(Punctuation {
-                //     punc_kind: PuncKind::DblGreaterThan,
-                //     ..
-                // }) => {
-                //     if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(Value::ArithmeticOrLogicalExpr(al)));
-                //     }
-                // }
                 _ => (),
             }
 
@@ -991,20 +939,12 @@ impl ParseTerm for Value {
                             return Ok(Some(Value::ParenthesizedExpr(par)));
                         }
 
-                        if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::TupleIndexExpr(ti)));
-                        }
-
                         if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Value::TupleExpr(te)));
                         }
                     }
 
                     (DelimKind::Bracket, DelimOrientation::Open) => {
-                        if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::IndexExpr(ie)));
-                        }
-
                         if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Value::ArrayExpr(ae)));
                         }

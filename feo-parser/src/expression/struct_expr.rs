@@ -1,8 +1,8 @@
 use feo_ast::{
     attribute::OuterAttr,
     expression::{
-        Expression, StructExpr, StructExprField, StructExprFields, TupleStructExpr,
-        TupleStructExprFields,
+        StructExpr, StructExprField, StructExprFields, TupleStructExpr, TupleStructExprFields,
+        Value,
     },
     path::PathInExpr,
     token::Token,
@@ -43,7 +43,7 @@ impl ParseTerm for StructExprField {
             {
                 parser.next_token();
 
-                if let Some(value) = Expression::parse(parser)? {
+                if let Some(value) = Value::parse(parser)? {
                     parser.next_token();
 
                     let field_content = (field_name, Box::new(value));
@@ -182,9 +182,9 @@ impl ParseTerm for TupleStructExprFields {
     where
         Self: Sized,
     {
-        let mut subsequent_fields: Vec<Expression> = Vec::new();
+        let mut subsequent_fields: Vec<Value> = Vec::new();
 
-        if let Some(first_field) = Expression::parse(parser)? {
+        if let Some(first_field) = Value::parse(parser)? {
             parser.next_token();
 
             while let Some(Punctuation {
@@ -194,7 +194,7 @@ impl ParseTerm for TupleStructExprFields {
             {
                 parser.next_token();
 
-                if let Some(next_field) = Expression::parse(parser)? {
+                if let Some(next_field) = Value::parse(parser)? {
                     subsequent_fields.push(next_field);
                     parser.next_token();
                 } else {

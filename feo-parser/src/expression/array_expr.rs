@@ -177,7 +177,7 @@ impl ParseExpr for IndexExpr {
     where
         Self: Sized,
     {
-        if let Some(indexed_operand) = Expression::parse(parser)? {
+        if let Some(indexed_operand) = Value::parse(parser)? {
             parser.next_token();
 
             let open_bracket_opt = parser.peek_current::<Delimiter>();

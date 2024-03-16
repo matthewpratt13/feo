@@ -4,7 +4,7 @@ use feo_types::{
     U64Primitive,
 };
 
-use super::{Expression, Value};
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub enum ArrayElementsKind {
@@ -43,7 +43,7 @@ pub struct ArrayElementsRepeatedValue {
 
 #[derive(Debug, Clone)]
 pub struct IndexExpr {
-    pub indexed_operand: Box<Expression>,
+    pub indexed_operand: Box<Value>,
     pub open_bracket: Bracket,
     pub index: U64Primitive,
     pub close_bracket: Bracket,

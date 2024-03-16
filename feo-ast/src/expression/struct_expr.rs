@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, path::PathInExpr};
 
-use super::Expression;
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub enum StructExprKind {
@@ -49,7 +49,7 @@ pub struct StructExprFields {
 #[derive(Debug, Clone)]
 pub struct StructExprField {
     pub attributes_opt: Option<Vec<OuterAttr>>,
-    pub field_content: (Identifier, Box<Expression>),
+    pub field_content: (Identifier, Box<Value>),
 }
 
 #[derive(Debug, Clone)]
@@ -71,6 +71,6 @@ impl Spanned for TupleStructExpr {
 
 #[derive(Debug, Clone)]
 pub struct TupleStructExprFields {
-    pub first_field: Box<Expression>,
-    pub subsequent_fields_opt: Option<Vec<Expression>>,
+    pub first_field: Box<Value>,
+    pub subsequent_fields_opt: Option<Vec<Value>>,
 }

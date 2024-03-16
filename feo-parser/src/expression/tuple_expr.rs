@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{Expression, TupleExpr, TupleExprElements, TupleIndexExpr},
+    expression::{TupleExpr, TupleExprElements, TupleIndexExpr, Value},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -19,9 +19,9 @@ impl ParseTerm for TupleExprElements {
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<Expression> = Vec::new();
+        let mut subsequent_elements: Vec<Value> = Vec::new();
 
-        if let Some(first_element) = Expression::parse(parser)? {
+        if let Some(first_element) = Value::parse(parser)? {
             parser.next_token();
 
             while let Some(Punctuation {
@@ -31,7 +31,7 @@ impl ParseTerm for TupleExprElements {
             {
                 parser.next_token();
 
-                if let Some(next_element) = Expression::parse(parser)? {
+                if let Some(next_element) = Value::parse(parser)? {
                     subsequent_elements.push(next_element);
                     parser.next_token();
                 } else {

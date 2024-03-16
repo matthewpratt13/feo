@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{CallParams, Expression, FunctionCallExpr, MethodCallExpr},
+    expression::{CallParams, FunctionCallExpr, MethodCallExpr, Value},
     path::PathInExpr,
     token::Token,
 };
@@ -20,9 +20,9 @@ impl ParseTerm for CallParams {
     where
         Self: Sized,
     {
-        let mut subsequent_params: Vec<Expression> = Vec::new();
+        let mut subsequent_params: Vec<Value> = Vec::new();
 
-        if let Some(first_param) = Expression::parse(parser)? {
+        if let Some(first_param) = Value::parse(parser)? {
             parser.next_token();
 
             while let Some(Punctuation {
@@ -32,7 +32,7 @@ impl ParseTerm for CallParams {
             {
                 parser.next_token();
 
-                if let Some(next_param) = Expression::parse(parser)? {
+                if let Some(next_param) = Value::parse(parser)? {
                     subsequent_params.push(next_param);
                     parser.next_token();
                 } else {

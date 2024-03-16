@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::ty::TupleType;
 
-use super::{Expression, TupleStructExpr};
+use super::{TupleStructExpr, Value};
 
 #[derive(Debug, Clone)]
 enum TupleKind {
@@ -41,8 +41,8 @@ impl Spanned for TupleExpr {
 
 #[derive(Debug, Clone)]
 pub struct TupleExprElements {
-    pub first_element: Box<Expression>,
-    pub subsequent_elements_opt: Option<Vec<Expression>>,
+    pub first_element: Box<Value>,
+    pub subsequent_elements_opt: Option<Vec<Value>>,
 }
 
 #[derive(Debug, Clone)]

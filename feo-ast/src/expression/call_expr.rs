@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::path::PathInExpr;
 
-use super::Expression;
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub struct FunctionCallExpr {
@@ -46,8 +46,8 @@ impl Spanned for MethodCallExpr {
 
 #[derive(Debug, Clone)]
 pub struct CallParams {
-    pub first_param: Box<Expression>,
-    pub subsequent_params_opt: Option<Vec<Expression>>,
+    pub first_param: Box<Value>,
+    pub subsequent_params_opt: Option<Vec<Value>>,
 }
 
 impl Spanned for CallParams {

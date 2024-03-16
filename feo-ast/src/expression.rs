@@ -164,7 +164,7 @@ pub enum ExprWithoutBlock {
 #[derive(Debug, Clone)]
 pub enum Value {
     ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
+    // IndexExpr(IndexExpr),
     FunctionCallExpr(FunctionCallExpr),
     MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
@@ -183,7 +183,7 @@ impl Spanned for Value {
     fn span(&self) -> Span {
         match self {
             Value::ArrayExpr(ae) => ae.span(),
-            Value::IndexExpr(ie) => ie.span(),
+            // Value::IndexExpr(ie) => ie.span(),
             Value::FunctionCallExpr(fc) => fc.span(),
             Value::MethodCallExpr(mc) => mc.span(),
             Value::FieldAccessExpr(fa) => fa.span(),
