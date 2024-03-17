@@ -75,11 +75,11 @@ impl Spanned for PredicateLoopExpr {
 
 #[derive(Debug, Clone)]
 pub struct IterLoopExpr {
-    kw_for: KwFor,
-    pattern: Box<Pattern>,
-    kw_in: KwIn,
-    iterator: Box<ParenthesizedExpr>,
-    block: BlockExpr,
+    pub kw_for: KwFor,
+    pub pattern: Box<Pattern>,
+    pub kw_in: KwIn,
+    pub iterator: Box<ParenthesizedExpr>,
+    pub block: BlockExpr,
 }
 
 impl Spanned for IterLoopExpr {

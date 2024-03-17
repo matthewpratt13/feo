@@ -3,13 +3,14 @@ use feo_ast::{
         BlockExpr, BreakExpr, ContinueExpr, InfiniteLoopExpr, IterLoopExpr, ParenthesizedExpr,
         PredicateLoopExpr,
     },
+    pattern::Pattern,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, Keyword};
 
 use crate::{
-    parse::{ParseExpr, ParseTerm},
+    parse::{ParseExpr, ParsePatt, ParseTerm},
     parser::Parser,
 };
 
@@ -136,7 +137,62 @@ impl ParseExpr for IterLoopExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let kw_for_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwFor,
+            ..
+        }) = kw_for_opt
+        {
+            parser.next_token();
+
+            if let Some(pattern) = Pattern::parse(parser)? {
+                parser.next_token();
+
+                let kw_in_opt = parser.peek_current::<Keyword>();
+
+                if let Some(Keyword {
+                    keyword_kind: KeywordKind::KwIn,
+                    ..
+                }) = kw_in_opt
+                {
+                    parser.next_token();
+
+                    if let Some(iterator) = ParenthesizedExpr::parse(parser)? {
+                        parser.next_token();
+
+                        if let Some(block) = BlockExpr::parse(parser)? {
+                            return Ok(Some(IterLoopExpr {
+                                kw_for: kw_for_opt.unwrap(),
+                                pattern: Box::new(pattern),
+                                kw_in: kw_in_opt.unwrap(),
+                                iterator: Box::new(iterator),
+                                block,
+                            }));
+                        }
+                    }
+
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`ParenthesizedExpr`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`in`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Pattern`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -200,5 +256,21 @@ mod tests {
             .expect("unable to parse predicate loop expression");
 
         Ok(println!("{:#?}", predicate_loop_expr))
+    }
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_iter_loop_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        for x in (1..10) {
+            x += 2
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let iter_loop_expr = IterLoopExpr::parse(&mut parser)
+            .expect("unable to parse iterator loop expression");
+
+        Ok(println!("{:#?}", iter_loop_expr))
     }
 }
