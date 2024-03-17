@@ -1,5 +1,3 @@
-use feo_error::error::CompilerError;
-
 use feo_types::{
     span::{Span, Spanned},
     utils::{
@@ -12,7 +10,7 @@ use feo_types::{
 
 use crate::Type;
 
-use super::{Expression, Value};
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub enum OperatorExprKind {
@@ -95,33 +93,6 @@ impl Spanned for NegationOperatorKind {
         match self {
             NegationOperatorKind::InvertNumeric(n) => n.span(),
             NegationOperatorKind::InvertBool(b) => b.span(),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum UnwrapOperandKind {
-    Option(Option<Box<Expression>>),
-    Result(Result<Box<Expression>, CompilerError>),
-}
-
-impl Spanned for UnwrapOperandKind {
-    fn span(&self) -> Span {
-        match self {
-            UnwrapOperandKind::Option(opt) => {
-                if let Some(e) = opt {
-                    e.span()
-                } else {
-                    Span::default()
-                }
-            }
-            UnwrapOperandKind::Result(res) => {
-                if let Ok(e) = res {
-                    e.span()
-                } else {
-                    Span::default()
-                }
-            }
         }
     }
 }
@@ -272,11 +243,10 @@ impl Spanned for TypeCastExpr {
     }
 }
 
-// TODO: parse by scanning for `None` or `Some` identifiers
 #[derive(Debug, Clone)]
 pub struct UnwrapExpr {
-    operand: UnwrapOperandKind,
-    operator: QuestionMark,
+    pub operand: Box<Value>,
+    pub operator: QuestionMark,
 }
 
 impl Spanned for UnwrapExpr {

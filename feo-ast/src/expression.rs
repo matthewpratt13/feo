@@ -42,7 +42,7 @@ pub use self::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, DerefOperator,
         DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
-        OperatorExprKind, RefOperator, ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind,
+        OperatorExprKind, RefOperator, ReferenceExpr, TypeCastExpr, UnwrapExpr,
     },
     parenthesized_expr::ParenthesizedExpr,
     range_expr::{

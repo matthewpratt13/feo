@@ -3,7 +3,7 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
         DereferenceExpr, LazyBoolExpr, LazyBoolOperatorKind, NegationExpr, NegationOperatorKind,
-        ReferenceExpr, TypeCastExpr, UnwrapExpr, UnwrapOperandKind, Value,
+        ReferenceExpr, TypeCastExpr, UnwrapExpr, Value,
     },
     token::Token,
     Type,
@@ -114,16 +114,6 @@ impl Peek for NegationOperatorKind {
         } else {
             None
         }
-    }
-}
-
-// TODO: how ??
-impl Peek for UnwrapOperandKind {
-    fn peek(peeker: &Peeker<'_>) -> Option<Self>
-    where
-        Self: Sized,
-    {
-        todo!()
     }
 }
 
@@ -626,7 +616,33 @@ impl ParseExpr for UnwrapExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(operand) = Value::parse(parser)? {
+            parser.next_token();
+
+            let question_mark_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::QuestionMark,
+                ..
+            }) = question_mark_opt
+            {
+                parser.next_token();
+
+                return Ok(Some(UnwrapExpr {
+                    operand: Box::new(operand),
+                    operator: question_mark_opt.unwrap(),
+                }));
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`?`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -755,5 +771,17 @@ mod tests {
             TypeCastExpr::parse(&mut parser).expect("unable to parse type_cast expression");
 
         Ok(println!("{:#?}", type_cast_expr))
+    }
+
+    #[test]
+    fn parse_unwrap_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"foo?"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let unwrap_expr =
+            UnwrapExpr::parse(&mut parser).expect("unable to parse unwrap expression");
+
+        Ok(println!("{:#?}", unwrap_expr))
     }
 }
