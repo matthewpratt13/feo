@@ -118,7 +118,33 @@ impl ParseExpr for RangeToExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let dbl_dot_opt = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::DblDot,
+            ..
+        }) = dbl_dot_opt
+        {
+            parser.next_token();
+
+            if let Some(to_operand) = Value::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(RangeToExpr {
+                    dbl_dot: dbl_dot_opt.unwrap(),
+                    to_operand: Box::new(to_operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Value`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -172,7 +198,33 @@ impl ParseExpr for RangeToInclusiveExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let dot_dot_equals = parser.peek_current::<Punctuation>();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::DotDotEquals,
+            ..
+        }) = dot_dot_equals
+        {
+            parser.next_token();
+
+            if let Some(to_operand) = Value::parse(parser)? {
+                parser.next_token();
+
+                return Ok(Some(RangeToInclusiveExpr {
+                    dot_dot_equals: dot_dot_equals.unwrap(),
+                    to_operand_incl: Box::new(to_operand),
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Value`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -219,6 +271,18 @@ mod tests {
     }
 
     #[test]
+    fn parse_range_to_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"..1"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let range_to_expr =
+            RangeToExpr::parse(&mut parser).expect("unable to parse to-range expression");
+
+        Ok(println!("{:#?}", range_to_expr))
+    }
+
+    #[test]
     fn parse_range_inclusive_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"1..=5"#;
 
@@ -228,5 +292,17 @@ mod tests {
             .expect("unable to parse from-to inclusive range expression");
 
         Ok(println!("{:#?}", range_inclusive_expr))
+    }
+
+    #[test]
+    fn parse_range_to_inclusive_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"..=1"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let range_to_inclusive_expr =
+            RangeToInclusiveExpr::parse(&mut parser).expect("unable to parse to inclusive–range expression");
+
+        Ok(println!("{:#?}", range_to_inclusive_expr))
     }
 }
