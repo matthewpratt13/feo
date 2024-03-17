@@ -1,7 +1,8 @@
 use feo_ast::{
     attribute::{InnerAttr, OuterAttr},
     expression::{
-        BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr, Value,
+        BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr,
+        ParenthesizedExpr,
     },
     pattern::Pattern,
     token::Token,
@@ -289,9 +290,7 @@ impl ParseExpr for MatchExpr {
         {
             parser.next_token();
 
-            if let Some(scrutinee) = Value::parse(parser)? {
-                parser.next_token();
-
+            if let Some(scrutinee) = ParenthesizedExpr::parse(parser)? {
                 let open_brace_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {
@@ -378,6 +377,7 @@ fn get_arm(parser: &mut Parser) -> Result<Option<(MatchArm, Expression)>, Vec<Co
             parser.next_token();
 
             if let Some(expr) = Expression::parse(parser)? {
+                parser.next_token();
                 return Ok(Some((arm, expr)));
             }
 
@@ -449,7 +449,7 @@ mod tests {
     #[test]
     fn parse_match_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
-        match foo {
+        match (foo) {
             #![unsafe]
             #[abstract]
             true => x + 2,

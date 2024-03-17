@@ -8,8 +8,8 @@ use feo_ast::{
         IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr, NegationExpr,
         OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind, RangeFromExpr,
         RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
-        ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr,
-        TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
+        ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
+        UnderscoreExpr, UnwrapExpr, Value,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -1012,14 +1012,14 @@ impl ParseTerm for Value {
                     }
                 }
 
-                // Some(Delimiter {
-                //     delim: (DelimKind::Brace, DelimOrientation::Open),
-                //     ..
-                // }) => {
-                //     if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                //         return Ok(Some(Value::StructExpr(se)));
-                //     }
-                // }
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::StructExpr(se)));
+                    }
+                }
                 _ => (),
             }
 

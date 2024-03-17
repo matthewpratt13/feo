@@ -28,6 +28,8 @@ impl ParseTerm for ParenthesizedExpr {
             parser.next_token();
 
             if let Some(enclosed_operand) = Expression::parse(parser)? {
+                parser.next_token();
+
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {

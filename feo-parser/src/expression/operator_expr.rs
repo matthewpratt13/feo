@@ -193,8 +193,6 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(ArithmeticOrLogicalExpr {
                         lhs: Box::new(lhs),
                         operator,
@@ -233,8 +231,6 @@ impl ParseExpr for AssignmentExpr {
                 parser.next_token();
 
                 if let Some(new_value) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(AssignmentExpr {
                         assignee: Box::new(assignee),
                         operator: equals_opt.unwrap(),
@@ -301,8 +297,6 @@ impl ParseExpr for CompoundAssignmentExpr {
                 };
 
                 if let Some(new_value) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(CompoundAssignmentExpr {
                         assignee: Box::new(assignee),
                         operator,
@@ -374,8 +368,6 @@ impl ParseExpr for ComparisonExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(ComparisonExpr {
                         lhs: Box::new(lhs),
                         operator,
@@ -416,8 +408,6 @@ impl ParseExpr for DereferenceExpr {
             parser.next_token();
 
             if let Some(operand) = Value::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(DereferenceExpr {
                     operator: operator_opt.unwrap(),
                     operand: Box::new(operand),
@@ -468,8 +458,6 @@ impl ParseExpr for LazyBoolExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(LazyBoolExpr {
                         lhs: Box::new(lhs),
                         operator,
@@ -527,8 +515,6 @@ impl ParseExpr for NegationExpr {
             };
 
             if let Some(operand) = Value::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(NegationExpr {
                     operator,
                     operand: Box::new(operand),
@@ -574,8 +560,6 @@ impl ParseExpr for ReferenceExpr {
             let operator = (ampersand_opt.unwrap(), kw_mut_opt);
 
             if let Some(operand) = Value::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(ReferenceExpr {
                     operator,
                     operand: Box::new(operand),
@@ -612,8 +596,6 @@ impl ParseExpr for TypeCastExpr {
                 parser.next_token();
 
                 if let Some(rhs) = Type::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(TypeCastExpr {
                         lhs: Box::new(lhs),
                         operator: kw_as_opt.unwrap(),
