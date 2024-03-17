@@ -128,6 +128,8 @@ impl ParseExpr for StructExpr {
         Self: Sized,
     {
         if let Some(path) = PathInExpr::parse(parser)? {
+            parser.next_token();
+
             let open_brace_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -225,6 +227,8 @@ impl ParseExpr for TupleStructExpr {
         Self: Sized,
     {
         if let Some(path) = PathInExpr::parse(parser)? {
+            parser.next_token();
+            
             let open_parenthesis_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {

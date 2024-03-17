@@ -21,6 +21,8 @@ impl ParseTerm for TypeParamBounds {
         let mut subsequent_bounds: Vec<TraitBound> = Vec::new();
 
         if let Some(first_bound) = PathType::parse(parser)? {
+            parser.next_token();
+
             while let Some(Punctuation {
                 punc_kind: PuncKind::Plus,
                 ..
@@ -30,6 +32,7 @@ impl ParseTerm for TypeParamBounds {
 
                 if let Some(next_bound) = PathType::parse(parser)? {
                     subsequent_bounds.push(next_bound);
+                    parser.next_token();
                 } else {
                     break;
                 }
@@ -110,16 +113,11 @@ impl ParseTerm for WhereClause {
 
                     if let Some(next_bound) = TypeBound::parse(parser)? {
                         subsequent_bounds.push(next_bound);
+                        parser.next_token();
                     } else {
                         break;
                     }
                 }
-
-                let trailing_type_bound_opt = if let Some(t) = TypeBound::parse(parser)? {
-                    Some(t)
-                } else {
-                    None
-                };
 
                 match &subsequent_bounds.is_empty() {
                     true => {
@@ -127,7 +125,6 @@ impl ParseTerm for WhereClause {
                             kw_where: kw_where_opt.unwrap(),
                             first_bound,
                             subsequent_bounds_opt: None,
-                            trailing_type_bound_opt,
                         }))
                     }
                     false => {
@@ -135,7 +132,6 @@ impl ParseTerm for WhereClause {
                             kw_where: kw_where_opt.unwrap(),
                             first_bound,
                             subsequent_bounds_opt: Some(subsequent_bounds),
-                            trailing_type_bound_opt,
                         }))
                     }
                 }
@@ -183,18 +179,19 @@ mod tests {
         Ok(println!("{:#?}", type_bound))
     }
 
-    // #[ignore] // TODO: remove when testing
     #[test]
     fn parse_where_clause() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         where 
-            Self: Foo + Bar + Baz, 
-            T: Foo
+            Self: Foo + Bar + Baz,
+            Self: Foo,
             "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let where_clause = WhereClause::parse(&mut parser).expect("unable to parse where clause");
+
+        // Ok(())
 
         Ok(println!("{:#?}", where_clause))
     }

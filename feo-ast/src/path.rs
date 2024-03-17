@@ -2,7 +2,7 @@
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::{DblColon, KwCrate, KwSelf, KwSelfType, KwSuper},
+    utils::{KwCrate, KwSelf, KwSelfType, KwSuper},
     Identifier,
 };
 
@@ -53,22 +53,17 @@ pub type PathExpr = PathInExpr;
 
 impl Spanned for PathExpr {
     fn span(&self) -> Span {
-        let start_pos = self.first_segment.span().start();
+        let s1 = self.first_segment.span();
 
-        let end_pos = if let Some(s) = &self.subsequent_segments {
-            match s.last() {
-                Some(t) => t.1.span().end(),
-                None => self.first_segment.span().end(),
-            }
-        } else {
-            self.first_segment.span().end()
+        let s2 = match &self.subsequent_segments {
+            Some(p) => match p.last() {
+                Some(s) => s.span(),
+                None => self.first_segment.span(),
+            },
+            None => self.first_segment.span(),
         };
 
-        let source = self.first_segment.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
@@ -78,59 +73,49 @@ pub type PathPatt = PathExpr;
 #[derive(Debug, Clone)]
 pub struct SimplePath {
     pub first_segment: SimplePathSegmentKind,
-    pub subsequent_segments: Option<Vec<(DblColon, SimplePathSegmentKind)>>,
+    pub subsequent_segments: Option<Vec<SimplePathSegmentKind>>,
 }
 
 impl Spanned for SimplePath {
     fn span(&self) -> Span {
-        let start_pos = self.first_segment.span().start();
+        let s1 = self.first_segment.span();
 
-        let end_pos = if let Some(s) = &self.subsequent_segments {
-            match s.last() {
-                Some(t) => t.1.span().end(),
-                None => self.first_segment.span().end(),
-            }
-        } else {
-            self.first_segment.span().end()
+        let s2 = match &self.subsequent_segments {
+            Some(p) => match p.last() {
+                Some(s) => s.span(),
+                None => self.first_segment.span(),
+            },
+            None => self.first_segment.span(),
         };
 
-        let source = self.first_segment.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct PathInExpr {
     pub first_segment: PathExprSegment,
-    pub subsequent_segments: Option<Vec<(DblColon, PathExprSegment)>>,
+    pub subsequent_segments: Option<Vec<PathExprSegment>>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PathType {
     pub first_segment: PathTypeSegment,
-    pub subsequent_segments: Option<Vec<(DblColon, PathTypeSegment)>>,
+    pub subsequent_segments: Option<Vec<PathTypeSegment>>,
 }
 
 impl Spanned for PathType {
     fn span(&self) -> Span {
-        let start_pos = self.first_segment.span().start();
+        let s1 = self.first_segment.span();
 
-        let end_pos = if let Some(s) = &self.subsequent_segments {
-            match s.last() {
-                Some(t) => t.1.span().end(),
-                None => self.first_segment.span().end(),
-            }
-        } else {
-            self.first_segment.span().end()
+        let s2 = match &self.subsequent_segments {
+            Some(p) => match p.last() {
+                Some(s) => s.span(),
+                None => self.first_segment.span(),
+            },
+            None => self.first_segment.span(),
         };
 
-        let source = self.first_segment.span().source();
-
-        let span = Span::new(source.as_str(), start_pos, end_pos);
-
-        span
+        Span::join(s1, s2)
     }
 }

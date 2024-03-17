@@ -7,7 +7,6 @@ pub struct WhereClause {
     pub kw_where: KwWhere,
     pub first_bound: TypeBound,
     pub subsequent_bounds_opt: Option<Vec<TypeBound>>,
-    pub trailing_type_bound_opt: Option<TypeBound>,
 }
 
 #[derive(Debug, Clone)]

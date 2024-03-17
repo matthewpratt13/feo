@@ -62,6 +62,8 @@ impl ParseExpr for FunctionCallExpr {
         Self: Sized,
     {
         if let Some(function_operand) = PathInExpr::parse(parser)? {
+            parser.next_token();
+            
             let open_parenthesis_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
