@@ -13,7 +13,7 @@ use super::{BlockExpr, Expression, ParenthesizedExpr};
 #[derive(Debug, Clone)]
 pub struct IfExpr {
     pub kw_if: KwIf,
-    pub condition_operand: Box<Expression>,
+    pub condition_operand: Box<ParenthesizedExpr>,
     pub if_block: Box<BlockExpr>,
     pub else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
     pub trailing_else_block_opt: Option<(KwElse, BlockExpr)>,
@@ -40,7 +40,7 @@ impl Spanned for IfExpr {
 #[derive(Debug, Clone)]
 pub struct MatchExpr {
     pub kw_match: KwMatch,
-    pub scrutinee: Box<ParenthesizedExpr>, // except struct expression
+    pub scrutinee: Box<ParenthesizedExpr>,
     pub open_brace: Brace,
     pub attributes_opt: Option<Vec<InnerAttr>>,
     pub match_arms_opt: Option<MatchArms>,

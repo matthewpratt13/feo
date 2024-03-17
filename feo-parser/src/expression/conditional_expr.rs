@@ -37,7 +37,7 @@ impl ParseExpr for IfExpr {
         {
             parser.next_token();
 
-            if let Some(condition_operand) = Expression::parse(parser)? {
+            if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
                 parser.next_token();
 
                 if let Some(if_block) = BlockExpr::parse(parser)? {
