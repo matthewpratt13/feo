@@ -1,6 +1,6 @@
 use feo_ast::{
     expression::{
-        BlockExpr, BreakExpr, ContinueExpr, Expression, InfiniteLoopExpr, IterLoopExpr,
+        BlockExpr, BreakExpr, ContinueExpr, InfiniteLoopExpr, IterLoopExpr, ParenthesizedExpr,
         PredicateLoopExpr,
     },
     token::Token,
@@ -8,7 +8,10 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, Keyword};
 
-use crate::{parse::ParseExpr, parser::Parser};
+use crate::{
+    parse::{ParseExpr, ParseTerm},
+    parser::Parser,
+};
 
 impl ParseExpr for BreakExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -97,7 +100,7 @@ impl ParseExpr for PredicateLoopExpr {
         {
             parser.next_token();
 
-            if let Some(conditional_operand) = Expression::parse(parser)? {
+            if let Some(conditional_operand) = ParenthesizedExpr::parse(parser)? {
                 parser.next_token();
 
                 if let Some(block) = BlockExpr::parse(parser)? {
@@ -161,7 +164,8 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let continue_expr = ContinueExpr::parse(&mut parser).expect("unable to parse continue expression");
+        let continue_expr =
+            ContinueExpr::parse(&mut parser).expect("unable to parse continue expression");
 
         Ok(println!("{:#?}", continue_expr))
     }

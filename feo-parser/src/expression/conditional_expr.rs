@@ -468,7 +468,7 @@ mod tests {
     #[test]
     fn parse_if_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
-        if foo < 2 { 
+        if (foo < 2) { 
             print!("bar")
         }"#;
 

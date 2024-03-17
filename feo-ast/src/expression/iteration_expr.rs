@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::pattern::Pattern;
 
-use super::{BlockExpr, Expression};
+use super::{BlockExpr, ParenthesizedExpr};
 
 #[derive(Debug, Clone)]
 pub enum IterationExprKind {
@@ -60,7 +60,7 @@ impl Spanned for InfiniteLoopExpr {
 #[derive(Debug, Clone)]
 pub struct PredicateLoopExpr {
     pub kw_while: KwWhile,
-    pub conditional_operand: Box<Expression>,
+    pub conditional_operand: Box<ParenthesizedExpr>,
     pub block: Box<BlockExpr>,
 }
 
@@ -78,7 +78,7 @@ pub struct IterLoopExpr {
     kw_for: KwFor,
     pattern: Box<Pattern>,
     kw_in: KwIn,
-    iterator: Box<Expression>,
+    iterator: Box<ParenthesizedExpr>,
     block: BlockExpr,
 }
 
