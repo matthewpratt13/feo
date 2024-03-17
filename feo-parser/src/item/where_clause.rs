@@ -191,8 +191,6 @@ mod tests {
 
         let where_clause = WhereClause::parse(&mut parser).expect("unable to parse where clause");
 
-        // Ok(())
-
         Ok(println!("{:#?}", where_clause))
     }
 }
