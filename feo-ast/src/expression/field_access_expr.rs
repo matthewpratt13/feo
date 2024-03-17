@@ -3,11 +3,11 @@ use feo_types::{
     Identifier,
 };
 
-use crate::path::PathInExpr;
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub struct FieldAccessExpr {
-    pub container_operand: PathInExpr,
+    pub container_operand: Box<Value>,
     pub field_name: Identifier,
 }
 

@@ -80,8 +80,6 @@ impl ParseExpr for FunctionCallExpr {
                     ..
                 }) = close_parenthesis_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(FunctionCallExpr {
                         function_operand,
                         open_parenthesis: open_parenthesis_opt.unwrap(),
@@ -112,7 +110,9 @@ impl ParseExpr for MethodCallExpr {
     where
         Self: Sized,
     {
-        if let Some(receiver) = PathInExpr::parse(parser)? {
+        if let Some(receiver) = Value::parse(parser)? {
+            parser.next_token();
+
             let full_stop_opt = parser.peek_current::<Punctuation>();
 
             if let Some(Punctuation {
@@ -146,7 +146,7 @@ impl ParseExpr for MethodCallExpr {
                             parser.next_token();
 
                             return Ok(Some(MethodCallExpr {
-                                receiver,
+                                receiver: Box::new(receiver),
                                 full_stop: full_stop_opt.unwrap(),
                                 method_name,
                                 open_parenthesis: open_parenthesis_opt.unwrap(),

@@ -27,7 +27,7 @@ impl Spanned for FunctionCallExpr {
 
 #[derive(Debug, Clone)]
 pub struct MethodCallExpr {
-    pub receiver: PathInExpr,
+    pub receiver: Box<Value>,
     pub full_stop: FullStop,
     pub method_name: Identifier,
     pub open_parenthesis: Parenthesis,

@@ -1028,13 +1028,13 @@ impl ParseTerm for Value {
                     punc_kind: PuncKind::FullStop,
                     ..
                 }) => {
-                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::FieldAccessExpr(fa)));
-                    }
+                    // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Value::FieldAccessExpr(fa)));
+                    // }
 
-                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::MethodCallExpr(mc)));
-                    }
+                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Value::MethodCallExpr(mc)));
+                    // }
                 }
 
                 _ => (),

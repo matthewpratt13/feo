@@ -1,8 +1,5 @@
-use feo_ast::{
-    expression::{Expression, ParenthesizedExpr},
-    token::Token,
-};
-use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_ast::expression::{Expression, ParenthesizedExpr};
+use feo_error::error::CompilerError;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     Delimiter,
@@ -46,10 +43,7 @@ impl ParseTerm for ParenthesizedExpr {
                     }));
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Expression`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

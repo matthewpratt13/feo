@@ -1,4 +1,7 @@
-use feo_ast::{expression::FieldAccessExpr, path::PathInExpr, token::Token};
+use feo_ast::{
+    expression::{FieldAccessExpr, Value},
+    token::Token,
+};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
 
@@ -12,7 +15,9 @@ impl ParseExpr for FieldAccessExpr {
     where
         Self: Sized,
     {
-        if let Some(container_operand) = PathInExpr::parse(parser)? {
+        if let Some(container_operand) = Value::parse(parser)? {
+            parser.next_token();
+
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
@@ -24,7 +29,7 @@ impl ParseExpr for FieldAccessExpr {
                     parser.next_token();
 
                     return Ok(Some(FieldAccessExpr {
-                        container_operand,
+                        container_operand: Box::new(container_operand),
                         field_name,
                     }));
                 }
