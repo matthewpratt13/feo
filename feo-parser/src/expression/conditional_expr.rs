@@ -230,6 +230,20 @@ mod tests {
     use super::*;
 
     #[test]
+    fn parse_match_arm() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[abstract]
+        true
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let match_arm = MatchArm::parse(&mut parser).expect("unable to parse match arm");
+
+        Ok(println!("{:#?}", match_arm))
+    }
+
+    #[test]
     fn parse_match_arm_guard() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"if x > 2"#;
 
