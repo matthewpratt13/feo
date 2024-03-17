@@ -4,12 +4,12 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, AssignmentExpr, BlockExpr, BreakExpr, ClosureWithBlock,
         ClosureWithoutBlock, ComparisonExpr, CompoundAssignmentExpr, ContinueExpr, DereferenceExpr,
-        Expression, FieldAccessExpr, FunctionCallExpr, IfExpr, IndexExpr, InfiniteLoopExpr,
-        IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr, NegationExpr,
-        OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind, RangeFromExpr,
-        RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr, ReferenceExpr,
-        ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr, TypeCastExpr,
-        UnderscoreExpr, UnwrapExpr, Value,
+        ExprWithoutBlock, Expression, FieldAccessExpr, FunctionCallExpr, IfExpr, IndexExpr,
+        InfiniteLoopExpr, IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr,
+        NegationExpr, OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind,
+        RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
+        ReferenceExpr, ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr,
+        TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -726,6 +726,625 @@ impl ParseExpr for Expression {
             }
         } else {
             return Ok(None);
+        }
+
+        Err(parser.errors())
+    }
+}
+
+impl ParseExpr for ExprWithoutBlock {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(id) = parser.peek_current::<Identifier>() {
+            if &id.name == "_" {
+                return Ok(Some(ExprWithoutBlock::UnderscoreExpr(UnderscoreExpr(id))));
+            }
+
+            match parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ts) = TupleStructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::TupleStructExpr(ts)));
+                    }
+
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::FunctionCallExpr(fc)));
+                    }
+                }
+
+                Some(Delimiter {
+                    delim: (DelimKind::Bracket, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::IndexExpr(ie)));
+                    }
+                }
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::StructExpr(se)));
+                    }
+                }
+
+                _ => (),
+            }
+
+            match parser.peek_next::<Punctuation>() {
+                Some(Punctuation {
+                    punc_kind: PuncKind::FullStop,
+                    ..
+                }) => {
+                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::FieldAccessExpr(fa)));
+                    }
+
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::MethodCallExpr(mc)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblColon,
+                    ..
+                }) => {
+                    if let Some(path_expr) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::PathExpr(path_expr)));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::Equals,
+                    ..
+                }) => {
+                    if let Some(ae) = AssignmentExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Assignment(ae),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(al),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::LessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::GreaterThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::LessThanEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::GreaterThanEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::BangEquals,
+                    ..
+                }) => {
+                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Comparison(ce),
+                        )));
+                    }
+                }
+                Some(Punctuation {
+                    punc_kind: PuncKind::QuestionMark,
+                    ..
+                }) => {
+                    if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::UnwrapExpr(ue),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::PlusEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::MinusEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::AsteriskEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlashEquals,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::PercentEquals,
+                    ..
+                }) => {
+                    if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::CompoundAssign(cae),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblAmpersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblPipe,
+                    ..
+                }) => {
+                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::LazyBool(lb),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DblDot,
+                    ..
+                }) => {
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::RangeExpr(
+                            RangeExprKind::RangeFromToExpr(rft),
+                        )));
+                    }
+
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::RangeExpr(
+                            RangeExprKind::RangeFromExpr(rfe),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
+                    punc_kind: PuncKind::DotDotEquals,
+                    ..
+                }) => {
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::RangeExpr(
+                            RangeExprKind::RangeInclusiveExpr(rie),
+                        )));
+                    }
+                }
+
+                _ => (),
+            }
+
+            if let Some(k) = parser.peek_next::<Keyword>() {
+                match &k.keyword_kind {
+                    KeywordKind::KwAs => {
+                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::TypeCast(tc),
+                            )));
+                        }
+                    }
+
+                    _ => (),
+                }
+            }
+
+            let path_expr = PathInExpr {
+                first_segment: PathIdenSegmentKind::Iden(id),
+                subsequent_segments: None,
+            };
+
+            return Ok(Some(ExprWithoutBlock::PathExpr(path_expr)));
+        }
+
+        if let Some(d) = parser.peek_current::<Delimiter>() {
+            match &d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::ParenthesizedExpr(par)));
+                    }
+
+                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::FunctionCallExpr(fc)));
+                    }
+
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::MethodCallExpr(mc)));
+                    }
+
+                    if let Some(ti) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::TupleIndexExpr(ti)));
+                    }
+
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::TupleExpr(te)));
+                    }
+
+                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Comparison(ce),
+                        )));
+                    }
+                }
+
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::IndexExpr(ie)));
+                    }
+
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::ArrayExpr(ae)));
+                    }
+
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(al),
+                        )));
+                    }
+
+                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Comparison(ce),
+                        )));
+                    }
+
+                    if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::CompoundAssign(cae),
+                        )));
+                    }
+
+                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Negation(ne),
+                        )));
+                    }
+
+                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Dereference(de),
+                        )));
+                    }
+
+                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::Reference(re),
+                        )));
+                    }
+
+                    if let Some(ue) = UnwrapExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::UnwrapExpr(ue),
+                        )));
+                    }
+
+                    if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                            OperatorExprKind::LazyBool(lb),
+                        )));
+                    }
+
+                    if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::RangeExpr(
+                            RangeExprKind::RangeFromToExpr(rft),
+                        )));
+                    }
+
+                    if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::RangeExpr(
+                            RangeExprKind::RangeFromExpr(rfe),
+                        )));
+                    }
+
+                    if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithoutBlock::RangeExpr(
+                            RangeExprKind::RangeInclusiveExpr(rie),
+                        )));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(l) = parser.peek_current::<LiteralKind>() {
+            if let Some(k) = parser.peek_next::<Keyword>() {
+                match &k.keyword_kind {
+                    KeywordKind::KwAs => {
+                        if let Some(tc) = TypeCastExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::TypeCast(tc),
+                            )));
+                        }
+                    }
+
+                    _ => (),
+                }
+                match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::LessThan,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::GreaterThan,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::LessThanEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::GreaterThanEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::DblEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::BangEquals,
+                        ..
+                    }) => {
+                        if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::Comparison(ce),
+                            )));
+                        }
+                    }
+
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DblDot,
+                        ..
+                    }) => {
+                        if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeFromToExpr(rft),
+                            )));
+                        }
+
+                        if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeFromExpr(rfe),
+                            )));
+                        }
+                    }
+
+                    Some(Punctuation {
+                        punc_kind: PuncKind::DotDotEquals,
+                        ..
+                    }) => {
+                        if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeInclusiveExpr(rie),
+                            )));
+                        }
+                    }
+
+                    Some(Punctuation {
+                        punc_kind: PuncKind::PlusEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::MinusEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::AsteriskEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::ForwardSlashEquals,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::PercentEquals,
+                        ..
+                    }) => {
+                        if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::CompoundAssign(cae),
+                            )));
+                        }
+                    }
+
+                    _ => (),
+                }
+
+                if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                    return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                        OperatorExprKind::Negation(ne),
+                    )));
+                }
+
+                return Ok(Some(ExprWithoutBlock::Literal(l)));
+            }
+
+            if let Some(k) = parser.peek_current::<Keyword>() {
+                match &k.keyword_kind {
+                    KeywordKind::KwBreak => {
+                        if let Some(be) = BreakExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::BreakExpr(be)));
+                        }
+                    }
+                    KeywordKind::KwContinue => {
+                        if let Some(ce) = ContinueExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::ContinueExpr(ce)));
+                        }
+                    }
+
+                    KeywordKind::KwCrate
+                    | KeywordKind::KwSelf
+                    | KeywordKind::KwSelfType
+                    | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
+                        Some(Punctuation {
+                            punc_kind: PuncKind::DblColon,
+                            ..
+                        }) => {
+                            if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                                return Ok(Some(ExprWithoutBlock::PathExpr(pth)));
+                            }
+                        }
+
+                        _ => return Ok(None),
+                    },
+
+                    KeywordKind::KwReturn => {
+                        if let Some(rtn) = ReturnExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::ReturnExpr(rtn)));
+                        }
+                    }
+
+                    _ => return Ok(None),
+                }
+            } else if let Some(p) = parser.peek_current::<Punctuation>() {
+                match &p.punc_kind {
+                    PuncKind::Bang | PuncKind::Minus => {
+                        if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::Negation(ne),
+                            )));
+                        }
+
+                        if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::ArithmeticOrLogical(al),
+                            )));
+                        }
+
+                        if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::Comparison(ce),
+                            )));
+                        }
+
+                        if let Some(cae) = CompoundAssignmentExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::CompoundAssign(cae),
+                            )));
+                        }
+
+                        if let Some(rft) = RangeFromToExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeFromToExpr(rft),
+                            )));
+                        }
+
+                        if let Some(rfe) = RangeFromExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeFromExpr(rfe),
+                            )));
+                        }
+
+                        if let Some(rie) = RangeInclusiveExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeInclusiveExpr(rie),
+                            )));
+                        }
+
+                        if let Some(lb) = LazyBoolExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::LazyBool(lb),
+                            )));
+                        }
+                    }
+
+                    PuncKind::Asterisk => {
+                        if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::Dereference(de),
+                            )));
+                        }
+                    }
+
+                    PuncKind::Ampersand => {
+                        if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::Reference(re),
+                            )));
+                        }
+                    }
+
+                    PuncKind::DblDot => {
+                        if let Some(rte) = RangeToExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeToExpr(rte),
+                            )));
+                        }
+                    }
+
+                    PuncKind::DotDotEquals => {
+                        if let Some(rti) = RangeToInclusiveExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::RangeExpr(
+                                RangeExprKind::RangeToInclusiveExpr(rti),
+                            )));
+                        }
+                    }
+
+                    PuncKind::DblPipe => {
+                        if let Some(c) = ClosureWithoutBlock::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::ClosureWithoutBlock(c)));
+                        }
+                    }
+
+                    _ => return Ok(None),
+                }
+            } else {
+                return Ok(None);
+            }
         }
 
         Err(parser.errors())
