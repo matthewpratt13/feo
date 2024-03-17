@@ -101,7 +101,43 @@ impl ParseExpr for RangeInclusiveExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(from_operand) = Value::parse(parser)? {
+            parser.next_token();
+
+            let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::DotDotEquals,
+                ..
+            }) = dot_dot_equals_opt
+            {
+                parser.next_token();
+
+                if let Some(to_operand_incl) = Value::parse(parser)? {
+                    parser.next_token();
+
+                    return Ok(Some(RangeInclusiveExpr {
+                        from_operand: Box::new(from_operand),
+                        dot_dot_equals: dot_dot_equals_opt.unwrap(),
+                        to_operand_incl: Box::new(to_operand_incl),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Value`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`..=`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -142,5 +178,17 @@ mod tests {
             RangeFromToExpr::parse(&mut parser).expect("unable to parse from-to range expression");
 
         Ok(println!("{:#?}", range_from_to_expr))
+    }
+
+     #[test]
+    fn parse_range_inclusive_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"1..=5"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let range_inclusive_expr =
+            RangeInclusiveExpr::parse(&mut parser).expect("unable to parse from-to inclusive range expression");
+
+        Ok(println!("{:#?}", range_inclusive_expr))
     }
 }

@@ -85,9 +85,9 @@ impl Spanned for RangeToExpr {
 
 #[derive(Debug, Clone)]
 pub struct RangeInclusiveExpr {
-    from_operand: Box<Value>,
-    dot_dot_equals: DotDotEquals,
-    to_operand_incl: Box<Value>,
+    pub from_operand: Box<Value>,
+    pub dot_dot_equals: DotDotEquals,
+    pub to_operand_incl: Box<Value>,
 }
 
 impl Spanned for RangeInclusiveExpr {
