@@ -229,6 +229,18 @@ mod tests {
 
     use super::*;
 
+    #[test]
+    fn parse_match_arm_guard() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"if x > 2"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let match_arm_guard =
+            MatchArmGuard::parse(&mut parser).expect("Unable to parse match arm guard");
+
+        Ok(println!("{:#?}", match_arm_guard))
+    }
+
     #[ignore] // TODO: remove when testing
     #[test]
     fn parse_if_expr() -> Result<(), Vec<CompilerError>> {
