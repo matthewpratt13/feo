@@ -1012,14 +1012,14 @@ impl ParseTerm for Value {
                     }
                 }
 
-                Some(Delimiter {
-                    delim: (DelimKind::Brace, DelimOrientation::Open),
-                    ..
-                }) => {
-                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::StructExpr(se)));
-                    }
-                }
+                // Some(Delimiter {
+                //     delim: (DelimKind::Brace, DelimOrientation::Open),
+                //     ..
+                // }) => {
+                //     if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Value::StructExpr(se)));
+                //     }
+                // }
                 _ => (),
             }
 

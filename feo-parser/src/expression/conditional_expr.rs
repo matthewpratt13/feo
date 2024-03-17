@@ -1,11 +1,19 @@
 use feo_ast::{
-    attribute::OuterAttr,
-    expression::{BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr},
+    attribute::{InnerAttr, OuterAttr},
+    expression::{
+        BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr, Value,
+    },
     pattern::Pattern,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{keyword::KeywordKind, punctuation::PuncKind, utils::KwElse, Keyword, Punctuation};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
+    punctuation::PuncKind,
+    utils::KwElse,
+    Delimiter, Keyword, Punctuation,
+};
 
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseTerm},
@@ -190,6 +198,7 @@ impl ParseTerm for MatchArm {
                         match_arm_guard_opt,
                     }))
                 }
+
                 false => {
                     return Ok(Some(MatchArm {
                         attributes_opt: Some(attributes),
@@ -216,7 +225,7 @@ impl ParseTerm for MatchArms {
         } else {
             return Ok(None);
         };
-        
+
         if let Some(Punctuation {
             punc_kind: PuncKind::Comma,
             ..
@@ -240,7 +249,7 @@ impl ParseTerm for MatchArms {
         }
 
         let final_arm = if let Some(arm) = self::get_arm(parser)? {
-            parser.next_token();
+            // parser.next_token();
             (arm.0, Box::new(arm.1))
         } else {
             arms.clear();
@@ -269,14 +278,98 @@ impl ParseExpr for MatchExpr {
     where
         Self: Sized,
     {
-        todo!()
+        let mut attributes: Vec<InnerAttr> = Vec::new();
+
+        let kw_match_opt = parser.peek_current::<Keyword>();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwMatch,
+            ..
+        }) = kw_match_opt
+        {
+            parser.next_token();
+
+            if let Some(scrutinee) = Value::parse(parser)? {
+                parser.next_token();
+
+                let open_brace_opt = parser.peek_current::<Delimiter>();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) = open_brace_opt
+                {
+                    parser.next_token();
+
+                    while let Some(ia) = InnerAttr::parse(parser)? {
+                        attributes.push(ia);
+                        parser.next_token();
+                    }
+
+                    let match_arms_opt = if let Some(ma) = MatchArms::parse(parser)? {
+                        Some(ma)
+                    } else {
+                        None
+                    };
+
+                    let close_brace_opt = parser.peek_current::<Delimiter>();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Brace, DelimOrientation::Close),
+                        ..
+                    }) = close_brace_opt
+                    {
+                        parser.next_token();
+
+                        match &attributes.is_empty() {
+                            true => {
+                                return Ok(Some(MatchExpr {
+                                    kw_match: kw_match_opt.unwrap(),
+                                    scrutinee: Box::new(scrutinee),
+                                    open_brace: open_brace_opt.unwrap(),
+                                    attributes_opt: None,
+                                    match_arms_opt,
+                                    close_brace: close_brace_opt.unwrap(),
+                                }));
+                            }
+                            false => {
+                                return Ok(Some(MatchExpr {
+                                    kw_match: kw_match_opt.unwrap(),
+                                    scrutinee: Box::new(scrutinee),
+                                    open_brace: open_brace_opt.unwrap(),
+                                    attributes_opt: Some(attributes),
+                                    match_arms_opt,
+                                    close_brace: close_brace_opt.unwrap(),
+                                }));
+                            }
+                        }
+                    } else {
+                        parser.log_error(ParserErrorKind::MissingDelimiter {
+                            delim: "}".to_string(),
+                        });
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`{`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Value`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
 fn get_arm(parser: &mut Parser) -> Result<Option<(MatchArm, Expression)>, Vec<CompilerError>> {
     if let Some(arm) = MatchArm::parse(parser)? {
-        // parser.next_token();
-
         if let Some(Punctuation {
             punc_kind: PuncKind::FatArrow,
             ..
@@ -343,7 +436,7 @@ mod tests {
         let source_code = r#"
         #[abstract]
         true => x + 2,
-        false => x - 2,
+        false => x - 2
         "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
@@ -351,6 +444,24 @@ mod tests {
         let match_arms = MatchArms::parse(&mut parser).expect("unable to parse match arms");
 
         Ok(println!("{:#?}", match_arms))
+    }
+
+    #[test]
+    fn parse_match_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        match foo {
+            #![unsafe]
+            #[abstract]
+            true => x + 2,
+            false => x - 2
+        }
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let match_expr = MatchExpr::parse(&mut parser).expect("unable to parse match expression");
+
+        Ok(println!("{:#?}", match_expr))
     }
 
     #[ignore] // TODO: remove when testing
