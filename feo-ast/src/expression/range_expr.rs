@@ -39,9 +39,9 @@ impl Spanned for RangeFullExpr {
 
 #[derive(Debug, Clone)]
 pub struct RangeFromToExpr {
-    from_operand: Box<Value>,
-    dbl_dot: DblDot,
-    to_operand_excl: Box<Value>,
+    pub from_operand: Box<Value>,
+    pub dbl_dot: DblDot,
+    pub to_operand_excl: Box<Value>,
 }
 
 impl Spanned for RangeFromToExpr {
