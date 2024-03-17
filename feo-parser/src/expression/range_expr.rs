@@ -1,9 +1,19 @@
 use feo_ast::expression::{
-    RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
+    RangeFromExpr, RangeFromToExpr, RangeFullExpr, RangeInclusiveExpr, RangeToExpr,
+    RangeToInclusiveExpr,
 };
 use feo_error::error::CompilerError;
 
 use crate::{parse::ParseExpr, parser::Parser};
+
+impl ParseExpr for RangeFullExpr {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
 
 impl ParseExpr for RangeFromToExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>

@@ -46,8 +46,8 @@ pub use self::{
     },
     parenthesized_expr::ParenthesizedExpr,
     range_expr::{
-        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr,
-        RangeToInclusiveExpr,
+        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeFullExpr, RangeInclusiveExpr,
+        RangeToExpr, RangeToInclusiveExpr,
     },
     return_expr::ReturnExpr,
     struct_expr::{

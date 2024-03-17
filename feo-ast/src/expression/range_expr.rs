@@ -28,7 +28,14 @@ impl Spanned for RangeExprKind {
     }
 }
 
-pub type RangeFullExpr = DblDot;
+#[derive(Debug, Clone)]
+pub struct RangeFullExpr(pub DblDot);
+
+impl Spanned for RangeFullExpr {
+    fn span(&self) -> Span {
+        self.0.span()
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct RangeFromToExpr {
