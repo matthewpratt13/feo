@@ -1023,23 +1023,6 @@ impl ParseTerm for Value {
                 _ => (),
             }
 
-            match parser.peek_next::<Punctuation>() {
-                Some(Punctuation {
-                    punc_kind: PuncKind::FullStop,
-                    ..
-                }) => {
-                    // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Value::FieldAccessExpr(fa)));
-                    // }
-
-                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Value::MethodCallExpr(mc)));
-                    // }
-                }
-
-                _ => (),
-            }
-
             let path_expr = PathExpr {
                 first_segment: PathIdenSegmentKind::Iden(id),
                 subsequent_segments: None,
