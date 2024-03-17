@@ -30,8 +30,8 @@ pub struct TupleExprElements {
 
 #[derive(Debug, Clone)]
 pub struct TupleIndexExpr {
-    operand: Box<Value>,
-    index: U64Primitive,
+    pub operand: Box<Value>,
+    pub index: U64Primitive,
 }
 
 impl Spanned for TupleIndexExpr {

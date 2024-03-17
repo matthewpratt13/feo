@@ -5,8 +5,9 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
+    literal::UIntType,
     punctuation::PuncKind,
-    Delimiter, Punctuation,
+    Delimiter, Literal, Punctuation, U64Primitive,
 };
 
 use crate::{
@@ -108,7 +109,40 @@ impl ParseExpr for TupleIndexExpr {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(operand) = Value::parse(parser)? {
+            parser.next_token();
+
+            if let Some(Punctuation {
+                punc_kind: PuncKind::FullStop,
+                ..
+            }) = parser.peek_current::<Punctuation>()
+            {
+                parser.next_token();
+
+                if let Some(index) = parser.peek_current::<Literal<UIntType>>() {
+                    parser.next_token();
+
+                    return Ok(Some(TupleIndexExpr {
+                        operand: Box::new(operand),
+                        index: U64Primitive::try_from(index)
+                            .expect("error converting `Literal<UIntType` to `U64Primitive`"),
+                    }));
+                }
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`Literal<UIntType>`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`.`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -140,5 +174,17 @@ mod tests {
         let tuple_expr = TupleExpr::parse(&mut parser).expect("unable to parse tuple expression");
 
         Ok(println!("{:#?}", tuple_expr))
+    }
+
+    #[test]
+    fn parse_tuple_index_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"foo.0"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let tuple_index_expr =
+            TupleIndexExpr::parse(&mut parser).expect("unable to parse tuple index expression");
+
+        Ok(println!("{:#?}", tuple_index_expr))
     }
 }
