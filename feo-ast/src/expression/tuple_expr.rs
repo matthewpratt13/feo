@@ -4,24 +4,7 @@ use feo_types::{
     U64Primitive,
 };
 
-use crate::ty::TupleType;
-
-use super::{TupleStructExpr, Value};
-
-#[derive(Debug, Clone)]
-enum TupleKind {
-    Tuple(TupleType),
-    TupleStruct(TupleStructExpr),
-}
-
-impl Spanned for TupleKind {
-    fn span(&self) -> Span {
-        match self {
-            TupleKind::Tuple(t) => t.span(),
-            TupleKind::TupleStruct(ts) => ts.span(),
-        }
-    }
-}
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub struct TupleExpr {
@@ -47,7 +30,7 @@ pub struct TupleExprElements {
 
 #[derive(Debug, Clone)]
 pub struct TupleIndexExpr {
-    operand: TupleKind,
+    operand: Box<Value>,
     index: U64Primitive,
 }
 
