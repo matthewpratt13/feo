@@ -58,8 +58,8 @@ impl Spanned for MatchExpr {
 
 #[derive(Debug, Clone)]
 pub struct MatchArms {
-    arms: Vec<(MatchArm, Expression)>,
-    final_arm: (MatchArm, Box<Expression>),
+    pub arms_opt: Option<Vec<(MatchArm, Expression)>>,
+    pub final_arm: (MatchArm, Box<Expression>),
 }
 
 #[derive(Debug, Clone)]

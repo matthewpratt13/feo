@@ -5,7 +5,7 @@ use feo_ast::{
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{keyword::KeywordKind, utils::KwElse, Keyword};
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, utils::KwElse, Keyword, Punctuation};
 
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseTerm},
@@ -209,7 +209,58 @@ impl ParseTerm for MatchArms {
     where
         Self: Sized,
     {
-        todo!()
+        let mut arms: Vec<(MatchArm, Expression)> = Vec::new();
+
+        let first_arm = if let Some(arm) = self::get_arm(parser)? {
+            arm
+        } else {
+            return Ok(None);
+        };
+        
+        if let Some(Punctuation {
+            punc_kind: PuncKind::Comma,
+            ..
+        }) = parser.peek_current::<Punctuation>()
+        {
+            parser.next_token();
+            arms.push(first_arm.clone());
+        }
+
+        while let Some(Punctuation {
+            punc_kind: PuncKind::Comma,
+            ..
+        }) = parser.peek_current::<Punctuation>()
+        {
+            parser.next_token();
+
+            if let Some(arm) = self::get_arm(parser)? {
+                arms.push(arm);
+                parser.next_token();
+            }
+        }
+
+        let final_arm = if let Some(arm) = self::get_arm(parser)? {
+            parser.next_token();
+            (arm.0, Box::new(arm.1))
+        } else {
+            arms.clear();
+            (first_arm.0, Box::new(first_arm.1))
+        };
+
+        match &arms.is_empty() {
+            true => {
+                return Ok(Some(MatchArms {
+                    arms_opt: None,
+                    final_arm,
+                }))
+            }
+            false => {
+                return Ok(Some(MatchArms {
+                    arms_opt: Some(arms),
+                    final_arm,
+                }))
+            }
+        }
     }
 }
 
@@ -222,12 +273,56 @@ impl ParseExpr for MatchExpr {
     }
 }
 
+fn get_arm(parser: &mut Parser) -> Result<Option<(MatchArm, Expression)>, Vec<CompilerError>> {
+    if let Some(arm) = MatchArm::parse(parser)? {
+        // parser.next_token();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::FatArrow,
+            ..
+        }) = parser.peek_current::<Punctuation>()
+        {
+            parser.next_token();
+
+            if let Some(expr) = Expression::parse(parser)? {
+                return Ok(Some((arm, expr)));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`Expression`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`=>`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        }
+    } else {
+        return Ok(None);
+    }
+
+    Err(parser.errors())
+}
+
 #[cfg(test)]
 mod tests {
 
     use crate::test_utils;
 
     use super::*;
+
+    #[test]
+    fn parse_match_arm_guard() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"if x > 2"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let match_arm_guard =
+            MatchArmGuard::parse(&mut parser).expect("Unable to parse match arm guard");
+
+        Ok(println!("{:#?}", match_arm_guard))
+    }
 
     #[test]
     fn parse_match_arm() -> Result<(), Vec<CompilerError>> {
@@ -244,15 +339,18 @@ mod tests {
     }
 
     #[test]
-    fn parse_match_arm_guard() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"if x > 2"#;
+    fn parse_match_arms() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[abstract]
+        true => x + 2,
+        false => x - 2,
+        "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let match_arm_guard =
-            MatchArmGuard::parse(&mut parser).expect("Unable to parse match arm guard");
+        let match_arms = MatchArms::parse(&mut parser).expect("unable to parse match arms");
 
-        Ok(println!("{:#?}", match_arm_guard))
+        Ok(println!("{:#?}", match_arms))
     }
 
     #[ignore] // TODO: remove when testing
