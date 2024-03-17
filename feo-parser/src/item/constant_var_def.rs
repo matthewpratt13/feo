@@ -149,7 +149,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_constant_var_def() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"const foo: u64 = 2;"#;
