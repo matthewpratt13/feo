@@ -1,4 +1,7 @@
-use feo_ast::item::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem};
+use feo_ast::item::{
+    ConstantVarDef, FunctionWithBlock, InherentImplBlock, InherentImplItem, TraitImplBlock,
+    TraitImplItem, TypeAliasDef,
+};
 use feo_error::error::CompilerError;
 
 use crate::{parse::ParseItem, parser::Parser};
@@ -9,7 +12,13 @@ impl ParseItem for InherentImplItem {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(cvd) = ConstantVarDef::parse(parser)? {
+            return Ok(Some(InherentImplItem::ConstantVarDef(cvd)));
+        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+            return Ok(Some(InherentImplItem::FuncWithBlock(fwb)));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
@@ -19,7 +28,15 @@ impl ParseItem for TraitImplItem {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(cvd) = ConstantVarDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::ConstantVarDef(cvd)));
+        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+            return Ok(Some(TraitImplItem::FuncWithBlock(fwb)));
+        } else if let Some(tad) = TypeAliasDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::TypeAliasDef(tad)));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
