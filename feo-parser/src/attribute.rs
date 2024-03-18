@@ -178,7 +178,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_attribute() -> Result<(), Vec<CompilerError>> {
+    fn parse_attribute_inner() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"#![unsafe]"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let inner_attr = InnerAttr::parse(&mut parser).expect("unable to parse inner attribute");
+
+        Ok(println!("{:#?}", inner_attr))
+    }
+
+    #[test]
+    fn parse_attribute_outer() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"#[unsafe]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
