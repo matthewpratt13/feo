@@ -54,16 +54,16 @@ impl Spanned for InherentImplBlock {
 
 #[derive(Debug, Clone)]
 pub struct TraitImplBlock {
-    outer_attributes_opt: Option<Vec<OuterAttr>>,
-    kw_impl: KwImpl,
-    implemented_trait_path: PathType,
-    kw_for: KwFor,
-    implementing_type: Type,
-    where_clause_opt: Option<WhereClause>,
-    open_brace: Brace,
-    inner_attributes_opt: Option<Vec<InnerAttr>>,
-    associated_items: Vec<TraitImplItem>,
-    close_brace: Brace,
+    pub outer_attributes_opt: Option<Vec<OuterAttr>>,
+    pub kw_impl: KwImpl,
+    pub implemented_trait_path: PathType,
+    pub kw_for: KwFor,
+    pub implementing_type: Type,
+    pub where_clause_opt: Option<WhereClause>,
+    pub open_brace: Brace,
+    pub inner_attributes_opt: Option<Vec<InnerAttr>>,
+    pub associated_items: Vec<TraitImplItem>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for TraitImplBlock {
