@@ -250,7 +250,6 @@ impl ParseTerm for MatchArms {
         }
 
         let final_arm = if let Some(arm) = self::get_arm(parser)? {
-            // parser.next_token();
             (arm.0, Box::new(arm.1))
         } else {
             arms.clear();
@@ -310,6 +309,14 @@ impl ParseExpr for MatchExpr {
                     } else {
                         None
                     };
+
+                    if let Some(Punctuation {
+                        punc_kind: PuncKind::Comma,
+                        ..
+                    }) = parser.peek_current::<Punctuation>()
+                    {
+                        parser.next_token();
+                    }
 
                     let close_brace_opt = parser.peek_current::<Delimiter>();
 
