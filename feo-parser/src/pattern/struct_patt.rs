@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     pattern::{
         Pattern, StructPatt, StructPattField, StructPattFields, TupleStructPatt,
         TupleStructPattFields,
@@ -16,6 +15,7 @@ use feo_types::{
 use crate::{
     parse::{ParsePatt, ParseTerm},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for StructPattField {
@@ -23,12 +23,7 @@ impl ParseTerm for StructPattField {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
@@ -43,23 +38,10 @@ impl ParseTerm for StructPattField {
                 if let Some(value) = Pattern::parse(parser)? {
                     let field_content = (field_name, Box::new(value));
 
-                    // parser.next_token();
-
-                    match &attributes.is_empty() {
-                        true => {
-                            return Ok(Some(StructPattField {
-                                attributes_opt: None,
-                                field_content,
-                            }))
-                        }
-
-                        false => {
-                            return Ok(Some(StructPattField {
-                                attributes_opt: Some(attributes),
-                                field_content,
-                            }))
-                        }
-                    }
+                    return Ok(Some(StructPattField {
+                        attributes_opt,
+                        field_content,
+                    }));
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`Pattern`".to_string(),
