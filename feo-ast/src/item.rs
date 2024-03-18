@@ -39,7 +39,7 @@ pub use self::{
         StructDef, StructDefField, StructDefFields, TupleStructDef, TupleStructDefField,
         TupleStructDefFields,
     },
-    trait_def::TraitDef,
+    trait_def::{TraitDef, TraitDefItem},
     type_alias_def::TypeAliasDef,
     visibility::{PubCrateVisibility, VisibilityKind},
     where_clause::{TypeBound, TypeParamBounds, WhereClause},

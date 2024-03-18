@@ -1,6 +1,7 @@
 use feo_ast::{
     item::{
-        FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, SelfParam, VisibilityKind,
+        FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, FunctionWithBlock,
+        SelfParam, VisibilityKind,
     },
     pattern::Pattern,
     token::Token,
@@ -284,6 +285,16 @@ impl ParseItem for FunctionSig {
         }
 
         Err(parser.errors())
+    }
+}
+
+impl ParseItem for FunctionWithBlock {
+    #[allow(unused_variables)]
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }
 
