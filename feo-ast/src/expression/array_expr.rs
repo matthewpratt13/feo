@@ -1,21 +1,15 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Bracket, Semicolon},
+    utils::Bracket,
     U64Primitive,
 };
 
 use super::Value;
 
 #[derive(Debug, Clone)]
-pub enum ArrayElementsKind {
-    CommaSeparated(ArrayElementsCommaSeparated),
-    RepeatedValue(ArrayElementsRepeatedValue),
-}
-
-#[derive(Debug, Clone)]
 pub struct ArrayExpr {
     pub open_bracket: Bracket,
-    pub elements_opt: Option<ArrayElementsKind>,
+    pub elements_opt: Option<ArrayElements>,
     pub close_bracket: Bracket,
 }
 
@@ -28,19 +22,12 @@ impl Spanned for ArrayExpr {
     }
 }
 
+// TODO: verify that all `Value` have the same type
 #[derive(Debug, Clone)]
-pub struct ArrayElementsCommaSeparated {
+pub struct ArrayElements {
     pub first_element: Box<Value>,
     pub subsequent_elements_opt: Option<Vec<Value>>,
 }
-
-#[derive(Debug, Clone)]
-pub struct ArrayElementsRepeatedValue {
-    pub repeat_operand: Box<Value>,
-    pub semicolon: Semicolon,
-    pub num_repeats: U64Primitive,
-}
-
 #[derive(Debug, Clone)]
 pub struct IndexExpr {
     pub indexed_operand: Box<Value>,

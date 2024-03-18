@@ -1,8 +1,5 @@
 use feo_ast::{
-    expression::{
-        ArrayElementsCommaSeparated, ArrayElementsKind, ArrayElementsRepeatedValue, ArrayExpr,
-        IndexExpr, Value,
-    },
+    expression::{ArrayElements, ArrayExpr, IndexExpr, Value},
     token::Token,
 };
 
@@ -19,7 +16,7 @@ use crate::{
     parser::Parser,
 };
 
-impl ParseTerm for ArrayElementsCommaSeparated {
+impl ParseTerm for ArrayElements {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -38,7 +35,6 @@ impl ParseTerm for ArrayElementsCommaSeparated {
 
                 if let Some(next_element) = Value::parse(parser)? {
                     subsequent_elements.push(next_element);
-
                     parser.next_token();
                 } else {
                     break;
@@ -46,11 +42,11 @@ impl ParseTerm for ArrayElementsCommaSeparated {
             }
 
             match &subsequent_elements.is_empty() {
-                true => Ok(Some(ArrayElementsCommaSeparated {
+                true => Ok(Some(ArrayElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: None,
                 })),
-                false => Ok(Some(ArrayElementsCommaSeparated {
+                false => Ok(Some(ArrayElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: Some(subsequent_elements),
                 })),
@@ -58,52 +54,6 @@ impl ParseTerm for ArrayElementsCommaSeparated {
         } else {
             Ok(None)
         }
-    }
-}
-
-impl ParseTerm for ArrayElementsRepeatedValue {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        if let Some(repeat_operand) = Value::parse(parser)? {
-            parser.next_token();
-
-            let semicolon_opt = parser.peek_current::<Punctuation>();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Semicolon,
-                ..
-            }) = semicolon_opt
-            {
-                parser.next_token();
-
-                if let Some(num_repeats) = parser.peek_current::<Literal<UIntType>>() {
-                    parser.next_token();
-
-                    return Ok(Some(ArrayElementsRepeatedValue {
-                        repeat_operand: Box::new(repeat_operand),
-                        semicolon: semicolon_opt.unwrap(),
-                        num_repeats: U64Primitive::try_from(num_repeats)
-                            .expect("error converting `Literal<UIntType>` to `U64Primitive`"),
-                    }));
-                }
-
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Literal<UIntType>`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`;`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
-        } else {
-            return Ok(None);
-        }
-
-        Err(parser.errors())
     }
 }
 
@@ -121,49 +71,29 @@ impl ParseExpr for ArrayExpr {
         {
             parser.next_token();
 
-            if let Some(elements) = ArrayElementsCommaSeparated::parse(parser)? {
-                let close_bracket_opt = parser.peek_current::<Delimiter>();
+            let elements_opt = if let Some(elements) = ArrayElements::parse(parser)? {
+                Some(elements)
+            } else {
+                None
+            };
 
-                if let Some(Delimiter {
-                    delim: (DelimKind::Bracket, DelimOrientation::Close),
-                    ..
-                }) = close_bracket_opt
-                {
-                    parser.next_token();
+            let close_bracket_opt = parser.peek_current::<Delimiter>();
 
-                    return Ok(Some(ArrayExpr {
-                        open_bracket: open_bracket_opt.unwrap(),
-                        elements_opt: Some(ArrayElementsKind::CommaSeparated(elements)),
-                        close_bracket: close_bracket_opt.unwrap(),
-                    }));
-                }
-
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "]".to_string(),
-                });
-            } else if let Some(elements) = ArrayElementsRepeatedValue::parse(parser)? {
-                parser.next_token();
-
-                let close_bracket_opt = parser.peek_current::<Delimiter>();
-
-                if let Some(Delimiter {
-                    delim: (DelimKind::Bracket, DelimOrientation::Close),
-                    ..
-                }) = close_bracket_opt
-                {
-                    parser.next_token();
-
-                    return Ok(Some(ArrayExpr {
-                        open_bracket: open_bracket_opt.unwrap(),
-                        elements_opt: Some(ArrayElementsKind::RepeatedValue(elements)),
-                        close_bracket: close_bracket_opt.unwrap(),
-                    }));
-                }
-
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "]".to_string(),
-                });
+            if let Some(Delimiter {
+                delim: (DelimKind::Bracket, DelimOrientation::Close),
+                ..
+            }) = close_bracket_opt
+            {
+                return Ok(Some(ArrayExpr {
+                    open_bracket: open_bracket_opt.unwrap(),
+                    elements_opt,
+                    close_bracket: close_bracket_opt.unwrap(),
+                }));
             }
+
+            parser.log_error(ParserErrorKind::MissingDelimiter {
+                delim: "]".to_string(),
+            });
         } else {
             return Ok(None);
         }
@@ -241,12 +171,25 @@ mod tests {
     use super::*;
 
     #[test]
+    fn parse_array_elements() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"1, 2, 3, 4"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let array_elements =
+            ArrayElements::parse(&mut parser).expect("unable to parse elements for an array");
+
+        Ok(println!("{:#?}", array_elements))
+    }
+
+    #[test]
     fn parse_array_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"[1, 2, 3, 4]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse array expression");
+        let array_expr =
+            ArrayExpr::parse(&mut parser).expect("unable to parse comma-separated array");
 
         Ok(println!("{:#?}", array_expr))
     }
