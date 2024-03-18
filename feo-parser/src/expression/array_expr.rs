@@ -177,19 +177,30 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let array_elements =
-            ArrayElements::parse(&mut parser).expect("unable to parse elements for an array");
+            ArrayElements::parse(&mut parser).expect("unable to parse array elements");
 
         Ok(println!("{:#?}", array_elements))
     }
 
     #[test]
-    fn parse_array_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"[1, 2, 3, 4]"#;
+    fn parse_array_expr_with_elements() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"[1, 2, 3, 4,]"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse array");
+
+        Ok(println!("{:#?}", array_expr))
+    }
+
+    #[test]
+    fn parse_array_expr_without_elements() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"[]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let array_expr =
-            ArrayExpr::parse(&mut parser).expect("unable to parse comma-separated array");
+            ArrayExpr::parse(&mut parser).expect("unable to parse array without elements");
 
         Ok(println!("{:#?}", array_expr))
     }
