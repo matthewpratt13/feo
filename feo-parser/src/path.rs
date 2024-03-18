@@ -193,13 +193,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_path() -> Result<(), Vec<CompilerError>> {
+    fn parse_path_simple() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"crate::module::Object"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let path_in_expr = PathInExpr::parse(&mut parser).expect("unable to parse path");
+        let simple_path = SimplePath::parse(&mut parser).expect("unable to parse simple path");
 
-        Ok(println!("{:#?}", path_in_expr))
+        Ok(println!("{:#?}", simple_path))
+    }
+
+    #[test]
+    fn parse_path_expr() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"Self::method"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let path_expr = PathInExpr::parse(&mut parser).expect("unable to parse path expression");
+
+        Ok(println!("{:#?}", path_expr))
     }
 }
