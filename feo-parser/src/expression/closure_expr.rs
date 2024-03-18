@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     expression::{
         ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
         Expression,
@@ -14,6 +13,7 @@ use feo_types::{punctuation::PuncKind, Punctuation};
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseTerm, ParseType},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for ClosureParamsOpt {
@@ -73,12 +73,7 @@ impl ParseTerm for ClosureParam {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         if let Some(pattern) = Pattern::parse(parser)? {
             parser.next_token();
@@ -100,22 +95,11 @@ impl ParseTerm for ClosureParam {
                 None
             };
 
-            match &attributes.is_empty() {
-                true => {
-                    return Ok(Some(ClosureParam {
-                        attributes_opt: None,
-                        pattern: Box::new(pattern),
-                        type_annotation_opt,
-                    }))
-                }
-                false => {
-                    return Ok(Some(ClosureParam {
-                        attributes_opt: Some(attributes),
-                        pattern: Box::new(pattern),
-                        type_annotation_opt,
-                    }))
-                }
-            }
+            return Ok(Some(ClosureParam {
+                attributes_opt,
+                pattern: Box::new(pattern),
+                type_annotation_opt,
+            }));
         } else {
             return Ok(None);
         }

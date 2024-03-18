@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::{InnerAttr, OuterAttr},
     expression::{
         BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr,
         ParenthesizedExpr,
@@ -19,6 +18,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseTerm},
     parser::Parser,
+    utils,
 };
 
 impl ParseExpr for IfExpr {
@@ -175,12 +175,7 @@ impl ParseTerm for MatchArm {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         if let Some(pattern) = Pattern::parse(parser)? {
             parser.next_token();
@@ -191,23 +186,11 @@ impl ParseTerm for MatchArm {
                 None
             };
 
-            match &attributes.is_empty() {
-                true => {
-                    return Ok(Some(MatchArm {
-                        attributes_opt: None,
-                        pattern: Box::new(pattern),
-                        match_arm_guard_opt,
-                    }))
-                }
-
-                false => {
-                    return Ok(Some(MatchArm {
-                        attributes_opt: Some(attributes),
-                        pattern: Box::new(pattern),
-                        match_arm_guard_opt,
-                    }))
-                }
-            }
+            return Ok(Some(MatchArm {
+                attributes_opt,
+                pattern: Box::new(pattern),
+                match_arm_guard_opt,
+            }));
         } else {
             return Ok(None);
         }
@@ -278,8 +261,6 @@ impl ParseExpr for MatchExpr {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<InnerAttr> = Vec::new();
-
         let kw_match_opt = parser.peek_current::<Keyword>();
 
         if let Some(Keyword {
@@ -299,10 +280,7 @@ impl ParseExpr for MatchExpr {
                 {
                     parser.next_token();
 
-                    while let Some(ia) = InnerAttr::parse(parser)? {
-                        attributes.push(ia);
-                        parser.next_token();
-                    }
+                    let attributes_opt = utils::get_attributes(parser)?;
 
                     let match_arms_opt = if let Some(ma) = MatchArms::parse(parser)? {
                         Some(ma)
@@ -327,28 +305,14 @@ impl ParseExpr for MatchExpr {
                     {
                         parser.next_token();
 
-                        match &attributes.is_empty() {
-                            true => {
-                                return Ok(Some(MatchExpr {
-                                    kw_match: kw_match_opt.unwrap(),
-                                    scrutinee: Box::new(scrutinee),
-                                    open_brace: open_brace_opt.unwrap(),
-                                    attributes_opt: None,
-                                    match_arms_opt,
-                                    close_brace: close_brace_opt.unwrap(),
-                                }));
-                            }
-                            false => {
-                                return Ok(Some(MatchExpr {
-                                    kw_match: kw_match_opt.unwrap(),
-                                    scrutinee: Box::new(scrutinee),
-                                    open_brace: open_brace_opt.unwrap(),
-                                    attributes_opt: Some(attributes),
-                                    match_arms_opt,
-                                    close_brace: close_brace_opt.unwrap(),
-                                }));
-                            }
-                        }
+                        return Ok(Some(MatchExpr {
+                            kw_match: kw_match_opt.unwrap(),
+                            scrutinee: Box::new(scrutinee),
+                            open_brace: open_brace_opt.unwrap(),
+                            attributes_opt,
+                            match_arms_opt,
+                            close_brace: close_brace_opt.unwrap(),
+                        }));
                     } else {
                         parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: "}".to_string(),
