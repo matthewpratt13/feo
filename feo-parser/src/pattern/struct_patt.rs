@@ -144,8 +144,9 @@ impl ParsePatt for StructPatt {
                     }));
                 }
 
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "}".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`}`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -243,8 +244,9 @@ impl ParsePatt for TupleStructPatt {
                     }));
                 }
 
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: ")".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`)`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {

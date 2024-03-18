@@ -45,8 +45,9 @@ impl ParseExpr for ArrayExpr {
                     close_bracket: close_bracket_opt.unwrap(),
                 }));
             } else {
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "]".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`]`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
         } else {
@@ -143,8 +144,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let array_expr =
-            ArrayExpr::parse(&mut parser).expect("unable to parse empty array");
+        let array_expr = ArrayExpr::parse(&mut parser).expect("unable to parse empty array");
 
         Ok(println!("{:#?}", array_expr))
     }

@@ -314,8 +314,9 @@ impl ParseExpr for MatchExpr {
                             close_brace: close_brace_opt.unwrap(),
                         }));
                     } else {
-                        parser.log_error(ParserErrorKind::MissingDelimiter {
-                            delim: "}".to_string(),
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`}`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
                     }
                 } else {

@@ -42,10 +42,6 @@ impl ParsePatt for ParenthesizedPatt {
                         close_parenthesis: close_parenthesis_opt.unwrap(),
                     }));
                 }
-
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: ")".to_string(),
-                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "pattern".to_string(),

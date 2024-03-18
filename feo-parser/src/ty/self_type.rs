@@ -17,7 +17,6 @@ impl ParseType for SelfType {
         }) = kw_self_opt
         {
             parser.next_token();
-
             return Ok(Some(SelfType(kw_self_opt.unwrap())));
         } else {
             return Ok(None);
