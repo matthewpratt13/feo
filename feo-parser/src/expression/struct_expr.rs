@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     expression::{StructExpr, StructExprField, StructExprFields, TupleStructExpr, Value},
     path::PathInExpr,
     token::Token,
@@ -24,12 +23,7 @@ impl ParseTerm for StructExprField {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
@@ -46,21 +40,10 @@ impl ParseTerm for StructExprField {
 
                     let field_content = (field_name, Box::new(value));
 
-                    match &attributes.is_empty() {
-                        true => {
-                            return Ok(Some(StructExprField {
-                                attributes_opt: None,
-                                field_content,
-                            }))
-                        }
-
-                        false => {
-                            return Ok(Some(StructExprField {
-                                attributes_opt: Some(attributes),
-                                field_content,
-                            }))
-                        }
-                    }
+                    return Ok(Some(StructExprField {
+                        attributes_opt,
+                        field_content,
+                    }));
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`Returnable`".to_string(),

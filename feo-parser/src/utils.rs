@@ -1,8 +1,26 @@
-use feo_ast::expression::{Value, ValueCollection};
+use feo_ast::{
+    attribute::OuterAttr,
+    expression::{Value, ValueCollection},
+};
 use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
 
 use crate::{parse::ParseTerm, parser::Parser};
+
+pub fn get_attributes(parser: &mut Parser) -> Result<Option<Vec<OuterAttr>>, Vec<CompilerError>> {
+    let mut attributes: Vec<OuterAttr> = Vec::new();
+
+    while let Some(oa) = OuterAttr::parse(parser)? {
+        attributes.push(oa);
+        parser.next_token();
+    }
+
+    if attributes.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(attributes))
+    }
+}
 
 pub fn get_value_collection(
     parser: &mut Parser,
