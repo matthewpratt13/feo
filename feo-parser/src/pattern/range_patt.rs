@@ -1,14 +1,12 @@
 use feo_ast::{
-    pattern::{
-        RangeFromPatt, RangeInclusivePatt, RangePattBound, RangePattKind, RangeToInclusivePatt,
-    },
+    pattern::{RangeFromPatt, RangeInclusivePatt, RangePattBound, RangeToInclusivePatt},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{literal::LiteralKind, punctuation::PuncKind, Punctuation};
 
 use crate::{
-    parse::{ParsePatt, ParseTerm},
+    parse::ParsePatt,
     parser::Parser,
     peek::{Peek, Peeker},
 };
@@ -30,15 +28,6 @@ impl Peek for RangePattBound {
         } else {
             None
         }
-    }
-}
-
-impl ParseTerm for RangePattKind {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        todo!()
     }
 }
 

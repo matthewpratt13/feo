@@ -1,5 +1,3 @@
-#![allow(unused_variables)]
-
 mod identifier_patt;
 mod parenthesized_patt;
 mod range_patt;

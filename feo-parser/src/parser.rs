@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use feo_ast::token::{Token, TokenStream};
 use feo_error::{
     error::CompilerError,

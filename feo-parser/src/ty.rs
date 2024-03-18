@@ -1,5 +1,3 @@
-#![allow(unused_variables)]
-
 mod array_type;
 mod built_in_type;
 mod function_type;

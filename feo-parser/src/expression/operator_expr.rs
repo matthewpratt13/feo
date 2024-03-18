@@ -470,8 +470,6 @@ impl ParseExpr for NegationExpr {
     where
         Self: Sized,
     {
-        let negation_operator_opt = parser.peek_current::<Punctuation>();
-
         if let Some(p) = parser.peek_current::<Punctuation>() {
             parser.next_token();
 

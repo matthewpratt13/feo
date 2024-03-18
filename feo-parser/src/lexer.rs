@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use std::{iter::Peekable, str::Chars, sync::Arc};
 
 use feo_ast::{

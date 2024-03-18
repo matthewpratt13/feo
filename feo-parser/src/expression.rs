@@ -1,6 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
-
 mod array_expr;
 mod block_expr;
 mod call_expr;

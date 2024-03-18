@@ -191,6 +191,7 @@ impl ParseExpr for ClosureWithoutBlock {
 }
 
 impl ParseExpr for ClosureWithBlock {
+    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
