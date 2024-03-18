@@ -26,14 +26,14 @@ pub enum TraitImplItem {
 
 #[derive(Debug, Clone)]
 pub struct InherentImplBlock {
-    outer_attributes_opt: Option<Vec<OuterAttr>>,
-    kw_impl: KwImpl,
-    nominal_type: Type,
-    where_clause_opt: Option<WhereClause>,
-    open_brace: Brace,
-    inner_attributes_opt: Option<Vec<InnerAttr>>,
-    associated_items: Vec<InherentImplItem>,
-    close_brace: Brace,
+    pub outer_attributes_opt: Option<Vec<OuterAttr>>,
+    pub kw_impl: KwImpl,
+    pub nominal_type: Type,
+    pub where_clause_opt: Option<WhereClause>,
+    pub open_brace: Brace,
+    pub inner_attributes_opt: Option<Vec<InnerAttr>>,
+    pub associated_items: Vec<InherentImplItem>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for InherentImplBlock {
