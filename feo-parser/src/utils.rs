@@ -27,6 +27,8 @@ pub fn get_value_collection(
             }
         }
 
+        skip_trailing_comma(parser)?;
+
         let subsequent_values_opt = if values.is_empty() {
             None
         } else {

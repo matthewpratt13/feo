@@ -32,7 +32,7 @@ impl ParseExpr for ArrayExpr {
 
             let elements_opt = utils::get_value_collection(parser)?;
 
-            utils::skip_trailing_comma(parser)?;
+            // utils::skip_trailing_comma(parser)?;
 
             let close_bracket_opt = parser.peek_current::<Delimiter>();
 
@@ -46,11 +46,11 @@ impl ParseExpr for ArrayExpr {
                     elements_opt,
                     close_bracket: close_bracket_opt.unwrap(),
                 }));
+            } else {
+                parser.log_error(ParserErrorKind::MissingDelimiter {
+                    delim: "]".to_string(),
+                });
             }
-
-            parser.log_error(ParserErrorKind::MissingDelimiter {
-                delim: "]".to_string(),
-            });
         } else {
             return Ok(None);
         }
