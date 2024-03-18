@@ -97,8 +97,9 @@ impl ParseExpr for IndexExpr {
                         }));
                     }
 
-                    parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: "]".to_string(),
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`]`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -129,7 +130,7 @@ mod tests {
 
     #[test]
     fn parse_array_expr_with_elements() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"[1, 2, 3, 4]"#;
+        let source_code = r#"[1, 2, 3, 4,]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
