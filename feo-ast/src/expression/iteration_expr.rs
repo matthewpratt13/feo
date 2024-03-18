@@ -61,7 +61,7 @@ impl Spanned for InfiniteLoopExpr {
 pub struct PredicateLoopExpr {
     pub kw_while: KwWhile,
     pub conditional_operand: Box<ParenthesizedExpr>,
-    pub block: Box<BlockExpr>,
+    pub block: BlockExpr,
 }
 
 impl Spanned for PredicateLoopExpr {

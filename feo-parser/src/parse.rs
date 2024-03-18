@@ -1687,6 +1687,18 @@ impl ParseTerm for Value {
                     }
                 }
 
+                PuncKind::Asterisk => {
+                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::DereferenceExpr(de)));
+                    }
+                }
+
+                PuncKind::Ampersand => {
+                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::ReferenceExpr(re)));
+                    }
+                }
+
                 _ => (),
             }
         }

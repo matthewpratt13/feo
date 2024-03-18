@@ -222,9 +222,9 @@ impl ParseExpr for AssignmentExpr {
 
                 if let Some(new_value) = Value::parse(parser)? {
                     return Ok(Some(AssignmentExpr {
-                        assignee: Box::new(assignee),
+                        assignee,
                         operator: equals_opt.unwrap(),
-                        new_value: Box::new(new_value),
+                        new_value,
                     }));
                 }
 
@@ -288,9 +288,9 @@ impl ParseExpr for CompoundAssignmentExpr {
 
                 if let Some(new_value) = Value::parse(parser)? {
                     return Ok(Some(CompoundAssignmentExpr {
-                        assignee: Box::new(assignee),
+                        assignee,
                         operator,
-                        new_value: Box::new(new_value),
+                        new_value,
                     }));
                 }
 
@@ -358,11 +358,7 @@ impl ParseExpr for ComparisonExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    return Ok(Some(ComparisonExpr {
-                        lhs: Box::new(lhs),
-                        operator,
-                        rhs: Box::new(rhs),
-                    }));
+                    return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -448,11 +444,7 @@ impl ParseExpr for LazyBoolExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    return Ok(Some(LazyBoolExpr {
-                        lhs: Box::new(lhs),
-                        operator,
-                        rhs: Box::new(rhs),
-                    }));
+                    return Ok(Some(LazyBoolExpr { lhs, operator, rhs }));
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -587,9 +579,9 @@ impl ParseExpr for TypeCastExpr {
 
                 if let Some(rhs) = Type::parse(parser)? {
                     return Ok(Some(TypeCastExpr {
-                        lhs: Box::new(lhs),
+                        lhs,
                         operator: kw_as_opt.unwrap(),
-                        rhs: Box::new(rhs),
+                        rhs,
                     }));
                 }
 

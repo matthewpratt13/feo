@@ -120,9 +120,9 @@ impl Spanned for ArithmeticOrLogicalExpr {
 
 #[derive(Debug, Clone)]
 pub struct AssignmentExpr {
-    pub assignee: Box<Value>,
+    pub assignee: Value,
     pub operator: AssignOperator,
-    pub new_value: Box<Value>,
+    pub new_value: Value,
 }
 
 impl Spanned for AssignmentExpr {
@@ -136,9 +136,9 @@ impl Spanned for AssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct CompoundAssignmentExpr {
-    pub assignee: Box<Value>,
+    pub assignee: Value,
     pub operator: CompoundAssignOperatorKind,
-    pub new_value: Box<Value>,
+    pub new_value: Value,
 }
 
 impl Spanned for CompoundAssignmentExpr {
@@ -152,9 +152,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonExpr {
-    pub lhs: Box<Value>,
+    pub lhs: Value,
     pub operator: ComparisonOperatorKind,
-    pub rhs: Box<Value>,
+    pub rhs: Value,
 }
 
 impl Spanned for ComparisonExpr {
@@ -183,9 +183,9 @@ impl Spanned for DereferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct LazyBoolExpr {
-    pub lhs: Box<Value>,
+    pub lhs: Value,
     pub operator: LazyBoolOperatorKind,
-    pub rhs: Box<Value>,
+    pub rhs: Value,
 }
 
 impl Spanned for LazyBoolExpr {
@@ -229,9 +229,9 @@ impl Spanned for ReferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct TypeCastExpr {
-    pub lhs: Box<Value>,
+    pub lhs: Value,
     pub operator: CastOperator,
-    pub rhs: Box<Type>,
+    pub rhs: Type,
 }
 
 impl Spanned for TypeCastExpr {

@@ -110,7 +110,7 @@ impl ParseExpr for PredicateLoopExpr {
                     return Ok(Some(PredicateLoopExpr {
                         kw_while: kw_while_opt.unwrap(),
                         conditional_operand: Box::new(conditional_operand),
-                        block: Box::new(block),
+                        block,
                     }));
                 }
 
