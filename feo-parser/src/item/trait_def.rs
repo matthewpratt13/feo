@@ -1,4 +1,6 @@
-use feo_ast::item::{TraitDef, TraitDefItem};
+use feo_ast::item::{
+    ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef,
+};
 use feo_error::error::CompilerError;
 
 use crate::{parse::ParseItem, parser::Parser};
@@ -9,7 +11,17 @@ impl ParseItem for TraitDefItem {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(c) = ConstantVarDef::parse(parser)? {
+            return Ok(Some(TraitDefItem::Constant(c)));
+        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+            return Ok(Some(TraitDefItem::FuncDef(fwb)));
+        } else if let Some(fs) = FunctionSig::parse(parser)? {
+            return Ok(Some(TraitDefItem::FuncSig(fs)));
+        } else if let Some(ta) = TypeAliasDef::parse(parser)? {
+            return Ok(Some(TraitDefItem::TypeAlias(ta)));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
