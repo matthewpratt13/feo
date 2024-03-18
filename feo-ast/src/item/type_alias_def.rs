@@ -10,13 +10,13 @@ use super::{TypeParamBounds, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub struct TypeAliasDef {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_type: KwType,
-    type_name: Identifier,
-    type_param_bounds_opt: Option<TypeParamBounds>,
-    assignment_opt: Option<Type>,
-    semicolon: Semicolon,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_type: KwType,
+    pub type_name: Identifier,
+    pub type_param_bounds_opt: Option<TypeParamBounds>,
+    pub type_opt: Option<Type>,
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for TypeAliasDef {

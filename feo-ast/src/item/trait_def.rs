@@ -21,16 +21,16 @@ pub enum TraitDefItem {
 
 #[derive(Debug, Clone)]
 pub struct TraitDef {
-    outer_attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_trait: KwTrait,
-    trait_name: Identifier,
-    type_param_bounds_opt: Option<Option<TypeParamBounds>>,
-    where_clause_opt: Option<WhereClause>,
-    open_brace: Brace,
-    inner_attributes_opt: Option<Vec<InnerAttr>>,
-    associated_items: Vec<TraitDefItem>,
-    close_brace: Brace,
+   pub outer_attributes_opt: Option<Vec<OuterAttr>>,
+   pub visibility_opt: Option<VisibilityKind>,
+   pub kw_trait: KwTrait,
+   pub trait_name: Identifier,
+   pub type_param_bounds_opt: Option<TypeParamBounds>,
+   pub where_clause_opt: Option<WhereClause>,
+   pub open_brace: Brace,
+   pub inner_attributes_opt: Option<Vec<InnerAttr>>,
+   pub associated_items: Vec<TraitDefItem>,
+   pub close_brace: Brace,
 }
 
 impl Spanned for TraitDef {
