@@ -22,12 +22,6 @@ impl Spanned for ArrayExpr {
     }
 }
 
-// TODO: verify that all `Value` have the same type
-#[derive(Debug, Clone)]
-pub struct ArrayElements {
-    pub first_element: Box<Value>,
-    pub subsequent_elements_opt: Option<Vec<Value>>,
-}
 #[derive(Debug, Clone)]
 pub struct IndexExpr {
     pub indexed_operand: Box<Value>,

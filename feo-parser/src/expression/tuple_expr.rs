@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{TupleExpr, TupleExprElements, TupleIndexExpr, Value},
+    expression::{TupleExpr, TupleIndexExpr, Value},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -13,48 +13,8 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    utils,
 };
-
-impl ParseTerm for TupleExprElements {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_elements: Vec<Value> = Vec::new();
-
-        if let Some(first_element) = Value::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current::<Punctuation>()
-            {
-                parser.next_token();
-
-                if let Some(next_element) = Value::parse(parser)? {
-                    subsequent_elements.push(next_element);
-                    parser.next_token();
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_elements.is_empty() {
-                true => Ok(Some(TupleExprElements {
-                    first_element: Box::new(first_element),
-                    subsequent_elements_opt: None,
-                })),
-                false => Ok(Some(TupleExprElements {
-                    first_element: Box::new(first_element),
-                    subsequent_elements_opt: Some(subsequent_elements),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
 
 impl ParseExpr for TupleExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -70,7 +30,7 @@ impl ParseExpr for TupleExpr {
         {
             parser.next_token();
 
-            if let Some(elements) = TupleExprElements::parse(parser)? {
+            if let Some(elements) = utils::get_value_collection(parser)? {
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
                 if let Some(Delimiter {
@@ -152,18 +112,6 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
-
-    #[test]
-    fn parse_tuple_expr_elements() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"1, "a", x"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let tuple_expr_elements = TupleExprElements::parse(&mut parser)
-            .expect("unable to parse tuple expression elements");
-
-        Ok(println!("{:#?}", tuple_expr_elements))
-    }
 
     #[test]
     fn parse_tuple_expr() -> Result<(), Vec<CompilerError>> {

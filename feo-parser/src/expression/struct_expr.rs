@@ -1,9 +1,6 @@
 use feo_ast::{
     attribute::OuterAttr,
-    expression::{
-        StructExpr, StructExprField, StructExprFields, TupleStructExpr, TupleStructExprFields,
-        Value,
-    },
+    expression::{StructExpr, StructExprField, StructExprFields, TupleStructExpr, Value},
     path::PathInExpr,
     token::Token,
 };
@@ -19,6 +16,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for StructExprField {
@@ -179,48 +177,6 @@ impl ParseExpr for StructExpr {
     }
 }
 
-impl ParseTerm for TupleStructExprFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_fields: Vec<Value> = Vec::new();
-
-        if let Some(first_field) = Value::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current::<Punctuation>()
-            {
-                parser.next_token();
-
-                if let Some(next_field) = Value::parse(parser)? {
-                    subsequent_fields.push(next_field);
-                    parser.next_token();
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_fields.is_empty() {
-                true => Ok(Some(TupleStructExprFields {
-                    first_field: Box::new(first_field),
-                    subsequent_fields_opt: None,
-                })),
-
-                false => Ok(Some(TupleStructExprFields {
-                    first_field: Box::new(first_field),
-                    subsequent_fields_opt: Some(subsequent_fields),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
-
 impl ParseExpr for TupleStructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -228,7 +184,7 @@ impl ParseExpr for TupleStructExpr {
     {
         if let Some(path) = PathInExpr::parse(parser)? {
             parser.next_token();
-            
+
             let open_parenthesis_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -238,11 +194,7 @@ impl ParseExpr for TupleStructExpr {
             {
                 parser.next_token();
 
-                let fields_opt = if let Some(f) = TupleStructExprFields::parse(parser)? {
-                    Some(f)
-                } else {
-                    None
-                };
+                let fields_opt = utils::get_value_collection(parser)?;
 
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
@@ -335,18 +287,6 @@ mod tests {
             StructExpr::parse(&mut parser).expect("unable to parse struct expression");
 
         Ok(println!("{:#?}", struct_expr))
-    }
-
-    #[test]
-    fn parse_tuple_struct_expr_fields() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"foo, "a", 1"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let tuple_struct_expr_fields = TupleStructExprFields::parse(&mut parser)
-            .expect("unable to parse tuple struct expression fields");
-
-        Ok(println!("{:#?}", tuple_struct_expr_fields))
     }
 
     #[test]

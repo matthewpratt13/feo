@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, path::PathInExpr};
 
-use super::Value;
+use super::{Value, ValueCollection};
 
 #[derive(Debug, Clone)]
 pub struct StructExpr {
@@ -41,7 +41,7 @@ pub struct StructExprField {
 pub struct TupleStructExpr {
     pub path: PathInExpr,
     pub open_parenthesis: Parenthesis,
-    pub fields_opt: Option<TupleStructExprFields>,
+    pub fields_opt: Option<ValueCollection>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -52,10 +52,4 @@ impl Spanned for TupleStructExpr {
 
         Span::join(s1, s2)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct TupleStructExprFields {
-    pub first_field: Box<Value>,
-    pub subsequent_fields_opt: Option<Vec<Value>>,
 }

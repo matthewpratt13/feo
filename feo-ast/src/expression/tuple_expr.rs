@@ -4,12 +4,12 @@ use feo_types::{
     U64Primitive,
 };
 
-use super::Value;
+use super::{Value, ValueCollection};
 
 #[derive(Debug, Clone)]
 pub struct TupleExpr {
     pub open_parenthesis: Parenthesis,
-    pub elements: TupleExprElements,
+    pub elements: ValueCollection,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -20,12 +20,6 @@ impl Spanned for TupleExpr {
 
         Span::join(s1, s2)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct TupleExprElements {
-    pub first_element: Box<Value>,
-    pub subsequent_elements_opt: Option<Vec<Value>>,
 }
 
 #[derive(Debug, Clone)]

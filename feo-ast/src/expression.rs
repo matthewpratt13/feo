@@ -23,7 +23,7 @@ use feo_types::{
 use crate::path::PathExpr;
 
 pub use self::{
-    array_expr::{ArrayElements, ArrayExpr, IndexExpr},
+    array_expr::{ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{
@@ -47,10 +47,8 @@ pub use self::{
         RangeToExpr, RangeToInclusiveExpr,
     },
     return_expr::ReturnExpr,
-    struct_expr::{
-        StructExpr, StructExprField, StructExprFields, TupleStructExpr, TupleStructExprFields,
-    },
-    tuple_expr::{TupleExpr, TupleExprElements, TupleIndexExpr},
+    struct_expr::{StructExpr, StructExprField, StructExprFields, TupleStructExpr},
+    tuple_expr::{TupleExpr, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
 };
 
