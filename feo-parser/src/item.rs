@@ -1,6 +1,7 @@
 mod constant_var_def;
 mod enum_def;
 mod function_def;
+mod impl_block;
 mod struct_def;
 mod trait_def;
 mod type_alias_def;

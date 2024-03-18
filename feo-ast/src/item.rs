@@ -32,7 +32,7 @@ pub use self::{
         FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionParams, FunctionSig,
         FunctionWithBlock, SelfParam,
     },
-    impl_block::{InherentImplBlock, TraitImplBlock},
+    impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_block::ModBlock,
     struct_def::{
