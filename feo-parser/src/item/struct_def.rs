@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     item::{
         StructDef, StructDefField, StructDefFields, TupleStructDef, TupleStructDefField,
         TupleStructDefFields, VisibilityKind, WhereClause,
@@ -18,6 +17,7 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for StructDefField {
@@ -25,12 +25,7 @@ impl ParseTerm for StructDefField {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -54,23 +49,11 @@ impl ParseTerm for StructDefField {
 
                     let field_type = (field_name, Box::new(ty));
 
-                    match &attributes.is_empty() {
-                        true => {
-                            return Ok(Some(StructDefField {
-                                attributes_opt: None,
-                                visibility_opt,
-                                field_type,
-                            }));
-                        }
-
-                        false => {
-                            return Ok(Some(StructDefField {
-                                attributes_opt: Some(attributes),
-                                visibility_opt,
-                                field_type,
-                            }));
-                        }
-                    }
+                    return Ok(Some(StructDefField {
+                        attributes_opt,
+                        visibility_opt,
+                        field_type,
+                    }));
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`Type`".to_string(),
@@ -135,12 +118,7 @@ impl ParseItem for StructDef {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -192,33 +170,16 @@ impl ParseItem for StructDef {
                     {
                         parser.next_token();
 
-                        match &attributes.is_empty() {
-                            true => {
-                                return Ok(Some(StructDef {
-                                    attributes_opt: None,
-                                    visibility_opt,
-                                    kw_struct: kw_struct_opt.unwrap(),
-                                    struct_name,
-                                    where_clause_opt,
-                                    open_brace: open_brace_opt.unwrap(),
-                                    fields_opt,
-                                    close_brace: close_brace_opt.unwrap(),
-                                }))
-                            }
-
-                            false => {
-                                return Ok(Some(StructDef {
-                                    attributes_opt: Some(attributes),
-                                    visibility_opt,
-                                    kw_struct: kw_struct_opt.unwrap(),
-                                    struct_name,
-                                    where_clause_opt,
-                                    open_brace: open_brace_opt.unwrap(),
-                                    fields_opt,
-                                    close_brace: close_brace_opt.unwrap(),
-                                }))
-                            }
-                        }
+                        return Ok(Some(StructDef {
+                            attributes_opt,
+                            visibility_opt,
+                            kw_struct: kw_struct_opt.unwrap(),
+                            struct_name,
+                            where_clause_opt,
+                            open_brace: open_brace_opt.unwrap(),
+                            fields_opt,
+                            close_brace: close_brace_opt.unwrap(),
+                        }));
                     } else {
                         parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: "}".to_string(),
@@ -249,12 +210,7 @@ impl ParseTerm for TupleStructDefField {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -266,19 +222,12 @@ impl ParseTerm for TupleStructDefField {
         if let Some(field_type) = Type::parse(parser)? {
             parser.next_token();
 
-            match &attributes.is_empty() {
-                true => Ok(Some(TupleStructDefField {
-                    attributes_opt: None,
-                    visibility_opt,
-                    field_type: Box::new(field_type),
-                })),
-
-                false => Ok(Some(TupleStructDefField {
-                    attributes_opt: Some(attributes),
-                    visibility_opt,
-                    field_type: Box::new(field_type),
-                })),
-            }
+            //     match &attributes.is_empty() {
+            Ok(Some(TupleStructDefField {
+                attributes_opt,
+                visibility_opt,
+                field_type: Box::new(field_type),
+            }))
         } else {
             Ok(None)
         }
@@ -329,12 +278,14 @@ impl ParseTerm for TupleStructDef {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
+        // let mut attributes: Vec<OuterAttr> = Vec::new();
 
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        // while let Some(oa) = OuterAttr::parse(parser)? {
+        //     attributes.push(oa);
+        //     parser.next_token();
+        // }
+
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -395,34 +346,19 @@ impl ParseTerm for TupleStructDef {
                         {
                             parser.next_token();
 
-                            match &attributes.is_empty() {
-                                true => {
-                                    return Ok(Some(TupleStructDef {
-                                        attributes_opt: None,
-                                        visibility_opt,
-                                        kw_struct: kw_struct_opt.unwrap(),
-                                        struct_name,
-                                        open_parenthesis: open_parenthesis_opt.unwrap(),
-                                        fields_opt,
-                                        close_parenthesis: close_parenthesis_opt.unwrap(),
-                                        where_clause_opt,
-                                        semicolon: semicolon_opt.unwrap(),
-                                    }));
-                                }
-                                false => {
-                                    return Ok(Some(TupleStructDef {
-                                        attributes_opt: Some(attributes),
-                                        visibility_opt,
-                                        kw_struct: kw_struct_opt.unwrap(),
-                                        struct_name,
-                                        open_parenthesis: open_parenthesis_opt.unwrap(),
-                                        fields_opt,
-                                        close_parenthesis: close_parenthesis_opt.unwrap(),
-                                        where_clause_opt,
-                                        semicolon: semicolon_opt.unwrap(),
-                                    }));
-                                }
-                            }
+                            // match &attributes.is_empty() {
+                            //     true => {
+                            return Ok(Some(TupleStructDef {
+                                attributes_opt,
+                                visibility_opt,
+                                kw_struct: kw_struct_opt.unwrap(),
+                                struct_name,
+                                open_parenthesis: open_parenthesis_opt.unwrap(),
+                                fields_opt,
+                                close_parenthesis: close_parenthesis_opt.unwrap(),
+                                where_clause_opt,
+                                semicolon: semicolon_opt.unwrap(),
+                            }));
                         } else {
                             parser.log_error(ParserErrorKind::MissingDelimiter {
                                 delim: ";".to_string(),

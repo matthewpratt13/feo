@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     item::{
         FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, SelfParam, VisibilityKind,
     },
@@ -18,6 +17,7 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParsePatt, ParseTerm, ParseType},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for FuncOrMethodParam {
@@ -189,12 +189,7 @@ impl ParseItem for FunctionSig {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -256,32 +251,16 @@ impl ParseItem for FunctionSig {
                             None
                         };
 
-                        match &attributes.is_empty() {
-                            true => {
-                                return Ok(Some(FunctionSig {
-                                    attributes_opt: None,
-                                    visibility_opt,
-                                    kw_func: kw_func_opt.unwrap(),
-                                    function_name,
-                                    open_parenthesis: open_parenthesis_opt.unwrap(),
-                                    function_params_opt,
-                                    close_parenthesis: close_parenthesis_opt.unwrap(),
-                                    return_type_opt,
-                                }))
-                            }
-                            false => {
-                                return Ok(Some(FunctionSig {
-                                    attributes_opt: Some(attributes),
-                                    visibility_opt,
-                                    kw_func: kw_func_opt.unwrap(),
-                                    function_name,
-                                    open_parenthesis: open_parenthesis_opt.unwrap(),
-                                    function_params_opt,
-                                    close_parenthesis: close_parenthesis_opt.unwrap(),
-                                    return_type_opt,
-                                }))
-                            }
-                        }
+                        return Ok(Some(FunctionSig {
+                            attributes_opt,
+                            visibility_opt,
+                            kw_func: kw_func_opt.unwrap(),
+                            function_name,
+                            open_parenthesis: open_parenthesis_opt.unwrap(),
+                            function_params_opt,
+                            close_parenthesis: close_parenthesis_opt.unwrap(),
+                            return_type_opt,
+                        }));
                     } else {
                         parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: ")".to_string(),
