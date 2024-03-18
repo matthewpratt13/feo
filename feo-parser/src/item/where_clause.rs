@@ -137,7 +137,7 @@ impl ParseTerm for WhereClause {
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`TypeBound`".to_string(),
+                    expected: "type bound".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -163,7 +163,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let type_param_bounds =
-            TypeParamBounds::parse(&mut parser).expect("unable to parse type param bounds");
+            TypeParamBounds::parse(&mut parser).expect("unable to parse type parameter bounds");
 
         Ok(println!("{:#?}", type_param_bounds))
     }

@@ -163,7 +163,7 @@ impl ParseExpr for ClosureWithoutBlock {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Expression`".to_string(),
+                expected: "expression".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -201,7 +201,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let closure_param =
-            ClosureParam::parse(&mut parser).expect("unable to parse closure param");
+            ClosureParam::parse(&mut parser).expect("unable to parse closure parameter");
 
         Ok(println!("{:#?}", closure_param))
     }
@@ -220,7 +220,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let closure_params =
-            ClosureParams::parse(&mut parser).expect("unable to parse closure params");
+            ClosureParams::parse(&mut parser).expect("unable to parse `ClosureParams`");
 
         Ok(println!("{:#?}", closure_params))
     }
@@ -232,7 +232,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, true)?;
 
         let closure_without_block =
-            ClosureWithoutBlock::parse(&mut parser).expect("unable to parse closure without block");
+            ClosureWithoutBlock::parse(&mut parser).expect("unable to parse closure-without-block");
 
         Ok(println!("{:#?}", closure_without_block))
     }

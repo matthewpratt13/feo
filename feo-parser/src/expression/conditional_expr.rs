@@ -65,7 +65,7 @@ impl ParseExpr for IfExpr {
                             }
                         } else {
                             parser.log_error(ParserErrorKind::UnexpectedToken {
-                                expected: "`IfExpr`".to_string(),
+                                expected: "if expression".to_string(),
                                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                             });
                             break;
@@ -85,7 +85,7 @@ impl ParseExpr for IfExpr {
                             Some((trailing_kw_else_opt.unwrap(), trailing_block_expr))
                         } else {
                             parser.log_error(ParserErrorKind::UnexpectedToken {
-                                expected: "`BlockExpr`".to_string(),
+                                expected: "block expression".to_string(),
                                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                             });
                             return Err(parser.errors());
@@ -117,13 +117,13 @@ impl ParseExpr for IfExpr {
                     }
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`BlockExpr`".to_string(),
+                        expected: "block expression".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`BooleanOperand`".to_string(),
+                    expected: "parenthesized expression".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -159,7 +159,7 @@ impl ParseTerm for MatchArmGuard {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Expression`".to_string(),
+                expected: "expression".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -326,7 +326,7 @@ impl ParseExpr for MatchExpr {
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Value`".to_string(),
+                    expected: "value expression".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -353,7 +353,7 @@ fn get_arm(parser: &mut Parser) -> Result<Option<(MatchArm, Expression)>, Vec<Co
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Expression`".to_string(),
+                expected: "expression".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -383,7 +383,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let match_arm_guard =
-            MatchArmGuard::parse(&mut parser).expect("Unable to parse match arm guard");
+            MatchArmGuard::parse(&mut parser).expect("unable to parse match arm guard");
 
         Ok(println!("{:#?}", match_arm_guard))
     }
@@ -412,7 +412,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let match_arms = MatchArms::parse(&mut parser).expect("unable to parse match arms");
+        let match_arms = MatchArms::parse(&mut parser).expect("unable to parse `MatchArms`");
 
         Ok(println!("{:#?}", match_arms))
     }

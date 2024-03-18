@@ -76,7 +76,7 @@ impl ParseExpr for InfiniteLoopExpr {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`BlockExpr`".to_string(),
+                expected: "block expression".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -115,12 +115,12 @@ impl ParseExpr for PredicateLoopExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`BlockExpr`".to_string(),
+                    expected: "block expression".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`BooleanOperand`".to_string(),
+                    expected: "parenthesized expression".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -173,7 +173,7 @@ impl ParseExpr for IterLoopExpr {
                     }
 
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`ParenthesizedExpr`".to_string(),
+                        expected: "parenthesized expression".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 } else {
@@ -184,7 +184,7 @@ impl ParseExpr for IterLoopExpr {
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Pattern`".to_string(),
+                    expected: "pattern".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }

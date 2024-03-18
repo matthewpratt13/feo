@@ -213,4 +213,15 @@ mod tests {
 
         Ok(println!("{:#?}", path_expr))
     }
+
+     #[test]
+    fn parse_path_type() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"SomeType"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let path_type = PathType::parse(&mut parser).expect("unable to parse type path");
+
+        Ok(println!("{:#?}", path_type))
+    }
 }

@@ -95,7 +95,7 @@ impl ParseTerm for PubCrateVisibility {
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`crate` keyword".to_string(),
+                        expected: "`crate`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }

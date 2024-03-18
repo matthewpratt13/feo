@@ -44,7 +44,7 @@ impl ParseTerm for StructPattField {
                     }));
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Pattern`".to_string(),
+                        expected: "pattern".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
@@ -81,7 +81,6 @@ impl ParseTerm for StructPattFields {
 
                 if let Some(next_field) = StructPattField::parse(parser)? {
                     subsequent_fields.push(next_field);
-                    // parser.next_token();
                 } else {
                     break;
                 }
@@ -298,7 +297,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let struct_patt_fields =
-            StructPattFields::parse(&mut parser).expect("unable to parse struct pattern fields");
+            StructPattFields::parse(&mut parser).expect("unable to parse `StructPattFields`");
 
         Ok(println!("{:#?}", struct_patt_fields))
     }
@@ -326,7 +325,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let tuple_struct_patt_fields = TupleStructPattFields::parse(&mut parser)
-            .expect("unable to parse tuple struct pattern fields");
+            .expect("unable to parse `TupleStructPattFields`");
 
         Ok(println!("{:#?}", tuple_struct_patt_fields))
     }

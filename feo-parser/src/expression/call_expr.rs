@@ -51,7 +51,7 @@ impl ParseExpr for FunctionCallExpr {
                 }
 
                 parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "`)`".to_string(),
+                    delim: ")".to_string(),
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -118,7 +118,7 @@ impl ParseExpr for MethodCallExpr {
                         }
 
                         parser.log_error(ParserErrorKind::MissingDelimiter {
-                            delim: "`)`".to_string(),
+                            delim: ")".to_string(),
                         });
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
@@ -149,7 +149,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_function_call_expr() -> Result<(), Vec<CompilerError>> {
+    fn parse_call_expr_function() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"foo(bar, "a", 1)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
@@ -161,7 +161,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_method_call_expr() -> Result<(), Vec<CompilerError>> {
+    fn parse_call_expr_method() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"foo.bar(baz, "a", 1)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;

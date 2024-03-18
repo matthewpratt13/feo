@@ -46,7 +46,7 @@ impl ParseTerm for StructExprField {
                     }));
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Returnable`".to_string(),
+                        expected: "value".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
@@ -250,7 +250,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let struct_expr_fields =
-            StructExprFields::parse(&mut parser).expect("unable to parse struct expression fields");
+            StructExprFields::parse(&mut parser).expect("unable to parse `StructExprFields`");
 
         Ok(println!("{:#?}", struct_expr_fields))
     }

@@ -97,7 +97,7 @@ impl ParseItem for ConstantVarDef {
                         }
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`Type`".to_string(),
+                            expected: "type".to_string(),
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
                     }
@@ -109,7 +109,7 @@ impl ParseItem for ConstantVarDef {
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`identifier`".to_string(),
+                    expected: "identifier".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -135,7 +135,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let constant_var_def =
-            ConstantVarDef::parse(&mut parser).expect("unable to constant var def");
+            ConstantVarDef::parse(&mut parser).expect("unable to parse constant variable definition");
 
         Ok(println!("{:#?}", constant_var_def))
     }

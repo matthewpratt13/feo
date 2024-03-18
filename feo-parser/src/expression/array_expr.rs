@@ -138,13 +138,13 @@ mod tests {
     }
 
     #[test]
-    fn parse_array_expr_without_elements() -> Result<(), Vec<CompilerError>> {
+    fn parse_array_empty() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"[]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let array_expr =
-            ArrayExpr::parse(&mut parser).expect("unable to parse array without elements");
+            ArrayExpr::parse(&mut parser).expect("unable to parse empty array");
 
         Ok(println!("{:#?}", array_expr))
     }

@@ -45,7 +45,7 @@ impl ParseType for ParenthesizedType {
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Type`".to_string(),
+                    expected: "type".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }

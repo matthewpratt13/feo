@@ -125,7 +125,7 @@ impl ParseTerm for FunctionParam {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Type`".to_string(),
+                    expected: "type".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -299,7 +299,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let self_param = SelfParam::parse(&mut parser).expect("unable to parse self param");
+        let self_param = SelfParam::parse(&mut parser).expect("unable to parse `self` parameter");
 
         Ok(println!("{:#?}", self_param))
     }
@@ -311,7 +311,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let function_param =
-            FunctionParam::parse(&mut parser).expect("unable to parse function param");
+            FunctionParam::parse(&mut parser).expect("unable to parse function parameter");
 
         Ok(println!("{:#?}", function_param))
     }
@@ -323,7 +323,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let function_params =
-            FunctionParams::parse(&mut parser).expect("unable to parse function params");
+            FunctionParams::parse(&mut parser).expect("unable to parse `FunctionParams`");
 
         Ok(println!("{:#?}", function_params))
     }

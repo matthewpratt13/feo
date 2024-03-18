@@ -56,7 +56,7 @@ impl ParseTerm for StructDefField {
                     }));
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Type`".to_string(),
+                        expected: "type".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
@@ -222,7 +222,6 @@ impl ParseTerm for TupleStructDefField {
         if let Some(field_type) = Type::parse(parser)? {
             parser.next_token();
 
-            //     match &attributes.is_empty() {
             Ok(Some(TupleStructDefField {
                 attributes_opt,
                 visibility_opt,
@@ -278,13 +277,6 @@ impl ParseTerm for TupleStructDef {
     where
         Self: Sized,
     {
-        // let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        // while let Some(oa) = OuterAttr::parse(parser)? {
-        //     attributes.push(oa);
-        //     parser.next_token();
-        // }
-
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
@@ -346,8 +338,6 @@ impl ParseTerm for TupleStructDef {
                         {
                             parser.next_token();
 
-                            // match &attributes.is_empty() {
-                            //     true => {
                             return Ok(Some(TupleStructDef {
                                 attributes_opt,
                                 visibility_opt,
@@ -359,11 +349,12 @@ impl ParseTerm for TupleStructDef {
                                 where_clause_opt,
                                 semicolon: semicolon_opt.unwrap(),
                             }));
-                        } else {
-                            parser.log_error(ParserErrorKind::MissingDelimiter {
-                                delim: ";".to_string(),
-                            });
                         }
+
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`;`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
                     } else {
                         parser.log_error(ParserErrorKind::MissingDelimiter {
                             delim: "}".to_string(),
@@ -406,7 +397,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let struct_def_field =
-            StructDefField::parse(&mut parser).expect("unable to parse struct def field");
+            StructDefField::parse(&mut parser).expect("unable to parse struct definition field");
 
         Ok(println!("{:#?}", struct_def_field))
     }
@@ -418,7 +409,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let tuple_struct_def_field = TupleStructDefField::parse(&mut parser)
-            .expect("unable to parse tuple struct def field");
+            .expect("unable to parse tuple struct definition field");
 
         Ok(println!("{:#?}", tuple_struct_def_field))
     }
@@ -433,7 +424,7 @@ mod tests {
         }"#;
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let struct_def = StructDef::parse(&mut parser).expect("unable to parse struct def");
+        let struct_def = StructDef::parse(&mut parser).expect("unable to parse struct definition");
 
         Ok(println!("{:#?}", struct_def))
     }
@@ -448,7 +439,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let tuple_struct_def =
-            TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct def");
+            TupleStructDef::parse(&mut parser).expect("unable to parse tuple struct definition");
 
         Ok(println!("{:#?}", tuple_struct_def))
     }

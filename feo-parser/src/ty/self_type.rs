@@ -38,7 +38,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let self_type = SelfType::parse(&mut parser).expect("unable to parse Self type");
+        let self_type = SelfType::parse(&mut parser).expect("unable to parse `Self` type");
 
         Ok(println!("{:#?}", self_type))
     }

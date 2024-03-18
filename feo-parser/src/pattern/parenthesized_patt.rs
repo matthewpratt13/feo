@@ -48,7 +48,7 @@ impl ParsePatt for ParenthesizedPatt {
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Pattern`".to_string(),
+                    expected: "pattern".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }

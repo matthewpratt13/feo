@@ -290,7 +290,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let enum_variant_struct =
-            EnumVariantStruct::parse(&mut parser).expect("unable to parse enum variant struct");
+            EnumVariantStruct::parse(&mut parser).expect("unable to parse struct enum variant");
 
         Ok(println!("{:#?}", enum_variant_struct))
     }
@@ -302,7 +302,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let enum_variant_tuple =
-            EnumVariantTuple::parse(&mut parser).expect("unable to parse enum variant tuple");
+            EnumVariantTuple::parse(&mut parser).expect("unable to parse tuple enum variant");
 
         Ok(println!("{:#?}", enum_variant_tuple))
     }
@@ -318,7 +318,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum def");
+        let enum_def = EnumDef::parse(&mut parser).expect("unable to parse enum definition");
 
         Ok(println!("{:#?}", enum_def))
     }

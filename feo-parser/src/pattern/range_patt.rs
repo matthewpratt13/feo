@@ -89,7 +89,7 @@ impl ParsePatt for RangeInclusivePatt {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`RangePattBound`".to_string(),
+                    expected: "range pattern bound".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -130,7 +130,7 @@ impl ParsePatt for RangeToInclusivePatt {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`RangePattBound`".to_string(),
+                expected: "range pattern bound".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -155,7 +155,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let range_from_patt =
-            RangeFromPatt::parse(&mut parser).expect("unable to parse `RangeFromPatt`");
+            RangeFromPatt::parse(&mut parser).expect("unable to parse from range pattern");
 
         Ok(println!("{:#?}", range_from_patt))
     }
@@ -166,8 +166,8 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let range_inclusive_patt =
-            RangeInclusivePatt::parse(&mut parser).expect("unable to parse `RangeInclusivePatt`");
+        let range_inclusive_patt = RangeInclusivePatt::parse(&mut parser)
+            .expect("unable to parse inclusive range pattern");
 
         Ok(println!("{:#?}", range_inclusive_patt))
     }
@@ -179,7 +179,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let range_to_inclusive_patt = RangeToInclusivePatt::parse(&mut parser)
-            .expect("unable to parse `RangeToInclusivePatt`");
+            .expect(" unable to parse to-inclusive range pattern");
 
         Ok(println!("{:#?}", range_to_inclusive_patt))
     }

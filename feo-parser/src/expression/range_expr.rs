@@ -61,7 +61,7 @@ impl ParseExpr for RangeFromToExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Value`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -137,7 +137,7 @@ impl ParseExpr for RangeToExpr {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Value`".to_string(),
+                expected: "value".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -176,7 +176,7 @@ impl ParseExpr for RangeInclusiveExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Value`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -217,7 +217,7 @@ impl ParseExpr for RangeToInclusiveExpr {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Value`".to_string(),
+                expected: "value".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {

@@ -106,7 +106,7 @@ impl ParsePatt for TuplePatt {
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`TuplePattElements`".to_string(),
+                    expected: "tuple pattern elements".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }

@@ -46,7 +46,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let impl_trait_type =
-            ImplTraitType::parse(&mut parser).expect("unable to parse impl trait type");
+            ImplTraitType::parse(&mut parser).expect("unable to parse `impl Trait` type");
 
         Ok(println!("{:#?}", impl_trait_type))
     }

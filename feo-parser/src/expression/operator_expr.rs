@@ -229,7 +229,7 @@ impl ParseExpr for AssignmentExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Operable`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -295,7 +295,7 @@ impl ParseExpr for CompoundAssignmentExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Operable`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -362,7 +362,7 @@ impl ParseExpr for ComparisonExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Operable`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -401,7 +401,7 @@ impl ParseExpr for DereferenceExpr {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Assignable`".to_string(),
+                expected: "value".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -448,7 +448,7 @@ impl ParseExpr for LazyBoolExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`BooleanOperand`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -486,7 +486,7 @@ impl ParseExpr for NegationExpr {
 
                 _ => {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`Operable`".to_string(),
+                        expected: "value".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
 
@@ -502,7 +502,7 @@ impl ParseExpr for NegationExpr {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Operable`".to_string(),
+                expected: "value".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -547,7 +547,7 @@ impl ParseExpr for ReferenceExpr {
             }
 
             parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`Assignable".to_string(),
+                expected: "value".to_string(),
                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
             });
         } else {
@@ -584,7 +584,7 @@ impl ParseExpr for TypeCastExpr {
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`Value`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
@@ -758,7 +758,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let type_cast_expr =
-            TypeCastExpr::parse(&mut parser).expect("unable to parse type_cast expression");
+            TypeCastExpr::parse(&mut parser).expect("unable to parse type cast expression");
 
         Ok(println!("{:#?}", type_cast_expr))
     }
