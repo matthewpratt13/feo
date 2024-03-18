@@ -63,7 +63,7 @@ impl ParseExpr for FunctionCallExpr {
     {
         if let Some(function_operand) = PathInExpr::parse(parser)? {
             parser.next_token();
-            
+
             let open_parenthesis_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
@@ -187,6 +187,16 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
+
+    #[test]
+    fn parse_call_params() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"bar, "a", 1"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let call_params = CallParams::parse(&mut parser).expect("unable to parse call params");
+        Ok(println!("{:#?}", call_params))
+    }
 
     #[test]
     fn parse_function_call_expr() -> Result<(), Vec<CompilerError>> {
