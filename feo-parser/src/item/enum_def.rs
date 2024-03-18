@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     item::{
         EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
         StructDefFields, TupleStructDefFields, VisibilityKind,
@@ -17,6 +16,7 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for EnumVariant {
@@ -24,12 +24,7 @@ impl ParseTerm for EnumVariant {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -47,21 +42,12 @@ impl ParseTerm for EnumVariant {
                 None
             };
 
-            match &attributes.is_empty() {
-                true => Ok(Some(EnumVariant {
-                    attributes_opt: None,
-                    visibility_opt,
-                    variant_name,
-                    variant_type_opt,
-                })),
-
-                false => Ok(Some(EnumVariant {
-                    attributes_opt: Some(attributes),
-                    visibility_opt,
-                    variant_name,
-                    variant_type_opt,
-                })),
-            }
+            Ok(Some(EnumVariant {
+                attributes_opt,
+                visibility_opt,
+                variant_name,
+                variant_type_opt,
+            }))
         } else {
             Ok(None)
         }
@@ -213,12 +199,7 @@ impl ParseItem for EnumDef {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -261,31 +242,15 @@ impl ParseItem for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
-                        match &attributes.is_empty() {
-                            true => {
-                                return Ok(Some(EnumDef {
-                                    attributes_opt: None,
-                                    visibility_opt,
-                                    kw_enum: kw_enum_opt.unwrap(),
-                                    enum_name,
-                                    open_brace: open_brace_opt.unwrap(),
-                                    enum_variants_opt,
-                                    close_brace: close_brace_opt.unwrap(),
-                                }))
-                            }
-
-                            false => {
-                                return Ok(Some(EnumDef {
-                                    attributes_opt: Some(attributes),
-                                    visibility_opt,
-                                    kw_enum: kw_enum_opt.unwrap(),
-                                    enum_name,
-                                    open_brace: open_brace_opt.unwrap(),
-                                    enum_variants_opt,
-                                    close_brace: close_brace_opt.unwrap(),
-                                }))
-                            }
-                        }
+                        return Ok(Some(EnumDef {
+                            attributes_opt,
+                            visibility_opt,
+                            kw_enum: kw_enum_opt.unwrap(),
+                            enum_name,
+                            open_brace: open_brace_opt.unwrap(),
+                            enum_variants_opt,
+                            close_brace: close_brace_opt.unwrap(),
+                        }));
                     }
 
                     parser.log_error(ParserErrorKind::MissingDelimiter {

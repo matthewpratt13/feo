@@ -1,5 +1,4 @@
 use feo_ast::{
-    attribute::OuterAttr,
     expression::Expression,
     item::{ConstantVarDef, VisibilityKind},
     token::Token,
@@ -11,6 +10,7 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword
 use crate::{
     parse::{ParseExpr, ParseItem, ParseTerm, ParseType},
     parser::Parser,
+    utils,
 };
 
 impl ParseItem for ConstantVarDef {
@@ -18,12 +18,7 @@ impl ParseItem for ConstantVarDef {
     where
         Self: Sized,
     {
-        let mut attributes: Vec<OuterAttr> = Vec::new();
-
-        while let Some(oa) = OuterAttr::parse(parser)? {
-            attributes.push(oa);
-            parser.next_token();
-        }
+        let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
             parser.next_token();
@@ -79,31 +74,15 @@ impl ParseItem for ConstantVarDef {
                             {
                                 parser.next_token();
 
-                                match &attributes.is_empty() {
-                                    true => {
-                                        return Ok(Some(ConstantVarDef {
-                                            attributes_opt: None,
-                                            visibility_opt,
-                                            kw_const: kw_const_opt.unwrap(),
-                                            item_name,
-                                            item_type: Box::new(item_type),
-                                            assignment_opt,
-                                            semicolon: semicolon_opt.unwrap(),
-                                        }))
-                                    }
-
-                                    false => {
-                                        return Ok(Some(ConstantVarDef {
-                                            attributes_opt: Some(attributes),
-                                            visibility_opt,
-                                            kw_const: kw_const_opt.unwrap(),
-                                            item_name,
-                                            item_type: Box::new(item_type),
-                                            assignment_opt,
-                                            semicolon: semicolon_opt.unwrap(),
-                                        }))
-                                    }
-                                }
+                                return Ok(Some(ConstantVarDef {
+                                    attributes_opt,
+                                    visibility_opt,
+                                    kw_const: kw_const_opt.unwrap(),
+                                    item_name,
+                                    item_type: Box::new(item_type),
+                                    assignment_opt,
+                                    semicolon: semicolon_opt.unwrap(),
+                                }));
                             }
 
                             parser.log_error(ParserErrorKind::UnexpectedToken {
