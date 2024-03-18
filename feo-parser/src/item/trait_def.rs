@@ -136,3 +136,32 @@ impl ParseItem for TraitDef {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[ignore] // TODO: remove when testing
+    #[test]
+    fn parse_trait_def() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+            #[abstract]
+            pub trait foo 
+                where Self: Bar
+            {
+                #![export]
+                fn baz()
+            }
+
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let trait_def = TraitDef::parse(&mut parser).expect("unable to parse trait definition");
+
+        Ok(println!("{:#?}", trait_def))
+    }
+}
