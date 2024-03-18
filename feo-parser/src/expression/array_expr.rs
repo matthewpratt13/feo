@@ -14,6 +14,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for ArrayElements {
@@ -76,6 +77,8 @@ impl ParseExpr for ArrayExpr {
             } else {
                 None
             };
+
+            utils::skip_trailing_comma(parser)?;
 
             let close_bracket_opt = parser.peek_current::<Delimiter>();
 
@@ -184,7 +187,7 @@ mod tests {
 
     #[test]
     fn parse_array_expr_with_elements() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"[1, 2, 3, 4,]"#;
+        let source_code = r#"[1, 2, 3, 4]"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
