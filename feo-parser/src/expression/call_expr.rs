@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{CallParams, FunctionCallExpr, MethodCallExpr, Value},
+    expression::{FunctionCallExpr, MethodCallExpr, Value},
     path::PathInExpr,
     token::Token,
 };
@@ -13,48 +13,8 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    utils,
 };
-
-impl ParseTerm for CallParams {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_params: Vec<Value> = Vec::new();
-
-        if let Some(first_param) = Value::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current::<Punctuation>()
-            {
-                parser.next_token();
-
-                if let Some(next_param) = Value::parse(parser)? {
-                    subsequent_params.push(next_param);
-                    parser.next_token();
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_params.is_empty() {
-                true => Ok(Some(CallParams {
-                    first_param: Box::new(first_param),
-                    subsequent_params_opt: None,
-                })),
-                false => Ok(Some(CallParams {
-                    first_param: Box::new(first_param),
-                    subsequent_params_opt: Some(subsequent_params),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
 
 impl ParseExpr for FunctionCallExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -73,7 +33,7 @@ impl ParseExpr for FunctionCallExpr {
             {
                 parser.next_token();
 
-                let call_params_opt = CallParams::parse(parser)?;
+                let call_params_opt = crate::utils::get_value_collection(parser)?;
 
                 let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
@@ -136,7 +96,7 @@ impl ParseExpr for MethodCallExpr {
                     {
                         parser.next_token();
 
-                        let call_params_opt = CallParams::parse(parser)?;
+                        let call_params_opt = utils::get_value_collection(parser)?;
 
                         let close_parenthesis_opt = parser.peek_current::<Delimiter>();
 
@@ -187,16 +147,6 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
-
-    #[test]
-    fn parse_call_params() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"bar, "a", 1"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let call_params = CallParams::parse(&mut parser).expect("unable to parse call params");
-        Ok(println!("{:#?}", call_params))
-    }
 
     #[test]
     fn parse_function_call_expr() -> Result<(), Vec<CompilerError>> {

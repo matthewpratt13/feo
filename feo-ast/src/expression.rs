@@ -25,7 +25,7 @@ use crate::path::PathExpr;
 pub use self::{
     array_expr::{ArrayElements, ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
-    call_expr::{CallParams, FunctionCallExpr, MethodCallExpr},
+    call_expr::{FunctionCallExpr, MethodCallExpr},
     closure_expr::{
         ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
     },

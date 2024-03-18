@@ -6,13 +6,13 @@ use feo_types::{
 
 use crate::path::PathInExpr;
 
-use super::Value;
+use super::{Value, ValueCollection};
 
 #[derive(Debug, Clone)]
 pub struct FunctionCallExpr {
     pub function_operand: PathInExpr,
     pub open_parenthesis: Parenthesis,
-    pub call_params_opt: Option<CallParams>,
+    pub call_params_opt: Option<ValueCollection>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -31,7 +31,7 @@ pub struct MethodCallExpr {
     pub full_stop: FullStop,
     pub method_name: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub call_params_opt: Option<CallParams>,
+    pub call_params_opt: Option<ValueCollection>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -39,28 +39,6 @@ impl Spanned for MethodCallExpr {
     fn span(&self) -> Span {
         let s1 = self.receiver.span();
         let s2 = self.close_parenthesis.span();
-
-        Span::join(s1, s2)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct CallParams {
-    pub first_param: Box<Value>,
-    pub subsequent_params_opt: Option<Vec<Value>>,
-}
-
-impl Spanned for CallParams {
-    fn span(&self) -> Span {
-        let s1 = self.first_param.span();
-
-        let s2 = match &self.subsequent_params_opt {
-            Some(sp) => match sp.last() {
-                Some(p) => p.span(),
-                None => self.first_param.span(),
-            },
-            None => self.first_param.span(),
-        };
 
         Span::join(s1, s2)
     }
