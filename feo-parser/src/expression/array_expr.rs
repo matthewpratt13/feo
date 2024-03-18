@@ -32,8 +32,6 @@ impl ParseExpr for ArrayExpr {
 
             let elements_opt = utils::get_value_collection(parser)?;
 
-            // utils::skip_trailing_comma(parser)?;
-
             let close_bracket_opt = parser.peek_current::<Delimiter>();
 
             if let Some(Delimiter {
