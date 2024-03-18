@@ -199,3 +199,18 @@ impl Spanned for Value {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct ValueCollection {
+    first_value: Box<Value>,
+    subsequent_values_opt: Option<Vec<Value>>,
+}
+
+impl ValueCollection {
+    pub fn new(first_value: Value, subsequent_values_opt: Option<Vec<Value>>) -> Self {
+        Self {
+            first_value: Box::new(first_value),
+            subsequent_values_opt,
+        }
+    }
+}

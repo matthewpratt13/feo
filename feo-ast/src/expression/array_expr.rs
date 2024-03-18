@@ -4,12 +4,12 @@ use feo_types::{
     U64Primitive,
 };
 
-use super::Value;
+use super::{Value, ValueCollection};
 
 #[derive(Debug, Clone)]
 pub struct ArrayExpr {
     pub open_bracket: Bracket,
-    pub elements_opt: Option<ArrayElements>,
+    pub elements_opt: Option<ValueCollection>,
     pub close_bracket: Bracket,
 }
 
