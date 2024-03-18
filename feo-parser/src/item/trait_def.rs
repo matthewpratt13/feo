@@ -1,8 +1,11 @@
-use feo_ast::item::{
-    ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef,
-    TypeParamBounds, VisibilityKind, WhereClause,
+use feo_ast::{
+    item::{
+        ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef,
+        TypeParamBounds, VisibilityKind, WhereClause,
+    },
+    token::Token,
 };
-use feo_error::error::CompilerError;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -43,6 +46,7 @@ impl ParseItem for TraitDef {
         Self: Sized,
     {
         let mut associated_items: Vec<TraitDefItem> = Vec::new();
+
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
@@ -127,6 +131,16 @@ impl ParseItem for TraitDef {
                             close_brace: close_brace_opt.unwrap(),
                         }));
                     }
+
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`}`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`{`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                 }
             }
         } else {
@@ -155,7 +169,6 @@ mod tests {
                 #![export]
                 fn baz()
             }
-
         "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
