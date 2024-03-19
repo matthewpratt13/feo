@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{TypeAliasDef, TypeParamBounds, VisibilityKind},
+    item::{TypeAliasDef, VisibilityKind},
     token::Token,
     Type,
 };
@@ -37,12 +37,7 @@ impl ParseItem for TypeAliasDef {
             parser.next_token();
 
             if let Some(type_name) = parser.peek_current::<Identifier>() {
-                let type_param_bounds_opt = if let Some(t) = TypeParamBounds::parse(parser)? {
-                    parser.next_token();
-                    Some(t)
-                } else {
-                    None
-                };
+                let type_param_bounds_opt = utils::get_term_collection(parser)?;
 
                 parser.next_token();
 

@@ -39,7 +39,7 @@ pub use self::{
     trait_def::{TraitDef, TraitDefItem},
     type_alias_def::TypeAliasDef,
     visibility::{PubCrateVisibility, VisibilityKind},
-    where_clause::{TypeBound, TypeParamBounds, WhereClause},
+    where_clause::{TypeBound, WhereClause},
 };
 
 // items are components of a crate, organized by a set of modules

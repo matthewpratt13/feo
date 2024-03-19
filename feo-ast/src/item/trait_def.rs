@@ -4,11 +4,14 @@ use feo_types::{
     Identifier,
 };
 
-use crate::attribute::{InnerAttr, OuterAttr};
+use crate::{
+    attribute::{InnerAttr, OuterAttr},
+    expression::TermCollection,
+    ty::TraitBound,
+};
 
 use super::{
-    ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, TypeParamBounds, VisibilityKind,
-    WhereClause,
+    ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, VisibilityKind, WhereClause,
 };
 
 #[derive(Debug, Clone)]
@@ -21,16 +24,16 @@ pub enum TraitDefItem {
 
 #[derive(Debug, Clone)]
 pub struct TraitDef {
-   pub outer_attributes_opt: Option<Vec<OuterAttr>>,
-   pub visibility_opt: Option<VisibilityKind>,
-   pub kw_trait: KwTrait,
-   pub trait_name: Identifier,
-   pub type_param_bounds_opt: Option<TypeParamBounds>,
-   pub where_clause_opt: Option<WhereClause>,
-   pub open_brace: Brace,
-   pub inner_attributes_opt: Option<Vec<InnerAttr>>,
-   pub associated_items_opt: Option<Vec<TraitDefItem>>,
-   pub close_brace: Brace,
+    pub outer_attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_trait: KwTrait,
+    pub trait_name: Identifier,
+    pub type_param_bounds_opt: Option<TermCollection<TraitBound>>,
+    pub where_clause_opt: Option<WhereClause>,
+    pub open_brace: Brace,
+    pub inner_attributes_opt: Option<Vec<InnerAttr>>,
+    pub associated_items_opt: Option<Vec<TraitDefItem>>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for TraitDef {

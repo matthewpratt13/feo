@@ -1,8 +1,6 @@
 use feo_ast::{
-    item::{TypeBound, TypeParamBounds, WhereClause},
-    path::PathType,
+    item::{TypeBound, WhereClause},
     token::Token,
-    ty::TraitBound,
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -11,48 +9,8 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuatio
 use crate::{
     parse::{ParseTerm, ParseType},
     parser::Parser,
+    utils,
 };
-
-impl ParseTerm for TypeParamBounds {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_bounds: Vec<TraitBound> = Vec::new();
-
-        if let Some(first_bound) = PathType::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Plus,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_bound) = PathType::parse(parser)? {
-                    subsequent_bounds.push(next_bound);
-                    parser.next_token();
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_bounds.is_empty() {
-                true => Ok(Some(TypeParamBounds {
-                    first_bound,
-                    subsequent_bounds_opt: None,
-                })),
-                false => Ok(Some(TypeParamBounds {
-                    first_bound,
-                    subsequent_bounds_opt: Some(subsequent_bounds),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
 
 impl ParseTerm for TypeBound {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -69,12 +27,7 @@ impl ParseTerm for TypeBound {
             {
                 parser.next_token();
 
-                let type_param_bounds_opt = if let Some(t) = TypeParamBounds::parse(parser)? {
-                    Some(t)
-                } else {
-                    None
-                };
-
+                let type_param_bounds_opt = utils::get_term_collection(parser)?;
                 return Ok(Some(TypeBound {
                     ty,
                     type_param_bounds_opt,
@@ -155,18 +108,6 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
-
-    #[test]
-    fn parse_type_param_bounds() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"Foo + Bar + Baz"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let type_param_bounds =
-            TypeParamBounds::parse(&mut parser).expect("unable to parse type parameter bounds");
-
-        Ok(println!("{:#?}", type_param_bounds))
-    }
 
     #[test]
     fn parse_type_bound() -> Result<(), Vec<CompilerError>> {

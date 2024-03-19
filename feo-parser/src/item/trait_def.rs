@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
         ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef,
-        TypeParamBounds, VisibilityKind, WhereClause,
+        VisibilityKind, WhereClause,
     },
     token::Token,
 };
@@ -65,12 +65,7 @@ impl ParseItem for TraitDef {
             if let Some(trait_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let type_param_bounds_opt = if let Some(t) = TypeParamBounds::parse(parser)? {
-                    parser.next_token();
-                    Some(t)
-                } else {
-                    None
-                };
+                let type_param_bounds_opt = utils::get_term_collection(parser)?;
 
                 let where_clause_opt = WhereClause::parse(parser)?;
 

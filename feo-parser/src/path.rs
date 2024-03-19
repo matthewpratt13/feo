@@ -6,7 +6,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseTerm, ParseType},
+    parse::ParseTerm,
     parser::Parser,
     peek::{Peek, Peeker},
 };
@@ -140,7 +140,7 @@ impl ParseTerm for PathInExpr {
     }
 }
 
-impl ParseType for PathType {
+impl ParseTerm for PathType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -212,7 +212,7 @@ mod tests {
         Ok(println!("{:#?}", path_expr))
     }
 
-     #[test]
+    #[test]
     fn parse_path_type() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"SomeType"#;
 

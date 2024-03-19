@@ -1,6 +1,9 @@
 use feo_types::type_utils::KwWhere;
 
-use crate::ty::{TraitBound, Type};
+use crate::{
+    expression::TermCollection,
+    ty::{TraitBound, Type},
+};
 
 #[derive(Debug, Clone)]
 pub struct WhereClause {
@@ -12,11 +15,5 @@ pub struct WhereClause {
 #[derive(Debug, Clone)]
 pub struct TypeBound {
     pub ty: Type,
-    pub type_param_bounds_opt: Option<TypeParamBounds>,
-}
-
-#[derive(Debug, Clone)]
-pub struct TypeParamBounds {
-    pub first_bound: TraitBound,
-    pub subsequent_bounds_opt: Option<Vec<TraitBound>>,
+    pub type_param_bounds_opt: Option<TermCollection<TraitBound>>,
 }
