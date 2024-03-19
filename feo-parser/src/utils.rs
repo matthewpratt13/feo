@@ -2,7 +2,10 @@ use feo_ast::expression::{Value, ValueCollection};
 use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
 
-use crate::{parse::{ParseItem, ParseTerm}, parser::Parser};
+use crate::{
+    parse::{ParseItem, ParseTerm},
+    parser::Parser,
+};
 
 pub fn get_attributes<T: ParseTerm>(
     parser: &mut Parser,
@@ -21,9 +24,7 @@ pub fn get_attributes<T: ParseTerm>(
     }
 }
 
-pub fn get_items<T: ParseItem>(
-    parser: &mut Parser,
-) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
+pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
     let mut items: Vec<T> = Vec::new();
 
     while let Some(i) = T::parse(parser)? {
@@ -35,6 +36,39 @@ pub fn get_items<T: ParseItem>(
         Ok(None)
     } else {
         Ok(Some(items))
+    }
+}
+
+pub fn get_term_collection<T: ParseTerm, U: ParseTerm>(
+    parser: &mut Parser,
+) -> Result<Option<U>, Vec<CompilerError>> {
+    let mut terms: Vec<T> = Vec::new();
+
+    if let Some(first_term) = T::parse(parser)? {
+        parser.next_token();
+
+        while let Some(Punctuation {
+            punc_kind: PuncKind::Comma,
+            ..
+        }) = parser.peek_current()
+        {
+            parser.next_token();
+
+            if let Some(next_term) = T::parse(parser)? {
+                terms.push(next_term);
+                parser.next_token();
+            } else {
+                break;
+            }
+        }
+
+        skip_trailing_comma(parser)?;
+
+        let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
+
+        return Ok(Some(U::new(first_term, subsequent_terms_opt)));
+    } else {
+        return Ok(None);
     }
 }
 
