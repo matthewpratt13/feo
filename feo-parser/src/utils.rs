@@ -2,7 +2,7 @@ use feo_ast::expression::{Value, ValueCollection};
 use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{parse::{ParseItem, ParseTerm}, parser::Parser};
 
 pub fn get_attributes<T: ParseTerm>(
     parser: &mut Parser,
@@ -18,6 +18,23 @@ pub fn get_attributes<T: ParseTerm>(
         Ok(None)
     } else {
         Ok(Some(attributes))
+    }
+}
+
+pub fn get_items<T: ParseItem>(
+    parser: &mut Parser,
+) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
+    let mut items: Vec<T> = Vec::new();
+
+    while let Some(a) = T::parse(parser)? {
+        items.push(a);
+        parser.next_token();
+    }
+
+    if items.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(items))
     }
 }
 

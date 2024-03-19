@@ -62,7 +62,7 @@ pub struct TraitImplBlock {
     pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
     pub inner_attributes_opt: Option<Vec<InnerAttr>>,
-    pub associated_items: Vec<TraitImplItem>,
+    pub associated_items_opt: Option<Vec<TraitImplItem>>,
     pub close_brace: Brace,
 }
 

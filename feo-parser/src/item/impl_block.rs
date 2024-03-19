@@ -209,20 +209,7 @@ impl ParseItem for TraitImplBlock {
 
                                 parser.next_token();
 
-                                while let Some(Punctuation {
-                                    punc_kind: PuncKind::Comma,
-                                    ..
-                                }) = parser.peek_current::<Punctuation>()
-                                {
-                                    parser.next_token();
-
-                                    if let Some(next_item) = TraitImplItem::parse(parser)? {
-                                        associated_items.push(next_item);
-                                        parser.next_token();
-                                    } else {
-                                        break;
-                                    }
-                                }
+                                let associated_items_opt = utils::get_items(parser)?;
 
                                 utils::skip_trailing_comma(parser)?;
 
@@ -242,7 +229,7 @@ impl ParseItem for TraitImplBlock {
                                         where_clause_opt,
                                         open_brace: open_brace_opt.unwrap(),
                                         inner_attributes_opt,
-                                        associated_items,
+                                        associated_items_opt,
                                         close_brace: close_brace_opt.unwrap(),
                                     }));
                                 }

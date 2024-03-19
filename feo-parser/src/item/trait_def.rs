@@ -9,8 +9,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    punctuation::PuncKind,
-    Delimiter, Identifier, Keyword, Punctuation,
+    Delimiter, Identifier, Keyword,
 };
 
 use crate::{
@@ -94,20 +93,7 @@ impl ParseItem for TraitDef {
                         parser.next_token();
                     }
 
-                    while let Some(Punctuation {
-                        punc_kind: PuncKind::Comma,
-                        ..
-                    }) = parser.peek_current::<Punctuation>()
-                    {
-                        parser.next_token();
-
-                        if let Some(next_item) = TraitDefItem::parse(parser)? {
-                            associated_items.push(next_item);
-                            parser.next_token();
-                        } else {
-                            break;
-                        }
-                    }
+                    let associated_items_opt = utils::get_items(parser)?;
 
                     utils::skip_trailing_comma(parser)?;
 
@@ -127,7 +113,7 @@ impl ParseItem for TraitDef {
                             where_clause_opt,
                             open_brace: open_brace_opt.unwrap(),
                             inner_attributes_opt,
-                            associated_items,
+                            associated_items_opt,
                             close_brace: close_brace_opt.unwrap(),
                         }));
                     }
