@@ -39,7 +39,6 @@ impl ParseTerm for EnumVariant {
                     ..
                 }) => {
                     if let Some(t) = EnumVariantTuple::parse(parser)? {
-                        parser.next_token();
                         Some(EnumVariantType::Tuple(t))
                     } else {
                         None
@@ -51,7 +50,6 @@ impl ParseTerm for EnumVariant {
                     ..
                 }) => {
                     if let Some(s) = EnumVariantStruct::parse(parser)? {
-                        parser.next_token();
                         Some(EnumVariantType::Struct(s))
                     } else {
                         None
@@ -60,8 +58,6 @@ impl ParseTerm for EnumVariant {
 
                 _ => None,
             };
-
-            // parser.next_token();
 
             Ok(Some(EnumVariant {
                 attributes_opt,
@@ -116,8 +112,6 @@ impl ParseTerm for EnumVariantStruct {
                     ..
                 }) = close_brace_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(EnumVariantStruct {
                         open_brace: open_brace_opt.unwrap(),
                         fields_opt,
@@ -166,8 +160,6 @@ impl ParseTerm for EnumVariantTuple {
                     ..
                 }) = close_parenthesis_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(EnumVariantTuple {
                         open_parenthesis: open_parenthesis_opt.unwrap(),
                         elements_opt,
@@ -226,8 +218,7 @@ impl ParseItem for EnumDef {
                     parser.next_token();
 
                     let enum_variants_opt = utils::get_term_collection::<EnumVariant>(parser)?;
-                    
-                    
+
                     let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
@@ -235,6 +226,8 @@ impl ParseItem for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
+                        parser.next_token();
+
                         return Ok(Some(EnumDef {
                             attributes_opt,
                             visibility_opt,

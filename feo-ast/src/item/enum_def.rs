@@ -54,7 +54,7 @@ pub struct EnumVariant {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub variant_name: Identifier,
-    pub variant_type_opt: Option<EnumVariantType>,
+    pub variant_type_opt: Option<EnumVariantType>
 }
 
 #[derive(Debug, Clone)]
