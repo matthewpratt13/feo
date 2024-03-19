@@ -4,11 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{
-    attribute::OuterAttr,
-    expression::TermCollection,
-    ty::{TraitBound, Type},
-};
+use crate::{attribute::OuterAttr, ty::Type};
 
 use super::VisibilityKind;
 
@@ -18,7 +14,6 @@ pub struct TypeAliasDef {
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_type: KwType,
     pub type_name: Identifier,
-    pub type_param_bounds_opt: Option<TermCollection<TraitBound>>,
     pub type_opt: Option<Type>,
     pub semicolon: Semicolon,
 }

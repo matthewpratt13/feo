@@ -1,7 +1,6 @@
 use feo_ast::{
     item::{TypeAliasDef, VisibilityKind},
     token::Token,
-    ty::TraitBound,
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -40,8 +39,6 @@ impl ParseItem for TypeAliasDef {
             if let Some(type_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let type_param_bounds_opt = utils::get_term_collection::<TraitBound>(parser)?;
-
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Equals,
                     ..
@@ -68,7 +65,6 @@ impl ParseItem for TypeAliasDef {
                             visibility_opt,
                             kw_type: kw_type_opt.unwrap(),
                             type_name,
-                            type_param_bounds_opt,
                             type_opt,
                             semicolon: semicolon_opt.unwrap(),
                         }));
@@ -109,7 +105,7 @@ mod tests {
     fn parse_type_alias_def() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
-        pub type foo: u64 = Bar;
+        pub type Foo = Bar;
         "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
