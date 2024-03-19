@@ -21,7 +21,7 @@ impl ParseExpr for TupleExpr {
     where
         Self: Sized,
     {
-        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+        let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -31,7 +31,7 @@ impl ParseExpr for TupleExpr {
             parser.next_token();
 
             if let Some(elements) = utils::get_value_collection(parser)? {
-                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -76,7 +76,7 @@ impl ParseExpr for TupleIndexExpr {
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 

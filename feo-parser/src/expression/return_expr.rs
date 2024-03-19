@@ -9,7 +9,7 @@ impl ParseExpr for ReturnExpr {
     where
         Self: Sized,
     {
-        let kw_return_opt = parser.peek_current::<Keyword>();
+        let kw_return_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwReturn,

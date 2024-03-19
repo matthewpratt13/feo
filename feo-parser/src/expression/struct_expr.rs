@@ -31,7 +31,7 @@ impl ParseTerm for StructExprField {
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -75,7 +75,7 @@ impl ParseTerm for StructExprFields {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -111,7 +111,7 @@ impl ParseExpr for StructExpr {
         if let Some(path) = PathInExpr::parse(parser)? {
             parser.next_token();
 
-            let open_brace_opt = parser.peek_current::<Delimiter>();
+            let open_brace_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -126,7 +126,7 @@ impl ParseExpr for StructExpr {
                     None
                 };
 
-                let close_brace_opt = parser.peek_current::<Delimiter>();
+                let close_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Close),
@@ -169,7 +169,7 @@ impl ParseExpr for TupleStructExpr {
         if let Some(path) = PathInExpr::parse(parser)? {
             parser.next_token();
 
-            let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+            let open_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -180,7 +180,7 @@ impl ParseExpr for TupleStructExpr {
 
                 let fields_opt = utils::get_value_collection(parser)?;
 
-                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),

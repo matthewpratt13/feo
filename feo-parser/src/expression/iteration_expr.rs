@@ -19,7 +19,7 @@ impl ParseExpr for BreakExpr {
     where
         Self: Sized,
     {
-        let kw_break_opt = parser.peek_current::<Keyword>();
+        let kw_break_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwBreak,
@@ -39,7 +39,7 @@ impl ParseExpr for ContinueExpr {
     where
         Self: Sized,
     {
-        let kw_continue_opt = parser.peek_current::<Keyword>();
+        let kw_continue_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwContinue,
@@ -59,7 +59,7 @@ impl ParseExpr for InfiniteLoopExpr {
     where
         Self: Sized,
     {
-        let kw_loop_opt = parser.peek_current::<Keyword>();
+        let kw_loop_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwLoop,
@@ -92,7 +92,7 @@ impl ParseExpr for PredicateLoopExpr {
     where
         Self: Sized,
     {
-        let kw_while_opt = parser.peek_current::<Keyword>();
+        let kw_while_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwWhile,

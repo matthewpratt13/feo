@@ -21,7 +21,7 @@ impl ParseTerm for ClosureParamsOpt {
     where
         Self: Sized,
     {
-        let pipe_or_dbl_pipe_opt = parser.peek_current::<Punctuation>();
+        let pipe_or_dbl_pipe_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Pipe,
@@ -31,7 +31,7 @@ impl ParseTerm for ClosureParamsOpt {
             parser.next_token();
 
             if let Some(params) = ClosureParams::parse(parser)? {
-                let pipe_opt = parser.peek_current::<Punctuation>();
+                let pipe_opt = parser.peek_current();
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Pipe,
@@ -81,7 +81,7 @@ impl ParseTerm for ClosureParam {
             let type_annotation_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -117,7 +117,7 @@ impl ParseTerm for ClosureParams {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 

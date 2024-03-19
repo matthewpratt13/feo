@@ -41,7 +41,7 @@ impl ParseExpr for RangeFromToExpr {
         if let Some(from_operand) = Value::parse(parser)? {
             parser.next_token();
 
-            let dbl_dot_opt = parser.peek_current::<Punctuation>();
+            let dbl_dot_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DblDot,
@@ -86,7 +86,7 @@ impl ParseExpr for RangeFromExpr {
         if let Some(from_operand) = Value::parse(parser)? {
             parser.next_token();
 
-            let dbl_dot_opt = parser.peek_current::<Punctuation>();
+            let dbl_dot_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DblDot,
@@ -118,7 +118,7 @@ impl ParseExpr for RangeToExpr {
     where
         Self: Sized,
     {
-        let dbl_dot_opt = parser.peek_current::<Punctuation>();
+        let dbl_dot_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::DblDot,
@@ -156,7 +156,7 @@ impl ParseExpr for RangeInclusiveExpr {
         if let Some(from_operand) = Value::parse(parser)? {
             parser.next_token();
 
-            let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+            let dot_dot_equals_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DotDotEquals,
@@ -198,7 +198,7 @@ impl ParseExpr for RangeToInclusiveExpr {
     where
         Self: Sized,
     {
-        let dot_dot_equals = parser.peek_current::<Punctuation>();
+        let dot_dot_equals = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::DotDotEquals,

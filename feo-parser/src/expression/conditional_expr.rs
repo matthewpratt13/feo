@@ -28,7 +28,7 @@ impl ParseExpr for IfExpr {
     {
         let mut else_if_blocks: Vec<(KwElse, Box<IfExpr>)> = Vec::new();
 
-        let kw_if_opt = parser.peek_current::<Keyword>();
+        let kw_if_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwIf,
@@ -43,7 +43,7 @@ impl ParseExpr for IfExpr {
                 if let Some(if_block) = BlockExpr::parse(parser)? {
                     parser.next_token();
 
-                    let mut next_kw_else_opt = parser.peek_current::<Keyword>();
+                    let mut next_kw_else_opt = parser.peek_current();
 
                     while let Some(Keyword {
                         keyword_kind: KeywordKind::KwElse,
@@ -72,7 +72,7 @@ impl ParseExpr for IfExpr {
                         }
                     }
 
-                    let trailing_kw_else_opt = parser.peek_current::<Keyword>();
+                    let trailing_kw_else_opt = parser.peek_current();
 
                     let trailing_else_block_opt = if let Some(Keyword {
                         keyword_kind: KeywordKind::KwElse,
@@ -140,7 +140,7 @@ impl ParseTerm for MatchArmGuard {
     where
         Self: Sized,
     {
-        let kw_if_opt = parser.peek_current::<Keyword>();
+        let kw_if_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwIf,
@@ -204,7 +204,7 @@ impl ParseTerm for MatchArms {
     {
         let mut arms: Vec<(MatchArm, Expression)> = Vec::new();
 
-        let first_arm = if let Some(arm) = self::get_arm(parser)? {
+        let first_arm = if let Some(arm) = get_arm(parser)? {
             arm
         } else {
             return Ok(None);
@@ -213,7 +213,7 @@ impl ParseTerm for MatchArms {
         if let Some(Punctuation {
             punc_kind: PuncKind::Comma,
             ..
-        }) = parser.peek_current::<Punctuation>()
+        }) = parser.peek_current()
         {
             parser.next_token();
             arms.push(first_arm.clone());
@@ -222,17 +222,17 @@ impl ParseTerm for MatchArms {
         while let Some(Punctuation {
             punc_kind: PuncKind::Comma,
             ..
-        }) = parser.peek_current::<Punctuation>()
+        }) = parser.peek_current()
         {
             parser.next_token();
 
-            if let Some(arm) = self::get_arm(parser)? {
+            if let Some(arm) = get_arm(parser)? {
                 arms.push(arm);
                 parser.next_token();
             }
         }
 
-        let final_arm = if let Some(arm) = self::get_arm(parser)? {
+        let final_arm = if let Some(arm) = get_arm(parser)? {
             (arm.0, Box::new(arm.1))
         } else {
             arms.clear();
@@ -261,7 +261,7 @@ impl ParseExpr for MatchExpr {
     where
         Self: Sized,
     {
-        let kw_match_opt = parser.peek_current::<Keyword>();
+        let kw_match_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwMatch,
@@ -271,7 +271,7 @@ impl ParseExpr for MatchExpr {
             parser.next_token();
 
             if let Some(scrutinee) = ParenthesizedExpr::parse(parser)? {
-                let open_brace_opt = parser.peek_current::<Delimiter>();
+                let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -291,12 +291,12 @@ impl ParseExpr for MatchExpr {
                     if let Some(Punctuation {
                         punc_kind: PuncKind::Comma,
                         ..
-                    }) = parser.peek_current::<Punctuation>()
+                    }) = parser.peek_current()
                     {
                         parser.next_token();
                     }
 
-                    let close_brace_opt = parser.peek_current::<Delimiter>();
+                    let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
@@ -344,7 +344,7 @@ fn get_arm(parser: &mut Parser) -> Result<Option<(MatchArm, Expression)>, Vec<Co
         if let Some(Punctuation {
             punc_kind: PuncKind::FatArrow,
             ..
-        }) = parser.peek_current::<Punctuation>()
+        }) = parser.peek_current()
         {
             parser.next_token();
 

@@ -21,7 +21,7 @@ impl ParseExpr for ArrayExpr {
     where
         Self: Sized,
     {
-        let open_bracket_opt = parser.peek_current::<Delimiter>();
+        let open_bracket_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -32,7 +32,7 @@ impl ParseExpr for ArrayExpr {
 
             let elements_opt = utils::get_value_collection(parser)?;
 
-            let close_bracket_opt = parser.peek_current::<Delimiter>();
+            let close_bracket_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Close),
@@ -66,7 +66,7 @@ impl ParseExpr for IndexExpr {
         if let Some(indexed_operand) = Value::parse(parser)? {
             parser.next_token();
 
-            let open_bracket_opt = parser.peek_current::<Delimiter>();
+            let open_bracket_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -78,7 +78,7 @@ impl ParseExpr for IndexExpr {
                 if let Some(index) = parser.peek_current::<Literal<UIntType>>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current::<Delimiter>();
+                    let close_bracket_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),

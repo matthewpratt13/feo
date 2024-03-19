@@ -211,7 +211,7 @@ impl ParseExpr for AssignmentExpr {
         if let Some(assignee) = Value::parse(parser)? {
             parser.next_token();
 
-            let equals_opt = parser.peek_current::<Punctuation>();
+            let equals_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Equals,
@@ -384,7 +384,7 @@ impl ParseExpr for DereferenceExpr {
     where
         Self: Sized,
     {
-        let operator_opt = parser.peek_current::<Punctuation>();
+        let operator_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Asterisk,
@@ -518,7 +518,7 @@ impl ParseExpr for ReferenceExpr {
     where
         Self: Sized,
     {
-        let ampersand_opt = parser.peek_current::<Punctuation>();
+        let ampersand_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Ampersand,
@@ -527,7 +527,7 @@ impl ParseExpr for ReferenceExpr {
         {
             parser.next_token();
 
-            let kw_mut_opt = parser.peek_current::<Keyword>();
+            let kw_mut_opt = parser.peek_current();
 
             if let Some(Keyword {
                 keyword_kind: KeywordKind::KwMut,
@@ -566,7 +566,7 @@ impl ParseExpr for TypeCastExpr {
         if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
-            let kw_as_opt = parser.peek_current::<Keyword>();
+            let kw_as_opt = parser.peek_current();
 
             if let Some(Keyword {
                 keyword_kind: KeywordKind::KwAs,
@@ -609,7 +609,7 @@ impl ParseExpr for UnwrapExpr {
         if let Some(operand) = Value::parse(parser)? {
             parser.next_token();
 
-            let question_mark_opt = parser.peek_current::<Punctuation>();
+            let question_mark_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::QuestionMark,

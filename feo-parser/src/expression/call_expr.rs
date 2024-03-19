@@ -24,7 +24,7 @@ impl ParseExpr for FunctionCallExpr {
         if let Some(function_operand) = PathInExpr::parse(parser)? {
             parser.next_token();
 
-            let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+            let open_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -33,9 +33,9 @@ impl ParseExpr for FunctionCallExpr {
             {
                 parser.next_token();
 
-                let call_params_opt = crate::utils::get_value_collection(parser)?;
+                let call_params_opt = utils::get_value_collection(parser)?;
 
-                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),

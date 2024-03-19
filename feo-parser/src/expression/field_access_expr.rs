@@ -21,7 +21,7 @@ impl ParseExpr for FieldAccessExpr {
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
