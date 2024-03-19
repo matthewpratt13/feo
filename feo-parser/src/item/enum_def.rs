@@ -36,6 +36,7 @@ impl ParseTerm for EnumVariant {
             parser.next_token();
 
             let variant_type_opt = if let Some(v) = EnumVariantType::parse(parser)? {
+                parser.next_token();
                 Some(v)
             } else {
                 None
@@ -183,7 +184,7 @@ impl ParseItem for EnumDef {
                 {
                     parser.next_token();
 
-                    let enum_variants_opt = utils::get_term_collection(parser)?;
+                    let enum_variants_opt = utils::get_term_collection::<EnumVariant>(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 
