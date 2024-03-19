@@ -125,7 +125,6 @@ impl ParseItem for StructDef {
                         ..
                     }) = close_brace_opt
                     {
-                        parser.next_token();
 
                         return Ok(Some(StructDef {
                             attributes_opt,
