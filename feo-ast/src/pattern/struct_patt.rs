@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::attribute::OuterAttr;
+use crate::{attribute::OuterAttr, expression::TermCollection};
 
 use super::Pattern;
 
@@ -12,7 +12,7 @@ use super::Pattern;
 pub struct StructPatt {
     pub id: Identifier,
     pub open_brace: Brace,
-    pub fields_opt: Option<StructPattFields>,
+    pub fields_opt: Option<TermCollection<StructPattField>>,
     pub close_brace: Brace,
 }
 

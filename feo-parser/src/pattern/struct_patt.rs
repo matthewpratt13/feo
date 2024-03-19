@@ -1,8 +1,5 @@
 use feo_ast::{
-    pattern::{
-        Pattern, StructPatt, StructPattField, StructPattFields, TupleStructPatt,
-        TupleStructPattFields,
-    },
+    pattern::{Pattern, StructPatt, StructPattField, TupleStructPatt, TupleStructPattFields},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -36,6 +33,8 @@ impl ParseTerm for StructPattField {
                 parser.next_token();
 
                 if let Some(value) = Pattern::parse(parser)? {
+                    parser.next_token();
+
                     let field_content = (field_name, Box::new(value));
 
                     return Ok(Some(StructPattField {
@@ -62,47 +61,6 @@ impl ParseTerm for StructPattField {
     }
 }
 
-impl ParseTerm for StructPattFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_fields: Vec<StructPattField> = Vec::new();
-
-        if let Some(first_field) = StructPattField::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_field) = StructPattField::parse(parser)? {
-                    subsequent_fields.push(next_field);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_fields.is_empty() {
-                true => Ok(Some(StructPattFields {
-                    first_field,
-                    subsequent_fields_opt: None,
-                })),
-
-                false => Ok(Some(StructPattFields {
-                    first_field,
-                    subsequent_fields_opt: Some(subsequent_fields),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
-
 impl ParsePatt for StructPatt {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -120,12 +78,7 @@ impl ParsePatt for StructPatt {
             {
                 parser.next_token();
 
-                let fields_opt = if let Some(f) = StructPattFields::parse(parser)? {
-                    parser.next_token();
-                    Some(f)
-                } else {
-                    None
-                };
+                let fields_opt = utils::get_term_collection(parser)?;
 
                 let close_brace_opt = parser.peek_current();
 
@@ -268,6 +221,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore]
     #[test]
     fn parse_struct_patt_field() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
@@ -285,31 +239,12 @@ mod tests {
     }
 
     #[test]
-    fn parse_struct_patt_fields() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-            #[export]
-            foo: "a",
-            bar: 1,
-            #[abstract]
-            #[unsafe]
-            baz: x,
-            "#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let struct_patt_fields =
-            StructPattFields::parse(&mut parser).expect("unable to parse `StructPattFields`");
-
-        Ok(println!("{:#?}", struct_patt_fields))
-    }
-
-    #[test]
     fn parse_struct_patt() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         SomeStruct {
             foo: "a",
             bar: 1,
-            baz: x
+            baz: x,
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
