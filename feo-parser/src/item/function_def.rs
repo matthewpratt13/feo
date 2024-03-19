@@ -143,48 +143,6 @@ impl ParseTerm for FunctionParam {
     }
 }
 
-impl ParseTerm for FunctionParams {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_params: Vec<FunctionParam> = Vec::new();
-
-        if let Some(first_param) = FuncOrMethodParam::parse(parser)? {
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_param) = FunctionParam::parse(parser)? {
-                    subsequent_params.push(next_param);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_params.is_empty() {
-                true => {
-                    return Ok(Some(FunctionParams {
-                        first_param,
-                        subsequent_params_opt: None,
-                    }))
-                }
-                false => {
-                    return Ok(Some(FunctionParams {
-                        first_param,
-                        subsequent_params_opt: Some(subsequent_params),
-                    }))
-                }
-            }
-        } else {
-            return Ok(None);
-        }
-    }
-}
-
 impl ParseItem for FunctionSig {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where

@@ -29,7 +29,7 @@ pub use self::{
     },
     extern_crate_decl::{AsClause, ExternCrateDecl},
     function_def::{
-        FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionParams, FunctionSig,
+        FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionSig,
         FunctionWithBlock, SelfParam,
     },
     impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},

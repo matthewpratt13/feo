@@ -4,7 +4,12 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{attribute::OuterAttr, expression::ExprWithBlock, pattern::Pattern, ty::Type};
+use crate::{
+    attribute::OuterAttr,
+    expression::{ExprWithBlock, TermCollection},
+    pattern::Pattern,
+    ty::Type,
+};
 
 use super::VisibilityKind;
 
@@ -51,7 +56,7 @@ pub struct FunctionSig {
     pub kw_func: KwFunc,
     pub function_name: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub function_params_opt: Option<FunctionParams>,
+    pub function_params_opt: Option<TermCollection<FunctionParam>>,
     pub close_parenthesis: Parenthesis,
     pub return_type_opt: Option<Box<Type>>,
 }
@@ -79,12 +84,6 @@ impl Spanned for FunctionSig {
 
         Span::join(s1, s2)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct FunctionParams {
-    pub first_param: FuncOrMethodParam,
-    pub subsequent_params_opt: Option<Vec<FunctionParam>>,
 }
 
 #[derive(Debug, Clone)]
