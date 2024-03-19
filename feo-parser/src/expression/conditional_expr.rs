@@ -88,6 +88,7 @@ impl ParseExpr for IfExpr {
                                 expected: "block expression".to_string(),
                                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                             });
+                            
                             return Err(parser.errors());
                         }
                     } else {
@@ -104,7 +105,6 @@ impl ParseExpr for IfExpr {
                                 trailing_else_block_opt,
                             }))
                         }
-
                         false => {
                             return Ok(Some(IfExpr {
                                 kw_if: kw_if_opt.unwrap(),

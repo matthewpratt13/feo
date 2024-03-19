@@ -261,7 +261,6 @@ impl ParseTerm for TupleStructDefFields {
                     first_field,
                     subsequent_fields_opt: None,
                 })),
-
                 false => Ok(Some(TupleStructDefFields {
                     first_field,
                     subsequent_fields_opt: Some(subsequent_fields),

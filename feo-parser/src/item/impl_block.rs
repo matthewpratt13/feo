@@ -11,8 +11,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    punctuation::PuncKind,
-    Delimiter, Keyword, Punctuation,
+    Delimiter, Keyword,
 };
 
 use crate::{
@@ -61,8 +60,6 @@ impl ParseItem for InherentImplBlock {
     where
         Self: Sized,
     {
-        let mut associated_items: Vec<InherentImplItem> = Vec::new();
-
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let kw_impl_opt = parser.peek_current();
@@ -90,57 +87,35 @@ impl ParseItem for InherentImplBlock {
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                    if let Some(item) = InherentImplItem::parse(parser)? {
-                        associated_items.push(item);
+                    parser.next_token();
 
-                        parser.next_token();
+                    let associated_items_opt = utils::get_items(parser)?;
 
-                        while let Some(Punctuation {
-                            punc_kind: PuncKind::Comma,
-                            ..
-                        }) = parser.peek_current()
-                        {
-                            parser.next_token();
+                    utils::skip_trailing_comma(parser)?;
 
-                            if let Some(next_item) = InherentImplItem::parse(parser)? {
-                                associated_items.push(next_item);
-                                parser.next_token();
-                            } else {
-                                break;
-                            }
-                        }
+                    let close_brace_opt = parser.peek_current();
 
-                        utils::skip_trailing_comma(parser)?;
-
-                        let close_brace_opt = parser.peek_current();
-
-                        if let Some(Delimiter {
-                            delim: (DelimKind::Brace, DelimOrientation::Close),
-                            ..
-                        }) = close_brace_opt
-                        {
-                            return Ok(Some(InherentImplBlock {
-                                outer_attributes_opt,
-                                kw_impl: kw_impl_opt.unwrap(),
-                                nominal_type,
-                                where_clause_opt,
-                                open_brace: open_brace_opt.unwrap(),
-                                inner_attributes_opt,
-                                associated_items,
-                                close_brace: close_brace_opt.unwrap(),
-                            }));
-                        }
-
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`}`".to_string(),
-                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                        });
-                    } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`InherentImplItem`".to_string(),
-                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                        });
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Brace, DelimOrientation::Close),
+                        ..
+                    }) = close_brace_opt
+                    {
+                        return Ok(Some(InherentImplBlock {
+                            outer_attributes_opt,
+                            kw_impl: kw_impl_opt.unwrap(),
+                            nominal_type,
+                            where_clause_opt,
+                            open_brace: open_brace_opt.unwrap(),
+                            inner_attributes_opt,
+                            associated_items_opt,
+                            close_brace: close_brace_opt.unwrap(),
+                        }));
                     }
+
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`}`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`{`".to_string(),
@@ -167,8 +142,6 @@ impl ParseItem for TraitImplBlock {
     where
         Self: Sized,
     {
-        let mut associated_items: Vec<TraitImplItem> = Vec::new();
-
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let kw_impl_opt = parser.peek_current();
@@ -204,58 +177,49 @@ impl ParseItem for TraitImplBlock {
 
                             let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                            if let Some(item) = TraitImplItem::parse(parser)? {
-                                associated_items.push(item);
+                            parser.next_token();
 
-                                parser.next_token();
+                            let associated_items_opt = utils::get_items(parser)?;
 
-                                let associated_items_opt = utils::get_items(parser)?;
+                            utils::skip_trailing_comma(parser)?;
 
-                                utils::skip_trailing_comma(parser)?;
+                            let close_brace_opt = parser.peek_current();
 
-                                let close_brace_opt = parser.peek_current();
-
-                                if let Some(Delimiter {
-                                    delim: (DelimKind::Brace, DelimOrientation::Close),
-                                    ..
-                                }) = close_brace_opt
-                                {
-                                    return Ok(Some(TraitImplBlock {
-                                        outer_attributes_opt,
-                                        kw_impl: kw_impl_opt.unwrap(),
-                                        implemented_trait_path,
-                                        implementing_type,
-                                        kw_for: kw_for_opt.unwrap(),
-                                        where_clause_opt,
-                                        open_brace: open_brace_opt.unwrap(),
-                                        inner_attributes_opt,
-                                        associated_items_opt,
-                                        close_brace: close_brace_opt.unwrap(),
-                                    }));
-                                }
-
-                                parser.log_error(ParserErrorKind::UnexpectedToken {
-                                    expected: "`}`".to_string(),
-                                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                                });
-                            } else {
-                                parser.log_error(ParserErrorKind::UnexpectedToken {
-                                    expected: "`InherentTraitItem`".to_string(),
-                                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                                });
+                            if let Some(Delimiter {
+                                delim: (DelimKind::Brace, DelimOrientation::Close),
+                                ..
+                            }) = close_brace_opt
+                            {
+                                return Ok(Some(TraitImplBlock {
+                                    outer_attributes_opt,
+                                    kw_impl: kw_impl_opt.unwrap(),
+                                    implemented_trait_path,
+                                    implementing_type,
+                                    kw_for: kw_for_opt.unwrap(),
+                                    where_clause_opt,
+                                    open_brace: open_brace_opt.unwrap(),
+                                    inner_attributes_opt,
+                                    associated_items_opt,
+                                    close_brace: close_brace_opt.unwrap(),
+                                }));
                             }
-                        } else {
+
                             parser.log_error(ParserErrorKind::UnexpectedToken {
-                                expected: "`{`".to_string(),
+                                expected: "`}`".to_string(),
                                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                             });
                         }
                     } else {
                         parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "type".to_string(),
+                            expected: "`{`".to_string(),
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
                     }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "type".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {

@@ -91,7 +91,6 @@ impl ParseTerm for StructExprFields {
                     first_field,
                     subsequent_fields_opt: None,
                 })),
-
                 false => Ok(Some(StructExprFields {
                     first_field,
                     subsequent_fields_opt: Some(subsequent_fields),

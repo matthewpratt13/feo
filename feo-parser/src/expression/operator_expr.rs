@@ -439,6 +439,7 @@ impl ParseExpr for LazyBoolExpr {
                             expected: "`LazyBoolOperatorKind`".to_string(),
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
+
                         return Err(parser.errors());
                     }
                 };

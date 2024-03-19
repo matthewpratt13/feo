@@ -44,8 +44,6 @@ impl ParseItem for TraitDef {
     where
         Self: Sized,
     {
-        let mut associated_items: Vec<TraitDefItem> = Vec::new();
-
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
@@ -87,11 +85,7 @@ impl ParseItem for TraitDef {
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                    if let Some(item) = TraitDefItem::parse(parser)? {
-                        associated_items.push(item);
-
-                        parser.next_token();
-                    }
+                    parser.next_token();
 
                     let associated_items_opt = utils::get_items(parser)?;
 

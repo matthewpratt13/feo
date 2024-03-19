@@ -2,7 +2,6 @@ use feo_ast::{
     expression::{ArrayExpr, IndexExpr, Value},
     token::Token,
 };
-
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
@@ -86,7 +85,7 @@ impl ParseExpr for IndexExpr {
                     }) = close_bracket_opt
                     {
                         parser.next_token();
-
+                        
                         return Ok(Some(IndexExpr {
                             indexed_operand: Box::new(indexed_operand),
                             open_bracket: open_bracket_opt.unwrap(),

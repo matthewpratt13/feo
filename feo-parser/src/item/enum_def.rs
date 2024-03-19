@@ -81,7 +81,6 @@ impl ParseTerm for EnumVariants {
                     first_variant,
                     subsequent_variants_opt: None,
                 })),
-
                 false => Ok(Some(EnumVariants {
                     first_variant,
                     subsequent_variants_opt: Some(subsequent_variants),

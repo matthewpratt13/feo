@@ -58,7 +58,6 @@ impl ParseTerm for ClosureParamsOpt {
         }) = pipe_or_dbl_pipe_opt
         {
             parser.next_token();
-
             return Ok(Some(ClosureParamsOpt::None(pipe_or_dbl_pipe_opt.unwrap())));
         } else {
             return Ok(None);
@@ -133,7 +132,6 @@ impl ParseTerm for ClosureParams {
                     first_param,
                     subsequent_params_opt: None,
                 })),
-
                 false => Ok(Some(ClosureParams {
                     first_param,
                     subsequent_params_opt: Some(subsequent_params),

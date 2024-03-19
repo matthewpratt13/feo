@@ -192,7 +192,6 @@ impl ParseTerm for TupleStructPattFields {
                     first_field: Box::new(first_field),
                     subsequent_fields_opt: None,
                 })),
-
                 false => Ok(Some(TupleStructPattFields {
                     first_field: Box::new(first_field),
                     subsequent_fields_opt: Some(subsequent_fields),

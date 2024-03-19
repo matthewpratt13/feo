@@ -71,7 +71,6 @@ impl ParseType for TupleType {
                                 close_parenthesis: close_parenthesis_opt.unwrap(),
                             }))
                         }
-
                         false => {
                             return Ok(Some(TupleType {
                                 open_parenthesis: open_parenthesis_opt.unwrap(),
@@ -82,8 +81,9 @@ impl ParseType for TupleType {
                         }
                     }
                 } else {
-                    parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: ")".to_string(),
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`)`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
             } else {

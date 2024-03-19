@@ -63,7 +63,6 @@ impl ParseTerm for SimplePath {
                     first_segment,
                     subsequent_segments: None,
                 })),
-
                 false => Ok(Some(SimplePath {
                     first_segment,
                     subsequent_segments: Some(subsequent_segments),
@@ -173,7 +172,6 @@ impl ParseType for PathType {
                     first_segment,
                     subsequent_segments: None,
                 })),
-
                 false => Ok(Some(PathType {
                     first_segment,
                     subsequent_segments: Some(subsequent_segments),

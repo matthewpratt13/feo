@@ -26,8 +26,8 @@ pub fn get_items<T: ParseItem>(
 ) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
     let mut items: Vec<T> = Vec::new();
 
-    while let Some(a) = T::parse(parser)? {
-        items.push(a);
+    while let Some(i) = T::parse(parser)? {
+        items.push(i);
         parser.next_token();
     }
 

@@ -57,7 +57,6 @@ impl ParseTerm for TuplePattElements {
                     subsequent_elements_opt: None,
                     trailing_comma_opt,
                 })),
-
                 false => Ok(Some(TuplePattElements {
                     first_element: Box::new(first_element),
                     subsequent_elements_opt: Some(subsequent_elements),

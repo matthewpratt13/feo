@@ -27,7 +27,7 @@ impl ParseExpr for FieldAccessExpr {
 
                 if let Some(field_name) = parser.peek_current::<Identifier>() {
                     parser.next_token();
-
+                    
                     return Ok(Some(FieldAccessExpr {
                         container_operand: Box::new(container_operand),
                         field_name,

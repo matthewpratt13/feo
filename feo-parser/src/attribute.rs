@@ -84,6 +84,7 @@ impl ParseTerm for InnerAttr {
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
                     }
+
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`]`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
@@ -95,8 +96,9 @@ impl ParseTerm for InnerAttr {
                     });
                 }
             } else {
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "[".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`[`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
         } else {
@@ -159,8 +161,9 @@ impl ParseTerm for OuterAttr {
                     });
                 }
             } else {
-                parser.log_error(ParserErrorKind::MissingDelimiter {
-                    delim: "[".to_string(),
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`[`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
         } else {

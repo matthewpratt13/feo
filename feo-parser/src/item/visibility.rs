@@ -23,7 +23,7 @@ impl ParseTerm for VisibilityKind {
             ..
         }) = kw_pub_opt
         {
-            match &parser.peek_next::<Delimiter>() {
+            match &parser.peek_next() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
@@ -90,8 +90,9 @@ impl ParseTerm for PubCrateVisibility {
                         }));
                     }
 
-                    parser.log_error(ParserErrorKind::MissingDelimiter {
-                        delim: ")".to_string(),
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`)`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {

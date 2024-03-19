@@ -106,7 +106,7 @@ impl ParseExpr for PredicateLoopExpr {
 
                 if let Some(block) = BlockExpr::parse(parser)? {
                     parser.next_token();
-
+                    
                     return Ok(Some(PredicateLoopExpr {
                         kw_while: kw_while_opt.unwrap(),
                         conditional_operand: Box::new(conditional_operand),
