@@ -33,14 +33,35 @@ impl ParseTerm for EnumVariant {
         };
 
         if let Some(variant_name) = parser.peek_current::<Identifier>() {
-            parser.next_token();
+            let variant_type_opt = match parser.peek_next::<Delimiter>() {
+                Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(t) = EnumVariantTuple::parse(parser)? {
+                        parser.next_token();
+                        Some(EnumVariantType::Tuple(t))
+                    } else {
+                        None
+                    }
+                }
 
-            let variant_type_opt = if let Some(v) = EnumVariantType::parse(parser)? {
-                parser.next_token();
-                Some(v)
-            } else {
-                None
+                Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) => {
+                    if let Some(s) = EnumVariantStruct::parse(parser)? {
+                        parser.next_token();
+                        Some(EnumVariantType::Struct(s))
+                    } else {
+                        None
+                    }
+                }
+
+                _ => None,
             };
+
+            // parser.next_token();
 
             Ok(Some(EnumVariant {
                 attributes_opt,
@@ -74,31 +95,42 @@ impl ParseTerm for EnumVariantStruct {
     where
         Self: Sized,
     {
-        let open_brace_opt = parser.peek_current();
-
-        if let Some(Delimiter {
-            delim: (DelimKind::Brace, DelimOrientation::Open),
-            ..
-        }) = open_brace_opt
-        {
+        if let Some(_) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
-            let fields_opt = utils::get_term_collection(parser)?;
-
-            let close_brace_opt = parser.peek_current();
+            let open_brace_opt = parser.peek_current();
 
             if let Some(Delimiter {
-                delim: (DelimKind::Brace, DelimOrientation::Close),
+                delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
-            }) = close_brace_opt
+            }) = open_brace_opt
             {
                 parser.next_token();
 
-                return Ok(Some(EnumVariantStruct {
-                    open_brace: open_brace_opt.unwrap(),
-                    fields_opt,
-                    close_brace: close_brace_opt.unwrap(),
-                }));
+                let fields_opt = utils::get_term_collection(parser)?;
+
+                let close_brace_opt = parser.peek_current();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Close),
+                    ..
+                }) = close_brace_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(EnumVariantStruct {
+                        open_brace: open_brace_opt.unwrap(),
+                        fields_opt,
+                        close_brace: close_brace_opt.unwrap(),
+                    }));
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`}`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -113,33 +145,42 @@ impl ParseTerm for EnumVariantTuple {
     where
         Self: Sized,
     {
-        let open_parenthesis_opt = parser.peek_current();
-
-        if let Some(Delimiter {
-            delim: (DelimKind::Parenthesis, DelimOrientation::Open),
-            ..
-        }) = open_parenthesis_opt
-        {
+        if let Some(_) = parser.peek_current::<Identifier>() {
             parser.next_token();
 
-            let elements_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
-
-            parser.next_token();
-
-            let close_parenthesis_opt = parser.peek_current();
+            let open_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
-                delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                 ..
-            }) = close_parenthesis_opt
+            }) = open_parenthesis_opt
             {
                 parser.next_token();
 
-                return Ok(Some(EnumVariantTuple {
-                    open_parenthesis: open_parenthesis_opt.unwrap(),
-                    elements_opt,
-                    close_parenthesis: close_parenthesis_opt.unwrap(),
-                }));
+                let elements_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
+
+                let close_parenthesis_opt = parser.peek_current();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Parenthesis, DelimOrientation::Close),
+                    ..
+                }) = close_parenthesis_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(EnumVariantTuple {
+                        open_parenthesis: open_parenthesis_opt.unwrap(),
+                        elements_opt,
+                        close_parenthesis: close_parenthesis_opt.unwrap(),
+                    }));
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`)`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -185,7 +226,8 @@ impl ParseItem for EnumDef {
                     parser.next_token();
 
                     let enum_variants_opt = utils::get_term_collection::<EnumVariant>(parser)?;
-
+                    
+                    
                     let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
@@ -234,6 +276,17 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
+
+    #[test]
+    fn parse_enum_variant() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"Foo(u64)"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let enum_variant = EnumVariant::parse(&mut parser).expect("unable to parse enum variant");
+
+        Ok(println!("{:#?}", enum_variant))
+    }
 
     #[test]
     fn parse_enum_variant_struct() -> Result<(), Vec<CompilerError>> {

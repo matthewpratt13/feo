@@ -175,8 +175,6 @@ impl ParseTerm for TupleStructDefField {
         };
 
         if let Some(field_type) = Type::parse(parser)? {
-            parser.next_token();
-
             Ok(Some(TupleStructDefField {
                 attributes_opt,
                 visibility_opt,
