@@ -1,5 +1,5 @@
 use feo_ast::{
-    pattern::{Pattern, StructPatt, StructPattField, TupleStructPatt, TupleStructPattFields},
+    pattern::{Pattern, StructPatt, StructPattField, TupleStructPatt, TupleStructPattField},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -115,43 +115,15 @@ impl ParsePatt for StructPatt {
     }
 }
 
-impl ParseTerm for TupleStructPattFields {
+impl ParseTerm for TupleStructPattField {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        let mut subsequent_fields: Vec<Pattern> = Vec::new();
-
-        if let Some(first_field) = Pattern::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_field) = Pattern::parse(parser)? {
-                    subsequent_fields.push(next_field);
-                    parser.next_token();
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_fields.is_empty() {
-                true => Ok(Some(TupleStructPattFields {
-                    first_field: Box::new(first_field),
-                    subsequent_fields_opt: None,
-                })),
-                false => Ok(Some(TupleStructPattFields {
-                    first_field: Box::new(first_field),
-                    subsequent_fields_opt: Some(subsequent_fields),
-                })),
-            }
+        if let Some(p) = Pattern::parse(parser)? {
+            return Ok(Some(TupleStructPattField(Box::new(p))));
         } else {
-            Ok(None)
+            return Ok(None);
         }
     }
 }
@@ -173,11 +145,7 @@ impl ParsePatt for TupleStructPatt {
             {
                 parser.next_token();
 
-                let fields_opt = if let Some(f) = TupleStructPattFields::parse(parser)? {
-                    Some(f)
-                } else {
-                    None
-                };
+                let fields_opt = utils::get_term_collection::<TupleStructPattField>(parser)?;
 
                 let close_parenthesis_opt = parser.peek_current();
 
@@ -252,18 +220,6 @@ mod tests {
         let struct_patt = StructPatt::parse(&mut parser).expect("unable to parse struct pattern");
 
         Ok(println!("{:#?}", struct_patt))
-    }
-
-    #[test]
-    fn parse_tuple_struct_patt_fields() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"foo, "a", 1"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let tuple_struct_patt_fields = TupleStructPattFields::parse(&mut parser)
-            .expect("unable to parse `TupleStructPattFields`");
-
-        Ok(println!("{:#?}", tuple_struct_patt_fields))
     }
 
     #[test]
