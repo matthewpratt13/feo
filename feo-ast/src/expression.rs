@@ -45,7 +45,7 @@ pub use self::{
         RangeToExpr, RangeToInclusiveExpr,
     },
     return_expr::ReturnExpr,
-    struct_expr::{StructExpr, StructExprField, StructExprFields, TupleStructExpr},
+    struct_expr::{StructExpr, StructExprField, TupleStructExpr},
     tuple_expr::{TupleExpr, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
 };

@@ -6,13 +6,13 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, path::PathInExpr};
 
-use super::{Value, ValueCollection};
+use super::{TermCollection, Value, ValueCollection};
 
 #[derive(Debug, Clone)]
 pub struct StructExpr {
     pub path: PathInExpr,
     pub open_brace: Brace,
-    pub fields_opt: Option<StructExprFields>,
+    pub fields_opt: Option<TermCollection<StructExprField>>,
     pub close_brace: Brace,
 }
 
@@ -23,12 +23,6 @@ impl Spanned for StructExpr {
 
         Span::join(s1, s2)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct StructExprFields {
-    pub first_field: StructExprField,
-    pub subsequent_fields_opt: Option<Vec<StructExprField>>,
 }
 
 #[derive(Debug, Clone)]

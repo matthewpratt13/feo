@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::{StructExpr, StructExprField, StructExprFields, TupleStructExpr, Value},
+    expression::{StructExpr, StructExprField, TupleStructExpr, Value},
     path::PathInExpr,
     token::Token,
 };
@@ -64,44 +64,6 @@ impl ParseTerm for StructExprField {
     }
 }
 
-impl ParseTerm for StructExprFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_fields: Vec<StructExprField> = Vec::new();
-
-        if let Some(first_field) = StructExprField::parse(parser)? {
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_field) = StructExprField::parse(parser)? {
-                    subsequent_fields.push(next_field);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_fields.is_empty() {
-                true => Ok(Some(StructExprFields {
-                    first_field,
-                    subsequent_fields_opt: None,
-                })),
-                false => Ok(Some(StructExprFields {
-                    first_field,
-                    subsequent_fields_opt: Some(subsequent_fields),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
-
 impl ParseExpr for StructExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -119,11 +81,7 @@ impl ParseExpr for StructExpr {
             {
                 parser.next_token();
 
-                let fields_opt = if let Some(f) = StructExprFields::parse(parser)? {
-                    Some(f)
-                } else {
-                    None
-                };
+                let fields_opt = utils::get_term_collection(parser)?;
 
                 let close_brace_opt = parser.peek_current();
 
@@ -235,25 +193,6 @@ mod tests {
             StructExprField::parse(&mut parser).expect("unable to parse struct expression field");
 
         Ok(println!("{:#?}", struct_expr_field))
-    }
-
-    #[test]
-    fn parse_struct_expr_fields() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-            #[export]
-            foo: "a",
-            bar: 1,
-            #[abstract]
-            #[unsafe]
-            baz: x,
-            "#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let struct_expr_fields =
-            StructExprFields::parse(&mut parser).expect("unable to parse `StructExprFields`");
-
-        Ok(println!("{:#?}", struct_expr_fields))
     }
 
     #[test]
