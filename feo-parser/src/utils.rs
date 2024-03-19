@@ -45,7 +45,7 @@ pub fn get_term_collection<T: ParseTerm>(
     let mut terms: Vec<T> = Vec::new();
 
     if let Some(first_term) = T::parse(parser)? {
-        // parser.next_token();
+        parser.next_token();
 
         while let Some(Punctuation {
             punc_kind: PuncKind::Comma,
@@ -56,7 +56,7 @@ pub fn get_term_collection<T: ParseTerm>(
 
             if let Some(next_term) = T::parse(parser)? {
                 terms.push(next_term);
-                // parser.next_token();
+                parser.next_token();
             } else {
                 break;
             }

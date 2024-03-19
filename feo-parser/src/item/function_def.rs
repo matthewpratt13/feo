@@ -116,7 +116,7 @@ impl ParseTerm for FunctionParam {
                 parser.next_token();
 
                 if let Some(param_type) = Type::parse(parser)? {
-                    parser.next_token();
+                    // parser.next_token();
 
                     return Ok(Some(FunctionParam {
                         param_pattern: Box::new(param_pattern),

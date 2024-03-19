@@ -36,7 +36,7 @@ impl ParseTerm for StructExprField {
                 parser.next_token();
 
                 if let Some(value) = Value::parse(parser)? {
-                    parser.next_token();
+                    // parser.next_token();
 
                     let field_content = (field_name, Box::new(value));
 

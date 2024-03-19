@@ -45,7 +45,7 @@ impl ParseTerm for StructDefField {
                 parser.next_token();
 
                 if let Some(ty) = Type::parse(parser)? {
-                    parser.next_token();
+                    // parser.next_token();
 
                     let field_type = (field_name, Box::new(ty));
 

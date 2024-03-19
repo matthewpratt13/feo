@@ -84,7 +84,7 @@ impl ParseTerm for ClosureParam {
                 parser.next_token();
 
                 if let Some(ty) = Type::parse(parser)? {
-                    parser.next_token();
+                    // parser.next_token();
                     Some(Box::new(ty))
                 } else {
                     None
