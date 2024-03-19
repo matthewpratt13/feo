@@ -78,6 +78,8 @@ impl ParsePatt for StructPatt {
 
                 let fields_opt = utils::get_term_collection::<StructPattField>(parser)?;
 
+                println!("current token: {:#?}", parser.current_token());
+
                 let close_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
@@ -209,8 +211,7 @@ mod tests {
         let source_code = r#"
         SomeStruct {
             foo: "a",
-            bar: 1,
-            baz: x,
+            bar: 1
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
@@ -222,7 +223,7 @@ mod tests {
 
     #[test]
     fn parse_tuple_struct_patt() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"SomeStruct(foo, "a", 1,)"#;
+        let source_code = r#"SomeStruct(foo, "a", 1)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

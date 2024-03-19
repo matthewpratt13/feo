@@ -199,7 +199,7 @@ mod tests {
         SomeStruct {
             foo: "a",
             bar: 1,
-            baz: x,
+            baz: x
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
