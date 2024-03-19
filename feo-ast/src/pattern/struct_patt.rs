@@ -26,12 +26,6 @@ impl Spanned for StructPatt {
 }
 
 #[derive(Debug, Clone)]
-pub struct StructPattFields {
-    pub first_field: StructPattField,
-    pub subsequent_fields_opt: Option<Vec<StructPattField>>,
-}
-
-#[derive(Debug, Clone)]
 pub struct StructPattField {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub field_content: (Identifier, Box<Pattern>),
@@ -41,7 +35,7 @@ pub struct StructPattField {
 pub struct TupleStructPatt {
     pub id: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub fields_opt: Option<TupleStructPattFields>,
+    pub fields_opt: Option<TermCollection<TupleStructPattField>>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -53,8 +47,6 @@ impl Spanned for TupleStructPatt {
         Span::join(s1, s2)
     }
 }
+
 #[derive(Debug, Clone)]
-pub struct TupleStructPattFields {
-    pub first_field: Box<Pattern>,
-    pub subsequent_fields_opt: Option<Vec<Pattern>>,
-}
+pub struct TupleStructPattField(pub Box<Pattern>);

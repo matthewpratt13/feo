@@ -20,9 +20,7 @@ pub use self::{
     range_patt::{
         RangeFromPatt, RangeInclusivePatt, RangePattBound, RangePattKind, RangeToInclusivePatt,
     },
-    struct_patt::{
-        StructPatt, StructPattField, StructPattFields, TupleStructPatt, TupleStructPattFields,
-    },
+    struct_patt::{StructPatt, StructPattField, TupleStructPatt, TupleStructPattField},
     tuple_patt::{TuplePatt, TuplePattElements},
     wildcard_patt::WildcardPatt,
 };
