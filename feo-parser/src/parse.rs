@@ -38,6 +38,12 @@ pub trait ParseTerm {
         Self: Sized;
 }
 
+pub trait ParseTermCollection {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized;
+}
+
 pub trait ParseExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where

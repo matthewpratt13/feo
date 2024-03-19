@@ -26,9 +26,7 @@ pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
     block_expr::BlockExpr,
     call_expr::{FunctionCallExpr, MethodCallExpr},
-    closure_expr::{
-        ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
-    },
+    closure_expr::{ClosureParam, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock},
     conditional_expr::{IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr},
     field_access_expr::FieldAccessExpr,
     iteration_expr::{
@@ -155,6 +153,21 @@ pub enum ExprWithoutBlock {
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
+}
+
+#[derive(Debug, Clone)]
+pub struct TermCollection<T> {
+    first_term: T,
+    subsequent_terms_opt: Option<Vec<T>>,
+}
+
+impl<T> TermCollection<T> {
+    pub fn new(first_term: T, subsequent_terms_opt: Option<Vec<T>>) -> Self {
+        Self {
+            first_term,
+            subsequent_terms_opt,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

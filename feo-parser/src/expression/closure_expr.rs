@@ -1,7 +1,6 @@
 use feo_ast::{
     expression::{
-        ClosureParam, ClosureParams, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
-        Expression,
+        ClosureParam, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock, Expression,
     },
     pattern::Pattern,
     token::Token,
@@ -30,7 +29,7 @@ impl ParseTerm for ClosureParamsOpt {
         {
             parser.next_token();
 
-            if let Some(params) = ClosureParams::parse(parser)? {
+            if let Some(params) = utils::get_term_collection::<ClosureParam>(parser)? {
                 let pipe_opt = parser.peek_current();
 
                 if let Some(Punctuation {
@@ -105,44 +104,6 @@ impl ParseTerm for ClosureParam {
     }
 }
 
-impl ParseTerm for ClosureParams {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_params: Vec<ClosureParam> = Vec::new();
-
-        if let Some(first_param) = ClosureParam::parse(parser)? {
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_param) = ClosureParam::parse(parser)? {
-                    subsequent_params.push(next_param);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_params.is_empty() {
-                true => Ok(Some(ClosureParams {
-                    first_param,
-                    subsequent_params_opt: None,
-                })),
-                false => Ok(Some(ClosureParams {
-                    first_param,
-                    subsequent_params_opt: Some(subsequent_params),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
-
 impl ParseExpr for ClosureWithoutBlock {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -202,25 +163,6 @@ mod tests {
             ClosureParam::parse(&mut parser).expect("unable to parse closure parameter");
 
         Ok(println!("{:#?}", closure_param))
-    }
-
-    #[test]
-    fn parse_closure_params() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-        #[abstract]
-        #[export]
-        foo: u64,
-        #[unsafe]
-        bar: bool,
-        baz: char
-        "#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let closure_params =
-            ClosureParams::parse(&mut parser).expect("unable to parse `ClosureParams`");
-
-        Ok(println!("{:#?}", closure_params))
     }
 
     #[test]

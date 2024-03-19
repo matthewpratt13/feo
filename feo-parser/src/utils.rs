@@ -1,4 +1,4 @@
-use feo_ast::expression::{Value, ValueCollection};
+use feo_ast::expression::{TermCollection, Value, ValueCollection};
 use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
 
@@ -39,13 +39,13 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
     }
 }
 
-pub fn get_term_collection<T: ParseTerm, U: ParseTerm>(
+pub fn get_term_collection<T: ParseTerm>(
     parser: &mut Parser,
-) -> Result<Option<U>, Vec<CompilerError>> {
+) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
     let mut terms: Vec<T> = Vec::new();
 
     if let Some(first_term) = T::parse(parser)? {
-        parser.next_token();
+        // parser.next_token();
 
         while let Some(Punctuation {
             punc_kind: PuncKind::Comma,
@@ -56,7 +56,7 @@ pub fn get_term_collection<T: ParseTerm, U: ParseTerm>(
 
             if let Some(next_term) = T::parse(parser)? {
                 terms.push(next_term);
-                parser.next_token();
+                // parser.next_token();
             } else {
                 break;
             }
@@ -66,7 +66,7 @@ pub fn get_term_collection<T: ParseTerm, U: ParseTerm>(
 
         let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
 
-        return Ok(Some(U::new(first_term, subsequent_terms_opt)));
+        return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
     } else {
         return Ok(None);
     }

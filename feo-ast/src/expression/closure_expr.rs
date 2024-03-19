@@ -5,12 +5,12 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, pattern::Pattern, ty::Type};
 
-use super::{BlockExpr, Expression};
+use super::{BlockExpr, Expression, TermCollection};
 
 #[derive(Debug, Clone)]
 pub enum ClosureParamsOpt {
     None(DblPipe),
-    Some((Pipe, ClosureParams, Pipe)),
+    Some((Pipe, TermCollection<ClosureParam>, Pipe)),
 }
 
 impl Spanned for ClosureParamsOpt {
@@ -58,26 +58,6 @@ impl Spanned for ClosureWithoutBlock {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ClosureParams {
-    pub first_param: ClosureParam,
-    pub subsequent_params_opt: Option<Vec<ClosureParam>>,
-}
-
-impl Spanned for ClosureParams {
-    fn span(&self) -> Span {
-        let s1 = self.first_param.span();
-        let s2 = match &self.subsequent_params_opt {
-            Some(sp) => match sp.last() {
-                Some(cp) => cp.span(),
-                None => self.first_param.span(),
-            },
-            None => self.first_param.span(),
-        };
-
-        Span::join(s1, s2)
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct ClosureParam {
