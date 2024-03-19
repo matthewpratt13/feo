@@ -221,6 +221,8 @@ impl ParseTerm for TupleStructDef {
 
                     let fields_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
 
+                    parser.next_token();
+
                     let close_parenthesis_opt = parser.peek_current();
 
                     if let Some(Delimiter {

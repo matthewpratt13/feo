@@ -105,6 +105,8 @@ impl ParseTerm for EnumVariantStruct {
 
                 let fields_opt = utils::get_term_collection(parser)?;
 
+                parser.next_token();
+
                 let close_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
@@ -152,6 +154,8 @@ impl ParseTerm for EnumVariantTuple {
                 parser.next_token();
 
                 let elements_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
+
+                parser.next_token();
 
                 let close_parenthesis_opt = parser.peek_current();
 
@@ -218,6 +222,8 @@ impl ParseItem for EnumDef {
                     parser.next_token();
 
                     let enum_variants_opt = utils::get_term_collection::<EnumVariant>(parser)?;
+
+                    parser.next_token();
 
                     let close_brace_opt = parser.peek_current();
 

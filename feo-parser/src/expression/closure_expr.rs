@@ -30,6 +30,8 @@ impl ParseTerm for ClosureParamsOpt {
             parser.next_token();
 
             if let Some(params) = utils::get_term_collection::<ClosureParam>(parser)? {
+                parser.next_token();
+
                 let pipe_opt = parser.peek_current();
 
                 if let Some(Punctuation {
