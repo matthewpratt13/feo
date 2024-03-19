@@ -9,7 +9,7 @@ impl ParsePatt for IdentifierPatt {
     where
         Self: Sized,
     {
-        let kw_ref_opt = parser.peek_current::<Keyword>();
+        let kw_ref_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwRef,
@@ -19,7 +19,7 @@ impl ParsePatt for IdentifierPatt {
             parser.next_token();
         }
 
-        let kw_mut_opt = parser.peek_current::<Keyword>();
+        let kw_mut_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwMut,

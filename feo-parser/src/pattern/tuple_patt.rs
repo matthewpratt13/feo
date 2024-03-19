@@ -27,7 +27,7 @@ impl ParseTerm for TuplePattElements {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -41,7 +41,7 @@ impl ParseTerm for TuplePattElements {
 
             parser.next_token();
 
-            let trailing_comma_opt = parser.peek_current::<Punctuation>();
+            let trailing_comma_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
@@ -75,7 +75,7 @@ impl ParsePatt for TuplePatt {
     where
         Self: Sized,
     {
-        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+        let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -85,7 +85,7 @@ impl ParsePatt for TuplePatt {
             parser.next_token();
 
             if let Some(elements) = TuplePattElements::parse(parser)? {
-                let close_parenthesis_opt = parser.peek_next::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_next();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),

@@ -48,7 +48,7 @@ impl ParseTerm for PubCrateVisibility {
     where
         Self: Sized,
     {
-        let kw_pub_opt = parser.peek_current::<Keyword>();
+        let kw_pub_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwPub,
@@ -57,7 +57,7 @@ impl ParseTerm for PubCrateVisibility {
         {
             parser.next_token();
 
-            let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+            let open_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -66,7 +66,7 @@ impl ParseTerm for PubCrateVisibility {
             {
                 parser.next_token();
 
-                let kw_crate_opt = parser.peek_current::<Keyword>();
+                let kw_crate_opt = parser.peek_current();
 
                 if let Some(Keyword {
                     keyword_kind: KeywordKind::KwCrate,
@@ -75,7 +75,7 @@ impl ParseTerm for PubCrateVisibility {
                 {
                     parser.next_token();
 
-                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                    let close_parenthesis_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Parenthesis, DelimOrientation::Close),

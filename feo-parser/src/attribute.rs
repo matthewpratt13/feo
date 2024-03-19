@@ -49,7 +49,7 @@ impl ParseTerm for InnerAttr {
     where
         Self: Sized,
     {
-        let hash_bang_opt = parser.peek_current::<Punctuation>();
+        let hash_bang_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::HashBang,
@@ -58,7 +58,7 @@ impl ParseTerm for InnerAttr {
         {
             parser.next_token();
 
-            let open_bracket_opt = parser.peek_current::<Delimiter>();
+            let open_bracket_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -70,7 +70,7 @@ impl ParseTerm for InnerAttr {
                 if let Some(attribute) = parser.peek_current::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current::<Delimiter>();
+                    let close_bracket_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
@@ -112,7 +112,7 @@ impl ParseTerm for OuterAttr {
     where
         Self: Sized,
     {
-        let hash_sign_opt = parser.peek_current::<Punctuation>();
+        let hash_sign_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
@@ -121,7 +121,7 @@ impl ParseTerm for OuterAttr {
         {
             parser.next_token();
 
-            let open_bracket_opt = parser.peek_current::<Delimiter>();
+            let open_bracket_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -133,7 +133,7 @@ impl ParseTerm for OuterAttr {
                 if let Some(attribute) = parser.peek_current::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current::<Delimiter>();
+                    let close_bracket_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),

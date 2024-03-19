@@ -26,7 +26,7 @@ impl ParseTerm for TypeParamBounds {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Plus,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -60,7 +60,7 @@ impl ParseTerm for TypeBound {
         Self: Sized,
     {
         if let Some(ty) = Type::parse(parser)? {
-            let colon_opt = parser.peek_current::<Punctuation>();
+            let colon_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
@@ -94,7 +94,7 @@ impl ParseTerm for WhereClause {
     {
         let mut subsequent_bounds: Vec<TypeBound> = Vec::new();
 
-        let kw_where_opt = parser.peek_current::<Keyword>();
+        let kw_where_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwWhere,
@@ -107,7 +107,7 @@ impl ParseTerm for WhereClause {
                 while let Some(Punctuation {
                     punc_kind: PuncKind::Comma,
                     ..
-                }) = parser.peek_current::<Punctuation>()
+                }) = parser.peek_current()
                 {
                     parser.next_token();
 

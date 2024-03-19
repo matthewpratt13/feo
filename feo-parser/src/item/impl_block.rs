@@ -65,7 +65,7 @@ impl ParseItem for InherentImplBlock {
 
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
-        let kw_impl_opt = parser.peek_current::<Keyword>();
+        let kw_impl_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwImpl,
@@ -79,7 +79,7 @@ impl ParseItem for InherentImplBlock {
 
                 let where_clause_opt = WhereClause::parse(parser)?;
 
-                let open_brace_opt = parser.peek_current::<Delimiter>();
+                let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -98,7 +98,7 @@ impl ParseItem for InherentImplBlock {
                         while let Some(Punctuation {
                             punc_kind: PuncKind::Comma,
                             ..
-                        }) = parser.peek_current::<Punctuation>()
+                        }) = parser.peek_current()
                         {
                             parser.next_token();
 
@@ -112,7 +112,7 @@ impl ParseItem for InherentImplBlock {
 
                         utils::skip_trailing_comma(parser)?;
 
-                        let close_brace_opt = parser.peek_current::<Delimiter>();
+                        let close_brace_opt = parser.peek_current();
 
                         if let Some(Delimiter {
                             delim: (DelimKind::Brace, DelimOrientation::Close),
@@ -171,7 +171,7 @@ impl ParseItem for TraitImplBlock {
 
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
-        let kw_impl_opt = parser.peek_current::<Keyword>();
+        let kw_impl_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwImpl,
@@ -179,7 +179,7 @@ impl ParseItem for TraitImplBlock {
         }) = kw_impl_opt
         {
             if let Some(implemented_trait_path) = PathType::parse(parser)? {
-                let kw_for_opt = parser.peek_current::<Keyword>();
+                let kw_for_opt = parser.peek_current();
 
                 if let Some(Keyword {
                     keyword_kind: KeywordKind::KwFor,
@@ -193,7 +193,7 @@ impl ParseItem for TraitImplBlock {
 
                         let where_clause_opt = WhereClause::parse(parser)?;
 
-                        let open_brace_opt = parser.peek_current::<Delimiter>();
+                        let open_brace_opt = parser.peek_current();
 
                         if let Some(Delimiter {
                             delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -213,7 +213,7 @@ impl ParseItem for TraitImplBlock {
 
                                 utils::skip_trailing_comma(parser)?;
 
-                                let close_brace_opt = parser.peek_current::<Delimiter>();
+                                let close_brace_opt = parser.peek_current();
 
                                 if let Some(Delimiter {
                                     delim: (DelimKind::Brace, DelimOrientation::Close),

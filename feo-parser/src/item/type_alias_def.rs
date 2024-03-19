@@ -27,7 +27,7 @@ impl ParseItem for TypeAliasDef {
             None
         };
 
-        let kw_type_opt = parser.peek_current::<Keyword>();
+        let kw_type_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwType,
@@ -49,7 +49,7 @@ impl ParseItem for TypeAliasDef {
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Equals,
                     ..
-                }) = parser.peek_current::<Punctuation>()
+                }) = parser.peek_current()
                 {
                     parser.next_token();
 
@@ -60,7 +60,7 @@ impl ParseItem for TypeAliasDef {
                         None
                     };
 
-                    let semicolon_opt = parser.peek_current::<Punctuation>();
+                    let semicolon_opt = parser.peek_current();
 
                     if let Some(Punctuation {
                         punc_kind: PuncKind::Semicolon,

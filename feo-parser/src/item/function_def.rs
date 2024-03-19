@@ -41,7 +41,7 @@ impl ParseTerm for SelfParam {
     where
         Self: Sized,
     {
-        let ampersand_opt = parser.peek_current::<Punctuation>();
+        let ampersand_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Ampersand,
@@ -51,7 +51,7 @@ impl ParseTerm for SelfParam {
             parser.next_token();
         }
 
-        let kw_mut_opt = parser.peek_current::<Keyword>();
+        let kw_mut_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwMut,
@@ -61,7 +61,7 @@ impl ParseTerm for SelfParam {
             parser.next_token();
         }
 
-        let kw_self_opt = parser.peek_current::<Keyword>();
+        let kw_self_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwSelf,
@@ -73,7 +73,7 @@ impl ParseTerm for SelfParam {
             let type_annotation_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -107,7 +107,7 @@ impl ParseTerm for FunctionParam {
         if let Some(param_pattern) = Pattern::parse(parser)? {
             parser.next_token();
 
-            let colon_opt = parser.peek_current::<Punctuation>();
+            let colon_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
@@ -154,7 +154,7 @@ impl ParseTerm for FunctionParams {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -199,7 +199,7 @@ impl ParseItem for FunctionSig {
             None
         };
 
-        let kw_func_opt = parser.peek_current::<Keyword>();
+        let kw_func_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwFunc,
@@ -211,7 +211,7 @@ impl ParseItem for FunctionSig {
             if let Some(function_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let open_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -226,7 +226,7 @@ impl ParseItem for FunctionSig {
                         None
                     };
 
-                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                    let close_parenthesis_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -238,7 +238,7 @@ impl ParseItem for FunctionSig {
                         let return_type_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::ThinArrow,
                             ..
-                        }) = parser.peek_current::<Punctuation>()
+                        }) = parser.peek_current()
                         {
                             parser.next_token();
 

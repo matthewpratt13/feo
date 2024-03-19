@@ -9,7 +9,7 @@ impl ParseType for ReferenceType {
     where
         Self: Sized,
     {
-        let ampersand_opt = parser.peek_current::<Punctuation>();
+        let ampersand_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::Ampersand,
@@ -18,7 +18,7 @@ impl ParseType for ReferenceType {
         {
             parser.next_token();
 
-            let kw_mut_opt = parser.peek_current::<Keyword>();
+            let kw_mut_opt = parser.peek_current();
 
             if let Some(Keyword {
                 keyword_kind: KeywordKind::KwMut,

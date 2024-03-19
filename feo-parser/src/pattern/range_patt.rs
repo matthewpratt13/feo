@@ -39,7 +39,7 @@ impl ParsePatt for RangeFromPatt {
         if let Some(from) = parser.peek_current::<RangePattBound>() {
             parser.next_token();
 
-            let dbl_dot_opt = parser.peek_current::<Punctuation>();
+            let dbl_dot_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DblDot,
@@ -69,7 +69,7 @@ impl ParsePatt for RangeInclusivePatt {
         if let Some(from) = parser.peek_current::<RangePattBound>() {
             parser.next_token();
 
-            let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+            let dot_dot_equals_opt = parser.peek_current();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DotDotEquals,
@@ -111,7 +111,7 @@ impl ParsePatt for RangeToInclusivePatt {
     where
         Self: Sized,
     {
-        let dot_dot_equals_opt = parser.peek_current::<Punctuation>();
+        let dot_dot_equals_opt = parser.peek_current();
 
         if let Some(Punctuation {
             punc_kind: PuncKind::DotDotEquals,

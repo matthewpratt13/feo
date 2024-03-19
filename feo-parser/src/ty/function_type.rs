@@ -23,7 +23,7 @@ impl ParseType for FunctionType {
     where
         Self: Sized,
     {
-        let kw_func_opt = parser.peek_current::<Keyword>();
+        let kw_func_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwFunc,
@@ -32,7 +32,7 @@ impl ParseType for FunctionType {
         {
             parser.next_token();
 
-            let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+            let open_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -47,7 +47,7 @@ impl ParseType for FunctionType {
                     None
                 };
 
-                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -59,7 +59,7 @@ impl ParseType for FunctionType {
                     let return_type_opt = if let Some(Punctuation {
                         punc_kind: PuncKind::ThinArrow,
                         ..
-                    }) = parser.peek_current::<Punctuation>()
+                    }) = parser.peek_current()
                     {
                         parser.next_token();
 

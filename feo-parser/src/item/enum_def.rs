@@ -65,7 +65,7 @@ impl ParseTerm for EnumVariants {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -113,7 +113,7 @@ impl ParseTerm for EnumVariantStruct {
     where
         Self: Sized,
     {
-        let open_brace_opt = parser.peek_current::<Delimiter>();
+        let open_brace_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -128,7 +128,7 @@ impl ParseTerm for EnumVariantStruct {
                 None
             };
 
-            let close_brace_opt = parser.peek_current::<Delimiter>();
+            let close_brace_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Close),
@@ -156,7 +156,7 @@ impl ParseTerm for EnumVariantTuple {
     where
         Self: Sized,
     {
-        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+        let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -171,7 +171,7 @@ impl ParseTerm for EnumVariantTuple {
                 None
             };
 
-            let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+            let close_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -208,7 +208,7 @@ impl ParseItem for EnumDef {
             None
         };
 
-        let kw_enum_opt = parser.peek_current::<Keyword>();
+        let kw_enum_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwEnum,
@@ -220,7 +220,7 @@ impl ParseItem for EnumDef {
             if let Some(enum_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let open_brace_opt = parser.peek_current::<Delimiter>();
+                let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -235,7 +235,7 @@ impl ParseItem for EnumDef {
                         None
                     };
 
-                    let close_brace_opt = parser.peek_current::<Delimiter>();
+                    let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),

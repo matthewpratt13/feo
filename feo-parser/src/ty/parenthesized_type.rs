@@ -12,7 +12,7 @@ impl ParseType for ParenthesizedType {
     where
         Self: Sized,
     {
-        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+        let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -24,7 +24,7 @@ impl ParseType for ParenthesizedType {
             if let Some(ty) = Type::parse(parser)? {
                 parser.next_token();
 
-                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),

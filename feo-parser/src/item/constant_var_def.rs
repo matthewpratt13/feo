@@ -27,7 +27,7 @@ impl ParseItem for ConstantVarDef {
             None
         };
 
-        let kw_const_opt = parser.peek_current::<Keyword>();
+        let kw_const_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwConst,
@@ -42,14 +42,14 @@ impl ParseItem for ConstantVarDef {
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
-                }) = parser.peek_current::<Punctuation>()
+                }) = parser.peek_current()
                 {
                     parser.next_token();
 
                     if let Some(item_type) = Type::parse(parser)? {
                         parser.next_token();
 
-                        let equals_opt = parser.peek_current::<Punctuation>();
+                        let equals_opt = parser.peek_current();
 
                         if let Some(Punctuation {
                             punc_kind: PuncKind::Equals,
@@ -65,7 +65,7 @@ impl ParseItem for ConstantVarDef {
                                 None
                             };
 
-                            let semicolon_opt = parser.peek_current::<Punctuation>();
+                            let semicolon_opt = parser.peek_current();
 
                             if let Some(Punctuation {
                                 punc_kind: PuncKind::Semicolon,

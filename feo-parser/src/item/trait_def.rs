@@ -55,7 +55,7 @@ impl ParseItem for TraitDef {
             None
         };
 
-        let kw_trait_opt = parser.peek_current::<Keyword>();
+        let kw_trait_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwTrait,
@@ -76,7 +76,7 @@ impl ParseItem for TraitDef {
 
                 let where_clause_opt = WhereClause::parse(parser)?;
 
-                let open_brace_opt = parser.peek_current::<Delimiter>();
+                let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -97,7 +97,7 @@ impl ParseItem for TraitDef {
 
                     utils::skip_trailing_comma(parser)?;
 
-                    let close_brace_opt = parser.peek_current::<Delimiter>();
+                    let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),

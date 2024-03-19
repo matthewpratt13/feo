@@ -9,7 +9,7 @@ impl ParseType for SelfType {
     where
         Self: Sized,
     {
-        let kw_self_opt = parser.peek_current::<Keyword>();
+        let kw_self_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwSelfType,

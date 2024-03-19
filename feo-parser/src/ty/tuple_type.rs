@@ -19,7 +19,7 @@ impl ParseType for TupleType {
     {
         let mut elements: Vec<Type> = Vec::new();
 
-        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+        let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -36,7 +36,7 @@ impl ParseType for TupleType {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -53,7 +53,7 @@ impl ParseType for TupleType {
             if let Some(trailing_element) = Type::parse(parser)? {
                 parser.next_token();
 
-                let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -105,7 +105,7 @@ impl ParseType for UnitType {
     where
         Self: Sized,
     {
-        let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+        let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -114,7 +114,7 @@ impl ParseType for UnitType {
         {
             parser.next_token();
 
-            let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+            let close_parenthesis_opt = parser.peek_current();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Close),

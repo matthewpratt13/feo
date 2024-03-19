@@ -2,9 +2,9 @@ use feo_ast::{token::Token, ty::ArrayType, Type};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
-    literal::LiteralKind,
+    literal::UIntType,
     punctuation::PuncKind,
-    Delimiter, Punctuation, U64Primitive,
+    Delimiter, Literal, Punctuation, U64Primitive,
 };
 
 use crate::{parse::ParseType, parser::Parser};
@@ -14,7 +14,7 @@ impl ParseType for ArrayType {
     where
         Self: Sized,
     {
-        let open_bracket_opt = parser.peek_current::<Delimiter>();
+        let open_bracket_opt = parser.peek_current();
 
         if let Some(Delimiter {
             delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -29,16 +29,14 @@ impl ParseType for ArrayType {
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Semicolon,
                     ..
-                }) = parser.peek_current::<Punctuation>()
+                }) = parser.peek_current()
                 {
                     parser.next_token();
 
-                    if let Some(LiteralKind::UInt(num_elements)) =
-                        parser.peek_current::<LiteralKind>()
-                    {
+                    if let Some(num_elements) = parser.peek_current::<Literal<UIntType>>() {
                         parser.next_token();
 
-                        let close_bracket_opt = parser.peek_current::<Delimiter>();
+                        let close_bracket_opt = parser.peek_current();
 
                         if let Some(Delimiter {
                             delim: (DelimKind::Bracket, DelimOrientation::Close),
@@ -48,8 +46,9 @@ impl ParseType for ArrayType {
                             return Ok(Some(ArrayType {
                                 open_bracket: open_bracket_opt.unwrap(),
                                 element_type: Box::new(element_type),
-                                num_elements: U64Primitive::try_from(num_elements)
-                                    .expect("error converting `Literal<u64>` to `U64Primitive`"),
+                                num_elements: U64Primitive::try_from(num_elements).expect(
+                                    "error converting `Literal<UIntType>` to `U64Primitive`",
+                                ),
                                 close_bracket: close_bracket_opt.unwrap(),
                             }));
                         }

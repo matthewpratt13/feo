@@ -40,7 +40,7 @@ impl ParseTerm for StructDefField {
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -85,7 +85,7 @@ impl ParseTerm for StructDefFields {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -127,7 +127,7 @@ impl ParseItem for StructDef {
             None
         };
 
-        let kw_struct_opt = parser.peek_current::<Keyword>();
+        let kw_struct_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwStruct,
@@ -146,7 +146,7 @@ impl ParseItem for StructDef {
                     None
                 };
 
-                let open_brace_opt = parser.peek_current::<Delimiter>();
+                let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -161,7 +161,7 @@ impl ParseItem for StructDef {
                         None
                     };
 
-                    let close_brace_opt = parser.peek_current::<Delimiter>();
+                    let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Brace, DelimOrientation::Close),
@@ -245,7 +245,7 @@ impl ParseTerm for TupleStructDefFields {
             while let Some(Punctuation {
                 punc_kind: PuncKind::Comma,
                 ..
-            }) = parser.peek_current::<Punctuation>()
+            }) = parser.peek_current()
             {
                 parser.next_token();
 
@@ -287,7 +287,7 @@ impl ParseTerm for TupleStructDef {
             None
         };
 
-        let kw_struct_opt = parser.peek_current::<Keyword>();
+        let kw_struct_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwStruct,
@@ -299,7 +299,7 @@ impl ParseTerm for TupleStructDef {
             if let Some(struct_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+                let open_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -314,7 +314,7 @@ impl ParseTerm for TupleStructDef {
                         None
                     };
 
-                    let close_parenthesis_opt = parser.peek_current::<Delimiter>();
+                    let close_parenthesis_opt = parser.peek_current();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -330,7 +330,7 @@ impl ParseTerm for TupleStructDef {
                             None
                         };
 
-                        let semicolon_opt = parser.peek_current::<Punctuation>();
+                        let semicolon_opt = parser.peek_current();
 
                         if let Some(Punctuation {
                             punc_kind: PuncKind::Semicolon,

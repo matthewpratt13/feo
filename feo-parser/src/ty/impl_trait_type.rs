@@ -9,7 +9,7 @@ impl ParseType for ImplTraitType {
     where
         Self: Sized,
     {
-        let kw_impl_opt = parser.peek_current::<Keyword>();
+        let kw_impl_opt = parser.peek_current();
 
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwImpl,
