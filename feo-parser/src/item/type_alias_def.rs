@@ -1,6 +1,7 @@
 use feo_ast::{
     item::{TypeAliasDef, VisibilityKind},
     token::Token,
+    ty::TraitBound,
     Type,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -39,7 +40,7 @@ impl ParseItem for TypeAliasDef {
             if let Some(type_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let type_param_bounds_opt = utils::get_term_collection(parser)?;
+                let type_param_bounds_opt = utils::get_term_collection::<TraitBound>(parser)?;
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Equals,
