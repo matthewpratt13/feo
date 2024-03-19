@@ -78,8 +78,6 @@ impl ParsePatt for StructPatt {
 
                 let fields_opt = utils::get_term_collection(parser)?;
 
-                parser.next_token();
-
                 let close_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {

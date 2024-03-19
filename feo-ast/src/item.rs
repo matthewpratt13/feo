@@ -34,7 +34,7 @@ pub use self::{
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_block::ModBlock,
     struct_def::{
-        StructDef, StructDefField, TupleStructDef, TupleStructDefField, TupleStructDefFields,
+        StructDef, StructDefField, TupleStructDef, TupleStructDefField,
     },
     trait_def::{TraitDef, TraitDefItem},
     type_alias_def::TypeAliasDef,

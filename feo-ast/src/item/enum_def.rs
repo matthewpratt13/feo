@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, expression::TermCollection};
 
-use super::{StructDefField, TupleStructDefFields, VisibilityKind};
+use super::{StructDefField, TupleStructDefField, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub enum EnumVariantType {
@@ -76,7 +76,7 @@ impl Spanned for EnumVariantStruct {
 #[derive(Debug, Clone)]
 pub struct EnumVariantTuple {
     pub open_parenthesis: Parenthesis,
-    pub elements_opt: Option<TupleStructDefFields>,
+    pub elements_opt: Option<TermCollection<TupleStructDefField>>,
     pub close_parenthesis: Parenthesis,
 }
 

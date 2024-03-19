@@ -1,7 +1,6 @@
 use feo_ast::{
     item::{
-        StructDef, StructDefField, TupleStructDef, TupleStructDefField, TupleStructDefFields,
-        VisibilityKind, WhereClause,
+        StructDef, StructDefField, TupleStructDef, TupleStructDefField, VisibilityKind, WhereClause,
     },
     token::Token,
     Type,
@@ -125,7 +124,6 @@ impl ParseItem for StructDef {
                         ..
                     }) = close_brace_opt
                     {
-
                         return Ok(Some(StructDef {
                             attributes_opt,
                             visibility_opt,
@@ -190,44 +188,6 @@ impl ParseTerm for TupleStructDefField {
     }
 }
 
-impl ParseTerm for TupleStructDefFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_fields: Vec<TupleStructDefField> = Vec::new();
-
-        if let Some(first_field) = TupleStructDefField::parse(parser)? {
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_field) = TupleStructDefField::parse(parser)? {
-                    subsequent_fields.push(next_field);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_fields.is_empty() {
-                true => Ok(Some(TupleStructDefFields {
-                    first_field,
-                    subsequent_fields_opt: None,
-                })),
-                false => Ok(Some(TupleStructDefFields {
-                    first_field,
-                    subsequent_fields_opt: Some(subsequent_fields),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
-
 impl ParseTerm for TupleStructDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -263,11 +223,9 @@ impl ParseTerm for TupleStructDef {
                 {
                     parser.next_token();
 
-                    let fields_opt = if let Some(f) = TupleStructDefFields::parse(parser)? {
-                        Some(f)
-                    } else {
-                        None
-                    };
+                    let fields_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
+
+                    parser.next_token();
 
                     let close_parenthesis_opt = parser.peek_current();
 
