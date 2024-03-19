@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::attribute::OuterAttr;
+use crate::{attribute::OuterAttr, expression::TermCollection};
 
 use super::{StructDefFields, TupleStructDefFields, VisibilityKind};
 
@@ -21,7 +21,7 @@ pub struct EnumDef {
     pub kw_enum: KwEnum,
     pub enum_name: Identifier,
     pub open_brace: Brace,
-    pub enum_variants_opt: Option<EnumVariants>,
+    pub enum_variants_opt: Option<TermCollection<EnumVariant>>,
     pub close_brace: Brace,
 }
 
@@ -47,12 +47,6 @@ impl Spanned for EnumDef {
 
         Span::join(s1, s2)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct EnumVariants {
-    pub first_variant: EnumVariant,
-    pub subsequent_variants_opt: Option<Vec<EnumVariant>>,
 }
 
 #[derive(Debug, Clone)]

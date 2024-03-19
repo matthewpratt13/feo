@@ -25,7 +25,7 @@ use self::struct_def::StructDefKind;
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
     enum_def::{
-        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
+        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType,
     },
     extern_crate_decl::{AsClause, ExternCrateDecl},
     function_def::{

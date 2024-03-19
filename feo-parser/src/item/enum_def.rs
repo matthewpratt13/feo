@@ -1,6 +1,6 @@
 use feo_ast::{
     item::{
-        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, EnumVariants,
+        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType,
         StructDefFields, TupleStructDefFields, VisibilityKind,
     },
     token::Token,
@@ -9,8 +9,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
-    punctuation::PuncKind,
-    Delimiter, Identifier, Keyword, Punctuation,
+    Delimiter, Identifier, Keyword,
 };
 
 use crate::{
@@ -48,44 +47,6 @@ impl ParseTerm for EnumVariant {
                 variant_name,
                 variant_type_opt,
             }))
-        } else {
-            Ok(None)
-        }
-    }
-}
-
-impl ParseTerm for EnumVariants {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_variants: Vec<EnumVariant> = Vec::new();
-
-        if let Some(first_variant) = EnumVariant::parse(parser)? {
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_variant) = EnumVariant::parse(parser)? {
-                    subsequent_variants.push(next_variant);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_variants.is_empty() {
-                true => Ok(Some(EnumVariants {
-                    first_variant,
-                    subsequent_variants_opt: None,
-                })),
-                false => Ok(Some(EnumVariants {
-                    first_variant,
-                    subsequent_variants_opt: Some(subsequent_variants),
-                })),
-            }
         } else {
             Ok(None)
         }
@@ -228,11 +189,7 @@ impl ParseItem for EnumDef {
                 {
                     parser.next_token();
 
-                    let enum_variants_opt = if let Some(e) = EnumVariants::parse(parser)? {
-                        Some(e)
-                    } else {
-                        None
-                    };
+                    let enum_variants_opt = utils::get_term_collection(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 
