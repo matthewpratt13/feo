@@ -76,7 +76,7 @@ impl ParsePatt for StructPatt {
             {
                 parser.next_token();
 
-                let fields_opt = utils::get_term_collection(parser)?;
+                let fields_opt = utils::get_term_collection::<StructPattField>(parser)?;
 
                 let close_brace_opt = parser.peek_current();
 

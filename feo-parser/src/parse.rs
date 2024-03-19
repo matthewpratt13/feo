@@ -1364,6 +1364,7 @@ impl ParsePatt for Pattern {
             if &id.name == "_" {
                 return Ok(Some(Pattern::WildcardPatt(WildcardPatt(id))));
             }
+            
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
