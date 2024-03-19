@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
-        StructDef, StructDefField, StructDefFields, TupleStructDef, TupleStructDefField,
-        TupleStructDefFields, VisibilityKind, WhereClause,
+        StructDef, StructDefField, TupleStructDef, TupleStructDefField, TupleStructDefFields,
+        VisibilityKind, WhereClause,
     },
     token::Token,
     Type,
@@ -74,45 +74,6 @@ impl ParseTerm for StructDefField {
     }
 }
 
-impl ParseTerm for StructDefFields {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let mut subsequent_fields: Vec<StructDefField> = Vec::new();
-
-        if let Some(first_field) = StructDefField::parse(parser)? {
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_field) = StructDefField::parse(parser)? {
-                    subsequent_fields.push(next_field);
-                } else {
-                    break;
-                }
-            }
-
-            match &subsequent_fields.is_empty() {
-                true => Ok(Some(StructDefFields {
-                    first_field,
-                    subsequent_fields_opt: None,
-                })),
-
-                false => Ok(Some(StructDefFields {
-                    first_field,
-                    subsequent_fields_opt: Some(subsequent_fields),
-                })),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-}
-
 impl ParseItem for StructDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -155,11 +116,7 @@ impl ParseItem for StructDef {
                 {
                     parser.next_token();
 
-                    let fields_opt = if let Some(f) = StructDefFields::parse(parser)? {
-                        Some(f)
-                    } else {
-                        None
-                    };
+                    let fields_opt = utils::get_term_collection(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 

@@ -24,20 +24,17 @@ use self::struct_def::StructDefKind;
 
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
-    enum_def::{
-        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType,
-    },
+    enum_def::{EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType},
     extern_crate_decl::{AsClause, ExternCrateDecl},
     function_def::{
-        FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionSig,
-        FunctionWithBlock, SelfParam,
+        FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionSig, FunctionWithBlock,
+        SelfParam,
     },
     impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},
     import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
     mod_block::ModBlock,
     struct_def::{
-        StructDef, StructDefField, StructDefFields, TupleStructDef, TupleStructDefField,
-        TupleStructDefFields,
+        StructDef, StructDefField, TupleStructDef, TupleStructDefField, TupleStructDefFields,
     },
     trait_def::{TraitDef, TraitDefItem},
     type_alias_def::TypeAliasDef,

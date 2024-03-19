@@ -1,7 +1,6 @@
 use feo_ast::{
     item::{
-        FuncOrMethodParam, FunctionParam, FunctionParams, FunctionSig, FunctionWithBlock,
-        SelfParam, VisibilityKind,
+        FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam, VisibilityKind,
     },
     pattern::Pattern,
     token::Token,
@@ -178,11 +177,7 @@ impl ParseItem for FunctionSig {
                 {
                     parser.next_token();
 
-                    let function_params_opt = if let Some(fp) = FunctionParams::parse(parser)? {
-                        Some(fp)
-                    } else {
-                        None
-                    };
+                    let function_params_opt = utils::get_term_collection(parser)?;
 
                     let close_parenthesis_opt = parser.peek_current();
 
@@ -284,18 +279,6 @@ mod tests {
             FunctionParam::parse(&mut parser).expect("unable to parse function parameter");
 
         Ok(println!("{:#?}", function_param))
-    }
-
-    #[test]
-    fn parse_function_params() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"foo: u64, bar: bool, baz: char"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let function_params =
-            FunctionParams::parse(&mut parser).expect("unable to parse `FunctionParams`");
-
-        Ok(println!("{:#?}", function_params))
     }
 
     #[test]

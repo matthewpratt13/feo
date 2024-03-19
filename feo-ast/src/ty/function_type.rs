@@ -3,13 +3,17 @@ use feo_types::{
     type_utils::{KwFunc, Parenthesis},
 };
 
-use crate::{expression::ClosureParamsOpt, item::FunctionParams, Type};
+use crate::{
+    expression::{ClosureParamsOpt, TermCollection},
+    item::FunctionParam,
+    Type,
+};
 
 #[derive(Debug, Clone)]
 pub struct FunctionType {
     pub kw_func: KwFunc,
     pub open_parenthesis: Parenthesis,
-    pub function_params_opt: Option<FunctionParams>,
+    pub function_params_opt: Option<TermCollection<FunctionParam>>,
     pub close_parenthesis: Parenthesis,
     pub return_type_opt: Option<Box<Type>>,
 }

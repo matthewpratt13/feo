@@ -4,7 +4,7 @@ use feo_types::{
     Identifier,
 };
 
-use crate::{attribute::OuterAttr, ty::Type};
+use crate::{attribute::OuterAttr, expression::TermCollection, ty::Type};
 
 use super::{VisibilityKind, WhereClause};
 
@@ -22,7 +22,7 @@ pub struct StructDef {
     pub struct_name: Identifier,
     pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
-    pub fields_opt: Option<StructDefFields>,
+    pub fields_opt: Option<TermCollection<StructDefField>>,
     pub close_brace: Brace,
 }
 
@@ -43,12 +43,6 @@ impl Spanned for StructDef {
 
         Span::join(s1, s2)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct StructDefFields {
-    pub first_field: StructDefField,
-    pub subsequent_fields_opt: Option<Vec<StructDefField>>,
 }
 
 #[derive(Debug, Clone)]

@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
         EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType,
-        StructDefFields, TupleStructDefFields, VisibilityKind,
+        TupleStructDefFields, VisibilityKind,
     },
     token::Token,
 };
@@ -82,11 +82,7 @@ impl ParseTerm for EnumVariantStruct {
         {
             parser.next_token();
 
-            let fields_opt = if let Some(f) = StructDefFields::parse(parser)? {
-                Some(f)
-            } else {
-                None
-            };
+            let fields_opt = utils::get_term_collection(parser)?;
 
             let close_brace_opt = parser.peek_current();
 
