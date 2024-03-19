@@ -37,16 +37,9 @@ impl ParseItem for TypeAliasDef {
             parser.next_token();
 
             if let Some(type_name) = parser.peek_current::<Identifier>() {
-                // parser.next_token();
-
-                let type_param_bounds_opt = if let Some(tpb) = utils::get_term_collection(parser)? {
-                    parser.next_token();
-                    Some(tpb)
-                } else {
-                    None
-                };
-                
                 parser.next_token();
+
+                let type_param_bounds_opt = utils::get_term_collection(parser)?;
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Equals,
