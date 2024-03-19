@@ -43,8 +43,6 @@ impl ParseType for FunctionType {
 
                 let function_params_opt = utils::get_term_collection(parser)?;
 
-                parser.next_token();
-
                 let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {

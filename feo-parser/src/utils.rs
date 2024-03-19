@@ -45,22 +45,26 @@ pub fn get_term_collection<T: ParseTerm>(
     let mut terms: Vec<T> = Vec::new();
 
     if let Some(first_term) = T::parse(parser)? {
+        parser.next_token();
+
         while let Some(Punctuation {
             punc_kind: PuncKind::Comma,
             ..
-        }) = parser.peek_next()
+        }) = parser.peek_current()
         {
-            parser.next_token();
             parser.next_token();
 
             if let Some(next_term) = T::parse(parser)? {
                 terms.push(next_term);
+                parser.next_token();
             } else {
                 break;
             }
         }
 
         let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
+
+        skip_trailing_comma(parser)?;
 
         return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
     } else {

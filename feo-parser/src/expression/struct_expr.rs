@@ -79,7 +79,7 @@ impl ParseExpr for StructExpr {
             {
                 parser.next_token();
 
-                let fields_opt = utils::get_term_collection(parser)?;
+                let fields_opt = utils::get_term_collection::<StructExprField>(parser)?;
 
                 let close_brace_opt = parser.peek_current();
 
@@ -199,7 +199,7 @@ mod tests {
         SomeStruct {
             foo: "a",
             bar: 1,
-            baz: x,
+            baz: x
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
@@ -212,7 +212,7 @@ mod tests {
 
     #[test]
     fn parse_tuple_struct_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"SomeStruct(foo, "a", 1)"#;
+        let source_code = r#"SomeStruct(foo, "a", x)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
