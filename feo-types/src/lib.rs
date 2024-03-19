@@ -35,4 +35,4 @@ pub mod span;
 pub mod type_annotation;
 pub use crate::type_annotation::BuiltInType;
 
-pub mod utils;
+pub mod type_utils;

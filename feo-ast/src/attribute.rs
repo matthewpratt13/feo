@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{
+    type_utils::{
         Bracket, HashBang, HashSign, KwAbstract, KwContract, KwExport, KwExtern, KwPayable,
         KwStorage, KwTest, KwTopic, KwUnsafe,
     },

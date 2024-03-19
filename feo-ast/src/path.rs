@@ -2,7 +2,7 @@
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::{KwCrate, KwSelf, KwSelfType, KwSuper},
+    type_utils::{KwCrate, KwSelf, KwSelfType, KwSuper},
     Identifier,
 };
 

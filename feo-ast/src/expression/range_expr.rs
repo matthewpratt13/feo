@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{DblDot, DotDotEquals},
+    type_utils::{DblDot, DotDotEquals},
 };
 
 use super::Value;

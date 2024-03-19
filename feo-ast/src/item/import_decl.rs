@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Asterisk, Brace, Comma, DblColon, KwImport, Semicolon},
+    type_utils::{Asterisk, Brace, Comma, DblColon, KwImport, Semicolon},
 };
 
 use crate::path::SimplePath;

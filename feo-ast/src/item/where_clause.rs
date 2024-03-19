@@ -1,4 +1,4 @@
-use feo_types::utils::KwWhere;
+use feo_types::type_utils::KwWhere;
 
 use crate::ty::{TraitBound, Type};
 

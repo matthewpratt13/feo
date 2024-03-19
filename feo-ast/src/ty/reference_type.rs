@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Ampersand, KwMut},
+    type_utils::{Ampersand, KwMut},
 };
 
 use super::Type;

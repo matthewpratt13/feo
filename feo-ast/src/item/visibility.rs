@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{KwCrate, KwPub, Parenthesis},
+    type_utils::{KwCrate, KwPub, Parenthesis},
 };
 
 #[derive(Debug, Clone)]

@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Comma, Parenthesis},
+    type_utils::{Comma, Parenthesis},
 };
 
 use super::Pattern;

@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::KwReturn,
+    type_utils::KwReturn,
 };
 
 use super::Expression;

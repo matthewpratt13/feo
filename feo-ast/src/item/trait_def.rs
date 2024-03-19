@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, KwTrait},
+    type_utils::{Brace, KwTrait},
     Identifier,
 };
 

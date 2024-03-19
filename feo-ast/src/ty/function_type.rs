@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{KwFunc, Parenthesis},
+    type_utils::{KwFunc, Parenthesis},
 };
 
 use crate::{expression::ClosureParamsOpt, item::FunctionParams, Type};

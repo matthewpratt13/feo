@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, KwStruct, Parenthesis, Semicolon},
+    type_utils::{Brace, KwStruct, Parenthesis, Semicolon},
     Identifier,
 };
 

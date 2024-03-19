@@ -2,7 +2,7 @@
 
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Colon, Equals, KwLet, Semicolon},
+    type_utils::{Colon, Equals, KwLet, Semicolon},
 };
 
 use crate::{

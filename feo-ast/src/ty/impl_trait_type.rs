@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::KwImpl,
+    type_utils::KwImpl,
 };
 
 use crate::path::PathType;

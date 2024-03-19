@@ -1,7 +1,7 @@
 use feo_types::{
     literal::{FloatType, IntType, Literal, UIntType},
     span::{Span, Spanned},
-    utils::{DblDot, DotDotEquals},
+    type_utils::{DblDot, DotDotEquals},
     U256,
 };
 

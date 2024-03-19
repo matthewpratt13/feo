@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{Brace, KwElse, KwIf, KwMatch},
+    type_utils::{Brace, KwElse, KwIf, KwMatch},
 };
 
 use crate::{

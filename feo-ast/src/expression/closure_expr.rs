@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{DblPipe, Pipe},
+    type_utils::{DblPipe, Pipe},
 };
 
 use crate::{attribute::OuterAttr, pattern::Pattern, ty::Type};

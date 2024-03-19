@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::Bracket,
+    type_utils::Bracket,
     U64Primitive,
 };
 

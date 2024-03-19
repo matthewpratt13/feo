@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::Underscore,
+    type_utils::Underscore,
 };
 
 #[derive(Debug, Clone)]

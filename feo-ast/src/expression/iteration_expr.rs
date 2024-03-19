@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::{KwBreak, KwContinue, KwFor, KwIn, KwLoop, KwWhile},
+    type_utils::{KwBreak, KwContinue, KwFor, KwIn, KwLoop, KwWhile},
 };
 
 use crate::pattern::Pattern;

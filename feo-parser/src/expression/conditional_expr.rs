@@ -11,7 +11,7 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    utils::KwElse,
+    type_utils::KwElse,
     Delimiter, Keyword, Punctuation,
 };
 

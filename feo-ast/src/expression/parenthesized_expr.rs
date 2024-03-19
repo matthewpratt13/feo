@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    utils::Parenthesis,
+    type_utils::Parenthesis,
 };
 
 use super::Expression;
