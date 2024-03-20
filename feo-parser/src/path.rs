@@ -42,7 +42,7 @@ impl ParseTerm for SimplePath {
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
-            }) = parser.peek_next::<Punctuation>()
+            }) = parser.peek_next()
             {
                 parser.next_token();
 

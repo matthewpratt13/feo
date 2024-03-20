@@ -1,9 +1,10 @@
 use feo_ast::{
     item::{TypeBound, WhereClause},
-    path::PathType,
+    path::{PathIdenSegmentKind, PathType},
+    token::Token,
     Type,
 };
-use feo_error::error::CompilerError;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
@@ -46,16 +47,21 @@ impl ParseTerm for TypeBound {
 
                         if let Some(_) = parser.peek_next::<Identifier>() {
                             parser.next_token();
+
                             if let Some(next_bound) = PathType::parse(parser)? {
                                 type_param_bounds.push(next_bound);
                                 // parser.next_token();
                             } else {
+                                parser.log_error(ParserErrorKind::UnexpectedToken {
+                                    expected: "path type".to_string(),
+                                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                                });
                                 break;
                             }
+                        } else {
+                            break;
                         }
                     }
-
-                    // parser.next_token();
 
                     println!("current token: {:?}", parser.current_token());
 
