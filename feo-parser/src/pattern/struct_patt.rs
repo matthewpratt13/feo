@@ -187,7 +187,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn parse_struct_patt_field() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
