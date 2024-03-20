@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Ampersand, KwFunc, KwMut, KwSelf, Parenthesis, Semicolon},
+    type_utils::{Ampersand, KwFunc, KwMut, KwSelf, Parenthesis},
     Identifier,
 };
 
@@ -12,21 +12,6 @@ use crate::{
 };
 
 use super::VisibilityKind;
-
-#[derive(Debug, Clone)]
-pub enum FunctionDefKind {
-    FuncSig((FunctionSig, Semicolon)),
-    FuncDef(FunctionWithBlock),
-}
-
-impl Spanned for FunctionDefKind {
-    fn span(&self) -> Span {
-        match self {
-            FunctionDefKind::FuncSig(fs) => fs.0.span(),
-            FunctionDefKind::FuncDef(fd) => fd.span(),
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub enum FuncOrMethodParam {

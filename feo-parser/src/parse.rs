@@ -62,6 +62,12 @@ pub trait ParsePatt {
         Self: Sized;
 }
 
+pub trait ParseStatement {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized;
+}
+
 pub trait ParseType {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where

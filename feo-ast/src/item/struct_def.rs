@@ -9,12 +9,6 @@ use crate::{attribute::OuterAttr, expression::TermCollection, ty::Type};
 use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
-pub enum StructDefKind {
-    Struct(StructDef),
-    TupleStruct(TupleStructDef),
-}
-
-#[derive(Debug, Clone)]
 pub struct StructDef {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
@@ -82,12 +76,6 @@ impl Spanned for TupleStructDef {
         Span::join(s1, s2)
     }
 }
-
-// #[derive(Debug, Clone)]
-// pub struct TupleStructDefFields {
-//     pub first_field: TupleStructDefField,
-//     pub subsequent_fields_opt: Option<Vec<TupleStructDefField>>,
-// }
 
 #[derive(Debug, Clone)]
 pub struct TupleStructDefField {

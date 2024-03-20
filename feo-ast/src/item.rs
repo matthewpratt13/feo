@@ -12,26 +12,16 @@ mod trait_def;
 mod type_alias_def;
 mod visibility;
 
-use feo_types::{
-    span::{Span, Spanned},
-    Identifier,
-};
-
-use crate::path::PathExpr;
-
-use self::struct_def::StructDefKind;
+use feo_types::span::{Span, Spanned};
 
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
     enum_def::{EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType},
     extern_crate_decl::{AsClause, ExternCrateDecl},
-    function_def::{
-        FuncOrMethodParam, FunctionDefKind, FunctionParam, FunctionSig, FunctionWithBlock,
-        SelfParam,
-    },
+    function_def::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
     impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},
-    import_decl::{ImportDecl, PathSubsetRecursive, PathWildcard, PathWithAsClause},
-    mod_block::ModBlock,
+    import_decl::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard, PathWithAsClause},
+    mod_block::{ModWithBody, ModWithoutBody},
     struct_def::{StructDef, StructDefField, TupleStructDef, TupleStructDefField},
     trait_def::{TraitDef, TraitDefItem},
     type_alias_def::TypeAliasDef,
@@ -46,19 +36,20 @@ pub enum Item {
     StaticVarDef(StaticVarDef),
     EnumDef(EnumDef),
     ExternCrateDecl(ExternCrateDecl),
-    FunctionDef(FunctionDefKind),
+    FunctionSig(FunctionSig),
+    FunctionWithBlock(FunctionWithBlock),
     InherentImplBlock(InherentImplBlock),
     TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
     PathWithAsClause(PathWithAsClause),
-    ModBlock(ModBlock),
-    StructDef(StructDefKind),
+    ModWithBody(ModWithBody),
+    ModWithoutBody(ModWithoutBody),
+    StructDef(StructDef),
+    TupleStructDef(TupleStructDef),
     TraitDef(TraitDef),
     TypeAliasDef(TypeAliasDef),
-    PathExpr(PathExpr),
-    Identifier(Identifier),
 }
 
 impl Spanned for Item {
@@ -68,25 +59,20 @@ impl Spanned for Item {
             Item::StaticVarDef(sv) => sv.span(),
             Item::EnumDef(ed) => ed.span(),
             Item::ExternCrateDecl(ecd) => ecd.span(),
-            Item::FunctionDef(fd) => fd.span(),
+            Item::FunctionSig(fs) => fs.span(),
+            Item::FunctionWithBlock(fwb) => fwb.span(),
             Item::InherentImplBlock(ii) => ii.span(),
             Item::TraitImplBlock(ti) => ti.span(),
             Item::ImportDecl(imp) => imp.span(),
             Item::PathWildcard(pwc) => pwc.span(),
             Item::PathSubsetRecursive(psr) => psr.span(),
             Item::PathWithAsClause(pwa) => pwa.span(),
-            Item::ModBlock(mb) => match mb {
-                ModBlock::ModWithBody(mwb) => mwb.span(),
-                ModBlock::ModWithoutBody(mb) => mb.span(),
-            },
-            Item::StructDef(sd) => match sd {
-                StructDefKind::Struct(s) => s.span(),
-                StructDefKind::TupleStruct(ts) => ts.span(),
-            },
+            Item::ModWithBody(mwb) => mwb.span(),
+            Item::ModWithoutBody(m) => m.span(),
+            Item::StructDef(sd) => sd.span(),
+            Item::TupleStructDef(tsd) => tsd.span(),
             Item::TraitDef(td) => td.span(),
             Item::TypeAliasDef(tad) => tad.span(),
-            Item::PathExpr(pe) => pe.span(),
-            Item::Identifier(id) => id.span(),
         }
     }
 }

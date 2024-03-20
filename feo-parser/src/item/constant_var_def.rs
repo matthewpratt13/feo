@@ -1,6 +1,6 @@
 use feo_ast::{
     expression::Expression,
-    item::{ConstantVarDef, VisibilityKind},
+    item::{ConstantVarDef, StaticVarDef, VisibilityKind},
     token::Token,
     Type,
 };
@@ -121,6 +121,16 @@ impl ParseItem for ConstantVarDef {
     }
 }
 
+impl ParseItem for StaticVarDef {
+    #[allow(unused_variables)]
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -134,8 +144,8 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let constant_var_def =
-            ConstantVarDef::parse(&mut parser).expect("unable to parse constant variable definition");
+        let constant_var_def = ConstantVarDef::parse(&mut parser)
+            .expect("unable to parse constant variable definition");
 
         Ok(println!("{:#?}", constant_var_def))
     }
