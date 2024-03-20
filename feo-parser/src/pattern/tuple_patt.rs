@@ -1,70 +1,28 @@
 use feo_ast::{
-    pattern::{Pattern, TuplePatt, TuplePattElements},
+    pattern::{Pattern, TuplePatt, TuplePattElement},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
-    punctuation::PuncKind,
-    Delimiter, Punctuation,
+    Delimiter,
 };
 
 use crate::{
     parse::{ParsePatt, ParseTerm},
     parser::Parser,
+    utils,
 };
 
-impl ParseTerm for TuplePattElements {
+impl ParseTerm for TuplePattElement {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        let mut subsequent_elements: Vec<Pattern> = Vec::new();
-
-        if let Some(first_element) = Pattern::parse(parser)? {
-            parser.next_token();
-
-            while let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = parser.peek_current()
-            {
-                parser.next_token();
-
-                if let Some(next_element) = Pattern::parse(parser)? {
-                    subsequent_elements.push(next_element);
-                    parser.next_token();
-                } else {
-                    break;
-                }
-            }
-
-            parser.next_token();
-
-            let trailing_comma_opt = parser.peek_current();
-
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Comma,
-                ..
-            }) = trailing_comma_opt
-            {
-                parser.next_token();
-            }
-
-            match &subsequent_elements.is_empty() {
-                true => Ok(Some(TuplePattElements {
-                    first_element: Box::new(first_element),
-                    subsequent_elements_opt: None,
-                    trailing_comma_opt,
-                })),
-                false => Ok(Some(TuplePattElements {
-                    first_element: Box::new(first_element),
-                    subsequent_elements_opt: Some(subsequent_elements),
-                    trailing_comma_opt,
-                })),
-            }
+        if let Some(p) = Pattern::parse(parser)? {
+            return Ok(Some(TuplePattElement(Box::new(p))));
         } else {
-            Ok(None)
+            return Ok(None);
         }
     }
 }
@@ -83,7 +41,7 @@ impl ParsePatt for TuplePatt {
         {
             parser.next_token();
 
-            if let Some(elements) = TuplePattElements::parse(parser)? {
+            if let Some(elements) = utils::get_term_collection::<TuplePattElement>(parser)? {
                 let close_parenthesis_opt = parser.peek_next();
 
                 if let Some(Delimiter {
@@ -124,18 +82,6 @@ mod tests {
     use crate::test_utils;
 
     use super::*;
-
-    #[test]
-    fn parse_tuple_patt_elements() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"1, "a", x"#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let tuple_patt_elements =
-            TuplePattElements::parse(&mut parser).expect("unable to parse tuple pattern elements");
-
-        Ok(println!("{:#?}", tuple_patt_elements))
-    }
 
     #[test]
     fn parse_tuple_patt() -> Result<(), Vec<CompilerError>> {
