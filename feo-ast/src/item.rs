@@ -11,7 +11,6 @@ mod struct_def;
 mod trait_def;
 mod type_alias_def;
 mod visibility;
-mod where_clause;
 
 use feo_types::{
     span::{Span, Spanned},
@@ -37,7 +36,6 @@ pub use self::{
     trait_def::{TraitDef, TraitDefItem},
     type_alias_def::TypeAliasDef,
     visibility::{PubCrateVisibility, VisibilityKind},
-
 };
 
 // items are components of a crate, organized by a set of modules

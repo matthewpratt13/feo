@@ -6,4 +6,3 @@ mod struct_def;
 mod trait_def;
 mod type_alias_def;
 mod visibility;
-mod where_clause;
