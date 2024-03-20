@@ -82,5 +82,6 @@ pub type QuestionMark = Punctuation;
 pub type Semicolon = Punctuation;
 pub type ForwardSlashEquals = Punctuation;
 pub type ThinArrow = Punctuation;
+pub type ColonColonAsterisk = Punctuation;
 
 pub type Underscore = Identifier;

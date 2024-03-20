@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Asterisk, Brace, Comma, DblColon, KwImport, Semicolon},
+    type_utils::{Brace, ColonColonAsterisk, Comma, DblColon, KwImport, Semicolon},
 };
 
 use crate::{attribute::OuterAttr, path::SimplePath};
@@ -43,24 +43,14 @@ impl Spanned for ImportDecl {
 
 #[derive(Debug, Clone)]
 pub struct PathWildcard {
-    full_path: Vec<Option<(Option<SimplePath>, DblColon)>>,
-    asterisk: Asterisk,
+    pub full_path: SimplePath,
+    pub colon_colon_asterisk: ColonColonAsterisk,
 }
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
-        let s1 = match self.full_path.first() {
-            Some(p) => match p {
-                Some(q) => match &q.0 {
-                    Some(r) => r.span(),
-                    None => self.asterisk.span(),
-                },
-                None => self.asterisk.span(),
-            },
-            None => self.asterisk.span(),
-        };
-
-        let s2 = self.asterisk.span();
+        let s1 = self.full_path.span();
+        let s2 = self.colon_colon_asterisk.span();
 
         Span::join(s1, s2)
     }

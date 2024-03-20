@@ -52,6 +52,8 @@ pub enum PuncKind {
     ThinArrow,
     FatArrow,
     DblPipe,
+
+    ColonColonAsterisk,
 }
 
 impl PuncKind {
@@ -99,6 +101,7 @@ impl PuncKind {
             PuncKind::ThinArrow => "->",
             PuncKind::FatArrow => "=>",
             PuncKind::DblPipe => "||",
+            PuncKind::ColonColonAsterisk => "::*",
         }
     }
 }
@@ -150,6 +153,7 @@ impl FromStr for PuncKind {
             "->" => Ok(PuncKind::ThinArrow),
             "=>" => Ok(PuncKind::FatArrow),
             "||" => Ok(PuncKind::DblPipe),
+            "::*" => Ok(PuncKind::ColonColonAsterisk),
             _ => Err(TypeErrorKind::UnexpectedPunctuation),
         }?;
 
