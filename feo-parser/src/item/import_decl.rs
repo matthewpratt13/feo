@@ -161,7 +161,7 @@ mod tests {
 
     #[test]
     fn parse_path_subset_recursive() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::module::{Object, Trait, self}"#;
+        let source_code = r#"crate::module::{Object::method, Trait, self}"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

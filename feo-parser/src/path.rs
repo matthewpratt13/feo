@@ -52,10 +52,10 @@ impl ParseTerm for SimplePath {
                     subsequent_segments.push(next_path_segment);
                     parser.next_token();
                 } else {
-                    // parser.log_error(ParserErrorKind::UnexpectedToken {
-                    //     expected: "`SimplePathSegmentKind`".to_string(),
-                    //     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    // });
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`SimplePathSegmentKind`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
                     break;
                 }
             }
