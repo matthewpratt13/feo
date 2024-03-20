@@ -89,11 +89,6 @@ impl ParsePatt for RangeInclusivePatt {
                     expected: "range pattern bound".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`..=`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             }
         } else {
             return Ok(None);

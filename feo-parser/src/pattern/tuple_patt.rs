@@ -42,7 +42,7 @@ impl ParsePatt for TuplePatt {
             parser.next_token();
 
             if let Some(elements) = utils::get_term_collection::<TuplePattElement>(parser)? {
-                let close_parenthesis_opt = parser.peek_next();
+                let close_parenthesis_opt = parser.peek_current();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
