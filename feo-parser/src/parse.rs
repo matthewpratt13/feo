@@ -1118,6 +1118,7 @@ impl ParseExpr for ExprWithoutBlock {
 
                     _ => (),
                 }
+                
                 match parser.peek_next::<Punctuation>() {
                     Some(Punctuation {
                         punc_kind: PuncKind::LessThan,
@@ -1364,14 +1365,14 @@ impl ParsePatt for Pattern {
             if &id.name == "_" {
                 return Ok(Some(Pattern::WildcardPatt(WildcardPatt(id))));
             }
-            
+
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
                 }) => {
-                    if let Some(ts) = TupleStructPatt::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Pattern::TupleStructPatt(ts)));
+                    if let Some(tsp) = TupleStructPatt::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Pattern::TupleStructPatt(tsp)));
                     }
                 }
 
@@ -1622,6 +1623,10 @@ impl ParseTerm for Value {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
+            if &id.name == "_" {
+                return Ok(Some(Value::UnderscoreExpr(UnderscoreExpr(id))));
+            }
+
             match parser.peek_next::<Delimiter>() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -1644,6 +1649,7 @@ impl ParseTerm for Value {
                         return Ok(Some(Value::StructExpr(se)));
                     }
                 }
+
                 _ => (),
             }
 
@@ -1656,29 +1662,24 @@ impl ParseTerm for Value {
         }
 
         if let Some(d) = parser.peek_current::<Delimiter>() {
-            if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                match &d.delim {
-                    (DelimKind::Parenthesis, DelimOrientation::Open) => {
-                        if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::ParenthesizedExpr(par)));
-                        }
-
-                        if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::TupleExpr(te)));
-                        }
+            match &d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::ParenthesizedExpr(par)));
                     }
 
-                    (DelimKind::Bracket, DelimOrientation::Open) => {
-                        if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Value::ArrayExpr(ae)));
-                        }
+                    if let Some(te) = TupleExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::TupleExpr(te)));
                     }
-                    _ => (),
                 }
 
-                return Ok(Some(Value::ParenthesizedExpr(par)));
-            } else {
-                return Ok(None);
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(ae) = ArrayExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::ArrayExpr(ae)));
+                    }
+                }
+
+                _ => return Ok(None),
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             return Ok(Some(Value::Literal(l)));
@@ -1704,8 +1705,10 @@ impl ParseTerm for Value {
                     }
                 }
 
-                _ => (),
+                _ => return Ok(None),
             }
+        } else {
+            return Ok(None);
         }
 
         Err(parser.errors())

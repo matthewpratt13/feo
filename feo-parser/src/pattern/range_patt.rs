@@ -37,9 +37,7 @@ impl ParsePatt for RangeFromPatt {
         Self: Sized,
     {
         if let Some(from) = parser.peek_current::<RangePattBound>() {
-            parser.next_token();
-
-            let dbl_dot_opt = parser.peek_current();
+            let dbl_dot_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DblDot,
@@ -52,9 +50,9 @@ impl ParsePatt for RangeFromPatt {
                     from,
                     dbl_dot: dbl_dot_opt.unwrap(),
                 }));
+            } else {
+                return Ok(None);
             }
-        } else {
-            return Ok(None);
         }
 
         Err(parser.errors())
@@ -67,15 +65,14 @@ impl ParsePatt for RangeInclusivePatt {
         Self: Sized,
     {
         if let Some(from) = parser.peek_current::<RangePattBound>() {
-            parser.next_token();
-
-            let dot_dot_equals_opt = parser.peek_current();
+            let dot_dot_equals_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DotDotEquals,
                 ..
             }) = dot_dot_equals_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(to_incl) = parser.peek_current::<RangePattBound>() {

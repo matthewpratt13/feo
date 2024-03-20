@@ -32,8 +32,8 @@ impl ParseTerm for StructPattField {
             {
                 parser.next_token();
 
-                if let Some(value) = Pattern::parse(parser)? {
-                    let field_content = (field_name, Box::new(value));
+                if let Some(pattern) = Pattern::parse(parser)? {
+                    let field_content = (field_name, Box::new(pattern));
 
                     return Ok(Some(StructPattField {
                         attributes_opt,
