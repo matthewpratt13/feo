@@ -1,14 +1,16 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Comma, Parenthesis},
+    type_utils::Parenthesis,
 };
+
+use crate::expression::TermCollection;
 
 use super::Pattern;
 
 #[derive(Debug, Clone)]
 pub struct TuplePatt {
     pub open_parenthesis: Parenthesis,
-    pub elements: TuplePattElements,
+    pub elements: TermCollection<TuplePattElement>,
     pub close_parenthesis: Parenthesis,
 }
 
@@ -21,9 +23,12 @@ impl Spanned for TuplePatt {
     }
 }
 
+// #[derive(Debug, Clone)]
+// pub struct TuplePattElements {
+//     pub first_element: Box<Pattern>,
+//     pub subsequent_elements_opt: Option<Vec<Pattern>>,
+//     pub trailing_comma_opt: Option<Comma>,
+// }
+
 #[derive(Debug, Clone)]
-pub struct TuplePattElements {
-    pub first_element: Box<Pattern>,
-    pub subsequent_elements_opt: Option<Vec<Pattern>>,
-    pub trailing_comma_opt: Option<Comma>,
-}
+pub struct TuplePattElement(pub Box<Pattern>);
