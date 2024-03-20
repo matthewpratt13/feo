@@ -1,6 +1,5 @@
 mod constant_var_def;
 mod enum_def;
-mod extern_crate_decl;
 mod function_def;
 mod impl_block;
 mod import_decl;

@@ -1,4 +1,4 @@
-use feo_ast::item::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard, PathWithAsClause};
+use feo_ast::item::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard};
 use feo_error::error::CompilerError;
 
 use crate::{
@@ -27,16 +27,6 @@ impl ParseItem for PathWildcard {
 }
 
 impl ParseItem for PathSubsetRecursive {
-    #[allow(unused_variables)]
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-}
-
-impl ParseItem for PathWithAsClause {
     #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where

@@ -2,7 +2,6 @@
 
 mod constant_var_def;
 mod enum_def;
-mod extern_crate_decl;
 mod function_def;
 mod impl_block;
 mod import_decl;
@@ -17,10 +16,9 @@ use feo_types::span::{Span, Spanned};
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
     enum_def::{EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType},
-    extern_crate_decl::{AsClause, ExternCrateDecl},
     function_def::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
     impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},
-    import_decl::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard, PathWithAsClause},
+    import_decl::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard},
     mod_block::{ModWithBody, ModWithoutBody},
     struct_def::{StructDef, StructDefField, TupleStructDef, TupleStructDefField},
     trait_def::{TraitDef, TraitDefItem},
@@ -35,7 +33,6 @@ pub enum Item {
     ConstantVarDef(ConstantVarDef),
     StaticVarDef(StaticVarDef),
     EnumDef(EnumDef),
-    ExternCrateDecl(ExternCrateDecl),
     FunctionSig(FunctionSig),
     FunctionWithBlock(FunctionWithBlock),
     InherentImplBlock(InherentImplBlock),
@@ -43,7 +40,6 @@ pub enum Item {
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
     PathSubsetRecursive(PathSubsetRecursive),
-    PathWithAsClause(PathWithAsClause),
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
     StructDef(StructDef),
@@ -58,7 +54,6 @@ impl Spanned for Item {
             Item::ConstantVarDef(cv) => cv.span(),
             Item::StaticVarDef(sv) => sv.span(),
             Item::EnumDef(ed) => ed.span(),
-            Item::ExternCrateDecl(ecd) => ecd.span(),
             Item::FunctionSig(fs) => fs.span(),
             Item::FunctionWithBlock(fwb) => fwb.span(),
             Item::InherentImplBlock(ii) => ii.span(),
@@ -66,7 +61,6 @@ impl Spanned for Item {
             Item::ImportDecl(imp) => imp.span(),
             Item::PathWildcard(pwc) => pwc.span(),
             Item::PathSubsetRecursive(psr) => psr.span(),
-            Item::PathWithAsClause(pwa) => pwa.span(),
             Item::ModWithBody(mwb) => mwb.span(),
             Item::ModWithoutBody(m) => m.span(),
             Item::StructDef(sd) => sd.span(),

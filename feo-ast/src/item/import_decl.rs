@@ -5,13 +5,12 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, path::SimplePath};
 
-use super::{AsClause, VisibilityKind};
+use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub enum ImportTree {
     Wildcard(PathWildcard),
     SubsetRecursive(PathSubsetRecursive),
-    WithAsClause(PathWithAsClause),
 }
 
 #[derive(Debug, Clone)]
@@ -86,25 +85,6 @@ impl Spanned for PathSubsetRecursive {
         };
 
         let s2 = self.close_brace.span();
-
-        Span::join(s1, s2)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct PathWithAsClause {
-    path_prefix: SimplePath,
-    as_clause_opt: Option<AsClause>,
-}
-
-impl Spanned for PathWithAsClause {
-    fn span(&self) -> Span {
-        let s1 = self.path_prefix.span();
-        let s2 = if let Some(a) = &self.as_clause_opt {
-            a.span()
-        } else {
-            self.path_prefix.span()
-        };
 
         Span::join(s1, s2)
     }

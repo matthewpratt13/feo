@@ -252,4 +252,16 @@ mod tests {
 
         Ok(println!("{:#?}", constant_var_def))
     }
+
+    #[test]
+    fn parse_static_var_def() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"pub static mut foo: u64 = 2;"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let static_var_def =
+            StaticVarDef::parse(&mut parser).expect("unable to parse static variable definition");
+
+        Ok(println!("{:#?}", static_var_def))
+    }
 }
