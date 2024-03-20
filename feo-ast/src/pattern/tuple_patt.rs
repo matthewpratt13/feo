@@ -23,12 +23,5 @@ impl Spanned for TuplePatt {
     }
 }
 
-// #[derive(Debug, Clone)]
-// pub struct TuplePattElements {
-//     pub first_element: Box<Pattern>,
-//     pub subsequent_elements_opt: Option<Vec<Pattern>>,
-//     pub trailing_comma_opt: Option<Comma>,
-// }
-
 #[derive(Debug, Clone)]
 pub struct TuplePattElement(pub Box<Pattern>);
