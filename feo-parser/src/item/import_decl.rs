@@ -75,8 +75,6 @@ impl ParseItem for PathSubsetRecursive {
         Self: Sized,
     {
         if let Some(path_prefix) = SimplePath::parse(parser)? {
-            parser.next_token();
-
             let open_brace_opt = parser.peek_current();
 
             if let Some(Delimiter {
@@ -93,6 +91,9 @@ impl ParseItem for PathSubsetRecursive {
                     } else {
                         None
                     };
+
+                parser.next_token();
+                parser.next_token();
 
                 let close_brace_opt = parser.peek_current();
 
@@ -116,7 +117,10 @@ impl ParseItem for PathSubsetRecursive {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                return Ok(None);
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`{`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             }
         } else {
             return Ok(None);
@@ -153,5 +157,17 @@ mod tests {
             PathWildcard::parse(&mut parser).expect("unable to parse path wildcard");
 
         Ok(println!("{:#?}", path_wildcard))
+    }
+
+    #[test]
+    fn parse_path_subset_recursive() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"crate::module::{Object, Trait, self}"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let path_subset_recursive =
+            PathSubsetRecursive::parse(&mut parser).expect("unable to parse recursive path subset");
+
+        Ok(println!("{:#?}", path_subset_recursive))
     }
 }
