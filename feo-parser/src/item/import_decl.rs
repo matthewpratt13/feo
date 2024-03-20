@@ -1,13 +1,19 @@
 use feo_ast::{
     item::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard},
     path::SimplePath,
+    token::Token,
 };
-use feo_error::error::CompilerError;
-use feo_types::{punctuation::PuncKind, Punctuation};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+    Delimiter, Punctuation,
+};
 
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
+    utils,
 };
 
 impl ParseTerm for ImportTree {
@@ -16,7 +22,17 @@ impl ParseTerm for ImportTree {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(sp) = SimplePath::parse(parser)? {
+            if let Some(psr) = PathSubsetRecursive::parse(parser)? {
+                return Ok(Some(ImportTree::SubsetRecursive(psr)));
+            } else if let Some(pw) = PathWildcard::parse(parser)? {
+                return Ok(Some(ImportTree::Wildcard(pw)));
+            } else {
+                return Ok(Some(ImportTree::SimplePath(sp)));
+            }
+        } else {
+            return Ok(None);
+        }
     }
 }
 
@@ -58,7 +74,55 @@ impl ParseItem for PathSubsetRecursive {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(path_prefix) = SimplePath::parse(parser)? {
+            parser.next_token();
+
+            let open_brace_opt = parser.peek_current();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Brace, DelimOrientation::Open),
+                ..
+            }) = open_brace_opt
+            {
+                parser.next_token();
+
+                let recursive_tree_opt =
+                    if let Some(t) = utils::get_term_collection::<ImportTree>(parser)? {
+                        parser.next_token();
+                        Some(Box::new(t))
+                    } else {
+                        None
+                    };
+
+                let close_brace_opt = parser.peek_current();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Close),
+                    ..
+                }) = close_brace_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(PathSubsetRecursive {
+                        path_prefix,
+                        open_brace: open_brace_opt.unwrap(),
+                        recursive_tree_opt,
+                        close_brace: close_brace_opt.unwrap(),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`}`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                return Ok(None);
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

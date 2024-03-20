@@ -1,14 +1,15 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Brace, ColonColonAsterisk, Comma, DblColon, KwImport, Semicolon},
+    type_utils::{Brace, ColonColonAsterisk, KwImport, Semicolon},
 };
 
-use crate::{attribute::OuterAttr, path::SimplePath};
+use crate::{attribute::OuterAttr, expression::TermCollection, path::SimplePath};
 
 use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub enum ImportTree {
+    SimplePath(SimplePath),
     Wildcard(PathWildcard),
     SubsetRecursive(PathSubsetRecursive),
 }
@@ -58,22 +59,15 @@ impl Spanned for PathWildcard {
 
 #[derive(Debug, Clone)]
 pub struct PathSubsetRecursive {
-    path_prefix_opt: Option<(Option<SimplePath>, DblColon)>,
-    open_brace: Brace,
-    recursive_tree_opt: Option<(Box<ImportTree>, Vec<(Comma, ImportTree)>, Option<Comma>)>,
-    close_brace: Brace,
+    pub path_prefix: SimplePath,
+    pub open_brace: Brace,
+    pub recursive_tree_opt: Option<Box<TermCollection<ImportTree>>>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for PathSubsetRecursive {
     fn span(&self) -> Span {
-        let s1 = match &self.path_prefix_opt {
-            Some(p) => match &p.0 {
-                Some(q) => q.span(),
-                None => self.open_brace.span(),
-            },
-            None => self.open_brace.span(),
-        };
-
+        let s1 = self.path_prefix.span();
         let s2 = self.close_brace.span();
 
         Span::join(s1, s2)
