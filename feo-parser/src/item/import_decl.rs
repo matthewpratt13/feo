@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{ImportDecl, ImportTree, PathSubset, PathSubsetRecursive, PathWildcard},
+    item::{ImportDecl, ImportTree, PathRecursive, PathSubset, PathWildcard},
     path::SimplePath,
     token::Token,
 };
@@ -24,8 +24,10 @@ impl ParseTerm for ImportTree {
         Self: Sized,
     {
         if let Some(sp) = SimplePath::parse(parser)? {
-            if let Some(psr) = PathSubsetRecursive::parse(parser)? {
-                return Ok(Some(ImportTree::SubsetRecursive(psr)));
+            if let Some(pr) = PathRecursive::parse(parser)? {
+                return Ok(Some(ImportTree::Recursive(pr)));
+            } else if let Some(ps) = PathSubset::parse(parser)? {
+                return Ok(Some(ImportTree::Subset(ps)));
             } else if let Some(pw) = PathWildcard::parse(parser)? {
                 return Ok(Some(ImportTree::Wildcard(pw)));
             } else {
@@ -97,7 +99,7 @@ impl ParseTerm for PathSubset {
     }
 }
 
-impl ParseItem for PathWildcard {
+impl ParseTerm for PathWildcard {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -126,7 +128,7 @@ impl ParseItem for PathWildcard {
     }
 }
 
-impl ParseItem for PathSubsetRecursive {
+impl ParseTerm for PathRecursive {
     #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -165,7 +167,7 @@ impl ParseItem for PathSubsetRecursive {
                 {
                     parser.next_token();
 
-                    return Ok(Some(PathSubsetRecursive {
+                    return Ok(Some(PathRecursive {
                         path_prefix,
                         open_brace: open_brace_opt.unwrap(),
                         recursive_tree_opt,
@@ -299,10 +301,10 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let path_subset_recursive =
-            PathSubsetRecursive::parse(&mut parser).expect("unable to parse recursive path");
+        let path_recursive =
+            PathRecursive::parse(&mut parser).expect("unable to parse recursive path");
 
-        Ok(println!("{:#?}", path_subset_recursive))
+        Ok(println!("{:#?}", path_recursive))
     }
 
     #[test]

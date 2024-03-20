@@ -10,8 +10,9 @@ use super::VisibilityKind;
 #[derive(Debug, Clone)]
 pub enum ImportTree {
     SimplePath(SimplePath),
+    Subset(PathSubset),
     Wildcard(PathWildcard),
-    SubsetRecursive(PathSubsetRecursive),
+    Recursive(PathRecursive),
 }
 
 #[derive(Debug, Clone)]
@@ -58,14 +59,14 @@ impl Spanned for PathWildcard {
 }
 
 #[derive(Debug, Clone)]
-pub struct PathSubsetRecursive {
+pub struct PathRecursive {
     pub path_prefix: SimplePath,
     pub open_brace: Brace,
     pub recursive_tree_opt: Option<Box<TermCollection<ImportTree>>>,
     pub close_brace: Brace,
 }
 
-impl Spanned for PathSubsetRecursive {
+impl Spanned for PathRecursive {
     fn span(&self) -> Span {
         let s1 = self.path_prefix.span();
         let s2 = self.close_brace.span();
@@ -82,7 +83,7 @@ pub struct PathSubset {
     pub close_brace: Brace,
 }
 
-impl Spanned for PathSubset{
+impl Spanned for PathSubset {
     fn span(&self) -> Span {
         let s1 = self.path_prefix.span();
         let s2 = self.close_brace.span();
@@ -90,4 +91,3 @@ impl Spanned for PathSubset{
         Span::join(s1, s2)
     }
 }
-
