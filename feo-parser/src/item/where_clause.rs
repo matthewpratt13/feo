@@ -1,5 +1,6 @@
 use feo_ast::{
     item::{TypeBound, WhereClause},
+    path::PathType,
     token::Token,
     Type,
 };
@@ -17,7 +18,11 @@ impl ParseTerm for TypeBound {
     where
         Self: Sized,
     {
+        let mut type_param_bounds: Vec<PathType> = Vec::new();
+
         if let Some(ty) = Type::parse(parser)? {
+            // parser.next_token();
+
             let colon_opt = parser.peek_current();
 
             if let Some(Punctuation {
@@ -27,15 +32,37 @@ impl ParseTerm for TypeBound {
             {
                 parser.next_token();
 
-                let type_param_bounds_opt = utils::get_term_collection(parser)?;
-                return Ok(Some(TypeBound {
-                    ty,
-                    type_param_bounds_opt,
-                }));
+                if let Some(first_bound) = PathType::parse(parser)? {
+                    type_param_bounds.push(first_bound);
+                    parser.next_token();
+
+                    while let Some(Punctuation {
+                        punc_kind: PuncKind::Plus,
+                        ..
+                    }) = parser.peek_current()
+                    {
+                        parser.next_token();
+
+                        if let Some(next_bound) = PathType::parse(parser)? {
+                            type_param_bounds.push(next_bound);
+                            parser.next_token();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    return Ok(Some(TypeBound {
+                        ty,
+                        type_param_bounds,
+                    }));
+                } else {
+                    return Ok(None);
+                }
+            } else {
+                return Ok(None);
             }
-            Ok(None)
         } else {
-            Ok(None)
+            return Ok(None);
         }
     }
 }
@@ -45,8 +72,6 @@ impl ParseTerm for WhereClause {
     where
         Self: Sized,
     {
-        let mut subsequent_bounds: Vec<TypeBound> = Vec::new();
-
         let kw_where_opt = parser.peek_current();
 
         if let Some(Keyword {
@@ -56,49 +81,17 @@ impl ParseTerm for WhereClause {
         {
             parser.next_token();
 
-            if let Some(first_bound) = TypeBound::parse(parser)? {
-                while let Some(Punctuation {
-                    punc_kind: PuncKind::Comma,
-                    ..
-                }) = parser.peek_current()
-                {
-                    parser.next_token();
-
-                    if let Some(next_bound) = TypeBound::parse(parser)? {
-                        subsequent_bounds.push(next_bound);
-                        parser.next_token();
-                    } else {
-                        break;
-                    }
-                }
-
-                match &subsequent_bounds.is_empty() {
-                    true => {
-                        return Ok(Some(WhereClause {
-                            kw_where: kw_where_opt.unwrap(),
-                            first_bound,
-                            subsequent_bounds_opt: None,
-                        }))
-                    }
-                    false => {
-                        return Ok(Some(WhereClause {
-                            kw_where: kw_where_opt.unwrap(),
-                            first_bound,
-                            subsequent_bounds_opt: Some(subsequent_bounds),
-                        }))
-                    }
-                }
+            if let Some(type_bounds) = utils::get_term_collection::<TypeBound>(parser)? {
+                return Ok(Some(WhereClause {
+                    kw_where: kw_where_opt.unwrap(),
+                    type_bounds,
+                }));
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "type bound".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
@@ -125,7 +118,7 @@ mod tests {
         let source_code = r#"
         where 
             Self: Foo + Bar + Baz,
-            Self: Foo,
+            T: Foo
             "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;

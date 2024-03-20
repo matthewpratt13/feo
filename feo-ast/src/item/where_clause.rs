@@ -8,12 +8,11 @@ use crate::{
 #[derive(Debug, Clone)]
 pub struct WhereClause {
     pub kw_where: KwWhere,
-    pub first_bound: TypeBound,
-    pub subsequent_bounds_opt: Option<Vec<TypeBound>>,
+    pub type_bounds: TermCollection<TypeBound>,
 }
 
 #[derive(Debug, Clone)]
 pub struct TypeBound {
     pub ty: Type,
-    pub type_param_bounds_opt: Option<TermCollection<TraitBound>>,
+    pub type_param_bounds: Vec<TraitBound>,
 }
