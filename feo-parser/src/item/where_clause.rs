@@ -1,11 +1,10 @@
 use feo_ast::{
     item::{TypeBound, WhereClause},
     path::PathType,
-    token::Token,
     Type,
 };
-use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
+use feo_error::error::CompilerError;
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
     parse::{ParseTerm, ParseType},
@@ -23,6 +22,8 @@ impl ParseTerm for TypeBound {
         if let Some(ty) = Type::parse(parser)? {
             // parser.next_token();
 
+            println!("type: {:?}", ty);
+
             let colon_opt = parser.peek_current();
 
             if let Some(Punctuation {
@@ -34,22 +35,29 @@ impl ParseTerm for TypeBound {
 
                 if let Some(first_bound) = PathType::parse(parser)? {
                     type_param_bounds.push(first_bound);
-                    parser.next_token();
+                    // parser.next_token();
 
                     while let Some(Punctuation {
                         punc_kind: PuncKind::Plus,
                         ..
-                    }) = parser.peek_current()
+                    }) = parser.peek_next()
                     {
                         parser.next_token();
 
-                        if let Some(next_bound) = PathType::parse(parser)? {
-                            type_param_bounds.push(next_bound);
+                        if let Some(_) = parser.peek_next::<Identifier>() {
                             parser.next_token();
-                        } else {
-                            break;
+                            if let Some(next_bound) = PathType::parse(parser)? {
+                                type_param_bounds.push(next_bound);
+                                // parser.next_token();
+                            } else {
+                                break;
+                            }
                         }
                     }
+
+                    // parser.next_token();
+
+                    println!("current token: {:?}", parser.current_token());
 
                     return Ok(Some(TypeBound {
                         ty,
@@ -118,7 +126,7 @@ mod tests {
         let source_code = r#"
         where 
             Self: Foo + Bar + Baz,
-            T: Foo
+            Self: Foo
             "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
