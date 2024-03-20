@@ -40,14 +40,14 @@ impl Spanned for ConstantVarDef {
 
 #[derive(Debug, Clone)]
 pub struct StaticVarDef {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_static: KwStatic,
-    kw_mut_opt: Option<KwMut>,
-    item_name: Identifier,
-    item_type: Type,
-    assignment_opt: Option<Box<Expression>>,
-    semicolon: Semicolon,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_static: KwStatic,
+    pub kw_mut_opt: Option<KwMut>,
+    pub item_name: Identifier,
+    pub item_type: Type,
+    pub assignment_opt: Option<Box<Expression>>,
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for StaticVarDef {

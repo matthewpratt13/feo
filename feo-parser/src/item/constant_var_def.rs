@@ -122,7 +122,115 @@ impl ParseItem for StaticVarDef {
     where
         Self: Sized,
     {
-        todo!()
+        let attributes_opt = utils::get_attributes(parser)?;
+
+        let visibility_opt = utils::get_visibility(parser)?;
+
+        let kw_static_opt = parser.peek_current();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwStatic,
+            ..
+        }) = kw_static_opt
+        {
+            parser.next_token();
+
+            let kw_mut_opt = parser.peek_current();
+
+            if let Some(Keyword {
+                keyword_kind: KeywordKind::KwMut,
+                ..
+            }) = kw_mut_opt
+            {
+                parser.next_token();
+
+                if let Some(item_name) = parser.peek_current::<Identifier>() {
+                    parser.next_token();
+
+                    if let Some(Punctuation {
+                        punc_kind: PuncKind::Colon,
+                        ..
+                    }) = parser.peek_current()
+                    {
+                        parser.next_token();
+
+                        if let Some(item_type) = Type::parse(parser)? {
+                            parser.next_token();
+
+                            let equals_opt = parser.peek_current();
+
+                            if let Some(Punctuation {
+                                punc_kind: PuncKind::Equals,
+                                ..
+                            }) = equals_opt
+                            {
+                                parser.next_token();
+
+                                let assignment_opt = if let Some(e) = Expression::parse(parser)? {
+                                    parser.next_token();
+                                    Some(Box::new(e))
+                                } else {
+                                    None
+                                };
+
+                                let semicolon_opt = parser.peek_current();
+
+                                if let Some(Punctuation {
+                                    punc_kind: PuncKind::Semicolon,
+                                    ..
+                                }) = semicolon_opt
+                                {
+                                    parser.next_token();
+
+                                    return Ok(Some(StaticVarDef {
+                                        attributes_opt,
+                                        visibility_opt,
+                                        kw_static: kw_static_opt.unwrap(),
+                                        kw_mut_opt,
+                                        item_name,
+                                        item_type,
+                                        assignment_opt,
+                                        semicolon: semicolon_opt.unwrap(),
+                                    }));
+                                } else {
+                                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                                        expected: "`;`".to_string(),
+                                        found: parser
+                                            .current_token()
+                                            .unwrap_or(Token::EOF)
+                                            .to_string(),
+                                    });
+                                }
+                            } else {
+                                parser.log_error(ParserErrorKind::UnexpectedToken {
+                                    expected: "`=`".to_string(),
+                                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                                });
+                            }
+                        } else {
+                            parser.log_error(ParserErrorKind::UnexpectedToken {
+                                expected: "type".to_string(),
+                                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                            });
+                        }
+                    } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`:`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
+                    }
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "identifier".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
