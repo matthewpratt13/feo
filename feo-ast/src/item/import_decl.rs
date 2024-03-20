@@ -3,7 +3,7 @@ use feo_types::{
     type_utils::{Asterisk, Brace, Comma, DblColon, KwImport, Semicolon},
 };
 
-use crate::path::SimplePath;
+use crate::{attribute::OuterAttr, path::SimplePath};
 
 use super::{AsClause, VisibilityKind};
 
@@ -16,6 +16,7 @@ pub enum ImportTree {
 
 #[derive(Debug, Clone)]
 pub struct ImportDecl {
+    attributes_opt: Option<Vec<OuterAttr>>,
     visibility_opt: Option<VisibilityKind>,
     kw_import: KwImport,
     import_tree: ImportTree,
@@ -24,10 +25,15 @@ pub struct ImportDecl {
 
 impl Spanned for ImportDecl {
     fn span(&self) -> Span {
-        let s1 = if let Some(v) = &self.visibility_opt {
-            v.span()
-        } else {
-            self.kw_import.span()
+        let s1 = match &self.attributes_opt {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_import.span(),
+                },
+            },
+            None => self.kw_import.span(),
         };
 
         let s2 = self.semicolon.span();

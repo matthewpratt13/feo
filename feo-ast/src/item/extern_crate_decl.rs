@@ -4,6 +4,10 @@ use feo_types::{
     Identifier,
 };
 
+use crate::attribute::OuterAttr;
+
+use super::VisibilityKind;
+
 #[derive(Debug, Clone)]
 pub enum CrateRefKind {
     Iden(Identifier),
@@ -12,6 +16,8 @@ pub enum CrateRefKind {
 
 #[derive(Debug, Clone)]
 pub struct ExternCrateDecl {
+    attributes_opt: Option<Vec<OuterAttr>>,
+    visibility_opt: Option<VisibilityKind>,
     kw_extern_crate: (KwExtern, KwCrate),
     crate_name: CrateRefKind,
     as_clause_opt: Option<AsClause>,
@@ -20,7 +26,17 @@ pub struct ExternCrateDecl {
 
 impl Spanned for ExternCrateDecl {
     fn span(&self) -> Span {
-        let s1 = self.kw_extern_crate.0.span();
+        let s1 = match &self.attributes_opt {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_extern_crate.0.span(),
+                },
+            },
+            None => self.kw_extern_crate.0.span(),
+        };
+
         let s2 = self.semicolon.span();
 
         Span::join(s1, s2)
