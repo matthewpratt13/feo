@@ -6,8 +6,9 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
     punctuation::PuncKind,
-    Delimiter, Punctuation,
+    Delimiter, Keyword, Punctuation,
 };
 
 use crate::{
@@ -136,7 +137,55 @@ impl ParseItem for ImportDecl {
     where
         Self: Sized,
     {
-        todo!()
+        let attributes_opt = utils::get_attributes(parser)?;
+
+        let visibility_opt = utils::get_visibility(parser)?;
+
+        let kw_import_opt = parser.peek_current();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwImport,
+            ..
+        }) = kw_import_opt
+        {
+            parser.next_token();
+
+            if let Some(import_tree) = ImportTree::parse(parser)? {
+                parser.next_token();
+
+                let semicolon_opt = parser.peek_current();
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::Semicolon,
+                    ..
+                }) = semicolon_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(ImportDecl {
+                        attributes_opt,
+                        visibility_opt,
+                        kw_import: kw_import_opt.unwrap(),
+                        import_tree,
+                        semicolon: semicolon_opt.unwrap(),
+                    }));
+                }
+
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`;`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "import tree".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

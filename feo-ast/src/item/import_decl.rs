@@ -16,11 +16,11 @@ pub enum ImportTree {
 
 #[derive(Debug, Clone)]
 pub struct ImportDecl {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_import: KwImport,
-    import_tree: ImportTree,
-    semicolon: Semicolon,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_import: KwImport,
+    pub import_tree: ImportTree,
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for ImportDecl {
