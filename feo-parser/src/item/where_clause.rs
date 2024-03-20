@@ -1,16 +1,10 @@
-use feo_ast::{
-    item::{TypeBound, WhereClause},
-    path::{PathIdenSegmentKind, PathType},
-    token::Token,
-    Type,
-};
+use feo_ast::{item::TypeBound, path::PathType, token::Token, Type};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
+use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
 
 use crate::{
     parse::{ParseTerm, ParseType},
     parser::Parser,
-    utils,
 };
 
 impl ParseTerm for TypeBound {
@@ -63,8 +57,6 @@ impl ParseTerm for TypeBound {
                         }
                     }
 
-                    println!("current token: {:?}", parser.current_token());
-
                     return Ok(Some(TypeBound {
                         ty,
                         type_param_bounds,
@@ -72,34 +64,6 @@ impl ParseTerm for TypeBound {
                 } else {
                     return Ok(None);
                 }
-            } else {
-                return Ok(None);
-            }
-        } else {
-            return Ok(None);
-        }
-    }
-}
-
-impl ParseTerm for WhereClause {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let kw_where_opt = parser.peek_current();
-
-        if let Some(Keyword {
-            keyword_kind: KeywordKind::KwWhere,
-            ..
-        }) = kw_where_opt
-        {
-            parser.next_token();
-
-            if let Some(type_bounds) = utils::get_term_collection::<TypeBound>(parser)? {
-                return Ok(Some(WhereClause {
-                    kw_where: kw_where_opt.unwrap(),
-                    type_bounds,
-                }));
             } else {
                 return Ok(None);
             }
@@ -125,20 +89,5 @@ mod tests {
         let type_bound = TypeBound::parse(&mut parser).expect("unable to parse type bound");
 
         Ok(println!("{:#?}", type_bound))
-    }
-
-    #[test]
-    fn parse_where_clause() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-        where 
-            Self: Foo + Bar + Baz,
-            Self: Foo
-            "#;
-
-        let mut parser = test_utils::get_parser(source_code, false)?;
-
-        let where_clause = WhereClause::parse(&mut parser).expect("unable to parse where clause");
-
-        Ok(println!("{:#?}", where_clause))
     }
 }

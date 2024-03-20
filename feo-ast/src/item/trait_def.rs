@@ -10,9 +10,7 @@ use crate::{
     ty::TraitBound,
 };
 
-use super::{
-    ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, VisibilityKind, WhereClause,
-};
+use super::{ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub enum TraitDefItem {
@@ -29,7 +27,6 @@ pub struct TraitDef {
     pub kw_trait: KwTrait,
     pub trait_name: Identifier,
     pub type_param_bounds_opt: Option<TermCollection<TraitBound>>,
-    pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
     pub inner_attributes_opt: Option<Vec<InnerAttr>>,
     pub associated_items_opt: Option<Vec<TraitDefItem>>,

@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
         ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef,
-        VisibilityKind, WhereClause,
+        VisibilityKind,
     },
     token::Token,
 };
@@ -67,8 +67,6 @@ impl ParseItem for TraitDef {
 
                 let type_param_bounds_opt = utils::get_term_collection(parser)?;
 
-                let where_clause_opt = WhereClause::parse(parser)?;
-
                 let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
@@ -99,7 +97,6 @@ impl ParseItem for TraitDef {
                             kw_trait: kw_trait_opt.unwrap(),
                             trait_name,
                             type_param_bounds_opt,
-                            where_clause_opt,
                             open_brace: open_brace_opt.unwrap(),
                             inner_attributes_opt,
                             associated_items_opt,

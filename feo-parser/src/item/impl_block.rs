@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
         ConstantVarDef, FunctionWithBlock, InherentImplBlock, InherentImplItem, TraitImplBlock,
-        TraitImplItem, TypeAliasDef, WhereClause,
+        TraitImplItem, TypeAliasDef,
     },
     path::PathType,
     token::Token,
@@ -74,8 +74,6 @@ impl ParseItem for InherentImplBlock {
             if let Some(nominal_type) = Type::parse(parser)? {
                 parser.next_token();
 
-                let where_clause_opt = WhereClause::parse(parser)?;
-
                 let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
@@ -104,7 +102,6 @@ impl ParseItem for InherentImplBlock {
                             outer_attributes_opt,
                             kw_impl: kw_impl_opt.unwrap(),
                             nominal_type,
-                            where_clause_opt,
                             open_brace: open_brace_opt.unwrap(),
                             inner_attributes_opt,
                             associated_items_opt,
@@ -164,8 +161,6 @@ impl ParseItem for TraitImplBlock {
                     if let Some(implementing_type) = Type::parse(parser)? {
                         parser.next_token();
 
-                        let where_clause_opt = WhereClause::parse(parser)?;
-
                         let open_brace_opt = parser.peek_current();
 
                         if let Some(Delimiter {
@@ -196,7 +191,6 @@ impl ParseItem for TraitImplBlock {
                                     implemented_trait_path,
                                     implementing_type,
                                     kw_for: kw_for_opt.unwrap(),
-                                    where_clause_opt,
                                     open_brace: open_brace_opt.unwrap(),
                                     inner_attributes_opt,
                                     associated_items_opt,

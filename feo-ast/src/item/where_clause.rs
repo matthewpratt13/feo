@@ -1,15 +1,4 @@
-use feo_types::type_utils::KwWhere;
-
-use crate::{
-    expression::TermCollection,
-    ty::{TraitBound, Type},
-};
-
-#[derive(Debug, Clone)]
-pub struct WhereClause {
-    pub kw_where: KwWhere,
-    pub type_bounds: TermCollection<TypeBound>,
-}
+use crate::ty::{TraitBound, Type};
 
 #[derive(Debug, Clone)]
 pub struct TypeBound {

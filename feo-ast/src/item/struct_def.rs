@@ -6,7 +6,7 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, expression::TermCollection, ty::Type};
 
-use super::{VisibilityKind, WhereClause};
+use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub enum StructDefKind {
@@ -20,7 +20,6 @@ pub struct StructDef {
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_struct: KwStruct,
     pub struct_name: Identifier,
-    pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
     pub fields_opt: Option<TermCollection<StructDefField>>,
     pub close_brace: Brace,
@@ -62,7 +61,6 @@ pub struct TupleStructDef {
     pub open_parenthesis: Parenthesis,
     pub fields_opt: Option<TermCollection<TupleStructDefField>>,
     pub close_parenthesis: Parenthesis,
-    pub where_clause_opt: Option<WhereClause>,
     pub semicolon: Semicolon,
 }
 

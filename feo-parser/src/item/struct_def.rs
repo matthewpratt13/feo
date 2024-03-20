@@ -1,7 +1,5 @@
 use feo_ast::{
-    item::{
-        StructDef, StructDefField, TupleStructDef, TupleStructDefField, VisibilityKind, WhereClause,
-    },
+    item::{StructDef, StructDefField, TupleStructDef, TupleStructDefField, VisibilityKind},
     token::Token,
     Type,
 };
@@ -97,13 +95,6 @@ impl ParseItem for StructDef {
             if let Some(struct_name) = parser.peek_current::<Identifier>() {
                 parser.next_token();
 
-                let where_clause_opt = if let Some(wc) = WhereClause::parse(parser)? {
-                    parser.next_token();
-                    Some(wc)
-                } else {
-                    None
-                };
-
                 let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
@@ -127,7 +118,6 @@ impl ParseItem for StructDef {
                             visibility_opt,
                             kw_struct: kw_struct_opt.unwrap(),
                             struct_name,
-                            where_clause_opt,
                             open_brace: open_brace_opt.unwrap(),
                             fields_opt,
                             close_brace: close_brace_opt.unwrap(),
@@ -230,13 +220,6 @@ impl ParseTerm for TupleStructDef {
                     {
                         parser.next_token();
 
-                        let where_clause_opt = if let Some(wc) = WhereClause::parse(parser)? {
-                            parser.next_token();
-                            Some(wc)
-                        } else {
-                            None
-                        };
-
                         let semicolon_opt = parser.peek_current();
 
                         if let Some(Punctuation {
@@ -254,7 +237,6 @@ impl ParseTerm for TupleStructDef {
                                 open_parenthesis: open_parenthesis_opt.unwrap(),
                                 fields_opt,
                                 close_parenthesis: close_parenthesis_opt.unwrap(),
-                                where_clause_opt,
                                 semicolon: semicolon_opt.unwrap(),
                             }));
                         }

@@ -9,7 +9,7 @@ use crate::{
     ty::Type,
 };
 
-use super::{ConstantVarDef, FunctionWithBlock, TypeAliasDef, WhereClause};
+use super::{ConstantVarDef, FunctionWithBlock, TypeAliasDef};
 
 #[derive(Debug, Clone)]
 pub enum InherentImplItem {
@@ -29,7 +29,6 @@ pub struct InherentImplBlock {
     pub outer_attributes_opt: Option<Vec<OuterAttr>>,
     pub kw_impl: KwImpl,
     pub nominal_type: Type,
-    pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
     pub inner_attributes_opt: Option<Vec<InnerAttr>>,
     pub associated_items_opt: Option<Vec<InherentImplItem>>,
@@ -59,7 +58,6 @@ pub struct TraitImplBlock {
     pub implemented_trait_path: PathType,
     pub kw_for: KwFor,
     pub implementing_type: Type,
-    pub where_clause_opt: Option<WhereClause>,
     pub open_brace: Brace,
     pub inner_attributes_opt: Option<Vec<InnerAttr>>,
     pub associated_items_opt: Option<Vec<TraitImplItem>>,
