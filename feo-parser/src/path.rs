@@ -39,16 +39,16 @@ impl ParseTerm for SimplePath {
         let mut subsequent_segments: Vec<SimplePathSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<SimplePathSegmentKind>() {
-            parser.next_token();
+            // parser.next_token();
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
                 parser.next_token();
 
-                if let Some(next_path_segment) = parser.peek_current::<SimplePathSegmentKind>() {
+                if let Some(next_path_segment) = parser.peek_next::<SimplePathSegmentKind>() {
                     subsequent_segments.push(next_path_segment);
                     parser.next_token();
                 } else {
@@ -194,7 +194,7 @@ mod tests {
 
     #[test]
     fn parse_path_simple() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::module::Object"#;
+        let source_code = r#"crate::some_module::SomeObject"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

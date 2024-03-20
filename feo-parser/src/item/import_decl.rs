@@ -198,7 +198,7 @@ mod tests {
 
     #[test]
     fn parse_path_wildcard() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::module::*"#;
+        let source_code = r#"crate::some_module::*"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
@@ -209,14 +209,64 @@ mod tests {
     }
 
     #[test]
-    fn parse_path_subset_recursive() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::module::{Object::method, Trait, self}"#;
+    fn parse_path_subset() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        some_module::{
+            SomeObject, self, some_function, SOME_CONSTANT
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let path_subset =
+            PathSubsetRecursive::parse(&mut parser).expect("unable to parse path subset");
+
+        Ok(println!("{:#?}", path_subset))
+    }
+
+    #[test]
+    fn parse_path_recursive() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        crate::{
+            some_module::{
+                SomeObject, self
+            },
+            another_module::{
+                AnotherObject, some_function
+            },
+            yet_another_module::YetAnotherObject,
+            SOME_CONSTANT,
+            an_entire_module::*,
+        }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let path_subset_recursive =
-            PathSubsetRecursive::parse(&mut parser).expect("unable to parse recursive path subset");
+            PathSubsetRecursive::parse(&mut parser).expect("unable to parse recursive path");
 
         Ok(println!("{:#?}", path_subset_recursive))
+    }
+
+    #[test]
+    fn parse_import_decl() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[foo]
+        pub import crate::{
+            some_module::{
+                SomeObject, self
+            },
+            another_module::{
+                AnotherObject, some_function
+            },
+            yet_another_module::YetAnotherObject,
+            SOME_CONSTANT,
+            an_entire_module::*,
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let import_decl =
+            ImportDecl::parse(&mut parser).expect("unable to parse import declaration");
+
+        Ok(println!("{:#?}", import_decl))
     }
 }
