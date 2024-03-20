@@ -736,6 +736,8 @@ impl ParseExpr for Expression {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 impl ParseExpr for ExprWithoutBlock {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -1118,7 +1120,7 @@ impl ParseExpr for ExprWithoutBlock {
 
                     _ => (),
                 }
-                
+
                 match parser.peek_next::<Punctuation>() {
                     Some(Punctuation {
                         punc_kind: PuncKind::LessThan,
@@ -1356,6 +1358,8 @@ impl ParseExpr for ExprWithoutBlock {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 impl ParsePatt for Pattern {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -1498,6 +1502,8 @@ impl ParsePatt for Pattern {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 impl ParseType for Type {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -1616,6 +1622,8 @@ impl ParseType for Type {
         Err(parser.errors())
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 impl ParseTerm for Value {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
