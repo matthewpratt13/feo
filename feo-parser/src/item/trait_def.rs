@@ -1,8 +1,5 @@
 use feo_ast::{
-    item::{
-        ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef,
-        VisibilityKind,
-    },
+    item::{ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -12,11 +9,7 @@ use feo_types::{
     Delimiter, Identifier, Keyword,
 };
 
-use crate::{
-    parse::{ParseItem, ParseTerm},
-    parser::Parser,
-    utils,
-};
+use crate::{parse::ParseItem, parser::Parser, utils};
 
 impl ParseItem for TraitDefItem {
     #[allow(unused_variables)]
@@ -46,12 +39,7 @@ impl ParseItem for TraitDef {
     {
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_trait_opt = parser.peek_current();
 

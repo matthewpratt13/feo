@@ -1,6 +1,6 @@
 use feo_ast::{
     expression::Expression,
-    item::{ConstantVarDef, StaticVarDef, VisibilityKind},
+    item::{ConstantVarDef, StaticVarDef},
     token::Token,
     Type,
 };
@@ -8,7 +8,7 @@ use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseExpr, ParseItem, ParseTerm, ParseType},
+    parse::{ParseExpr, ParseItem, ParseType},
     parser::Parser,
     utils,
 };
@@ -20,12 +20,7 @@ impl ParseItem for ConstantVarDef {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_const_opt = parser.peek_current();
 

@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
         EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType,
-        TupleStructDefField, VisibilityKind,
+        TupleStructDefField,
     },
     token::Token,
 };
@@ -25,12 +25,7 @@ impl ParseTerm for EnumVariant {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         if let Some(variant_name) = parser.peek_current::<Identifier>() {
             let variant_type_opt = match parser.peek_next::<Delimiter>() {
@@ -189,12 +184,7 @@ impl ParseItem for EnumDef {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_enum_opt = parser.peek_current();
 

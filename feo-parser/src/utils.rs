@@ -1,4 +1,7 @@
-use feo_ast::expression::{TermCollection, Value, ValueCollection};
+use feo_ast::{
+    expression::{TermCollection, Value, ValueCollection},
+    item::VisibilityKind,
+};
 use feo_error::error::CompilerError;
 use feo_types::{punctuation::PuncKind, Punctuation};
 
@@ -108,6 +111,15 @@ pub fn get_value_collection(
         )));
     } else {
         return Ok(None);
+    }
+}
+
+pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec<CompilerError>> {
+    if let Some(v) = VisibilityKind::parse(parser)? {
+        parser.next_token();
+        Ok(Some(v))
+    } else {
+        Ok(None)
     }
 }
 

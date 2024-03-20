@@ -1,13 +1,9 @@
-use feo_ast::{
-    item::{TypeAliasDef, VisibilityKind},
-    token::Token,
-    Type,
-};
+use feo_ast::{item::TypeAliasDef, token::Token, Type};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseItem, ParseTerm, ParseType},
+    parse::{ParseItem, ParseType},
     parser::Parser,
     utils,
 };
@@ -20,12 +16,7 @@ impl ParseItem for TypeAliasDef {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_type_opt = parser.peek_current();
 

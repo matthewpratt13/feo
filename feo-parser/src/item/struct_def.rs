@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{StructDef, StructDefField, TupleStructDef, TupleStructDefField, VisibilityKind},
+    item::{StructDef, StructDefField, TupleStructDef, TupleStructDefField},
     token::Token,
     Type,
 };
@@ -24,12 +24,7 @@ impl ParseTerm for StructDefField {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         if let Some(field_name) = parser.peek_current::<Identifier>() {
             parser.next_token();
@@ -76,12 +71,7 @@ impl ParseItem for StructDef {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_struct_opt = parser.peek_current();
 
@@ -155,12 +145,7 @@ impl ParseTerm for TupleStructDefField {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         if let Some(field_type) = Type::parse(parser)? {
             Ok(Some(TupleStructDefField {
@@ -181,12 +166,7 @@ impl ParseTerm for TupleStructDef {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_struct_opt = parser.peek_current();
 

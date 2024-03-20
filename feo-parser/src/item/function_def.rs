@@ -1,7 +1,5 @@
 use feo_ast::{
-    item::{
-        FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam, VisibilityKind,
-    },
+    item::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
     pattern::Pattern,
     token::Token,
     Type,
@@ -149,12 +147,7 @@ impl ParseItem for FunctionSig {
     {
         let attributes_opt = utils::get_attributes(parser)?;
 
-        let visibility_opt = if let Some(v) = VisibilityKind::parse(parser)? {
-            parser.next_token();
-            Some(v)
-        } else {
-            None
-        };
+        let visibility_opt = utils::get_visibility(parser)?;
 
         let kw_func_opt = parser.peek_current();
 
