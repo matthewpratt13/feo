@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard},
+    item::{ImportDecl, ImportTree, PathSubset, PathSubsetRecursive, PathWildcard},
     path::SimplePath,
     token::Token,
 };
@@ -37,18 +37,77 @@ impl ParseTerm for ImportTree {
     }
 }
 
+impl ParseTerm for PathSubset {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(path_prefix) = SimplePath::parse(parser)? {
+            if let Some(Punctuation {
+                punc_kind: PuncKind::DblColon,
+                ..
+            }) = parser.peek_current()
+            {
+                parser.next_token();
+
+                let open_brace_opt = parser.peek_current();
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Open),
+                    ..
+                }) = open_brace_opt
+                {
+                    parser.next_token();
+
+                    let inner_paths =
+                        if let Some(sp) = utils::get_term_collection::<SimplePath>(parser)? {
+                            sp
+                        } else {
+                            return Ok(None);
+                        };
+
+                    let close_brace_opt = parser.peek_current();
+
+                    if let Some(Delimiter {
+                        delim: (DelimKind::Brace, DelimOrientation::Close),
+                        ..
+                    }) = close_brace_opt
+                    {
+                        return Ok(Some(PathSubset {
+                            path_prefix,
+                            open_brace: open_brace_opt.unwrap(),
+                            inner_paths,
+                            close_brace: close_brace_opt.unwrap(),
+                        }));
+                    }
+
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`}`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                } else {
+                    return Ok(None);
+                }
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
+    }
+}
+
 impl ParseItem for PathWildcard {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
         let full_path = if let Some(sp) = SimplePath::parse(parser)? {
+            parser.next_token();
             sp
         } else {
             return Ok(None);
         };
-
-        parser.next_token();
 
         let colon_colon_asterisk_opt = parser.peek_current();
 
@@ -57,8 +116,6 @@ impl ParseItem for PathWildcard {
             ..
         }) = colon_colon_asterisk_opt
         {
-            parser.next_token();
-
             return Ok(Some(PathWildcard {
                 full_path,
                 colon_colon_asterisk: colon_colon_asterisk_opt.unwrap(),
@@ -76,6 +133,8 @@ impl ParseItem for PathSubsetRecursive {
         Self: Sized,
     {
         if let Some(path_prefix) = SimplePath::parse(parser)? {
+            parser.next_token();
+
             let open_brace_opt = parser.peek_current();
 
             if let Some(Delimiter {
@@ -85,9 +144,10 @@ impl ParseItem for PathSubsetRecursive {
             {
                 parser.next_token();
 
+                println!("current token: {:#?}", parser.current_token());
                 let recursive_tree_opt =
                     if let Some(t) = utils::get_term_collection::<ImportTree>(parser)? {
-                        parser.next_token();
+                        // parser.next_token();
                         Some(Box::new(t))
                     } else {
                         None
@@ -217,8 +277,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let path_subset =
-            PathSubsetRecursive::parse(&mut parser).expect("unable to parse path subset");
+        let path_subset = PathSubset::parse(&mut parser).expect("unable to parse path subset");
 
         Ok(println!("{:#?}", path_subset))
     }

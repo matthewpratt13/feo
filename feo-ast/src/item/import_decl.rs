@@ -73,3 +73,21 @@ impl Spanned for PathSubsetRecursive {
         Span::join(s1, s2)
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct PathSubset {
+    pub path_prefix: SimplePath,
+    pub open_brace: Brace,
+    pub inner_paths: TermCollection<SimplePath>,
+    pub close_brace: Brace,
+}
+
+impl Spanned for PathSubset{
+    fn span(&self) -> Span {
+        let s1 = self.path_prefix.span();
+        let s2 = self.close_brace.span();
+
+        Span::join(s1, s2)
+    }
+}
+
