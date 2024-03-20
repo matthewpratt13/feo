@@ -15,6 +15,17 @@ pub enum ImportTree {
     Recursive(PathRecursive),
 }
 
+impl Spanned for ImportTree {
+    fn span(&self) -> Span {
+        match self {
+            ImportTree::SimplePath(sp) => sp.span(),
+            ImportTree::Subset(ps) => ps.span(),
+            ImportTree::Wildcard(pw) => pw.span(),
+            ImportTree::Recursive(pr) => pr.span(),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ImportDecl {
     pub attributes_opt: Option<Vec<OuterAttr>>,
@@ -59,19 +70,11 @@ impl Spanned for PathWildcard {
 }
 
 #[derive(Debug, Clone)]
-pub struct PathRecursive {
-    pub path_prefix: SimplePath,
-    pub open_brace: Brace,
-    pub recursive_tree_opt: Option<Box<TermCollection<ImportTree>>>,
-    pub close_brace: Brace,
-}
+pub struct PathRecursive(pub Box<TermCollection<ImportTree>>);
 
 impl Spanned for PathRecursive {
     fn span(&self) -> Span {
-        let s1 = self.path_prefix.span();
-        let s2 = self.close_brace.span();
-
-        Span::join(s1, s2)
+        self.0.span()
     }
 }
 

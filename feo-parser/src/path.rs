@@ -39,8 +39,6 @@ impl ParseTerm for SimplePath {
         let mut subsequent_segments: Vec<SimplePathSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<SimplePathSegmentKind>() {
-            // parser.next_token();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
@@ -50,7 +48,6 @@ impl ParseTerm for SimplePath {
 
                 if let Some(next_path_segment) = parser.peek_next::<SimplePathSegmentKind>() {
                     subsequent_segments.push(next_path_segment);
-                    parser.next_token();
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`SimplePathSegmentKind`".to_string(),
@@ -59,6 +56,7 @@ impl ParseTerm for SimplePath {
                     break;
                 }
             }
+
 
             match &subsequent_segments.is_empty() {
                 true => Ok(Some(SimplePath {

@@ -1,6 +1,6 @@
 use feo_ast::{
     item::{ImportDecl, ImportTree, PathRecursive, PathSubset, PathWildcard},
-    path::SimplePath,
+    path::{SimplePath, SimplePathSegmentKind},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -33,6 +33,35 @@ impl ParseTerm for ImportTree {
             } else {
                 return Ok(Some(ImportTree::SimplePath(sp)));
             }
+        } else {
+            return Ok(None);
+        }
+    }
+}
+
+impl ParseTerm for PathWildcard {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        let full_path = if let Some(sp) = SimplePath::parse(parser)? {
+            parser.next_token();
+            sp
+        } else {
+            return Ok(None);
+        };
+
+        let colon_colon_asterisk_opt = parser.peek_current();
+
+        if let Some(Punctuation {
+            punc_kind: PuncKind::ColonColonAsterisk,
+            ..
+        }) = colon_colon_asterisk_opt
+        {
+            return Ok(Some(PathWildcard {
+                full_path,
+                colon_colon_asterisk: colon_colon_asterisk_opt.unwrap(),
+            }));
         } else {
             return Ok(None);
         }
@@ -99,97 +128,26 @@ impl ParseTerm for PathSubset {
     }
 }
 
-impl ParseTerm for PathWildcard {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        let full_path = if let Some(sp) = SimplePath::parse(parser)? {
-            parser.next_token();
-            sp
-        } else {
-            return Ok(None);
-        };
-
-        let colon_colon_asterisk_opt = parser.peek_current();
-
-        if let Some(Punctuation {
-            punc_kind: PuncKind::ColonColonAsterisk,
-            ..
-        }) = colon_colon_asterisk_opt
-        {
-            return Ok(Some(PathWildcard {
-                full_path,
-                colon_colon_asterisk: colon_colon_asterisk_opt.unwrap(),
-            }));
-        } else {
-            return Ok(None);
-        }
-    }
-}
-
 impl ParseTerm for PathRecursive {
     #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        if let Some(path_prefix) = SimplePath::parse(parser)? {
-            parser.next_token();
-
-            let open_brace_opt = parser.peek_current();
-
-            if let Some(Delimiter {
-                delim: (DelimKind::Brace, DelimOrientation::Open),
-                ..
-            }) = open_brace_opt
+        if let Some(i) = parser.peek_current::<SimplePathSegmentKind>() {
+            let recursive_tree = if let Some(t) = utils::get_term_collection::<ImportTree>(parser)?
             {
-                parser.next_token();
-
                 println!("current token: {:#?}", parser.current_token());
-                let recursive_tree_opt =
-                    if let Some(t) = utils::get_term_collection::<ImportTree>(parser)? {
-                        // parser.next_token();
-                        Some(Box::new(t))
-                    } else {
-                        None
-                    };
-
-                parser.next_token();
-                parser.next_token();
-
-                let close_brace_opt = parser.peek_current();
-
-                if let Some(Delimiter {
-                    delim: (DelimKind::Brace, DelimOrientation::Close),
-                    ..
-                }) = close_brace_opt
-                {
-                    parser.next_token();
-
-                    return Ok(Some(PathRecursive {
-                        path_prefix,
-                        open_brace: open_brace_opt.unwrap(),
-                        recursive_tree_opt,
-                        close_brace: close_brace_opt.unwrap(),
-                    }));
-                }
-
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`}`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                Box::new(t)
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`{`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
+                return Ok(None);
+            };
+
+
+            return Ok(Some(PathRecursive(recursive_tree)));
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
@@ -290,16 +248,10 @@ mod tests {
         crate::{
             some_module::{
                 SomeObject, self
-            },
-            another_module::{
-                AnotherObject, some_function
-            },
-            yet_another_module::YetAnotherObject,
-            SOME_CONSTANT,
-            an_entire_module::*,
+            }
         }"#;
 
-        let mut parser = test_utils::get_parser(source_code, false)?;
+        let mut parser = test_utils::get_parser(source_code, true)?;
 
         let path_recursive =
             PathRecursive::parse(&mut parser).expect("unable to parse recursive path");

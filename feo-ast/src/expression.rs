@@ -170,6 +170,21 @@ impl<T> TermCollection<T> {
     }
 }
 
+impl<T: Spanned> Spanned for TermCollection<T> {
+    fn span(&self) -> Span {
+        let s1 = self.first_term.span();
+        let s2 = match &self.subsequent_terms_opt {
+            Some(s) => match s.last() {
+                Some(t) => t.span(),
+                None => self.first_term.span(),
+            },
+            None => self.first_term.span(),
+        };
+
+        Span::join(s1, s2)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum Value {
     ArrayExpr(ArrayExpr),
