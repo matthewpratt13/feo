@@ -81,3 +81,14 @@ impl ParseExpr for BlockExpr {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use feo_error::error::CompilerError;
+
+    #[ignore]
+    #[test]
+    fn parse_block_expr() -> Result<(), Vec<CompilerError>> {
+        todo!()
+    }
+}

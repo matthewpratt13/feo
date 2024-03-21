@@ -120,7 +120,6 @@ impl ParseExpr for IfExpr {
                                 trailing_else_block_opt,
                             }));
                         }
-                        
                         false => {
                             println!(
                                 "exit if expression (with else-if blocks) \ncurrent token: {:#?}",
