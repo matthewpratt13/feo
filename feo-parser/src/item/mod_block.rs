@@ -170,18 +170,18 @@ mod tests {
     fn parse_mod_with_body() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
-        pub mod some_mod {
+        mod some_mod {
             import some_module::SomeObject;
 
-            pub const foo:  u64 = 10;
-            pub static mut bar: bool = true;
+            pub const foo: u64 = 10;
+            static mut bar: bool = true;
 
             pub enum Foo {
                 Bar,
                 Baz
             }
 
-            pub struct Foo {
+            struct Foo {
                 bar: u64
             }
 

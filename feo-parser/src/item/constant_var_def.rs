@@ -67,8 +67,6 @@ impl ParseItem for ConstantVarDef {
                                 ..
                             }) = semicolon_opt
                             {
-                                parser.next_token();
-
                                 return Ok(Some(ConstantVarDef {
                                     attributes_opt,
                                     visibility_opt,
@@ -179,8 +177,6 @@ impl ParseItem for StaticVarDef {
                                     ..
                                 }) = semicolon_opt
                                 {
-                                    parser.next_token();
-
                                     return Ok(Some(StaticVarDef {
                                         attributes_opt,
                                         visibility_opt,

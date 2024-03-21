@@ -113,7 +113,6 @@ impl ParseItem for ImportDecl {
 
             if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
                 parser.next_token();
-                println!("current token: {:#?}", parser.current_token());
 
                 let semicolon_opt = parser.peek_current();
 
@@ -122,8 +121,6 @@ impl ParseItem for ImportDecl {
                     ..
                 }) = semicolon_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(ImportDecl {
                         attributes_opt,
                         visibility_opt,

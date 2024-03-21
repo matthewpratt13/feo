@@ -216,8 +216,7 @@ impl ParseItem for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
-                        parser.next_token();
-
+                        
                         return Ok(Some(EnumDef {
                             attributes_opt,
                             visibility_opt,
