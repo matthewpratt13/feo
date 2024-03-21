@@ -195,7 +195,7 @@ mod tests {
             inner_module::InnerObject,
             AnotherObject,
             another_inner_module::AnotherInnerObject,
-            an_entire_module::*
+            an_entire_module::*,
         }
         "#;
 
@@ -209,20 +209,6 @@ mod tests {
 
     #[test]
     fn parse_import_decl() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-        // #[foo]
-        // pub import crate::{
-        //     some_module::{
-        //         SomeObject, self
-        //     },
-        //     another_module::{
-        //         AnotherObject, some_function
-        //     },
-        //     yet_another_module::YetAnotherObject,
-        //     SOME_CONSTANT,
-        //     an_entire_module::*,
-        // }"#;
-
         let source_code = r#"
         #[foo]
         pub import some_module::{ 

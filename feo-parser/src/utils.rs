@@ -110,6 +110,7 @@ pub fn get_path_collection<T: ParseTerm>(
                 }) = parser.peek_current()
                 {
                     parser.next_token();
+                    skip_trailing_comma(parser)?;
                 }
 
                 if let Some(Delimiter {
