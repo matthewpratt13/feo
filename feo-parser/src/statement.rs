@@ -1,13 +1,17 @@
 use feo_ast::{
     expression::Expression,
+    pattern::Pattern,
     statement::{ExprStatement, LetStatement},
+    token::Token,
+    Type,
 };
-use feo_error::error::CompilerError;
-use feo_types::{punctuation::PuncKind, Punctuation};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
-    parse::{ParseExpr, ParseStatement},
+    parse::{ParseExpr, ParsePatt, ParseStatement, ParseType},
     parser::Parser,
+    utils,
 };
 
 impl ParseStatement for ExprStatement {
@@ -49,7 +53,78 @@ impl ParseStatement for LetStatement {
     where
         Self: Sized,
     {
-        todo!()
+        let attributes_opt = utils::get_attributes(parser)?;
+
+        let kw_let_opt = parser.peek_current();
+
+        if let Some(Keyword {
+            keyword_kind: KeywordKind::KwLet,
+            ..
+        }) = kw_let_opt
+        {
+            parser.next_token();
+
+            if let Some(pattern) = Pattern::parse(parser)? {
+                parser.next_token();
+
+                let type_ann_opt = if let Some(Punctuation {
+                    punc_kind: PuncKind::Colon,
+                    ..
+                }) = parser.peek_current()
+                {
+                    parser.next_token();
+                    
+                    if let Some(t) = Type::parse(parser)? {
+                        parser.next_token();
+                        Some(t)
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                };
+
+                let assignment_opt = if let Some(e) = Expression::parse(parser)? {
+                    parser.next_token();
+                    Some(e)
+                } else {
+                    None
+                };
+
+                let semicolon_opt = parser.peek_current();
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::Semicolon,
+                    ..
+                }) = semicolon_opt
+                {
+                    parser.next_token();
+
+                    return Ok(Some(LetStatement {
+                        attributes_opt,
+                        kw_let: kw_let_opt.unwrap(),
+                        pattern: Box::new(pattern),
+                        type_ann_opt,
+                        assignment_opt,
+                        semicolon: semicolon_opt.unwrap(),
+                    }));
+                } else {
+                    parser.log_error(ParserErrorKind::UnexpectedToken {
+                        expected: "`;`".to_string(),
+                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    });
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`pattern`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

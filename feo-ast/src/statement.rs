@@ -2,7 +2,7 @@
 
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Colon, Equals, KwLet, Semicolon},
+    type_utils::{KwLet, Semicolon},
 };
 
 use crate::{
@@ -67,12 +67,12 @@ impl Spanned for ExprStatement {
 
 #[derive(Debug, Clone)]
 pub struct LetStatement {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    kw_let: KwLet,
-    pattern: Box<Pattern>,
-    type_ann_opt: Option<(Colon, Type)>,
-    assignment_opt: Option<(Equals, Expression)>,
-    semicolon: Semicolon,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub kw_let: KwLet,
+    pub pattern: Box<Pattern>,
+    pub type_ann_opt: Option<Type>,
+    pub assignment_opt: Option<Expression>,
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for LetStatement {
