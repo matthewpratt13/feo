@@ -13,12 +13,14 @@ mod visibility;
 
 use feo_types::span::{Span, Spanned};
 
+use crate::expression::TermCollection;
+
 pub use self::{
     constant_var_def::{ConstantVarDef, StaticVarDef},
     enum_def::{EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType},
     function_def::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
     impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},
-    import_decl::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard},
+    import_decl::{ImportDecl, ImportTree, PathRecursive, PathSubset, PathWildcard},
     mod_block::{ModWithBody, ModWithoutBody},
     struct_def::{StructDef, StructDefField, TupleStructDef, TupleStructDefField},
     trait_def::{TraitDef, TraitDefItem},
@@ -39,7 +41,8 @@ pub enum Item {
     TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
-    PathSubsetRecursive(PathSubsetRecursive),
+    PathSubset(PathSubset),
+    PathSubsetRecursive(PathRecursive),
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
     StructDef(StructDef),
@@ -60,6 +63,7 @@ impl Spanned for Item {
             Item::TraitImplBlock(ti) => ti.span(),
             Item::ImportDecl(imp) => imp.span(),
             Item::PathWildcard(pwc) => pwc.span(),
+            Item::PathSubset(ps) => ps.span(),
             Item::PathSubsetRecursive(psr) => psr.span(),
             Item::ModWithBody(mwb) => mwb.span(),
             Item::ModWithoutBody(m) => m.span(),
@@ -68,5 +72,23 @@ impl Spanned for Item {
             Item::TraitDef(td) => td.span(),
             Item::TypeAliasDef(tad) => tad.span(),
         }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PathCollection<T> {
+    pub root_path: Box<T>,
+    pub path_suffixes: Option<Box<TermCollection<T>>>,
+}
+
+impl<T: Spanned> Spanned for PathCollection<T> {
+    fn span(&self) -> Span {
+        let s1 = self.root_path.span();
+        let s2 = match &self.path_suffixes {
+            Some(ps) => ps.span(),
+            None => self.root_path.span(),
+        };
+
+        Span::join(s1, s2)
     }
 }

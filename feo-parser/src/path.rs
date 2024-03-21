@@ -39,8 +39,6 @@ impl ParseTerm for SimplePath {
         let mut subsequent_segments: Vec<SimplePathSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<SimplePathSegmentKind>() {
-            // parser.next_token();
-
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..

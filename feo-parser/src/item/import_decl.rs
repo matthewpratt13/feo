@@ -1,15 +1,10 @@
 use feo_ast::{
-    item::{ImportDecl, ImportTree, PathSubsetRecursive, PathWildcard},
+    item::{ImportDecl, ImportTree, PathRecursive, PathSubset, PathWildcard},
     path::SimplePath,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
-use feo_types::{
-    delimiter::{DelimKind, DelimOrientation},
-    keyword::KeywordKind,
-    punctuation::PuncKind,
-    Delimiter, Keyword, Punctuation,
-};
+use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuation};
 
 use crate::{
     parse::{ParseItem, ParseTerm},
@@ -24,10 +19,12 @@ impl ParseTerm for ImportTree {
         Self: Sized,
     {
         if let Some(sp) = SimplePath::parse(parser)? {
-            if let Some(psr) = PathSubsetRecursive::parse(parser)? {
-                return Ok(Some(ImportTree::SubsetRecursive(psr)));
+            if let Some(ps) = PathSubset::parse(parser)? {
+                return Ok(Some(ImportTree::Subset(ps)));
             } else if let Some(pw) = PathWildcard::parse(parser)? {
                 return Ok(Some(ImportTree::Wildcard(pw)));
+            } else if let Some(pr) = PathRecursive::parse(parser)? {
+                return Ok(Some(ImportTree::Recursive(pr)));
             } else {
                 return Ok(Some(ImportTree::SimplePath(sp)));
             }
@@ -37,12 +34,12 @@ impl ParseTerm for ImportTree {
     }
 }
 
-impl ParseItem for PathWildcard {
+impl ParseTerm for PathWildcard {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        let full_path = if let Some(sp) = SimplePath::parse(parser)? {
+        let path_prefix = if let Some(sp) = utils::get_path_collection::<SimplePath>(parser)? {
             sp
         } else {
             return Ok(None);
@@ -57,10 +54,8 @@ impl ParseItem for PathWildcard {
             ..
         }) = colon_colon_asterisk_opt
         {
-            parser.next_token();
-
             return Ok(Some(PathWildcard {
-                full_path,
+                path_prefix,
                 colon_colon_asterisk: colon_colon_asterisk_opt.unwrap(),
             }));
         } else {
@@ -69,65 +64,34 @@ impl ParseItem for PathWildcard {
     }
 }
 
-impl ParseItem for PathSubsetRecursive {
+impl ParseTerm for PathSubset {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        let path_collection = if let Some(sp) = utils::get_path_collection::<SimplePath>(parser)? {
+            sp
+        } else {
+            return Ok(None);
+        };
+
+        return Ok(Some(PathSubset(path_collection)));
+    }
+}
+
+impl ParseTerm for PathRecursive {
     #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        if let Some(path_prefix) = SimplePath::parse(parser)? {
-            let open_brace_opt = parser.peek_current();
-
-            if let Some(Delimiter {
-                delim: (DelimKind::Brace, DelimOrientation::Open),
-                ..
-            }) = open_brace_opt
-            {
-                parser.next_token();
-
-                let recursive_tree_opt =
-                    if let Some(t) = utils::get_term_collection::<ImportTree>(parser)? {
-                        parser.next_token();
-                        Some(Box::new(t))
-                    } else {
-                        None
-                    };
-
-                parser.next_token();
-                parser.next_token();
-
-                let close_brace_opt = parser.peek_current();
-
-                if let Some(Delimiter {
-                    delim: (DelimKind::Brace, DelimOrientation::Close),
-                    ..
-                }) = close_brace_opt
-                {
-                    parser.next_token();
-
-                    return Ok(Some(PathSubsetRecursive {
-                        path_prefix,
-                        open_brace: open_brace_opt.unwrap(),
-                        recursive_tree_opt,
-                        close_brace: close_brace_opt.unwrap(),
-                    }));
-                }
-
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`}`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`{`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            }
+        let path_collection = if let Some(sp) = utils::get_path_collection::<ImportTree>(parser)? {
+            sp
         } else {
             return Ok(None);
-        }
+        };
 
-        Err(parser.errors())
+        return Ok(Some(PathRecursive(path_collection)));
     }
 }
 
@@ -150,8 +114,9 @@ impl ParseItem for ImportDecl {
         {
             parser.next_token();
 
-            if let Some(import_tree) = ImportTree::parse(parser)? {
+            if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
                 parser.next_token();
+                println!("current token: {:#?}", parser.current_token());
 
                 let semicolon_opt = parser.peek_current();
 
@@ -166,7 +131,7 @@ impl ParseItem for ImportDecl {
                         attributes_opt,
                         visibility_opt,
                         kw_import: kw_import_opt.unwrap(),
-                        import_tree,
+                        import_trees,
                         semicolon: semicolon_opt.unwrap(),
                     }));
                 }
@@ -217,8 +182,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let path_subset =
-            PathSubsetRecursive::parse(&mut parser).expect("unable to parse path subset");
+        let path_subset = PathSubset::parse(&mut parser).expect("unable to parse path subset");
 
         Ok(println!("{:#?}", path_subset))
     }
@@ -226,41 +190,34 @@ mod tests {
     #[test]
     fn parse_path_recursive() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
-        crate::{
-            some_module::{
-                SomeObject, self
-            },
-            another_module::{
-                AnotherObject, some_function
-            },
-            yet_another_module::YetAnotherObject,
-            SOME_CONSTANT,
+        some_module::{ 
+            SomeObject,
+            inner_module::InnerObject,
+            AnotherObject,
+            another_inner_module::AnotherInnerObject,
             an_entire_module::*,
-        }"#;
+        }
+        "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let path_subset_recursive =
-            PathSubsetRecursive::parse(&mut parser).expect("unable to parse recursive path");
+        let path_recursive =
+            PathRecursive::parse(&mut parser).expect("unable to parse recursive path");
 
-        Ok(println!("{:#?}", path_subset_recursive))
+        Ok(println!("{:#?}", path_recursive))
     }
 
     #[test]
     fn parse_import_decl() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[foo]
-        pub import crate::{
-            some_module::{
-                SomeObject, self
-            },
-            another_module::{
-                AnotherObject, some_function
-            },
-            yet_another_module::YetAnotherObject,
-            SOME_CONSTANT,
-            an_entire_module::*,
-        }"#;
+        pub import some_module::{ 
+            SomeObject,
+            inner_module::InnerObject,
+            AnotherObject,
+            another_inner_module::AnotherInnerObject,
+            an_entire_module::*
+        };"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

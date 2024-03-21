@@ -10,7 +10,7 @@ use crate::{
     expression::Expression,
     item::{
         ConstantVarDef, EnumDef, FunctionSig, FunctionWithBlock, ImportDecl, InherentImplBlock,
-        ModWithBody, ModWithoutBody, PathSubsetRecursive, PathWildcard, StaticVarDef, StructDef,
+        ModWithBody, ModWithoutBody, PathRecursive, PathWildcard, StaticVarDef, StructDef,
         TraitDef, TraitImplBlock, TupleStructDef, TypeAliasDef,
     },
     pattern::Pattern,
@@ -30,7 +30,7 @@ pub enum Statement {
     TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
     PathWildcard(PathWildcard),
-    PathSubsetRecursive(PathSubsetRecursive),
+    PathSubsetRecursive(PathRecursive),
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
     StructDef(StructDef),

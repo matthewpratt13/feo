@@ -1,9 +1,14 @@
 use feo_ast::{
     expression::{TermCollection, Value, ValueCollection},
-    item::VisibilityKind,
+    item::{PathCollection, VisibilityKind},
+    token::Token,
 };
-use feo_error::error::CompilerError;
-use feo_types::{punctuation::PuncKind, Punctuation};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    punctuation::PuncKind,
+    Delimiter, Punctuation,
+};
 
 use crate::{
     parse::{ParseItem, ParseTerm},
@@ -73,6 +78,68 @@ pub fn get_term_collection<T: ParseTerm>(
     } else {
         return Ok(None);
     }
+}
+
+pub fn get_path_collection<T: ParseTerm>(
+    parser: &mut Parser,
+) -> Result<Option<PathCollection<T>>, Vec<CompilerError>> {
+    if let Some(root_path) = T::parse(parser)? {
+        if let Some(Punctuation {
+            punc_kind: PuncKind::DblColon,
+            ..
+        }) = parser.peek_current()
+        {
+            parser.next_token();
+
+            if let Some(Delimiter {
+                delim: (DelimKind::Brace, DelimOrientation::Open),
+                ..
+            }) = parser.peek_current()
+            {
+                parser.next_token();
+
+                let path_suffixes = if let Some(inner_paths) = get_term_collection::<T>(parser)? {
+                    Some(Box::new(inner_paths))
+                } else {
+                    None
+                };
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::ColonColonAsterisk,
+                    ..
+                }) = parser.peek_current()
+                {
+                    parser.next_token();
+                    skip_trailing_comma(parser)?;
+                }
+
+                if let Some(Delimiter {
+                    delim: (DelimKind::Brace, DelimOrientation::Close),
+                    ..
+                }) = parser.peek_current()
+                {
+                    return Ok(Some(PathCollection {
+                        root_path: Box::new(root_path),
+                        path_suffixes,
+                    }));
+                }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`{`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
+            }
+        } else {
+            return Ok(Some(PathCollection {
+                root_path: Box::new(root_path),
+                path_suffixes: None,
+            }));
+        }
+    } else {
+        return Ok(None);
+    }
+
+    Err(parser.errors())
 }
 
 pub fn get_value_collection(
