@@ -114,6 +114,7 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::IndexExpr(ie)));
                     }
                 }
+
                 Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
@@ -237,6 +238,7 @@ impl ParseExpr for Expression {
                         )));
                     }
                 }
+
                 Some(Punctuation {
                     punc_kind: PuncKind::QuestionMark,
                     ..
@@ -829,6 +831,7 @@ impl ParseExpr for ExprWithoutBlock {
                         return Ok(Some(ExprWithoutBlock::IndexExpr(ie)));
                     }
                 }
+
                 Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
@@ -952,6 +955,7 @@ impl ParseExpr for ExprWithoutBlock {
                         )));
                     }
                 }
+
                 Some(Punctuation {
                     punc_kind: PuncKind::QuestionMark,
                     ..
@@ -1181,6 +1185,53 @@ impl ParseExpr for ExprWithoutBlock {
                 }
 
                 match parser.peek_next::<Punctuation>() {
+                    Some(Punctuation {
+                        punc_kind: PuncKind::Plus,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::Minus,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::Asterisk,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::ForwardSlash,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::Percent,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::Ampersand,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::Pipe,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::Caret,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::DblLessThan,
+                        ..
+                    })
+                    | Some(Punctuation {
+                        punc_kind: PuncKind::DblGreaterThan,
+                        ..
+                    }) => {
+                        if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(ExprWithoutBlock::OperatorExpr(
+                                OperatorExprKind::ArithmeticOrLogical(al),
+                            )));
+                        }
+                    }
+
                     Some(Punctuation {
                         punc_kind: PuncKind::LessThan,
                         ..
@@ -1676,7 +1727,7 @@ impl ParseStatement for Statement {
         } else {
             return Ok(None);
         }
-        
+
         Err(parser.errors())
     }
 }
