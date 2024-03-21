@@ -39,12 +39,13 @@ impl ParseTerm for PathWildcard {
     where
         Self: Sized,
     {
-        let full_path = if let Some(sp) = SimplePath::parse(parser)? {
-            parser.next_token();
+        let path_prefix = if let Some(sp) = utils::get_path_collection::<SimplePath>(parser)? {
             sp
         } else {
             return Ok(None);
         };
+
+        parser.next_token();
 
         let colon_colon_asterisk_opt = parser.peek_current();
 
@@ -54,7 +55,7 @@ impl ParseTerm for PathWildcard {
         }) = colon_colon_asterisk_opt
         {
             return Ok(Some(PathWildcard {
-                full_path,
+                path_prefix,
                 colon_colon_asterisk: colon_colon_asterisk_opt.unwrap(),
             }));
         } else {
@@ -192,7 +193,8 @@ mod tests {
             SomeObject,
             inner_module::InnerObject,
             AnotherObject,
-            another_inner_module::AnotherInnerObject
+            another_inner_module::AnotherInnerObject,
+            an_entire_module::*
         }
         "#;
 

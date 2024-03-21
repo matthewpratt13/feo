@@ -97,13 +97,21 @@ pub fn get_path_collection<T: ParseTerm>(
             }) = parser.peek_current()
             {
                 parser.next_token();
-                println!("current token: {:#?}", parser.current_token());
 
                 let path_suffixes = if let Some(inner_paths) = get_term_collection::<T>(parser)? {
+                    println!("current token: {:#?}", parser.current_token());
                     Some(Box::new(inner_paths))
                 } else {
                     None
                 };
+
+                if let Some(Punctuation {
+                    punc_kind: PuncKind::ColonColonAsterisk,
+                    ..
+                }) = parser.peek_current()
+                {
+                    parser.next_token();
+                }
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Close),

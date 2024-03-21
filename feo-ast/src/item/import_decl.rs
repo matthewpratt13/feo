@@ -56,13 +56,13 @@ impl Spanned for ImportDecl {
 
 #[derive(Debug, Clone)]
 pub struct PathWildcard {
-    pub full_path: SimplePath,
+    pub path_prefix: PathCollection<SimplePath>,
     pub colon_colon_asterisk: ColonColonAsterisk,
 }
 
 impl Spanned for PathWildcard {
     fn span(&self) -> Span {
-        let s1 = self.full_path.span();
+        let s1 = self.path_prefix.span();
         let s2 = self.colon_colon_asterisk.span();
 
         Span::join(s1, s2)
