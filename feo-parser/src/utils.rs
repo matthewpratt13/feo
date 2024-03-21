@@ -172,10 +172,10 @@ pub fn get_value_collection(
             Some(values)
         };
 
-        return Ok(Some(ValueCollection::new(
-            first_value,
+        return Ok(Some(ValueCollection {
+            first_value: Box::new(first_value),
             subsequent_values_opt,
-        )));
+        }));
     } else {
         return Ok(None);
     }
