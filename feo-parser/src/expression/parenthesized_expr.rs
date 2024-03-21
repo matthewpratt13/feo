@@ -1,5 +1,8 @@
-use feo_ast::expression::{Expression, ParenthesizedExpr};
-use feo_error::error::CompilerError;
+use feo_ast::{
+    expression::{Expression, ParenthesizedExpr},
+    token::Token,
+};
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     Delimiter,
@@ -22,12 +25,24 @@ impl ParseTerm for ParenthesizedExpr {
             ..
         }) = open_parenthesis_opt
         {
+            println!(
+                "entering parenthesized expression... \ncurrent token: {:#?}",
+                parser.current_token()
+            );
+
             parser.next_token();
 
             if let Some(enclosed_operand) = Expression::parse(parser)? {
+                println!("enclosed operand: {:#?}", &enclosed_operand);
+
                 parser.next_token();
 
                 let close_parenthesis_opt = parser.peek_current();
+
+                println!(
+                    "expects close parenthesis... \nfinds: {:#?}",
+                    parser.current_token()
+                );
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -36,12 +51,22 @@ impl ParseTerm for ParenthesizedExpr {
                 {
                     parser.next_token();
 
+                    println!(
+                        "exit parenthesized expression. \ncurrent token: {:#?}",
+                        parser.current_token()
+                    );
+
                     return Ok(Some(ParenthesizedExpr {
                         open_parenthesis: open_parenthesis_opt.unwrap(),
                         enclosed_operand: Box::new(enclosed_operand),
                         close_parenthesis: close_parenthesis_opt.unwrap(),
                     }));
                 }
+                
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`)`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             } else {
                 return Ok(None);
             }

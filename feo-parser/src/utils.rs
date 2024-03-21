@@ -1,6 +1,7 @@
 use feo_ast::{
     expression::{TermCollection, Value, ValueCollection},
     item::{PathCollection, VisibilityKind},
+    statement::Statement,
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -11,7 +12,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{ParseItem, ParseTerm},
+    parse::{ParseItem, ParseStatement, ParseTerm},
     parser::Parser,
 };
 
@@ -44,39 +45,6 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
         Ok(None)
     } else {
         Ok(Some(items))
-    }
-}
-
-pub fn get_term_collection<T: ParseTerm>(
-    parser: &mut Parser,
-) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
-    let mut terms: Vec<T> = Vec::new();
-
-    if let Some(first_term) = T::parse(parser)? {
-        parser.next_token();
-
-        while let Some(Punctuation {
-            punc_kind: PuncKind::Comma,
-            ..
-        }) = parser.peek_current()
-        {
-            parser.next_token();
-
-            if let Some(next_term) = T::parse(parser)? {
-                terms.push(next_term);
-                parser.next_token();
-            } else {
-                break;
-            }
-        }
-
-        let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
-
-        skip_trailing_comma(parser)?;
-
-        return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
-    } else {
-        return Ok(None);
     }
 }
 
@@ -142,6 +110,66 @@ pub fn get_path_collection<T: ParseTerm>(
     Err(parser.errors())
 }
 
+pub fn get_term_collection<T: ParseTerm>(
+    parser: &mut Parser,
+) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
+    let mut terms: Vec<T> = Vec::new();
+
+    if let Some(first_term) = T::parse(parser)? {
+        parser.next_token();
+
+        while let Some(Punctuation {
+            punc_kind: PuncKind::Comma,
+            ..
+        }) = parser.peek_current()
+        {
+            parser.next_token();
+
+            if let Some(next_term) = T::parse(parser)? {
+                terms.push(next_term);
+                parser.next_token();
+            } else {
+                break;
+            }
+        }
+
+        let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
+
+        skip_trailing_comma(parser)?;
+
+        return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
+    } else {
+        return Ok(None);
+    }
+}
+
+pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec<CompilerError>> {
+    let mut statements: Vec<Statement> = Vec::new();
+
+    println!(
+        "entering statements... \ncurrent token: {:#?}",
+        parser.current_token()
+    );
+
+    while let Some(s) = Statement::parse(parser)? {
+        statements.push(s);
+        parser.next_token();
+    }
+
+    println!("number of statements: {:#?}", statements.len());
+
+    println!(
+        "exit statements. \ncurrent token (should be some): {:#?}",
+        parser.current_token()
+    );
+
+    if statements.is_empty() {
+        return Ok(None);
+    } else {
+        return Ok(Some(statements));
+    }
+}
+
 pub fn get_value_collection(
     parser: &mut Parser,
 ) -> Result<Option<ValueCollection>, Vec<CompilerError>> {
@@ -166,7 +194,6 @@ pub fn get_value_collection(
         }
 
         let subsequent_values_opt = if values.is_empty() {
-            parser.next_token();
             None
         } else {
             Some(values)

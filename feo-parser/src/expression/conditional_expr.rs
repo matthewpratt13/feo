@@ -35,13 +35,16 @@ impl ParseExpr for IfExpr {
             ..
         }) = kw_if_opt
         {
+            println!(
+                "entering if expression... \ncurrent token: {:#?}",
+                parser.current_token()
+            );
+
             parser.next_token();
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
-                parser.next_token();
-
                 if let Some(if_block) = BlockExpr::parse(parser)? {
-                    parser.next_token();
+                    println!("end of if block");
 
                     let mut next_kw_else_opt = parser.peek_current();
 
@@ -53,6 +56,8 @@ impl ParseExpr for IfExpr {
                         parser.next_token();
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
+                            println!("entering else-if block...");
+
                             parser.next_token();
 
                             else_if_blocks
@@ -79,6 +84,11 @@ impl ParseExpr for IfExpr {
                         ..
                     }) = trailing_kw_else_opt
                     {
+                        println!(
+                            "entering final else block... \ncurrent token: {:#?}",
+                            parser.current_token()
+                        );
+
                         parser.next_token();
 
                         if let Some(trailing_block_expr) = BlockExpr::parse(parser)? {
@@ -88,7 +98,7 @@ impl ParseExpr for IfExpr {
                                 expected: "block expression".to_string(),
                                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                             });
-                            
+
                             return Err(parser.errors());
                         }
                     } else {
@@ -97,22 +107,33 @@ impl ParseExpr for IfExpr {
 
                     match else_if_blocks.is_empty() {
                         true => {
+                            println!(
+                                "exit if expression (without else-if blocks) \ncurrent token: {:#?}",
+                                parser.current_token()
+                            );
+
                             return Ok(Some(IfExpr {
                                 kw_if: kw_if_opt.unwrap(),
                                 condition_operand: Box::new(condition_operand),
                                 if_block: Box::new(if_block),
                                 else_if_blocks_opt: None,
                                 trailing_else_block_opt,
-                            }))
+                            }));
                         }
+                        
                         false => {
+                            println!(
+                                "exit if expression (with else-if blocks) \ncurrent token: {:#?}",
+                                parser.current_token()
+                            );
+
                             return Ok(Some(IfExpr {
                                 kw_if: kw_if_opt.unwrap(),
                                 condition_operand: Box::new(condition_operand),
                                 if_block: Box::new(if_block),
                                 else_if_blocks_opt: Some(else_if_blocks),
                                 trailing_else_block_opt,
-                            }))
+                            }));
                         }
                     }
                 } else {
@@ -436,12 +457,12 @@ mod tests {
         Ok(println!("{:#?}", match_expr))
     }
 
-    #[ignore] // TODO: remove when testing
+    // #[ignore] // TODO: remove when testing
     #[test]
     fn parse_if_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         if (foo < 2) { 
-            print!("bar")
+            bar(x)
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;

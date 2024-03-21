@@ -1,24 +1,20 @@
 use feo_ast::{
     expression::{BlockExpr, ExprWithoutBlock},
-    statement::Statement,
+    token::Token,
 };
-use feo_error::error::CompilerError;
+use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     Delimiter,
 };
 
-use crate::{
-    parse::{ParseExpr, ParseStatement},
-    parser::Parser,
-};
+use crate::{parse::ParseExpr, parser::Parser, utils};
 
 impl ParseExpr for BlockExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        let mut statements: Vec<Statement> = Vec::new();
         let open_brace_opt = parser.peek_current();
 
         if let Some(Delimiter {
@@ -26,12 +22,14 @@ impl ParseExpr for BlockExpr {
             ..
         }) = open_brace_opt
         {
+            println!(
+                "entering block expression... \ncurrent token: {:#?}",
+                parser.current_token()
+            );
+
             parser.next_token();
 
-            while let Some(s) = Statement::parse(parser)? {
-                statements.push(s);
-                parser.next_token();
-            }
+            let statements_opt = utils::get_statements(parser)?;
 
             let final_operand_opt = if let Some(e) = ExprWithoutBlock::parse(parser)? {
                 parser.next_token();
@@ -40,32 +38,42 @@ impl ParseExpr for BlockExpr {
                 None
             };
 
+            println!(
+                "final operand in block expression (optional): {:#?}",
+                &final_operand_opt
+            );
+
             let close_brace_opt = parser.peek_current();
+
+            println!(
+                "expects close brace... \nfinds: {:#?}",
+                parser.current_token()
+            );
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Close),
                 ..
             }) = close_brace_opt
             {
-                match statements.is_empty() {
-                    true => {
-                        return Ok(Some(BlockExpr {
-                            open_brace: open_brace_opt.unwrap(),
-                            statements_opt: None,
-                            final_operand_opt,
-                            close_brace: close_brace_opt.unwrap(),
-                        }))
-                    }
-                    false => {
-                        return Ok(Some(BlockExpr {
-                            open_brace: open_brace_opt.unwrap(),
-                            statements_opt: Some(statements),
-                            final_operand_opt,
-                            close_brace: close_brace_opt.unwrap(),
-                        }))
-                    }
-                }
+                parser.next_token();
+
+                println!(
+                    "exit block expression. \ncurrent token: {:#?}",
+                    parser.current_token()
+                );
+
+                return Ok(Some(BlockExpr {
+                    open_brace: open_brace_opt.unwrap(),
+                    statements_opt,
+                    final_operand_opt,
+                    close_brace: close_brace_opt.unwrap(),
+                }));
             }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "`}`".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
         } else {
             return Ok(None);
         }
