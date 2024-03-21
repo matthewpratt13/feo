@@ -19,25 +19,27 @@ impl ParseStatement for ExprStatement {
         if let Some(expression) = Expression::parse(parser)? {
             parser.next_token();
 
-            let semicolon_opt = parser.peek_current();
+            let semicolon_opt = parser.peek_current::<Punctuation>();
 
-            if let Some(Punctuation {
-                punc_kind: PuncKind::Semicolon,
-                ..
-            }) = semicolon_opt
-            {
-                parser.next_token();
+            match &semicolon_opt {
+                Some(Punctuation {
+                    punc_kind: PuncKind::Semicolon,
+                    ..
+                })
+                | None => {
+                    parser.next_token();
 
-                return Ok(Some(ExprStatement {
-                    expression,
-                    semicolon_opt,
-                }));
+                    return Ok(Some(ExprStatement {
+                        expression,
+                        semicolon_opt,
+                    }));
+                }
+
+                _ => return Ok(None),
             }
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
@@ -48,5 +50,25 @@ impl ParseStatement for LetStatement {
         Self: Sized,
     {
         todo!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[test]
+    fn parse_expr_statement() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"x + 2"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let expr_statement =
+            ExprStatement::parse(&mut parser).expect("unable to parse expression statement");
+
+        Ok(println!("{:#?}", expr_statement))
     }
 }
