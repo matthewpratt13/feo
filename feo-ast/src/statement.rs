@@ -43,8 +43,8 @@ pub enum Statement {
 
 #[derive(Debug, Clone)]
 pub struct ExprStatement {
-    expression: Expression,
-    semicolon_opt: Option<Semicolon>,
+    pub expression: Expression,
+    pub semicolon_opt: Option<Semicolon>,
 }
 
 impl Spanned for ExprStatement {
