@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 mod constant_var_def;
 mod enum_def;
 mod function_def;
@@ -86,5 +84,3 @@ impl<T: Spanned> Spanned for PathCollection<T> {
         Span::join(s1, s2)
     }
 }
-
-

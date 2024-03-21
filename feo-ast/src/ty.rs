@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 mod array_type;
 mod function_type;
 mod impl_trait_type;

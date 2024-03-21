@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use feo_types::{
     span::{Span, Spanned},
     type_utils::{KwLet, Semicolon},
