@@ -13,7 +13,6 @@ use crate::{
 };
 
 impl ParseTerm for ImportTree {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -80,7 +79,6 @@ impl ParseTerm for PathSubset {
 }
 
 impl ParseTerm for PathRecursive {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -96,7 +94,6 @@ impl ParseTerm for PathRecursive {
 }
 
 impl ParseItem for ImportDecl {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

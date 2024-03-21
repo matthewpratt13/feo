@@ -21,7 +21,6 @@ use crate::{
 };
 
 impl ParseItem for InherentImplItem {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -37,7 +36,6 @@ impl ParseItem for InherentImplItem {
 }
 
 impl ParseItem for TraitImplItem {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -55,7 +53,6 @@ impl ParseItem for TraitImplItem {
 }
 
 impl ParseItem for InherentImplBlock {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -134,7 +131,6 @@ impl ParseItem for InherentImplBlock {
 }
 
 impl ParseItem for TraitImplBlock {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,

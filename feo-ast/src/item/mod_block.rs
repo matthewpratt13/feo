@@ -43,11 +43,11 @@ impl Spanned for ModWithBody {
 
 #[derive(Debug, Clone)]
 pub struct ModWithoutBody {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_mod: KwMod,
-    mod_name: Identifier,
-    semicolon: Semicolon,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_mod: KwMod,
+    pub mod_name: Identifier,
+    pub semicolon: Semicolon,
 }
 
 impl Spanned for ModWithoutBody {

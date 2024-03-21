@@ -90,7 +90,7 @@ impl ParseStatement for LetStatement {
                 }) = parser.peek_current()
                 {
                     parser.next_token();
-                    
+
                     if let Some(e) = Expression::parse(parser)? {
                         parser.next_token();
                         Some(e)
@@ -118,12 +118,12 @@ impl ParseStatement for LetStatement {
                         assignment_opt,
                         semicolon: semicolon_opt.unwrap(),
                     }));
-                } else {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`;`".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                 }
+                
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`;`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`pattern`".to_string(),

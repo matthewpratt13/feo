@@ -12,7 +12,6 @@ use feo_types::{
 use crate::{parse::ParseItem, parser::Parser, utils};
 
 impl ParseItem for TraitDefItem {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -32,7 +31,6 @@ impl ParseItem for TraitDefItem {
 }
 
 impl ParseItem for TraitDef {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
