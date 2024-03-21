@@ -99,7 +99,6 @@ pub fn get_path_collection<T: ParseTerm>(
                 parser.next_token();
 
                 let path_suffixes = if let Some(inner_paths) = get_term_collection::<T>(parser)? {
-                    println!("current token: {:#?}", parser.current_token());
                     Some(Box::new(inner_paths))
                 } else {
                     None

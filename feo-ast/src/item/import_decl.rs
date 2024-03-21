@@ -31,7 +31,7 @@ pub struct ImportDecl {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_import: KwImport,
-    pub import_tree: ImportTree,
+    pub import_trees: PathCollection<ImportTree>,
     pub semicolon: Semicolon,
 }
 

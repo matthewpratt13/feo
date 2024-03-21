@@ -114,8 +114,9 @@ impl ParseItem for ImportDecl {
         {
             parser.next_token();
 
-            if let Some(import_tree) = ImportTree::parse(parser)? {
+            if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
                 parser.next_token();
+                println!("current token: {:#?}", parser.current_token());
 
                 let semicolon_opt = parser.peek_current();
 
@@ -130,7 +131,7 @@ impl ParseItem for ImportDecl {
                         attributes_opt,
                         visibility_opt,
                         kw_import: kw_import_opt.unwrap(),
-                        import_tree,
+                        import_trees,
                         semicolon: semicolon_opt.unwrap(),
                     }));
                 }
@@ -209,18 +210,28 @@ mod tests {
     #[test]
     fn parse_import_decl() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
+        // #[foo]
+        // pub import crate::{
+        //     some_module::{
+        //         SomeObject, self
+        //     },
+        //     another_module::{
+        //         AnotherObject, some_function
+        //     },
+        //     yet_another_module::YetAnotherObject,
+        //     SOME_CONSTANT,
+        //     an_entire_module::*,
+        // }"#;
+
+        let source_code = r#"
         #[foo]
-        pub import crate::{
-            some_module::{
-                SomeObject, self
-            },
-            another_module::{
-                AnotherObject, some_function
-            },
-            yet_another_module::YetAnotherObject,
-            SOME_CONSTANT,
-            an_entire_module::*,
-        }"#;
+        pub import some_module::{ 
+            SomeObject,
+            inner_module::InnerObject,
+            AnotherObject,
+            another_inner_module::AnotherInnerObject,
+            an_entire_module::*
+        };"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
