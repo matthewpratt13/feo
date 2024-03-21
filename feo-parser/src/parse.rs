@@ -19,6 +19,7 @@ use feo_ast::{
         IdentifierPatt, ParenthesizedPatt, Pattern, RangeFromPatt, RangeInclusivePatt,
         RangePattKind, RangeToInclusivePatt, StructPatt, TuplePatt, TupleStructPatt, WildcardPatt,
     },
+    statement::{ExprStatement, LetStatement, Statement},
     ty::{
         ArrayType, ClosureType, FunctionType, ParenthesizedType, ReferenceType, SelfType,
         TupleType, UnitType,
@@ -1433,11 +1434,7 @@ impl ParseItem for Item {
 
                 if let Some(i) = get_item_by_keyword(parser)? {
                     return Ok(Some(i));
-                } else {
-                    ()
                 }
-            } else {
-                ()
             }
         } else if let Some(_) = parser.peek_current::<Keyword>() {
             return get_item_by_keyword(parser);
@@ -1589,6 +1586,97 @@ impl ParsePatt for Pattern {
             return Ok(None);
         }
 
+        Err(parser.errors())
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+impl ParseStatement for Statement {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(_) = parser.peek_current::<Identifier>() {
+            if let Some(es) = ExprStatement::parse(parser)? {
+                return Ok(Some(Statement::ExprStatement(es)));
+            }
+        }
+
+        if let Some(_) = parser.peek_current::<Delimiter>() {
+            if let Some(es) = ExprStatement::parse(parser)? {
+                return Ok(Some(Statement::ExprStatement(es)));
+            }
+        } else if let Some(_) = parser.peek_current::<LiteralKind>() {
+            if let Some(es) = ExprStatement::parse(parser)? {
+                return Ok(Some(Statement::ExprStatement(es)));
+            }
+        }
+
+        if let Some(k) = parser.peek_current::<Keyword>() {
+            match &k.keyword_kind {
+                KeywordKind::KwLet => {
+                    if let Some(ls) = LetStatement::parse(parser)? {
+                        return Ok(Some(Statement::LetStatement(ls)));
+                    }
+                }
+
+                KeywordKind::KwConst
+                | KeywordKind::KwEnum
+                | KeywordKind::KwFunc
+                | KeywordKind::KwImpl
+                | KeywordKind::KwImport
+                | KeywordKind::KwMod
+                | KeywordKind::KwPub
+                | KeywordKind::KwStatic
+                | KeywordKind::KwStruct
+                | KeywordKind::KwTrait
+                | KeywordKind::KwType => {
+                    if let Some(i) = get_item_by_keyword(parser)? {
+                        return Ok(Some(Statement::Item(i)));
+                    }
+                }
+
+                _ => {
+                    if let Some(es) = ExprStatement::parse(parser)? {
+                        return Ok(Some(Statement::ExprStatement(es)));
+                    }
+                }
+            }
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
+            match p.punc_kind {
+                PuncKind::HashSign => {
+                    if let Some(_) = OuterAttr::parse(parser)? {
+                        parser.next_token();
+
+                        if let Some(Keyword {
+                            keyword_kind: KeywordKind::KwLet,
+                            ..
+                        }) = parser.peek_current()
+                        {
+                            if let Some(ls) = LetStatement::parse(parser)? {
+                                return Ok(Some(Statement::LetStatement(ls)));
+                            }
+                        } else {
+                            return Ok(None);
+                        }
+
+                        if let Some(i) = get_item_by_keyword(parser)? {
+                            return Ok(Some(Statement::Item(i)));
+                        }
+                    }
+                }
+
+                _ => {
+                    if let Some(es) = ExprStatement::parse(parser)? {
+                        return Ok(Some(Statement::ExprStatement(es)));
+                    }
+                }
+            }
+        } else {
+            return Ok(None);
+        }
+        
         Err(parser.errors())
     }
 }
@@ -1813,6 +1901,8 @@ impl ParseTerm for Value {
         Err(parser.errors())
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 fn get_item_by_keyword(parser: &mut Parser) -> Result<Option<Item>, Vec<CompilerError>> {
     if let Some(cvd) = ConstantVarDef::parse(parser)? {

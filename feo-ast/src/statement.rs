@@ -3,38 +3,13 @@ use feo_types::{
     type_utils::{KwLet, Semicolon},
 };
 
-use crate::{
-    attribute::OuterAttr,
-    expression::Expression,
-    item::{
-        ConstantVarDef, EnumDef, FunctionSig, FunctionWithBlock, ImportDecl, InherentImplBlock,
-        ModWithBody, ModWithoutBody, PathRecursive, PathWildcard, StaticVarDef, StructDef,
-        TraitDef, TraitImplBlock, TupleStructDef, TypeAliasDef,
-    },
-    pattern::Pattern,
-    ty::Type,
-};
+use crate::{attribute::OuterAttr, expression::Expression, item::Item, pattern::Pattern, ty::Type};
 
 // statement: component of a block, which is a component of an outer expression / function
 
 #[derive(Debug, Clone)]
 pub enum Statement {
-    ConstantVarDef(ConstantVarDef),
-    StaticVarDef(StaticVarDef),
-    EnumDef(EnumDef),
-    FunctionSig(FunctionSig),
-    FunctionWithBlock(FunctionWithBlock),
-    InherentImplBlock(InherentImplBlock),
-    TraitImplBlock(TraitImplBlock),
-    ImportDecl(ImportDecl),
-    PathWildcard(PathWildcard),
-    PathSubsetRecursive(PathRecursive),
-    ModWithBody(ModWithBody),
-    ModWithoutBody(ModWithoutBody),
-    StructDef(StructDef),
-    TupleStructDef(TupleStructDef),
-    TraitDef(TraitDef),
-    TypeAliasDef(TypeAliasDef),
+    Item(Item),
     ExprStatement(ExprStatement),
     LetStatement(LetStatement),
 }

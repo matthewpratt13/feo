@@ -15,7 +15,6 @@ use crate::{
 };
 
 impl ParseStatement for ExprStatement {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -48,7 +47,6 @@ impl ParseStatement for ExprStatement {
 }
 
 impl ParseStatement for LetStatement {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -119,7 +117,7 @@ impl ParseStatement for LetStatement {
                         semicolon: semicolon_opt.unwrap(),
                     }));
                 }
-                
+
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`;`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
