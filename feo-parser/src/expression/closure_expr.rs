@@ -1,6 +1,7 @@
 use feo_ast::{
     expression::{
-        ClosureParam, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock, Expression,
+        BlockExpr, ClosureParam, ClosureParamsOpt, ClosureWithBlock, ClosureWithoutBlock,
+        Expression,
     },
     pattern::Pattern,
     token::Token,
@@ -134,12 +135,37 @@ impl ParseExpr for ClosureWithoutBlock {
 }
 
 impl ParseExpr for ClosureWithBlock {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(params) = ClosureParamsOpt::parse(parser)? {
+            parser.next_token();
+
+            let return_type_opt = if let Some(t) = Type::parse(parser)? {
+                parser.next_token();
+                Some(Box::new(t))
+            } else {
+                None
+            };
+
+            if let Some(block) = BlockExpr::parse(parser)? {
+                return Ok(Some(ClosureWithBlock {
+                    params,
+                    return_type_opt,
+                    block,
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "block expression".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 

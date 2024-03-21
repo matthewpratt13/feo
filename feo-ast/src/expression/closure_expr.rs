@@ -29,9 +29,9 @@ impl Spanned for ClosureParamsOpt {
 
 #[derive(Debug, Clone)]
 pub struct ClosureWithBlock {
-    params: ClosureParamsOpt,
-    return_type_opt: Option<Box<Type>>,
-    block: BlockExpr,
+    pub params: ClosureParamsOpt,
+    pub return_type_opt: Option<Box<Type>>,
+    pub block: BlockExpr,
 }
 
 impl Spanned for ClosureWithBlock {
