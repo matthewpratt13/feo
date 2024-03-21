@@ -10,13 +10,13 @@ use super::{Item, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub struct ModWithBody {
-    attributes_opt: Option<Vec<OuterAttr>>,
-    visibility_opt: Option<VisibilityKind>,
-    kw_mod: KwMod,
-    mod_name: Identifier,
-    open_brace: Brace,
-    items: Box<Item>,
-    close_brace: Brace,
+    pub attributes_opt: Option<Vec<OuterAttr>>,
+    pub visibility_opt: Option<VisibilityKind>,
+    pub kw_mod: KwMod,
+    pub mod_name: Identifier,
+    pub open_brace: Brace,
+    pub items_opt: Option<Vec<Item>>,
+    pub close_brace: Brace,
 }
 
 impl Spanned for ModWithBody {
