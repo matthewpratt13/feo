@@ -56,6 +56,11 @@ impl Parser {
         Peeker::with(&self.stream().tokens(), self.pos + 1)
     }
 
+    // peek at the next `T` and return it if it exists (without advancing) or return `None`
+    pub fn peek_with_len<T: Peek>(&self, num_tokens: usize) -> Option<T> {
+        Peeker::with(&self.stream().tokens(), self.pos + num_tokens)
+    }
+
     pub fn log_error(&self, error_kind: ParserErrorKind) -> ErrorEmitted {
         let err = ParserError {
             error_kind,

@@ -1,4 +1,5 @@
 use feo_ast::{
+    attribute::OuterAttr,
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, AssignmentExpr, BlockExpr, BreakExpr, ClosureWithBlock,
         ClosureWithoutBlock, ComparisonExpr, CompoundAssignmentExpr, ContinueExpr, DereferenceExpr,
@@ -8,6 +9,10 @@ use feo_ast::{
         RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
         ReferenceExpr, ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr,
         TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
+    },
+    item::{
+        ConstantVarDef, EnumDef, FunctionSig, ImportDecl, InherentImplBlock, Item, ModWithoutBody,
+        StaticVarDef, StructDef, TraitImplBlock, TupleStructDef, TypeAliasDef,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -26,6 +31,7 @@ use feo_types::{
     keyword::KeywordKind,
     literal::LiteralKind,
     punctuation::PuncKind,
+    span::Spanned,
     BuiltInType, Delimiter, Identifier, Keyword, Punctuation,
 };
 
@@ -1413,6 +1419,41 @@ impl ParseExpr for ExprWithoutBlock {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+impl ParseItem for Item {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(Punctuation {
+            punc_kind: PuncKind::HashSign,
+            ..
+        }) = parser.peek_current()
+        {
+            if let Some(oa) = OuterAttr::parse(parser)? {
+                if let Some(_) = parser.peek_with_len::<Keyword>(oa.span().len()) {
+                    if let Some(i) = get_item_by_keyword(parser)? {
+                        return Ok(Some(i));
+                    } else {
+                        ()
+                    };
+                } else {
+                    return Ok(None);
+                }
+            } else {
+                ()
+            }
+        } else if let Some(_) = parser.peek_current::<Keyword>() {
+            return get_item_by_keyword(parser);
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 impl ParsePatt for Pattern {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -1773,5 +1814,39 @@ impl ParseTerm for Value {
         }
 
         Err(parser.errors())
+    }
+}
+
+fn get_item_by_keyword(parser: &mut Parser) -> Result<Option<Item>, Vec<CompilerError>> {
+    if let Some(cvd) = ConstantVarDef::parse(parser)? {
+        return Ok(Some(Item::ConstantVarDef(cvd)));
+    } else if let Some(ed) = EnumDef::parse(parser)? {
+        return Ok(Some(Item::EnumDef(ed)));
+    } else if let Some(fs) = FunctionSig::parse(parser)? {
+        return Ok(Some(Item::FunctionSig(fs)));
+        // } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        //     return Ok(Some(Item::FunctionWithBlock(fwb)));
+    } else if let Some(iib) = InherentImplBlock::parse(parser)? {
+        return Ok(Some(Item::InherentImplBlock(iib)));
+    } else if let Some(tib) = TraitImplBlock::parse(parser)? {
+        return Ok(Some(Item::TraitImplBlock(tib)));
+    } else if let Some(imp) = ImportDecl::parse(parser)? {
+        return Ok(Some(Item::ImportDecl(imp)));
+    // } else if let Some(mwb) = ModWithBody::parse(parser)? {
+    //     return Ok(Some(Item::ModWithBody(mwb)));
+    } else if let Some(m) = ModWithoutBody::parse(parser)? {
+        return Ok(Some(Item::ModWithoutBody(m)));
+    } else if let Some(svd) = StaticVarDef::parse(parser)? {
+        return Ok(Some(Item::StaticVarDef(svd)));
+    } else if let Some(sd) = StructDef::parse(parser)? {
+        return Ok(Some(Item::StructDef(sd)));
+    } else if let Some(tsd) = TupleStructDef::parse(parser)? {
+        return Ok(Some(Item::TupleStructDef(tsd)));
+    // } else if let Some(td) = TraitDef::parse(parser)? {
+    //     return Ok(Some(Item::TraitDef(td)));
+    } else if let Some(tad) = TypeAliasDef::parse(parser)? {
+        return Ok(Some(Item::TypeAliasDef(tad)));
+    } else {
+        return Ok(None);
     }
 }

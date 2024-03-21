@@ -40,9 +40,6 @@ pub enum Item {
     InherentImplBlock(InherentImplBlock),
     TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
-    PathWildcard(PathWildcard),
-    PathSubset(PathSubset),
-    PathSubsetRecursive(PathRecursive),
     ModWithBody(ModWithBody),
     ModWithoutBody(ModWithoutBody),
     StructDef(StructDef),
@@ -62,9 +59,6 @@ impl Spanned for Item {
             Item::InherentImplBlock(ii) => ii.span(),
             Item::TraitImplBlock(ti) => ti.span(),
             Item::ImportDecl(imp) => imp.span(),
-            Item::PathWildcard(pwc) => pwc.span(),
-            Item::PathSubset(ps) => ps.span(),
-            Item::PathSubsetRecursive(psr) => psr.span(),
             Item::ModWithBody(mwb) => mwb.span(),
             Item::ModWithoutBody(m) => m.span(),
             Item::StructDef(sd) => sd.span(),
@@ -92,3 +86,5 @@ impl<T: Spanned> Spanned for PathCollection<T> {
         Span::join(s1, s2)
     }
 }
+
+

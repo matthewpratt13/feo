@@ -82,6 +82,14 @@ impl Span {
         self.end
     }
 
+    pub fn len(&self) -> usize {
+        if self.end >= self.start {
+            self.end - self.start
+        } else {
+            self.start - self.end
+        }
+    }
+
     pub fn join(s1: Span, s2: Span) -> Span {
         Span {
             src: s1.src,
