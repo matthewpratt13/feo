@@ -31,7 +31,6 @@ use feo_types::{
     keyword::KeywordKind,
     literal::LiteralKind,
     punctuation::PuncKind,
-    span::Spanned,
     BuiltInType, Delimiter, Identifier, Keyword, Punctuation,
 };
 
@@ -1429,15 +1428,13 @@ impl ParseItem for Item {
             ..
         }) = parser.peek_current()
         {
-            if let Some(oa) = OuterAttr::parse(parser)? {
-                if let Some(_) = parser.peek_with_len::<Keyword>(oa.span().len()) {
-                    if let Some(i) = get_item_by_keyword(parser)? {
-                        return Ok(Some(i));
-                    } else {
-                        ()
-                    };
+            if let Some(_) = OuterAttr::parse(parser)? {
+                parser.next_token();
+
+                if let Some(i) = get_item_by_keyword(parser)? {
+                    return Ok(Some(i));
                 } else {
-                    return Ok(None);
+                    ()
                 }
             } else {
                 ()

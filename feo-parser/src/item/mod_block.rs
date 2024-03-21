@@ -40,8 +40,6 @@ impl ParseItem for ModWithoutBody {
                     ..
                 }) = semicolon_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(ModWithoutBody {
                         attributes_opt,
                         visibility_opt,
@@ -171,14 +169,15 @@ mod tests {
         let source_code = r#"
         #[abstract]
         mod some_mod {
-            import some_module::SomeObject;
+            pub import some_module::SomeObject;
 
             pub const foo: u64 = 10;
             static mut bar: bool = true;
 
+            #[abstract]
             pub enum Foo {
                 Bar,
-                Baz
+                Baz(u64),
             }
 
             struct Foo {
@@ -186,6 +185,8 @@ mod tests {
             }
 
             pub func baz(some_param: ParamType) -> ReturnType;
+
+            mod some_without_body;
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
