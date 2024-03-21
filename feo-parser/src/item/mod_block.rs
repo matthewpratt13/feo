@@ -165,4 +165,34 @@ mod tests {
 
         Ok(println!("{:#?}", mod_without_body))
     }
+
+    #[test]
+    fn parse_mod_with_body() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[abstract]
+        pub mod some_mod {
+            import some_module::SomeObject;
+
+            pub const foo:  u64 = 10;
+            pub static mut bar: bool = true;
+
+            pub enum Foo {
+                Bar,
+                Baz
+            }
+
+            pub struct Foo {
+                bar: u64
+            }
+
+            pub func baz(some_param: ParamType) -> ReturnType;
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let mod_with_body =
+            ModWithBody::parse(&mut parser).expect("unable to parse module with body");
+
+        Ok(println!("{:#?}", mod_with_body))
+    }
 }
