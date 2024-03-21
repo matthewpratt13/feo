@@ -73,7 +73,7 @@ impl ParseStatement for LetStatement {
                 }) = parser.peek_current()
                 {
                     parser.next_token();
-                    
+
                     if let Some(t) = Type::parse(parser)? {
                         parser.next_token();
                         Some(t)
@@ -84,9 +84,19 @@ impl ParseStatement for LetStatement {
                     None
                 };
 
-                let assignment_opt = if let Some(e) = Expression::parse(parser)? {
+                let assignment_opt = if let Some(Punctuation {
+                    punc_kind: PuncKind::Equals,
+                    ..
+                }) = parser.peek_current()
+                {
                     parser.next_token();
-                    Some(e)
+                    
+                    if let Some(e) = Expression::parse(parser)? {
+                        parser.next_token();
+                        Some(e)
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 };
@@ -145,5 +155,17 @@ mod tests {
             ExprStatement::parse(&mut parser).expect("unable to parse expression statement");
 
         Ok(println!("{:#?}", expr_statement))
+    }
+
+    #[test]
+    fn parse_let_statement() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"let x = 12 * 4;"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let let_statement =
+            LetStatement::parse(&mut parser).expect("unable to parse let statement");
+
+        Ok(println!("{:#?}", let_statement))
     }
 }

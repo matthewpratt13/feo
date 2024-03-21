@@ -468,6 +468,53 @@ impl ParseExpr for Expression {
 
             match parser.peek_next::<Punctuation>() {
                 Some(Punctuation {
+                    punc_kind: PuncKind::Plus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Minus,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Asterisk,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::ForwardSlash,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Percent,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Ampersand,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Pipe,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::Caret,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblLessThan,
+                    ..
+                })
+                | Some(Punctuation {
+                    punc_kind: PuncKind::DblGreaterThan,
+                    ..
+                }) => {
+                    if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(al),
+                        )));
+                    }
+                }
+
+                Some(Punctuation {
                     punc_kind: PuncKind::LessThan,
                     ..
                 })
