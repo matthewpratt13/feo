@@ -60,3 +60,25 @@ impl ParseItem for ModWithoutBody {
         Err(parser.errors())
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[test]
+    fn parse_mod_without_body() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[abstract]
+        pub mod some_mod;"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let mod_without_body =
+            ModWithoutBody::parse(&mut parser).expect("unable to parse module without body");
+
+        Ok(println!("{:#?}", mod_without_body))
+    }
+}
