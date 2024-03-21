@@ -48,6 +48,7 @@ impl ParseTerm for SimplePath {
 
                 if let Some(next_path_segment) = parser.peek_next::<SimplePathSegmentKind>() {
                     subsequent_segments.push(next_path_segment);
+                    parser.next_token();
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`SimplePathSegmentKind`".to_string(),
@@ -56,7 +57,6 @@ impl ParseTerm for SimplePath {
                     break;
                 }
             }
-
 
             match &subsequent_segments.is_empty() {
                 true => Ok(Some(SimplePath {

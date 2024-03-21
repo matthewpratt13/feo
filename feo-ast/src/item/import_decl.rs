@@ -1,11 +1,11 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Brace, ColonColonAsterisk, KwImport, Semicolon},
+    type_utils::{ColonColonAsterisk, KwImport, Semicolon},
 };
 
-use crate::{attribute::OuterAttr, expression::TermCollection, path::SimplePath};
+use crate::{attribute::OuterAttr, path::SimplePath};
 
-use super::VisibilityKind;
+use super::{PathCollection, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub enum ImportTree {
@@ -70,7 +70,7 @@ impl Spanned for PathWildcard {
 }
 
 #[derive(Debug, Clone)]
-pub struct PathRecursive(pub Box<TermCollection<ImportTree>>);
+pub struct PathRecursive(pub PathCollection<ImportTree>);
 
 impl Spanned for PathRecursive {
     fn span(&self) -> Span {
@@ -79,18 +79,10 @@ impl Spanned for PathRecursive {
 }
 
 #[derive(Debug, Clone)]
-pub struct PathSubset {
-    pub path_prefix: SimplePath,
-    pub open_brace: Brace,
-    pub inner_paths: TermCollection<SimplePath>,
-    pub close_brace: Brace,
-}
+pub struct PathSubset(pub PathCollection<SimplePath>);
 
 impl Spanned for PathSubset {
     fn span(&self) -> Span {
-        let s1 = self.path_prefix.span();
-        let s2 = self.close_brace.span();
-
-        Span::join(s1, s2)
+        self.0.span()
     }
 }
