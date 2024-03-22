@@ -38,13 +38,6 @@ impl ParseExpr for BlockExpr {
                 None
             };
 
-            let final_operand_opt = None;
-
-            println!(
-                "final operand in block expression (optional): {:#?}",
-                &final_operand_opt
-            );
-
             let close_brace_opt = parser.peek_current();
 
             println!(

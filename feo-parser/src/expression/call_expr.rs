@@ -59,8 +59,6 @@ impl ParseExpr for FunctionCallExpr {
                     ..
                 }) = close_parenthesis_opt
                 {
-                    // parser.next_token();
-
                     println!(
                         "exit function call expression. \ncurrent token: {:#?}",
                         parser.current_token()

@@ -151,9 +151,21 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
         parser.current_token()
     );
 
-    if let Some(s) = Statement::parse(parser)? {
+    while let Some(s) = Statement::parse(parser)? {
         statements.push(s);
-        // parser.next_token();
+
+        println!(
+            "current token inside while loop: {:#?}",
+            parser.current_token()
+        );
+
+        if let Some(Delimiter {
+            delim: (DelimKind::Brace, DelimOrientation::Close),
+            ..
+        }) = parser.peek_current()
+        {
+            break;
+        }
     }
 
     println!(
