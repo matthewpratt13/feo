@@ -11,8 +11,9 @@ use feo_ast::{
         TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     item::{
-        ConstantVarDef, EnumDef, FunctionSig, ImportDecl, InherentImplBlock, Item, ModWithoutBody,
-        StaticVarDef, StructDef, TraitImplBlock, TupleStructDef, TypeAliasDef,
+        ConstantVarDef, EnumDef, FunctionSig, FunctionWithBlock, ImportDecl, InherentImplBlock,
+        Item, ModWithoutBody, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef,
+        TypeAliasDef,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -1888,10 +1889,10 @@ fn get_item_by_keyword(parser: &mut Parser) -> Result<Option<Item>, Vec<Compiler
         return Ok(Some(Item::ConstantVarDef(cvd)));
     } else if let Some(ed) = EnumDef::parse(parser)? {
         return Ok(Some(Item::EnumDef(ed)));
+    } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        return Ok(Some(Item::FunctionWithBlock(fwb)));
     } else if let Some(fs) = FunctionSig::parse(parser)? {
         return Ok(Some(Item::FunctionSig(fs)));
-        // } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
-        //     return Ok(Some(Item::FunctionWithBlock(fwb)));
     } else if let Some(iib) = InherentImplBlock::parse(parser)? {
         return Ok(Some(Item::InherentImplBlock(iib)));
     } else if let Some(tib) = TraitImplBlock::parse(parser)? {

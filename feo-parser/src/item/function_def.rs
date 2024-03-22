@@ -199,6 +199,14 @@ impl ParseItem for FunctionSig {
                             None
                         };
 
+                        if let Some(Punctuation {
+                            punc_kind: PuncKind::Semicolon,
+                            ..
+                        }) = parser.peek_current()
+                        {
+                            parser.next_token();
+                        }
+
                         return Ok(Some(FunctionSig {
                             attributes_opt,
                             visibility_opt,
@@ -242,25 +250,19 @@ impl ParseItem for FunctionWithBlock {
         Self: Sized,
     {
         if let Some(function_sig) = FunctionSig::parse(parser)? {
-            parser.next_token();
-            
+
             if let Some(function_body) = ExprWithBlock::parse(parser)? {
-                parser.next_token();
+                // parser.next_token();
                 return Ok(Some(FunctionWithBlock {
                     function_sig,
                     function_body,
                 }));
             }
 
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "function body".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 

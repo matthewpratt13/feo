@@ -64,11 +64,9 @@ impl ParseItem for TraitDef {
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                    parser.next_token();
 
-                    let associated_items_opt = utils::get_items(parser)?;
+                    let associated_items_opt = utils::get_items::<TraitDefItem>(parser)?;
 
-                    utils::skip_trailing_comma(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 
@@ -116,7 +114,6 @@ mod tests {
 
     use super::*;
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_trait_def() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
@@ -124,7 +121,7 @@ mod tests {
             pub trait foo 
             {
                 #![export]
-                fn baz()
+                func baz();
             }
         "#;
 
