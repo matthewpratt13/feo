@@ -469,7 +469,7 @@ mod tests {
         if (foo < 2) { 
             bar(x) 
         } else {
-            return x * 2;
+            return x * 2
         }
      "#;
 

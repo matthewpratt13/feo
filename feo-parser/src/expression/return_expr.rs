@@ -19,7 +19,6 @@ impl ParseExpr for ReturnExpr {
             parser.next_token();
 
             let expression_opt = if let Some(e) = Expression::parse(parser)? {
-                parser.next_token();
                 Some(Box::new(e))
             } else {
                 None
