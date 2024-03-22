@@ -1755,9 +1755,7 @@ impl ParseTerm for Value {
             };
 
             return Ok(Some(Value::PathExpr(path_expr)));
-        }
-
-        if let Some(d) = parser.peek_current::<Delimiter>() {
+        } else if let Some(d) = parser.peek_current::<Delimiter>() {
             match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(par) = ParenthesizedExpr::parse(parser).unwrap_or(None) {
@@ -1779,9 +1777,7 @@ impl ParseTerm for Value {
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             return Ok(Some(Value::Literal(l)));
-        }
-
-        if let Some(p) = parser.peek_current::<Punctuation>() {
+        } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
                 PuncKind::Bang | PuncKind::Minus => {
                     if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {

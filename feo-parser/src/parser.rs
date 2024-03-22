@@ -46,6 +46,15 @@ impl Parser {
         token
     }
 
+    // advance the parser and return the current token
+    pub fn previous_token(&mut self) -> Option<Token> {
+        if self.pos > 0 {
+            self.stream.tokens().get(self.pos - 1).cloned()
+        } else {
+            None
+        }
+    }
+
     // peek at the current `T` and return it if it exists (without advancing) or return `None`
     pub fn peek_current<T: Peek>(&self) -> Option<T> {
         Peeker::with(&self.stream().tokens(), self.pos)

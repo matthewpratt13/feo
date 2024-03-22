@@ -298,17 +298,12 @@ impl ParseExpr for MatchExpr {
             if let Some(scrutinee) = Value::parse(parser)? {
                 println!("scrutinee: {:#?}", &scrutinee);
 
+                parser.next_token();
+
                 println!(
                     "expecting open brace... \nfinds: {:#?}",
                     parser.current_token()
                 );
-
-                println!(
-                    "entering expression body... \ncurrent token: {:#?}",
-                    parser.current_token()
-                );
-
-                parser.next_token();
 
                 let open_brace_opt = parser.peek_current();
 
@@ -317,15 +312,30 @@ impl ParseExpr for MatchExpr {
                     ..
                 }) = open_brace_opt
                 {
+                    println!(
+                        "entering expression body... \ncurrent token: {:#?}",
+                        parser.current_token()
+                    );
+
                     parser.next_token();
 
                     let attributes_opt = utils::get_attributes(parser)?;
+
+                    println!(
+                        "entering match arms (optional)... \ncurrent token: {:#?}",
+                        parser.current_token()
+                    );
 
                     let match_arms_opt = if let Some(ma) = MatchArms::parse(parser)? {
                         Some(ma)
                     } else {
                         None
                     };
+
+                    println!(
+                        "exit match arms. \ncurrent token: {:#?}",
+                        parser.current_token()
+                    );
 
                     if let Some(Punctuation {
                         punc_kind: PuncKind::Comma,
@@ -335,7 +345,10 @@ impl ParseExpr for MatchExpr {
                         parser.next_token();
                     }
 
-                    parser.next_token();
+                    println!(
+                        "expecting close brace... \nfinds: {:#?}",
+                        parser.current_token()
+                    );
 
                     let close_brace_opt = parser.peek_current();
 
@@ -344,6 +357,11 @@ impl ParseExpr for MatchExpr {
                         ..
                     }) = close_brace_opt
                     {
+                        println!(
+                            "exit match expression block... \ncurrent token: {:#?}",
+                            parser.current_token()
+                        );
+
                         return Ok(Some(MatchExpr {
                             kw_match: kw_match_opt.unwrap(),
                             scrutinee,

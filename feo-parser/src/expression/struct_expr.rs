@@ -7,9 +7,7 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 
 use feo_types::{
-    delimiter::{DelimKind, DelimOrientation},
-    punctuation::PuncKind,
-    Delimiter, Identifier, Punctuation,
+    delimiter::{DelimKind, DelimOrientation}, keyword::KeywordKind, punctuation::PuncKind, Delimiter, Identifier, Keyword, Punctuation
 };
 
 use crate::{
@@ -67,6 +65,14 @@ impl ParseExpr for StructExpr {
     where
         Self: Sized,
     {
+        if let Some(Token::Keyword(Keyword {
+            keyword_kind: KeywordKind::KwMatch,
+            ..
+        })) = parser.previous_token()
+        {
+            return Ok(None);
+        }
+        
         if let Some(path) = PathInExpr::parse(parser)? {
             println!(
                 "entering struct expression... \ncurrent token: {:#?}",
