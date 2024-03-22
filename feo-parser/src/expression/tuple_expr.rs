@@ -81,8 +81,6 @@ impl ParseExpr for TupleIndexExpr {
                 parser.next_token();
 
                 if let Some(index) = parser.peek_current::<Literal<UIntType>>() {
-                    parser.next_token();
-
                     return Ok(Some(TupleIndexExpr {
                         operand: Box::new(operand),
                         index: U64Primitive::try_from(index)

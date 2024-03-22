@@ -63,7 +63,7 @@ impl ParseExpr for IfExpr {
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
                             else_if_blocks.push(Box::new(next_if_expr));
-                            parser.next_token();
+                            // parser.next_token();
                         } else if let Some(b) = BlockExpr::parse(parser)? {
                             trailing_else_block_opt = Some(b);
                             println!(
@@ -74,6 +74,8 @@ impl ParseExpr for IfExpr {
                             break;
                         }
                     }
+
+                    parser.next_token();
 
                     match else_if_blocks.is_empty() {
                         true => {
@@ -468,8 +470,10 @@ mod tests {
         let source_code = r#"
         if (foo < 2) { 
             bar(x) 
+        } else if (baz > 12) {
+            return y * 2
         } else {
-            return x * 2
+            foobar.0
         }
      "#;
 

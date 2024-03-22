@@ -125,6 +125,10 @@ impl ParseExpr for Expression {
 
                 match p.punc_kind {
                     PuncKind::FullStop => {
+                        if let Some(tie) = TupleIndexExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::TupleIndexExpr(tie)));
+                        }
+
                         if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Expression::FieldAccessExpr(fa)));
                         }
@@ -1820,12 +1824,11 @@ impl ParseTerm for Value {
                 _ => (),
             }
 
-            let path_expr = PathExpr {
-                first_segment: PathIdenSegmentKind::Iden(id),
-                subsequent_segments: None,
-            };
-
-            return Ok(Some(Value::PathExpr(path_expr)));
+            if let Some(_) = parser.peek_current::<PathIdenSegmentKind>() {
+                if let Some(p) = PathExpr::parse(parser).unwrap_or(None) {
+                    return Ok(Some(Value::PathExpr(p)));
+                }
+            }
         } else if let Some(d) = parser.peek_current::<Delimiter>() {
             match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
