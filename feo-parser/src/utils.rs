@@ -151,10 +151,15 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
         parser.current_token()
     );
 
-    while let Some(s) = Statement::parse(parser)? {
+    if let Some(s) = Statement::parse(parser)? {
         statements.push(s);
-        parser.next_token();
+        // parser.next_token();
     }
+
+    println!(
+        "current token after parsing `Statement`: {:#?}",
+        parser.current_token()
+    );
 
     println!("number of statements: {:#?}", statements.len());
 

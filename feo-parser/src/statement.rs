@@ -24,22 +24,18 @@ impl ParseStatement for ExprStatement {
 
             let semicolon_opt = parser.peek_current::<Punctuation>();
 
-            match &semicolon_opt {
-                Some(Punctuation {
-                    punc_kind: PuncKind::Semicolon,
-                    ..
-                })
-                | None => {
-                    parser.next_token();
-
-                    return Ok(Some(ExprStatement {
-                        expression,
-                        semicolon_opt,
-                    }));
-                }
-
-                _ => return Ok(None),
+            if let Some(Punctuation {
+                punc_kind: PuncKind::Semicolon,
+                ..
+            }) = semicolon_opt
+            {
+                parser.next_token();
             }
+
+            return Ok(Some(ExprStatement {
+                expression,
+                semicolon_opt,
+            }));
         } else {
             return Ok(None);
         }

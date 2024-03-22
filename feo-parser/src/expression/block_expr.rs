@@ -38,6 +38,8 @@ impl ParseExpr for BlockExpr {
                 None
             };
 
+            let final_operand_opt = None;
+
             println!(
                 "final operand in block expression (optional): {:#?}",
                 &final_operand_opt
@@ -55,8 +57,6 @@ impl ParseExpr for BlockExpr {
                 ..
             }) = close_brace_opt
             {
-                parser.next_token();
-
                 println!(
                     "exit block expression. \ncurrent token: {:#?}",
                     parser.current_token()
@@ -84,11 +84,22 @@ impl ParseExpr for BlockExpr {
 
 #[cfg(test)]
 mod tests {
-    use feo_error::error::CompilerError;
 
-    #[ignore]
+    use crate::test_utils;
+
+    use super::*;
+
     #[test]
     fn parse_block_expr() -> Result<(), Vec<CompilerError>> {
-        todo!()
+        let source_code = r#"
+        {
+            foo(bar, 12, true);
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let block_expr = BlockExpr::parse(&mut parser).expect("unable to parse block expression");
+
+        Ok(println!("{:#?}", block_expr))
     }
 }
