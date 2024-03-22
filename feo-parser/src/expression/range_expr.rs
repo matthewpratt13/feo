@@ -51,8 +51,6 @@ impl ParseExpr for RangeFromToExpr {
                 parser.next_token();
 
                 if let Some(to_operand_excl) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(RangeFromToExpr {
                         from_operand: Box::new(from_operand),
                         dbl_dot: dbl_dot_opt.unwrap(),
@@ -93,8 +91,6 @@ impl ParseExpr for RangeFromExpr {
                 ..
             }) = dbl_dot_opt
             {
-                parser.next_token();
-
                 return Ok(Some(RangeFromExpr {
                     from_operand: Box::new(from_operand),
                     dbl_dot: dbl_dot_opt.unwrap(),
@@ -128,8 +124,6 @@ impl ParseExpr for RangeToExpr {
             parser.next_token();
 
             if let Some(to_operand) = Value::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(RangeToExpr {
                     dbl_dot: dbl_dot_opt.unwrap(),
                     to_operand: Box::new(to_operand),
@@ -166,8 +160,6 @@ impl ParseExpr for RangeInclusiveExpr {
                 parser.next_token();
 
                 if let Some(to_operand_incl) = Value::parse(parser)? {
-                    parser.next_token();
-
                     return Ok(Some(RangeInclusiveExpr {
                         from_operand: Box::new(from_operand),
                         dot_dot_equals: dot_dot_equals_opt.unwrap(),
@@ -208,8 +200,6 @@ impl ParseExpr for RangeToInclusiveExpr {
             parser.next_token();
 
             if let Some(to_operand) = Value::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(RangeToInclusiveExpr {
                     dot_dot_equals: dot_dot_equals.unwrap(),
                     to_operand_incl: Box::new(to_operand),
@@ -300,8 +290,8 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let range_to_inclusive_expr =
-            RangeToInclusiveExpr::parse(&mut parser).expect("unable to parse to inclusive–range expression");
+        let range_to_inclusive_expr = RangeToInclusiveExpr::parse(&mut parser)
+            .expect("unable to parse to inclusive–range expression");
 
         Ok(println!("{:#?}", range_to_inclusive_expr))
     }

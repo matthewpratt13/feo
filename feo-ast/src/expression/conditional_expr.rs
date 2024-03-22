@@ -8,7 +8,7 @@ use crate::{
     pattern::Pattern,
 };
 
-use super::{BlockExpr, Expression, ParenthesizedExpr};
+use super::{BlockExpr, Expression, ParenthesizedExpr, Value};
 
 #[derive(Debug, Clone)]
 pub struct IfExpr {
@@ -40,7 +40,7 @@ impl Spanned for IfExpr {
 #[derive(Debug, Clone)]
 pub struct MatchExpr {
     pub kw_match: KwMatch,
-    pub scrutinee: Box<ParenthesizedExpr>,
+    pub scrutinee: Value,
     pub open_brace: Brace,
     pub attributes_opt: Option<Vec<InnerAttr>>,
     pub match_arms_opt: Option<MatchArms>,

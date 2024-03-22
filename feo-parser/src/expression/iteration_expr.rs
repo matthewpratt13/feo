@@ -26,7 +26,6 @@ impl ParseExpr for BreakExpr {
             ..
         }) = kw_break_opt
         {
-            parser.next_token();
             return Ok(Some(BreakExpr(kw_break_opt.unwrap())));
         } else {
             return Ok(None);
@@ -46,7 +45,6 @@ impl ParseExpr for ContinueExpr {
             ..
         }) = kw_continue_opt
         {
-            parser.next_token();
             return Ok(Some(ContinueExpr(kw_continue_opt.unwrap())));
         } else {
             return Ok(None);
@@ -102,11 +100,7 @@ impl ParseExpr for PredicateLoopExpr {
             parser.next_token();
 
             if let Some(conditional_operand) = ParenthesizedExpr::parse(parser)? {
-                parser.next_token();
-
                 if let Some(block) = BlockExpr::parse(parser)? {
-                    parser.next_token();
-                    
                     return Ok(Some(PredicateLoopExpr {
                         kw_while: kw_while_opt.unwrap(),
                         conditional_operand: Box::new(conditional_operand),
@@ -157,10 +151,7 @@ impl ParseExpr for IterLoopExpr {
                 }) = kw_in_opt
                 {
                     parser.next_token();
-
                     if let Some(iterator) = ParenthesizedExpr::parse(parser)? {
-                        parser.next_token();
-
                         if let Some(block) = BlockExpr::parse(parser)? {
                             return Ok(Some(IterLoopExpr {
                                 kw_for: kw_for_opt.unwrap(),
@@ -170,12 +161,12 @@ impl ParseExpr for IterLoopExpr {
                                 block,
                             }));
                         }
+                    } else {
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "parenthesized expression".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
                     }
-
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "parenthesized expression".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
                         expected: "`in`".to_string(),
@@ -226,7 +217,6 @@ mod tests {
         Ok(println!("{:#?}", continue_expr))
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_infinite_loop_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
@@ -242,11 +232,10 @@ mod tests {
         Ok(println!("{:#?}", infinite_loop_expr))
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_predicate_loop_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
-        while foo < 100 {
+        while (foo < 100) {
             foo += 2
         }"#;
 
@@ -258,18 +247,17 @@ mod tests {
         Ok(println!("{:#?}", predicate_loop_expr))
     }
 
-    #[ignore] // TODO: remove when testing
     #[test]
     fn parse_iter_loop_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         for x in (1..10) {
-            x += 2
+            y += 2
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let iter_loop_expr = IterLoopExpr::parse(&mut parser)
-            .expect("unable to parse iterator loop expression");
+        let iter_loop_expr =
+            IterLoopExpr::parse(&mut parser).expect("unable to parse iterator loop expression");
 
         Ok(println!("{:#?}", iter_loop_expr))
     }

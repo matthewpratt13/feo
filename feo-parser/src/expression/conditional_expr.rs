@@ -1,7 +1,7 @@
 use feo_ast::{
     expression::{
         BlockExpr, Expression, IfExpr, MatchArm, MatchArmGuard, MatchArms, MatchExpr,
-        ParenthesizedExpr,
+        ParenthesizedExpr, Value,
     },
     pattern::Pattern,
     token::Token,
@@ -288,9 +288,28 @@ impl ParseExpr for MatchExpr {
             ..
         }) = kw_match_opt
         {
+            println!(
+                "entering match expression... \ncurrent token: {:#?}",
+                parser.current_token()
+            );
+
             parser.next_token();
 
-            if let Some(scrutinee) = ParenthesizedExpr::parse(parser)? {
+            if let Some(scrutinee) = Value::parse(parser)? {
+                println!("scrutinee: {:#?}", &scrutinee);
+
+                println!(
+                    "expecting open brace... \nfinds: {:#?}",
+                    parser.current_token()
+                );
+
+                println!(
+                    "entering expression body... \ncurrent token: {:#?}",
+                    parser.current_token()
+                );
+
+                parser.next_token();
+
                 let open_brace_opt = parser.peek_current();
 
                 if let Some(Delimiter {
@@ -316,6 +335,8 @@ impl ParseExpr for MatchExpr {
                         parser.next_token();
                     }
 
+                    parser.next_token();
+
                     let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
@@ -323,11 +344,9 @@ impl ParseExpr for MatchExpr {
                         ..
                     }) = close_brace_opt
                     {
-                        parser.next_token();
-
                         return Ok(Some(MatchExpr {
                             kw_match: kw_match_opt.unwrap(),
-                            scrutinee: Box::new(scrutinee),
+                            scrutinee,
                             open_brace: open_brace_opt.unwrap(),
                             attributes_opt,
                             match_arms_opt,
@@ -438,11 +457,10 @@ mod tests {
         Ok(println!("{:#?}", match_arms))
     }
 
-    #[ignore]
     #[test]
     fn parse_match_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
-        match (foo) {
+        match foo {
             #![unsafe]
             #[abstract]
             true => x + 2,

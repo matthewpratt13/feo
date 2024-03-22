@@ -68,6 +68,11 @@ impl ParseExpr for StructExpr {
         Self: Sized,
     {
         if let Some(path) = PathInExpr::parse(parser)? {
+            println!(
+                "entering struct expression... \ncurrent token: {:#?}",
+                parser.current_token()
+            );
+
             parser.next_token();
 
             let open_brace_opt = parser.peek_current();
@@ -77,9 +82,20 @@ impl ParseExpr for StructExpr {
                 ..
             }) = open_brace_opt
             {
+                println!(
+                    "entering struct fields... \ncurrent token: {:#?}",
+                    parser.current_token()
+                );
+
                 parser.next_token();
 
                 let fields_opt = utils::get_term_collection::<StructExprField>(parser)?;
+
+                println!(
+                    "expecting close brace... \nfinds: {:#?}
+                ",
+                    parser.current_token()
+                );
 
                 let close_brace_opt = parser.peek_current();
 
@@ -88,7 +104,10 @@ impl ParseExpr for StructExpr {
                     ..
                 }) = close_brace_opt
                 {
-                    parser.next_token();
+                    println!(
+                        "exit struct expression \ncurrent token: {:#?}",
+                        parser.current_token()
+                    );
 
                     return Ok(Some(StructExpr {
                         path,
