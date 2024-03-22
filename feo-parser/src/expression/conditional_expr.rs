@@ -35,9 +35,16 @@ impl ParseExpr for IfExpr {
             ..
         }) = kw_if_opt
         {
+            println!(
+                "entering if expression... \ncurrent token: {:#?}",
+                parser.current_token()
+            );
+
             parser.next_token();
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
+                println!("condition_operand: {:#?}", condition_operand);
+
                 if let Some(if_block) = BlockExpr::parse(parser)? {
                     let mut next_kw_else_opt = parser.peek_current();
 
@@ -46,6 +53,11 @@ impl ParseExpr for IfExpr {
                         ..
                     }) = next_kw_else_opt
                     {
+                        println!(
+                            "entering else-if block... \ncurrent token: {:#?}",
+                            parser.current_token()
+                        );
+
                         parser.next_token();
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
@@ -57,6 +69,11 @@ impl ParseExpr for IfExpr {
                             if let Some(k) = parser.peek_current::<Keyword>() {
                                 next_kw_else_opt = Some(k)
                             } else {
+                                println!(
+                                    "exit else-if block. \ncurrent token: {:#?}",
+                                    parser.current_token()
+                                );
+
                                 break;
                             }
                         } else {
@@ -75,6 +92,11 @@ impl ParseExpr for IfExpr {
                         ..
                     }) = trailing_kw_else_opt
                     {
+                        println!(
+                            "entering trailing else block... \ncurrent token: {:#?}",
+                            parser.current_token()
+                        );
+
                         parser.next_token();
 
                         if let Some(trailing_block_expr) = BlockExpr::parse(parser)? {
@@ -85,6 +107,11 @@ impl ParseExpr for IfExpr {
                                 found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                             });
 
+                            println!(
+                                "exit trailing else block... \ncurrent token: {:#?}",
+                                parser.current_token()
+                            );
+
                             return Err(parser.errors());
                         }
                     } else {
@@ -93,6 +120,11 @@ impl ParseExpr for IfExpr {
 
                     match else_if_blocks.is_empty() {
                         true => {
+                            println!(
+                                "exit if expression with no else-if blocks... \ncurrent token: {:#?}",
+                                parser.current_token()
+                            );
+
                             return Ok(Some(IfExpr {
                                 kw_if: kw_if_opt.unwrap(),
                                 condition_operand: Box::new(condition_operand),
@@ -102,6 +134,11 @@ impl ParseExpr for IfExpr {
                             }));
                         }
                         false => {
+                            println!(
+                                "exit if expression with else-if blocks... \ncurrent token: {:#?}",
+                                parser.current_token()
+                            );
+
                             return Ok(Some(IfExpr {
                                 kw_if: kw_if_opt.unwrap(),
                                 condition_operand: Box::new(condition_operand),
