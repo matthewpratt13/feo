@@ -82,8 +82,6 @@ impl ParseItem for InherentImplBlock {
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                    parser.next_token();
-
                     let associated_items_opt = utils::get_items(parser)?;
 
                     utils::skip_trailing_comma(parser)?;
@@ -222,5 +220,52 @@ impl ParseItem for TraitImplBlock {
         }
 
         Err(parser.errors())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::test_utils;
+
+    use super::*;
+
+    #[test]
+    fn parse_inherent_impl_block() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        impl SomeObject {
+            #![unsafe]
+
+            #[extern]
+            pub const FOO: u64 = 15;
+
+            #[abstract]
+            pub func new(x: u64) -> SomeObject {
+                return Self {
+                    x: x
+                    y: 10
+                }
+            } 
+
+            func bar(&self) -> bool {
+                if (self.x < self.y) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            func baz(&mut self) {
+               self.x = 10
+            }
+        }
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let inherent_impl_block = InherentImplBlock::parse(&mut parser)
+            .expect("unable to parse inherent implementation block");
+
+        Ok(println!("{:#?}", inherent_impl_block))
     }
 }
