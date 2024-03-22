@@ -140,11 +140,19 @@ impl ParseExpr for ClosureWithBlock {
         Self: Sized,
     {
         if let Some(params) = ClosureParamsOpt::parse(parser)? {
-            parser.next_token();
-
-            let return_type_opt = if let Some(t) = Type::parse(parser)? {
+            let return_type_opt = if let Some(Punctuation {
+                punc_kind: PuncKind::ThinArrow,
+                ..
+            }) = parser.peek_current()
+            {
                 parser.next_token();
-                Some(Box::new(t))
+
+                if let Some(t) = Type::parse(parser)? {
+                    parser.next_token();
+                    Some(Box::new(t))
+                } else {
+                    None
+                }
             } else {
                 None
             };
@@ -195,11 +203,26 @@ mod tests {
     fn parse_closure_without_block() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"|foo: u64| return bar"#;
 
-        let mut parser = test_utils::get_parser(source_code, true)?;
+        let mut parser = test_utils::get_parser(source_code, false)?;
 
         let closure_without_block =
             ClosureWithoutBlock::parse(&mut parser).expect("unable to parse closure-without-block");
 
         Ok(println!("{:#?}", closure_without_block))
+    }
+
+    #[test]
+    fn parse_closure_with_block() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"|foo: u64| -> bool {
+            foo * 12;
+            true
+        }"#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let closure_with_block =
+            ClosureWithBlock::parse(&mut parser).expect("unable to parse closure-with-block");
+
+        Ok(println!("{:#?}", closure_with_block))
     }
 }
