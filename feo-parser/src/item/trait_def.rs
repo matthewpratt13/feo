@@ -122,7 +122,6 @@ mod tests {
         let source_code = r#"
             #[abstract]
             pub trait foo 
-                where Self: Bar
             {
                 #![export]
                 fn baz()
