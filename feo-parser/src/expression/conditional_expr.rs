@@ -27,6 +27,8 @@ impl ParseExpr for IfExpr {
     {
         let mut else_if_blocks: Vec<Box<IfExpr>> = Vec::new();
 
+        let mut trailing_else_block_opt = None::<BlockExpr>;
+
         let kw_if_opt = parser.peek_current();
 
         if let Some(Keyword {
@@ -61,8 +63,9 @@ impl ParseExpr for IfExpr {
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
                             else_if_blocks.push(Box::new(next_if_expr));
-                            // parser.next_token();
+                            parser.next_token();
                         } else if let Some(b) = BlockExpr::parse(parser)? {
+                            trailing_else_block_opt = Some(b);
                             println!(
                                 "exit trailing else block. \ncurrent token: {:#?}",
                                 parser.current_token()
@@ -109,7 +112,6 @@ impl ParseExpr for IfExpr {
                     //     None
                     // };
 
-                    let trailing_else_block_opt = None;
 
                     match else_if_blocks.is_empty() {
                         true => {
