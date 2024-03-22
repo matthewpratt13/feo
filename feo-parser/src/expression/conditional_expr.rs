@@ -70,48 +70,10 @@ impl ParseExpr for IfExpr {
                                 "exit trailing else block. \ncurrent token: {:#?}",
                                 parser.current_token()
                             );
-
-                            parser.next_token();
                         } else {
                             break;
                         }
                     }
-
-                    parser.next_token();
-
-                    // let trailing_else_block_opt = if let Some(Keyword {
-                    //     keyword_kind: KeywordKind::KwElse,
-                    //     ..
-                    // }) = parser.peek_current()
-                    // {
-                    //     println!(
-                    //         "entering trailing else block... \ncurrent token: {:#?}",
-                    //         parser.current_token()
-                    //     );
-
-                    //     parser.next_token();
-
-                    //     if let Some(trailing_block_expr) = BlockExpr::parse(parser)? {
-                    //         parser.next_token();
-
-                    //         Some(trailing_block_expr)
-                    //     } else {
-                    //         parser.log_error(ParserErrorKind::UnexpectedToken {
-                    //             expected: "block expression".to_string(),
-                    //             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    //         });
-
-                    //         println!(
-                    //             "exit trailing else block... \ncurrent token: {:#?}",
-                    //             parser.current_token()
-                    //         );
-
-                    //         return Err(parser.errors());
-                    //     }
-                    // } else {
-                    //     None
-                    // };
-
 
                     match else_if_blocks.is_empty() {
                         true => {
