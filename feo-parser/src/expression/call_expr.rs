@@ -22,11 +22,6 @@ impl ParseExpr for FunctionCallExpr {
         Self: Sized,
     {
         if let Some(function_operand) = PathInExpr::parse(parser)? {
-            println!(
-                "entering function call expression... \ncurrent_token: {:#?}",
-                &parser.current_token()
-            );
-
             parser.next_token();
 
             let open_parenthesis_opt = parser.peek_current();
@@ -36,34 +31,17 @@ impl ParseExpr for FunctionCallExpr {
                 ..
             }) = open_parenthesis_opt
             {
-                println!(
-                    "entering function call params... \ncurrent token: {:#?}",
-                    parser.current_token()
-                );
-
                 parser.next_token();
 
                 let call_params_opt = utils::get_value_collection(parser)?;
 
-                println!("function call params (optional): {:#?}", &call_params_opt);
-
                 let close_parenthesis_opt = parser.peek_current();
-
-                println!(
-                    "expects close parenthesis... \nfinds: {:#?}",
-                    parser.current_token()
-                );
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
                     ..
                 }) = close_parenthesis_opt
                 {
-                    println!(
-                        "exit function call expression. \ncurrent token: {:#?}",
-                        parser.current_token()
-                    );
-
                     return Ok(Some(FunctionCallExpr {
                         function_operand,
                         open_parenthesis: open_parenthesis_opt.unwrap(),
