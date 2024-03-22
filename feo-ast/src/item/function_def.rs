@@ -58,8 +58,8 @@ impl Spanned for FunctionSig {
 
 #[derive(Debug, Clone)]
 pub struct FunctionWithBlock {
-    function_sig: FunctionSig,
-    function_body: ExprWithBlock,
+    pub function_sig: FunctionSig,
+    pub function_body: ExprWithBlock,
 }
 
 impl Spanned for FunctionWithBlock {

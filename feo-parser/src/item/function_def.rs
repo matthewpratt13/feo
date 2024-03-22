@@ -1,4 +1,5 @@
 use feo_ast::{
+    expression::ExprWithBlock,
     item::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
     pattern::Pattern,
     token::Token,
@@ -13,7 +14,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::{ParseItem, ParsePatt, ParseTerm, ParseType},
+    parse::{ParseExpr, ParseItem, ParsePatt, ParseTerm, ParseType},
     parser::Parser,
     utils,
 };
@@ -240,7 +241,26 @@ impl ParseItem for FunctionWithBlock {
     where
         Self: Sized,
     {
-        todo!()
+        if let Some(function_sig) = FunctionSig::parse(parser)? {
+            parser.next_token();
+            
+            if let Some(function_body) = ExprWithBlock::parse(parser)? {
+                parser.next_token();
+                return Ok(Some(FunctionWithBlock {
+                    function_sig,
+                    function_body,
+                }));
+            }
+
+            parser.log_error(ParserErrorKind::UnexpectedToken {
+                expected: "function body".to_string(),
+                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+            });
+        } else {
+            return Ok(None);
+        }
+
+        Err(parser.errors())
     }
 }
 
@@ -287,5 +307,24 @@ mod tests {
             FunctionSig::parse(&mut parser).expect("unable to parse function signature");
 
         Ok(println!("{:#?}", function_sig))
+    }
+
+    #[test]
+    fn parse_function_with_block() -> Result<(), Vec<CompilerError>> {
+        let source_code = r#"
+        #[abstract]
+        pub func foo(bar: bool, baz: char) -> u64 {
+            if (x > 2) {
+                return 12
+            }
+        }
+        "#;
+
+        let mut parser = test_utils::get_parser(source_code, false)?;
+
+        let function_with_block =
+            FunctionWithBlock::parse(&mut parser).expect("unable to parse function with block");
+
+        Ok(println!("{:#?}", function_with_block))
     }
 }
