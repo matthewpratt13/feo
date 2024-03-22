@@ -3,12 +3,12 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArrayExpr, AssignmentExpr, BlockExpr, BreakExpr, ClosureWithBlock,
         ClosureWithoutBlock, ComparisonExpr, CompoundAssignmentExpr, ContinueExpr, DereferenceExpr,
-        ExprWithoutBlock, Expression, FieldAccessExpr, FunctionCallExpr, IfExpr, IndexExpr,
-        InfiniteLoopExpr, IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr, MethodCallExpr,
-        NegationExpr, OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr, RangeExprKind,
-        RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr, RangeToInclusiveExpr,
-        ReferenceExpr, ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr, TupleStructExpr,
-        TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
+        ExprWithBlock, ExprWithoutBlock, Expression, FieldAccessExpr, FunctionCallExpr, IfExpr,
+        IndexExpr, InfiniteLoopExpr, IterLoopExpr, IterationExprKind, LazyBoolExpr, MatchExpr,
+        MethodCallExpr, NegationExpr, OperatorExprKind, ParenthesizedExpr, PredicateLoopExpr,
+        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, RangeToExpr,
+        RangeToInclusiveExpr, ReferenceExpr, ReturnExpr, StructExpr, TupleExpr, TupleIndexExpr,
+        TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     item::{
         ConstantVarDef, EnumDef, FunctionSig, ImportDecl, InherentImplBlock, Item, ModWithoutBody,
@@ -1304,6 +1304,77 @@ impl ParseExpr for ExprWithoutBlock {
             } else {
                 return Ok(None);
             }
+        }
+
+        Err(parser.errors())
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+impl ParseExpr for ExprWithBlock {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(Delimiter {
+            delim: (DelimKind::Brace, DelimOrientation::Open),
+            ..
+        }) = parser.peek_current()
+        {
+            if let Some(be) = BlockExpr::parse(parser).unwrap_or(None) {
+                return Ok(Some(ExprWithBlock::BlockExpr(be)));
+            }
+        } else if let Some(k) = parser.peek_current::<Keyword>() {
+            match &k.keyword_kind {
+                KeywordKind::KwFor => {
+                    if let Some(ile) = IterLoopExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithBlock::IterLoop(ile)));
+                    }
+                }
+
+                KeywordKind::KwIf => {
+                    if let Some(ie) = IfExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithBlock::IfExpr(ie)));
+                    }
+                }
+
+                KeywordKind::KwLoop => {
+                    if let Some(inf) = InfiniteLoopExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithBlock::InfiniteLoop(inf)));
+                    }
+                }
+
+                KeywordKind::KwMatch => {
+                    if let Some(me) = MatchExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithBlock::MatchExpr(me)));
+                    }
+                }
+
+                KeywordKind::KwWhile => {
+                    if let Some(ple) = PredicateLoopExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(ExprWithBlock::PredicateLoop(ple)));
+                    }
+                }
+
+                _ => return Ok(None),
+            }
+        } else if let Some(
+            Punctuation {
+                punc_kind: PuncKind::Pipe,
+                ..
+            }
+            | Punctuation {
+                punc_kind: PuncKind::DblPipe,
+                ..
+            },
+        ) = parser.peek_current()
+        {
+            if let Some(cwb) = ClosureWithBlock::parse(parser).unwrap_or(None) {
+                return Ok(Some(ExprWithBlock::ClosureWithBlock(cwb)));
+            }
+        } else {
+            return Ok(None);
         }
 
         Err(parser.errors())

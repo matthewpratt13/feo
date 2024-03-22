@@ -28,22 +28,6 @@ impl Spanned for ClosureParamsOpt {
 }
 
 #[derive(Debug, Clone)]
-pub struct ClosureWithBlock {
-    pub params: ClosureParamsOpt,
-    pub return_type_opt: Option<Box<Type>>,
-    pub block: BlockExpr,
-}
-
-impl Spanned for ClosureWithBlock {
-    fn span(&self) -> Span {
-        let s1 = self.params.span();
-        let s2 = self.block.span();
-
-        Span::join(s1, s2)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct ClosureWithoutBlock {
     pub params: ClosureParamsOpt,
     pub body_operand: Box<Expression>,
@@ -58,6 +42,21 @@ impl Spanned for ClosureWithoutBlock {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct ClosureWithBlock {
+    pub params: ClosureParamsOpt,
+    pub return_type_opt: Option<Box<Type>>,
+    pub block: BlockExpr,
+}
+
+impl Spanned for ClosureWithBlock {
+    fn span(&self) -> Span {
+        let s1 = self.params.span();
+        let s2 = self.block.span();
+
+        Span::join(s1, s2)
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct ClosureParam {

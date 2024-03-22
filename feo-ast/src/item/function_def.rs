@@ -20,21 +20,6 @@ pub enum FuncOrMethodParam {
 }
 
 #[derive(Debug, Clone)]
-pub struct FunctionWithBlock {
-    function_sig: FunctionSig,
-    function_body: ExprWithBlock,
-}
-
-impl Spanned for FunctionWithBlock {
-    fn span(&self) -> Span {
-        let s1 = self.function_sig.span();
-        let s2 = self.function_body.span();
-
-        Span::join(s1, s2)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct FunctionSig {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
@@ -66,6 +51,21 @@ impl Spanned for FunctionSig {
             Some(rt) => rt.span(),
             None => self.close_parenthesis.span(),
         };
+
+        Span::join(s1, s2)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FunctionWithBlock {
+    function_sig: FunctionSig,
+    function_body: ExprWithBlock,
+}
+
+impl Spanned for FunctionWithBlock {
+    fn span(&self) -> Span {
+        let s1 = self.function_sig.span();
+        let s2 = self.function_body.span();
 
         Span::join(s1, s2)
     }

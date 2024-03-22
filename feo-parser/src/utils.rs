@@ -110,6 +110,28 @@ pub fn get_path_collection<T: ParseTerm>(
     Err(parser.errors())
 }
 
+pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec<CompilerError>> {
+    let mut statements: Vec<Statement> = Vec::new();
+
+    while let Some(s) = Statement::parse(parser)? {
+        statements.push(s);
+
+        if let Some(Delimiter {
+            delim: (DelimKind::Brace, DelimOrientation::Close),
+            ..
+        }) = parser.peek_current()
+        {
+            break;
+        }
+    }
+
+    if statements.is_empty() {
+        return Ok(None);
+    } else {
+        return Ok(Some(statements));
+    }
+}
+
 pub fn get_term_collection<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
@@ -140,50 +162,6 @@ pub fn get_term_collection<T: ParseTerm>(
         return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
     } else {
         return Ok(None);
-    }
-}
-
-pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec<CompilerError>> {
-    let mut statements: Vec<Statement> = Vec::new();
-
-    println!(
-        "entering statements... \ncurrent token: {:#?}",
-        parser.current_token()
-    );
-
-    while let Some(s) = Statement::parse(parser)? {
-        statements.push(s);
-
-        println!(
-            "current token inside while loop: {:#?}",
-            parser.current_token()
-        );
-
-        if let Some(Delimiter {
-            delim: (DelimKind::Brace, DelimOrientation::Close),
-            ..
-        }) = parser.peek_current()
-        {
-            break;
-        }
-    }
-
-    println!(
-        "current token after parsing `Statement`: {:#?}",
-        parser.current_token()
-    );
-
-    println!("number of statements: {:#?}", statements.len());
-
-    println!(
-        "exit statements. \ncurrent token (should be some): {:#?}",
-        parser.current_token()
-    );
-
-    if statements.is_empty() {
-        return Ok(None);
-    } else {
-        return Ok(Some(statements));
     }
 }
 

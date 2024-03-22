@@ -110,27 +110,6 @@ impl Spanned for Expression {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExprWithBlock {
-    BlockExpr(BlockExpr),
-    ClosureWithBlock(ClosureWithBlock),
-    IfExpr(IfExpr),
-    MatchExpr(MatchExpr),
-    IterationExpr(IterationExprKind),
-}
-
-impl Spanned for ExprWithBlock {
-    fn span(&self) -> Span {
-        match self {
-            ExprWithBlock::BlockExpr(be) => be.span(),
-            ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
-            ExprWithBlock::IfExpr(ife) => ife.span(),
-            ExprWithBlock::MatchExpr(me) => me.span(),
-            ExprWithBlock::IterationExpr(ite) => ite.span(),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ExprWithoutBlock {
     ArrayExpr(ArrayExpr),
     IndexExpr(IndexExpr),
@@ -151,6 +130,31 @@ pub enum ExprWithoutBlock {
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
+}
+
+#[derive(Debug, Clone)]
+pub enum ExprWithBlock {
+    BlockExpr(BlockExpr),
+    ClosureWithBlock(ClosureWithBlock),
+    IfExpr(IfExpr),
+    MatchExpr(MatchExpr),
+    InfiniteLoop(InfiniteLoopExpr),
+    PredicateLoop(PredicateLoopExpr),
+    IterLoop(IterLoopExpr),
+}
+
+impl Spanned for ExprWithBlock {
+    fn span(&self) -> Span {
+        match self {
+            ExprWithBlock::BlockExpr(be) => be.span(),
+            ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
+            ExprWithBlock::IfExpr(ife) => ife.span(),
+            ExprWithBlock::MatchExpr(me) => me.span(),
+            ExprWithBlock::InfiniteLoop(inf) => inf.span(),
+            ExprWithBlock::PredicateLoop(ple) => ple.span(),
+            ExprWithBlock::IterLoop(ite) => ite.span(),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

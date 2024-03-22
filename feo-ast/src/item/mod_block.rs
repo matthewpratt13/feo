@@ -19,28 +19,6 @@ pub struct ModWithBody {
     pub close_brace: Brace,
 }
 
-impl Spanned for ModWithBody {
-    fn span(&self) -> Span {
-        let s1 = match &self.attributes_opt {
-            Some(a) => match a.first() {
-                Some(oa) => oa.span(),
-                None => match &self.visibility_opt {
-                    Some(v) => v.span(),
-                    None => self.kw_mod.span(),
-                },
-            },
-            None => match &self.visibility_opt {
-                Some(v) => v.span(),
-                None => self.kw_mod.span(),
-            },
-        };
-
-        let s2 = self.close_brace.span();
-
-        Span::join(s1, s2)
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct ModWithoutBody {
     pub attributes_opt: Option<Vec<OuterAttr>>,
@@ -66,6 +44,28 @@ impl Spanned for ModWithoutBody {
             },
         };
         let s2 = self.semicolon.span();
+
+        Span::join(s1, s2)
+    }
+}
+
+impl Spanned for ModWithBody {
+    fn span(&self) -> Span {
+        let s1 = match &self.attributes_opt {
+            Some(a) => match a.first() {
+                Some(oa) => oa.span(),
+                None => match &self.visibility_opt {
+                    Some(v) => v.span(),
+                    None => self.kw_mod.span(),
+                },
+            },
+            None => match &self.visibility_opt {
+                Some(v) => v.span(),
+                None => self.kw_mod.span(),
+            },
+        };
+
+        let s2 = self.close_brace.span();
 
         Span::join(s1, s2)
     }
