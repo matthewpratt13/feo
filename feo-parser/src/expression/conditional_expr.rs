@@ -457,7 +457,6 @@ mod tests {
         Ok(println!("{:#?}", match_expr))
     }
 
-    #[ignore]
     #[test]
     fn parse_if_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
