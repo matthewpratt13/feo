@@ -11,7 +11,6 @@ use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
     punctuation::PuncKind,
-    type_utils::KwElse,
     Delimiter, Keyword, Punctuation,
 };
 
@@ -26,7 +25,7 @@ impl ParseExpr for IfExpr {
     where
         Self: Sized,
     {
-        let mut else_if_blocks: Vec<(KwElse, Box<IfExpr>)> = Vec::new();
+        let mut else_if_blocks: Vec<Box<IfExpr>> = Vec::new();
 
         let kw_if_opt = parser.peek_current();
 
@@ -46,77 +45,71 @@ impl ParseExpr for IfExpr {
                 println!("condition_operand: {:#?}", condition_operand);
 
                 if let Some(if_block) = BlockExpr::parse(parser)? {
-                    let mut next_kw_else_opt = parser.peek_current();
+                    parser.next_token();
 
                     while let Some(Keyword {
                         keyword_kind: KeywordKind::KwElse,
                         ..
-                    }) = next_kw_else_opt
+                    }) = parser.peek_current()
                     {
                         println!(
-                            "entering else-if block... \ncurrent token: {:#?}",
+                            "entering else block... \ncurrent token: {:#?}",
                             parser.current_token()
                         );
 
                         parser.next_token();
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
+                            else_if_blocks.push(Box::new(next_if_expr));
+                            // parser.next_token();
+                        } else if let Some(b) = BlockExpr::parse(parser)? {
+                            println!(
+                                "exit trailing else block. \ncurrent token: {:#?}",
+                                parser.current_token()
+                            );
+
                             parser.next_token();
-
-                            else_if_blocks
-                                .push((next_kw_else_opt.unwrap(), Box::new(next_if_expr)));
-
-                            if let Some(k) = parser.peek_current::<Keyword>() {
-                                next_kw_else_opt = Some(k)
-                            } else {
-                                println!(
-                                    "exit else-if block. \ncurrent token: {:#?}",
-                                    parser.current_token()
-                                );
-
-                                break;
-                            }
                         } else {
-                            parser.log_error(ParserErrorKind::UnexpectedToken {
-                                expected: "if expression".to_string(),
-                                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                            });
                             break;
                         }
                     }
 
-                    let trailing_kw_else_opt = parser.peek_current();
+                    parser.next_token();
 
-                    let trailing_else_block_opt = if let Some(Keyword {
-                        keyword_kind: KeywordKind::KwElse,
-                        ..
-                    }) = trailing_kw_else_opt
-                    {
-                        println!(
-                            "entering trailing else block... \ncurrent token: {:#?}",
-                            parser.current_token()
-                        );
+                    // let trailing_else_block_opt = if let Some(Keyword {
+                    //     keyword_kind: KeywordKind::KwElse,
+                    //     ..
+                    // }) = parser.peek_current()
+                    // {
+                    //     println!(
+                    //         "entering trailing else block... \ncurrent token: {:#?}",
+                    //         parser.current_token()
+                    //     );
 
-                        parser.next_token();
+                    //     parser.next_token();
 
-                        if let Some(trailing_block_expr) = BlockExpr::parse(parser)? {
-                            Some((trailing_kw_else_opt.unwrap(), trailing_block_expr))
-                        } else {
-                            parser.log_error(ParserErrorKind::UnexpectedToken {
-                                expected: "block expression".to_string(),
-                                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                            });
+                    //     if let Some(trailing_block_expr) = BlockExpr::parse(parser)? {
+                    //         parser.next_token();
 
-                            println!(
-                                "exit trailing else block... \ncurrent token: {:#?}",
-                                parser.current_token()
-                            );
+                    //         Some(trailing_block_expr)
+                    //     } else {
+                    //         parser.log_error(ParserErrorKind::UnexpectedToken {
+                    //             expected: "block expression".to_string(),
+                    //             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                    //         });
 
-                            return Err(parser.errors());
-                        }
-                    } else {
-                        None
-                    };
+                    //         println!(
+                    //             "exit trailing else block... \ncurrent token: {:#?}",
+                    //             parser.current_token()
+                    //         );
+
+                    //         return Err(parser.errors());
+                    //     }
+                    // } else {
+                    //     None
+                    // };
+
+                    let trailing_else_block_opt = None;
 
                     match else_if_blocks.is_empty() {
                         true => {
@@ -510,12 +503,17 @@ mod tests {
     fn parse_if_expr() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         if (foo < 2) { 
-            bar(x)
-        }"#;
+            bar(x) 
+        } else {
+            return x * 2;
+        }
+     "#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let if_expr = IfExpr::parse(&mut parser).expect("unable to parse if expression");
+
+        // Ok(())
 
         Ok(println!("{:#?}", if_expr))
     }

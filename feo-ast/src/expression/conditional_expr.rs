@@ -1,6 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{Brace, KwElse, KwIf, KwMatch},
+    type_utils::{Brace, KwIf, KwMatch},
 };
 
 use crate::{
@@ -15,18 +15,18 @@ pub struct IfExpr {
     pub kw_if: KwIf,
     pub condition_operand: Box<ParenthesizedExpr>,
     pub if_block: Box<BlockExpr>,
-    pub else_if_blocks_opt: Option<Vec<(KwElse, Box<IfExpr>)>>,
-    pub trailing_else_block_opt: Option<(KwElse, BlockExpr)>,
+    pub else_if_blocks_opt: Option<Vec<Box<IfExpr>>>,
+    pub trailing_else_block_opt: Option<BlockExpr>,
 }
 
 impl Spanned for IfExpr {
     fn span(&self) -> Span {
         let s1 = self.kw_if.span();
         let s2 = match &self.trailing_else_block_opt {
-            Some(e) => e.1.span(),
+            Some(e) => e.span(),
             None => match &self.else_if_blocks_opt {
                 Some(ei) => match ei.last() {
-                    Some(b) => b.1.span(),
+                    Some(b) => b.span(),
                     None => self.if_block.span(),
                 },
                 None => self.if_block.span(),
