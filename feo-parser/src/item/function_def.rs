@@ -16,7 +16,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseItem, ParsePatt, ParseTerm, ParseType},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseTerm for FuncOrMethodParam {
@@ -146,6 +146,8 @@ impl ParseItem for FunctionSig {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "function signature", parser);
+
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = utils::get_visibility(parser)?;
@@ -207,6 +209,8 @@ impl ParseItem for FunctionSig {
                             parser.next_token();
                         }
 
+                        utils::log_msg(LogMsgType::Exit, "function signature", parser);
+
                         return Ok(Some(FunctionSig {
                             attributes_opt,
                             visibility_opt,
@@ -244,15 +248,18 @@ impl ParseItem for FunctionSig {
 }
 
 impl ParseItem for FunctionWithBlock {
-    #[allow(unused_variables)]
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "function with block", parser);
+
         if let Some(function_sig) = FunctionSig::parse(parser)? {
+            utils::log_msg(LogMsgType::Expect, "`)` or type", parser);
 
             if let Some(function_body) = ExprWithBlock::parse(parser)? {
-                // parser.next_token();
+                utils::log_msg(LogMsgType::Exit, "function with block", parser);
+
                 return Ok(Some(FunctionWithBlock {
                     function_sig,
                     function_body,
@@ -327,6 +334,8 @@ mod tests {
         let function_with_block =
             FunctionWithBlock::parse(&mut parser).expect("unable to parse function with block");
 
-        Ok(println!("{:#?}", function_with_block))
+        // Ok(println!("{:#?}", function_with_block))
+
+        Ok(())
     }
 }

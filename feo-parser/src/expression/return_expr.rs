@@ -2,13 +2,19 @@ use feo_ast::expression::{Expression, ReturnExpr};
 use feo_error::error::CompilerError;
 use feo_types::{keyword::KeywordKind, Keyword};
 
-use crate::{parse::ParseExpr, parser::Parser};
+use crate::{
+    parse::ParseExpr,
+    parser::Parser,
+    utils::{self, LogMsgType},
+};
 
 impl ParseExpr for ReturnExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "return expression", parser);
+
         let kw_return_opt = parser.peek_current();
 
         if let Some(Keyword {
@@ -23,6 +29,8 @@ impl ParseExpr for ReturnExpr {
             } else {
                 None
             };
+
+            utils::log_msg(LogMsgType::Exit, "return expression", parser);
 
             return Ok(Some(ReturnExpr {
                 kw_return: kw_return_opt.unwrap(),

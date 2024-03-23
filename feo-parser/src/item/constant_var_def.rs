@@ -10,7 +10,7 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword
 use crate::{
     parse::{ParseExpr, ParseItem, ParseType},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseItem for ConstantVarDef {
@@ -18,6 +18,8 @@ impl ParseItem for ConstantVarDef {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "constant variable definition", parser);
+
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = utils::get_visibility(parser)?;
@@ -67,6 +69,8 @@ impl ParseItem for ConstantVarDef {
                                 ..
                             }) = semicolon_opt
                             {
+                                utils::log_msg(LogMsgType::Exit, "constant variable definition", parser);
+
                                 return Ok(Some(ConstantVarDef {
                                     attributes_opt,
                                     visibility_opt,

@@ -17,7 +17,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseTerm},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseExpr for IfExpr {
@@ -25,6 +25,8 @@ impl ParseExpr for IfExpr {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "if expression", parser);
+
         let mut else_if_blocks: Vec<Box<IfExpr>> = Vec::new();
 
         let mut trailing_else_block_opt = None::<BlockExpr>;
@@ -36,15 +38,10 @@ impl ParseExpr for IfExpr {
             ..
         }) = kw_if_opt
         {
-            println!(
-                "entering if expression... \ncurrent token: {:#?}",
-                parser.current_token()
-            );
-
             parser.next_token();
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
-                println!("condition_operand: {:#?}", condition_operand);
+                utils::log_msg(LogMsgType::Detect, "conditional operand", parser);
 
                 if let Some(if_block) = BlockExpr::parse(parser)? {
                     parser.next_token();
@@ -54,22 +51,15 @@ impl ParseExpr for IfExpr {
                         ..
                     }) = parser.peek_current()
                     {
-                        println!(
-                            "entering else block... \ncurrent token: {:#?}",
-                            parser.current_token()
-                        );
-
                         parser.next_token();
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
+                            utils::log_msg(LogMsgType::Exit, "else-if block", parser);
+
                             else_if_blocks.push(Box::new(next_if_expr));
-                            // parser.next_token();
                         } else if let Some(b) = BlockExpr::parse(parser)? {
                             trailing_else_block_opt = Some(b);
-                            println!(
-                                "exit trailing else block. \ncurrent token: {:#?}",
-                                parser.current_token()
-                            );
+                            utils::log_msg(LogMsgType::Exit, "trailing else block", parser);
                         } else {
                             break;
                         }
@@ -79,9 +69,10 @@ impl ParseExpr for IfExpr {
 
                     match else_if_blocks.is_empty() {
                         true => {
-                            println!(
-                                "exit if expression with no else-if blocks... \ncurrent token: {:#?}",
-                                parser.current_token()
+                            utils::log_msg(
+                                LogMsgType::Exit,
+                                "if expression with no else-if blocks",
+                                parser,
                             );
 
                             return Ok(Some(IfExpr {
@@ -93,9 +84,10 @@ impl ParseExpr for IfExpr {
                             }));
                         }
                         false => {
-                            println!(
-                                "exit if expression with else-if blocks... \ncurrent token: {:#?}",
-                                parser.current_token()
+                            utils::log_msg(
+                                LogMsgType::Exit,
+                                "if expression with else-if blocks",
+                                parser,
                             );
 
                             return Ok(Some(IfExpr {
@@ -253,6 +245,8 @@ impl ParseExpr for MatchExpr {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "match expression", parser);
+
         let kw_match_opt = parser.peek_current();
 
         if let Some(Keyword {
@@ -260,22 +254,12 @@ impl ParseExpr for MatchExpr {
             ..
         }) = kw_match_opt
         {
-            println!(
-                "entering match expression... \ncurrent token: {:#?}",
-                parser.current_token()
-            );
-
             parser.next_token();
 
             if let Some(scrutinee) = Value::parse(parser)? {
-                println!("scrutinee: {:#?}", &scrutinee);
+                utils::log_msg(LogMsgType::Detect, "scrutinee", parser);
 
                 parser.next_token();
-
-                println!(
-                    "expecting open brace... \nfinds: {:#?}",
-                    parser.current_token()
-                );
 
                 let open_brace_opt = parser.peek_current();
 
@@ -284,30 +268,19 @@ impl ParseExpr for MatchExpr {
                     ..
                 }) = open_brace_opt
                 {
-                    println!(
-                        "entering expression body... \ncurrent token: {:#?}",
-                        parser.current_token()
-                    );
+                    utils::log_msg(LogMsgType::Enter, "match expression body", parser);
 
                     parser.next_token();
 
                     let attributes_opt = utils::get_attributes(parser)?;
 
-                    println!(
-                        "entering match arms (optional)... \ncurrent token: {:#?}",
-                        parser.current_token()
-                    );
-
                     let match_arms_opt = if let Some(ma) = MatchArms::parse(parser)? {
+                        utils::log_msg(LogMsgType::Detect, "match arms", parser);
+
                         Some(ma)
                     } else {
                         None
                     };
-
-                    println!(
-                        "exit match arms. \ncurrent token: {:#?}",
-                        parser.current_token()
-                    );
 
                     if let Some(Punctuation {
                         punc_kind: PuncKind::Comma,
@@ -317,11 +290,6 @@ impl ParseExpr for MatchExpr {
                         parser.next_token();
                     }
 
-                    println!(
-                        "expecting close brace... \nfinds: {:#?}",
-                        parser.current_token()
-                    );
-
                     let close_brace_opt = parser.peek_current();
 
                     if let Some(Delimiter {
@@ -329,10 +297,7 @@ impl ParseExpr for MatchExpr {
                         ..
                     }) = close_brace_opt
                     {
-                        println!(
-                            "exit match expression block... \ncurrent token: {:#?}",
-                            parser.current_token()
-                        );
+                        utils::log_msg(LogMsgType::Exit, "match expression", parser);
 
                         return Ok(Some(MatchExpr {
                             kw_match: kw_match_opt.unwrap(),

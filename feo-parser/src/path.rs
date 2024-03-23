@@ -9,6 +9,7 @@ use crate::{
     parse::ParseTerm,
     parser::Parser,
     peek::{Peek, Peeker},
+    utils::{self, LogMsgType},
 };
 
 impl Peek for SimplePathSegmentKind {
@@ -102,6 +103,8 @@ impl ParseTerm for PathInExpr {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "path in expression", parser);
+
         let mut subsequent_segments: Vec<PathIdenSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
@@ -124,6 +127,8 @@ impl ParseTerm for PathInExpr {
                 }
             }
 
+            utils::log_msg(LogMsgType::Exit, "path in expression", parser);
+
             match &subsequent_segments.is_empty() {
                 true => Ok(Some(PathInExpr {
                     first_segment,
@@ -145,6 +150,8 @@ impl ParseTerm for PathType {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "path type", parser);
+
         let mut subsequent_segments: Vec<PathIdenSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
@@ -166,6 +173,8 @@ impl ParseTerm for PathType {
                     break;
                 }
             }
+
+            utils::log_msg(LogMsgType::Exit, "path type", parser);
 
             match &subsequent_segments.is_empty() {
                 true => Ok(Some(PathType {

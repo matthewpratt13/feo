@@ -5,7 +5,7 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword
 use crate::{
     parse::{ParseItem, ParseType},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseItem for TypeAliasDef {
@@ -13,6 +13,8 @@ impl ParseItem for TypeAliasDef {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "type alias definition", parser);
+
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = utils::get_visibility(parser)?;
@@ -47,9 +49,11 @@ impl ParseItem for TypeAliasDef {
 
                     if let Some(Punctuation {
                         punc_kind: PuncKind::Semicolon,
-                        ..
+                        ..  
                     }) = semicolon_opt
                     {
+                        utils::log_msg(LogMsgType::Exit, "type alias definition", parser);
+
                         return Ok(Some(TypeAliasDef {
                             attributes_opt,
                             visibility_opt,

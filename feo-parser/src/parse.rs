@@ -711,7 +711,7 @@ impl ParseExpr for ExprWithoutBlock {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "ExprWithoutBlock", parser);
+        utils::log_msg(LogMsgType::Detect, "ExprWithoutBlock", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {

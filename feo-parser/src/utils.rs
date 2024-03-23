@@ -27,8 +27,13 @@ pub fn get_attributes<T: ParseTerm>(
     }
 
     if attributes.is_empty() {
+        log_msg(LogMsgType::Detect, "no attributes", parser);
+
         Ok(None)
     } else {
+        log_msg(LogMsgType::Detect, "attributes", parser);
+        println!("number of attributes: {}", attributes.len());
+
         Ok(Some(attributes))
     }
 }
@@ -42,8 +47,13 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
     }
 
     if items.is_empty() {
+        log_msg(LogMsgType::Detect, "no items", parser);
+
         Ok(None)
     } else {
+        log_msg(LogMsgType::Detect, "items", parser);
+        println!("number of items: {}", items.len());
+
         Ok(Some(items))
     }
 }
@@ -51,6 +61,8 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
 pub fn get_path_collection<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<PathCollection<T>>, Vec<CompilerError>> {
+    log_msg(LogMsgType::Enter, "`get_path_collection()`", parser);
+
     if let Some(root_path) = T::parse(parser)? {
         if let Some(Punctuation {
             punc_kind: PuncKind::DblColon,
@@ -98,12 +110,16 @@ pub fn get_path_collection<T: ParseTerm>(
                 });
             }
         } else {
+            log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
+
             return Ok(Some(PathCollection {
                 root_path: Box::new(root_path),
                 path_suffixes: None,
             }));
         }
     } else {
+        log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
+
         return Ok(None);
     }
 
@@ -126,8 +142,13 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
     }
 
     if statements.is_empty() {
+        log_msg(LogMsgType::Detect, "no statements", parser);
+
         return Ok(None);
     } else {
+        log_msg(LogMsgType::Detect, "statements", parser);
+        println!("number of statements: {}", statements.len());
+
         return Ok(Some(statements));
     }
 }
@@ -155,7 +176,16 @@ pub fn get_term_collection<T: ParseTerm>(
             }
         }
 
-        let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
+        let subsequent_terms_opt = if terms.is_empty() {
+            log_msg(LogMsgType::Detect, "no terms", parser);
+
+            None
+        } else {
+            log_msg(LogMsgType::Detect, "terms", parser);
+            println!("number of terms: {}", terms.len());
+
+            Some(terms)
+        };
 
         skip_trailing_comma(parser)?;
 
@@ -189,8 +219,13 @@ pub fn get_value_collection(
         }
 
         let subsequent_values_opt = if values.is_empty() {
+            log_msg(LogMsgType::Detect, "no values", parser);
+
             None
         } else {
+            log_msg(LogMsgType::Detect, "no values", parser);
+            println!("number of values: {}", values.len());
+
             Some(values)
         };
 
@@ -206,8 +241,12 @@ pub fn get_value_collection(
 pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec<CompilerError>> {
     if let Some(v) = VisibilityKind::parse(parser)? {
         parser.next_token();
+        log_msg(LogMsgType::Detect, "visibility", parser);
+
         Ok(Some(v))
     } else {
+        log_msg(LogMsgType::Detect, "no visibility", parser);
+
         Ok(None)
     }
 }
@@ -227,7 +266,10 @@ pub fn log_msg(msg_type: LogMsgType, object_name: &str, parser: &mut Parser) -> 
         LogMsgType::Expect => "expected",
     };
 
-    println!("{msg_str} {object_name}...\ncurrent_token: {:#?}", parser.current_token());
+    println!(
+        "{msg_str} {object_name}...\ncurrent_token: {:#?}",
+        parser.current_token()
+    );
 }
 
 pub fn skip_trailing_comma(parser: &mut Parser) -> Result<(), Vec<CompilerError>> {
@@ -236,6 +278,8 @@ pub fn skip_trailing_comma(parser: &mut Parser) -> Result<(), Vec<CompilerError>
         ..
     }) = parser.peek_current::<Punctuation>()
     {
+        log_msg(LogMsgType::Detect, "trailing comma", parser);
+
         parser.next_token();
         Ok(())
     } else {

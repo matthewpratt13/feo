@@ -11,6 +11,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    utils::{self, LogMsgType},
 };
 
 impl ParseTerm for ParenthesizedExpr {
@@ -18,6 +19,8 @@ impl ParseTerm for ParenthesizedExpr {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
+
         let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
@@ -25,24 +28,16 @@ impl ParseTerm for ParenthesizedExpr {
             ..
         }) = open_parenthesis_opt
         {
-            println!(
-                "entering parenthesized expression... \ncurrent token: {:#?}",
-                parser.current_token()
-            );
+            utils::log_msg(LogMsgType::Detect, "`(`", parser);
 
             parser.next_token();
 
             if let Some(enclosed_operand) = Expression::parse(parser)? {
-                println!("enclosed operand: {:#?}", &enclosed_operand);
+                utils::log_msg(LogMsgType::Detect, "enclosed operand", parser);
 
                 parser.next_token();
 
                 let close_parenthesis_opt = parser.peek_current();
-
-                println!(
-                    "expects close parenthesis... \nfinds: {:#?}",
-                    parser.current_token()
-                );
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -51,10 +46,7 @@ impl ParseTerm for ParenthesizedExpr {
                 {
                     parser.next_token();
 
-                    println!(
-                        "exit parenthesized expression. \ncurrent token: {:#?}",
-                        parser.current_token()
-                    );
+                    utils::log_msg(LogMsgType::Exit, "parenthesized expression", parser);
 
                     return Ok(Some(ParenthesizedExpr {
                         open_parenthesis: open_parenthesis_opt.unwrap(),
@@ -62,7 +54,7 @@ impl ParseTerm for ParenthesizedExpr {
                         close_parenthesis: close_parenthesis_opt.unwrap(),
                     }));
                 }
-                
+
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`)`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),

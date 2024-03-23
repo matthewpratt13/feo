@@ -11,7 +11,7 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuatio
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseStatement, ParseType},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseStatement for ExprStatement {
@@ -19,6 +19,8 @@ impl ParseStatement for ExprStatement {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "expression statement", parser);
+
         if let Some(expression) = Expression::parse(parser)? {
             parser.next_token();
 
@@ -31,6 +33,8 @@ impl ParseStatement for ExprStatement {
             {
                 parser.next_token();
             }
+
+            utils::log_msg(LogMsgType::Exit, "expression statement", parser);
 
             return Ok(Some(ExprStatement {
                 expression,

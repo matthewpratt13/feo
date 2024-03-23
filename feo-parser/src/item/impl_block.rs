@@ -17,7 +17,7 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseItem for InherentImplItem {
@@ -40,6 +40,8 @@ impl ParseItem for InherentImplBlock {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "InherentImplBlock", parser);
+
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let kw_impl_opt = parser.peek_current();
@@ -76,6 +78,8 @@ impl ParseItem for InherentImplBlock {
                         ..
                     }) = close_brace_opt
                     {
+                        utils::log_msg(LogMsgType::Exit, "InherentImplBlock", parser);
+
                         return Ok(Some(InherentImplBlock {
                             outer_attributes_opt,
                             kw_impl: kw_impl_opt.unwrap(),

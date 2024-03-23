@@ -8,13 +8,19 @@ use feo_types::{
     Delimiter,
 };
 
-use crate::{parse::ParseExpr, parser::Parser, utils};
+use crate::{
+    parse::ParseExpr,
+    parser::Parser,
+    utils::{self, LogMsgType},
+};
 
 impl ParseExpr for BlockExpr {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "block expression", parser);
+
         let open_brace_opt = parser.peek_current();
 
         if let Some(Delimiter {
@@ -22,11 +28,6 @@ impl ParseExpr for BlockExpr {
             ..
         }) = open_brace_opt
         {
-            println!(
-                "entering block expression... \ncurrent token: {:#?}",
-                parser.current_token()
-            );
-
             parser.next_token();
 
             let statements_opt = utils::get_statements(parser)?;
@@ -40,20 +41,12 @@ impl ParseExpr for BlockExpr {
 
             let close_brace_opt = parser.peek_current();
 
-            println!(
-                "expects close brace... \nfinds: {:#?}",
-                parser.current_token()
-            );
-
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Close),
                 ..
             }) = close_brace_opt
             {
-                println!(
-                    "exit block expression. \ncurrent token: {:#?}",
-                    parser.current_token()
-                );
+                utils::log_msg(LogMsgType::Exit, "block expression", parser);
 
                 return Ok(Some(BlockExpr {
                     open_brace: open_brace_opt.unwrap(),

@@ -68,6 +68,8 @@ impl ParseExpr for StructExpr {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "struct expression", parser);
+
         if let Some(Token::Keyword(Keyword {
             keyword_kind: KeywordKind::KwMatch,
             ..
@@ -76,9 +78,9 @@ impl ParseExpr for StructExpr {
             return Ok(None);
         }
 
+        utils::log_msg(LogMsgType::Expect, "path expression", parser);
+
         if let Some(path) = PathInExpr::parse(parser)? {
-            utils::log_msg(LogMsgType::Enter, "struct expression", parser);
-            
             parser.next_token();
 
             let open_brace_opt = parser.peek_current();
@@ -99,6 +101,8 @@ impl ParseExpr for StructExpr {
                     ..
                 }) = close_brace_opt
                 {
+                    utils::log_msg(LogMsgType::Exit, "struct expression", parser);
+
                     return Ok(Some(StructExpr {
                         path,
                         open_brace: open_brace_opt.unwrap(),
