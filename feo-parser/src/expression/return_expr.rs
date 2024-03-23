@@ -13,16 +13,15 @@ impl ParseExpr for ReturnExpr {
     where
         Self: Sized,
     {
-        
         let kw_return_opt = parser.peek_current();
-        
+
         if let Some(Keyword {
             keyword_kind: KeywordKind::KwReturn,
             ..
         }) = kw_return_opt
         {
             utils::log_msg(LogMsgType::Enter, "return expression", parser);
-            
+
             parser.next_token();
 
             let expression_opt = if let Some(e) = Expression::parse(parser)? {

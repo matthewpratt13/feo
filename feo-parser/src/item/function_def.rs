@@ -117,8 +117,6 @@ impl ParseTerm for FunctionParam {
                 parser.next_token();
 
                 if let Some(param_type) = Type::parse(parser)? {
-                    // parser.next_token();
-
                     return Ok(Some(FunctionParam {
                         param_pattern: Box::new(param_pattern),
                         param_type: Box::new(param_type),
@@ -186,19 +184,17 @@ impl ParseItem for FunctionSig {
                         ..
                     }) = close_parenthesis_opt
                     {
-                        parser.next_token();
-
                         let return_type_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::ThinArrow,
                             ..
-                        }) = parser.peek_current()
+                        }) = parser.peek_next()
                         {
                             utils::log_msg(LogMsgType::Detect, "return type", parser);
 
                             parser.next_token();
+                            parser.next_token();
 
                             if let Some(ty) = Type::parse(parser)? {
-                                parser.next_token();
                                 Some(Box::new(ty))
                             } else {
                                 utils::log_msg(LogMsgType::Expect, "`->`", parser);
@@ -208,12 +204,10 @@ impl ParseItem for FunctionSig {
                             None
                         };
 
-                        parser.next_token();
-
                         if let Some(Punctuation {
                             punc_kind: PuncKind::Semicolon,
                             ..
-                        }) = parser.peek_current()
+                        }) = parser.peek_next()
                         {
                             utils::log_msg(LogMsgType::Detect, "semicolon", parser);
 
@@ -264,6 +258,8 @@ impl ParseItem for FunctionWithBlock {
         Self: Sized,
     {
         if let Some(function_sig) = FunctionSig::parse(parser)? {
+            parser.next_token();
+
             utils::log_msg(LogMsgType::Expect, "function block", parser);
 
             if let Some(function_body) = ExprWithBlock::parse(parser)? {
@@ -331,7 +327,7 @@ mod tests {
     fn parse_function_with_block() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
-        pub func foo(bar: bool, baz: char) -> u64 {
+        pub func foo(bar: bool, baz: char) {
             if (x > 2) {
                 return 12
             }
