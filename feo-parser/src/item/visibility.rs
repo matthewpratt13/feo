@@ -45,6 +45,8 @@ impl ParseTerm for VisibilityKind {
             return Ok(Some(VisibilityKind::Pub(kw_pub_opt.unwrap())));
         }
 
+        utils::log_msg(LogMsgType::Detect, "no visibility", parser);
+
         Ok(None)
     }
 }
