@@ -131,6 +131,8 @@ pub fn get_path_collection<T: ParseTerm>(
 pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec<CompilerError>> {
     let mut statements: Vec<Statement> = Vec::new();
 
+    log_msg(LogMsgType::Enter, "`get_statements()`", parser);
+
     while let Some(s) = Statement::parse(parser)? {
         statements.push(s);
 
@@ -143,14 +145,13 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
         }
     }
 
-    if statements.is_empty() {
-        log_msg(LogMsgType::Detect, "no statements", parser);
+    println!("number of statements: {}", statements.len());
 
+    if statements.is_empty() {
+        log_msg(LogMsgType::Exit, "`get_statements()`", parser);
         return Ok(None);
     } else {
-        log_msg(LogMsgType::Detect, "statements", parser);
-        println!("number of statements: {}", statements.len());
-
+        log_msg(LogMsgType::Exit, "`get_statements()`", parser);
         return Ok(Some(statements));
     }
 }
@@ -159,6 +160,8 @@ pub fn get_term_collection<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
     let mut terms: Vec<T> = Vec::new();
+
+    log_msg(LogMsgType::Enter, "`get_term_collection()`", parser);
 
     if let Some(first_term) = T::parse(parser)? {
         parser.next_token();
@@ -178,13 +181,12 @@ pub fn get_term_collection<T: ParseTerm>(
             }
         }
 
-        let subsequent_terms_opt = if terms.is_empty() {
-            log_msg(LogMsgType::Detect, "no terms", parser);
+        println!("number of terms: {}", terms.len() + 1);
 
+        let subsequent_terms_opt = if terms.is_empty() {
             None
         } else {
-            log_msg(LogMsgType::Detect, "terms", parser);
-            println!("number of terms: {}", terms.len());
+            log_msg(LogMsgType::Exit, "`get_term_collection()`", parser);
 
             Some(terms)
         };
@@ -226,7 +228,7 @@ pub fn get_value_collection(
             None
         } else {
             log_msg(LogMsgType::Detect, "no values", parser);
-            println!("number of values: {}", values.len());
+            println!("number of values: {}", values.len() + 1);
 
             Some(values)
         };
@@ -247,11 +249,11 @@ pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec
         parser.next_token();
 
         println!("visibility kind: {:#?}", v);
-        
-        log_msg(LogMsgType::Enter, "exit `get_visibility()`", parser);
+
+        log_msg(LogMsgType::Exit, "exit `get_visibility()`", parser);
         Ok(Some(v))
     } else {
-        log_msg(LogMsgType::Enter, "exit `get_visibility()`", parser);
+        log_msg(LogMsgType::Exit, "exit `get_visibility()`", parser);
         Ok(None)
     }
 }

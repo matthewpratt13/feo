@@ -103,6 +103,8 @@ impl ParseTerm for FunctionParam {
         Self: Sized,
     {
         if let Some(param_pattern) = Pattern::parse(parser)? {
+            utils::log_msg(LogMsgType::Detect, "function parameter", parser);
+
             parser.next_token();
 
             let colon_opt = parser.peek_current();

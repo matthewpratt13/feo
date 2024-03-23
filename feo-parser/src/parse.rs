@@ -1281,6 +1281,8 @@ impl ParseExpr for ExprWithBlock {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Detect, "ExprWithBlock", parser);
+
         if let Some(Delimiter {
             delim: (DelimKind::Brace, DelimOrientation::Open),
             ..
@@ -1383,6 +1385,8 @@ impl ParsePatt for Pattern {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Detect, "Pattern", parser);
+
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
                 return Ok(Some(Pattern::WildcardPatt(WildcardPatt(id))));
