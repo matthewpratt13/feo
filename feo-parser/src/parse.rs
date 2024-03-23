@@ -1798,9 +1798,9 @@ impl ParseTerm for Value {
                         return Ok(Some(Value::TupleStructExpr(tse)));
                     }
 
-                    if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::FunctionCallExpr(fc)));
-                    }
+                    // if let Some(fc) = FunctionCallExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Value::FunctionCallExpr(fc)));
+                    // }
                 }
 
                 Some(Delimiter {
@@ -1842,28 +1842,73 @@ impl ParseTerm for Value {
             }
         } else if let Some(l) = parser.peek_current::<LiteralKind>() {
             return Ok(Some(Value::Literal(l)));
-        } else if let Some(p) = parser.peek_current::<Punctuation>() {
-            match &p.punc_kind {
-                PuncKind::Bang | PuncKind::Minus => {
-                    if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::NegationExpr(ne)));
+        } else if let Some(k) = parser.peek_current::<Keyword>() {
+            match k.keyword_kind {
+                KeywordKind::KwSelfType => {
+                    if let Some(se) = StructExpr::parse(parser)? {
+                        return Ok(Some(Value::StructExpr(se)));
+                    }
+
+                    match parser.peek_next::<Punctuation>() {
+                        Some(Punctuation {
+                            punc_kind: PuncKind::DblColon,
+                            ..
+                        }) => {
+                            if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                                return Ok(Some(Value::PathExpr(pth)));
+                            }
+                        }
+
+                        _ => return Ok(None),
                     }
                 }
 
-                PuncKind::Asterisk => {
-                    if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::DereferenceExpr(de)));
+                KeywordKind::KwCrate | KeywordKind::KwSuper => {
+                    match parser.peek_next::<Punctuation>() {
+                        Some(Punctuation {
+                            punc_kind: PuncKind::DblColon,
+                            ..
+                        }) => {
+                            if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                                return Ok(Some(Value::PathExpr(pth)));
+                            }
+                        }
+
+                        _ => return Ok(None),
                     }
                 }
 
-                PuncKind::Ampersand => {
-                    if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Value::ReferenceExpr(re)));
+                KeywordKind::KwSelf => {
+                    if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Value::PathExpr(pth)));
                     }
                 }
 
                 _ => return Ok(None),
             }
+
+            // } else if let Some(p) = parser.peek_current::<Punctuation>() {
+            //     match &p.punc_kind {
+            //         PuncKind::Bang | PuncKind::Minus => {
+            //             if let Some(ne) = NegationExpr::parse(parser).unwrap_or(None) {
+            //                 return Ok(Some(Value::NegationExpr(ne)));
+            //             }
+            //         }
+
+            //         PuncKind::Asterisk => {
+            //             if let Some(de) = DereferenceExpr::parse(parser).unwrap_or(None) {
+            //                 return Ok(Some(Value::DereferenceExpr(de)));
+            //             }
+            //         }
+
+            //         PuncKind::Ampersand => {
+            //             if let Some(re) = ReferenceExpr::parse(parser).unwrap_or(None) {
+            //                 return Ok(Some(Value::ReferenceExpr(re)));
+            //             }
+            //         }
+
+            //         _ => return Ok(None),
+            //     }
         } else {
             return Ok(None);
         }
