@@ -212,6 +212,24 @@ pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec
     }
 }
 
+pub enum LogMsgType {
+    Enter,
+    Exit,
+    Detect,
+    Expect,
+}
+
+pub fn log_msg(msg_type: LogMsgType, object_name: &str, parser: &mut Parser) -> () {
+    let msg_str = match msg_type {
+        LogMsgType::Enter => "entering",
+        LogMsgType::Exit => "exit",
+        LogMsgType::Detect => "detected",
+        LogMsgType::Expect => "expected",
+    };
+
+    println!("{msg_str} {object_name}...\ncurrent_token: {:#?}", parser.current_token());
+}
+
 pub fn skip_trailing_comma(parser: &mut Parser) -> Result<(), Vec<CompilerError>> {
     if let Some(Punctuation {
         punc_kind: PuncKind::Comma,

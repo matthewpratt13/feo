@@ -16,7 +16,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseTerm for StructExprField {
@@ -77,6 +77,8 @@ impl ParseExpr for StructExpr {
         }
 
         if let Some(path) = PathInExpr::parse(parser)? {
+            utils::log_msg(LogMsgType::Enter, "struct expression", parser);
+            
             parser.next_token();
 
             let open_brace_opt = parser.peek_current();

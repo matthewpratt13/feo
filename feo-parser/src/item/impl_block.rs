@@ -35,23 +35,6 @@ impl ParseItem for InherentImplItem {
     }
 }
 
-impl ParseItem for TraitImplItem {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized,
-    {
-        if let Some(cvd) = ConstantVarDef::parse(parser)? {
-            return Ok(Some(TraitImplItem::ConstantVarDef(cvd)));
-        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
-            return Ok(Some(TraitImplItem::FuncWithBlock(fwb)));
-        } else if let Some(tad) = TypeAliasDef::parse(parser)? {
-            return Ok(Some(TraitImplItem::TypeAliasDef(tad)));
-        } else {
-            return Ok(None);
-        }
-    }
-}
-
 impl ParseItem for InherentImplBlock {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
@@ -125,6 +108,23 @@ impl ParseItem for InherentImplBlock {
         }
 
         Err(parser.errors())
+    }
+}
+
+impl ParseItem for TraitImplItem {
+    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
+    where
+        Self: Sized,
+    {
+        if let Some(cvd) = ConstantVarDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::ConstantVarDef(cvd)));
+        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+            return Ok(Some(TraitImplItem::FuncWithBlock(fwb)));
+        } else if let Some(tad) = TypeAliasDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::TypeAliasDef(tad)));
+        } else {
+            return Ok(None);
+        }
     }
 }
 
