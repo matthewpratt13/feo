@@ -100,6 +100,8 @@ pub fn get_path_collection<T: ParseTerm>(
                     ..
                 }) = parser.peek_current()
                 {
+                    log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
+
                     return Ok(Some(PathCollection {
                         root_path: Box::new(root_path),
                         path_suffixes,
@@ -129,9 +131,9 @@ pub fn get_path_collection<T: ParseTerm>(
 }
 
 pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec<CompilerError>> {
-    let mut statements: Vec<Statement> = Vec::new();
-
     log_msg(LogMsgType::Enter, "`get_statements()`", parser);
+
+    let mut statements: Vec<Statement> = Vec::new();
 
     while let Some(s) = Statement::parse(parser)? {
         statements.push(s);
@@ -147,11 +149,11 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
 
     println!("number of statements: {}", statements.len());
 
+    log_msg(LogMsgType::Exit, "`get_statements()`", parser);
+
     if statements.is_empty() {
-        log_msg(LogMsgType::Exit, "`get_statements()`", parser);
         return Ok(None);
     } else {
-        log_msg(LogMsgType::Exit, "`get_statements()`", parser);
         return Ok(Some(statements));
     }
 }
@@ -159,9 +161,9 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
 pub fn get_term_collection<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
-    let mut terms: Vec<T> = Vec::new();
-
     log_msg(LogMsgType::Enter, "`get_term_collection()`", parser);
+
+    let mut terms: Vec<T> = Vec::new();
 
     if let Some(first_term) = T::parse(parser)? {
         parser.next_token();
@@ -183,15 +185,11 @@ pub fn get_term_collection<T: ParseTerm>(
 
         println!("number of terms: {}", terms.len() + 1);
 
-        let subsequent_terms_opt = if terms.is_empty() {
-            None
-        } else {
-            log_msg(LogMsgType::Exit, "`get_term_collection()`", parser);
-
-            Some(terms)
-        };
+        let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
 
         skip_trailing_comma(parser)?;
+
+        log_msg(LogMsgType::Exit, "`get_term_collection()`", parser);
 
         return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
     } else {
@@ -222,14 +220,13 @@ pub fn get_value_collection(
             }
         }
 
-        let subsequent_values_opt = if values.is_empty() {
-            log_msg(LogMsgType::Detect, "no values", parser);
+        println!("number of values: {}", values.len() + 1);
 
+        log_msg(LogMsgType::Exit, "`get_value_collection()`", parser);
+
+        let subsequent_values_opt = if values.is_empty() {
             None
         } else {
-            log_msg(LogMsgType::Detect, "no values", parser);
-            println!("number of values: {}", values.len() + 1);
-
             Some(values)
         };
 

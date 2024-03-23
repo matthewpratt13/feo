@@ -209,7 +209,7 @@ impl ParseItem for FunctionSig {
                             ..
                         }) = parser.peek_next()
                         {
-                            utils::log_msg(LogMsgType::Detect, "semicolon", parser);
+                            utils::log_msg(LogMsgType::Detect, "`;`", parser);
 
                             parser.next_token();
                         }
