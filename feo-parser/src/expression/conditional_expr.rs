@@ -42,8 +42,6 @@ impl ParseExpr for IfExpr {
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
                 if let Some(if_block) = BlockExpr::parse(parser)? {
-                    parser.next_token();
-
                     while let Some(Keyword {
                         keyword_kind: KeywordKind::KwElse,
                         ..
@@ -64,8 +62,6 @@ impl ParseExpr for IfExpr {
                             break;
                         }
                     }
-
-                    parser.next_token();
 
                     match else_if_blocks.is_empty() {
                         true => {

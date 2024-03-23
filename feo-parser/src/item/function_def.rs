@@ -189,9 +189,10 @@ impl ParseItem for FunctionSig {
                             ..
                         }) = parser.peek_next()
                         {
+                            parser.next_token();
+
                             utils::log_msg(LogMsgType::Detect, "return type", parser);
 
-                            parser.next_token();
                             parser.next_token();
 
                             if let Some(ty) = Type::parse(parser)? {
@@ -327,7 +328,7 @@ mod tests {
     fn parse_function_with_block() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
-        pub func foo(bar: bool, baz: char) {
+        pub func foo(bar: bool, baz: char) -> u64 {
             if (x > 2) {
                 return 12
             }
