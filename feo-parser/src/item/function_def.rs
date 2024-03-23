@@ -66,17 +66,15 @@ impl ParseTerm for SelfParam {
             ..
         }) = kw_self_opt
         {
-            parser.next_token();
-
             let type_annotation_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(ty) = Type::parse(parser)? {
-                    parser.next_token();
                     Some(Box::new(ty))
                 } else {
                     None
