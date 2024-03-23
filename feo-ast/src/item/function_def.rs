@@ -26,7 +26,7 @@ pub struct FunctionSig {
     pub kw_func: KwFunc,
     pub function_name: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub function_params_opt: Option<TermCollection<FunctionParam>>,
+    pub function_params_opt: Option<TermCollection<FuncOrMethodParam>>,
     pub close_parenthesis: Parenthesis,
     pub return_type_opt: Option<Box<Type>>,
 }

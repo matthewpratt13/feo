@@ -30,8 +30,6 @@ impl ParsePatt for IdentifierPatt {
         }
 
         if let Some(name) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
             return Ok(Some(IdentifierPatt {
                 kw_ref_opt,
                 kw_mut_opt,

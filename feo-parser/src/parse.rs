@@ -12,13 +12,14 @@ use feo_ast::{
     },
     item::{
         ConstantVarDef, EnumDef, FunctionSig, FunctionWithBlock, ImportDecl, InherentImplBlock,
-        Item, ModWithoutBody, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef,
+        Item, ModWithoutBody, SelfParam, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef,
         TypeAliasDef,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
         IdentifierPatt, ParenthesizedPatt, Pattern, RangeFromPatt, RangeInclusivePatt,
-        RangePattKind, RangeToInclusivePatt, StructPatt, TuplePatt, TupleStructPatt, WildcardPatt,
+        RangePattKind, RangeToInclusivePatt, ReferencePatt, StructPatt, TuplePatt, TupleStructPatt,
+        WildcardPatt,
     },
     statement::{ExprStatement, LetStatement, Statement},
     ty::{
@@ -548,6 +549,10 @@ impl ParseExpr for Expression {
                         punc_kind: PuncKind::DblColon,
                         ..
                     }) => {
+                        if let Some(se) = StructExpr::parse(parser)? {
+                            return Ok(Some(Expression::StructExpr(se)));
+                        }
+
                         if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Expression::PathExpr(pth)));
                         }
@@ -1447,16 +1452,10 @@ impl ParsePatt for Pattern {
                 _ => (),
             }
 
-            let identifier_patt = IdentifierPatt {
-                kw_ref_opt: None,
-                kw_mut_opt: None,
-                name: id,
-            };
-
-            return Ok(Some(Pattern::IdentifierPatt(identifier_patt)));
-        }
-
-        if let Some(d) = parser.peek_current::<Delimiter>() {
+            if let Some(id) = IdentifierPatt::parse(parser)? {
+                return Ok(Some(Pattern::IdentifierPatt(id)));
+            }
+        } else if let Some(d) = parser.peek_current::<Delimiter>() {
             match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(par) = ParenthesizedPatt::parse(parser).unwrap_or(None) {
@@ -1482,9 +1481,7 @@ impl ParsePatt for Pattern {
             }
 
             return Ok(Some(Pattern::Literal(l)));
-        }
-
-        if let Some(k) = parser.peek_current::<Keyword>() {
+        } else if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
                 KeywordKind::KwCrate
                 | KeywordKind::KwSelf
@@ -1506,6 +1503,12 @@ impl ParsePatt for Pattern {
             }
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
+                PuncKind::Ampersand => {
+                    if let Some(rp) = ReferencePatt::parse(parser)? {
+                        return Ok(Some(Pattern::ReferencePatt(rp)));
+                    }
+                }
+
                 PuncKind::DotDotEquals => {
                     if let Some(rti) = RangeToInclusivePatt::parse(parser).unwrap_or(None) {
                         return Ok(Some(Pattern::RangePatt(

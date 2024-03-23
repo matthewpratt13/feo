@@ -1,6 +1,7 @@
 mod identifier_patt;
 mod parenthesized_patt;
 mod range_patt;
+mod reference_patt;
 mod struct_patt;
 mod tuple_patt;
 mod wildcard_patt;
@@ -18,6 +19,7 @@ pub use self::{
     range_patt::{
         RangeFromPatt, RangeInclusivePatt, RangePattBound, RangePattKind, RangeToInclusivePatt,
     },
+    reference_patt::ReferencePatt,
     struct_patt::{StructPatt, StructPattField, TupleStructPatt, TupleStructPattField},
     tuple_patt::{TuplePatt, TuplePattElement},
     wildcard_patt::WildcardPatt,
@@ -32,6 +34,7 @@ pub enum Pattern {
     ParenthesizedPatt(ParenthesizedPatt),
     RangePatt(RangePattKind),
     PathPatt(PathPatt),
+    ReferencePatt(ReferencePatt),
     StructPatt(StructPatt),
     TupleStructPatt(TupleStructPatt),
     TuplePatt(TuplePatt),
@@ -54,6 +57,7 @@ impl Spanned for Pattern {
             Pattern::TupleStructPatt(tsp) => tsp.span(),
             Pattern::TuplePatt(tup) => tup.span(),
             Pattern::WildcardPatt(wcp) => wcp.span(),
+            Pattern::ReferencePatt(rp) => rp.span(),
         }
     }
 }
