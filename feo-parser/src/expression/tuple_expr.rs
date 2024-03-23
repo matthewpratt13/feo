@@ -21,6 +21,7 @@ impl ParseExpr for TupleExpr {
     where
         Self: Sized,
     {
+        // TODO: find a way to prevent stack overflow when accessing tuple indexes (as a tuple index expression)
         let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {

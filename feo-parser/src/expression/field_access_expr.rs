@@ -15,6 +15,7 @@ impl ParseExpr for FieldAccessExpr {
     where
         Self: Sized,
     {
+        // TODO: find a way to prevent stack overflow when accessing fields (as a field access expression)
         if let Some(container_operand) = Value::parse(parser)? {
             parser.next_token();
 
@@ -26,8 +27,6 @@ impl ParseExpr for FieldAccessExpr {
                 parser.next_token();
 
                 if let Some(field_name) = parser.peek_current::<Identifier>() {
-                    parser.next_token();
-                    
                     return Ok(Some(FieldAccessExpr {
                         container_operand: Box::new(container_operand),
                         field_name,

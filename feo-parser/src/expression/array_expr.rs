@@ -62,6 +62,7 @@ impl ParseExpr for IndexExpr {
     where
         Self: Sized,
     {
+        // TODO: find a way to prevent stack overflow when accessing indexes (as an index expression)
         if let Some(indexed_operand) = Value::parse(parser)? {
             parser.next_token();
 
@@ -85,7 +86,7 @@ impl ParseExpr for IndexExpr {
                     }) = close_bracket_opt
                     {
                         parser.next_token();
-                        
+
                         return Ok(Some(IndexExpr {
                             indexed_operand: Box::new(indexed_operand),
                             open_bracket: open_bracket_opt.unwrap(),
