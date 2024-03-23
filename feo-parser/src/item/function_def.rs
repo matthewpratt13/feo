@@ -208,6 +208,8 @@ impl ParseItem for FunctionSig {
                             None
                         };
 
+                        parser.next_token();
+
                         if let Some(Punctuation {
                             punc_kind: PuncKind::Semicolon,
                             ..
@@ -341,8 +343,6 @@ mod tests {
         let function_with_block =
             FunctionWithBlock::parse(&mut parser).expect("unable to parse function with block");
 
-        // Ok(println!("{:#?}", function_with_block))
-
-        Ok(())
+        Ok(println!("{:#?}", function_with_block))
     }
 }
