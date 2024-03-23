@@ -19,6 +19,8 @@ use crate::{
 pub fn get_attributes<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
+    log_msg(LogMsgType::Enter, "`get_attributes()`", parser);
+
     let mut attributes: Vec<T> = Vec::new();
 
     while let Some(a) = T::parse(parser)? {
@@ -26,19 +28,20 @@ pub fn get_attributes<T: ParseTerm>(
         parser.next_token();
     }
 
-    if attributes.is_empty() {
-        log_msg(LogMsgType::Detect, "no attributes", parser);
+    println!("number of attributes: {}", attributes.len());
 
+    log_msg(LogMsgType::Exit, "`get_attributes()`", parser);
+
+    if attributes.is_empty() {
         Ok(None)
     } else {
-        log_msg(LogMsgType::Detect, "attributes", parser);
-        println!("number of attributes: {}", attributes.len());
-
         Ok(Some(attributes))
     }
 }
 
 pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
+    log_msg(LogMsgType::Enter, "`get_items()`", parser);
+
     let mut items: Vec<T> = Vec::new();
 
     while let Some(i) = T::parse(parser)? {
@@ -46,14 +49,13 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
         parser.next_token();
     }
 
-    if items.is_empty() {
-        log_msg(LogMsgType::Detect, "no items", parser);
+    println!("number of items: {}", items.len());
 
+    log_msg(LogMsgType::Exit, "`get_items", parser);
+
+    if items.is_empty() {
         Ok(None)
     } else {
-        log_msg(LogMsgType::Detect, "items", parser);
-        println!("number of items: {}", items.len());
-
         Ok(Some(items))
     }
 }
@@ -239,14 +241,17 @@ pub fn get_value_collection(
 }
 
 pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec<CompilerError>> {
+    log_msg(LogMsgType::Enter, "`get_visibility()`", parser);
+
     if let Some(v) = VisibilityKind::parse(parser)? {
         parser.next_token();
-        log_msg(LogMsgType::Detect, "visibility", parser);
 
+        println!("visibility kind: {:#?}", v);
+        
+        log_msg(LogMsgType::Enter, "exit `get_visibility()`", parser);
         Ok(Some(v))
     } else {
-        log_msg(LogMsgType::Detect, "no visibility", parser);
-
+        log_msg(LogMsgType::Enter, "exit `get_visibility()`", parser);
         Ok(None)
     }
 }

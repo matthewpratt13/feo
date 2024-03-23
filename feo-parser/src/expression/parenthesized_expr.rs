@@ -19,8 +19,6 @@ impl ParseTerm for ParenthesizedExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
-
         let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
@@ -28,13 +26,11 @@ impl ParseTerm for ParenthesizedExpr {
             ..
         }) = open_parenthesis_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`(`", parser);
+            utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
 
             parser.next_token();
 
             if let Some(enclosed_operand) = Expression::parse(parser)? {
-                utils::log_msg(LogMsgType::Detect, "enclosed operand", parser);
-
                 parser.next_token();
 
                 let close_parenthesis_opt = parser.peek_current();

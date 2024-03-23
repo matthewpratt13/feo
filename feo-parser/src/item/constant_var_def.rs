@@ -18,8 +18,6 @@ impl ParseItem for ConstantVarDef {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "constant variable definition", parser);
-
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = utils::get_visibility(parser)?;
@@ -31,6 +29,12 @@ impl ParseItem for ConstantVarDef {
             ..
         }) = kw_const_opt
         {
+            utils::log_msg(
+                LogMsgType::Enter,
+                "constant variable definition (item)",
+                parser,
+            );
+
             parser.next_token();
 
             if let Some(item_name) = parser.peek_current::<Identifier>() {
@@ -69,7 +73,11 @@ impl ParseItem for ConstantVarDef {
                                 ..
                             }) = semicolon_opt
                             {
-                                utils::log_msg(LogMsgType::Exit, "constant variable definition", parser);
+                                utils::log_msg(
+                                    LogMsgType::Exit,
+                                    "constant variable definition",
+                                    parser,
+                                );
 
                                 return Ok(Some(ConstantVarDef {
                                     attributes_opt,
@@ -134,6 +142,8 @@ impl ParseItem for StaticVarDef {
             ..
         }) = kw_static_opt
         {
+            utils::log_msg(LogMsgType::Enter, "static variable definition", parser);
+
             parser.next_token();
 
             let kw_mut_opt = parser.peek_current();
@@ -181,6 +191,12 @@ impl ParseItem for StaticVarDef {
                                     ..
                                 }) = semicolon_opt
                                 {
+                                    utils::log_msg(
+                                        LogMsgType::Exit,
+                                        "static variable definition",
+                                        parser,
+                                    );
+
                                     return Ok(Some(StaticVarDef {
                                         attributes_opt,
                                         visibility_opt,

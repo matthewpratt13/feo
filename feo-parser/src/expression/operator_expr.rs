@@ -124,7 +124,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
         Self: Sized,
     {
         utils::log_msg(
-            LogMsgType::Enter,
+            LogMsgType::Detect,
             "arithmetic or logical expression",
             parser,
         );
@@ -190,8 +190,6 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    utils::log_msg(LogMsgType::Exit, "arithmetic or logical expression", parser);
-
                     return Ok(Some(ArithmeticOrLogicalExpr {
                         lhs: Box::new(lhs),
                         operator,
@@ -326,7 +324,7 @@ impl ParseExpr for ComparisonExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "comparison expression", parser);
+        utils::log_msg(LogMsgType::Detect, "comparison expression", parser);
 
         if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
@@ -369,11 +367,6 @@ impl ParseExpr for ComparisonExpr {
                 };
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    utils::log_msg(
-                        LogMsgType::Exit,
-                        "comparison expression",
-                        parser,
-                    );
                     return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
                 }
 

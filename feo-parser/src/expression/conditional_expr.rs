@@ -41,8 +41,6 @@ impl ParseExpr for IfExpr {
             parser.next_token();
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
-                utils::log_msg(LogMsgType::Detect, "conditional operand", parser);
-
                 if let Some(if_block) = BlockExpr::parse(parser)? {
                     parser.next_token();
 
@@ -51,6 +49,8 @@ impl ParseExpr for IfExpr {
                         ..
                     }) = parser.peek_current()
                     {
+                        utils::log_msg(LogMsgType::Enter, "else(-if) block", parser);
+
                         parser.next_token();
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {

@@ -50,8 +50,6 @@ impl ParseTerm for InnerAttr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "inner attribute", parser);
-
         let hash_bang_opt = parser.peek_current();
 
         if let Some(Punctuation {
@@ -59,6 +57,8 @@ impl ParseTerm for InnerAttr {
             ..
         }) = hash_bang_opt
         {
+            utils::log_msg(LogMsgType::Detect, "inner attribute", parser);
+
             parser.next_token();
 
             let open_bracket_opt = parser.peek_current();
@@ -80,8 +80,6 @@ impl ParseTerm for InnerAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "inner attribute", parser);
-
                         return Ok(Some(InnerAttr {
                             hash_bang: hash_bang_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
@@ -119,8 +117,6 @@ impl ParseTerm for OuterAttr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "outer attribute", parser);
-
         let hash_sign_opt = parser.peek_current();
 
         if let Some(Punctuation {
@@ -128,6 +124,8 @@ impl ParseTerm for OuterAttr {
             ..
         }) = hash_sign_opt
         {
+            utils::log_msg(LogMsgType::Detect, "outer attribute", parser);
+
             parser.next_token();
 
             let open_bracket_opt = parser.peek_current();
@@ -149,8 +147,6 @@ impl ParseTerm for OuterAttr {
                         ..
                     }) = close_bracket_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "outer attribute", parser);
-
                         return Ok(Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),

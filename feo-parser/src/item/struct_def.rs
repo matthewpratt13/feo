@@ -14,7 +14,7 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseTerm for StructDefField {
@@ -80,6 +80,8 @@ impl ParseItem for StructDef {
             ..
         }) = kw_struct_opt
         {
+            utils::log_msg(LogMsgType::Enter, "struct definition", parser);
+
             parser.next_token();
 
             if let Some(struct_name) = parser.peek_current::<Identifier>() {
@@ -103,6 +105,8 @@ impl ParseItem for StructDef {
                         ..
                     }) = close_brace_opt
                     {
+                        utils::log_msg(LogMsgType::Exit, "struct definition", parser);
+
                         return Ok(Some(StructDef {
                             attributes_opt,
                             visibility_opt,
@@ -175,6 +179,8 @@ impl ParseTerm for TupleStructDef {
             ..
         }) = kw_struct_opt
         {
+            utils::log_msg(LogMsgType::Enter, "(tuple) struct definition", parser);
+
             parser.next_token();
 
             if let Some(struct_name) = parser.peek_current::<Identifier>() {
@@ -208,6 +214,8 @@ impl ParseTerm for TupleStructDef {
                         }) = semicolon_opt
                         {
                             parser.next_token();
+
+                            utils::log_msg(LogMsgType::Exit, "(tuple) struct definition", parser);
 
                             return Ok(Some(TupleStructDef {
                                 attributes_opt,

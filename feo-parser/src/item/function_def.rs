@@ -146,8 +146,6 @@ impl ParseItem for FunctionSig {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "function signature", parser);
-
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = utils::get_visibility(parser)?;
@@ -159,9 +157,13 @@ impl ParseItem for FunctionSig {
             ..
         }) = kw_func_opt
         {
+            utils::log_msg(LogMsgType::Enter, "function signature (item)", parser);
+
             parser.next_token();
 
             if let Some(function_name) = parser.peek_current::<Identifier>() {
+                utils::log_msg(LogMsgType::Detect, "function name", parser);
+
                 parser.next_token();
 
                 let open_parenthesis_opt = parser.peek_current();
@@ -189,12 +191,15 @@ impl ParseItem for FunctionSig {
                             ..
                         }) = parser.peek_current()
                         {
+                            utils::log_msg(LogMsgType::Detect, "return type", parser);
+
                             parser.next_token();
 
                             if let Some(ty) = Type::parse(parser)? {
                                 parser.next_token();
                                 Some(Box::new(ty))
                             } else {
+                                utils::log_msg(LogMsgType::Expect, "`->`", parser);
                                 None
                             }
                         } else {
@@ -206,6 +211,8 @@ impl ParseItem for FunctionSig {
                             ..
                         }) = parser.peek_current()
                         {
+                            utils::log_msg(LogMsgType::Detect, "semicolon", parser);
+
                             parser.next_token();
                         }
 
@@ -252,13 +259,11 @@ impl ParseItem for FunctionWithBlock {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "function with block", parser);
-
         if let Some(function_sig) = FunctionSig::parse(parser)? {
-            utils::log_msg(LogMsgType::Expect, "`)` or type", parser);
+            utils::log_msg(LogMsgType::Expect, "function block", parser);
 
             if let Some(function_body) = ExprWithBlock::parse(parser)? {
-                utils::log_msg(LogMsgType::Exit, "function with block", parser);
+                utils::log_msg(LogMsgType::Exit, "function block", parser);
 
                 return Ok(Some(FunctionWithBlock {
                     function_sig,

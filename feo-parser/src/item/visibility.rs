@@ -9,7 +9,11 @@ use feo_types::{
     Delimiter, Keyword,
 };
 
-use crate::{parse::ParseTerm, parser::Parser};
+use crate::{
+    parse::ParseTerm,
+    parser::Parser,
+    utils::{self, LogMsgType},
+};
 
 impl ParseTerm for VisibilityKind {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -23,6 +27,8 @@ impl ParseTerm for VisibilityKind {
             ..
         }) = kw_pub_opt
         {
+            utils::log_msg(LogMsgType::Detect, "visibility", parser);
+
             match &parser.peek_next() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),

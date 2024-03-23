@@ -9,7 +9,7 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuatio
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseTerm for ImportTree {
@@ -109,6 +109,8 @@ impl ParseItem for ImportDecl {
             ..
         }) = kw_import_opt
         {
+            utils::log_msg(LogMsgType::Enter, "import declaration", parser);
+
             parser.next_token();
 
             if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
@@ -121,6 +123,8 @@ impl ParseItem for ImportDecl {
                     ..
                 }) = semicolon_opt
                 {
+                    utils::log_msg(LogMsgType::Exit, "import declaration", parser);
+
                     return Ok(Some(ImportDecl {
                         attributes_opt,
                         visibility_opt,

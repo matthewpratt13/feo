@@ -1739,7 +1739,7 @@ impl ParseTerm for Value {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Expression", parser);
+        utils::log_msg(LogMsgType::Detect, "Value", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {

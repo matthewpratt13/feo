@@ -40,8 +40,6 @@ impl ParseItem for InherentImplBlock {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "InherentImplBlock", parser);
-
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let kw_impl_opt = parser.peek_current();
@@ -51,6 +49,8 @@ impl ParseItem for InherentImplBlock {
             ..
         }) = kw_impl_opt
         {
+            utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+
             parser.next_token();
 
             if let Some(nominal_type) = Type::parse(parser)? {
@@ -78,7 +78,7 @@ impl ParseItem for InherentImplBlock {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "InherentImplBlock", parser);
+                        utils::log_msg(LogMsgType::Exit, "inherent implementation block", parser);
 
                         return Ok(Some(InherentImplBlock {
                             outer_attributes_opt,
@@ -146,6 +146,8 @@ impl ParseItem for TraitImplBlock {
             ..
         }) = kw_impl_opt
         {
+            utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
+
             if let Some(implemented_trait_path) = PathType::parse(parser)? {
                 let kw_for_opt = parser.peek_current();
 
@@ -183,6 +185,12 @@ impl ParseItem for TraitImplBlock {
                                 ..
                             }) = close_brace_opt
                             {
+                                utils::log_msg(
+                                    LogMsgType::Exit,
+                                    "trait implementation block",
+                                    parser,
+                                );
+
                                 return Ok(Some(TraitImplBlock {
                                     outer_attributes_opt,
                                     kw_impl: kw_impl_opt.unwrap(),
@@ -270,6 +278,8 @@ mod tests {
         let inherent_impl_block = InherentImplBlock::parse(&mut parser)
             .expect("unable to parse inherent implementation block");
 
-        Ok(println!("{:#?}", inherent_impl_block))
+        // Ok(println!("{:#?}", inherent_impl_block))
+
+        Ok(())
     }
 }

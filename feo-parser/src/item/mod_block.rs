@@ -10,7 +10,11 @@ use feo_types::{
     Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::{parse::ParseItem, parser::Parser, utils};
+use crate::{
+    parse::ParseItem,
+    parser::Parser,
+    utils::{self, LogMsgType},
+};
 
 impl ParseItem for ModWithoutBody {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -28,6 +32,8 @@ impl ParseItem for ModWithoutBody {
             ..
         }) = kw_mod_opt
         {
+            utils::log_msg(LogMsgType::Enter, "mod ule definition", parser);
+
             parser.next_token();
 
             if let Some(mod_name) = parser.peek_current::<Identifier>() {
@@ -40,6 +46,8 @@ impl ParseItem for ModWithoutBody {
                     ..
                 }) = semicolon_opt
                 {
+                    utils::log_msg(LogMsgType::Exit, "module definition", parser);
+
                     return Ok(Some(ModWithoutBody {
                         attributes_opt,
                         visibility_opt,
@@ -83,6 +91,8 @@ impl ParseItem for ModWithBody {
             ..
         }) = kw_mod_opt
         {
+            utils::log_msg(LogMsgType::Enter, "module with body", parser);
+
             parser.next_token();
 
             if let Some(mod_name) = parser.peek_current::<Identifier>() {
@@ -107,6 +117,8 @@ impl ParseItem for ModWithBody {
                     }) = close_brace_opt
                     {
                         parser.next_token();
+
+                        utils::log_msg(LogMsgType::Exit, "module with body", parser);
 
                         return Ok(Some(ModWithBody {
                             attributes_opt,

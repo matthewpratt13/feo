@@ -103,11 +103,11 @@ impl ParseTerm for PathInExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "path in expression", parser);
-
         let mut subsequent_segments: Vec<PathIdenSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
+            utils::log_msg(LogMsgType::Enter, "path in expression", parser);
+
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..
@@ -150,11 +150,11 @@ impl ParseTerm for PathType {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "path type", parser);
-
         let mut subsequent_segments: Vec<PathIdenSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
+            utils::log_msg(LogMsgType::Enter, "path type", parser);
+
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
                 ..

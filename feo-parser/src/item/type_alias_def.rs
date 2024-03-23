@@ -13,8 +13,6 @@ impl ParseItem for TypeAliasDef {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "type alias definition", parser);
-
         let attributes_opt = utils::get_attributes(parser)?;
 
         let visibility_opt = utils::get_visibility(parser)?;
@@ -26,6 +24,8 @@ impl ParseItem for TypeAliasDef {
             ..
         }) = kw_type_opt
         {
+            utils::log_msg(LogMsgType::Enter, "type alias definition", parser);
+
             parser.next_token();
 
             if let Some(type_name) = parser.peek_current::<Identifier>() {
@@ -49,7 +49,7 @@ impl ParseItem for TypeAliasDef {
 
                     if let Some(Punctuation {
                         punc_kind: PuncKind::Semicolon,
-                        ..  
+                        ..
                     }) = semicolon_opt
                     {
                         utils::log_msg(LogMsgType::Exit, "type alias definition", parser);

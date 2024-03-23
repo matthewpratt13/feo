@@ -9,7 +9,11 @@ use feo_types::{
     Delimiter, Identifier, Keyword,
 };
 
-use crate::{parse::ParseItem, parser::Parser, utils};
+use crate::{
+    parse::ParseItem,
+    parser::Parser,
+    utils::{self, LogMsgType},
+};
 
 impl ParseItem for TraitDefItem {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
@@ -46,6 +50,8 @@ impl ParseItem for TraitDef {
             ..
         }) = kw_trait_opt
         {
+            utils::log_msg(LogMsgType::Enter, "trait definition", parser);
+
             parser.next_token();
 
             if let Some(trait_name) = parser.peek_current::<Identifier>() {
@@ -64,9 +70,7 @@ impl ParseItem for TraitDef {
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-
                     let associated_items_opt = utils::get_items::<TraitDefItem>(parser)?;
-
 
                     let close_brace_opt = parser.peek_current();
 
@@ -75,6 +79,8 @@ impl ParseItem for TraitDef {
                         ..
                     }) = close_brace_opt
                     {
+                        utils::log_msg(LogMsgType::Exit, "trait definition", parser);
+
                         return Ok(Some(TraitDef {
                             outer_attributes_opt,
                             visibility_opt,
