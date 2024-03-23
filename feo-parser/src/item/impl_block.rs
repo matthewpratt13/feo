@@ -40,6 +40,8 @@ impl ParseItem for InherentImplBlock {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let kw_impl_opt = parser.peek_current();
@@ -49,8 +51,6 @@ impl ParseItem for InherentImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
-
             parser.next_token();
 
             if let Some(nominal_type) = Type::parse(parser)? {
@@ -137,6 +137,8 @@ impl ParseItem for TraitImplBlock {
     where
         Self: Sized,
     {
+        utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
+
         let outer_attributes_opt = utils::get_attributes(parser)?;
 
         let kw_impl_opt = parser.peek_current();
@@ -146,8 +148,8 @@ impl ParseItem for TraitImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
-
+            parser.next_token();
+            
             if let Some(implemented_trait_path) = PathType::parse(parser)? {
                 let kw_for_opt = parser.peek_current();
 

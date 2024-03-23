@@ -51,7 +51,7 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
 
     println!("number of items: {}", items.len());
 
-    log_msg(LogMsgType::Exit, "`get_items", parser);
+    log_msg(LogMsgType::Exit, "`get_items()`", parser);
 
     if items.is_empty() {
         Ok(None)
@@ -250,10 +250,10 @@ pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec
 
         println!("visibility kind: {:#?}", v);
 
-        log_msg(LogMsgType::Exit, "exit `get_visibility()`", parser);
+        log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
         Ok(Some(v))
     } else {
-        log_msg(LogMsgType::Exit, "exit `get_visibility()`", parser);
+        log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
         Ok(None)
     }
 }
