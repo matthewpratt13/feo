@@ -101,8 +101,6 @@ impl ParseExpr for MethodCallExpr {
                             ..
                         }) = close_parenthesis_opt
                         {
-                            parser.next_token();
-
                             return Ok(Some(MethodCallExpr {
                                 receiver: Box::new(receiver),
                                 full_stop: full_stop_opt.unwrap(),

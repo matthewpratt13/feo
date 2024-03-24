@@ -27,13 +27,12 @@ impl ParseTerm for StructExprField {
         let attributes_opt = utils::get_attributes(parser)?;
 
         if let Some(field_name) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(value) = Value::parse(parser)? {
@@ -81,15 +80,14 @@ impl ParseExpr for StructExpr {
         if let Some(path) = PathInExpr::parse(parser)? {
             utils::log_msg(LogMsgType::Enter, "struct expression", parser);
 
-            parser.next_token();
-
-            let open_brace_opt = parser.peek_current();
+            let open_brace_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
                 ..
             }) = open_brace_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 let fields_opt = utils::get_term_collection::<StructExprField>(parser)?;
@@ -116,10 +114,7 @@ impl ParseExpr for StructExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`{`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -135,15 +130,14 @@ impl ParseExpr for TupleStructExpr {
         Self: Sized,
     {
         if let Some(path) = PathInExpr::parse(parser)? {
-            parser.next_token();
-
-            let open_parenthesis_opt = parser.peek_current();
+            let open_parenthesis_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                 ..
             }) = open_parenthesis_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 let fields_opt = utils::get_value_collection(parser)?;
@@ -155,8 +149,6 @@ impl ParseExpr for TupleStructExpr {
                     ..
                 }) = close_parenthesis_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(TupleStructExpr {
                         path,
                         open_parenthesis: open_parenthesis_opt.unwrap(),
@@ -170,10 +162,7 @@ impl ParseExpr for TupleStructExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`(`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
