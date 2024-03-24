@@ -92,7 +92,7 @@ impl ParseExpr for Expression {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Expression", parser);
+        // utils::log_msg(LogMsgType::Detect, "Expression", parser);
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
@@ -123,12 +123,18 @@ impl ParseExpr for Expression {
                 }
 
                 KeywordKind::KwSelf => {
-                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::MethodCallExpr(mc)));
-                    }
+                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Expression::MethodCallExpr(mc)));
+                    // }
 
                     if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::FieldAccessExpr(fa)));
+                    }
+
+                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::OperatorExpr(
+                            OperatorExprKind::Comparison(ce),
+                        )));
                     }
 
                     if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
@@ -635,7 +641,7 @@ impl ParseExpr for ExprWithoutBlock {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "ExprWithoutBlock", parser);
+        // utils::log_msg(LogMsgType::Detect, "ExprWithoutBlock", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
@@ -1205,7 +1211,7 @@ impl ParseExpr for ExprWithBlock {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "ExprWithBlock", parser);
+        // utils::log_msg(LogMsgType::Detect, "ExprWithBlock", parser);
 
         if let Some(Delimiter {
             delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -1278,7 +1284,7 @@ impl ParseItem for Item {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Item", parser);
+        // utils::log_msg(LogMsgType::Detect, "Item", parser);
 
         if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
@@ -1309,7 +1315,7 @@ impl ParsePatt for Pattern {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Pattern", parser);
+        // utils::log_msg(LogMsgType::Detect, "Pattern", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
@@ -1453,7 +1459,7 @@ impl ParseStatement for Statement {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Statement", parser);
+        // utils::log_msg(LogMsgType::Detect, "Statement", parser);
 
         if let Some(_) = parser.peek_current::<Identifier>() {
             if let Some(es) = ExprStatement::parse(parser)? {
@@ -1542,7 +1548,7 @@ impl ParseType for Type {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Type", parser);
+        // utils::log_msg(LogMsgType::Detect, "Type", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
@@ -1665,7 +1671,7 @@ impl ParseTerm for Value {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Value", parser);
+        // utils::log_msg(LogMsgType::Detect, "Value", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {

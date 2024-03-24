@@ -132,62 +132,8 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
         if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
-            if let Some(p) = parser.peek_current::<Punctuation>() {
+            if let Some(operator) = parser.peek_current::<ArithmeticOrLogicalOperatorKind>() {
                 parser.next_token();
-
-                let operator = match p {
-                    Punctuation {
-                        punc_kind: PuncKind::Plus,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::Add(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Minus,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::Subtract(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Asterisk,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::Multiply(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::ForwardSlash,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::Divide(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Percent,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::Modulus(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Ampersand,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::LogicalAnd(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Pipe,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::LogicalOr(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Caret,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::LogicalXOr(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::DblLessThan,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::ShiftLeft(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::DblGreaterThan,
-                        ..
-                    } => ArithmeticOrLogicalOperatorKind::ShiftRight(p),
-
-                    _ => return Ok(None),
-                };
 
                 if let Some(rhs) = Value::parse(parser)? {
                     return Ok(Some(ArithmeticOrLogicalExpr {
@@ -196,9 +142,9 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
                         rhs: Box::new(rhs),
                     }));
                 }
-            } else {
+
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`ArithmeticOrLogicalOperatorKind`".to_string(),
+                    expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -239,11 +185,6 @@ impl ParseExpr for AssignmentExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`=`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             }
         } else {
             return Ok(None);
@@ -261,37 +202,8 @@ impl ParseExpr for CompoundAssignmentExpr {
         if let Some(assignee) = Value::parse(parser)? {
             parser.next_token();
 
-            if let Some(p) = parser.peek_current::<Punctuation>() {
+            if let Some(operator) = parser.peek_current::<CompoundAssignOperatorKind>() {
                 parser.next_token();
-
-                let operator = match p {
-                    Punctuation {
-                        punc_kind: PuncKind::PlusEquals,
-                        ..
-                    } => CompoundAssignOperatorKind::AddAssign(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Minus,
-                        ..
-                    } => CompoundAssignOperatorKind::SubtractAssign(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Asterisk,
-                        ..
-                    } => CompoundAssignOperatorKind::MultiplyAssign(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::ForwardSlash,
-                        ..
-                    } => CompoundAssignOperatorKind::DivideAssign(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::Percent,
-                        ..
-                    } => CompoundAssignOperatorKind::ModulusAssign(p),
-
-                    _ => return Ok(None),
-                };
 
                 if let Some(new_value) = Value::parse(parser)? {
                     return Ok(Some(CompoundAssignmentExpr {
@@ -303,11 +215,6 @@ impl ParseExpr for CompoundAssignmentExpr {
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "value".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`CompoundAssignOperatorKind`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -329,42 +236,8 @@ impl ParseExpr for ComparisonExpr {
         if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
-            if let Some(p) = parser.peek_current::<Punctuation>() {
+            if let Some(operator) = parser.peek_current::<ComparisonOperatorKind>() {
                 parser.next_token();
-
-                let operator = match p {
-                    Punctuation {
-                        punc_kind: PuncKind::DblEquals,
-                        ..
-                    } => ComparisonOperatorKind::Equality(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::BangEquals,
-                        ..
-                    } => ComparisonOperatorKind::NotEqual(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::LessThan,
-                        ..
-                    } => ComparisonOperatorKind::LessThan(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::GreaterThan,
-                        ..
-                    } => ComparisonOperatorKind::GreaterThan(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::LessThanEquals,
-                        ..
-                    } => ComparisonOperatorKind::LessThanOrEqual(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::GreaterThanEquals,
-                        ..
-                    } => ComparisonOperatorKind::GreaterThanOrEqual(p),
-
-                    _ => return Ok(None),
-                };
 
                 if let Some(rhs) = Value::parse(parser)? {
                     return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
@@ -372,11 +245,6 @@ impl ParseExpr for ComparisonExpr {
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "value".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`ComparisonOperatorKind`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -429,29 +297,8 @@ impl ParseExpr for LazyBoolExpr {
         if let Some(lhs) = Value::parse(parser)? {
             parser.next_token();
 
-            if let Some(p) = parser.peek_current::<Punctuation>() {
+            if let Some(operator) = parser.peek_current::<LazyBoolOperatorKind>() {
                 parser.next_token();
-
-                let operator = match p {
-                    Punctuation {
-                        punc_kind: PuncKind::DblAmpersand,
-                        ..
-                    } => LazyBoolOperatorKind::LazyAnd(p),
-
-                    Punctuation {
-                        punc_kind: PuncKind::DblPipe,
-                        ..
-                    } => LazyBoolOperatorKind::LazyOr(p),
-
-                    _ => {
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`LazyBoolOperatorKind`".to_string(),
-                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                        });
-
-                        return Err(parser.errors());
-                    }
-                };
 
                 if let Some(rhs) = Value::parse(parser)? {
                     return Ok(Some(LazyBoolExpr { lhs, operator, rhs }));
@@ -459,11 +306,6 @@ impl ParseExpr for LazyBoolExpr {
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "value".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`LazyBoolOperatorKind`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -480,29 +322,8 @@ impl ParseExpr for NegationExpr {
     where
         Self: Sized,
     {
-        if let Some(p) = parser.peek_current::<Punctuation>() {
+        if let Some(operator) = parser.peek_current::<NegationOperatorKind>() {
             parser.next_token();
-
-            let operator = match p {
-                Punctuation {
-                    punc_kind: PuncKind::Minus,
-                    ..
-                } => NegationOperatorKind::InvertNumeric(p),
-
-                Punctuation {
-                    punc_kind: PuncKind::Bang,
-                    ..
-                } => NegationOperatorKind::InvertBool(p),
-
-                _ => {
-                    parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "value".to_string(),
-                        found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                    });
-
-                    return Err(parser.errors());
-                }
-            };
 
             if let Some(operand) = Value::parse(parser)? {
                 return Ok(Some(NegationExpr {
@@ -597,11 +418,6 @@ impl ParseExpr for TypeCastExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`as`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             }
         } else {
             return Ok(None);
@@ -626,17 +442,10 @@ impl ParseExpr for UnwrapExpr {
                 ..
             }) = question_mark_opt
             {
-                parser.next_token();
-
                 return Ok(Some(UnwrapExpr {
                     operand: Box::new(operand),
                     operator: question_mark_opt.unwrap(),
                 }));
-            } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`?`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             }
         } else {
             return Ok(None);
