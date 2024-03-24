@@ -17,16 +17,16 @@ impl ParseExpr for FieldAccessExpr {
     {
         // TODO: find a way to prevent stack overflow when accessing fields (as a field access expression)
         if let Some(container_operand) = Value::parse(parser)? {
-            parser.next_token();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
                 parser.next_token();
 
-                if let Some(field_name) = parser.peek_current::<Identifier>() {
+                if let Some(field_name) = parser.peek_next::<Identifier>() {
+                    parser.next_token();
+
                     return Ok(Some(FieldAccessExpr {
                         container_operand: Box::new(container_operand),
                         field_name,
@@ -38,10 +38,7 @@ impl ParseExpr for FieldAccessExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`.`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

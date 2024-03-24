@@ -118,7 +118,10 @@ impl ParseExpr for MethodCallExpr {
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
                     } else {
-                        return Ok(None);
+                        parser.log_error(ParserErrorKind::UnexpectedToken {
+                            expected: "`(`".to_string(),
+                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                        });
                     }
                 } else {
                     return Ok(None);
