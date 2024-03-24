@@ -36,9 +36,9 @@ impl ParseExpr for ReturnExpr {
                 kw_return: kw_return_opt.unwrap(),
                 expression_opt,
             }));
+        } else {
+            return Ok(None);
         }
-
-        Ok(None)
     }
 }
 
