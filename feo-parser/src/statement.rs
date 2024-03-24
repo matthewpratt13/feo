@@ -31,7 +31,7 @@ impl ParseStatement for ExprStatement {
                 ..
             }) = semicolon_opt
             {
-                utils::log_msg(LogMsgType::Detect, "trailing comma", parser);
+                utils::log_msg(LogMsgType::Detect, "semicolon", parser);
 
                 parser.next_token();
             }
