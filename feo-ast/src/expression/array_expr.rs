@@ -26,7 +26,7 @@ impl Spanned for ArrayExpr {
 pub struct IndexExpr {
     pub indexed_operand: Box<Value>,
     pub open_bracket: Bracket,
-    pub index: U64Primitive,
+    pub index: Box<Value>,
     pub close_bracket: Bracket,
 }
 
