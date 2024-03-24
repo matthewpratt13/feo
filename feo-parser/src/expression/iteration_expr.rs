@@ -100,6 +100,8 @@ impl ParseExpr for PredicateLoopExpr {
             parser.next_token();
 
             if let Some(conditional_operand) = ParenthesizedExpr::parse(parser)? {
+                parser.next_token();
+
                 if let Some(block) = BlockExpr::parse(parser)? {
                     return Ok(Some(PredicateLoopExpr {
                         kw_while: kw_while_opt.unwrap(),
@@ -151,7 +153,10 @@ impl ParseExpr for IterLoopExpr {
                 }) = kw_in_opt
                 {
                     parser.next_token();
+                    
                     if let Some(iterator) = ParenthesizedExpr::parse(parser)? {
+                        parser.next_token();
+
                         if let Some(block) = BlockExpr::parse(parser)? {
                             return Ok(Some(IterLoopExpr {
                                 kw_for: kw_for_opt.unwrap(),

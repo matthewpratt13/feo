@@ -36,7 +36,6 @@ impl ParseTerm for ParenthesizedExpr {
                 }) = close_parenthesis_opt
                 {
                     parser.next_token();
-                    parser.next_token();
 
                     utils::log_msg(LogMsgType::Exit, "parenthesized expression", parser);
 

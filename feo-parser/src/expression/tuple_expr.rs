@@ -21,7 +21,6 @@ impl ParseExpr for TupleExpr {
     where
         Self: Sized,
     {
-        // TODO: find a way to prevent stack overflow when accessing tuple indexes (as a tuple index expression)
         let open_parenthesis_opt = parser.peek_current();
 
         if let Some(Delimiter {
@@ -39,8 +38,6 @@ impl ParseExpr for TupleExpr {
                     ..
                 }) = close_parenthesis_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(TupleExpr {
                         open_parenthesis: open_parenthesis_opt.unwrap(),
                         elements,
@@ -54,7 +51,7 @@ impl ParseExpr for TupleExpr {
                 });
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`ValueCollection`".to_string(),
+                    expected: "values".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -71,17 +68,18 @@ impl ParseExpr for TupleIndexExpr {
     where
         Self: Sized,
     {
+        // TODO: find a way to prevent stack overflow when accessing tuple indexes (as a tuple index expression)
         if let Some(operand) = Value::parse(parser)? {
-            parser.next_token();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
                 parser.next_token();
 
-                if let Some(index) = parser.peek_current::<Literal<UIntType>>() {
+                if let Some(index) = parser.peek_next::<Literal<UIntType>>() {
+                    parser.next_token();
+
                     return Ok(Some(TupleIndexExpr {
                         operand: Box::new(operand),
                         index: U64Primitive::try_from(index)
@@ -93,10 +91,7 @@ impl ParseExpr for TupleIndexExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`.`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

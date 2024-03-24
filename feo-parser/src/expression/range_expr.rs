@@ -25,7 +25,6 @@ impl ParseExpr for RangeFullExpr {
             ..
         }) = dbl_dot_opt
         {
-            parser.next_token();
             return Ok(Some(RangeFullExpr(dbl_dot_opt.unwrap())));
         } else {
             return Ok(None);
@@ -39,15 +38,14 @@ impl ParseExpr for RangeFromToExpr {
         Self: Sized,
     {
         if let Some(from_operand) = Value::parse(parser)? {
-            parser.next_token();
-
-            let dbl_dot_opt = parser.peek_current();
+            let dbl_dot_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DblDot,
                 ..
             }) = dbl_dot_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(to_operand_excl) = Value::parse(parser)? {
@@ -63,10 +61,7 @@ impl ParseExpr for RangeFromToExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`..`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -82,30 +77,25 @@ impl ParseExpr for RangeFromExpr {
         Self: Sized,
     {
         if let Some(from_operand) = Value::parse(parser)? {
-            parser.next_token();
-
-            let dbl_dot_opt = parser.peek_current();
+            let dbl_dot_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DblDot,
                 ..
             }) = dbl_dot_opt
             {
+                parser.next_token();
+
                 return Ok(Some(RangeFromExpr {
                     from_operand: Box::new(from_operand),
                     dbl_dot: dbl_dot_opt.unwrap(),
                 }));
             }
 
-            parser.log_error(ParserErrorKind::UnexpectedToken {
-                expected: "`..`".to_string(),
-                found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-            });
+            return Ok(None);
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
@@ -148,15 +138,14 @@ impl ParseExpr for RangeInclusiveExpr {
         Self: Sized,
     {
         if let Some(from_operand) = Value::parse(parser)? {
-            parser.next_token();
-
-            let dot_dot_equals_opt = parser.peek_current();
+            let dot_dot_equals_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::DotDotEquals,
                 ..
             }) = dot_dot_equals_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(to_operand_incl) = Value::parse(parser)? {
@@ -172,10 +161,7 @@ impl ParseExpr for RangeInclusiveExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`..=`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

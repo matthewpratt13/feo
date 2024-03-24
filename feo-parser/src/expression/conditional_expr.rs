@@ -41,6 +41,8 @@ impl ParseExpr for IfExpr {
             parser.next_token();
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
+                parser.next_token();
+
                 if let Some(if_block) = BlockExpr::parse(parser)? {
                     while let Some(Keyword {
                         keyword_kind: KeywordKind::KwElse,
@@ -130,8 +132,6 @@ impl ParseTerm for MatchArmGuard {
             parser.next_token();
 
             if let Some(operand) = Expression::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(MatchArmGuard {
                     kw_if: kw_if_opt.unwrap(),
                     operand: Box::new(operand),
