@@ -130,9 +130,8 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
         );
 
         if let Some(lhs) = Value::parse(parser)? {
-            parser.next_token();
-
-            if let Some(operator) = parser.peek_current::<ArithmeticOrLogicalOperatorKind>() {
+            if let Some(operator) = parser.peek_next::<ArithmeticOrLogicalOperatorKind>() {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(rhs) = Value::parse(parser)? {
@@ -147,6 +146,8 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -162,15 +163,14 @@ impl ParseExpr for AssignmentExpr {
         Self: Sized,
     {
         if let Some(assignee) = Value::parse(parser)? {
-            parser.next_token();
-
-            let equals_opt = parser.peek_current();
+            let equals_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Equals,
                 ..
             }) = equals_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(new_value) = Value::parse(parser)? {
@@ -185,6 +185,8 @@ impl ParseExpr for AssignmentExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -200,9 +202,8 @@ impl ParseExpr for CompoundAssignmentExpr {
         Self: Sized,
     {
         if let Some(assignee) = Value::parse(parser)? {
-            parser.next_token();
-
-            if let Some(operator) = parser.peek_current::<CompoundAssignOperatorKind>() {
+            if let Some(operator) = parser.peek_next::<CompoundAssignOperatorKind>() {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(new_value) = Value::parse(parser)? {
@@ -217,6 +218,8 @@ impl ParseExpr for CompoundAssignmentExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -234,9 +237,8 @@ impl ParseExpr for ComparisonExpr {
         utils::log_msg(LogMsgType::Detect, "comparison expression", parser);
 
         if let Some(lhs) = Value::parse(parser)? {
-            parser.next_token();
-
-            if let Some(operator) = parser.peek_current::<ComparisonOperatorKind>() {
+            if let Some(operator) = parser.peek_next::<ComparisonOperatorKind>() {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(rhs) = Value::parse(parser)? {
@@ -247,6 +249,8 @@ impl ParseExpr for ComparisonExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -295,9 +299,8 @@ impl ParseExpr for LazyBoolExpr {
         Self: Sized,
     {
         if let Some(lhs) = Value::parse(parser)? {
-            parser.next_token();
-
-            if let Some(operator) = parser.peek_current::<LazyBoolOperatorKind>() {
+            if let Some(operator) = parser.peek_next::<LazyBoolOperatorKind>() {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(rhs) = Value::parse(parser)? {
@@ -308,6 +311,8 @@ impl ParseExpr for LazyBoolExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -395,15 +400,14 @@ impl ParseExpr for TypeCastExpr {
         Self: Sized,
     {
         if let Some(lhs) = Value::parse(parser)? {
-            parser.next_token();
-
-            let kw_as_opt = parser.peek_current();
+            let kw_as_opt = parser.peek_next();
 
             if let Some(Keyword {
                 keyword_kind: KeywordKind::KwAs,
                 ..
             }) = kw_as_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(rhs) = Type::parse(parser)? {
@@ -418,6 +422,8 @@ impl ParseExpr for TypeCastExpr {
                     expected: "value".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -433,25 +439,25 @@ impl ParseExpr for UnwrapExpr {
         Self: Sized,
     {
         if let Some(operand) = Value::parse(parser)? {
-            parser.next_token();
-
-            let question_mark_opt = parser.peek_current();
+            let question_mark_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::QuestionMark,
                 ..
             }) = question_mark_opt
             {
+                parser.next_token();
+
                 return Ok(Some(UnwrapExpr {
                     operand: Box::new(operand),
                     operator: question_mark_opt.unwrap(),
                 }));
+            } else {
+                return Ok(None);
             }
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
