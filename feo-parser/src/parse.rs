@@ -37,10 +37,7 @@ use feo_types::{
     BuiltInType, Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::{
-    parser::Parser,
-    utils::{self, LogMsgType},
-};
+use crate::parser::Parser;
 
 // literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
 pub trait ParseTerm {
@@ -123,9 +120,9 @@ impl ParseExpr for Expression {
                 }
 
                 KeywordKind::KwSelf => {
-                    // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Expression::MethodCallExpr(mc)));
-                    // }
+                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        return Ok(Some(Expression::MethodCallExpr(mc)));
+                    }
 
                     if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::FieldAccessExpr(fa)));
@@ -1692,6 +1689,11 @@ impl ParseTerm for Value {
                     // }
                 }
 
+                // Some(Delimiter { delim: (DelimKind::Bracket, DelimOrientation::Open), ..}) => {
+                //     if let Some(ie) = IndexExpr::parse(parser).unwrap_or(None) {
+                //         return Ok(Some(Value::IndexExpr(ie)));
+                //     }
+                // }
                 Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
