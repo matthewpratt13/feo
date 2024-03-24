@@ -1,7 +1,6 @@
 use feo_types::{
     span::{Span, Spanned},
     type_utils::Bracket,
-    U64Primitive,
 };
 
 use super::{Value, ValueCollection};
