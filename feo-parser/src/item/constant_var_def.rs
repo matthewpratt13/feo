@@ -34,6 +34,8 @@ impl ParseItem for ConstantVarDef {
             if let Some(item_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
+                utils::log_msg(LogMsgType::Detect, "constant variable item name", parser);
+
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
@@ -43,12 +45,21 @@ impl ParseItem for ConstantVarDef {
                     parser.next_token();
 
                     if let Some(item_type) = Type::parse(parser)? {
+                        utils::log_msg(LogMsgType::Detect, "constant variable item type", parser);
+
                         let assignment_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::Equals,
                             ..
                         }) = parser.peek_next()
                         {
                             parser.next_token();
+
+                            utils::log_msg(
+                                LogMsgType::Detect,
+                                "constant variable assignment",
+                                parser,
+                            );
+
                             parser.next_token();
 
                             if let Some(e) = Expression::parse(parser)? {
@@ -148,6 +159,8 @@ impl ParseItem for StaticVarDef {
             if let Some(item_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
+                utils::log_msg(LogMsgType::Detect, "static variable item name", parser);
+
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
                     ..
@@ -157,12 +170,21 @@ impl ParseItem for StaticVarDef {
                     parser.next_token();
 
                     if let Some(item_type) = Type::parse(parser)? {
+                        utils::log_msg(LogMsgType::Detect, "static variable item type", parser);
+
                         let assignment_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::Equals,
                             ..
                         }) = parser.peek_next()
                         {
                             parser.next_token();
+
+                            utils::log_msg(
+                                LogMsgType::Detect,
+                                "static variable assignment",
+                                parser,
+                            );
+
                             parser.next_token();
 
                             if let Some(e) = Expression::parse(parser)? {
@@ -240,10 +262,13 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let constant_var_def = ConstantVarDef::parse(&mut parser)
+        let _ = ConstantVarDef::parse(&mut parser)
             .expect("unable to parse constant variable definition");
 
-        Ok(println!("{:#?}", constant_var_def))
+        
+        // Ok(println!("{:#?}", constant_var_def))
+
+        Ok(())
     }
 
     #[test]
@@ -252,9 +277,12 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let static_var_def =
+        let _ =
             StaticVarDef::parse(&mut parser).expect("unable to parse static variable definition");
 
-        Ok(println!("{:#?}", static_var_def))
+        // Ok(println!("{:#?}", static_var_def))
+
+        Ok(())
+
     }
 }

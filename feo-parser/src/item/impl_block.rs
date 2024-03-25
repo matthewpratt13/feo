@@ -280,8 +280,8 @@ mod tests {
         let inherent_impl_block = InherentImplBlock::parse(&mut parser)
             .expect("unable to parse inherent implementation block");
 
-        Ok(println!("{:#?}", inherent_impl_block))
+        // Ok(println!("{:#?}", inherent_impl_block))
 
-        // Ok(())
+        Ok(())
     }
 }
