@@ -37,7 +37,10 @@ use feo_types::{
     BuiltInType, Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::{parser::Parser, utils::{self, LogMsgType}};
+use crate::{
+    parser::Parser,
+    utils::{self, LogMsgType},
+};
 
 // literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
 pub trait ParseTerm {
@@ -127,12 +130,6 @@ impl ParseExpr for Expression {
                     if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::FieldAccessExpr(fa)));
                     }
-
-                    // if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
-                    //     return Ok(Some(Expression::OperatorExpr(
-                    //         OperatorExprKind::Comparison(ce),
-                    //     )));
-                    // }
 
                     if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::PathExpr(pth)));
