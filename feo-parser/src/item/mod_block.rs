@@ -32,7 +32,7 @@ impl ParseItem for ModWithoutBody {
             ..
         }) = kw_mod_opt
         {
-            utils::log_msg(LogMsgType::Enter, "mod ule definition", parser);
+            utils::log_msg(LogMsgType::Enter, "module definition", parser);
 
             parser.next_token();
 
@@ -91,11 +91,13 @@ impl ParseItem for ModWithBody {
             ..
         }) = kw_mod_opt
         {
-            utils::log_msg(LogMsgType::Enter, "module with body", parser);
+            utils::log_msg(LogMsgType::Detect, "`mod` keyword", parser);
 
             parser.next_token();
 
             if let Some(mod_name) = parser.peek_current::<Identifier>() {
+                utils::log_msg(LogMsgType::Detect, "module name", parser);
+
                 parser.next_token();
 
                 let open_brace_opt = parser.peek_current();
@@ -105,6 +107,8 @@ impl ParseItem for ModWithBody {
                     ..
                 }) = open_brace_opt
                 {
+                    utils::log_msg(LogMsgType::Enter, "mod body", parser);
+
                     parser.next_token();
 
                     let items_opt = utils::get_items(parser)?;
@@ -116,8 +120,6 @@ impl ParseItem for ModWithBody {
                         ..
                     }) = close_brace_opt
                     {
-                        parser.next_token();
-
                         utils::log_msg(LogMsgType::Exit, "module with body", parser);
 
                         return Ok(Some(ModWithBody {

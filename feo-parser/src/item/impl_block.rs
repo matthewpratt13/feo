@@ -49,7 +49,7 @@ impl ParseItem for InherentImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`impl keyword`", parser);
+            utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
 
             parser.next_token();
 
@@ -73,7 +73,7 @@ impl ParseItem for InherentImplBlock {
 
                     let associated_items_opt = utils::get_items(parser)?;
 
-                    utils::skip_trailing_comma(parser)?;
+                    // utils::skip_trailing_comma(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 

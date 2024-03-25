@@ -45,9 +45,12 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
     let mut items: Vec<T> = Vec::new();
 
     while let Some(i) = T::parse(parser)? {
-        items.push(i);
+
         parser.next_token();
+        items.push(i);
     }
+    
+    panic!("aaahhh");
 
     println!("number of items: {}", items.len());
 
