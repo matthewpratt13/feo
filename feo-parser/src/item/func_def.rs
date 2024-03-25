@@ -66,6 +66,8 @@ impl ParseTerm for SelfParam {
             ..
         }) = kw_self_opt
         {
+            utils::log_msg(LogMsgType::Detect, "`self` parameter", parser);
+
             let type_ann_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
@@ -113,6 +115,8 @@ impl ParseTerm for FuncParam {
                 parser.next_token();
                 parser.next_token();
 
+                utils::log_msg(LogMsgType::Detect, "function parameter type", parser);
+
                 if let Some(param_type) = Type::parse(parser)? {
                     return Ok(Some(FuncParam {
                         param_pattern: Box::new(param_pattern),
@@ -151,12 +155,12 @@ impl ParseItem for FuncSig {
             ..
         }) = kw_func_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`function` keyword", parser);
+            utils::log_msg(LogMsgType::Detect, "`func` keyword", parser);
 
             if let Some(func_name) = parser.peek_next::<Identifier>() {
-                utils::log_msg(LogMsgType::Detect, "function name", parser);
-
                 parser.next_token();
+
+                utils::log_msg(LogMsgType::Detect, "function name", parser);
 
                 let open_parenthesis_opt = parser.peek_next();
 
@@ -185,10 +189,9 @@ impl ParseItem for FuncSig {
                         }) = parser.peek_next()
                         {
                             parser.next_token();
+                            parser.next_token();
 
                             utils::log_msg(LogMsgType::Detect, "return type", parser);
-
-                            parser.next_token();
 
                             if let Some(ty) = Type::parse(parser)? {
                                 Some(Box::new(ty))

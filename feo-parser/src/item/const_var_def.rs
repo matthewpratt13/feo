@@ -53,14 +53,13 @@ impl ParseItem for ConstVarDef {
                         }) = parser.peek_next()
                         {
                             parser.next_token();
+                            parser.next_token();
 
                             utils::log_msg(
                                 LogMsgType::Detect,
-                                "constant variable item assignment",
+                                "constant variable item expression",
                                 parser,
                             );
-
-                            parser.next_token();
 
                             if let Some(e) = Expression::parse(parser)? {
                                 parser.next_token();
