@@ -49,11 +49,13 @@ impl ParseItem for InherentImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+            utils::log_msg(LogMsgType::Detect, "`impl keyword`", parser);
 
             parser.next_token();
 
             if let Some(nominal_type) = Type::parse(parser)? {
+                utils::log_msg(LogMsgType::Detect, "nominal type", parser);
+
                 parser.next_token();
 
                 let open_brace_opt = parser.peek_current();
@@ -63,6 +65,8 @@ impl ParseItem for InherentImplBlock {
                     ..
                 }) = open_brace_opt
                 {
+                    utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+
                     parser.next_token();
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
@@ -277,7 +281,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let inherent_impl_block = InherentImplBlock::parse(&mut parser)
+        let _ = InherentImplBlock::parse(&mut parser)
             .expect("unable to parse inherent implementation block");
 
         // Ok(println!("{:#?}", inherent_impl_block))

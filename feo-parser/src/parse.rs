@@ -37,7 +37,7 @@ use feo_types::{
     BuiltInType, Delimiter, Identifier, Keyword, Punctuation,
 };
 
-use crate::parser::Parser;
+use crate::{parser::Parser, utils::{self, LogMsgType}};
 
 // literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
 pub trait ParseTerm {
@@ -1281,7 +1281,7 @@ impl ParseItem for Item {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "Item", parser);
+        utils::log_msg(LogMsgType::Detect, "Item", parser);
 
         if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,

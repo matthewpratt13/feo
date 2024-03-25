@@ -59,9 +59,7 @@ impl ParseTerm for InnerAttr {
         {
             utils::log_msg(LogMsgType::Detect, "inner attribute", parser);
 
-            parser.next_token();
-
-            let open_bracket_opt = parser.peek_current();
+            let open_bracket_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -70,16 +68,20 @@ impl ParseTerm for InnerAttr {
             {
                 parser.next_token();
 
-                if let Some(attribute) = parser.peek_current::<AttributeKind>() {
+                if let Some(attribute) = parser.peek_next::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current();
+                    utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
+
+                    let close_bracket_opt = parser.peek_next();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
                     }) = close_bracket_opt
                     {
+                        parser.next_token();
+
                         return Ok(Some(InnerAttr {
                             hash_bang: hash_bang_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
@@ -126,9 +128,7 @@ impl ParseTerm for OuterAttr {
         {
             utils::log_msg(LogMsgType::Detect, "outer attribute", parser);
 
-            parser.next_token();
-
-            let open_bracket_opt = parser.peek_current();
+            let open_bracket_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -137,16 +137,20 @@ impl ParseTerm for OuterAttr {
             {
                 parser.next_token();
 
-                if let Some(attribute) = parser.peek_current::<AttributeKind>() {
+                if let Some(attribute) = parser.peek_next::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current();
+                    utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
+
+                    let close_bracket_opt = parser.peek_next();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
                     }) = close_bracket_opt
                     {
+                        parser.next_token();
+
                         return Ok(Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),

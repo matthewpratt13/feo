@@ -56,7 +56,7 @@ impl ParseItem for ConstantVarDef {
 
                             utils::log_msg(
                                 LogMsgType::Detect,
-                                "constant variable assignment",
+                                "constant variable item assignment",
                                 parser,
                             );
 

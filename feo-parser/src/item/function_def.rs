@@ -155,7 +155,7 @@ impl ParseItem for FunctionSig {
             ..
         }) = kw_func_opt
         {
-            utils::log_msg(LogMsgType::Enter, "function signature (item)", parser);
+            utils::log_msg(LogMsgType::Enter, "function signature", parser);
 
             parser.next_token();
 

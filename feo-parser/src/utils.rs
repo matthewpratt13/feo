@@ -19,7 +19,7 @@ use crate::{
 pub fn get_attributes<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
-    // log_msg(LogMsgType::Enter, "`get_attributes()`", parser);
+    log_msg(LogMsgType::Enter, "`get_attributes()`", parser);
 
     let mut attributes: Vec<T> = Vec::new();
 
@@ -30,7 +30,7 @@ pub fn get_attributes<T: ParseTerm>(
 
     println!("number of attributes: {}", attributes.len());
 
-    // log_msg(LogMsgType::Exit, "`get_attributes()`", parser);
+    log_msg(LogMsgType::Exit, "`get_attributes()`", parser);
 
     if attributes.is_empty() {
         Ok(None)
@@ -240,17 +240,15 @@ pub fn get_value_collection(
 }
 
 pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec<CompilerError>> {
-    // log_msg(LogMsgType::Enter, "`get_visibility()`", parser);
+    log_msg(LogMsgType::Enter, "`get_visibility()`", parser);
 
     if let Some(v) = VisibilityKind::parse(parser)? {
         parser.next_token();
 
-        println!("visibility kind: {:#?}", v);
-
-        // log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
+        log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
         Ok(Some(v))
     } else {
-        // log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
+        log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
         Ok(None)
     }
 }
