@@ -128,11 +128,11 @@ impl ParseExpr for Expression {
                         return Ok(Some(Expression::FieldAccessExpr(fa)));
                     }
 
-                    if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::OperatorExpr(
-                            OperatorExprKind::Comparison(ce),
-                        )));
-                    }
+                    // if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
+                    //     return Ok(Some(Expression::OperatorExpr(
+                    //         OperatorExprKind::Comparison(ce),
+                    //     )));
+                    // }
 
                     if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::PathExpr(pth)));
