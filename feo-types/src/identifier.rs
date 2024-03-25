@@ -18,7 +18,7 @@ pub fn is_keyword(iden: &str) -> bool {
         "export", "extern", "for", "func", "if", "impl", "import", "in", "let", "library", "loop",
         "match", "module", "mut", "package", "payable", "pub", "ref", "return", "script", "self",
         "Self", "static", "storage", "struct", "super", "test", "topic", "trait", "type", "unsafe",
-        "where", "while",
+        "while",
     ]
     .contains(&iden)
 }
