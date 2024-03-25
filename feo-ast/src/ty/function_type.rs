@@ -5,7 +5,7 @@ use feo_types::{
 
 use crate::{
     expression::{ClosureParamsOpt, TermCollection},
-    item::FunctionParam,
+    item::FuncParam,
     Type,
 };
 
@@ -13,7 +13,7 @@ use crate::{
 pub struct FunctionType {
     pub kw_func: KwFunc,
     pub open_parenthesis: Parenthesis,
-    pub function_params_opt: Option<TermCollection<FunctionParam>>,
+    pub func_params_opt: Option<TermCollection<FuncParam>>,
     pub close_parenthesis: Parenthesis,
     pub return_type_opt: Option<Box<Type>>,
 }

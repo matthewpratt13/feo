@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{ModWithBody, ModWithoutBody},
+    item::{ModuleWithBlock, ModuleWithoutBlock},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -16,7 +16,7 @@ use crate::{
     utils::{self, LogMsgType},
 };
 
-impl ParseItem for ModWithoutBody {
+impl ParseItem for ModuleWithoutBlock {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -25,18 +25,20 @@ impl ParseItem for ModWithoutBody {
 
         let visibility_opt = utils::get_visibility(parser)?;
 
-        let kw_mod_opt = parser.peek_current();
+        let kw_module_opt = parser.peek_current();
 
         if let Some(Keyword {
-            keyword_kind: KeywordKind::KwMod,
+            keyword_kind: KeywordKind::KwModule,
             ..
-        }) = kw_mod_opt
+        }) = kw_module_opt
         {
-            utils::log_msg(LogMsgType::Enter, "module definition", parser);
+            utils::log_msg(LogMsgType::Detect, "`module` keyword", parser);
 
-            parser.next_token();
+            if let Some(module_name) = parser.peek_next::<Identifier>() {
+                parser.next_token();
 
-            if let Some(mod_name) = parser.peek_current::<Identifier>() {
+                utils::log_msg(LogMsgType::Detect, "module name", parser);
+
                 parser.next_token();
 
                 let semicolon_opt = parser.peek_current();
@@ -48,11 +50,11 @@ impl ParseItem for ModWithoutBody {
                 {
                     utils::log_msg(LogMsgType::Exit, "module definition", parser);
 
-                    return Ok(Some(ModWithoutBody {
+                    return Ok(Some(ModuleWithoutBlock {
                         attributes_opt,
                         visibility_opt,
-                        kw_mod: kw_mod_opt.unwrap(),
-                        mod_name,
+                        kw_module: kw_module_opt.unwrap(),
+                        module_name,
                         semicolon: semicolon_opt.unwrap(),
                     }));
                 }
@@ -75,7 +77,7 @@ impl ParseItem for ModWithoutBody {
     }
 }
 
-impl ParseItem for ModWithBody {
+impl ParseItem for ModuleWithBlock {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -84,18 +86,18 @@ impl ParseItem for ModWithBody {
 
         let visibility_opt = utils::get_visibility(parser)?;
 
-        let kw_mod_opt = parser.peek_current();
+        let kw_module_opt = parser.peek_current();
 
         if let Some(Keyword {
-            keyword_kind: KeywordKind::KwMod,
+            keyword_kind: KeywordKind::KwModule,
             ..
-        }) = kw_mod_opt
+        }) = kw_module_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`mod` keyword", parser);
+            utils::log_msg(LogMsgType::Detect, "`module` keyword", parser);
 
-            parser.next_token();
+            if let Some(module_name) = parser.peek_next::<Identifier>() {
+                parser.next_token();
 
-            if let Some(mod_name) = parser.peek_current::<Identifier>() {
                 utils::log_msg(LogMsgType::Detect, "module name", parser);
 
                 parser.next_token();
@@ -107,7 +109,7 @@ impl ParseItem for ModWithBody {
                     ..
                 }) = open_brace_opt
                 {
-                    utils::log_msg(LogMsgType::Enter, "mod body", parser);
+                    utils::log_msg(LogMsgType::Enter, "module body", parser);
 
                     parser.next_token();
 
@@ -120,13 +122,13 @@ impl ParseItem for ModWithBody {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "module with body", parser);
+                        utils::log_msg(LogMsgType::Exit, "module body", parser);
 
-                        return Ok(Some(ModWithBody {
+                        return Ok(Some(ModuleWithBlock {
                             attributes_opt,
                             visibility_opt,
-                            kw_mod: kw_mod_opt.unwrap(),
-                            mod_name,
+                            kw_module: kw_module_opt.unwrap(),
+                            module_name,
                             open_brace: open_brace_opt.unwrap(),
                             items_opt,
                             close_brace: close_brace_opt.unwrap(),
@@ -165,24 +167,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_mod_without_body() -> Result<(), Vec<CompilerError>> {
+    fn parse_module_without_body() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
-        pub mod some_mod;"#;
+        pub module some_mod;"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let mod_without_body =
-            ModWithoutBody::parse(&mut parser).expect("unable to parse module without body");
+            ModuleWithoutBlock::parse(&mut parser).expect("unable to parse module without body");
 
         Ok(println!("{:#?}", mod_without_body))
     }
 
     #[test]
-    fn parse_mod_with_body() -> Result<(), Vec<CompilerError>> {
+    fn parse_module_with_body() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
-        mod some_mod {
+        module some_mod {
             pub import some_module::SomeObject;
 
             pub const foo: u64 = 10;
@@ -200,13 +202,13 @@ mod tests {
 
             pub func baz(some_param: ParamType) -> ReturnType;
 
-            mod some_without_body;
+            module some_without_body;
         }"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let mod_with_body =
-            ModWithBody::parse(&mut parser).expect("unable to parse module with body");
+            ModuleWithBlock::parse(&mut parser).expect("unable to parse module with body");
 
         Ok(println!("{:#?}", mod_with_body))
     }

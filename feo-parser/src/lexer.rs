@@ -810,9 +810,9 @@ mod tests {
         
         contract;
 
-        import crate::some_library::SomeTrait;
+        import package::some_library::SomeTrait;
 
-        mod some_abstract_contract;
+        module some_abstract_contract;
         
         import self::some_abstract_contract::{SomeAbstractContract, Colour};
 
@@ -908,7 +908,7 @@ mod tests {
                     Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
                     Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
                     Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
-                    Token::Iden(id) => println!("Iden: {:?}", id.name),
+                    Token::Identifier(id) => println!("Identifier: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
                     Token::Comment(c) => println!("Comment: {:?}", c.data),
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),

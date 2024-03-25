@@ -1,6 +1,6 @@
 use feo_ast::{
     expression::ExprWithBlock,
-    item::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
+    item::{FuncOrMethodParam, FuncParam, FuncSig, FuncWithBlock, SelfParam},
     pattern::Pattern,
     token::Token,
     Type,
@@ -26,7 +26,7 @@ impl ParseTerm for FuncOrMethodParam {
     {
         if let Some(sp) = SelfParam::parse(parser)? {
             Ok(Some(FuncOrMethodParam::MethodParam(sp)))
-        } else if let Some(fp) = FunctionParam::parse(parser)? {
+        } else if let Some(fp) = FuncParam::parse(parser)? {
             Ok(Some(FuncOrMethodParam::FuncParam(fp)))
         } else {
             Ok(None)
@@ -66,7 +66,7 @@ impl ParseTerm for SelfParam {
             ..
         }) = kw_self_opt
         {
-            let type_annotation_opt = if let Some(Punctuation {
+            let type_ann_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
             }) = parser.peek_next()
@@ -87,7 +87,7 @@ impl ParseTerm for SelfParam {
                 ampersand_opt,
                 kw_mut_opt,
                 kw_self: kw_self_opt.unwrap(),
-                type_annotation_opt,
+                type_ann_opt,
             }));
         } else {
             return Ok(None);
@@ -95,7 +95,7 @@ impl ParseTerm for SelfParam {
     }
 }
 
-impl ParseTerm for FunctionParam {
+impl ParseTerm for FuncParam {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -103,9 +103,7 @@ impl ParseTerm for FunctionParam {
         if let Some(param_pattern) = Pattern::parse(parser)? {
             utils::log_msg(LogMsgType::Detect, "function parameter", parser);
 
-            parser.next_token();
-
-            let colon_opt = parser.peek_current();
+            let colon_opt = parser.peek_next();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
@@ -113,9 +111,10 @@ impl ParseTerm for FunctionParam {
             }) = colon_opt
             {
                 parser.next_token();
+                parser.next_token();
 
                 if let Some(param_type) = Type::parse(parser)? {
-                    return Ok(Some(FunctionParam {
+                    return Ok(Some(FuncParam {
                         param_pattern: Box::new(param_pattern),
                         param_type: Box::new(param_type),
                     }));
@@ -126,10 +125,7 @@ impl ParseTerm for FunctionParam {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`:`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -139,7 +135,7 @@ impl ParseTerm for FunctionParam {
     }
 }
 
-impl ParseItem for FunctionSig {
+impl ParseItem for FuncSig {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -157,14 +153,12 @@ impl ParseItem for FunctionSig {
         {
             utils::log_msg(LogMsgType::Enter, "function signature", parser);
 
-            parser.next_token();
-
-            if let Some(function_name) = parser.peek_current::<Identifier>() {
+            if let Some(func_name) = parser.peek_next::<Identifier>() {
                 utils::log_msg(LogMsgType::Detect, "function name", parser);
 
                 parser.next_token();
 
-                let open_parenthesis_opt = parser.peek_current();
+                let open_parenthesis_opt = parser.peek_next();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -172,8 +166,9 @@ impl ParseItem for FunctionSig {
                 }) = open_parenthesis_opt
                 {
                     parser.next_token();
+                    parser.next_token();
 
-                    let function_params_opt = utils::get_term_collection(parser)?;
+                    let func_params_opt = utils::get_term_collection::<FuncOrMethodParam>(parser)?;
 
                     let close_parenthesis_opt = parser.peek_current();
 
@@ -215,13 +210,13 @@ impl ParseItem for FunctionSig {
 
                         utils::log_msg(LogMsgType::Exit, "function signature", parser);
 
-                        return Ok(Some(FunctionSig {
+                        return Ok(Some(FuncSig {
                             attributes_opt,
                             visibility_opt,
                             kw_func: kw_func_opt.unwrap(),
-                            function_name,
+                            func_name,
                             open_parenthesis: open_parenthesis_opt.unwrap(),
-                            function_params_opt,
+                            func_params_opt,
                             close_parenthesis: close_parenthesis_opt.unwrap(),
                             return_type_opt,
                         }));
@@ -239,7 +234,7 @@ impl ParseItem for FunctionSig {
                 }
             } else {
                 parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`func`".to_string(),
+                    expected: "identifier".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             }
@@ -251,12 +246,12 @@ impl ParseItem for FunctionSig {
     }
 }
 
-impl ParseItem for FunctionWithBlock {
+impl ParseItem for FuncWithBlock {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
     {
-        if let Some(function_sig) = FunctionSig::parse(parser)? {
+        if let Some(function_sig) = FuncSig::parse(parser)? {
             parser.next_token();
 
             utils::log_msg(LogMsgType::Expect, "function block", parser);
@@ -264,10 +259,15 @@ impl ParseItem for FunctionWithBlock {
             if let Some(function_body) = ExprWithBlock::parse(parser)? {
                 utils::log_msg(LogMsgType::Exit, "function block", parser);
 
-                return Ok(Some(FunctionWithBlock {
+                return Ok(Some(FuncWithBlock {
                     function_sig,
                     function_body,
                 }));
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "expression with block".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             }
 
             return Ok(None);
@@ -302,7 +302,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let function_param =
-            FunctionParam::parse(&mut parser).expect("unable to parse function parameter");
+            FuncParam::parse(&mut parser).expect("unable to parse function parameter");
 
         Ok(println!("{:#?}", function_param))
     }
@@ -316,8 +316,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let function_sig =
-            FunctionSig::parse(&mut parser).expect("unable to parse function signature");
+        let function_sig = FuncSig::parse(&mut parser).expect("unable to parse function signature");
 
         Ok(println!("{:#?}", function_sig))
     }
@@ -336,7 +335,7 @@ mod tests {
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let function_with_block =
-            FunctionWithBlock::parse(&mut parser).expect("unable to parse function with block");
+            FuncWithBlock::parse(&mut parser).expect("unable to parse function with block");
 
         Ok(println!("{:#?}", function_with_block))
     }

@@ -27,13 +27,12 @@ impl ParseTerm for StructDefField {
         let visibility_opt = utils::get_visibility(parser)?;
 
         if let Some(field_name) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
             if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
+                parser.next_token();
                 parser.next_token();
 
                 if let Some(ty) = Type::parse(parser)? {
@@ -51,10 +50,7 @@ impl ParseTerm for StructDefField {
                     });
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`:`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -82,18 +78,17 @@ impl ParseItem for StructDef {
         {
             utils::log_msg(LogMsgType::Enter, "struct definition", parser);
 
-            parser.next_token();
-
-            if let Some(struct_name) = parser.peek_current::<Identifier>() {
+            if let Some(struct_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                let open_brace_opt = parser.peek_current();
+                let open_brace_opt = parser.peek_next();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
                 }) = open_brace_opt
                 {
+                    parser.next_token();
                     parser.next_token();
 
                     let fields_opt = utils::get_term_collection(parser)?;
@@ -179,20 +174,19 @@ impl ParseTerm for TupleStructDef {
             ..
         }) = kw_struct_opt
         {
-            utils::log_msg(LogMsgType::Enter, "(tuple) struct definition", parser);
+            utils::log_msg(LogMsgType::Enter, "struct definition", parser);
 
-            parser.next_token();
-
-            if let Some(struct_name) = parser.peek_current::<Identifier>() {
+            if let Some(struct_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                let open_parenthesis_opt = parser.peek_current();
+                let open_parenthesis_opt = parser.peek_next();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
                 }) = open_parenthesis_opt
                 {
+                    parser.next_token();
                     parser.next_token();
 
                     let fields_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
@@ -215,7 +209,7 @@ impl ParseTerm for TupleStructDef {
                         {
                             parser.next_token();
 
-                            utils::log_msg(LogMsgType::Exit, "(tuple) struct definition", parser);
+                            utils::log_msg(LogMsgType::Exit, "struct definition", parser);
 
                             return Ok(Some(TupleStructDef {
                                 attributes_opt,

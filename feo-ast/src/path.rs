@@ -1,13 +1,13 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{KwCrate, KwSelf, KwSelfType, KwSuper},
+    type_utils::{KwPackage, KwSelf, KwSelfType, KwSuper},
     Identifier,
 };
 
 #[derive(Debug, Clone)]
 pub enum SimplePathSegmentKind {
-    Iden(Identifier),
-    KwCrate(KwCrate),
+    Identifier(Identifier),
+    KwPackage(KwPackage),
     KwSelf(KwSelf),
     KwSuper(KwSuper),
 }
@@ -15,8 +15,8 @@ pub enum SimplePathSegmentKind {
 impl Spanned for SimplePathSegmentKind {
     fn span(&self) -> Span {
         match &self {
-            SimplePathSegmentKind::Iden(i) => i.span(),
-            SimplePathSegmentKind::KwCrate(c) => c.span(),
+            SimplePathSegmentKind::Identifier(i) => i.span(),
+            SimplePathSegmentKind::KwPackage(c) => c.span(),
             SimplePathSegmentKind::KwSelf(se) => se.span(),
             SimplePathSegmentKind::KwSuper(su) => su.span(),
         }
@@ -25,8 +25,8 @@ impl Spanned for SimplePathSegmentKind {
 
 #[derive(Debug, Clone)]
 pub enum PathIdenSegmentKind {
-    Iden(Identifier),
-    KwCrate(KwCrate),
+    Identifier(Identifier),
+    KwPackage(KwPackage),
     KwSelf(KwSelf),
     KwSelfType(KwSelfType),
     KwSuper(KwSuper),
@@ -35,8 +35,8 @@ pub enum PathIdenSegmentKind {
 impl Spanned for PathIdenSegmentKind {
     fn span(&self) -> Span {
         match &self {
-            PathIdenSegmentKind::Iden(i) => i.span(),
-            PathIdenSegmentKind::KwCrate(c) => c.span(),
+            PathIdenSegmentKind::Identifier(i) => i.span(),
+            PathIdenSegmentKind::KwPackage(c) => c.span(),
             PathIdenSegmentKind::KwSelf(se) => se.span(),
             PathIdenSegmentKind::KwSelfType(st) => st.span(),
             PathIdenSegmentKind::KwSuper(su) => su.span(),

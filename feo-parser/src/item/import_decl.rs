@@ -161,7 +161,7 @@ mod tests {
 
     #[test]
     fn parse_path_wildcard() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::some_module::*"#;
+        let source_code = r#"package::some_module::*"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

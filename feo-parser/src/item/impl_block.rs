@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
-        ConstantVarDef, FunctionWithBlock, InherentImplBlock, InherentImplItem, TraitImplBlock,
-        TraitImplItem, TypeAliasDef,
+        ConstVarDef, FuncWithBlock, InherentImplBlock, InherentImplItem, TraitImplBlock,
+        TraitImplItem, TypeDef,
     },
     path::PathType,
     token::Token,
@@ -25,9 +25,9 @@ impl ParseItem for InherentImplItem {
     where
         Self: Sized,
     {
-        if let Some(cvd) = ConstantVarDef::parse(parser)? {
-            return Ok(Some(InherentImplItem::ConstantVarDef(cvd)));
-        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        if let Some(cvd) = ConstVarDef::parse(parser)? {
+            return Ok(Some(InherentImplItem::ConstVarDef(cvd)));
+        } else if let Some(fwb) = FuncWithBlock::parse(parser)? {
             return Ok(Some(InherentImplItem::FuncWithBlock(fwb)));
         } else {
             return Ok(None);
@@ -71,9 +71,7 @@ impl ParseItem for InherentImplBlock {
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                    let associated_items_opt = utils::get_items(parser)?;
-
-                    // utils::skip_trailing_comma(parser)?;
+                    let associated_items_opt = utils::get_items::<InherentImplItem>(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 
@@ -124,12 +122,12 @@ impl ParseItem for TraitImplItem {
     where
         Self: Sized,
     {
-        if let Some(cvd) = ConstantVarDef::parse(parser)? {
-            return Ok(Some(TraitImplItem::ConstantVarDef(cvd)));
-        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        if let Some(cvd) = ConstVarDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::ConstVarDef(cvd)));
+        } else if let Some(fwb) = FuncWithBlock::parse(parser)? {
             return Ok(Some(TraitImplItem::FuncWithBlock(fwb)));
-        } else if let Some(tad) = TypeAliasDef::parse(parser)? {
-            return Ok(Some(TraitImplItem::TypeAliasDef(tad)));
+        } else if let Some(tad) = TypeDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::TypeDef(tad)));
         } else {
             return Ok(None);
         }
@@ -150,11 +148,13 @@ impl ParseItem for TraitImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
+            utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
 
             parser.next_token();
 
             if let Some(implemented_trait_path) = PathType::parse(parser)? {
+                utils::log_msg(LogMsgType::Detect, "implemented trait path", parser);
+
                 let kw_for_opt = parser.peek_current();
 
                 if let Some(Keyword {
@@ -165,6 +165,8 @@ impl ParseItem for TraitImplBlock {
                     parser.next_token();
 
                     if let Some(implementing_type) = Type::parse(parser)? {
+                        utils::log_msg(LogMsgType::Detect, "implementing type", parser);
+
                         parser.next_token();
 
                         let open_brace_opt = parser.peek_current();
@@ -174,15 +176,15 @@ impl ParseItem for TraitImplBlock {
                             ..
                         }) = open_brace_opt
                         {
+                            utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
+
                             parser.next_token();
 
                             let inner_attributes_opt = utils::get_attributes(parser)?;
 
                             parser.next_token();
 
-                            let associated_items_opt = utils::get_items(parser)?;
-
-                            utils::skip_trailing_comma(parser)?;
+                            let associated_items_opt = utils::get_items::<TraitImplItem>(parser)?;
 
                             let close_brace_opt = parser.peek_current();
 

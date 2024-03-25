@@ -9,19 +9,19 @@ use crate::{
     ty::Type,
 };
 
-use super::{ConstantVarDef, FunctionWithBlock, TypeAliasDef};
+use super::{ConstVarDef, FuncWithBlock, TypeDef};
 
 #[derive(Debug, Clone)]
 pub enum InherentImplItem {
-    ConstantVarDef(ConstantVarDef),
-    FuncWithBlock(FunctionWithBlock),
+    ConstVarDef(ConstVarDef),
+    FuncWithBlock(FuncWithBlock),
 }
 
 #[derive(Debug, Clone)]
 pub enum TraitImplItem {
-    ConstantVarDef(ConstantVarDef),
-    FuncWithBlock(FunctionWithBlock),
-    TypeAliasDef(TypeAliasDef),
+    ConstVarDef(ConstVarDef),
+    FuncWithBlock(FuncWithBlock),
+    TypeDef(TypeDef),
 }
 
 #[derive(Debug, Clone)]

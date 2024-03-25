@@ -1,6 +1,6 @@
 use feo_ast::{
     expression::Expression,
-    item::{ConstantVarDef, StaticVarDef},
+    item::{ConstVarDef, StaticVarDef},
     token::Token,
     Type,
 };
@@ -13,7 +13,7 @@ use crate::{
     utils::{self, LogMsgType},
 };
 
-impl ParseItem for ConstantVarDef {
+impl ParseItem for ConstVarDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -86,7 +86,7 @@ impl ParseItem for ConstantVarDef {
                                 parser,
                             );
 
-                            return Ok(Some(ConstantVarDef {
+                            return Ok(Some(ConstVarDef {
                                 attributes_opt,
                                 visibility_opt,
                                 kw_const: kw_const_opt.unwrap(),
@@ -262,7 +262,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let _ = ConstantVarDef::parse(&mut parser)
+        let _ = ConstVarDef::parse(&mut parser)
             .expect("unable to parse constant variable definition");
 
         

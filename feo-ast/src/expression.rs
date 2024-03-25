@@ -138,9 +138,9 @@ pub enum ExprWithBlock {
     ClosureWithBlock(ClosureWithBlock),
     IfExpr(IfExpr),
     MatchExpr(MatchExpr),
-    InfiniteLoop(InfiniteLoopExpr),
-    PredicateLoop(PredicateLoopExpr),
-    IterLoop(IterLoopExpr),
+    InfiniteLoopExpr(InfiniteLoopExpr),
+    PredicateLoopExpr(PredicateLoopExpr),
+    IterLoopExpr(IterLoopExpr),
 }
 
 impl Spanned for ExprWithBlock {
@@ -150,9 +150,9 @@ impl Spanned for ExprWithBlock {
             ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
             ExprWithBlock::IfExpr(ife) => ife.span(),
             ExprWithBlock::MatchExpr(me) => me.span(),
-            ExprWithBlock::InfiniteLoop(inf) => inf.span(),
-            ExprWithBlock::PredicateLoop(ple) => ple.span(),
-            ExprWithBlock::IterLoop(ite) => ite.span(),
+            ExprWithBlock::InfiniteLoopExpr(inf) => inf.span(),
+            ExprWithBlock::PredicateLoopExpr(ple) => ple.span(),
+            ExprWithBlock::IterLoopExpr(ite) => ite.span(),
         }
     }
 }

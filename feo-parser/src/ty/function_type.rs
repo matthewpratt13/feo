@@ -1,5 +1,6 @@
 use feo_ast::{
     expression::ClosureParamsOpt,
+    item::FuncParam,
     token::Token,
     ty::{ClosureType, FunctionType},
     Type,
@@ -41,7 +42,7 @@ impl ParseType for FunctionType {
             {
                 parser.next_token();
 
-                let function_params_opt = utils::get_term_collection(parser)?;
+                let func_params_opt = utils::get_term_collection::<FuncParam>(parser)?;
 
                 let close_parenthesis_opt = parser.peek_current();
 
@@ -72,7 +73,7 @@ impl ParseType for FunctionType {
                     return Ok(Some(FunctionType {
                         kw_func: kw_func_opt.unwrap(),
                         open_parenthesis: open_parenthesis_opt.unwrap(),
-                        function_params_opt,
+                        func_params_opt,
                         close_parenthesis: close_parenthesis_opt.unwrap(),
                         return_type_opt,
                     }));

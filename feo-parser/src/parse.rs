@@ -11,9 +11,9 @@ use feo_ast::{
         TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     item::{
-        ConstantVarDef, EnumDef, FunctionSig, FunctionWithBlock, ImportDecl, InherentImplBlock,
-        Item, ModWithoutBody, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef,
-        TypeAliasDef,
+        ConstVarDef, EnumDef, FuncSig, FuncWithBlock, ImportDecl, InherentImplBlock,
+        Item, ModuleWithoutBlock, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef,
+        TypeDef,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -136,7 +136,7 @@ impl ParseExpr for Expression {
                     }
                 }
 
-                KeywordKind::KwCrate | KeywordKind::KwSuper => {
+                KeywordKind::KwPackage | KeywordKind::KwSuper => {
                     if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Expression::PathExpr(pth)));
                     }
@@ -788,7 +788,7 @@ impl ParseExpr for ExprWithoutBlock {
                 }
             } else {
                 let path_expr = PathInExpr {
-                    first_segment: PathIdenSegmentKind::Iden(id),
+                    first_segment: PathIdenSegmentKind::Identifier(id),
                     subsequent_segments: None,
                 };
 
@@ -1073,7 +1073,7 @@ impl ParseExpr for ExprWithoutBlock {
                         }
                     }
 
-                    KeywordKind::KwCrate
+                    KeywordKind::KwPackage
                     | KeywordKind::KwSelf
                     | KeywordKind::KwSelfType
                     | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
@@ -1219,7 +1219,7 @@ impl ParseExpr for ExprWithBlock {
             match &k.keyword_kind {
                 KeywordKind::KwFor => {
                     if let Some(ile) = IterLoopExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(ExprWithBlock::IterLoop(ile)));
+                        return Ok(Some(ExprWithBlock::IterLoopExpr(ile)));
                     }
                 }
 
@@ -1231,7 +1231,7 @@ impl ParseExpr for ExprWithBlock {
 
                 KeywordKind::KwLoop => {
                     if let Some(inf) = InfiniteLoopExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(ExprWithBlock::InfiniteLoop(inf)));
+                        return Ok(Some(ExprWithBlock::InfiniteLoopExpr(inf)));
                     }
                 }
 
@@ -1243,7 +1243,7 @@ impl ParseExpr for ExprWithBlock {
 
                 KeywordKind::KwWhile => {
                     if let Some(ple) = PredicateLoopExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(ExprWithBlock::PredicateLoop(ple)));
+                        return Ok(Some(ExprWithBlock::PredicateLoopExpr(ple)));
                     }
                 }
 
@@ -1402,7 +1402,7 @@ impl ParsePatt for Pattern {
             return Ok(Some(Pattern::Literal(l)));
         } else if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate
+                KeywordKind::KwPackage
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
                 | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
@@ -1480,7 +1480,7 @@ impl ParseStatement for Statement {
                 | KeywordKind::KwFunc
                 | KeywordKind::KwImpl
                 | KeywordKind::KwImport
-                | KeywordKind::KwMod
+                | KeywordKind::KwModule
                 | KeywordKind::KwPub
                 | KeywordKind::KwStatic
                 | KeywordKind::KwStruct
@@ -1569,7 +1569,7 @@ impl ParseType for Type {
             }
 
             let path_type = PathType {
-                first_segment: PathTypeSegment::Iden(id),
+                first_segment: PathTypeSegment::Identifier(id),
                 subsequent_segments: None,
             };
 
@@ -1602,7 +1602,7 @@ impl ParseType for Type {
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
-                KeywordKind::KwCrate
+                KeywordKind::KwPackage
                 | KeywordKind::KwSelf
                 | KeywordKind::KwSelfType
                 | KeywordKind::KwSuper => match parser.peek_next::<Punctuation>() {
@@ -1751,7 +1751,7 @@ impl ParseTerm for Value {
                     }
                 }
 
-                KeywordKind::KwCrate | KeywordKind::KwSuper => {
+                KeywordKind::KwPackage | KeywordKind::KwSuper => {
                     match parser.peek_next::<Punctuation>() {
                         Some(Punctuation {
                             punc_kind: PuncKind::DblColon,
@@ -1808,24 +1808,24 @@ impl ParseTerm for Value {
 ///////////////////////////////////////////////////////////////////////////////
 
 fn get_item_by_keyword(parser: &mut Parser) -> Result<Option<Item>, Vec<CompilerError>> {
-    if let Some(cvd) = ConstantVarDef::parse(parser)? {
-        return Ok(Some(Item::ConstantVarDef(cvd)));
+    if let Some(cvd) = ConstVarDef::parse(parser)? {
+        return Ok(Some(Item::ConstVarDef(cvd)));
     } else if let Some(ed) = EnumDef::parse(parser)? {
         return Ok(Some(Item::EnumDef(ed)));
-    } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
-        return Ok(Some(Item::FunctionWithBlock(fwb)));
-    } else if let Some(fs) = FunctionSig::parse(parser)? {
-        return Ok(Some(Item::FunctionSig(fs)));
+    } else if let Some(fwb) = FuncWithBlock::parse(parser)? {
+        return Ok(Some(Item::FuncWithBlock(fwb)));
+    } else if let Some(fs) = FuncSig::parse(parser)? {
+        return Ok(Some(Item::FuncSig(fs)));
     } else if let Some(iib) = InherentImplBlock::parse(parser)? {
         return Ok(Some(Item::InherentImplBlock(iib)));
     } else if let Some(tib) = TraitImplBlock::parse(parser)? {
         return Ok(Some(Item::TraitImplBlock(tib)));
     } else if let Some(imp) = ImportDecl::parse(parser)? {
         return Ok(Some(Item::ImportDecl(imp)));
-    // } else if let Some(mwb) = ModWithBody::parse(parser)? {
-    //     return Ok(Some(Item::ModWithBody(mwb)));
-    } else if let Some(m) = ModWithoutBody::parse(parser)? {
-        return Ok(Some(Item::ModWithoutBody(m)));
+    // } else if let Some(mwb) = ModuleWithBlock::parse(parser)? {
+    //     return Ok(Some(Item::ModuleWithBlock(mwb)));
+    } else if let Some(m) = ModuleWithoutBlock::parse(parser)? {
+        return Ok(Some(Item::ModuleWithoutBlock(m)));
     } else if let Some(svd) = StaticVarDef::parse(parser)? {
         return Ok(Some(Item::StaticVarDef(svd)));
     } else if let Some(sd) = StructDef::parse(parser)? {
@@ -1834,8 +1834,8 @@ fn get_item_by_keyword(parser: &mut Parser) -> Result<Option<Item>, Vec<Compiler
         return Ok(Some(Item::TupleStructDef(tsd)));
     // } else if let Some(td) = TraitDef::parse(parser)? {
     //     return Ok(Some(Item::TraitDef(td)));
-    } else if let Some(tad) = TypeAliasDef::parse(parser)? {
-        return Ok(Some(Item::TypeAliasDef(tad)));
+    } else if let Some(tad) = TypeDef::parse(parser)? {
+        return Ok(Some(Item::TypeDef(tad)));
     } else {
         return Ok(None);
     }

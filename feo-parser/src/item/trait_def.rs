@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{ConstantVarDef, FunctionSig, FunctionWithBlock, TraitDef, TraitDefItem, TypeAliasDef},
+    item::{ConstVarDef, FuncSig, FuncWithBlock, TraitDef, TraitDefItem, TypeDef},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -20,13 +20,13 @@ impl ParseItem for TraitDefItem {
     where
         Self: Sized,
     {
-        if let Some(c) = ConstantVarDef::parse(parser)? {
+        if let Some(c) = ConstVarDef::parse(parser)? {
             return Ok(Some(TraitDefItem::Constant(c)));
-        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        } else if let Some(fwb) = FuncWithBlock::parse(parser)? {
             return Ok(Some(TraitDefItem::FuncDef(fwb)));
-        } else if let Some(fs) = FunctionSig::parse(parser)? {
+        } else if let Some(fs) = FuncSig::parse(parser)? {
             return Ok(Some(TraitDefItem::FuncSig(fs)));
-        } else if let Some(ta) = TypeAliasDef::parse(parser)? {
+        } else if let Some(ta) = TypeDef::parse(parser)? {
             return Ok(Some(TraitDefItem::TypeAlias(ta)));
         } else {
             return Ok(None);
@@ -50,11 +50,10 @@ impl ParseItem for TraitDef {
             ..
         }) = kw_trait_opt
         {
-            utils::log_msg(LogMsgType::Enter, "trait definition", parser);
+            utils::log_msg(LogMsgType::Detect, "`trait` keyword", parser);
 
-            parser.next_token();
-
-            if let Some(trait_name) = parser.peek_current::<Identifier>() {
+            if let Some(trait_name) = parser.peek_next::<Identifier>() {
+                parser.next_token();
                 parser.next_token();
 
                 let type_param_bounds_opt = utils::get_term_collection(parser)?;
@@ -104,6 +103,11 @@ impl ParseItem for TraitDef {
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "identifier".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             }
         } else {
             return Ok(None);

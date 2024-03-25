@@ -85,7 +85,7 @@ impl<'a> Peeker<'a> {
 
     fn peek_identifier(&self) -> Result<Identifier, Self> {
         match self.peek_token() {
-            Some(Token::Iden(id)) => Ok(id),
+            Some(Token::Identifier(id)) => Ok(id),
             _ => Err(*self),
         }
     }

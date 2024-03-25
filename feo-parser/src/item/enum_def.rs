@@ -1,6 +1,6 @@
 use feo_ast::{
     item::{
-        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType,
+        EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType, StructDefField,
         TupleStructDefField,
     },
     token::Token,
@@ -87,9 +87,7 @@ impl ParseTerm for EnumVariantStruct {
         Self: Sized,
     {
         if let Some(_) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
-            let open_brace_opt = parser.peek_current();
+            let open_brace_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -97,8 +95,9 @@ impl ParseTerm for EnumVariantStruct {
             }) = open_brace_opt
             {
                 parser.next_token();
+                parser.next_token();
 
-                let fields_opt = utils::get_term_collection(parser)?;
+                let fields_opt = utils::get_term_collection::<StructDefField>(parser)?;
 
                 let close_brace_opt = parser.peek_current();
 
@@ -135,15 +134,14 @@ impl ParseTerm for EnumVariantTuple {
         Self: Sized,
     {
         if let Some(_) = parser.peek_current::<Identifier>() {
-            parser.next_token();
-
-            let open_parenthesis_opt = parser.peek_current();
+            let open_parenthesis_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                 ..
             }) = open_parenthesis_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 let elements_opt = utils::get_term_collection::<TupleStructDefField>(parser)?;
@@ -193,18 +191,17 @@ impl ParseItem for EnumDef {
             ..
         }) = kw_enum_opt
         {
-            parser.next_token();
-
-            if let Some(enum_name) = parser.peek_current::<Identifier>() {
+            if let Some(enum_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                let open_brace_opt = parser.peek_current();
+                let open_brace_opt = parser.peek_next();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Brace, DelimOrientation::Open),
                     ..
                 }) = open_brace_opt
                 {
+                    parser.next_token();
                     parser.next_token();
 
                     let enum_variants_opt = utils::get_term_collection::<EnumVariant>(parser)?;
@@ -216,7 +213,6 @@ impl ParseItem for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
-                        
                         return Ok(Some(EnumDef {
                             attributes_opt,
                             visibility_opt,

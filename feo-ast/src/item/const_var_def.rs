@@ -9,7 +9,7 @@ use crate::{attribute::OuterAttr, expression::Expression, ty::Type};
 use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
-pub struct ConstantVarDef {
+pub struct ConstVarDef {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_const: KwConst,
@@ -19,7 +19,7 @@ pub struct ConstantVarDef {
     pub semicolon: Semicolon,
 }
 
-impl Spanned for ConstantVarDef {
+impl Spanned for ConstVarDef {
     fn span(&self) -> Span {
         let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {

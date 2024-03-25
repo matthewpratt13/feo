@@ -1,4 +1,4 @@
-use feo_ast::{item::TypeAliasDef, token::Token, Type};
+use feo_ast::{item::TypeDef, token::Token, Type};
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword, Punctuation};
 
@@ -8,7 +8,7 @@ use crate::{
     utils::{self, LogMsgType},
 };
 
-impl ParseItem for TypeAliasDef {
+impl ParseItem for TypeDef {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -24,18 +24,19 @@ impl ParseItem for TypeAliasDef {
             ..
         }) = kw_type_opt
         {
-            utils::log_msg(LogMsgType::Enter, "type alias definition", parser);
-
-            parser.next_token();
-
-            if let Some(type_name) = parser.peek_current::<Identifier>() {
+            utils::log_msg(LogMsgType::Detect, "`type` keyword", parser);
+            
+            if let Some(type_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
+                
+                utils::log_msg(LogMsgType::Detect, "type name", parser);
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Equals,
                     ..
-                }) = parser.peek_current()
+                }) = parser.peek_next()
                 {
+                    parser.next_token();
                     parser.next_token();
 
                     let type_opt = if let Some(ty) = Type::parse(parser)? {
@@ -52,9 +53,9 @@ impl ParseItem for TypeAliasDef {
                         ..
                     }) = semicolon_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "type alias definition", parser);
+                        utils::log_msg(LogMsgType::Exit, "type definition", parser);
 
-                        return Ok(Some(TypeAliasDef {
+                        return Ok(Some(TypeDef {
                             attributes_opt,
                             visibility_opt,
                             kw_type: kw_type_opt.unwrap(),
@@ -104,8 +105,7 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let type_alias_def =
-            TypeAliasDef::parse(&mut parser).expect("unable to parse type alias definition");
+        let type_alias_def = TypeDef::parse(&mut parser).expect("unable to parse type definition");
 
         Ok(println!("{:#?}", type_alias_def))
     }

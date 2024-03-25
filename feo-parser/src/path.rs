@@ -18,10 +18,10 @@ impl Peek for SimplePathSegmentKind {
         Self: Sized,
     {
         if let Some(id) = Identifier::peek(peeker) {
-            Some(SimplePathSegmentKind::Iden(id))
+            Some(SimplePathSegmentKind::Identifier(id))
         } else if let Some(k) = Keyword::peek(peeker) {
             match &k.keyword_kind {
-                KeywordKind::KwCrate => Some(SimplePathSegmentKind::KwCrate(k)),
+                KeywordKind::KwPackage => Some(SimplePathSegmentKind::KwPackage(k)),
                 KeywordKind::KwSelf => Some(SimplePathSegmentKind::KwSelf(k)),
                 KeywordKind::KwSuper => Some(SimplePathSegmentKind::KwSuper(k)),
                 _ => None,
@@ -81,10 +81,10 @@ impl Peek for PathIdenSegmentKind {
         Self: Sized,
     {
         let segment_kind = if let Some(id) = Identifier::peek(peeker) {
-            PathIdenSegmentKind::Iden(id)
+            PathIdenSegmentKind::Identifier(id)
         } else if let Some(k) = Keyword::peek(peeker) {
             match &k.keyword_kind {
-                KeywordKind::KwCrate => PathIdenSegmentKind::KwCrate(k),
+                KeywordKind::KwPackage => PathIdenSegmentKind::KwPackage(k),
                 KeywordKind::KwSelf => PathIdenSegmentKind::KwSelf(k),
                 KeywordKind::KwSelfType => PathIdenSegmentKind::KwSelfType(k),
                 KeywordKind::KwSuper => PathIdenSegmentKind::KwSuper(k),
@@ -201,7 +201,7 @@ mod tests {
 
     #[test]
     fn parse_path_simple() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::some_module::SomeObject"#;
+        let source_code = r#"package::some_module::SomeObject"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

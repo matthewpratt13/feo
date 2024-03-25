@@ -1,12 +1,12 @@
-mod constant_var_def;
+mod const_var_def;
 mod enum_def;
-mod function_def;
+mod func_def;
 mod impl_block;
 mod import_decl;
-mod mod_block;
+mod module_block;
 mod struct_def;
 mod trait_def;
-mod type_alias_def;
+mod type_def;
 mod visibility;
 
 use feo_types::span::{Span, Spanned};
@@ -14,55 +14,55 @@ use feo_types::span::{Span, Spanned};
 use crate::expression::TermCollection;
 
 pub use self::{
-    constant_var_def::{ConstantVarDef, StaticVarDef},
+    const_var_def::{ConstVarDef, StaticVarDef},
     enum_def::{EnumDef, EnumVariant, EnumVariantStruct, EnumVariantTuple, EnumVariantType},
-    function_def::{FuncOrMethodParam, FunctionParam, FunctionSig, FunctionWithBlock, SelfParam},
+    func_def::{FuncOrMethodParam, FuncParam, FuncSig, FuncWithBlock, SelfParam},
     impl_block::{InherentImplBlock, InherentImplItem, TraitImplBlock, TraitImplItem},
     import_decl::{ImportDecl, ImportTree, PathRecursive, PathSubset, PathWildcard},
-    mod_block::{ModWithBody, ModWithoutBody},
+    module_block::{ModuleWithBlock, ModuleWithoutBlock},
     struct_def::{StructDef, StructDefField, TupleStructDef, TupleStructDefField},
     trait_def::{TraitDef, TraitDefItem},
-    type_alias_def::TypeAliasDef,
-    visibility::{PubCrateVisibility, VisibilityKind},
+    type_def::TypeDef,
+    visibility::{PubPackageVisibility, VisibilityKind},
 };
 
 // items are components of a crate, organized by a set of modules
 
 #[derive(Debug, Clone)]
 pub enum Item {
-    ConstantVarDef(ConstantVarDef),
+    ConstVarDef(ConstVarDef),
     StaticVarDef(StaticVarDef),
     EnumDef(EnumDef),
-    FunctionSig(FunctionSig),
-    FunctionWithBlock(FunctionWithBlock),
+    FuncSig(FuncSig),
+    FuncWithBlock(FuncWithBlock),
     InherentImplBlock(InherentImplBlock),
     TraitImplBlock(TraitImplBlock),
     ImportDecl(ImportDecl),
-    ModWithBody(ModWithBody),
-    ModWithoutBody(ModWithoutBody),
+    ModuleWithBlock(ModuleWithBlock),
+    ModuleWithoutBlock(ModuleWithoutBlock),
     StructDef(StructDef),
     TupleStructDef(TupleStructDef),
     TraitDef(TraitDef),
-    TypeAliasDef(TypeAliasDef),
+    TypeDef(TypeDef),
 }
 
 impl Spanned for Item {
     fn span(&self) -> Span {
         match self {
-            Item::ConstantVarDef(cv) => cv.span(),
+            Item::ConstVarDef(cv) => cv.span(),
             Item::StaticVarDef(sv) => sv.span(),
             Item::EnumDef(ed) => ed.span(),
-            Item::FunctionSig(fs) => fs.span(),
-            Item::FunctionWithBlock(fwb) => fwb.span(),
+            Item::FuncSig(fs) => fs.span(),
+            Item::FuncWithBlock(fwb) => fwb.span(),
             Item::InherentImplBlock(ii) => ii.span(),
             Item::TraitImplBlock(ti) => ti.span(),
             Item::ImportDecl(imp) => imp.span(),
-            Item::ModWithBody(mwb) => mwb.span(),
-            Item::ModWithoutBody(m) => m.span(),
+            Item::ModuleWithBlock(mwb) => mwb.span(),
+            Item::ModuleWithoutBlock(m) => m.span(),
             Item::StructDef(sd) => sd.span(),
             Item::TupleStructDef(tsd) => tsd.span(),
             Item::TraitDef(td) => td.span(),
-            Item::TypeAliasDef(tad) => tad.span(),
+            Item::TypeDef(tad) => tad.span(),
         }
     }
 }
