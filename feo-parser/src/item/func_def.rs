@@ -151,7 +151,7 @@ impl ParseItem for FuncSig {
             ..
         }) = kw_func_opt
         {
-            utils::log_msg(LogMsgType::Enter, "function signature", parser);
+            utils::log_msg(LogMsgType::Detect, "`function` keyword", parser);
 
             if let Some(func_name) = parser.peek_next::<Identifier>() {
                 utils::log_msg(LogMsgType::Detect, "function name", parser);
@@ -177,6 +177,8 @@ impl ParseItem for FuncSig {
                         ..
                     }) = close_parenthesis_opt
                     {
+                        utils::log_msg(LogMsgType::Detect, "`)`", parser);
+
                         let return_type_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::ThinArrow,
                             ..

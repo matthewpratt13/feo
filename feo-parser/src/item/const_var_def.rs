@@ -29,7 +29,7 @@ impl ParseItem for ConstVarDef {
             ..
         }) = kw_const_opt
         {
-            utils::log_msg(LogMsgType::Enter, "constant variable definition", parser);
+            utils::log_msg(LogMsgType::Detect, "`const` keyword", parser);
 
             if let Some(item_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
@@ -143,11 +143,14 @@ impl ParseItem for StaticVarDef {
             ..
         }) = kw_static_opt
         {
-            utils::log_msg(LogMsgType::Enter, "static variable definition", parser);
+            utils::log_msg(LogMsgType::Detect, "`static` keyword", parser);
 
             let kw_mut_opt = if let Some(k) = parser.peek_next::<Keyword>() {
                 if k.keyword_kind == KeywordKind::KwMut {
                     parser.next_token();
+
+                    utils::log_msg(LogMsgType::Detect, "`mut` keyword", parser);
+
                     Some(k)
                 } else {
                     None
@@ -171,7 +174,6 @@ impl ParseItem for StaticVarDef {
 
                     if let Some(item_type) = Type::parse(parser)? {
                         utils::log_msg(LogMsgType::Detect, "static variable item type", parser);
-
                         let assignment_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::Equals,
                             ..
@@ -262,10 +264,9 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let _ = ConstVarDef::parse(&mut parser)
-            .expect("unable to parse constant variable definition");
+        let _ =
+            ConstVarDef::parse(&mut parser).expect("unable to parse constant variable definition");
 
-        
         // Ok(println!("{:#?}", constant_var_def))
 
         Ok(())
@@ -283,6 +284,5 @@ mod tests {
         // Ok(println!("{:#?}", static_var_def))
 
         Ok(())
-
     }
 }

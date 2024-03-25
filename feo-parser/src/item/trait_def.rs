@@ -54,6 +54,9 @@ impl ParseItem for TraitDef {
 
             if let Some(trait_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
+
+                utils::log_msg(LogMsgType::Detect, "trait name", parser);
+
                 parser.next_token();
 
                 let type_param_bounds_opt = utils::get_term_collection(parser)?;
@@ -65,6 +68,8 @@ impl ParseItem for TraitDef {
                     ..
                 }) = open_brace_opt
                 {
+                    utils::log_msg(LogMsgType::Enter, "trait definition body", parser);
+
                     parser.next_token();
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
@@ -78,7 +83,7 @@ impl ParseItem for TraitDef {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "trait definition", parser);
+                        utils::log_msg(LogMsgType::Exit, "trait definition body", parser);
 
                         return Ok(Some(TraitDef {
                             outer_attributes_opt,

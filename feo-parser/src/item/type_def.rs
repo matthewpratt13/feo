@@ -25,10 +25,10 @@ impl ParseItem for TypeDef {
         }) = kw_type_opt
         {
             utils::log_msg(LogMsgType::Detect, "`type` keyword", parser);
-            
+
             if let Some(type_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
-                
+
                 utils::log_msg(LogMsgType::Detect, "type name", parser);
 
                 if let Some(Punctuation {
@@ -37,6 +37,13 @@ impl ParseItem for TypeDef {
                 }) = parser.peek_next()
                 {
                     parser.next_token();
+
+                    utils::log_msg(
+                        LogMsgType::Detect,
+                        "type definition assignment",
+                        parser,
+                    );
+
                     parser.next_token();
 
                     let type_opt = if let Some(ty) = Type::parse(parser)? {

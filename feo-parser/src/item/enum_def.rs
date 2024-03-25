@@ -15,7 +15,7 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
-    utils,
+    utils::{self, LogMsgType},
 };
 
 impl ParseTerm for EnumVariant {
@@ -191,8 +191,12 @@ impl ParseItem for EnumDef {
             ..
         }) = kw_enum_opt
         {
+            utils::log_msg(LogMsgType::Detect, "`enum` keyword", parser);
+
             if let Some(enum_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
+
+                utils::log_msg(LogMsgType::Detect, "enum name", parser);
 
                 let open_brace_opt = parser.peek_next();
 
@@ -202,6 +206,9 @@ impl ParseItem for EnumDef {
                 }) = open_brace_opt
                 {
                     parser.next_token();
+
+                    utils::log_msg(LogMsgType::Enter, "enum definition body", parser);
+
                     parser.next_token();
 
                     let enum_variants_opt = utils::get_term_collection::<EnumVariant>(parser)?;
@@ -213,6 +220,8 @@ impl ParseItem for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
+                        utils::log_msg(LogMsgType::Exit, "enum definition body", parser);
+
                         return Ok(Some(EnumDef {
                             attributes_opt,
                             visibility_opt,

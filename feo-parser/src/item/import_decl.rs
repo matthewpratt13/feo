@@ -109,11 +109,13 @@ impl ParseItem for ImportDecl {
             ..
         }) = kw_import_opt
         {
-            utils::log_msg(LogMsgType::Enter, "import declaration", parser);
+            utils::log_msg(LogMsgType::Detect, "`import` keyword", parser);
 
             parser.next_token();
 
             if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
+                utils::log_msg(LogMsgType::Detect, "import trees", parser);
+
                 parser.next_token();
 
                 let semicolon_opt = parser.peek_current();

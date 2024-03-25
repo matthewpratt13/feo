@@ -76,7 +76,7 @@ impl ParseItem for StructDef {
             ..
         }) = kw_struct_opt
         {
-            utils::log_msg(LogMsgType::Enter, "struct definition", parser);
+            utils::log_msg(LogMsgType::Detect, "`struct` keyword", parser);
 
             if let Some(struct_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
@@ -89,6 +89,9 @@ impl ParseItem for StructDef {
                 }) = open_brace_opt
                 {
                     parser.next_token();
+
+                    utils::log_msg(LogMsgType::Enter, "struct definition block", parser);
+                    
                     parser.next_token();
 
                     let fields_opt = utils::get_term_collection(parser)?;
@@ -100,7 +103,7 @@ impl ParseItem for StructDef {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "struct definition", parser);
+                        utils::log_msg(LogMsgType::Exit, "struct definition block", parser);
 
                         return Ok(Some(StructDef {
                             attributes_opt,
