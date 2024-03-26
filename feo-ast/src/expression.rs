@@ -47,6 +47,8 @@ pub use self::{
     tuple_expr::{TupleExpr, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
 };
+
+/// Helps to control the order in which operations are parsed.
 #[derive(PartialEq, PartialOrd, Debug, Clone, Copy)]
 pub enum Precedence {
     Lowest,
