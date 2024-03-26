@@ -9,7 +9,8 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuatio
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseTerm for ImportTree {
@@ -109,12 +110,12 @@ impl ParseItem for ImportDecl {
             ..
         }) = kw_import_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`import` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`import` keyword", parser);
 
             parser.next_token();
 
             if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
-                utils::log_msg(LogMsgType::Detect, "import trees", parser);
+                test_utils::log_msg(LogMsgType::Detect, "import trees", parser);
 
                 parser.next_token();
 
@@ -125,7 +126,7 @@ impl ParseItem for ImportDecl {
                     ..
                 }) = semicolon_opt
                 {
-                    utils::log_msg(LogMsgType::Exit, "import declaration", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "import declaration", parser);
 
                     return Ok(Some(ImportDecl {
                         attributes_opt,
@@ -156,8 +157,6 @@ impl ParseItem for ImportDecl {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

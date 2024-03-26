@@ -16,7 +16,8 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseItem, ParsePatt, ParseTerm, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseTerm for FuncOrMethodParam {
@@ -66,7 +67,7 @@ impl ParseTerm for SelfParam {
             ..
         }) = kw_self_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`self` parameter", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`self` parameter", parser);
 
             let type_ann_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::Colon,
@@ -103,7 +104,7 @@ impl ParseTerm for FuncParam {
         Self: Sized,
     {
         if let Some(param_pattern) = Pattern::parse(parser)? {
-            utils::log_msg(LogMsgType::Detect, "function parameter", parser);
+            test_utils::log_msg(LogMsgType::Detect, "function parameter", parser);
 
             let colon_opt = parser.peek_next();
 
@@ -115,7 +116,7 @@ impl ParseTerm for FuncParam {
                 parser.next_token();
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "function parameter type", parser);
+                test_utils::log_msg(LogMsgType::Detect, "function parameter type", parser);
 
                 if let Some(param_type) = Type::parse(parser)? {
                     return Ok(Some(FuncParam {
@@ -155,12 +156,12 @@ impl ParseItem for FuncSig {
             ..
         }) = kw_func_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`func` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`func` keyword", parser);
 
             if let Some(func_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "function name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "function name", parser);
 
                 let open_parenthesis_opt = parser.peek_next();
 
@@ -181,7 +182,7 @@ impl ParseItem for FuncSig {
                         ..
                     }) = close_parenthesis_opt
                     {
-                        utils::log_msg(LogMsgType::Detect, "`)`", parser);
+                        test_utils::log_msg(LogMsgType::Detect, "`)`", parser);
 
                         let return_type_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::ThinArrow,
@@ -191,12 +192,12 @@ impl ParseItem for FuncSig {
                             parser.next_token();
                             parser.next_token();
 
-                            utils::log_msg(LogMsgType::Detect, "return type", parser);
+                            test_utils::log_msg(LogMsgType::Detect, "return type", parser);
 
                             if let Some(ty) = Type::parse(parser)? {
                                 Some(Box::new(ty))
                             } else {
-                                utils::log_msg(LogMsgType::Expect, "`->`", parser);
+                                test_utils::log_msg(LogMsgType::Expect, "`->`", parser);
                                 None
                             }
                         } else {
@@ -208,12 +209,12 @@ impl ParseItem for FuncSig {
                             ..
                         }) = parser.peek_next()
                         {
-                            utils::log_msg(LogMsgType::Detect, "`;`", parser);
+                            test_utils::log_msg(LogMsgType::Detect, "`;`", parser);
 
                             parser.next_token();
                         }
 
-                        utils::log_msg(LogMsgType::Exit, "function signature", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "function signature", parser);
 
                         return Ok(Some(FuncSig {
                             attributes_opt,
@@ -259,10 +260,10 @@ impl ParseItem for FuncWithBlock {
         if let Some(function_sig) = FuncSig::parse(parser)? {
             parser.next_token();
 
-            utils::log_msg(LogMsgType::Expect, "function block", parser);
+            test_utils::log_msg(LogMsgType::Expect, "function block", parser);
 
             if let Some(function_body) = ExprWithBlock::parse(parser)? {
-                utils::log_msg(LogMsgType::Exit, "function block", parser);
+                test_utils::log_msg(LogMsgType::Exit, "function block", parser);
 
                 return Ok(Some(FuncWithBlock {
                     function_sig,
@@ -284,8 +285,6 @@ impl ParseItem for FuncWithBlock {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

@@ -26,8 +26,7 @@ pub use self::{
     visibility::{PubPackageVisibility, VisibilityKind},
 };
 
-// items are components of a crate, organized by a set of modules
-
+/// Component of a package, organized by a set of modules.
 #[derive(Debug, Clone)]
 pub enum Item {
     ConstVarDef(ConstVarDef),

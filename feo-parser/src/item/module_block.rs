@@ -13,7 +13,8 @@ use feo_types::{
 use crate::{
     parse::ParseItem,
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseItem for ModuleWithoutBlock {
@@ -32,12 +33,12 @@ impl ParseItem for ModuleWithoutBlock {
             ..
         }) = kw_module_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`module` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`module` keyword", parser);
 
             if let Some(module_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "module name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "module name", parser);
 
                 parser.next_token();
 
@@ -48,7 +49,7 @@ impl ParseItem for ModuleWithoutBlock {
                     ..
                 }) = semicolon_opt
                 {
-                    utils::log_msg(LogMsgType::Exit, "module definition", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "module definition", parser);
 
                     return Ok(Some(ModuleWithoutBlock {
                         attributes_opt,
@@ -93,12 +94,12 @@ impl ParseItem for ModuleWithBlock {
             ..
         }) = kw_module_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`module` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`module` keyword", parser);
 
             if let Some(module_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "module name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "module name", parser);
 
                 parser.next_token();
 
@@ -109,7 +110,7 @@ impl ParseItem for ModuleWithBlock {
                     ..
                 }) = open_brace_opt
                 {
-                    utils::log_msg(LogMsgType::Enter, "module body", parser);
+                    test_utils::log_msg(LogMsgType::Enter, "module body", parser);
 
                     parser.next_token();
 
@@ -122,7 +123,7 @@ impl ParseItem for ModuleWithBlock {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "module body", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "module body", parser);
 
                         return Ok(Some(ModuleWithBlock {
                             attributes_opt,
@@ -161,8 +162,6 @@ impl ParseItem for ModuleWithBlock {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

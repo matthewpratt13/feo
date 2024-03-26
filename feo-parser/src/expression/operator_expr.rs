@@ -15,7 +15,7 @@ use crate::{
     parse::{ParseExpr, ParseTerm, ParseType},
     parser::Parser,
     peek::{Peek, Peeker},
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl Peek for ArithmeticOrLogicalOperatorKind {
@@ -123,7 +123,7 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(
+        test_utils::log_msg(
             LogMsgType::Detect,
             "arithmetic or logical expression",
             parser,
@@ -234,7 +234,7 @@ impl ParseExpr for ComparisonExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "comparison expression", parser);
+        test_utils::log_msg(LogMsgType::Detect, "comparison expression", parser);
 
         if let Some(lhs) = Value::parse(parser)? {
             if let Some(operator) = parser.peek_next::<ComparisonOperatorKind>() {
@@ -463,8 +463,6 @@ impl ParseExpr for UnwrapExpr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

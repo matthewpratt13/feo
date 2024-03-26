@@ -12,7 +12,8 @@ use feo_types::{
 use crate::{
     parse::ParseItem,
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseItem for TraitDefItem {
@@ -50,12 +51,12 @@ impl ParseItem for TraitDef {
             ..
         }) = kw_trait_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`trait` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`trait` keyword", parser);
 
             if let Some(trait_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "trait name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "trait name", parser);
 
                 parser.next_token();
 
@@ -68,7 +69,7 @@ impl ParseItem for TraitDef {
                     ..
                 }) = open_brace_opt
                 {
-                    utils::log_msg(LogMsgType::Enter, "trait definition body", parser);
+                    test_utils::log_msg(LogMsgType::Enter, "trait definition body", parser);
 
                     parser.next_token();
 
@@ -83,7 +84,7 @@ impl ParseItem for TraitDef {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "trait definition body", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "trait definition body", parser);
 
                         return Ok(Some(TraitDef {
                             outer_attributes_opt,
@@ -124,8 +125,6 @@ impl ParseItem for TraitDef {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

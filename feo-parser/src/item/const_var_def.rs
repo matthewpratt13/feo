@@ -10,7 +10,8 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword
 use crate::{
     parse::{ParseExpr, ParseItem, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseItem for ConstVarDef {
@@ -29,12 +30,12 @@ impl ParseItem for ConstVarDef {
             ..
         }) = kw_const_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`const` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`const` keyword", parser);
 
             if let Some(item_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "constant variable item name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "constant variable item name", parser);
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
@@ -45,7 +46,11 @@ impl ParseItem for ConstVarDef {
                     parser.next_token();
 
                     if let Some(item_type) = Type::parse(parser)? {
-                        utils::log_msg(LogMsgType::Detect, "constant variable item type", parser);
+                        test_utils::log_msg(
+                            LogMsgType::Detect,
+                            "constant variable item type",
+                            parser,
+                        );
 
                         let assignment_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::Equals,
@@ -55,7 +60,7 @@ impl ParseItem for ConstVarDef {
                             parser.next_token();
                             parser.next_token();
 
-                            utils::log_msg(
+                            test_utils::log_msg(
                                 LogMsgType::Detect,
                                 "constant variable item expression",
                                 parser,
@@ -79,7 +84,7 @@ impl ParseItem for ConstVarDef {
                             ..
                         }) = semicolon_opt
                         {
-                            utils::log_msg(
+                            test_utils::log_msg(
                                 LogMsgType::Exit,
                                 "constant variable definition",
                                 parser,
@@ -142,13 +147,13 @@ impl ParseItem for StaticVarDef {
             ..
         }) = kw_static_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`static` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`static` keyword", parser);
 
             let kw_mut_opt = if let Some(k) = parser.peek_next::<Keyword>() {
                 if k.keyword_kind == KeywordKind::KwMut {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Detect, "`mut` keyword", parser);
+                    test_utils::log_msg(LogMsgType::Detect, "`mut` keyword", parser);
 
                     Some(k)
                 } else {
@@ -161,7 +166,7 @@ impl ParseItem for StaticVarDef {
             if let Some(item_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "static variable item name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "static variable item name", parser);
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Colon,
@@ -172,7 +177,11 @@ impl ParseItem for StaticVarDef {
                     parser.next_token();
 
                     if let Some(item_type) = Type::parse(parser)? {
-                        utils::log_msg(LogMsgType::Detect, "static variable item type", parser);
+                        test_utils::log_msg(
+                            LogMsgType::Detect,
+                            "static variable item type",
+                            parser,
+                        );
                         let assignment_opt = if let Some(Punctuation {
                             punc_kind: PuncKind::Equals,
                             ..
@@ -180,7 +189,7 @@ impl ParseItem for StaticVarDef {
                         {
                             parser.next_token();
 
-                            utils::log_msg(
+                            test_utils::log_msg(
                                 LogMsgType::Detect,
                                 "static variable assignment",
                                 parser,
@@ -206,7 +215,11 @@ impl ParseItem for StaticVarDef {
                             ..
                         }) = semicolon_opt
                         {
-                            utils::log_msg(LogMsgType::Exit, "static variable definition", parser);
+                            test_utils::log_msg(
+                                LogMsgType::Exit,
+                                "static variable definition",
+                                parser,
+                            );
 
                             return Ok(Some(StaticVarDef {
                                 attributes_opt,
@@ -252,8 +265,6 @@ impl ParseItem for StaticVarDef {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

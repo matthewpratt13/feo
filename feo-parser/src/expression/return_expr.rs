@@ -5,7 +5,7 @@ use feo_types::{keyword::KeywordKind, Keyword};
 use crate::{
     parse::ParseExpr,
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseExpr for ReturnExpr {
@@ -20,7 +20,7 @@ impl ParseExpr for ReturnExpr {
             ..
         }) = kw_return_opt
         {
-            utils::log_msg(LogMsgType::Enter, "return expression", parser);
+            test_utils::log_msg(LogMsgType::Enter, "return expression", parser);
 
             parser.next_token();
 
@@ -30,7 +30,7 @@ impl ParseExpr for ReturnExpr {
                 None
             };
 
-            utils::log_msg(LogMsgType::Exit, "return expression", parser);
+            test_utils::log_msg(LogMsgType::Exit, "return expression", parser);
 
             return Ok(Some(ReturnExpr {
                 kw_return: kw_return_opt.unwrap(),
@@ -44,8 +44,6 @@ impl ParseExpr for ReturnExpr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

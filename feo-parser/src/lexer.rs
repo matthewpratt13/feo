@@ -19,6 +19,7 @@ use feo_types::{
     Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
+/// Struct that stores an input string and the current character index, and handles errors
 pub struct Lexer<'a> {
     input: &'a str,
     pos: usize,
@@ -40,8 +41,8 @@ impl<'a> Lexer<'a> {
         self.handler.clone().get_inner().0
     }
 
-    // main lexer function
-    // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
+    /// Main lexer function
+    /// Returns a stream of tokens, parsed and tokenized from some input source code
     pub fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 

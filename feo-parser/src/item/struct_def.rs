@@ -14,7 +14,8 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseTerm for StructDefField {
@@ -76,7 +77,7 @@ impl ParseItem for StructDef {
             ..
         }) = kw_struct_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`struct` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`struct` keyword", parser);
 
             if let Some(struct_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
@@ -90,8 +91,8 @@ impl ParseItem for StructDef {
                 {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Enter, "struct definition block", parser);
-                    
+                    test_utils::log_msg(LogMsgType::Enter, "struct definition block", parser);
+
                     parser.next_token();
 
                     let fields_opt = utils::get_term_collection(parser)?;
@@ -103,7 +104,7 @@ impl ParseItem for StructDef {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "struct definition block", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "struct definition block", parser);
 
                         return Ok(Some(StructDef {
                             attributes_opt,
@@ -177,7 +178,7 @@ impl ParseTerm for TupleStructDef {
             ..
         }) = kw_struct_opt
         {
-            utils::log_msg(LogMsgType::Enter, "struct definition", parser);
+            test_utils::log_msg(LogMsgType::Enter, "struct definition", parser);
 
             if let Some(struct_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
@@ -212,7 +213,7 @@ impl ParseTerm for TupleStructDef {
                         {
                             parser.next_token();
 
-                            utils::log_msg(LogMsgType::Exit, "struct definition", parser);
+                            test_utils::log_msg(LogMsgType::Exit, "struct definition", parser);
 
                             return Ok(Some(TupleStructDef {
                                 attributes_opt,
@@ -258,8 +259,6 @@ impl ParseTerm for TupleStructDef {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

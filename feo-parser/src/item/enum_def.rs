@@ -15,7 +15,8 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseTerm for EnumVariant {
@@ -191,12 +192,12 @@ impl ParseItem for EnumDef {
             ..
         }) = kw_enum_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`enum` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`enum` keyword", parser);
 
             if let Some(enum_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "enum name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "enum name", parser);
 
                 let open_brace_opt = parser.peek_next();
 
@@ -207,7 +208,7 @@ impl ParseItem for EnumDef {
                 {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Enter, "enum definition body", parser);
+                    test_utils::log_msg(LogMsgType::Enter, "enum definition body", parser);
 
                     parser.next_token();
 
@@ -220,7 +221,7 @@ impl ParseItem for EnumDef {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "enum definition body", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "enum definition body", parser);
 
                         return Ok(Some(EnumDef {
                             attributes_opt,
@@ -259,8 +260,6 @@ impl ParseItem for EnumDef {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

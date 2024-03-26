@@ -25,8 +25,8 @@ pub use self::{
     wildcard_patt::WildcardPatt,
 };
 
-// patterns are used: to match values against structures; in variable declarations; as func params
-
+/// Used to match values against structures, as well as within variable declarations 
+/// and as function parameters.
 #[derive(Debug, Clone)]
 pub enum Pattern {
     Literal(LiteralKind),

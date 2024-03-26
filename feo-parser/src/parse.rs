@@ -38,17 +38,12 @@ use feo_types::{
 
 use crate::{
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
-// literals, attributes, paths, parenthesized expressions, helper types (e.g., `StructExprField`)
 pub trait ParseTerm {
-    fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
-    where
-        Self: Sized;
-}
-
-pub trait ParseTermCollection {
+    /// Parses literals, attributes, paths, parenthesized expressions and
+    /// helper types (e.g., `StructExprField`)
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized;
@@ -91,7 +86,7 @@ impl ParseExpr for Expression {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "Expression", parser);
+        // test_utils::log_msg(LogMsgType::Detect, "Expression", parser);
 
         if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
@@ -641,7 +636,7 @@ impl ParseExpr for ExprWithoutBlock {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "ExprWithoutBlock", parser);
+        //test_utils::log_msg(LogMsgType::Detect, "ExprWithoutBlock", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
@@ -1211,7 +1206,7 @@ impl ParseExpr for ExprWithBlock {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "ExprWithBlock", parser);
+        //test_utils::log_msg(LogMsgType::Detect, "ExprWithBlock", parser);
 
         if let Some(Delimiter {
             delim: (DelimKind::Brace, DelimOrientation::Open),
@@ -1284,7 +1279,7 @@ impl ParseItem for Item {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Detect, "Item", parser);
+        test_utils::log_msg(LogMsgType::Detect, "Item", parser);
 
         if let Some(Punctuation {
             punc_kind: PuncKind::HashSign,
@@ -1315,7 +1310,7 @@ impl ParsePatt for Pattern {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "Pattern", parser);
+        //test_utils::log_msg(LogMsgType::Detect, "Pattern", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
@@ -1459,7 +1454,7 @@ impl ParseStatement for Statement {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "Statement", parser);
+        //test_utils::log_msg(LogMsgType::Detect, "Statement", parser);
 
         if let Some(_) = parser.peek_current::<Identifier>() {
             if let Some(es) = ExprStatement::parse(parser)? {
@@ -1548,7 +1543,7 @@ impl ParseType for Type {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "Type", parser);
+        //test_utils::log_msg(LogMsgType::Detect, "Type", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {
@@ -1671,7 +1666,7 @@ impl ParseTerm for Value {
     where
         Self: Sized,
     {
-        // utils::log_msg(LogMsgType::Detect, "Value", parser);
+        //test_utils::log_msg(LogMsgType::Detect, "Value", parser);
 
         if let Some(id) = parser.peek_current::<Identifier>() {
             if &id.name == "_" {

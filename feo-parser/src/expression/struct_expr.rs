@@ -16,7 +16,8 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseTerm for StructExprField {
@@ -67,7 +68,7 @@ impl ParseExpr for StructExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Expect, "path expression", parser);
+        test_utils::log_msg(LogMsgType::Expect, "path expression", parser);
 
         if let Some(Token::Keyword(Keyword {
             keyword_kind: KeywordKind::KwMatch,
@@ -78,7 +79,7 @@ impl ParseExpr for StructExpr {
         }
 
         if let Some(path) = PathInExpr::parse(parser)? {
-            utils::log_msg(LogMsgType::Enter, "struct expression", parser);
+            test_utils::log_msg(LogMsgType::Enter, "struct expression", parser);
 
             let open_brace_opt = parser.peek_next();
 
@@ -99,7 +100,7 @@ impl ParseExpr for StructExpr {
                     ..
                 }) = close_brace_opt
                 {
-                    utils::log_msg(LogMsgType::Exit, "struct expression", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "struct expression", parser);
 
                     return Ok(Some(StructExpr {
                         path,
@@ -174,8 +175,6 @@ impl ParseExpr for TupleStructExpr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

@@ -8,7 +8,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseTerm for ParenthesizedExpr {
@@ -23,7 +23,7 @@ impl ParseTerm for ParenthesizedExpr {
             ..
         }) = open_parenthesis_opt
         {
-            utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
+            test_utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
 
             parser.next_token();
 
@@ -37,7 +37,7 @@ impl ParseTerm for ParenthesizedExpr {
                 {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Exit, "parenthesized expression", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "parenthesized expression", parser);
 
                     return Ok(Some(ParenthesizedExpr {
                         open_parenthesis: open_parenthesis_opt.unwrap(),
@@ -58,8 +58,6 @@ impl ParseTerm for ParenthesizedExpr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

@@ -9,7 +9,7 @@ use crate::{
     parse::ParseTerm,
     parser::Parser,
     peek::{Peek, Peeker},
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl Peek for SimplePathSegmentKind {
@@ -106,7 +106,7 @@ impl ParseTerm for PathInExpr {
         let mut subsequent_segments: Vec<PathIdenSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
-            utils::log_msg(LogMsgType::Enter, "path in expression", parser);
+            test_utils::log_msg(LogMsgType::Enter, "path in expression", parser);
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -127,7 +127,7 @@ impl ParseTerm for PathInExpr {
                 }
             }
 
-            utils::log_msg(LogMsgType::Exit, "path in expression", parser);
+            test_utils::log_msg(LogMsgType::Exit, "path in expression", parser);
 
             match &subsequent_segments.is_empty() {
                 true => Ok(Some(PathInExpr {
@@ -153,7 +153,7 @@ impl ParseTerm for PathType {
         let mut subsequent_segments: Vec<PathIdenSegmentKind> = Vec::new();
 
         if let Some(first_segment) = parser.peek_current::<PathIdenSegmentKind>() {
-            utils::log_msg(LogMsgType::Enter, "path type", parser);
+            test_utils::log_msg(LogMsgType::Enter, "path type", parser);
 
             while let Some(Punctuation {
                 punc_kind: PuncKind::DblColon,
@@ -174,7 +174,7 @@ impl ParseTerm for PathType {
                 }
             }
 
-            utils::log_msg(LogMsgType::Exit, "path type", parser);
+            test_utils::log_msg(LogMsgType::Exit, "path type", parser);
 
             match &subsequent_segments.is_empty() {
                 true => Ok(Some(PathType {
@@ -194,8 +194,6 @@ impl ParseTerm for PathType {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

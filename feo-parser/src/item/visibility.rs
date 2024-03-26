@@ -12,7 +12,7 @@ use feo_types::{
 use crate::{
     parse::ParseTerm,
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseTerm for VisibilityKind {
@@ -27,7 +27,7 @@ impl ParseTerm for VisibilityKind {
             ..
         }) = kw_pub_opt
         {
-            utils::log_msg(LogMsgType::Detect, "visibility", parser);
+            test_utils::log_msg(LogMsgType::Detect, "visibility", parser);
 
             match &parser.peek_next() {
                 Some(Delimiter {
@@ -45,7 +45,7 @@ impl ParseTerm for VisibilityKind {
             return Ok(Some(VisibilityKind::Pub(kw_pub_opt.unwrap())));
         }
 
-        utils::log_msg(LogMsgType::Detect, "no visibility", parser);
+        test_utils::log_msg(LogMsgType::Detect, "no visibility", parser);
 
         Ok(None)
     }
@@ -124,8 +124,6 @@ impl ParseTerm for PubPackageVisibility {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

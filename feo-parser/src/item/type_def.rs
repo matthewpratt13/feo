@@ -5,7 +5,8 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Identifier, Keyword
 use crate::{
     parse::{ParseItem, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseItem for TypeDef {
@@ -24,12 +25,12 @@ impl ParseItem for TypeDef {
             ..
         }) = kw_type_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`type` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`type` keyword", parser);
 
             if let Some(type_name) = parser.peek_next::<Identifier>() {
                 parser.next_token();
 
-                utils::log_msg(LogMsgType::Detect, "type name", parser);
+                test_utils::log_msg(LogMsgType::Detect, "type name", parser);
 
                 if let Some(Punctuation {
                     punc_kind: PuncKind::Equals,
@@ -38,11 +39,7 @@ impl ParseItem for TypeDef {
                 {
                     parser.next_token();
 
-                    utils::log_msg(
-                        LogMsgType::Detect,
-                        "type definition assignment",
-                        parser,
-                    );
+                    test_utils::log_msg(LogMsgType::Detect, "type definition assignment", parser);
 
                     parser.next_token();
 
@@ -60,7 +57,7 @@ impl ParseItem for TypeDef {
                         ..
                     }) = semicolon_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "type definition", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "type definition", parser);
 
                         return Ok(Some(TypeDef {
                             attributes_opt,
@@ -98,8 +95,6 @@ impl ParseItem for TypeDef {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

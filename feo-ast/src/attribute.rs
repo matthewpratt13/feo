@@ -19,7 +19,7 @@ pub enum AttributeKind {
     KwTopic(KwTopic),
     KwUnsafe(KwUnsafe),
 
-    Iden(Identifier),
+    Identifier(Identifier),
 }
 
 #[derive(Debug, Clone)]

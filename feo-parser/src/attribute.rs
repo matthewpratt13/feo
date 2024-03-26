@@ -14,7 +14,7 @@ use crate::{
     parse::ParseTerm,
     parser::Parser,
     peek::{Peek, Peeker},
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl Peek for AttributeKind {
@@ -36,7 +36,7 @@ impl Peek for AttributeKind {
                 _ => return None,
             }
         } else if let Some(id) = Identifier::peek(peeker) {
-            AttributeKind::Iden(id)
+            AttributeKind::Identifier(id)
         } else {
             return None;
         };
@@ -57,7 +57,7 @@ impl ParseTerm for InnerAttr {
             ..
         }) = hash_bang_opt
         {
-            utils::log_msg(LogMsgType::Detect, "inner attribute", parser);
+            test_utils::log_msg(LogMsgType::Detect, "inner attribute", parser);
 
             let open_bracket_opt = parser.peek_next();
 
@@ -71,7 +71,7 @@ impl ParseTerm for InnerAttr {
                 if let Some(attribute) = parser.peek_next::<AttributeKind>() {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
+                    test_utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
 
                     let close_bracket_opt = parser.peek_next();
 
@@ -126,7 +126,7 @@ impl ParseTerm for OuterAttr {
             ..
         }) = hash_sign_opt
         {
-            utils::log_msg(LogMsgType::Detect, "outer attribute", parser);
+            test_utils::log_msg(LogMsgType::Detect, "outer attribute", parser);
 
             let open_bracket_opt = parser.peek_next();
 
@@ -140,7 +140,7 @@ impl ParseTerm for OuterAttr {
                 if let Some(attribute) = parser.peek_next::<AttributeKind>() {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
+                    test_utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
 
                     let close_bracket_opt = parser.peek_next();
 
@@ -185,8 +185,6 @@ impl ParseTerm for OuterAttr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

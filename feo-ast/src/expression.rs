@@ -48,8 +48,7 @@ pub use self::{
     underscore_expr::UnderscoreExpr,
 };
 
-// expressions always produce / evaluate to a value, and may have (side) effects
-
+/// `Expression` always produce / evaluate to a value, and may have (side) effects.
 #[derive(Debug, Clone)]
 pub enum Expression {
     ArrayExpr(ArrayExpr),

@@ -4,6 +4,7 @@ use feo_types::{
     Identifier,
 };
 
+/// Element within a `SimplePath`
 #[derive(Debug, Clone)]
 pub enum SimplePathSegmentKind {
     Identifier(Identifier),
@@ -23,6 +24,7 @@ impl Spanned for SimplePathSegmentKind {
     }
 }
 
+/// Element within a `PathInExpr`
 #[derive(Debug, Clone)]
 pub enum PathIdenSegmentKind {
     Identifier(Identifier),
@@ -67,7 +69,8 @@ impl Spanned for PathExpr {
 
 pub type PathPatt = PathExpr;
 
-// points to either a local variable or an item
+
+/// Points to either a local variable or an `Item`.
 #[derive(Debug, Clone)]
 pub struct SimplePath {
     pub first_segment: SimplePathSegmentKind,
@@ -90,6 +93,7 @@ impl Spanned for SimplePath {
     }
 }
 
+/// Points to an `Identifier` or `Item`.
 #[derive(Debug, Clone)]
 pub struct PathInExpr {
     pub first_segment: PathExprSegment,

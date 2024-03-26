@@ -17,7 +17,8 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseItem for InherentImplItem {
@@ -49,12 +50,12 @@ impl ParseItem for InherentImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
 
             parser.next_token();
 
             if let Some(nominal_type) = Type::parse(parser)? {
-                utils::log_msg(LogMsgType::Detect, "nominal type", parser);
+                test_utils::log_msg(LogMsgType::Detect, "nominal type", parser);
 
                 parser.next_token();
 
@@ -65,7 +66,7 @@ impl ParseItem for InherentImplBlock {
                     ..
                 }) = open_brace_opt
                 {
-                    utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+                    test_utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
 
                     parser.next_token();
 
@@ -80,7 +81,11 @@ impl ParseItem for InherentImplBlock {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "inherent implementation block", parser);
+                        test_utils::log_msg(
+                            LogMsgType::Exit,
+                            "inherent implementation block",
+                            parser,
+                        );
 
                         return Ok(Some(InherentImplBlock {
                             outer_attributes_opt,
@@ -148,12 +153,12 @@ impl ParseItem for TraitImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
 
             parser.next_token();
 
             if let Some(implemented_trait_path) = PathType::parse(parser)? {
-                utils::log_msg(LogMsgType::Detect, "implemented trait path", parser);
+                test_utils::log_msg(LogMsgType::Detect, "implemented trait path", parser);
 
                 let kw_for_opt = parser.peek_current();
 
@@ -165,7 +170,7 @@ impl ParseItem for TraitImplBlock {
                     parser.next_token();
 
                     if let Some(implementing_type) = Type::parse(parser)? {
-                        utils::log_msg(LogMsgType::Detect, "implementing type", parser);
+                        test_utils::log_msg(LogMsgType::Detect, "implementing type", parser);
 
                         parser.next_token();
 
@@ -176,7 +181,11 @@ impl ParseItem for TraitImplBlock {
                             ..
                         }) = open_brace_opt
                         {
-                            utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
+                            test_utils::log_msg(
+                                LogMsgType::Enter,
+                                "trait implementation block",
+                                parser,
+                            );
 
                             parser.next_token();
 
@@ -193,7 +202,7 @@ impl ParseItem for TraitImplBlock {
                                 ..
                             }) = close_brace_opt
                             {
-                                utils::log_msg(
+                                test_utils::log_msg(
                                     LogMsgType::Exit,
                                     "trait implementation block",
                                     parser,
@@ -245,8 +254,6 @@ impl ParseItem for TraitImplBlock {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 
