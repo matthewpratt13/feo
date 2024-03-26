@@ -10,7 +10,7 @@ use feo_types::{
 
 use crate::Type;
 
-use super::{Expression, Value};
+use super::Value;
 
 #[derive(Debug, Clone)]
 pub enum OperatorExprKind {

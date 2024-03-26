@@ -1275,10 +1275,10 @@ impl ParseItem for Item {
             ..
         }) = parser.peek_current()
         {
-            if let Some(_) = OuterAttr::parse(parser)? {
+            if let Some(_) = OuterAttr::parse(parser).unwrap_or(None) {
                 parser.next_token();
 
-                if let Some(i) = get_item_by_keyword(parser)? {
+                if let Some(i) = get_item_by_keyword(parser).unwrap_or(None) {
                     return Ok(Some(i));
                 }
             }
@@ -1361,7 +1361,7 @@ impl ParsePatt for Pattern {
                 _ => (),
             }
 
-            if let Some(id) = IdentifierPatt::parse(parser)? {
+            if let Some(id) = IdentifierPatt::parse(parser).unwrap_or(None) {
                 return Ok(Some(Pattern::IdentifierPatt(id)));
             }
         } else if let Some(d) = parser.peek_current::<Delimiter>() {
@@ -1413,7 +1413,7 @@ impl ParsePatt for Pattern {
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match &p.punc_kind {
                 PuncKind::Ampersand => {
-                    if let Some(rp) = ReferencePatt::parse(parser)? {
+                    if let Some(rp) = ReferencePatt::parse(parser).unwrap_or(None) {
                         return Ok(Some(Pattern::ReferencePatt(rp)));
                     }
                 }
@@ -1446,21 +1446,21 @@ impl ParseStatement for Statement {
         //test_utils::log_msg(LogMsgType::Detect, "Statement", parser);
 
         if let Some(_) = parser.peek_current::<Identifier>() {
-            if let Some(es) = ExprStatement::parse(parser)? {
+            if let Some(es) = ExprStatement::parse(parser).unwrap_or(None) {
                 return Ok(Some(Statement::ExprStatement(es)));
             }
         } else if let Some(_) = parser.peek_current::<Delimiter>() {
-            if let Some(es) = ExprStatement::parse(parser)? {
+            if let Some(es) = ExprStatement::parse(parser).unwrap_or(None) {
                 return Ok(Some(Statement::ExprStatement(es)));
             }
         } else if let Some(_) = parser.peek_current::<LiteralKind>() {
-            if let Some(es) = ExprStatement::parse(parser)? {
+            if let Some(es) = ExprStatement::parse(parser).unwrap_or(None) {
                 return Ok(Some(Statement::ExprStatement(es)));
             }
         } else if let Some(k) = parser.peek_current::<Keyword>() {
             match &k.keyword_kind {
                 KeywordKind::KwLet => {
-                    if let Some(ls) = LetStatement::parse(parser)? {
+                    if let Some(ls) = LetStatement::parse(parser).unwrap_or(None) {
                         return Ok(Some(Statement::LetStatement(ls)));
                     }
                 }
@@ -1476,13 +1476,13 @@ impl ParseStatement for Statement {
                 | KeywordKind::KwStruct
                 | KeywordKind::KwTrait
                 | KeywordKind::KwType => {
-                    if let Some(i) = get_item_by_keyword(parser)? {
+                    if let Some(i) = get_item_by_keyword(parser).unwrap_or(None) {
                         return Ok(Some(Statement::Item(i)));
                     }
                 }
 
                 _ => {
-                    if let Some(es) = ExprStatement::parse(parser)? {
+                    if let Some(es) = ExprStatement::parse(parser).unwrap_or(None) {
                         return Ok(Some(Statement::ExprStatement(es)));
                     }
                 }
@@ -1490,7 +1490,7 @@ impl ParseStatement for Statement {
         } else if let Some(p) = parser.peek_current::<Punctuation>() {
             match p.punc_kind {
                 PuncKind::HashSign => {
-                    if let Some(_) = OuterAttr::parse(parser)? {
+                    if let Some(_) = OuterAttr::parse(parser).unwrap_or(None) {
                         parser.next_token();
 
                         if let Some(Keyword {
@@ -1498,21 +1498,21 @@ impl ParseStatement for Statement {
                             ..
                         }) = parser.peek_current()
                         {
-                            if let Some(ls) = LetStatement::parse(parser)? {
+                            if let Some(ls) = LetStatement::parse(parser).unwrap_or(None) {
                                 return Ok(Some(Statement::LetStatement(ls)));
                             }
                         } else {
                             return Ok(None);
                         }
 
-                        if let Some(i) = get_item_by_keyword(parser)? {
+                        if let Some(i) = get_item_by_keyword(parser).unwrap_or(None) {
                             return Ok(Some(Statement::Item(i)));
                         }
                     }
                 }
 
                 _ => {
-                    if let Some(es) = ExprStatement::parse(parser)? {
+                    if let Some(es) = ExprStatement::parse(parser).unwrap_or(None) {
                         return Ok(Some(Statement::ExprStatement(es)));
                     }
                 }
@@ -1660,11 +1660,11 @@ impl ParseTerm for Value {
         if let Some(k) = parser.peek_current::<Keyword>() {
             match k.keyword_kind {
                 KeywordKind::KwSelfType => {
-                    if let Some(se) = StructExpr::parse(parser)? {
+                    if let Some(se) = StructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Value::StructExpr(se)));
                     }
 
-                    if let Some(tse) = TupleStructExpr::parse(parser)? {
+                    if let Some(tse) = TupleStructExpr::parse(parser).unwrap_or(None) {
                         return Ok(Some(Value::TupleStructExpr(tse)));
                     }
 
@@ -1750,6 +1750,15 @@ impl ParseTerm for Value {
                 _ => (),
             }
 
+            if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
+                let path_expr = PathInExpr {
+                    first_segment: pis,
+                    subsequent_segments: None,
+                };
+
+                return Ok(Some(Value::PathExpr(path_expr)));
+            }
+
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
@@ -1759,25 +1768,25 @@ impl ParseTerm for Value {
                 //     return Ok(Some(Value::MethodCallExpr(mc)));
                 // }
 
-                // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                //     return Ok(Some(Value::FieldAccessExpr(fa)));
-                // }
+                if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                    return Ok(Some(Value::FieldAccessExpr(fa)));
+                }
 
                 // if let Some(tie) = TupleIndexExprExpr::parse(parser).unwrap_or(None) {
                 //     return Ok(Some(Value::TupleIndexExprExpr(tie)));
                 // }
             }
 
-            if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
-                let path_expr = PathInExpr {
-                    first_segment: pis,
-                    subsequent_segments: None,
-                };
+            // if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
+            //     let path_expr = PathInExpr {
+            //         first_segment: pis,
+            //         subsequent_segments: None,
+            //     };
 
-                return Ok(Some(Value::PathExpr(path_expr)));
-            } else {
-                return Ok(None);
-            }
+            //     return Ok(Some(Value::PathExpr(path_expr)));
+            // } else {
+            //     return Ok(None);
+            // }
         } else if let Some(d) = parser.peek_current::<Delimiter>() {
             match &d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
