@@ -38,8 +38,6 @@ impl ParseTerm for ClosureParamsOpt {
                     ..
                 }) = pipe_opt
                 {
-                    parser.next_token();
-
                     return Ok(Some(ClosureParamsOpt::Some((
                         pipe_or_dbl_pipe_opt.unwrap(),
                         params,
@@ -51,13 +49,17 @@ impl ParseTerm for ClosureParamsOpt {
                     expected: "`|`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
+            } else {
+                parser.log_error(ParserErrorKind::UnexpectedToken {
+                    expected: "`ClosureParam`".to_string(),
+                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
+                });
             }
         } else if let Some(Punctuation {
             punc_kind: PuncKind::DblPipe,
             ..
         }) = pipe_or_dbl_pipe_opt
         {
-            parser.next_token();
             return Ok(Some(ClosureParamsOpt::None(pipe_or_dbl_pipe_opt.unwrap())));
         } else {
             return Ok(None);
@@ -114,8 +116,6 @@ impl ParseExpr for ClosureWithoutBlock {
             parser.next_token();
 
             if let Some(body_operand) = Expression::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(ClosureWithoutBlock {
                     params,
                     body_operand: Box::new(body_operand),
@@ -140,6 +140,8 @@ impl ParseExpr for ClosureWithBlock {
         Self: Sized,
     {
         if let Some(params) = ClosureParamsOpt::parse(parser)? {
+            parser.next_token();
+
             let return_type_opt = if let Some(Punctuation {
                 punc_kind: PuncKind::ThinArrow,
                 ..

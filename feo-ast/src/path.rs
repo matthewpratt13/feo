@@ -1,13 +1,14 @@
 use feo_types::{
     span::{Span, Spanned},
-    type_utils::{KwCrate, KwSelf, KwSelfType, KwSuper},
+    type_utils::{KwPackage, KwSelf, KwSelfType, KwSuper},
     Identifier,
 };
 
+/// Element within a `SimplePath`
 #[derive(Debug, Clone)]
 pub enum SimplePathSegmentKind {
-    Iden(Identifier),
-    KwCrate(KwCrate),
+    Identifier(Identifier),
+    KwPackage(KwPackage),
     KwSelf(KwSelf),
     KwSuper(KwSuper),
 }
@@ -15,18 +16,19 @@ pub enum SimplePathSegmentKind {
 impl Spanned for SimplePathSegmentKind {
     fn span(&self) -> Span {
         match &self {
-            SimplePathSegmentKind::Iden(i) => i.span(),
-            SimplePathSegmentKind::KwCrate(c) => c.span(),
+            SimplePathSegmentKind::Identifier(i) => i.span(),
+            SimplePathSegmentKind::KwPackage(c) => c.span(),
             SimplePathSegmentKind::KwSelf(se) => se.span(),
             SimplePathSegmentKind::KwSuper(su) => su.span(),
         }
     }
 }
 
+/// Element within a `PathInExpr`
 #[derive(Debug, Clone)]
 pub enum PathIdenSegmentKind {
-    Iden(Identifier),
-    KwCrate(KwCrate),
+    Identifier(Identifier),
+    KwPackage(KwPackage),
     KwSelf(KwSelf),
     KwSelfType(KwSelfType),
     KwSuper(KwSuper),
@@ -35,8 +37,8 @@ pub enum PathIdenSegmentKind {
 impl Spanned for PathIdenSegmentKind {
     fn span(&self) -> Span {
         match &self {
-            PathIdenSegmentKind::Iden(i) => i.span(),
-            PathIdenSegmentKind::KwCrate(c) => c.span(),
+            PathIdenSegmentKind::Identifier(i) => i.span(),
+            PathIdenSegmentKind::KwPackage(c) => c.span(),
             PathIdenSegmentKind::KwSelf(se) => se.span(),
             PathIdenSegmentKind::KwSelfType(st) => st.span(),
             PathIdenSegmentKind::KwSuper(su) => su.span(),
@@ -67,7 +69,8 @@ impl Spanned for PathExpr {
 
 pub type PathPatt = PathExpr;
 
-// points to either a local variable or an item
+
+/// Points to either a local variable or an `Item`.
 #[derive(Debug, Clone)]
 pub struct SimplePath {
     pub first_segment: SimplePathSegmentKind,
@@ -90,6 +93,7 @@ impl Spanned for SimplePath {
     }
 }
 
+/// Points to an `Identifier` or `Item`.
 #[derive(Debug, Clone)]
 pub struct PathInExpr {
     pub first_segment: PathExprSegment,

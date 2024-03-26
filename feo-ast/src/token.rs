@@ -16,7 +16,7 @@ pub enum Token {
     U256Lit(Literal<U256>),
     FloatLit(Literal<FloatType>),
 
-    Iden(Identifier),
+    Identifier(Identifier),
     Keyword(Keyword),
 
     Comment(Comment),
@@ -38,7 +38,7 @@ impl Spanned for Token {
             Token::UIntLit(ui) => ui.span(),
             Token::U256Lit(u) => u.span(),
             Token::FloatLit(f) => f.span(),
-            Token::Iden(id) => id.span(),
+            Token::Identifier(id) => id.span(),
             Token::Keyword(k) => k.span(),
             Token::Comment(c) => c.span(),
             Token::DocComment(dc) => dc.span(),
@@ -61,7 +61,7 @@ impl fmt::Display for Token {
             Token::UIntLit(ui) => write!(f, "`{}`", ui),
             Token::U256Lit(u) => write!(f, "`{}`", u),
             Token::FloatLit(fl) => write!(f, "`{}`", fl),
-            Token::Iden(id) => write!(f, "`{}`", id.name),
+            Token::Identifier(id) => write!(f, "`{}`", id.name),
             Token::Keyword(k) => write!(f, "`{}`", k.keyword_kind.as_str()),
             Token::Comment(c) => write!(f, "`{}`", c.data),
             Token::DocComment(dc) => write!(f, "`{}`", dc.content),

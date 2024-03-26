@@ -14,7 +14,7 @@ use crate::{
     parse::ParseTerm,
     parser::Parser,
     peek::{Peek, Peeker},
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl Peek for AttributeKind {
@@ -36,7 +36,7 @@ impl Peek for AttributeKind {
                 _ => return None,
             }
         } else if let Some(id) = Identifier::peek(peeker) {
-            AttributeKind::Iden(id)
+            AttributeKind::Identifier(id)
         } else {
             return None;
         };
@@ -57,11 +57,9 @@ impl ParseTerm for InnerAttr {
             ..
         }) = hash_bang_opt
         {
-            utils::log_msg(LogMsgType::Detect, "inner attribute", parser);
+            test_utils::log_msg(LogMsgType::Detect, "inner attribute", parser);
 
-            parser.next_token();
-
-            let open_bracket_opt = parser.peek_current();
+            let open_bracket_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -70,16 +68,20 @@ impl ParseTerm for InnerAttr {
             {
                 parser.next_token();
 
-                if let Some(attribute) = parser.peek_current::<AttributeKind>() {
+                if let Some(attribute) = parser.peek_next::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current();
+                    test_utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
+
+                    let close_bracket_opt = parser.peek_next();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
                     }) = close_bracket_opt
                     {
+                        parser.next_token();
+
                         return Ok(Some(InnerAttr {
                             hash_bang: hash_bang_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
@@ -124,11 +126,9 @@ impl ParseTerm for OuterAttr {
             ..
         }) = hash_sign_opt
         {
-            utils::log_msg(LogMsgType::Detect, "outer attribute", parser);
+            test_utils::log_msg(LogMsgType::Detect, "outer attribute", parser);
 
-            parser.next_token();
-
-            let open_bracket_opt = parser.peek_current();
+            let open_bracket_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -137,16 +137,20 @@ impl ParseTerm for OuterAttr {
             {
                 parser.next_token();
 
-                if let Some(attribute) = parser.peek_current::<AttributeKind>() {
+                if let Some(attribute) = parser.peek_next::<AttributeKind>() {
                     parser.next_token();
 
-                    let close_bracket_opt = parser.peek_current();
+                    test_utils::log_msg(LogMsgType::Detect, "attribute kind", parser);
+
+                    let close_bracket_opt = parser.peek_next();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
                         ..
                     }) = close_bracket_opt
                     {
+                        parser.next_token();
+
                         return Ok(Some(OuterAttr {
                             hash_sign: hash_sign_opt.unwrap(),
                             open_bracket: open_bracket_opt.unwrap(),
@@ -181,8 +185,6 @@ impl ParseTerm for OuterAttr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

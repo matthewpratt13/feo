@@ -17,7 +17,8 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseExpr for IfExpr {
@@ -25,7 +26,7 @@ impl ParseExpr for IfExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "if expression", parser);
+        test_utils::log_msg(LogMsgType::Enter, "if expression", parser);
 
         let mut else_if_blocks: Vec<Box<IfExpr>> = Vec::new();
 
@@ -41,23 +42,25 @@ impl ParseExpr for IfExpr {
             parser.next_token();
 
             if let Some(condition_operand) = ParenthesizedExpr::parse(parser)? {
+                parser.next_token();
+
                 if let Some(if_block) = BlockExpr::parse(parser)? {
                     while let Some(Keyword {
                         keyword_kind: KeywordKind::KwElse,
                         ..
                     }) = parser.peek_current()
                     {
-                        utils::log_msg(LogMsgType::Enter, "else(-if) block", parser);
+                        test_utils::log_msg(LogMsgType::Enter, "else(-if) block", parser);
 
                         parser.next_token();
 
                         if let Some(next_if_expr) = IfExpr::parse(parser)? {
-                            utils::log_msg(LogMsgType::Exit, "else-if block", parser);
+                            test_utils::log_msg(LogMsgType::Exit, "else-if block", parser);
 
                             else_if_blocks.push(Box::new(next_if_expr));
                         } else if let Some(b) = BlockExpr::parse(parser)? {
                             trailing_else_block_opt = Some(b);
-                            utils::log_msg(LogMsgType::Exit, "trailing else block", parser);
+                            test_utils::log_msg(LogMsgType::Exit, "trailing else block", parser);
                         } else {
                             break;
                         }
@@ -65,7 +68,7 @@ impl ParseExpr for IfExpr {
 
                     match else_if_blocks.is_empty() {
                         true => {
-                            utils::log_msg(
+                            test_utils::log_msg(
                                 LogMsgType::Exit,
                                 "if expression with no else-if blocks",
                                 parser,
@@ -80,7 +83,7 @@ impl ParseExpr for IfExpr {
                             }));
                         }
                         false => {
-                            utils::log_msg(
+                            test_utils::log_msg(
                                 LogMsgType::Exit,
                                 "if expression with else-if blocks",
                                 parser,
@@ -130,8 +133,6 @@ impl ParseTerm for MatchArmGuard {
             parser.next_token();
 
             if let Some(operand) = Expression::parse(parser)? {
-                parser.next_token();
-
                 return Ok(Some(MatchArmGuard {
                     kw_if: kw_if_opt.unwrap(),
                     operand: Box::new(operand),
@@ -241,7 +242,7 @@ impl ParseExpr for MatchExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "match expression", parser);
+        test_utils::log_msg(LogMsgType::Enter, "match expression", parser);
 
         let kw_match_opt = parser.peek_current();
 
@@ -253,7 +254,7 @@ impl ParseExpr for MatchExpr {
             parser.next_token();
 
             if let Some(scrutinee) = Value::parse(parser)? {
-                utils::log_msg(LogMsgType::Detect, "scrutinee", parser);
+                test_utils::log_msg(LogMsgType::Detect, "scrutinee", parser);
 
                 parser.next_token();
 
@@ -264,14 +265,14 @@ impl ParseExpr for MatchExpr {
                     ..
                 }) = open_brace_opt
                 {
-                    utils::log_msg(LogMsgType::Enter, "match expression body", parser);
+                    test_utils::log_msg(LogMsgType::Enter, "match expression body", parser);
 
                     parser.next_token();
 
                     let attributes_opt = utils::get_attributes(parser)?;
 
                     let match_arms_opt = if let Some(ma) = MatchArms::parse(parser)? {
-                        utils::log_msg(LogMsgType::Detect, "match arms", parser);
+                        test_utils::log_msg(LogMsgType::Detect, "match arms", parser);
 
                         Some(ma)
                     } else {
@@ -293,7 +294,7 @@ impl ParseExpr for MatchExpr {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "match expression", parser);
+                        test_utils::log_msg(LogMsgType::Exit, "match expression", parser);
 
                         return Ok(Some(MatchExpr {
                             kw_match: kw_match_opt.unwrap(),
@@ -362,8 +363,6 @@ fn get_arm(parser: &mut Parser) -> Result<Option<(MatchArm, Expression)>, Vec<Co
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

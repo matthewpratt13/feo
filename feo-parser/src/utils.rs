@@ -14,12 +14,16 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseStatement, ParseTerm},
     parser::Parser,
+    test_utils::{self, LogMsgType},
 };
 
+/// Helper function that collects attributes during parsing
+/// `T` should only be an `InnerAttr` or `OuterAttr`
+// TODO: restrict `T` to be either an `InnerAttr` or `OuterAttr` (using traits)
 pub fn get_attributes<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
-    log_msg(LogMsgType::Enter, "`get_attributes()`", parser);
+    // test_utils::log_msg(LogMsgType::Enter, "`get_attributes()`", parser);
 
     let mut attributes: Vec<T> = Vec::new();
 
@@ -28,9 +32,10 @@ pub fn get_attributes<T: ParseTerm>(
         parser.next_token();
     }
 
+    // TODO: remove after initial debugging
     println!("number of attributes: {}", attributes.len());
 
-    log_msg(LogMsgType::Exit, "`get_attributes()`", parser);
+    // test_utils::log_msg(LogMsgType::Exit, "`get_attributes()`", parser);
 
     if attributes.is_empty() {
         Ok(None)
@@ -39,19 +44,22 @@ pub fn get_attributes<T: ParseTerm>(
     }
 }
 
+/// Helper function that collects `Item` during parsing.
+/// e.g., `ConstVarDef`, `FuncDef`, `StructDef`, etc.
 pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Vec<CompilerError>> {
-    log_msg(LogMsgType::Enter, "`get_items()`", parser);
+    test_utils::log_msg(LogMsgType::Enter, "`get_items()`", parser);
 
     let mut items: Vec<T> = Vec::new();
 
     while let Some(i) = T::parse(parser)? {
-        items.push(i);
         parser.next_token();
+        items.push(i);
     }
 
+    // TODO: remove after initial debugging
     println!("number of items: {}", items.len());
 
-    log_msg(LogMsgType::Exit, "`get_items()`", parser);
+    test_utils::log_msg(LogMsgType::Exit, "`get_items()`", parser);
 
     if items.is_empty() {
         Ok(None)
@@ -60,10 +68,12 @@ pub fn get_items<T: ParseItem>(parser: &mut Parser) -> Result<Option<Vec<T>>, Ve
     }
 }
 
+/// Helper function that collects path elements during parsing (usually `Identifier` or `Self`)
+/// `T` should resolve to some `PathIdenSegmentKind` or `SimplePathSegmentKind`
 pub fn get_path_collection<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<PathCollection<T>>, Vec<CompilerError>> {
-    log_msg(LogMsgType::Enter, "`get_path_collection()`", parser);
+    test_utils::log_msg(LogMsgType::Enter, "`get_path_collection()`", parser);
 
     if let Some(root_path) = T::parse(parser)? {
         if let Some(Punctuation {
@@ -100,7 +110,7 @@ pub fn get_path_collection<T: ParseTerm>(
                     ..
                 }) = parser.peek_current()
                 {
-                    log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
 
                     return Ok(Some(PathCollection {
                         root_path: Box::new(root_path),
@@ -114,7 +124,7 @@ pub fn get_path_collection<T: ParseTerm>(
                 });
             }
         } else {
-            log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
+            test_utils::log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
 
             return Ok(Some(PathCollection {
                 root_path: Box::new(root_path),
@@ -122,7 +132,7 @@ pub fn get_path_collection<T: ParseTerm>(
             }));
         }
     } else {
-        log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
+        test_utils::log_msg(LogMsgType::Exit, "`get_path_collection()`", parser);
 
         return Ok(None);
     }
@@ -130,8 +140,10 @@ pub fn get_path_collection<T: ParseTerm>(
     Err(parser.errors())
 }
 
+/// Helper function that collects `Statement` during parsing.
+/// Statements include all `Item`, as well as `ExprStatement` and `LetStatement`
 pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec<CompilerError>> {
-    log_msg(LogMsgType::Enter, "`get_statements()`", parser);
+    test_utils::log_msg(LogMsgType::Enter, "`get_statements()`", parser);
 
     let mut statements: Vec<Statement> = Vec::new();
 
@@ -147,9 +159,10 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
         }
     }
 
+    // TODO: remove after initial debugging
     println!("number of statements: {}", statements.len());
 
-    log_msg(LogMsgType::Exit, "`get_statements()`", parser);
+    test_utils::log_msg(LogMsgType::Exit, "`get_statements()`", parser);
 
     if statements.is_empty() {
         return Ok(None);
@@ -158,10 +171,11 @@ pub fn get_statements(parser: &mut Parser) -> Result<Option<Vec<Statement>>, Vec
     }
 }
 
+/// Helper function that collects terms during parsing (i.e., elements of `Item` and `Expression`)
 pub fn get_term_collection<T: ParseTerm>(
     parser: &mut Parser,
 ) -> Result<Option<TermCollection<T>>, Vec<CompilerError>> {
-    log_msg(LogMsgType::Enter, "`get_term_collection()`", parser);
+    // test_utils::log_msg(LogMsgType::Enter, "`get_term_collection()`", parser);
 
     let mut terms: Vec<T> = Vec::new();
 
@@ -183,13 +197,14 @@ pub fn get_term_collection<T: ParseTerm>(
             }
         }
 
+        // TODO: remove after initial debugging
         println!("number of terms: {}", terms.len() + 1);
 
         let subsequent_terms_opt = if terms.is_empty() { None } else { Some(terms) };
 
         skip_trailing_comma(parser)?;
 
-        log_msg(LogMsgType::Exit, "`get_term_collection()`", parser);
+        // test_utils::log_msg(LogMsgType::Exit, "`get_term_collection()`", parser);
 
         return Ok(Some(TermCollection::new(first_term, subsequent_terms_opt)));
     } else {
@@ -197,6 +212,7 @@ pub fn get_term_collection<T: ParseTerm>(
     }
 }
 
+/// Helper function that collects `Value` (`Expression`) during parsing
 pub fn get_value_collection(
     parser: &mut Parser,
 ) -> Result<Option<ValueCollection>, Vec<CompilerError>> {
@@ -220,9 +236,10 @@ pub fn get_value_collection(
             }
         }
 
+        // TODO: remove after initial debugging
         println!("number of values: {}", values.len() + 1);
 
-        log_msg(LogMsgType::Exit, "`get_value_collection()`", parser);
+        test_utils::log_msg(LogMsgType::Exit, "`get_value_collection()`", parser);
 
         let subsequent_values_opt = if values.is_empty() {
             None
@@ -239,50 +256,29 @@ pub fn get_value_collection(
     }
 }
 
+/// Helper function that returns `VisibilityKind` during parsing
 pub fn get_visibility(parser: &mut Parser) -> Result<Option<VisibilityKind>, Vec<CompilerError>> {
-    log_msg(LogMsgType::Enter, "`get_visibility()`", parser);
+    // test_utils::log_msg(LogMsgType::Enter, "`get_visibility()`", parser);
 
     if let Some(v) = VisibilityKind::parse(parser)? {
         parser.next_token();
 
-        println!("visibility kind: {:#?}", v);
-
-        log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
+        // test_utils::log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
         Ok(Some(v))
     } else {
-        log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
+        // test_utils::log_msg(LogMsgType::Exit, "`get_visibility()`", parser);
         Ok(None)
     }
 }
 
-pub enum LogMsgType {
-    Enter,
-    Exit,
-    Detect,
-    Expect,
-}
-
-pub fn log_msg(msg_type: LogMsgType, object_name: &str, parser: &mut Parser) -> () {
-    let msg_str = match msg_type {
-        LogMsgType::Enter => "entering",
-        LogMsgType::Exit => "exit",
-        LogMsgType::Detect => "detected",
-        LogMsgType::Expect => "expected",
-    };
-
-    println!(
-        "{msg_str} {object_name}...\ncurrent_token: {:#?}",
-        parser.current_token()
-    );
-}
-
+/// Helper function that skips trailing commas
 pub fn skip_trailing_comma(parser: &mut Parser) -> Result<(), Vec<CompilerError>> {
     if let Some(Punctuation {
         punc_kind: PuncKind::Comma,
         ..
     }) = parser.peek_current::<Punctuation>()
     {
-        log_msg(LogMsgType::Detect, "trailing comma", parser);
+        test_utils::log_msg(LogMsgType::Detect, "trailing comma", parser);
 
         parser.next_token();
         Ok(())

@@ -11,7 +11,8 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuatio
 use crate::{
     parse::{ParseExpr, ParsePatt, ParseStatement, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseStatement for ExprStatement {
@@ -19,7 +20,7 @@ impl ParseStatement for ExprStatement {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "expression statement", parser);
+        test_utils::log_msg(LogMsgType::Enter, "expression statement", parser);
 
         if let Some(expression) = Expression::parse(parser)? {
             parser.next_token();
@@ -31,12 +32,12 @@ impl ParseStatement for ExprStatement {
                 ..
             }) = semicolon_opt
             {
-                utils::log_msg(LogMsgType::Detect, "trailing comma", parser);
+                test_utils::log_msg(LogMsgType::Detect, "semicolon", parser);
 
                 parser.next_token();
             }
 
-            utils::log_msg(LogMsgType::Exit, "expression statement", parser);
+            test_utils::log_msg(LogMsgType::Exit, "expression statement", parser);
 
             return Ok(Some(ExprStatement {
                 expression,
@@ -140,8 +141,6 @@ impl ParseStatement for LetStatement {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

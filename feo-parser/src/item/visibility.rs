@@ -1,5 +1,5 @@
 use feo_ast::{
-    item::{PubCrateVisibility, VisibilityKind},
+    item::{PubPackageVisibility, VisibilityKind},
     token::Token,
 };
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
@@ -12,7 +12,7 @@ use feo_types::{
 use crate::{
     parse::ParseTerm,
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseTerm for VisibilityKind {
@@ -27,15 +27,15 @@ impl ParseTerm for VisibilityKind {
             ..
         }) = kw_pub_opt
         {
-            utils::log_msg(LogMsgType::Detect, "visibility", parser);
+            test_utils::log_msg(LogMsgType::Detect, "visibility", parser);
 
             match &parser.peek_next() {
                 Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                     ..
                 }) => {
-                    if let Some(p) = PubCrateVisibility::parse(parser)? {
-                        return Ok(Some(VisibilityKind::PubCrate(p)));
+                    if let Some(p) = PubPackageVisibility::parse(parser)? {
+                        return Ok(Some(VisibilityKind::PubPackage(p)));
                     }
                 }
 
@@ -45,13 +45,13 @@ impl ParseTerm for VisibilityKind {
             return Ok(Some(VisibilityKind::Pub(kw_pub_opt.unwrap())));
         }
 
-        utils::log_msg(LogMsgType::Detect, "no visibility", parser);
+        test_utils::log_msg(LogMsgType::Detect, "no visibility", parser);
 
         Ok(None)
     }
 }
 
-impl ParseTerm for PubCrateVisibility {
+impl ParseTerm for PubPackageVisibility {
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized,
@@ -74,12 +74,12 @@ impl ParseTerm for PubCrateVisibility {
             {
                 parser.next_token();
 
-                let kw_crate_opt = parser.peek_current();
+                let kw_package_opt = parser.peek_current();
 
                 if let Some(Keyword {
-                    keyword_kind: KeywordKind::KwCrate,
+                    keyword_kind: KeywordKind::KwPackage,
                     ..
-                }) = kw_crate_opt
+                }) = kw_package_opt
                 {
                     parser.next_token();
 
@@ -90,10 +90,10 @@ impl ParseTerm for PubCrateVisibility {
                         ..
                     }) = close_parenthesis_opt
                     {
-                        return Ok(Some(PubCrateVisibility {
+                        return Ok(Some(PubPackageVisibility {
                             kw_pub: kw_pub_opt.unwrap(),
                             open_parenthesis: open_parenthesis_opt.unwrap(),
-                            kw_crate: kw_crate_opt.unwrap(),
+                            kw_package: kw_package_opt.unwrap(),
                             close_parenthesis: close_parenthesis_opt.unwrap(),
                         }));
                     }
@@ -104,7 +104,7 @@ impl ParseTerm for PubCrateVisibility {
                     });
                 } else {
                     parser.log_error(ParserErrorKind::UnexpectedToken {
-                        expected: "`crate`".to_string(),
+                        expected: "`package`".to_string(),
                         found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                     });
                 }
@@ -125,15 +125,11 @@ impl ParseTerm for PubCrateVisibility {
 #[cfg(test)]
 mod tests {
 
-    use crate::test_utils;
-
     use super::*;
 
     #[test]
     fn parse_visibility_kind() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"
-        pub
-        pub(crate)"#;
+        let source_code = r#"pub(package)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

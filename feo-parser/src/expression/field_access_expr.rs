@@ -8,6 +8,7 @@ use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseExpr for FieldAccessExpr {
@@ -17,16 +18,25 @@ impl ParseExpr for FieldAccessExpr {
     {
         // TODO: find a way to prevent stack overflow when accessing fields (as a field access expression)
         if let Some(container_operand) = Value::parse(parser)? {
-            parser.next_token();
-
+            test_utils::log_msg(
+                LogMsgType::Detect,
+                "field access expression container operand",
+                parser,
+            );
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
-            }) = parser.peek_current()
+            }) = parser.peek_next()
             {
                 parser.next_token();
 
-                if let Some(field_name) = parser.peek_current::<Identifier>() {
+                test_utils::log_msg(LogMsgType::Detect, "full stop", parser);
+
+                if let Some(field_name) = parser.peek_next::<Identifier>() {
+                    parser.next_token();
+
+                    test_utils::log_msg(LogMsgType::Detect, "identifier", parser);
+
                     return Ok(Some(FieldAccessExpr {
                         container_operand: Box::new(container_operand),
                         field_name,
@@ -38,10 +48,7 @@ impl ParseExpr for FieldAccessExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`.`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

@@ -48,8 +48,7 @@ pub use self::{
     underscore_expr::UnderscoreExpr,
 };
 
-// expressions always produce / evaluate to a value, and may have (side) effects
-
+/// `Expression` always produce / evaluate to a value, and may have (side) effects.
 #[derive(Debug, Clone)]
 pub enum Expression {
     ArrayExpr(ArrayExpr),
@@ -138,9 +137,9 @@ pub enum ExprWithBlock {
     ClosureWithBlock(ClosureWithBlock),
     IfExpr(IfExpr),
     MatchExpr(MatchExpr),
-    InfiniteLoop(InfiniteLoopExpr),
-    PredicateLoop(PredicateLoopExpr),
-    IterLoop(IterLoopExpr),
+    InfiniteLoopExpr(InfiniteLoopExpr),
+    PredicateLoopExpr(PredicateLoopExpr),
+    IterLoopExpr(IterLoopExpr),
 }
 
 impl Spanned for ExprWithBlock {
@@ -150,9 +149,9 @@ impl Spanned for ExprWithBlock {
             ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
             ExprWithBlock::IfExpr(ife) => ife.span(),
             ExprWithBlock::MatchExpr(me) => me.span(),
-            ExprWithBlock::InfiniteLoop(inf) => inf.span(),
-            ExprWithBlock::PredicateLoop(ple) => ple.span(),
-            ExprWithBlock::IterLoop(ite) => ite.span(),
+            ExprWithBlock::InfiniteLoopExpr(inf) => inf.span(),
+            ExprWithBlock::PredicateLoopExpr(ple) => ple.span(),
+            ExprWithBlock::IterLoopExpr(ite) => ite.span(),
         }
     }
 }
@@ -190,16 +189,16 @@ impl<T: Spanned> Spanned for TermCollection<T> {
 #[derive(Debug, Clone)]
 pub enum Value {
     ArrayExpr(ArrayExpr),
-    IndexExpr(IndexExpr),
-    FunctionCallExpr(FunctionCallExpr),
-    MethodCallExpr(MethodCallExpr),
+    // IndexExpr(IndexExpr),
+    // FunctionCallExpr(FunctionCallExpr),
+    // MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
     Literal(LiteralKind),
-    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
-    DereferenceExpr(DereferenceExpr),
-    NegationExpr(NegationExpr),
-    ReferenceExpr(ReferenceExpr),
-    UnwrapExpr(UnwrapExpr),
+    // ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+    // DereferenceExpr(DereferenceExpr),
+    // NegationExpr(NegationExpr),
+    // ReferenceExpr(ReferenceExpr),
+    // UnwrapExpr(UnwrapExpr),
     ParenthesizedExpr(ParenthesizedExpr),
     PathExpr(PathExpr),
     StructExpr(StructExpr),
@@ -213,16 +212,16 @@ impl Spanned for Value {
     fn span(&self) -> Span {
         match self {
             Value::ArrayExpr(ae) => ae.span(),
-            Value::IndexExpr(ie) => ie.span(),
-            Value::FunctionCallExpr(fc) => fc.span(),
-            Value::MethodCallExpr(mc) => mc.span(),
+            // Value::IndexExpr(ie) => ie.span(),
+            // Value::FunctionCallExpr(fc) => fc.span(),
+            // Value::MethodCallExpr(mc) => mc.span(),
             Value::FieldAccessExpr(fa) => fa.span(),
             Value::Literal(lit) => lit.span(),
-            Value::ArithmeticOrLogicalExpr(ale) => ale.span(),
-            Value::DereferenceExpr(de) => de.span(),
-            Value::NegationExpr(ne) => ne.span(),
-            Value::ReferenceExpr(re) => re.span(),
-            Value::UnwrapExpr(ue) => ue.span(),
+            // Value::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            // Value::DereferenceExpr(de) => de.span(),
+            // Value::NegationExpr(ne) => ne.span(),
+            // Value::ReferenceExpr(re) => re.span(),
+            // Value::UnwrapExpr(ue) => ue.span(),
             Value::ParenthesizedExpr(par) => par.span(),
             Value::PathExpr(pth) => pth.span(),
             Value::StructExpr(se) => se.span(),

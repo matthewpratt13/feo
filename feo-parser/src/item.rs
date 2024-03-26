@@ -1,10 +1,10 @@
-mod constant_var_def;
+mod const_var_def;
 mod enum_def;
-mod function_def;
+mod func_def;
 mod impl_block;
 mod import_decl;
-mod mod_block;
+mod module_block;
 mod struct_def;
 mod trait_def;
-mod type_alias_def;
+mod type_def;
 mod visibility;

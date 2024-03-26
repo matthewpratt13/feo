@@ -9,7 +9,8 @@ use feo_types::{keyword::KeywordKind, punctuation::PuncKind, Keyword, Punctuatio
 use crate::{
     parse::{ParseItem, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseTerm for ImportTree {
@@ -109,11 +110,13 @@ impl ParseItem for ImportDecl {
             ..
         }) = kw_import_opt
         {
-            utils::log_msg(LogMsgType::Enter, "import declaration", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`import` keyword", parser);
 
             parser.next_token();
 
             if let Some(import_trees) = utils::get_path_collection::<ImportTree>(parser)? {
+                test_utils::log_msg(LogMsgType::Detect, "import trees", parser);
+
                 parser.next_token();
 
                 let semicolon_opt = parser.peek_current();
@@ -123,7 +126,7 @@ impl ParseItem for ImportDecl {
                     ..
                 }) = semicolon_opt
                 {
-                    utils::log_msg(LogMsgType::Exit, "import declaration", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "import declaration", parser);
 
                     return Ok(Some(ImportDecl {
                         attributes_opt,
@@ -155,13 +158,11 @@ impl ParseItem for ImportDecl {
 #[cfg(test)]
 mod tests {
 
-    use crate::test_utils;
-
     use super::*;
 
     #[test]
     fn parse_path_wildcard() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"crate::some_module::*"#;
+        let source_code = r#"package::some_module::*"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

@@ -5,8 +5,7 @@ use feo_ast::{
 use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
-    literal::UIntType,
-    Delimiter, Literal, U64Primitive,
+    Delimiter,
 };
 
 use crate::{
@@ -64,9 +63,7 @@ impl ParseExpr for IndexExpr {
     {
         // TODO: find a way to prevent stack overflow when accessing indexes (as an index expression)
         if let Some(indexed_operand) = Value::parse(parser)? {
-            parser.next_token();
-
-            let open_bracket_opt = parser.peek_current();
+            let open_bracket_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Bracket, DelimOrientation::Open),
@@ -74,11 +71,10 @@ impl ParseExpr for IndexExpr {
             }) = open_bracket_opt
             {
                 parser.next_token();
+                parser.next_token();
 
-                if let Some(index) = parser.peek_current::<Literal<UIntType>>() {
-                    parser.next_token();
-
-                    let close_bracket_opt = parser.peek_current();
+                if let Some(index) = Value::parse(parser)? {
+                    let close_bracket_opt = parser.peek_next();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Bracket, DelimOrientation::Close),
@@ -86,12 +82,11 @@ impl ParseExpr for IndexExpr {
                     }) = close_bracket_opt
                     {
                         parser.next_token();
-
+                        
                         return Ok(Some(IndexExpr {
                             indexed_operand: Box::new(indexed_operand),
                             open_bracket: open_bracket_opt.unwrap(),
-                            index: U64Primitive::try_from(index)
-                                .expect("error converting `Literal<UIntType>` to `U64Primitive`"),
+                            index: Box::new(index),
                             close_bracket: close_bracket_opt.unwrap(),
                         }));
                     }
@@ -107,10 +102,7 @@ impl ParseExpr for IndexExpr {
                     });
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`[`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

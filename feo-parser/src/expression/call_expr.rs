@@ -22,15 +22,14 @@ impl ParseExpr for FunctionCallExpr {
         Self: Sized,
     {
         if let Some(function_operand) = PathInExpr::parse(parser)? {
-            parser.next_token();
-
-            let open_parenthesis_opt = parser.peek_current();
+            let open_parenthesis_opt = parser.peek_next();
 
             if let Some(Delimiter {
                 delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                 ..
             }) = open_parenthesis_opt
             {
+                parser.next_token();
                 parser.next_token();
 
                 let call_params_opt = utils::get_value_collection(parser)?;
@@ -55,10 +54,7 @@ impl ParseExpr for FunctionCallExpr {
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                 });
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`(`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);
@@ -74,9 +70,7 @@ impl ParseExpr for MethodCallExpr {
         Self: Sized,
     {
         if let Some(receiver) = Value::parse(parser)? {
-            parser.next_token();
-
-            let full_stop_opt = parser.peek_current::<Punctuation>();
+            let full_stop_opt = parser.peek_next::<Punctuation>();
 
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
@@ -85,10 +79,11 @@ impl ParseExpr for MethodCallExpr {
             {
                 parser.next_token();
 
-                if let Some(method_name) = parser.peek_current::<Identifier>() {
+                if let Some(method_name) = parser.peek_next::<Identifier>() {
                     parser.next_token();
 
-                    let open_parenthesis_opt = parser.peek_current::<Delimiter>();
+                    let open_parenthesis_opt = parser.peek_next::<Delimiter>();
+                    parser.next_token();
 
                     if let Some(Delimiter {
                         delim: (DelimKind::Parenthesis, DelimOrientation::Open),
@@ -106,8 +101,6 @@ impl ParseExpr for MethodCallExpr {
                             ..
                         }) = close_parenthesis_opt
                         {
-                            parser.next_token();
-
                             return Ok(Some(MethodCallExpr {
                                 receiver: Box::new(receiver),
                                 full_stop: full_stop_opt.unwrap(),
@@ -123,18 +116,13 @@ impl ParseExpr for MethodCallExpr {
                             found: parser.current_token().unwrap_or(Token::EOF).to_string(),
                         });
                     } else {
-                        parser.log_error(ParserErrorKind::UnexpectedToken {
-                            expected: "`(`".to_string(),
-                            found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                        });
+                        return Ok(None);
                     }
                 } else {
+                    return Ok(None);
                 }
             } else {
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`.`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
+                return Ok(None);
             }
         } else {
             return Ok(None);

@@ -1,8 +1,5 @@
-use feo_ast::{
-    expression::{Expression, ParenthesizedExpr},
-    token::Token,
-};
-use feo_error::{error::CompilerError, parser_error::ParserErrorKind};
+use feo_ast::expression::{Expression, ParenthesizedExpr};
+use feo_error::error::CompilerError;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     Delimiter,
@@ -11,7 +8,7 @@ use feo_types::{
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseTerm for ParenthesizedExpr {
@@ -26,14 +23,12 @@ impl ParseTerm for ParenthesizedExpr {
             ..
         }) = open_parenthesis_opt
         {
-            utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
+            test_utils::log_msg(LogMsgType::Enter, "parenthesized expression", parser);
 
             parser.next_token();
 
             if let Some(enclosed_operand) = Expression::parse(parser)? {
-                parser.next_token();
-
-                let close_parenthesis_opt = parser.peek_current();
+                let close_parenthesis_opt = parser.peek_next();
 
                 if let Some(Delimiter {
                     delim: (DelimKind::Parenthesis, DelimOrientation::Close),
@@ -42,45 +37,41 @@ impl ParseTerm for ParenthesizedExpr {
                 {
                     parser.next_token();
 
-                    utils::log_msg(LogMsgType::Exit, "parenthesized expression", parser);
+                    test_utils::log_msg(LogMsgType::Exit, "parenthesized expression", parser);
 
                     return Ok(Some(ParenthesizedExpr {
                         open_parenthesis: open_parenthesis_opt.unwrap(),
                         enclosed_operand: Box::new(enclosed_operand),
                         close_parenthesis: close_parenthesis_opt.unwrap(),
                     }));
+                } else {
+                    return Ok(None);
                 }
-
-                parser.log_error(ParserErrorKind::UnexpectedToken {
-                    expected: "`)`".to_string(),
-                    found: parser.current_token().unwrap_or(Token::EOF).to_string(),
-                });
             } else {
                 return Ok(None);
             }
         } else {
             return Ok(None);
         }
-
-        Err(parser.errors())
     }
 }
 
 #[cfg(test)]
-mod tests {
 
-    use crate::test_utils;
+mod tests {
 
     use super::*;
 
     #[test]
     fn parse_parenthesized_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"(x + 2)"#;
+        let source_code = r#"(foo.bar + 2)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let parenthesized_expr = ParenthesizedExpr::parse(&mut parser)
             .expect("unable to parse parenthesized expression");
+
+        // Ok(())
 
         Ok(println!("{:#?}", parenthesized_expr))
     }

@@ -10,14 +10,14 @@ use crate::{
     ty::TraitBound,
 };
 
-use super::{ConstantVarDef, FunctionSig, FunctionWithBlock, TypeAliasDef, VisibilityKind};
+use super::{ConstVarDef, FuncSig, FuncWithBlock, TypeDef, VisibilityKind};
 
 #[derive(Debug, Clone)]
 pub enum TraitDefItem {
-    Constant(ConstantVarDef),
-    FuncDef(FunctionWithBlock),
-    FuncSig(FunctionSig),
-    TypeAlias(TypeAliasDef),
+    Constant(ConstVarDef),
+    FuncDef(FuncWithBlock),
+    FuncSig(FuncSig),
+    TypeAlias(TypeDef),
 }
 
 #[derive(Debug, Clone)]

@@ -5,8 +5,7 @@ use feo_types::{
 
 use crate::{attribute::OuterAttr, expression::Expression, item::Item, pattern::Pattern, ty::Type};
 
-// statement: component of a block, which is a component of an outer expression / function
-
+/// Component of a block, which is a component of an outer expression / function.
 #[derive(Debug, Clone)]
 pub enum Statement {
     Item(Item),

@@ -160,7 +160,7 @@ impl Tokenize for Identifier {
 
         let identifier = Identifier::new(content.to_string(), span);
 
-        let token = Token::Iden(identifier);
+        let token = Token::Identifier(identifier);
 
         Ok(Some(token))
     }

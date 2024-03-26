@@ -152,9 +152,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonExpr {
-    pub lhs: Value,
+    pub lhs: Box<Value>,
     pub operator: ComparisonOperatorKind,
-    pub rhs: Value,
+    pub rhs: Box<Value>,
 }
 
 impl Spanned for ComparisonExpr {

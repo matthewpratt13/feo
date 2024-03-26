@@ -5,13 +5,14 @@ use feo_types::{
     Delimiter, Identifier, Keyword, Punctuation, U256,
 };
 
+/// Trait that must be implemented for a type to be peeked.
 pub trait Peek {
     fn peek(peeker: &Peeker<'_>) -> Option<Self>
     where
         Self: Sized;
 }
 
-// type that allows for peeking at the next `Token` in a `&[Token]` without advancing the parser
+/// Type that allows for peeking at the next `Token` in a `&[Token]`, without advancing the parser
 #[derive(Debug, Copy, Clone)]
 pub struct Peeker<'a> {
     tokens: &'a [Token],
@@ -19,7 +20,8 @@ pub struct Peeker<'a> {
 }
 
 impl<'a> Peeker<'a> {
-    // peek for a `T` in `&[Token]'; return `T` if it exists or return `None`
+    /// Peek for some `T` in `&[Token]`.
+    /// Return `T` if it exists or return `None`
     pub(crate) fn with<T: Peek>(tokens: &'a [Token], pos: usize) -> Option<T> {
         let peeker = Peeker { tokens, pos };
         let value = T::peek(&peeker);
@@ -27,13 +29,14 @@ impl<'a> Peeker<'a> {
         value
     }
 
-    // peek for the current `Token`; return it if it exists or return `None`
+    /// Peek for the current `Token`.
+    /// Return it if it exists or return `None`
     fn peek_token(&self) -> Option<Token> {
         self.tokens.get(self.pos).cloned()
     }
 
-    // peek for a `Literal`; return it if it exists, or return `self`
-    // (i.e., do nothing)
+    /// Peek for a character literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_char_lit(&self) -> Result<Literal<char>, Self> {
         match self.peek_token() {
             Some(Token::CharLit(c)) => Ok(c),
@@ -41,6 +44,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for a string literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_string_lit(&self) -> Result<Literal<String>, Self> {
         match self.peek_token() {
             Some(Token::StringLit(s)) => Ok(s),
@@ -48,6 +53,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for a bool literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_bool_lit(&self) -> Result<Literal<bool>, Self> {
         match self.peek_token() {
             Some(Token::BoolLit(b)) => Ok(b),
@@ -55,6 +62,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for an integer literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_int_lit(&self) -> Result<Literal<IntType>, Self> {
         match self.peek_token() {
             Some(Token::IntLit(i)) => Ok(i),
@@ -62,6 +71,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for an unsigned integer literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_uint_lit(&self) -> Result<Literal<UIntType>, Self> {
         match self.peek_token() {
             Some(Token::UIntLit(ui)) => Ok(ui),
@@ -69,6 +80,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for a `U256` literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_u256_lit(&self) -> Result<Literal<U256>, Self> {
         match self.peek_token() {
             Some(Token::U256Lit(u)) => Ok(u),
@@ -76,6 +89,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for a float literal.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_float_lit(&self) -> Result<Literal<FloatType>, Self> {
         match self.peek_token() {
             Some(Token::FloatLit(f)) => Ok(f),
@@ -83,13 +98,17 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for an identifier.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_identifier(&self) -> Result<Identifier, Self> {
         match self.peek_token() {
-            Some(Token::Iden(id)) => Ok(id),
+            Some(Token::Identifier(id)) => Ok(id),
             _ => Err(*self),
         }
     }
 
+    /// Peek for a keyword.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_keyword(&self) -> Result<Keyword, Self> {
         match self.peek_token() {
             Some(Token::Keyword(k)) => Ok(k),
@@ -97,13 +116,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
-    // fn peek_doc_comment(&self) -> Result<DocComment, Self> {
-    //     match self.peek_token() {
-    //         Some(Token::Keyword(dc)) => Ok(dc),
-    //         _ => Err(*self),
-    //     }
-    // }
-
+    /// Peek for a delimiter.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_delimiter(&self) -> Result<Delimiter, Self> {
         match self.peek_token() {
             Some(Token::Delim(d)) => Ok(d),
@@ -111,6 +125,8 @@ impl<'a> Peeker<'a> {
         }
     }
 
+    /// Peek for punctuation.
+    /// Return it if it exists, or return `Self` (i.e., do nothing)
     fn peek_punctuation(&self) -> Result<Punctuation, Self> {
         match self.peek_token() {
             Some(Token::Punc(p)) => Ok(p),

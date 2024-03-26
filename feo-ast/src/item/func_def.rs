@@ -15,23 +15,23 @@ use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
 pub enum FuncOrMethodParam {
-    FuncParam(FunctionParam),
+    FuncParam(FuncParam),
     MethodParam(SelfParam),
 }
 
 #[derive(Debug, Clone)]
-pub struct FunctionSig {
+pub struct FuncSig {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_func: KwFunc,
-    pub function_name: Identifier,
+    pub func_name: Identifier,
     pub open_parenthesis: Parenthesis,
-    pub function_params_opt: Option<TermCollection<FuncOrMethodParam>>,
+    pub func_params_opt: Option<TermCollection<FuncOrMethodParam>>,
     pub close_parenthesis: Parenthesis,
     pub return_type_opt: Option<Box<Type>>,
 }
 
-impl Spanned for FunctionSig {
+impl Spanned for FuncSig {
     fn span(&self) -> Span {
         let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {
@@ -57,12 +57,12 @@ impl Spanned for FunctionSig {
 }
 
 #[derive(Debug, Clone)]
-pub struct FunctionWithBlock {
-    pub function_sig: FunctionSig,
+pub struct FuncWithBlock {
+    pub function_sig: FuncSig,
     pub function_body: ExprWithBlock,
 }
 
-impl Spanned for FunctionWithBlock {
+impl Spanned for FuncWithBlock {
     fn span(&self) -> Span {
         let s1 = self.function_sig.span();
         let s2 = self.function_body.span();
@@ -72,7 +72,7 @@ impl Spanned for FunctionWithBlock {
 }
 
 #[derive(Debug, Clone)]
-pub struct FunctionParam {
+pub struct FuncParam {
     pub param_pattern: Box<Pattern>,
     pub param_type: Box<Type>,
 }
@@ -82,5 +82,5 @@ pub struct SelfParam {
     pub ampersand_opt: Option<Ampersand>,
     pub kw_mut_opt: Option<KwMut>,
     pub kw_self: KwSelf,
-    pub type_annotation_opt: Option<Box<Type>>,
+    pub type_ann_opt: Option<Box<Type>>,
 }

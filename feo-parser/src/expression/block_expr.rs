@@ -11,7 +11,8 @@ use feo_types::{
 use crate::{
     parse::ParseExpr,
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseExpr for BlockExpr {
@@ -19,7 +20,7 @@ impl ParseExpr for BlockExpr {
     where
         Self: Sized,
     {
-        utils::log_msg(LogMsgType::Enter, "block expression", parser);
+        test_utils::log_msg(LogMsgType::Enter, "block expression", parser);
 
         let open_brace_opt = parser.peek_current();
 
@@ -46,7 +47,7 @@ impl ParseExpr for BlockExpr {
                 ..
             }) = close_brace_opt
             {
-                utils::log_msg(LogMsgType::Exit, "block expression", parser);
+                test_utils::log_msg(LogMsgType::Exit, "block expression", parser);
 
                 return Ok(Some(BlockExpr {
                     open_brace: open_brace_opt.unwrap(),
@@ -70,8 +71,6 @@ impl ParseExpr for BlockExpr {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::test_utils;
 
     use super::*;
 

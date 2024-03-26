@@ -9,7 +9,7 @@ use crate::{attribute::OuterAttr, ty::Type};
 use super::VisibilityKind;
 
 #[derive(Debug, Clone)]
-pub struct TypeAliasDef {
+pub struct TypeDef {
     pub attributes_opt: Option<Vec<OuterAttr>>,
     pub visibility_opt: Option<VisibilityKind>,
     pub kw_type: KwType,
@@ -18,7 +18,7 @@ pub struct TypeAliasDef {
     pub semicolon: Semicolon,
 }
 
-impl Spanned for TypeAliasDef {
+impl Spanned for TypeDef {
     fn span(&self) -> Span {
         let s1 = match &self.attributes_opt {
             Some(a) => match a.first() {

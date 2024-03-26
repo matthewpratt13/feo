@@ -1,7 +1,7 @@
 use feo_ast::{
     item::{
-        ConstantVarDef, FunctionWithBlock, InherentImplBlock, InherentImplItem, TraitImplBlock,
-        TraitImplItem, TypeAliasDef,
+        ConstVarDef, FuncWithBlock, InherentImplBlock, InherentImplItem, TraitImplBlock,
+        TraitImplItem, TypeDef,
     },
     path::PathType,
     token::Token,
@@ -17,7 +17,8 @@ use feo_types::{
 use crate::{
     parse::{ParseItem, ParseTerm, ParseType},
     parser::Parser,
-    utils::{self, LogMsgType},
+    test_utils::{self, LogMsgType},
+    utils,
 };
 
 impl ParseItem for InherentImplItem {
@@ -25,9 +26,9 @@ impl ParseItem for InherentImplItem {
     where
         Self: Sized,
     {
-        if let Some(cvd) = ConstantVarDef::parse(parser)? {
-            return Ok(Some(InherentImplItem::ConstantVarDef(cvd)));
-        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        if let Some(cvd) = ConstVarDef::parse(parser)? {
+            return Ok(Some(InherentImplItem::ConstVarDef(cvd)));
+        } else if let Some(fwb) = FuncWithBlock::parse(parser)? {
             return Ok(Some(InherentImplItem::FuncWithBlock(fwb)));
         } else {
             return Ok(None);
@@ -49,11 +50,13 @@ impl ParseItem for InherentImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
 
             parser.next_token();
 
             if let Some(nominal_type) = Type::parse(parser)? {
+                test_utils::log_msg(LogMsgType::Detect, "nominal type", parser);
+
                 parser.next_token();
 
                 let open_brace_opt = parser.peek_current();
@@ -63,13 +66,13 @@ impl ParseItem for InherentImplBlock {
                     ..
                 }) = open_brace_opt
                 {
+                    test_utils::log_msg(LogMsgType::Enter, "inherent implementation block", parser);
+
                     parser.next_token();
 
                     let inner_attributes_opt = utils::get_attributes(parser)?;
 
-                    let associated_items_opt = utils::get_items(parser)?;
-
-                    utils::skip_trailing_comma(parser)?;
+                    let associated_items_opt = utils::get_items::<InherentImplItem>(parser)?;
 
                     let close_brace_opt = parser.peek_current();
 
@@ -78,7 +81,11 @@ impl ParseItem for InherentImplBlock {
                         ..
                     }) = close_brace_opt
                     {
-                        utils::log_msg(LogMsgType::Exit, "inherent implementation block", parser);
+                        test_utils::log_msg(
+                            LogMsgType::Exit,
+                            "inherent implementation block",
+                            parser,
+                        );
 
                         return Ok(Some(InherentImplBlock {
                             outer_attributes_opt,
@@ -120,12 +127,12 @@ impl ParseItem for TraitImplItem {
     where
         Self: Sized,
     {
-        if let Some(cvd) = ConstantVarDef::parse(parser)? {
-            return Ok(Some(TraitImplItem::ConstantVarDef(cvd)));
-        } else if let Some(fwb) = FunctionWithBlock::parse(parser)? {
+        if let Some(cvd) = ConstVarDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::ConstVarDef(cvd)));
+        } else if let Some(fwb) = FuncWithBlock::parse(parser)? {
             return Ok(Some(TraitImplItem::FuncWithBlock(fwb)));
-        } else if let Some(tad) = TypeAliasDef::parse(parser)? {
-            return Ok(Some(TraitImplItem::TypeAliasDef(tad)));
+        } else if let Some(tad) = TypeDef::parse(parser)? {
+            return Ok(Some(TraitImplItem::TypeDef(tad)));
         } else {
             return Ok(None);
         }
@@ -146,11 +153,13 @@ impl ParseItem for TraitImplBlock {
             ..
         }) = kw_impl_opt
         {
-            utils::log_msg(LogMsgType::Enter, "trait implementation block", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`impl` keyword", parser);
 
             parser.next_token();
 
             if let Some(implemented_trait_path) = PathType::parse(parser)? {
+                test_utils::log_msg(LogMsgType::Detect, "implemented trait path", parser);
+
                 let kw_for_opt = parser.peek_current();
 
                 if let Some(Keyword {
@@ -161,6 +170,8 @@ impl ParseItem for TraitImplBlock {
                     parser.next_token();
 
                     if let Some(implementing_type) = Type::parse(parser)? {
+                        test_utils::log_msg(LogMsgType::Detect, "implementing type", parser);
+
                         parser.next_token();
 
                         let open_brace_opt = parser.peek_current();
@@ -170,15 +181,19 @@ impl ParseItem for TraitImplBlock {
                             ..
                         }) = open_brace_opt
                         {
+                            test_utils::log_msg(
+                                LogMsgType::Enter,
+                                "trait implementation block",
+                                parser,
+                            );
+
                             parser.next_token();
 
                             let inner_attributes_opt = utils::get_attributes(parser)?;
 
                             parser.next_token();
 
-                            let associated_items_opt = utils::get_items(parser)?;
-
-                            utils::skip_trailing_comma(parser)?;
+                            let associated_items_opt = utils::get_items::<TraitImplItem>(parser)?;
 
                             let close_brace_opt = parser.peek_current();
 
@@ -187,7 +202,7 @@ impl ParseItem for TraitImplBlock {
                                 ..
                             }) = close_brace_opt
                             {
-                                utils::log_msg(
+                                test_utils::log_msg(
                                     LogMsgType::Exit,
                                     "trait implementation block",
                                     parser,
@@ -240,8 +255,6 @@ impl ParseItem for TraitImplBlock {
 #[cfg(test)]
 mod tests {
 
-    use crate::test_utils;
-
     use super::*;
 
     #[test]
@@ -277,11 +290,11 @@ mod tests {
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
-        let inherent_impl_block = InherentImplBlock::parse(&mut parser)
+        let _ = InherentImplBlock::parse(&mut parser)
             .expect("unable to parse inherent implementation block");
 
-        Ok(println!("{:#?}", inherent_impl_block))
+        // Ok(println!("{:#?}", inherent_impl_block))
 
-        // Ok(())
+        Ok(())
     }
 }

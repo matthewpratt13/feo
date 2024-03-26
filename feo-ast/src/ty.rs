@@ -23,6 +23,7 @@ pub use self::{
     tuple_type::{TupleType, UnitType},
 };
 
+/// Defines a value's memory interpretation and the appropriate operations that may be performed/
 #[derive(Debug, Clone)]
 pub enum Type {
     // `char`, `str`, `bool`, numeric types

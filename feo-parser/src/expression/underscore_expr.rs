@@ -10,7 +10,6 @@ impl ParseExpr for UnderscoreExpr {
         Self: Sized,
     {
         if let Some(id) = parser.peek_current::<Identifier>() {
-            parser.next_token();
             return Ok(Some(UnderscoreExpr(id)));
         }
 

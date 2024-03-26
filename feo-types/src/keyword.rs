@@ -14,7 +14,6 @@ pub enum KeywordKind {
     KwConst,
     KwContinue,
     KwContract,
-    KwCrate,
     KwElse,
     KwEnum,
     KwExport,
@@ -29,8 +28,9 @@ pub enum KeywordKind {
     KwLibrary,
     KwLoop,
     KwMatch,
-    KwMod,
+    KwModule,
     KwMut,
+    KwPackage,
     KwPayable,
     KwPub,
     KwRef,
@@ -47,7 +47,6 @@ pub enum KeywordKind {
     KwTrait,
     KwType,
     KwUnsafe,
-    KwWhere,
     KwWhile,
 }
 
@@ -61,7 +60,6 @@ impl KeywordKind {
             KeywordKind::KwConst => "const",
             KeywordKind::KwContinue => "continue",
             KeywordKind::KwContract => "contract",
-            KeywordKind::KwCrate => "crate",
             KeywordKind::KwElse => "else",
             KeywordKind::KwEnum => "enum",
             KeywordKind::KwExport => "export",
@@ -76,8 +74,9 @@ impl KeywordKind {
             KeywordKind::KwLibrary => "library", // TODO: remove
             KeywordKind::KwLoop => "loop",
             KeywordKind::KwMatch => "match",
-            KeywordKind::KwMod => "mod",
+            KeywordKind::KwModule => "module",
             KeywordKind::KwMut => "mut",
+            KeywordKind::KwPackage => "package",
             KeywordKind::KwPayable => "payable",
             KeywordKind::KwPub => "pub",
             KeywordKind::KwRef => "ref",
@@ -94,7 +93,6 @@ impl KeywordKind {
             KeywordKind::KwTrait => "trait",
             KeywordKind::KwType => "type",
             KeywordKind::KwUnsafe => "unsafe",
-            KeywordKind::KwWhere => "where",
             KeywordKind::KwWhile => "while",
         }
     }
@@ -112,7 +110,6 @@ impl FromStr for KeywordKind {
             "const" => Ok(KeywordKind::KwConst),
             "continue" => Ok(KeywordKind::KwContinue),
             "contract" => Ok(KeywordKind::KwContract),
-            "crate" => Ok(KeywordKind::KwCrate),
             "else" => Ok(KeywordKind::KwElse),
             "enum" => Ok(KeywordKind::KwEnum),
             "export" => Ok(KeywordKind::KwExport),
@@ -127,8 +124,9 @@ impl FromStr for KeywordKind {
             "library" => Ok(KeywordKind::KwLibrary), // TODO: remove
             "loop" => Ok(KeywordKind::KwLoop),
             "match" => Ok(KeywordKind::KwMatch),
-            "mod" => Ok(KeywordKind::KwMod),
+            "module" => Ok(KeywordKind::KwModule),
             "mut" => Ok(KeywordKind::KwMut),
+            "package" => Ok(KeywordKind::KwPackage),
             "payable" => Ok(KeywordKind::KwPayable),
             "pub" => Ok(KeywordKind::KwPub),
             "ref" => Ok(KeywordKind::KwRef),
@@ -145,7 +143,6 @@ impl FromStr for KeywordKind {
             "trait" => Ok(KeywordKind::KwTrait),
             "type" => Ok(KeywordKind::KwType),
             "unsafe" => Ok(KeywordKind::KwUnsafe),
-            "where" => Ok(KeywordKind::KwWhere),
             "while" => Ok(KeywordKind::KwWhile),
             _ => Err(TypeErrorKind::UnrecognizedKeyword),
         }?;

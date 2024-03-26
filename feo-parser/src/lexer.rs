@@ -19,6 +19,7 @@ use feo_types::{
     Comment, Delimiter, DocComment, Identifier, Keyword, Punctuation, U256,
 };
 
+/// Struct that stores an input string and the current character index, and handles errors
 pub struct Lexer<'a> {
     input: &'a str,
     pos: usize,
@@ -40,8 +41,8 @@ impl<'a> Lexer<'a> {
         self.handler.clone().get_inner().0
     }
 
-    // main lexer function
-    // return a stream of tokens, parsed and tokenized from an input stream (i.e., source code)
+    /// Main lexer function
+    /// Returns a stream of tokens, parsed and tokenized from some input source code
     pub fn lex(&mut self) -> Result<TokenStream, ErrorEmitted> {
         let mut tokens: Vec<Option<Token>> = Vec::new();
 
@@ -810,9 +811,9 @@ mod tests {
         
         contract;
 
-        import crate::some_library::SomeTrait;
+        import package::some_library::SomeTrait;
 
-        mod some_abstract_contract;
+        module some_abstract_contract;
         
         import self::some_abstract_contract::{SomeAbstractContract, Colour};
 
@@ -908,7 +909,7 @@ mod tests {
                     Token::UIntLit(ui) => println!("UIntLit: {:?}", ui.into_inner()),
                     Token::U256Lit(u) => println!("U256Lit: {:?}", u.into_inner()),
                     Token::FloatLit(f) => println!("FloatLit: {:?}", f.into_inner()),
-                    Token::Iden(id) => println!("Iden: {:?}", id.name),
+                    Token::Identifier(id) => println!("Identifier: {:?}", id.name),
                     Token::Keyword(k) => println!("Keyword: {:?}", k.keyword_kind),
                     Token::Comment(c) => println!("Comment: {:?}", c.data),
                     Token::DocComment(dc) => println!("DocComment: {:?}", dc.content),

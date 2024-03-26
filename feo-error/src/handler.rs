@@ -2,11 +2,14 @@ use core::cell::RefCell;
 
 use crate::{error::CompilerError, warning::CompilerWarning};
 
+/// Handler that contains information to be emitted.
+/// Uses `RefCell` around the `HandlerInner` to avoid excessive `&mut`
 #[derive(Default, Debug, Clone)]
 pub struct Handler {
     inner: RefCell<HandlerInner>,
 }
 
+/// Inner struct that contains actual data
 #[derive(Default, Debug, Clone)]
 struct HandlerInner {
     errors: Vec<CompilerError>,
@@ -29,8 +32,8 @@ impl Handler {
     }
 }
 
-// dummy struct to prove that an error occurred and was emitted
-// returned in place of some `CompilerError` (i.e., `LexError`, `ParserError`, `TypeError`, etc.)
+/// Dummy struct to prove that an error occurred and was emitted.
+/// Returned in place of some `CompilerError` (i.e., `LexError`, `ParserError`, `TypeError`, etc.).
 #[derive(Debug)]
 pub struct ErrorEmitted {
     _phantom: (),
