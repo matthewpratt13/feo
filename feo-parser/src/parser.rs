@@ -56,7 +56,7 @@ impl Parser {
         }
     }
 
-    // Peek at the current `T` and return it if it exists (without advancing) or return `None`.
+    /// Peek at the current `T` and return it if it exists (without advancing) or return `None`.
     pub fn peek_current<T: Peek>(&self) -> Option<T> {
         Peeker::with(&self.stream().tokens(), self.pos)
     }
@@ -66,7 +66,7 @@ impl Parser {
         Peeker::with(&self.stream().tokens(), self.pos + 1)
     }
 
-    // Peek at the `T` at `num_tokens` index and return it if it exists (without advancing)
+    /// Peek at the `T` at `num_tokens` index and return it if it exists (without advancing)
     /// or return `None`.
     pub fn peek_with_len<T: Peek>(&self, num_tokens: usize) -> Option<T> {
         Peeker::with(&self.stream().tokens(), self.pos + num_tokens)
