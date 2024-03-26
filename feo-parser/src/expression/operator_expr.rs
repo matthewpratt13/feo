@@ -123,12 +123,6 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
     where
         Self: Sized,
     {
-        test_utils::log_msg(
-            LogMsgType::Detect,
-            "arithmetic or logical expression",
-            parser,
-        );
-
         if let Some(lhs) = Value::parse(parser)? {
             test_utils::log_msg(
                 LogMsgType::Detect,
@@ -503,7 +497,7 @@ mod tests {
 
     #[test]
     fn parse_arithmetic_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"x + 2"#;
+        let source_code = r#"foo.bar + 2"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
