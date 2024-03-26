@@ -50,30 +50,35 @@ pub use self::{
 #[derive(PartialEq, PartialOrd, Debug, Clone, Copy)]
 pub enum Precedence {
     Lowest,
-    Assignment,  // =, +=
-    Unwrap,      // ?
-    Range,       // .., ..=
-    Or,          // ||
-    And,         // &&
-    Equality,    // ==, !=
-    Comparison,  // <, >, <=, >=
-    Sum,         // +, -
-    Product,     // *, /, %
-    TypeCast,    // as (Type Casting)
-    Prefix,      // -X, !X, * (dereference), & and &mut (reference)
-    Call,        // func(args), object.method(args)
-    Index,       // array[index], tuple.0
-    FieldAccess, // expr.field
-    Path,        // foo::bar, foo.bar
-    Closure,     // |args| expr
-    Literal,     // 123, "string", true/false
-    Parentheses, // (expr)
-    Struct,      // StructName { field: expr, .. }
-    Tuple,       // (expr, expr)
-    Array,       // [expr, expr]
-    Block,       // { ... }
-    Loop,        // loop { ... }, while (condition) { ... }, for item in collection { ... }
-    If,          // if condition { ... } else { ... }
+    Assignment,         // =, +=
+    Unwrap,             // ?
+    Or,                 // ||
+    And,                // &&
+    BitwiseOr,          // |
+    BitwiseXor,         // ^
+    BitwiseAnd,         // &
+    Equality,           // ==, !=
+    Comparison,         // <, >, <=, >=
+    Shift,              // <<, >>
+    Sum,                // +, -
+    Product,            // *, /, %
+    Prefix,             // -X, !X, * (dereference), & and &mut (reference)
+    TypeCast,           // as (Type Casting)
+    Call,               // func(args), object.method(args)
+    Index,              // array[index], tuple.0
+    FieldAccess,        // expr.field
+    Path,               // foo::bar, foo.bar
+    Closure,            // |args| expr
+    Literal,            // 123, "string", true/false
+    Parentheses,        // (expr)
+    Array,              // [expr, expr]
+    Tuple,              // (expr, expr)
+    Struct,             // StructName { field: expr, .. }
+    Block,              // { ... }
+    If,                 // if condition { ... } else { ... }
+    Loop,               // loop { ... }, while (condition) { ... }, for item in collection { ... }
+    Range,              // .., ..=
+    CompoundAssignment, // +=, -=, *=, /=
 }
 
 /// `Expression` always produce / evaluate to a value, and may have (side) effects.
