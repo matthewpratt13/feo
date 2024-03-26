@@ -216,6 +216,55 @@ pub enum ExprWithoutBlock {
     UnderscoreExpr(UnderscoreExpr),
 }
 
+impl ExprWithoutBlock {
+    pub fn precedence(&self) -> Precedence {
+        match self {
+            Self::ArrayExpr(_) => Precedence::Array,
+            Self::IndexExpr(_) | Self::TupleIndexExpr(_) => Precedence::Index,
+            Self::ClosureWithoutBlock(_) => Precedence::Closure,
+            Self::BreakExpr(_)
+            | Self::ContinueExpr(_)
+            | Self::ReturnExpr(_)
+            | Self::UnderscoreExpr(_) => Precedence::Lowest,
+            Self::FieldAccessExpr(_) => Precedence::FieldAccess,
+            Self::FunctionCallExpr(_) | Self::MethodCallExpr(_) => Precedence::Call,
+            Self::Literal(_) => Precedence::Literal,
+            Self::OperatorExpr(oe) => match oe {
+                OperatorExprKind::Assignment(_) => Precedence::Assignment,
+                OperatorExprKind::ArithmeticOrLogical(al) => match al.operator {
+                    ArithmeticOrLogicalOperatorKind::Add(_)
+                    | ArithmeticOrLogicalOperatorKind::Subtract(_) => Precedence::Sum,
+                    ArithmeticOrLogicalOperatorKind::Multiply(_)
+                    | ArithmeticOrLogicalOperatorKind::Divide(_)
+                    | ArithmeticOrLogicalOperatorKind::Modulus(_) => Precedence::Product,
+                    ArithmeticOrLogicalOperatorKind::BitwiseAnd(_) => Precedence::BitwiseAnd,
+                    ArithmeticOrLogicalOperatorKind::BitwiseOr(_) => Precedence::BitwiseOr,
+                    ArithmeticOrLogicalOperatorKind::BitwiseXor(_) => Precedence::BitwiseXor,
+                    ArithmeticOrLogicalOperatorKind::ShiftLeft(_)
+                    | ArithmeticOrLogicalOperatorKind::ShiftRight(_) => Precedence::Shift,
+                },
+                OperatorExprKind::Comparison(_) => Precedence::Comparison,
+                OperatorExprKind::CompoundAssign(_) => Precedence::CompoundAssignment,
+                OperatorExprKind::LazyBool(lb) => match lb.operator {
+                    LazyBoolOperatorKind::LazyAnd(_) => Precedence::And,
+                    LazyBoolOperatorKind::LazyOr(_) => Precedence::Or,
+                },
+                OperatorExprKind::Negation(_)
+                | OperatorExprKind::Reference(_)
+                | OperatorExprKind::Dereference(_) => Precedence::Prefix,
+
+                OperatorExprKind::TypeCast(_) => Precedence::TypeCast,
+                OperatorExprKind::UnwrapExpr(_) => Precedence::Unwrap,
+            },
+            Self::ParenthesizedExpr(_) => Precedence::Parentheses,
+            Self::PathExpr(_) => Precedence::Path,
+            Self::RangeExpr(_) => Precedence::Range,
+            Self::StructExpr(_) | Self::TupleStructExpr(_) => Precedence::Struct,
+            Self::TupleExpr(_) => Precedence::Tuple,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum ExprWithBlock {
     BlockExpr(BlockExpr),
@@ -225,6 +274,19 @@ pub enum ExprWithBlock {
     InfiniteLoopExpr(InfiniteLoopExpr),
     PredicateLoopExpr(PredicateLoopExpr),
     IterLoopExpr(IterLoopExpr),
+}
+
+impl ExprWithBlock {
+    pub fn precedence(&self) -> Precedence {
+        match self {
+            ExprWithBlock::BlockExpr(_) => Precedence::Block,
+            ExprWithBlock::ClosureWithBlock(_) => Precedence::Closure,
+            ExprWithBlock::IfExpr(_) | ExprWithBlock::MatchExpr(_) => Precedence::If,
+            ExprWithBlock::InfiniteLoopExpr(_)
+            | ExprWithBlock::PredicateLoopExpr(_)
+            | ExprWithBlock::IterLoopExpr(_) => Precedence::Loop,
+        }
+    }
 }
 
 impl Spanned for ExprWithBlock {
