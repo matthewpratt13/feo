@@ -57,19 +57,22 @@ impl ParseTerm for ParenthesizedExpr {
 }
 
 #[cfg(test)]
+
 mod tests {
 
     use super::*;
 
     #[test]
     fn parse_parenthesized_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"(x + 2)"#;
+        let source_code = r#"(foo.bar + 2)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let parenthesized_expr = ParenthesizedExpr::parse(&mut parser)
             .expect("unable to parse parenthesized expression");
 
-        Ok(println!("{:#?}", parenthesized_expr))
+        Ok(())
+
+        // Ok(println!("{:#?}", parenthesized_expr))
     }
 }

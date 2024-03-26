@@ -204,7 +204,7 @@ pub enum Value {
     StructExpr(StructExpr),
     TupleStructExpr(TupleStructExpr),
     TupleExpr(TupleExpr),
-    // TupleIndexExpr(TupleIndexExpr),
+    TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
 }
 
@@ -227,7 +227,7 @@ impl Spanned for Value {
             Value::StructExpr(se) => se.span(),
             Value::TupleStructExpr(tse) => tse.span(),
             Value::TupleExpr(tup) => tup.span(),
-            // Value::TupleIndexExpr(tie) => tie.span(),
+            Value::TupleIndexExpr(tie) => tie.span(),
             Value::UnderscoreExpr(ue) => ue.span(),
         }
     }

@@ -86,6 +86,7 @@ impl ParseExpr for TupleIndexExpr {
                             .expect("error converting `Literal<UIntType` to `U64Primitive`"),
                     }));
                 }
+
                 parser.log_error(ParserErrorKind::UnexpectedToken {
                     expected: "`Literal<UIntType>`".to_string(),
                     found: parser.current_token().unwrap_or(Token::EOF).to_string(),

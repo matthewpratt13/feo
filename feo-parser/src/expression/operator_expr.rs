@@ -130,11 +130,29 @@ impl ParseExpr for ArithmeticOrLogicalExpr {
         );
 
         if let Some(lhs) = Value::parse(parser)? {
+            test_utils::log_msg(
+                LogMsgType::Detect,
+                "arithmetic or logical expression: left-hand side",
+                parser,
+            );
+
             if let Some(operator) = parser.peek_next::<ArithmeticOrLogicalOperatorKind>() {
                 parser.next_token();
+                test_utils::log_msg(
+                    LogMsgType::Detect,
+                    "arithmetic or logical expression: operator",
+                    parser,
+                );
+
                 parser.next_token();
 
                 if let Some(rhs) = Value::parse(parser)? {
+                    test_utils::log_msg(
+                        LogMsgType::Detect,
+                        "arithmetic or logical expression: right-hand side",
+                        parser,
+                    );
+
                     return Ok(Some(ArithmeticOrLogicalExpr {
                         lhs: Box::new(lhs),
                         operator,
@@ -234,20 +252,26 @@ impl ParseExpr for ComparisonExpr {
     where
         Self: Sized,
     {
-        test_utils::log_msg(LogMsgType::Detect, "comparison expression", parser);
-
         if let Some(lhs) = Value::parse(parser)? {
-            test_utils::log_msg(LogMsgType::Detect, "left-hand side", parser);
+            test_utils::log_msg(
+                LogMsgType::Detect,
+                "comparison expression: left-hand side",
+                parser,
+            );
 
             if let Some(operator) = parser.peek_next::<ComparisonOperatorKind>() {
                 parser.next_token();
 
-                test_utils::log_msg(LogMsgType::Detect, "comparison operator kind", parser);
+                test_utils::log_msg(LogMsgType::Detect, "comparison expression: operator", parser);
 
                 parser.next_token();
 
                 if let Some(rhs) = Value::parse(parser)? {
-                    test_utils::log_msg(LogMsgType::Detect, "right-hand side", parser);
+                    test_utils::log_msg(
+                        LogMsgType::Detect,
+                        "comparison expression: right-hand side",
+                        parser,
+                    );
 
                     return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
                 }

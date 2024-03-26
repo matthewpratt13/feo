@@ -8,6 +8,7 @@ use feo_types::{punctuation::PuncKind, Identifier, Punctuation};
 use crate::{
     parse::{ParseExpr, ParseTerm},
     parser::Parser,
+    test_utils::{self, LogMsgType},
 };
 
 impl ParseExpr for FieldAccessExpr {
@@ -22,10 +23,19 @@ impl ParseExpr for FieldAccessExpr {
                 ..
             }) = parser.peek_next()
             {
+                test_utils::log_msg(
+                    LogMsgType::Detect,
+                    "field access expression container operand",
+                    parser,
+                );
                 parser.next_token();
+
+                test_utils::log_msg(LogMsgType::Detect, "full stop", parser);
 
                 if let Some(field_name) = parser.peek_next::<Identifier>() {
                     parser.next_token();
+
+                    test_utils::log_msg(LogMsgType::Detect, "identifier", parser);
 
                     return Ok(Some(FieldAccessExpr {
                         container_operand: Box::new(container_operand),
