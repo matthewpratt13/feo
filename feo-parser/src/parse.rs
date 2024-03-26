@@ -1759,9 +1759,9 @@ impl ParseTerm for Value {
                 //     return Ok(Some(Value::MethodCallExpr(mc)));
                 // }
 
-                if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                    return Ok(Some(Value::FieldAccessExpr(fa)));
-                }
+                // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                //     return Ok(Some(Value::FieldAccessExpr(fa)));
+                // }
 
                 // if let Some(tie) = TupleIndexExprExpr::parse(parser).unwrap_or(None) {
                 //     return Ok(Some(Value::TupleIndexExprExpr(tie)));
