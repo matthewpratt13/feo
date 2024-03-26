@@ -26,13 +26,13 @@ impl Peek for ArithmeticOrLogicalOperatorKind {
         if let Some(p) = Punctuation::peek(peeker) {
             match &p.punc_kind {
                 PuncKind::Percent => Some(ArithmeticOrLogicalOperatorKind::Modulus(p)),
-                PuncKind::Ampersand => Some(ArithmeticOrLogicalOperatorKind::LogicalAnd(p)),
+                PuncKind::Ampersand => Some(ArithmeticOrLogicalOperatorKind::BitwiseAnd(p)),
                 PuncKind::Asterisk => Some(ArithmeticOrLogicalOperatorKind::Multiply(p)),
                 PuncKind::Plus => Some(ArithmeticOrLogicalOperatorKind::Add(p)),
                 PuncKind::Minus => Some(ArithmeticOrLogicalOperatorKind::Subtract(p)),
                 PuncKind::ForwardSlash => Some(ArithmeticOrLogicalOperatorKind::Divide(p)),
-                PuncKind::Caret => Some(ArithmeticOrLogicalOperatorKind::LogicalXOr(p)),
-                PuncKind::Pipe => Some(ArithmeticOrLogicalOperatorKind::LogicalOr(p)),
+                PuncKind::Caret => Some(ArithmeticOrLogicalOperatorKind::BitwiseXor(p)),
+                PuncKind::Pipe => Some(ArithmeticOrLogicalOperatorKind::BitwiseOr(p)),
                 PuncKind::DblLessThan => Some(ArithmeticOrLogicalOperatorKind::ShiftLeft(p)),
                 PuncKind::DblGreaterThan => Some(ArithmeticOrLogicalOperatorKind::ShiftRight(p)),
                 _ => None,

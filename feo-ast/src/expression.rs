@@ -112,33 +112,85 @@ pub enum Expression {
     UnderscoreExpr(UnderscoreExpr),
 }
 
+impl Expression {
+    pub fn precedence(&self) -> Precedence {
+        match self {
+            Self::ArrayExpr(_) => Precedence::Array,
+            Self::IndexExpr(_) | Self::TupleIndexExpr(_) => Precedence::Index,
+            Self::BlockExpr(_) => Precedence::Block,
+            Self::FunctionCallExpr(_) | Self::MethodCallExpr(_) => Precedence::Call,
+            Self::ClosureWithBlock(_) | Self::ClosureWithoutBlock(_) => {
+                Precedence::Closure
+            }
+            Self::FieldAccessExpr(_) => Precedence::FieldAccess,
+            Self::IfExpr(_) | Self::MatchExpr(_) => Precedence::If,
+            Self::IterationExpr(_) => Precedence::Loop,
+            Self::BreakExpr(_) | Self::ContinueExpr(_) => Precedence::Lowest,
+            Self::Literal(_) => Precedence::Literal,
+            Self::OperatorExpr(oe) => match oe {
+                OperatorExprKind::Assignment(_) => Precedence::Assignment,
+                OperatorExprKind::ArithmeticOrLogical(al) => match al.operator {
+                    ArithmeticOrLogicalOperatorKind::Add(_)
+                    | ArithmeticOrLogicalOperatorKind::Subtract(_) => Precedence::Sum,
+                    ArithmeticOrLogicalOperatorKind::Multiply(_)
+                    | ArithmeticOrLogicalOperatorKind::Divide(_)
+                    | ArithmeticOrLogicalOperatorKind::Modulus(_) => Precedence::Product,
+                    ArithmeticOrLogicalOperatorKind::BitwiseAnd(_) => Precedence::BitwiseAnd,
+                    ArithmeticOrLogicalOperatorKind::BitwiseOr(_) => Precedence::BitwiseOr,
+                    ArithmeticOrLogicalOperatorKind::BitwiseXor(_) => Precedence::BitwiseXor,
+                    ArithmeticOrLogicalOperatorKind::ShiftLeft(_)
+                    | ArithmeticOrLogicalOperatorKind::ShiftRight(_) => Precedence::Shift,
+                },
+                OperatorExprKind::Comparison(_) => Precedence::Comparison,
+                OperatorExprKind::CompoundAssign(_) => Precedence::CompoundAssignment,
+                OperatorExprKind::LazyBool(lb) => match lb.operator {
+                    LazyBoolOperatorKind::LazyAnd(_) => Precedence::And,
+                    LazyBoolOperatorKind::LazyOr(_) => Precedence::Or,
+                },
+                OperatorExprKind::Negation(_)
+                | OperatorExprKind::Reference(_)
+                | OperatorExprKind::Dereference(_) => Precedence::Prefix,
+
+                OperatorExprKind::TypeCast(_) => Precedence::TypeCast,
+                OperatorExprKind::UnwrapExpr(_) => Precedence::Unwrap,
+            },
+            Self::ParenthesizedExpr(_) => Precedence::Parentheses,
+            Self::PathExpr(_) => Precedence::Path,
+            Self::RangeExpr(_) => Precedence::Range,
+            Self::ReturnExpr(_) | Self::UnderscoreExpr(_) => Precedence::Lowest,
+            Self::StructExpr(_) | Self::TupleStructExpr(_) => Precedence::Struct,
+            Self::TupleExpr(_) => Precedence::Tuple,
+        }
+    }
+}
+
 impl Spanned for Expression {
     fn span(&self) -> Span {
         match self {
-            Expression::ArrayExpr(ae) => ae.span(),
-            Expression::IndexExpr(ie) => ie.span(),
-            Expression::BlockExpr(be) => be.span(),
-            Expression::FunctionCallExpr(fc) => fc.span(),
-            Expression::MethodCallExpr(mc) => mc.span(),
-            Expression::ClosureWithBlock(cwb) => cwb.span(),
-            Expression::ClosureWithoutBlock(c) => c.span(),
-            Expression::FieldAccessExpr(fa) => fa.span(),
-            Expression::IfExpr(ife) => ife.span(),
-            Expression::MatchExpr(me) => me.span(),
-            Expression::IterationExpr(ite) => ite.span(),
-            Expression::BreakExpr(be) => be.span(),
-            Expression::ContinueExpr(ce) => ce.span(),
-            Expression::Literal(lit) => lit.span(),
-            Expression::OperatorExpr(oe) => oe.span(),
-            Expression::ParenthesizedExpr(par) => par.span(),
-            Expression::PathExpr(pie) => pie.span(),
-            Expression::RangeExpr(rng) => rng.span(),
-            Expression::ReturnExpr(rtn) => rtn.span(),
-            Expression::StructExpr(se) => se.span(),
-            Expression::TupleStructExpr(tse) => tse.span(),
-            Expression::TupleExpr(te) => te.span(),
-            Expression::TupleIndexExpr(ti) => ti.span(),
-            Expression::UnderscoreExpr(ue) => ue.span(),
+            Self::ArrayExpr(ae) => ae.span(),
+            Self::IndexExpr(ie) => ie.span(),
+            Self::BlockExpr(be) => be.span(),
+            Self::FunctionCallExpr(fc) => fc.span(),
+            Self::MethodCallExpr(mc) => mc.span(),
+            Self::ClosureWithBlock(cwb) => cwb.span(),
+            Self::ClosureWithoutBlock(c) => c.span(),
+            Self::FieldAccessExpr(fa) => fa.span(),
+            Self::IfExpr(ife) => ife.span(),
+            Self::MatchExpr(me) => me.span(),
+            Self::IterationExpr(ite) => ite.span(),
+            Self::BreakExpr(be) => be.span(),
+            Self::ContinueExpr(ce) => ce.span(),
+            Self::Literal(lit) => lit.span(),
+            Self::OperatorExpr(oe) => oe.span(),
+            Self::ParenthesizedExpr(par) => par.span(),
+            Self::PathExpr(pie) => pie.span(),
+            Self::RangeExpr(rng) => rng.span(),
+            Self::ReturnExpr(rtn) => rtn.span(),
+            Self::StructExpr(se) => se.span(),
+            Self::TupleStructExpr(tse) => tse.span(),
+            Self::TupleExpr(te) => te.span(),
+            Self::TupleIndexExpr(ti) => ti.span(),
+            Self::UnderscoreExpr(ue) => ue.span(),
         }
     }
 }
@@ -180,13 +232,13 @@ pub enum ExprWithBlock {
 impl Spanned for ExprWithBlock {
     fn span(&self) -> Span {
         match self {
-            ExprWithBlock::BlockExpr(be) => be.span(),
-            ExprWithBlock::ClosureWithBlock(cwb) => cwb.span(),
-            ExprWithBlock::IfExpr(ife) => ife.span(),
-            ExprWithBlock::MatchExpr(me) => me.span(),
-            ExprWithBlock::InfiniteLoopExpr(inf) => inf.span(),
-            ExprWithBlock::PredicateLoopExpr(ple) => ple.span(),
-            ExprWithBlock::IterLoopExpr(ite) => ite.span(),
+            Self::BlockExpr(be) => be.span(),
+            Self::ClosureWithBlock(cwb) => cwb.span(),
+            Self::IfExpr(ife) => ife.span(),
+            Self::MatchExpr(me) => me.span(),
+            Self::InfiniteLoopExpr(inf) => inf.span(),
+            Self::PredicateLoopExpr(ple) => ple.span(),
+            Self::IterLoopExpr(ite) => ite.span(),
         }
     }
 }
@@ -246,24 +298,24 @@ pub enum Value {
 impl Spanned for Value {
     fn span(&self) -> Span {
         match self {
-            Value::ArrayExpr(ae) => ae.span(),
-            // Value::IndexExpr(ie) => ie.span(),
-            // Value::FunctionCallExpr(fc) => fc.span(),
-            // Value::MethodCallExpr(mc) => mc.span(),
-            Value::FieldAccessExpr(fa) => fa.span(),
-            Value::Literal(lit) => lit.span(),
-            // Value::ArithmeticOrLogicalExpr(ale) => ale.span(),
-            // Value::DereferenceExpr(de) => de.span(),
-            // Value::NegationExpr(ne) => ne.span(),
-            // Value::ReferenceExpr(re) => re.span(),
-            // Value::UnwrapExpr(ue) => ue.span(),
-            Value::ParenthesizedExpr(par) => par.span(),
-            Value::PathExpr(pth) => pth.span(),
-            Value::StructExpr(se) => se.span(),
-            Value::TupleStructExpr(tse) => tse.span(),
-            Value::TupleExpr(tup) => tup.span(),
-            Value::TupleIndexExpr(tie) => tie.span(),
-            Value::UnderscoreExpr(ue) => ue.span(),
+            Self::ArrayExpr(ae) => ae.span(),
+            // Self::IndexExpr(ie) => ie.span(),
+            // Self::FunctionCallExpr(fc) => fc.span(),
+            // Self::MethodCallExpr(mc) => mc.span(),
+            Self::FieldAccessExpr(fa) => fa.span(),
+            Self::Literal(lit) => lit.span(),
+            // Self::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            // Self::DereferenceExpr(de) => de.span(),
+            // Self::NegationExpr(ne) => ne.span(),
+            // Self::ReferenceExpr(re) => re.span(),
+            // Self::UnwrapExpr(ue) => ue.span(),
+            Self::ParenthesizedExpr(par) => par.span(),
+            Self::PathExpr(pth) => pth.span(),
+            Self::StructExpr(se) => se.span(),
+            Self::TupleStructExpr(tse) => tse.span(),
+            Self::TupleExpr(tup) => tup.span(),
+            Self::TupleIndexExpr(tie) => tie.span(),
+            Self::UnderscoreExpr(ue) => ue.span(),
         }
     }
 }
