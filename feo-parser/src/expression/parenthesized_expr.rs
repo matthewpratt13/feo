@@ -64,7 +64,7 @@ mod tests {
 
     #[test]
     fn parse_parenthesized_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"(foo.bar > bar.baz)"#;
+        let source_code = r#"(self.x + 2)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 

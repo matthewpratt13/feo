@@ -122,30 +122,15 @@ impl ParseExpr for Expression {
                         ..
                     }) = parser.peek_next()
                     {
-                        // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        //     return Ok(Some(Expression::MethodCallExpr(mc)));
-                        // }
-
-                        if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                            if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None)
-                            {
-                                return Ok(Some(Expression::OperatorExpr(
-                                    OperatorExprKind::ArithmeticOrLogical(al),
-                                )));
-                            }
-
-                            if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
-                                return Ok(Some(Expression::OperatorExpr(
-                                    OperatorExprKind::Comparison(ce),
-                                )));
-                            }
-
+                        if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::MethodCallExpr(mc)));
+                        } else if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Expression::FieldAccessExpr(fa)));
                         }
-                    }
 
-                    if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::PathExpr(pth)));
+                        if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::PathExpr(pth)));
+                        }
                     }
                 }
 
@@ -243,24 +228,11 @@ impl ParseExpr for Expression {
             } else if let Some(p) = parser.peek_next::<Punctuation>() {
                 match p.punc_kind {
                     PuncKind::FullStop => {
-                        if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                            if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None)
-                            {
-                                return Ok(Some(Expression::OperatorExpr(
-                                    OperatorExprKind::ArithmeticOrLogical(al),
-                                )));
-                            }
-
+                        if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                            return Ok(Some(Expression::MethodCallExpr(mc)));
+                        } else if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
                             return Ok(Some(Expression::FieldAccessExpr(fa)));
                         }
-
-                        if let Some(tie) = TupleIndexExpr::parse(parser).unwrap_or(None) {
-                            return Ok(Some(Expression::TupleIndexExpr(tie)));
-                        }
-
-                        // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        //     return Ok(Some(Expression::MethodCallExpr(mc)));
-                        // }
                     }
 
                     PuncKind::DblColon => {
@@ -1787,9 +1759,9 @@ impl ParseTerm for Value {
                 //     return Ok(Some(Value::MethodCallExpr(mc)));
                 // }
 
-                if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                    return Ok(Some(Value::FieldAccessExpr(fa)));
-                }
+                // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                //     return Ok(Some(Value::FieldAccessExpr(fa)));
+                // }
 
                 // if let Some(tie) = TupleIndexExprExpr::parse(parser).unwrap_or(None) {
                 //     return Ok(Some(Value::TupleIndexExprExpr(tie)));
