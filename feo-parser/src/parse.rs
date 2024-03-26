@@ -1750,6 +1750,15 @@ impl ParseTerm for Value {
                 _ => (),
             }
 
+            if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
+                let path_expr = PathInExpr {
+                    first_segment: pis,
+                    subsequent_segments: None,
+                };
+
+                return Ok(Some(Value::PathExpr(path_expr)));
+            }
+
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
@@ -1759,24 +1768,13 @@ impl ParseTerm for Value {
                 //     return Ok(Some(Value::MethodCallExpr(mc)));
                 // }
 
-                // if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                //     return Ok(Some(Value::FieldAccessExpr(fa)));
-                // }
+                if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                    return Ok(Some(Value::FieldAccessExpr(fa)));
+                }
 
                 // if let Some(tie) = TupleIndexExprExpr::parse(parser).unwrap_or(None) {
                 //     return Ok(Some(Value::TupleIndexExprExpr(tie)));
                 // }
-            }
-
-            if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
-                let path_expr = PathInExpr {
-                    first_segment: pis,
-                    subsequent_segments: None,
-                };
-
-                return Ok(Some(Value::PathExpr(path_expr)));
-            } else {
-                return Ok(None);
             }
         } else if let Some(d) = parser.peek_current::<Delimiter>() {
             match &d.delim {

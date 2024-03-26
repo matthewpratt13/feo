@@ -10,7 +10,7 @@ use feo_types::{
 
 use crate::Type;
 
-use super::Value;
+use super::{Expression, Value};
 
 #[derive(Debug, Clone)]
 pub enum OperatorExprKind {
@@ -152,9 +152,9 @@ impl Spanned for CompoundAssignmentExpr {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonExpr {
-    pub lhs: Box<Value>,
+    pub lhs: Value,
     pub operator: ComparisonOperatorKind,
-    pub rhs: Box<Value>,
+    pub rhs: Value,
 }
 
 impl Spanned for ComparisonExpr {

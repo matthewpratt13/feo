@@ -277,11 +277,7 @@ impl ParseExpr for ComparisonExpr {
                         parser,
                     );
 
-                    return Ok(Some(ComparisonExpr {
-                        lhs: Box::new(lhs),
-                        operator,
-                        rhs: Box::new(rhs),
-                    }));
+                    return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {
