@@ -127,6 +127,13 @@ impl ParseExpr for Expression {
                         // }
 
                         if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                            if let Some(al) = ArithmeticOrLogicalExpr::parse(parser).unwrap_or(None)
+                            {
+                                return Ok(Some(Expression::OperatorExpr(
+                                    OperatorExprKind::ArithmeticOrLogical(al),
+                                )));
+                            }
+
                             if let Some(ce) = ComparisonExpr::parse(parser).unwrap_or(None) {
                                 return Ok(Some(Expression::OperatorExpr(
                                     OperatorExprKind::Comparison(ce),

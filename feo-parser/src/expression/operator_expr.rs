@@ -262,7 +262,11 @@ impl ParseExpr for ComparisonExpr {
             if let Some(operator) = parser.peek_next::<ComparisonOperatorKind>() {
                 parser.next_token();
 
-                test_utils::log_msg(LogMsgType::Detect, "comparison expression: operator", parser);
+                test_utils::log_msg(
+                    LogMsgType::Detect,
+                    "comparison expression: operator",
+                    parser,
+                );
 
                 parser.next_token();
 
@@ -273,7 +277,11 @@ impl ParseExpr for ComparisonExpr {
                         parser,
                     );
 
-                    return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
+                    return Ok(Some(ComparisonExpr {
+                        lhs: Box::new(lhs),
+                        operator,
+                        rhs: Box::new(rhs),
+                    }));
                 }
 
                 parser.log_error(ParserErrorKind::UnexpectedToken {

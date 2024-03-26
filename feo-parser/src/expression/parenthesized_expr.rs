@@ -64,15 +64,15 @@ mod tests {
 
     #[test]
     fn parse_parenthesized_expr() -> Result<(), Vec<CompilerError>> {
-        let source_code = r#"(foo.bar + 2)"#;
+        let source_code = r#"(foo.bar > bar.baz)"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
 
         let parenthesized_expr = ParenthesizedExpr::parse(&mut parser)
             .expect("unable to parse parenthesized expression");
 
-        Ok(())
+        // Ok(())
 
-        // Ok(println!("{:#?}", parenthesized_expr))
+        Ok(println!("{:#?}", parenthesized_expr))
     }
 }
