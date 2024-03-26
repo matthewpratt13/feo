@@ -18,16 +18,16 @@ impl ParseExpr for FieldAccessExpr {
     {
         // TODO: find a way to prevent stack overflow when accessing fields (as a field access expression)
         if let Some(container_operand) = Value::parse(parser)? {
+            test_utils::log_msg(
+                LogMsgType::Detect,
+                "field access expression container operand",
+                parser,
+            );
             if let Some(Punctuation {
                 punc_kind: PuncKind::FullStop,
                 ..
             }) = parser.peek_next()
             {
-                test_utils::log_msg(
-                    LogMsgType::Detect,
-                    "field access expression container operand",
-                    parser,
-                );
                 parser.next_token();
 
                 test_utils::log_msg(LogMsgType::Detect, "full stop", parser);

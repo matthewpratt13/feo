@@ -1766,7 +1766,9 @@ impl ParseTerm for Value {
                 // if let Some(tie) = TupleIndexExprExpr::parse(parser).unwrap_or(None) {
                 //     return Ok(Some(Value::TupleIndexExprExpr(tie)));
                 // }
-            } else if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
+            }
+
+            if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
                 let path_expr = PathInExpr {
                     first_segment: pis,
                     subsequent_segments: None,
