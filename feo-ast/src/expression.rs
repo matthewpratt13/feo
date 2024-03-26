@@ -119,9 +119,7 @@ impl Expression {
             Self::IndexExpr(_) | Self::TupleIndexExpr(_) => Precedence::Index,
             Self::BlockExpr(_) => Precedence::Block,
             Self::FunctionCallExpr(_) | Self::MethodCallExpr(_) => Precedence::Call,
-            Self::ClosureWithBlock(_) | Self::ClosureWithoutBlock(_) => {
-                Precedence::Closure
-            }
+            Self::ClosureWithBlock(_) | Self::ClosureWithoutBlock(_) => Precedence::Closure,
             Self::FieldAccessExpr(_) => Precedence::FieldAccess,
             Self::IfExpr(_) | Self::MatchExpr(_) => Precedence::If,
             Self::IterationExpr(_) => Precedence::Loop,
@@ -291,8 +289,41 @@ pub enum Value {
     StructExpr(StructExpr),
     TupleStructExpr(TupleStructExpr),
     TupleExpr(TupleExpr),
-    TupleIndexExpr(TupleIndexExpr),
+    // TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
+}
+
+impl Value {
+    pub fn precedence(&self) -> Precedence {
+        match self {
+            Value::ArrayExpr(_) => Precedence::Array,
+            // Value::IndexExpr(_) | Value::TupleIndexExpr(_) => Precedence::Index,
+            // Value::FunctionCallExpr(_) | Value::MethodCallExpr(_) => Precedence::Call,
+            Value::FieldAccessExpr(_) => Precedence::FieldAccess,
+            Value::Literal(_) => Precedence::Literal,
+            // Value::ArithmeticOrLogicalExpr(al) => match al.operator {
+            // ArithmeticOrLogicalOperatorKind::Add(_)
+            // | ArithmeticOrLogicalOperatorKind::Subtract(_) => Precedence::Sum,
+            // ArithmeticOrLogicalOperatorKind::Multiply(_)
+            // | ArithmeticOrLogicalOperatorKind::Divide(_)
+            // | ArithmeticOrLogicalOperatorKind::Modulus(_) => Precedence::Product,
+            // ArithmeticOrLogicalOperatorKind::BitwiseAnd(_) => Precedence::BitwiseAnd,
+            // ArithmeticOrLogicalOperatorKind::BitwiseOr(_) => Precedence::BitwiseOr,
+            // ArithmeticOrLogicalOperatorKind::BitwiseXor(_) => Precedence::BitwiseXor,
+            // ArithmeticOrLogicalOperatorKind::ShiftLeft(_)
+            // | ArithmeticOrLogicalOperatorKind::ShiftRight(_) => Precedence::Shift,
+            // },
+            // Value::DereferenceExpr(_) | Value::NegationExpr(_) | Value::ReferenceExpr(_) => {
+            // Precedence::Prefix
+            // }
+            // Value::UnwrapExpr(_) => Precedence::Unwrap,
+            Value::ParenthesizedExpr(_) => Precedence::Parentheses,
+            Value::PathExpr(_) => Precedence::Path,
+            Value::StructExpr(_) | Value::TupleStructExpr(_) => Precedence::Struct,
+            Value::TupleExpr(_) => Precedence::Tuple,
+            Value::UnderscoreExpr(_) => Precedence::Lowest,
+        }
+    }
 }
 
 impl Spanned for Value {
@@ -314,7 +345,7 @@ impl Spanned for Value {
             Self::StructExpr(se) => se.span(),
             Self::TupleStructExpr(tse) => tse.span(),
             Self::TupleExpr(tup) => tup.span(),
-            Self::TupleIndexExpr(tie) => tie.span(),
+            // Self::TupleIndexExpr(tie) => tie.span(),
             Self::UnderscoreExpr(ue) => ue.span(),
         }
     }
