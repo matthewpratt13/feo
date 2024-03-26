@@ -43,7 +43,7 @@ use crate::{
 
 pub trait ParseTerm {
     /// Parses literals, attributes, paths, parenthesized expressions and
-    /// helper types (e.g., `StructExprField`)
+    /// helper types (e.g., `StructExprField`).
     fn parse(parser: &mut Parser) -> Result<Option<Self>, Vec<CompilerError>>
     where
         Self: Sized;
@@ -342,9 +342,9 @@ impl ParseExpr for Expression {
                 }
             }
 
-            if let Some(pisk) = parser.peek_current::<PathIdenSegmentKind>() {
+            if let Some(pis) = parser.peek_current::<PathIdenSegmentKind>() {
                 let path_expr = PathInExpr {
-                    first_segment: pisk,
+                    first_segment: pis,
                     subsequent_segments: None,
                 };
 
