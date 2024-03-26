@@ -11,9 +11,8 @@ use feo_ast::{
         TupleStructExpr, TypeCastExpr, UnderscoreExpr, UnwrapExpr, Value,
     },
     item::{
-        ConstVarDef, EnumDef, FuncSig, FuncWithBlock, ImportDecl, InherentImplBlock,
-        Item, ModuleWithoutBlock, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef,
-        TypeDef,
+        ConstVarDef, EnumDef, FuncSig, FuncWithBlock, ImportDecl, InherentImplBlock, Item,
+        ModuleWithoutBlock, StaticVarDef, StructDef, TraitImplBlock, TupleStructDef, TypeDef,
     },
     path::{PathExpr, PathIdenSegmentKind, PathInExpr, PathType, PathTypeSegment},
     pattern::{
@@ -123,12 +122,19 @@ impl ParseExpr for Expression {
                 }
 
                 KeywordKind::KwSelf => {
-                    if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::MethodCallExpr(mc)));
-                    }
+                    if let Some(Punctuation {
+                        punc_kind: PuncKind::FullStop,
+                        ..
+                    }) = parser.peek_next()
+                    {
+                        // if let Some(mc) = MethodCallExpr::parse(parser).unwrap_or(None) {
+                        //     return Ok(Some(Expression::MethodCallExpr(mc)));
+                        // }
 
-                    if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
-                        return Ok(Some(Expression::FieldAccessExpr(fa)));
+                        if let Some(fa) = FieldAccessExpr::parse(parser).unwrap_or(None) {
+                            // panic!("aaahhh");
+                            return Ok(Some(Expression::FieldAccessExpr(fa)));
+                        }
                     }
 
                     if let Some(pth) = PathInExpr::parse(parser).unwrap_or(None) {
