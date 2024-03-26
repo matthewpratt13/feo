@@ -47,6 +47,34 @@ pub use self::{
     tuple_expr::{TupleExpr, TupleIndexExpr},
     underscore_expr::UnderscoreExpr,
 };
+#[derive(PartialEq, PartialOrd, Debug, Clone, Copy)]
+pub enum Precedence {
+    Lowest,
+    Assignment,  // =, +=
+    Unwrap,      // ?
+    Range,       // .., ..=
+    Or,          // ||
+    And,         // &&
+    Equality,    // ==, !=
+    Comparison,  // <, >, <=, >=
+    Sum,         // +, -
+    Product,     // *, /, %
+    TypeCast,    // as (Type Casting)
+    Prefix,      // -X, !X, * (dereference), & and &mut (reference)
+    Call,        // func(args), object.method(args)
+    Index,       // array[index], tuple.0
+    FieldAccess, // expr.field
+    Path,        // foo::bar, foo.bar
+    Closure,     // |args| expr
+    Literal,     // 123, "string", true/false
+    Parentheses, // (expr)
+    Struct,      // StructName { field: expr, .. }
+    Tuple,       // (expr, expr)
+    Array,       // [expr, expr]
+    Block,       // { ... }
+    Loop,        // loop { ... }, while (condition) { ... }, for item in collection { ... }
+    If,          // if condition { ... } else { ... }
+}
 
 /// `Expression` always produce / evaluate to a value, and may have (side) effects.
 #[derive(Debug, Clone)]

@@ -8,6 +8,8 @@ use feo_types::span::{Position, Spanned};
 
 use crate::peek::{Peek, Peeker};
 
+
+
 /// Struct that stores a token stream and the current character index, and handles errors.
 pub struct Parser {
     stream: TokenStream,
