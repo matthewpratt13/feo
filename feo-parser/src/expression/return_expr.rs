@@ -20,11 +20,13 @@ impl ParseExpr for ReturnExpr {
             ..
         }) = kw_return_opt
         {
-            test_utils::log_msg(LogMsgType::Enter, "return expression", parser);
+            test_utils::log_msg(LogMsgType::Detect, "`return` keyword", parser);
 
             parser.next_token();
 
             let expression_opt = if let Some(e) = Expression::parse(parser)? {
+                test_utils::log_msg(LogMsgType::Detect, "optional expression", parser);
+
                 Some(Box::new(e))
             } else {
                 None

@@ -300,7 +300,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_function_param() -> Result<(), Vec<CompilerError>> {
+    fn parse_func_param() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"foo: u64"#;
 
         let mut parser = test_utils::get_parser(source_code, false)?;
@@ -312,7 +312,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_function_sig() -> Result<(), Vec<CompilerError>> {
+    fn parse_func_sig() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
         pub func foo(bar: bool, baz: char) -> u64
@@ -326,7 +326,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_function_with_block() -> Result<(), Vec<CompilerError>> {
+    fn parse_func_with_block() -> Result<(), Vec<CompilerError>> {
         let source_code = r#"
         #[abstract]
         pub func foo(bar: bool, baz: char) -> u64 {

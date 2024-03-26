@@ -237,11 +237,18 @@ impl ParseExpr for ComparisonExpr {
         test_utils::log_msg(LogMsgType::Detect, "comparison expression", parser);
 
         if let Some(lhs) = Value::parse(parser)? {
+            test_utils::log_msg(LogMsgType::Detect, "left-hand side", parser);
+
             if let Some(operator) = parser.peek_next::<ComparisonOperatorKind>() {
                 parser.next_token();
+
+                test_utils::log_msg(LogMsgType::Detect, "comparison operator kind", parser);
+
                 parser.next_token();
 
                 if let Some(rhs) = Value::parse(parser)? {
+                    test_utils::log_msg(LogMsgType::Detect, "right-hand side", parser);
+
                     return Ok(Some(ComparisonExpr { lhs, operator, rhs }));
                 }
 
