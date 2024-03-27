@@ -106,10 +106,16 @@ impl Precedence {
 
                 KeywordKind::KwPackage | KeywordKind::KwSuper => {
                     match parser.peek_num_tokens_ahead(1) {
-                        Some(Token::Punc(Punctuation {
-                            punc_kind: PuncKind::DblColon,
-                            ..
-                        })) => match parser.peek_num_tokens_ahead(2) {
+                        Some(Token::Punc(
+                            Punctuation {
+                                punc_kind: PuncKind::DblColon,
+                                ..
+                            }
+                            | Punctuation {
+                                punc_kind: PuncKind::ColonColonAsterisk,
+                                ..
+                            },
+                        )) => match parser.peek_num_tokens_ahead(2) {
                             Some(Token::Identifier(_)) => Some(Precedence::Path),
                             _ => None,
                         },

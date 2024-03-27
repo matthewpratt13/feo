@@ -13,6 +13,7 @@ mod struct_expr;
 mod tuple_expr;
 mod underscore_expr;
 
+use feo_error::parser_error::ParserErrorKind;
 use feo_types::{
     literal::LiteralKind,
     span::{Span, Spanned},
@@ -189,45 +190,86 @@ impl<T: Spanned> Spanned for TermCollection<T> {
 #[derive(Debug, Clone)]
 pub enum Value {
     ArrayExpr(ArrayExpr),
-    // IndexExpr(IndexExpr),
-    // FunctionCallExpr(FunctionCallExpr),
-    // MethodCallExpr(MethodCallExpr),
+    IndexExpr(IndexExpr),
+    FunctionCallExpr(FunctionCallExpr),
+    MethodCallExpr(MethodCallExpr),
     FieldAccessExpr(FieldAccessExpr),
     Literal(LiteralKind),
-    // ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
-    // DereferenceExpr(DereferenceExpr),
-    // NegationExpr(NegationExpr),
-    // ReferenceExpr(ReferenceExpr),
-    // UnwrapExpr(UnwrapExpr),
+    ArithmeticOrLogicalExpr(ArithmeticOrLogicalExpr),
+    DereferenceExpr(DereferenceExpr),
+    NegationExpr(NegationExpr),
+    ReferenceExpr(ReferenceExpr),
+    TypeCastExpr(TypeCastExpr),
+    UnwrapExpr(UnwrapExpr),
     ParenthesizedExpr(ParenthesizedExpr),
     PathExpr(PathExpr),
     StructExpr(StructExpr),
     TupleStructExpr(TupleStructExpr),
     TupleExpr(TupleExpr),
-    // TupleIndexExpr(TupleIndexExpr),
+    TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
+}
+
+impl TryFrom<Expression> for Value {
+    type Error = ParserErrorKind;
+
+    fn try_from(value: Expression) -> Result<Self, Self::Error> {
+        let value_as_string = format!("{:#?}", value);
+
+        match value {
+            Expression::ArrayExpr(ae) => Ok(Value::ArrayExpr(ae)),
+            Expression::IndexExpr(ie) => Ok(Value::IndexExpr(ie)),
+            Expression::FunctionCallExpr(fc) => Ok(Value::FunctionCallExpr(fc)),
+            Expression::MethodCallExpr(mc) => Ok(Value::MethodCallExpr(mc)),
+            Expression::FieldAccessExpr(fa) => Ok(Value::FieldAccessExpr(fa)),
+            Expression::Literal(l) => Ok(Value::Literal(l)),
+            Expression::OperatorExpr(o) => match o {
+                OperatorExprKind::ArithmeticOrLogical(al) => Ok(Value::ArithmeticOrLogicalExpr(al)),
+                OperatorExprKind::Dereference(d) => Ok(Value::DereferenceExpr(d)),
+                OperatorExprKind::Negation(n) => Ok(Value::NegationExpr(n)),
+                OperatorExprKind::Reference(r) => Ok(Value::ReferenceExpr(r)),
+                OperatorExprKind::TypeCast(tc) => Ok(Value::TypeCastExpr(tc)),
+                OperatorExprKind::UnwrapExpr(ure) => Ok(Value::UnwrapExpr(ure)),
+                _ => Err(ParserErrorKind::InvalidToken {
+                    token: value_as_string,
+                }),
+            },
+            Expression::ParenthesizedExpr(par) => Ok(Value::ParenthesizedExpr(par)),
+            Expression::PathExpr(pth) => Ok(Value::PathExpr(pth)),
+            Expression::StructExpr(se) => Ok(Value::StructExpr(se)),
+            Expression::TupleStructExpr(tse) => Ok(Value::TupleStructExpr(tse)),
+            Expression::TupleExpr(te) => Ok(Value::TupleExpr(te)),
+            Expression::TupleIndexExpr(tie) => Ok(Value::TupleIndexExpr(tie)),
+            Expression::UnderscoreExpr(ue) => Ok(Value::UnderscoreExpr(ue)),
+            _ => Err(ParserErrorKind::UnexpectedToken {
+                expected: "expression".to_string(),
+                found: value_as_string,
+            }),
+        }
+    }
 }
 
 impl Spanned for Value {
     fn span(&self) -> Span {
         match self {
             Self::ArrayExpr(ae) => ae.span(),
-            // Self::IndexExpr(ie) => ie.span(),
-            // Self::FunctionCallExpr(fc) => fc.span(),
-            // Self::MethodCallExpr(mc) => mc.span(),
+            Self::IndexExpr(ie) => ie.span(),
+            Self::FunctionCallExpr(fc) => fc.span(),
+            Self::MethodCallExpr(mc) => mc.span(),
             Self::FieldAccessExpr(fa) => fa.span(),
             Self::Literal(lit) => lit.span(),
-            // Self::ArithmeticOrLogicalExpr(ale) => ale.span(),
-            // Self::DereferenceExpr(de) => de.span(),
-            // Self::NegationExpr(ne) => ne.span(),
-            // Self::ReferenceExpr(re) => re.span(),
-            // Self::UnwrapExpr(ue) => ue.span(),
+            Self::ArithmeticOrLogicalExpr(ale) => ale.span(),
+            Self::DereferenceExpr(de) => de.span(),
+            Self::NegationExpr(ne) => ne.span(),
+            Self::ReferenceExpr(re) => re.span(),
+            Self::TypeCastExpr(tc) => tc.span(),
+            Self::UnwrapExpr(ue) => ue.span(),
             Self::ParenthesizedExpr(par) => par.span(),
             Self::PathExpr(pth) => pth.span(),
             Self::StructExpr(se) => se.span(),
             Self::TupleStructExpr(tse) => tse.span(),
             Self::TupleExpr(tup) => tup.span(),
-            // Self::TupleIndexExpr(tie) => tie.span(),
+            Self::TupleIndexExpr(tie) => tie.span(),
             Self::UnderscoreExpr(ue) => ue.span(),
         }
     }

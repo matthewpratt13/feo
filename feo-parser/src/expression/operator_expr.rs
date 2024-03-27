@@ -441,7 +441,7 @@ impl ParseExpr for TypeCastExpr {
 
                 if let Some(rhs) = Type::parse(parser)? {
                     return Ok(Some(TypeCastExpr {
-                        lhs,
+                        lhs: Box::new(lhs),
                         operator: kw_as_opt.unwrap(),
                         rhs,
                     }));
