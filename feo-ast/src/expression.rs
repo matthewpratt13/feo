@@ -64,7 +64,7 @@ pub enum Precedence {
     Shift,              // <<, >>
     Sum,                // +, -
     Product,            // *, /, %
-    Prefix,             // -X, !X, * (dereference), & and &mut (reference)
+    Prefix,             // -X, !X, * (dereference), & and &mut (reference), # and #! (attributes)
     TypeCast,           // as (Type Casting)
     Call,               // func(args), object.method(args)
     Index,              // array[index], tuple.0

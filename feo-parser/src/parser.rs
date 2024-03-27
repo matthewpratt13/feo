@@ -8,8 +8,6 @@ use feo_types::span::{Position, Spanned};
 
 use crate::peek::{Peek, Peeker};
 
-
-
 /// Struct that stores a token stream and the current character index, and handles errors.
 pub struct Parser {
     stream: TokenStream,
@@ -49,8 +47,8 @@ impl Parser {
         token
     }
 
-    pub fn peek_next_token(&self) -> Option<Token> {
-        self.stream.tokens().get(self.pos + 1).cloned()
+    pub fn peek_num_tokens_ahead(&self, num_tokens: usize) -> Option<Token> {
+        self.stream.tokens().get(self.pos + num_tokens).cloned()
     }
 
     /// Return the previous token.
@@ -74,8 +72,8 @@ impl Parser {
 
     /// Peek at the `T` at `num_tokens` index and return it if it exists (without advancing)
     /// or return `None`.
-    pub fn peek_with_len<T: Peek>(&self, num_tokens: usize) -> Option<T> {
-        Peeker::with(&self.stream().tokens(), self.pos + num_tokens)
+    pub fn peek_ahead<T: Peek>(&self, offset: usize) -> Option<T> {
+        Peeker::with(&self.stream().tokens(), self.pos + offset)
     }
 
     /// Push `ParserError` to the `Handler`.
