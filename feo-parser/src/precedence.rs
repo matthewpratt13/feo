@@ -142,12 +142,18 @@ impl Precedence {
                         PuncKind::ColonColonAsterisk => Some(Precedence::Path),
                         _ => None,
                     },
+
                     _ => None,
                 },
+
                 None => Some(Precedence::Path),
             },
 
             Some(Token::Keyword(k)) => match k.keyword_kind {
+                KeywordKind::KwBreak | KeywordKind::KwContinue | KeywordKind::KwReturn => {
+                    Some(Precedence::Lowest)
+                }
+
                 KeywordKind::KwIf => Some(Precedence::If),
 
                 KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => {
