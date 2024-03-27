@@ -164,7 +164,7 @@ impl Precedence {
                             (DelimKind::Bracket, DelimOrientation::Open) => Some(Precedence::Index),
 
                             (DelimKind::Brace, DelimOrientation::Open) => Some(Precedence::Struct),
-                            
+
                             _ => None,
                         },
 
@@ -312,7 +312,7 @@ impl Precedence {
                 Some(Precedence::Literal)
             }
 
-            _ => None,
+            _ => Some(Precedence::Lowest),
         }
     }
 }
