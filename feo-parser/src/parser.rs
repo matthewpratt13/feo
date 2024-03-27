@@ -2,7 +2,7 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, Expression, LazyBoolExpr, LazyBoolOperatorKind, OperatorExprKind,
-        UnwrapExpr, Value,
+        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, UnwrapExpr, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -22,6 +22,7 @@ use feo_types::{
 };
 
 use crate::{
+    parse::ParseExpr,
     peek::{Peek, Peeker},
     precedence::Precedence,
 };
@@ -102,11 +103,76 @@ impl Parser {
                 | PuncKind::ForwardSlashEquals
                 | PuncKind::PercentEquals => todo!(),
 
-                PuncKind::DblDot | PuncKind::DotDotEquals => todo!(),
+                PuncKind::DblDot => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+
+                        if let Some(_) = RangeFromToExpr::parse(self).ok()? {
+                            return Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
+                                RangeFromToExpr {
+                                    from_operand: Box::new(Value::try_from(left).ok()?),
+                                    dbl_dot: p,
+                                    to_operand_excl: Box::new(Value::try_from(right).ok()?),
+                                },
+                            )));
+                        } else if let Some(_) = RangeFromExpr::parse(self).ok()? {
+                            let right = self.parse_expression(precedence)?;
+
+                            return Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
+                                RangeFromToExpr {
+                                    from_operand: Box::new(Value::try_from(left).ok()?),
+                                    dbl_dot: p,
+                                    to_operand_excl: Box::new(Value::try_from(right).ok()?),
+                                },
+                            )));
+                        } else {
+                            return None;
+                        }
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::DotDotEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::RangeExpr(RangeExprKind::RangeInclusiveExpr(
+                            RangeInclusiveExpr {
+                                from_operand: Box::new(Value::try_from(left).ok()?),
+                                dot_dot_equals: p,
+                                to_operand_incl: Box::new(Value::try_from(right).ok()?),
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
 
                 PuncKind::FullStop => todo!(),
 
-                PuncKind::DblColon | PuncKind::ColonColonAsterisk => todo!(),
+                PuncKind::DblColon => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::PathExpr(PathInExpr {
+                            first_segment: todo!(),
+                            subsequent_segments: todo!(),
+                        }));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::ColonColonAsterisk => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::PathExpr(PathInExpr {
+                            first_segment: todo!(),
+                            subsequent_segments: todo!(),
+                        }));
+                    } else {
+                        return None;
+                    }
+                }
 
                 PuncKind::Plus => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
