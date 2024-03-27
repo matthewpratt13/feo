@@ -49,6 +49,10 @@ impl Parser {
         token
     }
 
+    pub fn peek_next_token(&self) -> Option<Token> {
+        self.stream.tokens().get(self.pos + 1).cloned()
+    }
+
     /// Return the previous token.
     pub fn previous_token(&mut self) -> Option<Token> {
         if self.pos > 0 {

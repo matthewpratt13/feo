@@ -7,6 +7,7 @@ mod parser;
 mod path;
 mod pattern;
 mod peek;
+pub mod precedence;
 mod statement;
 pub mod test_utils;
 mod ty;
