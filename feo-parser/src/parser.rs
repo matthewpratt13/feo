@@ -1,4 +1,7 @@
-use feo_ast::token::{Token, TokenStream};
+use feo_ast::{
+    expression::Expression,
+    token::{Token, TokenStream},
+};
 use feo_error::{
     error::CompilerError,
     handler::{ErrorEmitted, Handler},
@@ -6,7 +9,10 @@ use feo_error::{
 };
 use feo_types::span::{Position, Spanned};
 
-use crate::peek::{Peek, Peeker};
+use crate::{
+    peek::{Peek, Peeker},
+    precedence::Precedence,
+};
 
 /// Struct that stores a token stream and the current character index, and handles errors.
 pub struct Parser {
@@ -30,6 +36,22 @@ impl Parser {
 
     pub fn pos(&self) -> usize {
         self.pos
+    }
+
+    pub fn parse_expression(&mut self, precedence: Precedence) -> Option<Expression> {
+        todo!()
+    }
+
+    fn parse_prefix(&mut self) -> Option<Expression> {
+        todo!()
+    }
+
+    fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
+        todo!()
+    }
+
+    fn peek_precedence(&mut self) -> Precedence {
+        todo!()
     }
 
     /// Return the current token.
