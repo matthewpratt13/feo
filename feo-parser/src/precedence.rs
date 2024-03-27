@@ -1,4 +1,5 @@
 use feo_ast::token::Token;
+use feo_error::parser_error::ParserErrorKind;
 use feo_types::{
     delimiter::{DelimKind, DelimOrientation},
     keyword::KeywordKind,
@@ -44,24 +45,24 @@ pub enum Precedence {
 }
 
 impl Precedence {
-    pub fn token_precedence(parser: &mut Parser) -> Option<Precedence> {
+    pub fn token_precedence(parser: &mut Parser) -> Result<Option<Precedence>, ParserErrorKind> {
         match parser.current_token() {
             Some(Token::Keyword(k)) => match k.keyword_kind {
                 KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => {
-                    Some(Precedence::Loop)
+                    Ok(Some(Precedence::Loop))
                 }
 
-                KeywordKind::KwIf | KeywordKind::KwMatch => Some(Precedence::If),
+                KeywordKind::KwIf | KeywordKind::KwMatch => Ok(Some(Precedence::If)),
 
                 KeywordKind::KwSelfType => match parser.peek_num_tokens_ahead(1) {
                     Some(t) => match t {
                         Token::Delim(d) => match d.delim {
                             (DelimKind::Parenthesis, DelimOrientation::Open)
                             | (DelimKind::Brace, DelimOrientation::Open) => {
-                                Some(Precedence::Struct)
+                                Ok(Some(Precedence::Struct))
                             }
 
-                            _ => None,
+                            _ => Ok(None),
                         },
 
                         Token::Punc(
@@ -74,14 +75,14 @@ impl Precedence {
                                 ..
                             },
                         ) => match parser.peek_num_tokens_ahead(2) {
-                            Some(Token::Identifier(_)) => Some(Precedence::Path),
-                            _ => None,
+                            Some(Token::Identifier(_)) => Ok(Some(Precedence::Path)),
+                            _ => Ok(None),
                         },
 
-                        _ => None,
+                        _ => Ok(None),
                     },
 
-                    None => Some(Precedence::Path),
+                    None => Ok(Some(Precedence::Path)),
                 },
 
                 KeywordKind::KwSelf => match parser.peek_num_tokens_ahead(1) {
@@ -92,16 +93,16 @@ impl Precedence {
                         Some(Token::Delim(Delimiter {
                             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                             ..
-                        })) => Some(Precedence::Call),
+                        })) => Ok(Some(Precedence::Call)),
 
-                        Some(Token::Identifier(_)) => Some(Precedence::FieldAccess),
+                        Some(Token::Identifier(_)) => Ok(Some(Precedence::FieldAccess)),
 
-                        _ => None,
+                        _ => Ok(None),
                     },
 
-                    Some(_) => None,
+                    Some(_) => Ok(None),
 
-                    None => Some(Precedence::Path),
+                    None => Ok(Some(Precedence::Path)),
                 },
 
                 KeywordKind::KwPackage | KeywordKind::KwSuper => {
@@ -110,68 +111,72 @@ impl Precedence {
                             punc_kind: PuncKind::DblColon,
                             ..
                         })) => match parser.peek_num_tokens_ahead(2) {
-                            Some(Token::Identifier(_)) => Some(Precedence::Path),
-                            _ => None,
+                            Some(Token::Identifier(_)) => Ok(Some(Precedence::Path)),
+                            _ => Ok(None),
                         },
 
-                        _ => None,
+                        _ => Ok(None),
                     }
                 }
 
-                KeywordKind::KwMut => Some(Precedence::Prefix),
+                KeywordKind::KwMut => Ok(Some(Precedence::Prefix)),
 
                 KeywordKind::KwBreak | KeywordKind::KwContinue | KeywordKind::KwReturn => {
-                    Some(Precedence::Lowest)
+                    Ok(Some(Precedence::Lowest))
                 }
 
-                _ => None,
+                _ => Ok(None),
             },
 
             Some(Token::Delim(d)) => match d.delim {
-                (DelimKind::Brace, DelimOrientation::Open) => Some(Precedence::Block),
+                (DelimKind::Brace, DelimOrientation::Open) => Ok(Some(Precedence::Block)),
 
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     match parser.peek_num_tokens_ahead(2) {
                         Some(Token::Punc(Punctuation {
                             punc_kind: PuncKind::Comma,
                             ..
-                        })) => Some(Precedence::Tuple),
+                        })) => Ok(Some(Precedence::Tuple)),
 
-                        Some(_) => Some(Precedence::Parentheses),
+                        Some(_) => Ok(Some(Precedence::Parentheses)),
 
-                        _ => None,
+                        _ => Ok(None),
                     }
                 }
 
-                (DelimKind::Bracket, DelimOrientation::Open) => Some(Precedence::Array),
+                (DelimKind::Bracket, DelimOrientation::Open) => Ok(Some(Precedence::Array)),
 
-                _ => None,
+                _ => Ok(None),
             },
 
             Some(Token::Identifier(id)) => {
                 if &id.name == "_" {
-                    return Some(Precedence::Lowest);
+                    return Ok(Some(Precedence::Lowest));
                 }
 
                 match parser.peek_num_tokens_ahead(1) {
                     Some(t) => match t {
                         Token::Delim(d) => match d.delim {
                             (DelimKind::Parenthesis, DelimOrientation::Open) => {
-                                Some(Precedence::Call)
+                                Ok(Some(Precedence::Call))
                                 // what about tuple structs?
                             }
 
-                            (DelimKind::Bracket, DelimOrientation::Open) => Some(Precedence::Index),
+                            (DelimKind::Bracket, DelimOrientation::Open) => {
+                                Ok(Some(Precedence::Index))
+                            }
 
-                            (DelimKind::Brace, DelimOrientation::Open) => Some(Precedence::Struct),
+                            (DelimKind::Brace, DelimOrientation::Open) => {
+                                Ok(Some(Precedence::Struct))
+                            }
 
-                            _ => None,
+                            _ => Ok(None),
                         },
 
                         Token::Keyword(Keyword {
                             keyword_kind: KeywordKind::KwAs,
                             ..
-                        }) => Some(Precedence::TypeCast),
+                        }) => Ok(Some(Precedence::TypeCast)),
 
                         Token::Punc(p) => match p.punc_kind {
                             PuncKind::FullStop => match parser.peek_num_tokens_ahead(2) {
@@ -179,86 +184,88 @@ impl Precedence {
                                     Token::Delim(Delimiter {
                                         delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                                         ..
-                                    }) => Some(Precedence::Call),
+                                    }) => Ok(Some(Precedence::Call)),
 
-                                    Token::Identifier(_) => Some(Precedence::FieldAccess),
+                                    Token::Identifier(_) => Ok(Some(Precedence::FieldAccess)),
 
-                                    Token::UIntLit(_) => Some(Precedence::Index),
+                                    Token::UIntLit(_) => Ok(Some(Precedence::Index)),
 
-                                    _ => None,
+                                    _ => Ok(None),
                                 },
 
-                                None => None,
+                                None => Ok(None),
                             },
 
                             PuncKind::PlusEquals
                             | PuncKind::MinusEquals
                             | PuncKind::AsteriskEquals
                             | PuncKind::ForwardSlashEquals
-                            | PuncKind::PercentEquals => Some(Precedence::CompoundAssignment),
+                            | PuncKind::PercentEquals => Ok(Some(Precedence::CompoundAssignment)),
 
-                            PuncKind::DblDot | PuncKind::DotDotEquals => Some(Precedence::Range),
+                            PuncKind::DblDot | PuncKind::DotDotEquals => {
+                                Ok(Some(Precedence::Range))
+                            }
 
                             PuncKind::DblColon | PuncKind::ColonColonAsterisk => {
-                                Some(Precedence::Path)
+                                Ok(Some(Precedence::Path))
                             }
 
                             PuncKind::Asterisk | PuncKind::ForwardSlash | PuncKind::Percent => {
-                                Some(Precedence::Product)
+                                Ok(Some(Precedence::Product))
                             }
 
-                            PuncKind::Plus | PuncKind::Minus => Some(Precedence::Sum),
+                            PuncKind::Plus | PuncKind::Minus => Ok(Some(Precedence::Sum)),
 
                             PuncKind::DblLessThan | PuncKind::DblGreaterThan => {
-                                Some(Precedence::Shift)
+                                Ok(Some(Precedence::Shift))
                             }
 
                             PuncKind::LessThan
                             | PuncKind::GreaterThan
                             | PuncKind::LessThanEquals
-                            | PuncKind::GreaterThanEquals => Some(Precedence::Comparison),
+                            | PuncKind::GreaterThanEquals => Ok(Some(Precedence::Comparison)),
 
                             PuncKind::DblEquals | PuncKind::BangEquals => {
-                                Some(Precedence::Equality)
+                                Ok(Some(Precedence::Equality))
                             }
 
-                            PuncKind::Ampersand => Some(Precedence::BitwiseAnd),
+                            PuncKind::Ampersand => Ok(Some(Precedence::BitwiseAnd)),
 
-                            PuncKind::Caret => Some(Precedence::BitwiseXor),
+                            PuncKind::Caret => Ok(Some(Precedence::BitwiseXor)),
 
-                            PuncKind::Pipe => Some(Precedence::BitwiseOr),
+                            PuncKind::Pipe => Ok(Some(Precedence::BitwiseOr)),
 
-                            PuncKind::DblAmpersand => Some(Precedence::And),
+                            PuncKind::DblAmpersand => Ok(Some(Precedence::And)),
 
-                            PuncKind::DblPipe => Some(Precedence::Or),
+                            PuncKind::DblPipe => Ok(Some(Precedence::Or)),
 
-                            PuncKind::QuestionMark => Some(Precedence::Unwrap),
+                            PuncKind::QuestionMark => Ok(Some(Precedence::Unwrap)),
 
-                            PuncKind::Equals => Some(Precedence::Assignment),
+                            PuncKind::Equals => Ok(Some(Precedence::Assignment)),
 
-                            _ => None,
+                            _ => Ok(None),
                         },
 
-                        _ => None,
+                        _ => Ok(None),
                     },
 
-                    None => Some(Precedence::Path),
+                    None => Ok(Some(Precedence::Path)),
                 }
             }
 
             Some(Token::Punc(p)) => match p.punc_kind {
-                PuncKind::DblDot | PuncKind::DotDotEquals => Some(Precedence::Range),
+                PuncKind::DblDot | PuncKind::DotDotEquals => Ok(Some(Precedence::Range)),
 
-                PuncKind::Pipe | PuncKind::DblPipe => Some(Precedence::Closure),
+                PuncKind::Pipe | PuncKind::DblPipe => Ok(Some(Precedence::Closure)),
 
                 PuncKind::Minus
                 | PuncKind::Bang
                 | PuncKind::Asterisk
                 | PuncKind::Ampersand
                 | PuncKind::HashSign
-                | PuncKind::HashBang => Some(Precedence::Prefix),
+                | PuncKind::HashBang => Ok(Some(Precedence::Prefix)),
 
-                _ => None,
+                _ => Ok(None),
             },
 
             Some(Token::IntLit(_))
@@ -269,50 +276,54 @@ impl Precedence {
                     Token::Keyword(Keyword {
                         keyword_kind: KeywordKind::KwAs,
                         ..
-                    }) => Some(Precedence::TypeCast),
+                    }) => Ok(Some(Precedence::TypeCast)),
 
                     Token::Punc(p) => match p.punc_kind {
-                        PuncKind::DblDot | PuncKind::DotDotEquals => Some(Precedence::Range),
+                        PuncKind::DblDot | PuncKind::DotDotEquals => Ok(Some(Precedence::Range)),
 
                         PuncKind::Asterisk | PuncKind::ForwardSlash | PuncKind::Percent => {
-                            Some(Precedence::Product)
+                            Ok(Some(Precedence::Product))
                         }
 
-                        PuncKind::Plus | PuncKind::Minus => Some(Precedence::Sum),
+                        PuncKind::Plus | PuncKind::Minus => Ok(Some(Precedence::Sum)),
 
-                        PuncKind::DblLessThan | PuncKind::DblGreaterThan => Some(Precedence::Shift),
+                        PuncKind::DblLessThan | PuncKind::DblGreaterThan => {
+                            Ok(Some(Precedence::Shift))
+                        }
 
                         PuncKind::LessThan
                         | PuncKind::GreaterThan
                         | PuncKind::LessThanEquals
-                        | PuncKind::GreaterThanEquals => Some(Precedence::Comparison),
+                        | PuncKind::GreaterThanEquals => Ok(Some(Precedence::Comparison)),
 
-                        PuncKind::BangEquals | PuncKind::DblEquals => Some(Precedence::Equality),
+                        PuncKind::BangEquals | PuncKind::DblEquals => {
+                            Ok(Some(Precedence::Equality))
+                        }
 
-                        PuncKind::Ampersand => Some(Precedence::BitwiseAnd),
+                        PuncKind::Ampersand => Ok(Some(Precedence::BitwiseAnd)),
 
-                        PuncKind::Caret => Some(Precedence::BitwiseXor),
+                        PuncKind::Caret => Ok(Some(Precedence::BitwiseXor)),
 
-                        PuncKind::Pipe => Some(Precedence::BitwiseOr),
+                        PuncKind::Pipe => Ok(Some(Precedence::BitwiseOr)),
 
-                        PuncKind::DblAmpersand => Some(Precedence::And),
+                        PuncKind::DblAmpersand => Ok(Some(Precedence::And)),
 
-                        PuncKind::DblPipe => Some(Precedence::Or),
+                        PuncKind::DblPipe => Ok(Some(Precedence::Or)),
 
-                        _ => None,
+                        _ => Ok(None),
                     },
 
-                    _ => None,
+                    _ => Ok(None),
                 },
 
-                None => Some(Precedence::Literal),
+                None => Ok(Some(Precedence::Literal)),
             },
 
             Some(Token::CharLit(_)) | Some(Token::StringLit(_)) | Some(Token::BoolLit(_)) => {
-                Some(Precedence::Literal)
+                Ok(Some(Precedence::Literal))
             }
 
-            _ => Some(Precedence::Lowest),
+            _ => Ok(Some(Precedence::Lowest)),
         }
     }
 }

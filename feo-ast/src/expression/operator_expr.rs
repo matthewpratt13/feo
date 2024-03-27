@@ -229,7 +229,7 @@ impl Spanned for ReferenceExpr {
 
 #[derive(Debug, Clone)]
 pub struct TypeCastExpr {
-    pub lhs: Value,
+    pub lhs: Box<Value>,
     pub operator: CastOperator,
     pub rhs: Type,
 }

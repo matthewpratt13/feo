@@ -1,5 +1,5 @@
 use feo_ast::{
-    expression::Expression,
+    expression::{Expression, MethodCallExpr, Value},
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
 };
@@ -9,11 +9,16 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
     literal::LiteralKind,
+    punctuation::PuncKind,
     span::{Position, Spanned},
+    Delimiter, Keyword,
 };
 
 use crate::{
+    parse::ParseExpr,
     peek::{Peek, Peeker},
     precedence::Precedence,
 };
@@ -42,32 +47,61 @@ impl Parser {
         self.pos
     }
 
-    pub fn parse_expression(&mut self, precedence: Precedence) -> Option<Expression> {
-        todo!()
+    pub fn parse_expression(
+        &mut self,
+        precedence: Precedence,
+    ) -> Result<Option<Expression>, ParserErrorKind> {
+        let mut left_expr = self.parse_prefix()?.expect("token not found");
+
+        if let Some(input) = Precedence::token_precedence(self)? {
+            while precedence < input {
+                let infix = self.next_token().expect("token not found");
+                left_expr = self
+                    .parse_infix(infix, left_expr)?
+                    .expect("token not found");
+            }
+        }
+
+        Ok(Some(left_expr))
     }
 
-    fn parse_prefix(&mut self) -> Option<Expression> {
+    fn parse_prefix(&mut self) -> Result<Option<Expression>, ParserErrorKind> {
         match self.current_token() {
-            Some(Token::BoolLit(b)) => Some(Expression::Literal(LiteralKind::Bool(b))),
-            Some(Token::IntLit(i)) => Some(Expression::Literal(LiteralKind::Int(i))),
-            Some(Token::UIntLit(ui)) => Some(Expression::Literal(LiteralKind::UInt(ui))),
-            Some(Token::U256Lit(u)) => Some(Expression::Literal(LiteralKind::U256(u))),
-            Some(Token::FloatLit(f)) => Some(Expression::Literal(LiteralKind::Float(f))),
-            Some(Token::Identifier(id)) => Some(Expression::PathExpr(PathInExpr {
+            Some(Token::BoolLit(b)) => Ok(Some(Expression::Literal(LiteralKind::Bool(b)))),
+            Some(Token::IntLit(i)) => Ok(Some(Expression::Literal(LiteralKind::Int(i)))),
+            Some(Token::UIntLit(ui)) => Ok(Some(Expression::Literal(LiteralKind::UInt(ui)))),
+            Some(Token::U256Lit(u)) => Ok(Some(Expression::Literal(LiteralKind::U256(u)))),
+            Some(Token::FloatLit(f)) => Ok(Some(Expression::Literal(LiteralKind::Float(f)))),
+            Some(Token::Identifier(id)) => Ok(Some(Expression::PathExpr(PathInExpr {
                 first_segment: PathIdenSegmentKind::Identifier(id),
                 subsequent_segments: None,
-            })),
-            
-            _ => None,
+            }))),
+
+            _ => Ok(None),
         }
     }
 
-    fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
-        todo!()
-    }
-
-    fn peek_precedence(&mut self) -> Precedence {
-        todo!()
+    fn parse_infix(
+        &mut self,
+        infix: Token,
+        left: Expression,
+    ) -> Result<Option<Expression>, ParserErrorKind> {
+        match infix {
+            Token::CharLit(_) => todo!(),
+            Token::StringLit(_) => todo!(),
+            Token::BoolLit(_) => todo!(),
+            Token::IntLit(_) => todo!(),
+            Token::UIntLit(_) => todo!(),
+            Token::U256Lit(_) => todo!(),
+            Token::FloatLit(_) => todo!(),
+            Token::Identifier(_) => todo!(),
+            Token::Keyword(_) => todo!(),
+            Token::Comment(_) => todo!(),
+            Token::DocComment(_) => todo!(),
+            Token::Delim(_) => todo!(),
+            Token::Punc(_) => todo!(),
+            Token::EOF => todo!(),
+        }
     }
 
     /// Return the current token.
