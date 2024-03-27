@@ -84,25 +84,18 @@ impl Parser {
 
     fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
         match infix {
-            // Token::Keyword(k) => match k.keyword_kind {
-            //     KeywordKind::KwAs => {
-            //         if let Some(precedence) = Precedence::token_precedence(self) {
-            //             let right = self.parse_expression(precedence)?;
+            Token::Keyword(k) => match k.keyword_kind {
+                KeywordKind::KwAs => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(right);
+                    } else {
+                        return None;
+                    }
+                }
 
-            //             return Some(Expression::OperatorExpr(OperatorExprKind::TypeCast(
-            //                 TypeCastExpr {
-            //                     operator: k,
-            //                     lhs: Box::new(Value::try_from(left).ok()?),
-            //                     rhs: todo!(),
-            //                 },
-            //             )));
-            //         } else {
-            //             return None;
-            //         }
-            //     }
-
-            //     _ => None,
-            // },
+                _ => None,
+            },
             Token::Delim(d) => match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => todo!(),
 
