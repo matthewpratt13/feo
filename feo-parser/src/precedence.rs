@@ -47,15 +47,11 @@ impl Precedence {
     pub fn token_precedence(parser: &mut Parser) -> Option<Precedence> {
         match parser.current_token() {
             Some(Token::Keyword(k)) => match k.keyword_kind {
-                KeywordKind::KwBreak | KeywordKind::KwContinue | KeywordKind::KwReturn => {
-                    Some(Precedence::Lowest)
-                }
-
                 KeywordKind::KwLoop | KeywordKind::KwWhile | KeywordKind::KwFor => {
                     Some(Precedence::Loop)
                 }
 
-                KeywordKind::KwIf => Some(Precedence::If),
+                KeywordKind::KwIf | KeywordKind::KwMatch => Some(Precedence::If),
 
                 KeywordKind::KwSelfType => match parser.peek_num_tokens_ahead(1) {
                     Some(t) => match t {
@@ -122,6 +118,10 @@ impl Precedence {
                 }
 
                 KeywordKind::KwMut => Some(Precedence::Prefix),
+
+                KeywordKind::KwBreak | KeywordKind::KwContinue | KeywordKind::KwReturn => {
+                    Some(Precedence::Lowest)
+                }
 
                 _ => None,
             },
