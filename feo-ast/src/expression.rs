@@ -19,7 +19,7 @@ use feo_types::{
     span::{Span, Spanned},
 };
 
-use crate::{path::PathExpr, Type};
+use crate::path::PathExpr;
 
 pub use self::{
     array_expr::{ArrayExpr, IndexExpr},
