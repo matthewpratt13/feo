@@ -1,10 +1,11 @@
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
-        ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, Expression,
-        FieldAccessExpr, LazyBoolExpr, LazyBoolOperatorKind, MethodCallExpr, OperatorExprKind,
-        TupleIndexExpr, UnwrapExpr, Value,
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, BreakExpr,
+        ComparisonExpr, ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr,
+        ContinueExpr, Expression, FieldAccessExpr, FunctionCallExpr, LazyBoolExpr,
+        LazyBoolOperatorKind, MethodCallExpr, OperatorExprKind, TupleIndexExpr, UnwrapExpr, Value,
     },
+    item::SelfParam,
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
 };
@@ -23,7 +24,7 @@ use feo_types::{
 };
 
 use crate::{
-    parse::ParseExpr,
+    parse::{ParseExpr, ParseTerm},
     peek::{Peek, Peeker},
     precedence::Precedence,
 };
@@ -67,6 +68,33 @@ impl Parser {
 
     fn parse_prefix(&mut self) -> Option<Expression> {
         match self.current_token() {
+            Some(Token::Keyword(k)) => match k.keyword_kind {
+                KeywordKind::KwBreak => Some(Expression::BreakExpr(BreakExpr(k))),
+
+                KeywordKind::KwContinue => Some(Expression::ContinueExpr(ContinueExpr(k))),
+
+                KeywordKind::KwSelfType => Some(Expression::PathExpr(PathInExpr {
+                    first_segment: PathIdenSegmentKind::KwSelfType(k),
+                    subsequent_segments: None,
+                })),
+
+                KeywordKind::KwSelf => Some(Expression::FunctionCallExpr(
+                    FunctionCallExpr::parse(self).unwrap_or(None)?,
+                )),
+
+                KeywordKind::KwSuper => Some(Expression::PathExpr(PathInExpr {
+                    first_segment: PathIdenSegmentKind::KwSuper(k),
+                    subsequent_segments: None,
+                })),
+
+                KeywordKind::KwPackage => Some(Expression::PathExpr(PathInExpr {
+                    first_segment: PathIdenSegmentKind::KwPackage(k),
+                    subsequent_segments: None,
+                })),
+
+                _ => None,
+            },
+
             Some(Token::BoolLit(b)) => Some(Expression::Literal(LiteralKind::Bool(b))),
             Some(Token::IntLit(i)) => Some(Expression::Literal(LiteralKind::Int(i))),
             Some(Token::UIntLit(ui)) => Some(Expression::Literal(LiteralKind::UInt(ui))),
@@ -96,6 +124,8 @@ impl Parser {
             }
 
             Token::Delim(d) => match d.delim {
+                // TODO: function calls and tuple structs (incl. `Self` type)
+                // TODO:
                 (DelimKind::Parenthesis, DelimOrientation::Open) => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
@@ -203,6 +233,7 @@ impl Parser {
                 }
 
                 PuncKind::DblDot => {
+                    // TODO: `PathInExpr` (`KwSelf`, `KwSelfType`, `KwPackage`, `KwSuper`)
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
                         return Some(right);
@@ -212,6 +243,7 @@ impl Parser {
                 }
 
                 PuncKind::DotDotEquals => {
+                    // TODO: `PathInExpr` (`KwSelf`, `KwSelfType`, `KwPackage`, `KwSuper`)
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
                         return Some(right);
