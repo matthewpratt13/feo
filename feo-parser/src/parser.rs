@@ -1,7 +1,8 @@
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, ComparisonExpr,
-        ComparisonOperatorKind, Expression, OperatorExprKind, Value,
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
+        ComparisonOperatorKind, Expression, LazyBoolExpr, LazyBoolOperatorKind, OperatorExprKind,
+        UnwrapExpr, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -347,11 +348,64 @@ impl Parser {
                     }
                 }
 
-                PuncKind::DblAmpersand | PuncKind::DblPipe => todo!(),
+                PuncKind::DblAmpersand => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
+                            LazyBoolExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: LazyBoolOperatorKind::LazyAnd(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
 
-                PuncKind::QuestionMark => todo!(),
+                PuncKind::DblPipe => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::LazyBool(
+                            LazyBoolExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: LazyBoolOperatorKind::LazyOr(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
 
-                PuncKind::Equals => todo!(),
+                PuncKind::QuestionMark => {
+                    if let Some(_) = Precedence::token_precedence(self) {
+                        return Some(Expression::OperatorExpr(OperatorExprKind::UnwrapExpr(
+                            UnwrapExpr {
+                                operand: Box::new(Value::try_from(left).ok()?),
+                                operator: p,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::Equals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Assignment(
+                            AssignmentExpr {
+                                assignee: Value::try_from(left).ok()?,
+                                operator: p,
+                                new_value: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
                 _ => None,
             },
 
