@@ -1,7 +1,7 @@
 use feo_ast::{
     expression::{
-        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Expression, OperatorExprKind,
-        Value,
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, ComparisonExpr,
+        ComparisonOperatorKind, Expression, OperatorExprKind, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -257,12 +257,95 @@ impl Parser {
                     }
                 }
 
-                PuncKind::LessThan
-                | PuncKind::GreaterThan
-                | PuncKind::LessThanEquals
-                | PuncKind::GreaterThanEquals => todo!(),
+                PuncKind::LessThan => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Comparison(
+                            ComparisonExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: ComparisonOperatorKind::LessThan(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
 
-                PuncKind::DblEquals | PuncKind::BangEquals => todo!(),
+                PuncKind::GreaterThan => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Comparison(
+                            ComparisonExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: ComparisonOperatorKind::GreaterThan(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::LessThanEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Comparison(
+                            ComparisonExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: ComparisonOperatorKind::LessThanOrEqual(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::GreaterThanEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Comparison(
+                            ComparisonExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: ComparisonOperatorKind::GreaterThanOrEqual(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::DblEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Comparison(
+                            ComparisonExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: ComparisonOperatorKind::Equality(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::BangEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::Comparison(
+                            ComparisonExpr {
+                                lhs: Value::try_from(left).ok()?,
+                                operator: ComparisonOperatorKind::NotEqual(p),
+                                rhs: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
 
                 PuncKind::DblAmpersand | PuncKind::DblPipe => todo!(),
 
