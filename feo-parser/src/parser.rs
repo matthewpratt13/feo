@@ -1,5 +1,8 @@
 use feo_ast::{
-    expression::Expression,
+    expression::{
+        ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, Expression, OperatorExprKind,
+        Value,
+    },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
 };
@@ -104,16 +107,155 @@ impl Parser {
 
                 PuncKind::DblColon | PuncKind::ColonColonAsterisk => todo!(),
 
-                PuncKind::Asterisk
-                | PuncKind::ForwardSlash
-                | PuncKind::Percent
-                | PuncKind::Plus
-                | PuncKind::Minus
-                | PuncKind::Ampersand
-                | PuncKind::Caret
-                | PuncKind::Pipe => todo!(),
+                PuncKind::Plus => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::Add(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
 
-                PuncKind::DblLessThan | PuncKind::DblGreaterThan => todo!(),
+                PuncKind::Minus => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::Subtract(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::Asterisk => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::Multiply(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::ForwardSlash => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::Divide(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::Percent => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::Modulus(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::Ampersand => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::BitwiseAnd(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::Pipe => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::BitwiseOr(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::Caret => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::BitwiseXor(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::DblLessThan => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::ShiftLeft(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::DblGreaterThan => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(
+                            OperatorExprKind::ArithmeticOrLogical(ArithmeticOrLogicalExpr {
+                                lhs: Box::new(Value::try_from(left).ok()?),
+                                operator: ArithmeticOrLogicalOperatorKind::ShiftRight(p),
+                                rhs: Box::new(Value::try_from(right).ok()?),
+                            }),
+                        ));
+                    } else {
+                        return None;
+                    }
+                }
 
                 PuncKind::LessThan
                 | PuncKind::GreaterThan
