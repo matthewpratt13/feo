@@ -48,41 +48,6 @@ pub use self::{
     underscore_expr::UnderscoreExpr,
 };
 
-/// Helps to control the order in which operations are parsed.
-#[derive(PartialEq, PartialOrd, Debug, Clone, Copy)]
-pub enum Precedence {
-    Lowest,
-    Assignment,         // =, +=
-    Unwrap,             // ?
-    Or,                 // ||
-    And,                // &&
-    BitwiseOr,          // |
-    BitwiseXor,         // ^
-    BitwiseAnd,         // &
-    Equality,           // ==, !=
-    Comparison,         // <, >, <=, >=
-    Shift,              // <<, >>
-    Sum,                // +, -
-    Product,            // *, /, %
-    Prefix,             // -X, !X, * (dereference), & and &mut (reference), # and #! (attributes)
-    TypeCast,           // as (Type Casting)
-    Call,               // func(args), object.method(args)
-    Index,              // array[index], tuple.0
-    FieldAccess,        // expr.field
-    Path,               // foo::bar, foo.bar
-    Closure,            // |args| expr
-    Literal,            // 123, "string", true/false
-    Parentheses,        // (expr)
-    Array,              // [expr, expr]
-    Tuple,              // (expr, expr)
-    Struct,             // StructName { field: expr, .. }
-    Block,              // { ... }
-    If,                 // if condition { ... } else { ... }
-    Loop,               // loop { ... }, while (condition) { ... }, for item in collection { ... }
-    Range,              // .., ..=
-    CompoundAssignment, // +=, -=, *=, /=
-}
-
 /// `Expression` always produce / evaluate to a value, and may have (side) effects.
 #[derive(Debug, Clone)]
 pub enum Expression {
@@ -110,56 +75,6 @@ pub enum Expression {
     TupleExpr(TupleExpr),
     TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
-}
-
-impl Expression {
-    pub fn precedence(&self) -> Precedence {
-        match self {
-            Self::ArrayExpr(_) => Precedence::Array,
-            Self::IndexExpr(_) | Self::TupleIndexExpr(_) => Precedence::Index,
-            Self::BlockExpr(_) => Precedence::Block,
-            Self::FunctionCallExpr(_) | Self::MethodCallExpr(_) => Precedence::Call,
-            Self::ClosureWithBlock(_) | Self::ClosureWithoutBlock(_) => Precedence::Closure,
-            Self::FieldAccessExpr(_) => Precedence::FieldAccess,
-            Self::IfExpr(_) | Self::MatchExpr(_) => Precedence::If,
-            Self::IterationExpr(_) => Precedence::Loop,
-            Self::BreakExpr(_) | Self::ContinueExpr(_) => Precedence::Lowest,
-            Self::Literal(_) => Precedence::Literal,
-            Self::OperatorExpr(oe) => match oe {
-                OperatorExprKind::Assignment(_) => Precedence::Assignment,
-                OperatorExprKind::ArithmeticOrLogical(al) => match al.operator {
-                    ArithmeticOrLogicalOperatorKind::Add(_)
-                    | ArithmeticOrLogicalOperatorKind::Subtract(_) => Precedence::Sum,
-                    ArithmeticOrLogicalOperatorKind::Multiply(_)
-                    | ArithmeticOrLogicalOperatorKind::Divide(_)
-                    | ArithmeticOrLogicalOperatorKind::Modulus(_) => Precedence::Product,
-                    ArithmeticOrLogicalOperatorKind::BitwiseAnd(_) => Precedence::BitwiseAnd,
-                    ArithmeticOrLogicalOperatorKind::BitwiseOr(_) => Precedence::BitwiseOr,
-                    ArithmeticOrLogicalOperatorKind::BitwiseXor(_) => Precedence::BitwiseXor,
-                    ArithmeticOrLogicalOperatorKind::ShiftLeft(_)
-                    | ArithmeticOrLogicalOperatorKind::ShiftRight(_) => Precedence::Shift,
-                },
-                OperatorExprKind::Comparison(_) => Precedence::Comparison,
-                OperatorExprKind::CompoundAssign(_) => Precedence::CompoundAssignment,
-                OperatorExprKind::LazyBool(lb) => match lb.operator {
-                    LazyBoolOperatorKind::LazyAnd(_) => Precedence::And,
-                    LazyBoolOperatorKind::LazyOr(_) => Precedence::Or,
-                },
-                OperatorExprKind::Negation(_)
-                | OperatorExprKind::Reference(_)
-                | OperatorExprKind::Dereference(_) => Precedence::Prefix,
-
-                OperatorExprKind::TypeCast(_) => Precedence::TypeCast,
-                OperatorExprKind::UnwrapExpr(_) => Precedence::Unwrap,
-            },
-            Self::ParenthesizedExpr(_) => Precedence::Parentheses,
-            Self::PathExpr(_) => Precedence::Path,
-            Self::RangeExpr(_) => Precedence::Range,
-            Self::ReturnExpr(_) | Self::UnderscoreExpr(_) => Precedence::Lowest,
-            Self::StructExpr(_) | Self::TupleStructExpr(_) => Precedence::Struct,
-            Self::TupleExpr(_) => Precedence::Tuple,
-        }
-    }
 }
 
 impl Spanned for Expression {
@@ -216,55 +131,6 @@ pub enum ExprWithoutBlock {
     UnderscoreExpr(UnderscoreExpr),
 }
 
-impl ExprWithoutBlock {
-    pub fn precedence(&self) -> Precedence {
-        match self {
-            Self::ArrayExpr(_) => Precedence::Array,
-            Self::IndexExpr(_) | Self::TupleIndexExpr(_) => Precedence::Index,
-            Self::ClosureWithoutBlock(_) => Precedence::Closure,
-            Self::BreakExpr(_)
-            | Self::ContinueExpr(_)
-            | Self::ReturnExpr(_)
-            | Self::UnderscoreExpr(_) => Precedence::Lowest,
-            Self::FieldAccessExpr(_) => Precedence::FieldAccess,
-            Self::FunctionCallExpr(_) | Self::MethodCallExpr(_) => Precedence::Call,
-            Self::Literal(_) => Precedence::Literal,
-            Self::OperatorExpr(oe) => match oe {
-                OperatorExprKind::Assignment(_) => Precedence::Assignment,
-                OperatorExprKind::ArithmeticOrLogical(al) => match al.operator {
-                    ArithmeticOrLogicalOperatorKind::Add(_)
-                    | ArithmeticOrLogicalOperatorKind::Subtract(_) => Precedence::Sum,
-                    ArithmeticOrLogicalOperatorKind::Multiply(_)
-                    | ArithmeticOrLogicalOperatorKind::Divide(_)
-                    | ArithmeticOrLogicalOperatorKind::Modulus(_) => Precedence::Product,
-                    ArithmeticOrLogicalOperatorKind::BitwiseAnd(_) => Precedence::BitwiseAnd,
-                    ArithmeticOrLogicalOperatorKind::BitwiseOr(_) => Precedence::BitwiseOr,
-                    ArithmeticOrLogicalOperatorKind::BitwiseXor(_) => Precedence::BitwiseXor,
-                    ArithmeticOrLogicalOperatorKind::ShiftLeft(_)
-                    | ArithmeticOrLogicalOperatorKind::ShiftRight(_) => Precedence::Shift,
-                },
-                OperatorExprKind::Comparison(_) => Precedence::Comparison,
-                OperatorExprKind::CompoundAssign(_) => Precedence::CompoundAssignment,
-                OperatorExprKind::LazyBool(lb) => match lb.operator {
-                    LazyBoolOperatorKind::LazyAnd(_) => Precedence::And,
-                    LazyBoolOperatorKind::LazyOr(_) => Precedence::Or,
-                },
-                OperatorExprKind::Negation(_)
-                | OperatorExprKind::Reference(_)
-                | OperatorExprKind::Dereference(_) => Precedence::Prefix,
-
-                OperatorExprKind::TypeCast(_) => Precedence::TypeCast,
-                OperatorExprKind::UnwrapExpr(_) => Precedence::Unwrap,
-            },
-            Self::ParenthesizedExpr(_) => Precedence::Parentheses,
-            Self::PathExpr(_) => Precedence::Path,
-            Self::RangeExpr(_) => Precedence::Range,
-            Self::StructExpr(_) | Self::TupleStructExpr(_) => Precedence::Struct,
-            Self::TupleExpr(_) => Precedence::Tuple,
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 pub enum ExprWithBlock {
     BlockExpr(BlockExpr),
@@ -274,19 +140,6 @@ pub enum ExprWithBlock {
     InfiniteLoopExpr(InfiniteLoopExpr),
     PredicateLoopExpr(PredicateLoopExpr),
     IterLoopExpr(IterLoopExpr),
-}
-
-impl ExprWithBlock {
-    pub fn precedence(&self) -> Precedence {
-        match self {
-            ExprWithBlock::BlockExpr(_) => Precedence::Block,
-            ExprWithBlock::ClosureWithBlock(_) => Precedence::Closure,
-            ExprWithBlock::IfExpr(_) | ExprWithBlock::MatchExpr(_) => Precedence::If,
-            ExprWithBlock::InfiniteLoopExpr(_)
-            | ExprWithBlock::PredicateLoopExpr(_)
-            | ExprWithBlock::IterLoopExpr(_) => Precedence::Loop,
-        }
-    }
 }
 
 impl Spanned for ExprWithBlock {
@@ -353,39 +206,6 @@ pub enum Value {
     TupleExpr(TupleExpr),
     // TupleIndexExpr(TupleIndexExpr),
     UnderscoreExpr(UnderscoreExpr),
-}
-
-impl Value {
-    pub fn precedence(&self) -> Precedence {
-        match self {
-            Value::ArrayExpr(_) => Precedence::Array,
-            // Value::IndexExpr(_) | Value::TupleIndexExpr(_) => Precedence::Index,
-            // Value::FunctionCallExpr(_) | Value::MethodCallExpr(_) => Precedence::Call,
-            Value::FieldAccessExpr(_) => Precedence::FieldAccess,
-            Value::Literal(_) => Precedence::Literal,
-            // Value::ArithmeticOrLogicalExpr(al) => match al.operator {
-            // ArithmeticOrLogicalOperatorKind::Add(_)
-            // | ArithmeticOrLogicalOperatorKind::Subtract(_) => Precedence::Sum,
-            // ArithmeticOrLogicalOperatorKind::Multiply(_)
-            // | ArithmeticOrLogicalOperatorKind::Divide(_)
-            // | ArithmeticOrLogicalOperatorKind::Modulus(_) => Precedence::Product,
-            // ArithmeticOrLogicalOperatorKind::BitwiseAnd(_) => Precedence::BitwiseAnd,
-            // ArithmeticOrLogicalOperatorKind::BitwiseOr(_) => Precedence::BitwiseOr,
-            // ArithmeticOrLogicalOperatorKind::BitwiseXor(_) => Precedence::BitwiseXor,
-            // ArithmeticOrLogicalOperatorKind::ShiftLeft(_)
-            // | ArithmeticOrLogicalOperatorKind::ShiftRight(_) => Precedence::Shift,
-            // },
-            // Value::DereferenceExpr(_) | Value::NegationExpr(_) | Value::ReferenceExpr(_) => {
-            // Precedence::Prefix
-            // }
-            // Value::UnwrapExpr(_) => Precedence::Unwrap,
-            Value::ParenthesizedExpr(_) => Precedence::Parentheses,
-            Value::PathExpr(_) => Precedence::Path,
-            Value::StructExpr(_) | Value::TupleStructExpr(_) => Precedence::Struct,
-            Value::TupleExpr(_) => Precedence::Tuple,
-            Value::UnderscoreExpr(_) => Precedence::Lowest,
-        }
-    }
 }
 
 impl Spanned for Value {
