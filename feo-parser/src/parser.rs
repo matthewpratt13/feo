@@ -84,18 +84,18 @@ impl Parser {
 
     fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
         match infix {
-            Token::Keyword(k) => match k.keyword_kind {
-                KeywordKind::KwAs => {
-                    if let Some(precedence) = Precedence::token_precedence(self) {
-                        let right = self.parse_expression(precedence)?;
-                        return Some(right);
-                    } else {
-                        return None;
-                    }
+            Token::Keyword(Keyword {
+                keyword_kind: KeywordKind::KwAs,
+                ..
+            }) => {
+                if let Some(precedence) = Precedence::token_precedence(self) {
+                    let right = self.parse_expression(precedence)?;
+                    return Some(right);
+                } else {
+                    return None;
                 }
-
-                _ => None,
-            },
+            }
+            
             Token::Delim(d) => match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => todo!(),
 
@@ -185,28 +185,7 @@ impl Parser {
                 PuncKind::DblDot => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
-
-                        if let Some(_) = RangeFromToExpr::parse(self).ok()? {
-                            return Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
-                                RangeFromToExpr {
-                                    from_operand: Box::new(Value::try_from(left).ok()?),
-                                    dbl_dot: p,
-                                    to_operand_excl: Box::new(Value::try_from(right).ok()?),
-                                },
-                            )));
-                        } else if let Some(_) = RangeFromExpr::parse(self).ok()? {
-                            let right = self.parse_expression(precedence)?;
-
-                            return Some(Expression::RangeExpr(RangeExprKind::RangeFromToExpr(
-                                RangeFromToExpr {
-                                    from_operand: Box::new(Value::try_from(left).ok()?),
-                                    dbl_dot: p,
-                                    to_operand_excl: Box::new(Value::try_from(right).ok()?),
-                                },
-                            )));
-                        } else {
-                            return None;
-                        }
+                        return Some(right);
                     } else {
                         return None;
                     }
@@ -215,13 +194,7 @@ impl Parser {
                 PuncKind::DotDotEquals => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
-                        return Some(Expression::RangeExpr(RangeExprKind::RangeInclusiveExpr(
-                            RangeInclusiveExpr {
-                                from_operand: Box::new(Value::try_from(left).ok()?),
-                                dot_dot_equals: p,
-                                to_operand_incl: Box::new(Value::try_from(right).ok()?),
-                            },
-                        )));
+                        return Some(right);
                     } else {
                         return None;
                     }
@@ -259,10 +232,7 @@ impl Parser {
                 PuncKind::DblColon => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
-                        return Some(Expression::PathExpr(PathInExpr {
-                            first_segment: todo!(),
-                            subsequent_segments: todo!(),
-                        }));
+                        return Some(right);
                     } else {
                         return None;
                     }
@@ -271,10 +241,7 @@ impl Parser {
                 PuncKind::ColonColonAsterisk => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
                         let right = self.parse_expression(precedence)?;
-                        return Some(Expression::PathExpr(PathInExpr {
-                            first_segment: todo!(),
-                            subsequent_segments: todo!(),
-                        }));
+                        return Some(right);
                     } else {
                         return None;
                     }
