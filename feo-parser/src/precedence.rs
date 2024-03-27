@@ -60,6 +60,7 @@ impl Precedence {
                             | (DelimKind::Brace, DelimOrientation::Open) => {
                                 Some(Precedence::Struct)
                             }
+
                             _ => None,
                         },
 
@@ -88,12 +89,12 @@ impl Precedence {
                         punc_kind: PuncKind::FullStop,
                         ..
                     })) => match parser.peek_num_tokens_ahead(2) {
-                        Some(Token::Identifier(_)) => Some(Precedence::FieldAccess),
-
                         Some(Token::Delim(Delimiter {
                             delim: (DelimKind::Parenthesis, DelimOrientation::Open),
                             ..
                         })) => Some(Precedence::Call),
+
+                        Some(Token::Identifier(_)) => Some(Precedence::FieldAccess),
 
                         _ => None,
                     },
@@ -163,6 +164,7 @@ impl Precedence {
                             (DelimKind::Bracket, DelimOrientation::Open) => Some(Precedence::Index),
 
                             (DelimKind::Brace, DelimOrientation::Open) => Some(Precedence::Struct),
+                            
                             _ => None,
                         },
 
