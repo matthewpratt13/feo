@@ -3,8 +3,7 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, Expression,
         FieldAccessExpr, LazyBoolExpr, LazyBoolOperatorKind, MethodCallExpr, OperatorExprKind,
-        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, TupleIndexExpr,
-        TypeCastExpr, UnwrapExpr, Value,
+        TupleIndexExpr, UnwrapExpr, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -95,13 +94,34 @@ impl Parser {
                     return None;
                 }
             }
-            
+
             Token::Delim(d) => match d.delim {
-                (DelimKind::Parenthesis, DelimOrientation::Open) => todo!(),
+                (DelimKind::Parenthesis, DelimOrientation::Open) => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(right);
+                    } else {
+                        return None;
+                    }
+                }
 
-                (DelimKind::Brace, DelimOrientation::Open) => todo!(),
+                (DelimKind::Brace, DelimOrientation::Open) => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(right);
+                    } else {
+                        return None;
+                    }
+                }
 
-                (DelimKind::Bracket, DelimOrientation::Open) => todo!(),
+                (DelimKind::Bracket, DelimOrientation::Open) => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(right);
+                    } else {
+                        return None;
+                    }
+                }
 
                 _ => None,
             },
