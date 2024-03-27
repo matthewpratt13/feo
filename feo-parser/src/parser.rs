@@ -9,8 +9,12 @@ use feo_error::{
     parser_error::{ParserError, ParserErrorKind},
 };
 use feo_types::{
+    delimiter::{DelimKind, DelimOrientation},
+    keyword::KeywordKind,
     literal::LiteralKind,
+    punctuation::PuncKind,
     span::{Position, Spanned},
+    Keyword,
 };
 
 use crate::{
@@ -73,9 +77,59 @@ impl Parser {
 
     fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
         match infix {
-            Token::Keyword(_) => todo!(),
-            Token::Delim(_) => todo!(),
-            Token::Punc(_) => todo!(),
+            Token::Keyword(Keyword {
+                keyword_kind: KeywordKind::KwAs,
+                ..
+            }) => todo!(),
+            Token::Delim(d) => match d.delim {
+                (DelimKind::Parenthesis, DelimOrientation::Open) => todo!(),
+
+                (DelimKind::Brace, DelimOrientation::Open) => todo!(),
+
+                (DelimKind::Bracket, DelimOrientation::Open) => todo!(),
+
+                _ => None,
+            },
+
+            Token::Punc(p) => match p.punc_kind {
+                PuncKind::PlusEquals
+                | PuncKind::MinusEquals
+                | PuncKind::AsteriskEquals
+                | PuncKind::ForwardSlashEquals
+                | PuncKind::PercentEquals => todo!(),
+
+                PuncKind::DblDot | PuncKind::DotDotEquals => todo!(),
+
+                PuncKind::FullStop => todo!(),
+
+                PuncKind::DblColon | PuncKind::ColonColonAsterisk => todo!(),
+
+                PuncKind::Asterisk
+                | PuncKind::ForwardSlash
+                | PuncKind::Percent
+                | PuncKind::Plus
+                | PuncKind::Minus
+                | PuncKind::Ampersand
+                | PuncKind::Caret
+                | PuncKind::Pipe => todo!(),
+
+                PuncKind::DblLessThan | PuncKind::DblGreaterThan => todo!(),
+
+                PuncKind::LessThan
+                | PuncKind::GreaterThan
+                | PuncKind::LessThanEquals
+                | PuncKind::GreaterThanEquals => todo!(),
+
+                PuncKind::DblEquals | PuncKind::BangEquals => todo!(),
+
+                PuncKind::DblAmpersand | PuncKind::DblPipe => todo!(),
+
+                PuncKind::QuestionMark => todo!(),
+
+                PuncKind::Equals => todo!(),
+                _ => None,
+            },
+
             _ => None,
         }
     }
