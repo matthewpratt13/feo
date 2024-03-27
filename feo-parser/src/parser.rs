@@ -2,8 +2,9 @@ use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, Expression,
-        LazyBoolExpr, LazyBoolOperatorKind, OperatorExprKind, RangeExprKind, RangeFromExpr,
-        RangeFromToExpr, RangeInclusiveExpr, TypeCastExpr, UnwrapExpr, Value,
+        FieldAccessExpr, LazyBoolExpr, LazyBoolOperatorKind, MethodCallExpr, OperatorExprKind,
+        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, TupleIndexExpr,
+        TypeCastExpr, UnwrapExpr, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -102,7 +103,6 @@ impl Parser {
 
             //     _ => None,
             // },
-
             Token::Delim(d) => match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => todo!(),
 
@@ -234,7 +234,34 @@ impl Parser {
                     }
                 }
 
-                PuncKind::FullStop => todo!(),
+                PuncKind::FullStop => {
+                    if let Some(_) = Precedence::token_precedence(self) {
+                        if let Some(mc) = MethodCallExpr::parse(self).ok()? {
+                            return Some(Expression::MethodCallExpr(MethodCallExpr {
+                                receiver: Box::new(Value::try_from(left).ok()?),
+                                full_stop: p,
+                                method_name: mc.clone().method_name,
+                                open_parenthesis: mc.clone().open_parenthesis,
+                                call_params_opt: mc.call_params_opt,
+                                close_parenthesis: mc.open_parenthesis,
+                            }));
+                        } else if let Some(fa) = FieldAccessExpr::parse(self).ok()? {
+                            return Some(Expression::FieldAccessExpr(FieldAccessExpr {
+                                container_operand: Box::new(Value::try_from(left).ok()?),
+                                field_name: fa.field_name,
+                            }));
+                        } else if let Some(tie) = TupleIndexExpr::parse(self).ok()? {
+                            return Some(Expression::TupleIndexExpr(TupleIndexExpr {
+                                operand: Box::new(Value::try_from(left).ok()?),
+                                index: tie.index,
+                            }));
+                        } else {
+                            return None;
+                        }
+                    } else {
+                        return None;
+                    }
+                }
 
                 PuncKind::DblColon => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
