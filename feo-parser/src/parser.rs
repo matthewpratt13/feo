@@ -1,5 +1,6 @@
 use feo_ast::{
     expression::Expression,
+    path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
 };
 use feo_error::{
@@ -7,7 +8,10 @@ use feo_error::{
     handler::{ErrorEmitted, Handler},
     parser_error::{ParserError, ParserErrorKind},
 };
-use feo_types::span::{Position, Spanned};
+use feo_types::{
+    literal::LiteralKind,
+    span::{Position, Spanned},
+};
 
 use crate::{
     peek::{Peek, Peeker},
@@ -43,7 +47,19 @@ impl Parser {
     }
 
     fn parse_prefix(&mut self) -> Option<Expression> {
-        todo!()
+        match self.current_token() {
+            Some(Token::BoolLit(b)) => Some(Expression::Literal(LiteralKind::Bool(b))),
+            Some(Token::IntLit(i)) => Some(Expression::Literal(LiteralKind::Int(i))),
+            Some(Token::UIntLit(ui)) => Some(Expression::Literal(LiteralKind::UInt(ui))),
+            Some(Token::U256Lit(u)) => Some(Expression::Literal(LiteralKind::U256(u))),
+            Some(Token::FloatLit(f)) => Some(Expression::Literal(LiteralKind::Float(f))),
+            Some(Token::Identifier(id)) => Some(Expression::PathExpr(PathInExpr {
+                first_segment: PathIdenSegmentKind::Identifier(id),
+                subsequent_segments: None,
+            })),
+            
+            _ => None,
+        }
     }
 
     fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
