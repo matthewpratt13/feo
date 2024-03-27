@@ -47,6 +47,10 @@ impl Parser {
         token
     }
 
+    pub fn peek_num_tokens_ahead(&self, num_tokens: usize) -> Option<Token> {
+        self.stream.tokens().get(self.pos + num_tokens).cloned()
+    }
+
     /// Return the previous token.
     pub fn previous_token(&mut self) -> Option<Token> {
         if self.pos > 0 {
@@ -68,8 +72,8 @@ impl Parser {
 
     /// Peek at the `T` at `num_tokens` index and return it if it exists (without advancing)
     /// or return `None`.
-    pub fn peek_with_len<T: Peek>(&self, num_tokens: usize) -> Option<T> {
-        Peeker::with(&self.stream().tokens(), self.pos + num_tokens)
+    pub fn peek_ahead<T: Peek>(&self, offset: usize) -> Option<T> {
+        Peeker::with(&self.stream().tokens(), self.pos + offset)
     }
 
     /// Push `ParserError` to the `Handler`.

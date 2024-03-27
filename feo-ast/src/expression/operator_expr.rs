@@ -50,9 +50,9 @@ pub enum ArithmeticOrLogicalOperatorKind {
     Multiply(Asterisk),
     Divide(ForwardSlash),
     Modulus(Percent),
-    LogicalAnd(Ampersand),
-    LogicalOr(Pipe),
-    LogicalXOr(Caret),
+    BitwiseAnd(Ampersand),
+    BitwiseOr(Pipe),
+    BitwiseXor(Caret),
     ShiftLeft(DblLessThan),
     ShiftRight(DblGreaterThan),
 }
