@@ -1,8 +1,9 @@
 use feo_ast::{
     expression::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
-        ComparisonOperatorKind, Expression, LazyBoolExpr, LazyBoolOperatorKind, OperatorExprKind,
-        RangeExprKind, RangeFromExpr, RangeFromToExpr, RangeInclusiveExpr, UnwrapExpr, Value,
+        ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, Expression,
+        LazyBoolExpr, LazyBoolOperatorKind, OperatorExprKind, RangeExprKind, RangeFromExpr,
+        RangeFromToExpr, RangeInclusiveExpr, UnwrapExpr, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -97,11 +98,80 @@ impl Parser {
             },
 
             Token::Punc(p) => match p.punc_kind {
-                PuncKind::PlusEquals
-                | PuncKind::MinusEquals
-                | PuncKind::AsteriskEquals
-                | PuncKind::ForwardSlashEquals
-                | PuncKind::PercentEquals => todo!(),
+                PuncKind::AsteriskEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::CompoundAssign(
+                            CompoundAssignmentExpr {
+                                assignee: Value::try_from(left).ok()?,
+                                operator: CompoundAssignOperatorKind::MultiplyAssign(p),
+                                new_value: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::ForwardSlashEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::CompoundAssign(
+                            CompoundAssignmentExpr {
+                                assignee: Value::try_from(left).ok()?,
+                                operator: CompoundAssignOperatorKind::DivideAssign(p),
+                                new_value: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::PercentEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::CompoundAssign(
+                            CompoundAssignmentExpr {
+                                assignee: Value::try_from(left).ok()?,
+                                operator: CompoundAssignOperatorKind::ModulusAssign(p),
+                                new_value: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::PlusEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::CompoundAssign(
+                            CompoundAssignmentExpr {
+                                assignee: Value::try_from(left).ok()?,
+                                operator: CompoundAssignOperatorKind::AddAssign(p),
+                                new_value: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
+
+                PuncKind::MinusEquals => {
+                    if let Some(precedence) = Precedence::token_precedence(self) {
+                        let right = self.parse_expression(precedence)?;
+                        return Some(Expression::OperatorExpr(OperatorExprKind::CompoundAssign(
+                            CompoundAssignmentExpr {
+                                assignee: Value::try_from(left).ok()?,
+                                operator: CompoundAssignOperatorKind::SubtractAssign(p),
+                                new_value: Value::try_from(right).ok()?,
+                            },
+                        )));
+                    } else {
+                        return None;
+                    }
+                }
 
                 PuncKind::DblDot => {
                     if let Some(precedence) = Precedence::token_precedence(self) {
