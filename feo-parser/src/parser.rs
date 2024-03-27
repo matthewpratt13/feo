@@ -3,7 +3,7 @@ use feo_ast::{
         ArithmeticOrLogicalExpr, ArithmeticOrLogicalOperatorKind, AssignmentExpr, ComparisonExpr,
         ComparisonOperatorKind, CompoundAssignOperatorKind, CompoundAssignmentExpr, Expression,
         LazyBoolExpr, LazyBoolOperatorKind, OperatorExprKind, RangeExprKind, RangeFromExpr,
-        RangeFromToExpr, RangeInclusiveExpr, UnwrapExpr, Value,
+        RangeFromToExpr, RangeInclusiveExpr, TypeCastExpr, UnwrapExpr, Value,
     },
     path::{PathIdenSegmentKind, PathInExpr},
     token::{Token, TokenStream},
@@ -83,10 +83,26 @@ impl Parser {
 
     fn parse_infix(&mut self, infix: Token, left: Expression) -> Option<Expression> {
         match infix {
-            Token::Keyword(Keyword {
-                keyword_kind: KeywordKind::KwAs,
-                ..
-            }) => todo!(),
+            // Token::Keyword(k) => match k.keyword_kind {
+            //     KeywordKind::KwAs => {
+            //         if let Some(precedence) = Precedence::token_precedence(self) {
+            //             let right = self.parse_expression(precedence)?;
+
+            //             return Some(Expression::OperatorExpr(OperatorExprKind::TypeCast(
+            //                 TypeCastExpr {
+            //                     operator: k,
+            //                     lhs: Box::new(Value::try_from(left).ok()?),
+            //                     rhs: todo!(),
+            //                 },
+            //             )));
+            //         } else {
+            //             return None;
+            //         }
+            //     }
+
+            //     _ => None,
+            // },
+
             Token::Delim(d) => match d.delim {
                 (DelimKind::Parenthesis, DelimOrientation::Open) => todo!(),
 
